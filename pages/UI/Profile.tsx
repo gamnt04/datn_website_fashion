@@ -5,7 +5,12 @@ const Profile = () => {
     <div>
       <div className="container mx-auto">
         <div className="">
-          <div className=""></div>
+          <div className="">
+            <div className="flex-col">
+              <div className="grid grid-col-2"></div>
+            </div>
+            <div className="flex-col"></div>
+          </div>
           <div className="">
             <div className="">
               <h2>Hồ Sơ Của Tôi</h2>
