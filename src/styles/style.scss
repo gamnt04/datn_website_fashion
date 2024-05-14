@@ -1,0 +1,15 @@
+@use "_mixin" as m;
+$font-poppins: "Poppins", sans-serif;
+body {
+  font-family: $font-poppins;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+.container {
+  width: 1200px;
+  margin: auto;
+  padding-left: 15px;
+  padding-top: 15px;
+}
