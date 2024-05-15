@@ -1,8 +1,9 @@
-import Profile from "../pages/UI/Profile";
+import Header from "./component/layout/Header";
+
 function App() {
   return (
     <>
-      <Profile />
+      <Header></Header>
     </>
   );
 }
