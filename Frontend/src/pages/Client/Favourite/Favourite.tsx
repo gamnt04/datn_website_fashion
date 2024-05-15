@@ -39,19 +39,18 @@ const Favourite = () => {
                         </li>
                         <li className="relative">
                             <a href="#" className="border-[#f68e56] hover:border-b-2">
-                                PAGESjjj
+                                PAGES
                             </a>
-                            <ul className="absolute top-full left-0 hidden bg-white border rounded-sm mt-1">
+                            <ul className="absolute top-full left-0 hidden bg-white border rounded-sm mt-1 w-32">
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Page 1</a>
+                                    <a href="/about-us" className="block px-4 py-2 hover:bg-gray-100">About Us</a>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Page 2</a>
+                                    <a href="/faqs" className="block px-4 py-2 hover:bg-gray-100">FAQs</a>
                                 </li>
                                 <li>
-                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100">Page 3</a>
+                                    <a href="/delivery" className="block px-4 py-2 hover:bg-gray-100">Delivery</a>
                                 </li>
-                                {/* Thêm các mục menu con khác tại đây */}
                             </ul>
                         </li>
 
@@ -85,8 +84,8 @@ const Favourite = () => {
                     </ul>
                 </nav>
             </header>
-            <div className="px-6 mt-5">
-                <div className="flex items-center">
+            <div>
+                <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
                     <ul className="flex gap-2">
                         <li className="text-red-500"><a href="#">Home </a></li>
                         <li> / </li>

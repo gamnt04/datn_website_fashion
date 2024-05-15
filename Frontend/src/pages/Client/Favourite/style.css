@@ -7,7 +7,7 @@
 
 .absolute {
     position: absolute;
-    top: 100%; /* Đặt vị trí của menu con ở phía dưới của phần tử cha */
+    top: 80%; /* Đặt vị trí của menu con ở phía dưới của phần tử cha */
     left: 0;
     z-index: 1000; /* Đảm bảo menu con hiển thị trên cùng */
     display: none; /* Ẩn menu con mặc định */
