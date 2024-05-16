@@ -16,8 +16,117 @@ const Profile = () => {
               </div>
               <div className="">
                 <h3 className="text-[#333] font-semibold text-sm">User Name</h3>
-                <a className=" text-[#9B9B9B] font-normal text-xs">Sửa Hồ Sơ</a>
+                <a
+                  href=""
+                  className=" text-[#9B9B9B] font-normal text-[14px] flex pt-[5px]  font-normal"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#9B9B9B"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="lucide lucide-pencil pr-[3px]"
+                  >
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                    <path d="m15 5 4 4" />
+                  </svg>
+                  Sửa Hồ Sơ
+                </a>
               </div>
+            </div>
+            <div className="mx-auto py-[20px] pl-[40px]">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className=" w-[24px]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#0145AD"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-circle-user"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <circle cx="12" cy="10" r="3" />
+                          <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td className="">
+                      <a href="" className="pl-[10px] py-[10px]">
+                        <span className="text-sm">Tài Khoản Của Tôi</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td className="">
+                      <a href="" className="pl-[10px] py-[15px]">
+                        <span className="text-sm text-[#7D7D7D]">Hồ Sơ</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td className="">
+                      <a href="" className="pl-[10px] py-[15px]">
+                        <span className="text-sm text-[#7D7D7D]">
+                          Đổi Mật Khẩu
+                        </span>
+                      </a>
+                    </td>
+                  </tr>
+
+                  <tr className="py-[20px]">
+                    <td>
+                      <div className=" w-[24px]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#0145AD"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-clipboard-list"
+                        >
+                          <rect
+                            width="8"
+                            height="4"
+                            x="8"
+                            y="2"
+                            rx="1"
+                            ry="1"
+                          />
+                          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                          <path d="M12 11h4" />
+                          <path d="M12 16h4" />
+                          <path d="M8 11h.01" />
+                          <path d="M8 16h.01" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="" className="pl-[10px] ">
+                        <span className="text-sm">Đơn Mua</span>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
           <div className="w-[81%] bg-[#FFFFFF] flex">
