@@ -610,6 +610,10 @@ video {
   display: table;
 }
 
+.grid {
+  display: grid;
+}
+
 .h-\[150px\] {
   height: 150px;
 }
@@ -620,6 +624,10 @@ video {
 
 .h-\[46px\] {
   height: 46px;
+}
+
+.h-\[350px\] {
+  height: 350px;
 }
 
 .w-\[125px\] {
@@ -658,8 +666,24 @@ video {
   width: 81%;
 }
 
+.w-\[400px\] {
+  width: 400px;
+}
+
+.w-full {
+  width: 100%;
+}
+
 .max-w-\[1200px\] {
   max-width: 1200px;
+}
+
+.max-w-\[1400px\] {
+  max-width: 1400px;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .gap-2 {
@@ -769,6 +793,31 @@ video {
 .py-\[20px\] {
   padding-top: 20px;
   padding-bottom: 20px;
+}
+
+.px-\[10px\] {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.px-\[20px\] {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.px-\[30px\] {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.py-\[50px\] {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.py-\[40px\] {
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .pb-4 {
@@ -889,6 +938,10 @@ video {
   font-size: 14px;
 }
 
+.text-\[25px\] {
+  font-size: 25px;
+}
+
 .font-normal {
   font-weight: 400;
 }
@@ -934,6 +987,11 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-\[\#A3A3A3\] {
+  --tw-text-opacity: 1;
+  color: rgb(163 163 163 / var(--tw-text-opacity));
 }
 
 .underline {
