@@ -5,12 +5,16 @@ import Favourite from "../pages/Client/Favourite/Favourite";
 import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 
 const RouterComponent = () => {
   return (
     <>
       <Router>
+      <Header></Header>
+ 
         <Routes>
           <Route path="/" element={<h1>Đây Là Trang Home</h1>} />
             <Route index element={<h1>Home</h1>} />
@@ -34,6 +38,7 @@ const RouterComponent = () => {
           </Route>
 
         </Routes>
+        <Footer></Footer>
       </Router>
     </>
   );
