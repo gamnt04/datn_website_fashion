@@ -372,10 +372,12 @@ const Blogs = () => {
                     alt=""
                     className="image_blog object-cover "
                   />
-                  <div className="absolute bottom-3 left-0 right-0 bg-[#A3A3A3] bg-opacity-80 text-[#2B2B2B] p-4 max-w-[360px] mx-auto">
+                  <div className="absolute bottom-3 left-0 right-0 bg-white bg-opacity-80 text-[#2B2B2B] p-4 max-w-[360px] mx-auto">
                     <p className="text-sm">New Arrival</p>
                     <h3 className="text-2xl font-bold">Sale Off 30%</h3>
-                    <a className="text-base mt-2 underline">Discover Now</a>
+                    <a className="text-base mt-2 underline pb-[10px]">
+                      Discover Now
+                    </a>
                   </div>
                 </div>
               </div>
