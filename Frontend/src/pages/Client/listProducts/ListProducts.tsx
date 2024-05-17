@@ -424,6 +424,7 @@ const ListProducts = () => {
           <p className="text-[#ABABAB]">Don’t worry. We won't spam.</p>
         </div>
       </div>
+      {/* END EMAIL */}
     </div>
   );
 };
