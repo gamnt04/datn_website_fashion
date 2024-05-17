@@ -7,6 +7,8 @@ import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
 import ListProducts from "../pages/Client/listProducts/ListProducts";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
+import ProductDetail from "../pages/Client/ProductDetail/ProductDetail";
 
 const RouterComponent = () => {
   return (
@@ -22,11 +24,13 @@ const RouterComponent = () => {
           <Route path="faqs" element={<FAQ />} />
           <Route path="about-us" element={<AboutUS />} />
           <Route path="/products" element={<ListProducts />} />
+          <Route path="/detailP" element={<ProductDetail />} />
 
           <Route path="/admin" element={<h1>Đây là Trang Admin</h1>} />
           <Route index element={<h1>Dashboard</h1>} />
           <Route path="/admin/product" element={<h1>Products</h1>} />
         </Routes>
+        <Footer></Footer>
       </Router>
     </>
   );
