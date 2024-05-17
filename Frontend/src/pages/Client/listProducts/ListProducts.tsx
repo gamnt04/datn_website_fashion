@@ -1,5 +1,6 @@
-import { CartIcon, HeartIcon } from "../../resources/svg/Icon/Icon";
+import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import React, { useState } from "react";
+import "./style.css";
 
 const ListProducts = () => {
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);

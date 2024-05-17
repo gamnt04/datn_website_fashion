@@ -5,7 +5,7 @@ import Favourite from "../pages/Client/Favourite/Favourite";
 import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
-import ListProducts from "../pages/listProducts/ListProducts";
+import ListProducts from "../pages/Client/listProducts/ListProducts";
 import Header from "../components/Header";
 
 const RouterComponent = () => {
