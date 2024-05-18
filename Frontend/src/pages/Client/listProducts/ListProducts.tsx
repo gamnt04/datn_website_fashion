@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 const ListProducts = () => {
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    navigate("/detailP");
+  };
 
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
@@ -441,10 +447,11 @@ const ListProducts = () => {
                                   viewBox="0 0 24 24"
                                   fill="none"
                                   stroke="currentColor"
-                                  stroke-width="0.5"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeWidth="0.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   className="lucide lucide-arrow-right"
+                                  onClick={handleNavigation}
                                 >
                                   <path d="M5 12h14" />
                                   <path d="m12 5 7 7-7 7" />
