@@ -12,14 +12,14 @@ const ListProducts = () => {
     <div>
       {/* TAGPRODUCTS */}
       <div className="h-[80px] bg-[#F3F3F3] flex  items-center  ">
-        <h2 className="text-2xl font-bold pl-5">Products</h2>
+        <h2 className="pl-5 text-2xl font-bold">Products</h2>
       </div>
       {/* END TAGPRODUCTS */}
 
       {/*FILTER AND List P */}
       <div className="container mx-auto max-w-[1100px]">
         {/* FILTER PRODUCTS */}
-        <div className="flex justify-between items-center pt-10">
+        <div className="flex items-center justify-between pt-10">
           {/* FILTER LEFT */}
           <div className="flex flex-row items-center space-x-4">
             <div>
@@ -47,20 +47,20 @@ const ListProducts = () => {
                 </svg>
               </div>
               {isDisplayOpen && (
-                <div className="parent-display facets__display bg-white shadow-md rounded-b-md">
-                  <div className="facets__header flex justify-between items-center px-4 py-3 border-b border-gray-200">
+                <div className="bg-white shadow-md parent-display facets__display rounded-b-md">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 facets__header">
                     <span className="facets__selected no-js-hidden">
                       selected
                     </span>
                     <a
                       href="/collections/all"
-                      className="facets__reset link underlined-link text-blue-500"
+                      className="text-blue-500 facets__reset link underlined-link"
                       role="button"
                     >
                       Reset
                     </a>
                   </div>
-                  <fieldset className="facets-wrap parent-wrap p-4">
+                  <fieldset className="p-4 facets-wrap parent-wrap">
                     <ul
                       className="facets__list list-unstyled no-js-hidden"
                       role="list"
@@ -68,7 +68,7 @@ const ListProducts = () => {
                       <li className="list-menu__item facets__item">
                         <label
                           htmlFor="Filter-filter.v.availability-1"
-                          className="facet-checkbox flex items-center"
+                          className="flex items-center facet-checkbox"
                         >
                           <input
                             type="checkbox"
@@ -82,7 +82,7 @@ const ListProducts = () => {
                       <li className="list-menu__item facets__item">
                         <label
                           htmlFor="Filter-filter.v.availability-2"
-                          className="facet-checkbox flex items-center"
+                          className="flex items-center facet-checkbox"
                         >
                           <input
                             type="checkbox"
@@ -204,17 +204,17 @@ const ListProducts = () => {
           {/* INFOR P */}
 
           <div className="">
-            <div className="relative w-full h-72 border rounded-sm overflow-hidden img-hover-scale">
-              {/* <div className="absolute top-2 left-2 z-10">
+            <div className="relative w-full overflow-hidden border rounded-sm h-72 img-hover-scale">
+              {/* <div className="absolute z-10 top-2 left-2">
                 <HeartIcon />
               </div> */}
 
               <img
                 src="../../../src/resources/images/products/90chinh-mau-nen.webp"
                 alt=""
-                className="w-full h-full object-cover"
+                className="object-cover w-full h-full"
               />
-              <div className="absolute bottom-2 right-2 flex justify-between items-center">
+              <div className="absolute flex items-center justify-between bottom-2 right-2">
                 <div>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -238,23 +238,23 @@ const ListProducts = () => {
                 </div>
               </div>
             </div>
-            <div className="text-center mt-5">
+            <div className="mt-5 text-center">
               <p className="text-lg font-thin">Dép Màu Đen</p>
               <p className="font-sans">Thượng Đình</p>
-              <span className="text-lg font-sans">18.800.000 VND</span>
-              <div className="text-center mt-2">
-                <label className="inline-block cursor-pointer mr-2">
+              <span className="font-sans text-lg">18.800.000 VND</span>
+              <div className="mt-2 text-center">
+                <label className="inline-block mr-2 cursor-pointer">
                   <img
                     src="../../../src/resources/images/products/90chinh-mau-nen.webp"
                     alt=""
-                    className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
+                    className="overflow-hidden border rounded-full w-7 h-7 hover:border-orange-500"
                   />
                 </label>
                 <label className="inline-block cursor-pointer">
                   <img
                     src="../../../src/resources/images/products/90chinh-mau-nen.webp"
                     alt=""
-                    className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
+                    className="overflow-hidden border rounded-full w-7 h-7 hover:border-orange-500"
                   />
                 </label>
               </div>
@@ -342,7 +342,7 @@ const ListProducts = () => {
           </button>
         </div>
         <div className="">
-          <ul className="flex justify-center flex space-x-5">
+          <ul className="flex justify-center space-x-5">
             <li className="link_icon px-4 py-4 border-2 border-[#ABABAB] rounded-full flex items-center justify-center">
               <a href="" className="flex items-center justify-center">
                 <svg
@@ -381,7 +381,7 @@ const ListProducts = () => {
               </a>
             </li>
             <li className="link_icon px-4 py-4 border-2 border-[#ABABAB] rounded-full flex items-center justify-center">
-              <a href="" className="icon flex items-center justify-center">
+              <a href="" className="flex items-center justify-center icon">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
