@@ -11,6 +11,7 @@ import Blogs from "../pages/Client/Blogs/Blogs";
 import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
 import Footer from "../components/Footer";
 import ProductDetail from "../pages/Client/ProductDetail/ProductDetail";
+import Home from "../pages/Client/Home/Home";
 
 const RouterComponent = () => {
   return (
@@ -18,8 +19,8 @@ const RouterComponent = () => {
       <Router>
         <Header></Header>
         <Routes>
-          <Route path="/" element={<h1>Đây Là Trang Home</h1>} />
-          <Route index element={<h1>Home</h1>} />
+          <Route path="/" element={<Home />} />
+          <Route index element={<Home />} />
           <Route path="cart" element={<ListCart />} />
           <Route path="favourite" element={<Favourite />} />
           <Route path="delivery" element={<Delivery />} />

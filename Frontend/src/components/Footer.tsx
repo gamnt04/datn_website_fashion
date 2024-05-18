@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <div className=" max-w-[1300px] mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 ">
+    <div className=" max-w-[1250px] mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 ">
       <div>
         <h4 className="text-lg font-medium">STARK.</h4>
 
