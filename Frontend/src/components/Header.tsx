@@ -12,7 +12,7 @@ const Header = () => {
         <nav className="flex-grow">
           <ul className="flex justify-center gap-10 text-base font-semibold text-[#222222]">
             <li>
-              <a href="#" className="border-[#f68e56] hover:border-b-2">
+              <a href="/" className="border-[#f68e56] hover:border-b-2">
                 HOME
               </a>
             </li>
@@ -36,10 +36,21 @@ const Header = () => {
                 CONTACT
               </a>
             </li>
-            <li>
+            <li className="relative">
               <a href="#" className="border-[#f68e56] hover:border-b-2">
                 PAGES
               </a>
+              <ul className="absolute top-full left-0 hidden bg-white border rounded-sm mt-1 w-32">
+                <li>
+                  <a href="/about-us" className="block px-4 py-2 hover:bg-gray-100">About Us</a>
+                </li>
+                <li>
+                  <a href="/faqs" className="block px-4 py-2 hover:bg-gray-100">FAQs</a>
+                </li>
+                <li>
+                  <a href="/delivery" className="block px-4 py-2 hover:bg-gray-100">Delivery</a>
+                </li>
+              </ul>
             </li>
           </ul>
         </nav>
@@ -74,7 +85,7 @@ const Header = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="group">
+              <a href="/cart" className="group">
                 <svg
                   className="transition-colors duration-300 icon icon-cart-empty group-hover:fill-red-500"
                   xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +109,7 @@ const Header = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="group">
+              <a href="/favourite" className="group">
                 <svg
                   aria-hidden="true"
                   focusable="false"
