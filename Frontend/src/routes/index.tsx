@@ -22,7 +22,7 @@ const RouterComponent = () => {
         <Header></Header>
         <Routes>
           <Route path="/" element={<h1>Đây Là Trang Home</h1>} />
-            <Route index element={<h1>Home</h1>} />
+            <Route index element={<Home />} />
             <Route path="cart" element={<ListCart />} />
             <Route path="favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
