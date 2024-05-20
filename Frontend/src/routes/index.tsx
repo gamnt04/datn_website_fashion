@@ -11,7 +11,9 @@ import Blogs from "../pages/Client/Blogs/Blogs";
 import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
 import Footer from "../components/Footer";
 import ProductDetail from "../pages/Client/ProductDetail/ProductDetail";
-
+import Profile from "../pages/Client/Profile/Profile";
+import AllOrder from "../pages/Client/Order/AllOrder/AllOrder";
+import RefundRetunr from "../pages/Client/Order/RefundRetunr/RefundRetunr";
 const RouterComponent = () => {
   return (
     <>
@@ -27,8 +29,11 @@ const RouterComponent = () => {
           <Route path="about-us" element={<AboutUS />} />
           <Route path="/products" element={<ListProducts />} />
           <Route path="/blogs" element={<Blogs />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/blogs/detailblog" element={<DetailBlogs />} />
           <Route path="/detailP" element={<ProductDetail />} />
+          <Route path="/allorder" element={<AllOrder />} />
+          <Route path="/allorder/refundretunr" element={<RefundRetunr />} />
 
           <Route path="/admin" element={<h1>Đây là Trang Admin</h1>} />
           <Route index element={<h1>Dashboard</h1>} />

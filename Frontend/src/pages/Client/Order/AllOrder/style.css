@@ -1,0 +1,31 @@
+.link_menu {
+  font-size: 16px;
+  color: black;
+  max-height: 66px;
+  background-color: white;
+  border-bottom: 2px solid #eaeaea;
+}
+.link_menu:hover {
+  color: #f68e56;
+  border-bottom: 2px solid #f68e56;
+  background-color: white;
+}
+.btn_recevi {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 15px;
+  background-color: #222222;
+}
+.btn_recevi:hover {
+  background: #f68e56;
+}
+.btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 15px;
+  border: 1px solid #eaeaea;
+}
+.btn:hover {
+  background: #bfbebd;
+  color: white;
+}
