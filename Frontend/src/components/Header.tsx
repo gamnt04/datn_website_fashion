@@ -1,7 +1,7 @@
 const Header = () => {
   return (
     <div className="max-w-[1200px] mx-auto">
-      <header className="flex items-center h-[100px]">
+      <header className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 bg-white h-[100px] flex justify-center items-center w-[1200px]">
         <a href="#" className="h-20 mr-2 w-28 ">
           <img
             src="../../../src/resources/images/Logo/logo_chung.png"
@@ -147,6 +147,7 @@ const Header = () => {
           </ul>
         </nav>
       </header>
+      <div className="h-[100px]"></div>
     </div>
   );
 };
