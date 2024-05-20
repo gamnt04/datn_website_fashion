@@ -1,0 +1,15 @@
+.wrapper-image {
+  overflow: hidden;
+}
+.image_blog {
+  transition: transform 0.5s ease;
+}
+.image_blog:hover {
+  transform: scale(1.1);
+}
+.input:hover {
+  border: 2px solid #121212;
+}
+.btn_post:hover {
+  background-color: #f68e56;
+}

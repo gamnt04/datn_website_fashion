@@ -224,8 +224,9 @@ const ListCart = () => {
                 </div>
             </div>
             <footer className="w-full bg-orange-400 p-5 text-center text-3xl">Hoàng Đức Trung</footer>
-        </div>
-    );
+
+    </div>
+  );
 };
 
 export default ListCart;
