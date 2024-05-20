@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { SearchIcon, CartIcon, HeartIcon, NoteIcon, Minus, Plus } from "../../../resources/svg/Icon/Icon";
 import './ListCart.css';
 const ListCart = () => {
@@ -91,7 +92,7 @@ const ListCart = () => {
                         <li><a href="#">Cart</a></li>
                     </ul>
                 </div>
-
+                
                 <div className="mt-4">
                     <div className="bg-white flex border rounded-sm shadow-sm text-sm uppercase tracking-wider text-black font-medium items-center">
                         <div className="px-6 py-3 text-left">
@@ -100,16 +101,16 @@ const ListCart = () => {
                         <div className="px-6 py-3 flex-grow">
                             Sản phẩm
                         </div>
-                        <div className="px-6 py-3 flex-shrink-0 w-32">
+                        <div className="px-6 py-3 text-center flex-shrink-0 w-32">
                             Đơn Giá
                         </div>
-                        <div className="px-6 py-3 flex-shrink-0 w-36">
+                        <div className="px-6 py-3 text-center flex-shrink-0 w-36">
                             Số Lượng
                         </div>
-                        <div className="px-6 py-3 flex-shrink-0 w-32">
+                        <div className="px-6 py-3 text-center flex-shrink-0 w-32">
                             Số Tiền
                         </div>
-                        <div className="px-6 py-3 flex-shrink-0 w-32">
+                        <div className="px-6 py-3 text-center flex-shrink-0 w-32">
                             Thao Tác
                         </div>
                     </div>
@@ -137,8 +138,8 @@ const ListCart = () => {
                                     $10
                                 </div>
                             </div>
-                            <div className="px-6 flex-shrink-0 w-32 ml-5 rounded-sm ">
-                                <div className="text-sm flex items-center gap-3 text-gray-500">
+                            <div className="px-6 flex-shrink-0 w-32 rounded-sm ">
+                                <div className="text-sm flex text-center gap-3 text-gray-500">
                                     <Minus />
                                     <span>2</span>
                                     <Plus />
@@ -146,12 +147,12 @@ const ListCart = () => {
                             </div>
 
                             <div className="px-6 flex-shrink-0 w-32">
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-center text-gray-500">
                                     $20
                                 </div>
                             </div>
                             <div className="px-6 flex-shrink-0 w-32">
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-center text-gray-500">
                                     Edit
                                 </div>
                             </div>
@@ -181,8 +182,8 @@ const ListCart = () => {
                                     $10
                                 </div>
                             </div>
-                            <div className="px-6 flex-shrink-0 w-32 ml-5 rounded-sm ">
-                                <div className="text-sm flex items-center gap-3 text-gray-500">
+                            <div className="px-6 flex-shrink-0 w-32 rounded-sm ">
+                                <div className="text-sm flex text-center gap-3 text-gray-500">
                                     <Minus />
                                     <span>2</span>
                                     <Plus />
@@ -190,56 +191,12 @@ const ListCart = () => {
                             </div>
 
                             <div className="px-6 flex-shrink-0 w-32">
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-center text-gray-500">
                                     $20
                                 </div>
                             </div>
                             <div className="px-6 flex-shrink-0 w-32">
-                                <div className="text-sm text-gray-500">
-                                    Edit
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bg-white mt-4 border mb-5 rounded-sm shadow-sm">
-                        <div className="flex items-center py-4">
-                            <div className="px-6">
-                                <input type="checkbox" className="form-checkbox h-4 w-4 text-orange-500" />
-                            </div>
-                            <div className="px-6 flex-grow mr-10">
-                                <div className=" flex gap-5">
-                                    <div className="w-20 h-20 ">
-                                        <img src="../../../src/resources/images/products/90chinh-mau-nen.webp" alt="" />
-                                    </div>
-                                    <div className="overflow-hidden max-w-60 max-h-14 text-sm">
-                                        GUDETU Giày nam. Dép mềm mại, thoải mái, dép eva, dép đi trong phòng tắm gia đình chống trượt Dép đi trong nhà dành cho cặp đôi. Dép
-                                    </div>
-                                    <div className="overflow-hidden max-w-32 max-h-56">
-                                        <p className="text-sm text-gray-400">Phân Loại Hàng: dép màu đen</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="px-6 flex-shrink-0 w-28">
-                                <div className="text-sm text-gray-500">
-                                    $10
-                                </div>
-                            </div>
-                            <div className="px-6 flex-shrink-0 w-32 ml-5 rounded-sm ">
-                                <div className="text-sm flex items-center gap-3 text-gray-500">
-                                    <Minus />
-                                    <span>2</span>
-                                    <Plus />
-                                </div>
-                            </div>
-
-                            <div className="px-6 flex-shrink-0 w-32">
-                                <div className="text-sm text-gray-500">
-                                    $20
-                                </div>
-                            </div>
-                            <div className="px-6 flex-shrink-0 w-32">
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-center text-gray-500">
                                     Edit
                                 </div>
                             </div>
@@ -255,14 +212,14 @@ const ListCart = () => {
                             Chọn Tất Cả
                         </div>
                         <div className="px-6 py-3 flex ">
-                            <div className="text-lg">Tổng Thành Toán : </div>
+                            <div className="text-lg">Tạm Tính : </div>
                             <span className="py-1 "> $10.000đ</span>
                         </div>
-                        <div>
+                        <Link to="pay">
                             <button className="px-4 py-3 mr-5 w-48 text-white font-semibold bg-amber-800 hover:bg-orange-700 rounded-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                                 Mua Hàng
                             </button>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
