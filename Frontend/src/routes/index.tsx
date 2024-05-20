@@ -4,6 +4,7 @@ import Favourite from "../pages/Client/Favourite/Favourite";
 import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
+import Pay from "../pages/Client/pay/Pay";
 
 
 const RouterComponent = () => {
@@ -18,6 +19,7 @@ const RouterComponent = () => {
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
+            <Route path="cart/pay" element={<Pay />} />
           
           <Route path="/admin" element={<h1>Đây là Trang Admin</h1>} />
             <Route index element={<h1>Dashboard</h1>} />
