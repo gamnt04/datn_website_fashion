@@ -1,7 +1,7 @@
 const Header = () => {
   return (
     <div className="max-w-[1200px] mx-auto">
-      <header className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 bg-white h-[100px] flex justify-center items-center w-[1200px]">
+      <header className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 bg-white h-[100px] flex justify-center items-center w-[1400px] px-[100px]">
         <a href="#" className="h-20 mr-2 w-28 ">
           <img
             src="../../../src/resources/images/Logo/logo_chung.png"
@@ -40,15 +40,27 @@ const Header = () => {
               <a href="#" className="border-[#f68e56] hover:border-b-2">
                 PAGES
               </a>
-              <ul className="absolute top-full left-0 hidden bg-white border rounded-sm mt-1 w-32">
+              <ul className="absolute left-0 hidden w-32 mt-1 bg-white border rounded-sm top-full">
                 <li>
-                  <a href="/about-us" className="block px-4 py-2 hover:bg-gray-100">About Us</a>
+                  <a
+                    href="/about-us"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    About Us
+                  </a>
                 </li>
                 <li>
-                  <a href="/faqs" className="block px-4 py-2 hover:bg-gray-100">FAQs</a>
+                  <a href="/faqs" className="block px-4 py-2 hover:bg-gray-100">
+                    FAQs
+                  </a>
                 </li>
                 <li>
-                  <a href="/delivery" className="block px-4 py-2 hover:bg-gray-100">Delivery</a>
+                  <a
+                    href="/delivery"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Delivery
+                  </a>
                 </li>
               </ul>
             </li>
