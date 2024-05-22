@@ -11,6 +11,9 @@ import Blogs from "../pages/Client/Blogs/Blogs";
 import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
 import ProductDetail from "../pages/Client/ProductDetail/ProductDetail";
 import Home from "../pages/Client/Home/Home";
+import Contact from "../pages/Client/Contact/Contact";
+import Login from "../pages/Client/User/Login";
+import Register from "../pages/Client/User/Register";
 
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/Admin/Dashboard/Dashboard";
@@ -33,6 +36,9 @@ const RouterComponent = () => {
             <Route path="about-us" element={<AboutUS />} />
             <Route path="cart/pay" element={<Pay />} />
             <Route path="/products" element={<ListProducts />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blogs/detailblog" element={<DetailBlogs />} />
             <Route path="/detailP" element={<ProductDetail />} />

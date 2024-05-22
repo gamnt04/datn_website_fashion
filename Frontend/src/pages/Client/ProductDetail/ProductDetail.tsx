@@ -10,7 +10,7 @@ const ProductDetail = () => {
     <div className=" mx-w-[1200px]">
       {/* TAG  */}
       <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
-        <ul className="flex gap-2 container mx-auto max-w-[1100px] ">
+        <ul className="flex gap-2 container mx-auto max-w-[1200px] ">
           <li className="text-red-500">
             <a href="#">Home </a>
           </li>
@@ -22,7 +22,7 @@ const ProductDetail = () => {
       </div>
       {/* END TAG */}
 
-      <div className=" container mx-auto max-w-[1100px] ">
+      <div className=" container mx-auto max-w-[1200px] ">
         {/* CONTENT DETAIL */}
         <div>
           {/* INFOR DETAIL P */}
@@ -236,13 +236,13 @@ const ProductDetail = () => {
 
             <div
               className={`cursor-pointer ${
-                activeTab === "featured"
+                activeTab === "evaluate"
                   ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
                   : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
               } ${activeTab === "description" ? "  text-[#6B7280]" : ""}`}
-              onClick={() => handleTabClick("featured")}
+              onClick={() => handleTabClick("evaluate")}
             >
-              Featured
+              Evaluate
             </div>
             <div
               className={`cursor-pointer ${
@@ -287,16 +287,240 @@ const ProductDetail = () => {
             </div>
           </>
         )}
-        {activeTab === "featured" && (
+        {activeTab === "evaluate" && (
           <>
-            <div>
-              Contains: Brand New 2 PCs Rectanglar Covers/Shells 12 X 20 Inches
-              (30cm X 50cm), No Filler/Insert
+            <div className="max-w-[1200px] mx-auto bg-[#FFFBF8] border-[1px] border-[#eddccf] mt-5">
+              {/* header danh gia */}
+              <div className="flex p-8">
+                <div className="">
+                  <p className="">5 tren 5</p>
+                  <div className="flex justify-center items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="0.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="lucide lucide-star"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="0.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="lucide lucide-star"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="0.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="lucide lucide-star"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="0.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="lucide lucide-star"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="0.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="lucide lucide-star"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex space-x-3 pl-[15px] text-[14px] ">
+                  <div className="border-black border-[1px] px-[10px]  ">
+                    Tất cả
+                  </div>
+                  <div className="border-black border-[1px]  p-3">5 sao</div>
+                  <div className="border-black border-[1px]  p-3">4 sao</div>
+                  <div className="border-black border-[1px]  p-3">3 sao</div>
+                  <div className="border-black border-[1px]  p-3">2 sao</div>
+                  <div className="border-black border-[1px]  p-3">1 sao</div>
+                  <div className="border-black border-[1px]  p-3">
+                    Có bình luận
+                  </div>
+                  <div className="border-black border-[1px]  p-3">
+                    Có hình ảnh/ Video
+                  </div>
+                </div>
+              </div>
+              {/* header danh gia */}
             </div>
-            <div>
-              Contains: Brand New 2 PCs Rectanglar Covers/Shells 12 X 20 Inches
-              (30cm X 50cm), No Filler/Insert
+
+            {/* nguoi dung danh gia */}
+            <div className=" mx-auto ">
+              <div className="flex pl-5 ">
+                <div>
+                  <img
+                    src="../../../src/resources/images/products/90chinh-mau-nen.webp"
+                    alt=""
+                    className="w-10 h-10 object-cover rounded-full"
+                  />
+                </div>
+                <div className="pl-5 ">
+                  <div className="text-[12px]">
+                    <p>Ten nguoi dung</p>
+                    <div className="flex pt-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="0.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-star"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="0.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-star"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="0.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-star"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="0.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-star"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="0.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-star"
+                      >
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                    </div>
+
+                    {/* time reviews*/}
+                    <div className="flex pt-1">
+                      <p>2024-01-01</p>
+                      <p className="pl-2">11:00</p>
+                      <p className="pl-2">|</p>
+                      <p className="pl-2">Phân loại: xanh lục(L)</p>
+                    </div>
+                    {/* end time reviews*/}
+                  </div>
+
+                  <div className="text-14px">
+                    <p className="pt-3 ">Màu sắc:</p>
+                    <p className="pt-3">Description:</p>
+                  </div>
+
+                  {/* pictures reviews */}
+                  <div className="flex pt-3">
+                    <img
+                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
+                      alt=""
+                      className="w-16 h-16  object-cover"
+                    />
+                    <img
+                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
+                      alt=""
+                      className="w-20 h-16 pl-2 object-cover"
+                    />
+                    <img
+                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
+                      alt=""
+                      className="w-20 h-16 pl-2 object-cover"
+                    />
+                    <img
+                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
+                      alt=""
+                      className="w-20 h-16 pl-2 object-cover"
+                    />
+                    <img
+                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
+                      alt=""
+                      className="w-20 h-16 pl-2 object-cover"
+                    />
+                  </div>
+                  {/*end pictures reviews */}
+                </div>
+              </div>
             </div>
+            {/* end nguoi dung danh gia */}
           </>
         )}
         {activeTab === "delivery" && (
@@ -344,7 +568,6 @@ const ProductDetail = () => {
           </>
         )}
       </div>
-
       {/*END  ACTION */}
 
       {/* RECOMMEND */}
