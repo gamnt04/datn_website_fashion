@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  SearchIcon,
-  CartIcon,
-  HeartIcon,
-  NoteIcon,
-} from "../../../../resources/svg/Icon/Icon";
+
 
 const FAQ = () => {
   const [isContentVisible, setIsContentVisible] = useState([
@@ -36,12 +31,12 @@ const FAQ = () => {
           </ul>
         </div>
       </div>
-      <div>
+      <div className="mb-20">
         <div className="p-4 mt-10">
           <p className="text-lg font-bold mb-2">Frequently Asked Questions</p>
           <p>Close contact with customers by frequently asked questions</p>
         </div>
-        <div className="grid grid-cols-3 ">
+        <div className="grid grid-cols-3">
           <div className="grid *:mt-2 col-span-2">
             {isContentVisible.map((isVisible, index) => (
               <div key={index} className="*:mt-1 col-span-2">
