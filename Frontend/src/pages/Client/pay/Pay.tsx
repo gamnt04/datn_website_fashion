@@ -4,7 +4,7 @@ import './style.css';
 const Pay = () => {
     return (
         <div className="container mx-auto max-w-[1200px]">
-            <div>
+            <div className="mb-20">
                 <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
                     <ul className="flex gap-2">
                         <li className="text-red-500"><a href="#">Home </a></li>
