@@ -22,7 +22,7 @@ const AboutUS = () => {
           </ul>
         </div>
       </div>
-      <div>
+      <div className="mb-20">
         <div className="text-center mb-16">
           <div className="mb-20 mt-9 ">
             <p className="font-bold text-xl mb-5 uppercase tracking-wider ">
