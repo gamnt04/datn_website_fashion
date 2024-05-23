@@ -6,20 +6,19 @@ import styles from "./style.module.css";
 const Home = () => {
   return (
     <div className="max-w-[1200px] mx-auto mt-5 mb-5">
-     
-     <div className={styles.container}>
-  <Slide easing="ease" arrows={false}>
-    {slideImages.map((slide, index) => {
-      return (
-        <div className={styles.slide} key={slide}>
-          <div style={{ backgroundImage: `url(${slideImages[index]})` }}>
-            <span>Slide {index + 1}</span>
-          </div>
-        </div>
-      );
-    })}
-  </Slide>
-</div>
+      <div className={styles.container}>
+        <Slide easing="ease" arrows={false}>
+          {slideImages.map((slide, index) => {
+            return (
+              <div className={styles.slide} key={slide}>
+                <div style={{ backgroundImage: `url(${slideImages[index]})` }}>
+                  <span>Slide {index + 1}</span>
+                </div>
+              </div>
+            );
+          })}
+        </Slide>
+      </div>
       <div className="flex gap-2 text-[#222222]">
         <div className="border border-gray-300 h-[456px] relative overflow-hidden flex flex-col items-center rounded">
           <a

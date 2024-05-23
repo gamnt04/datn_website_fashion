@@ -1,0 +1,16 @@
+.btn_status {
+  background-color: #222222;
+  width: 220px;
+}
+.btn_status:hover {
+  background-color: #f68e56;
+}
+.btn_orderdetail {
+  width: 220px;
+  border: 1px solid #cbcbcb;
+  color: #000;
+}
+.btn_orderdetail:hover {
+  background: #bfbebd;
+  color: white;
+}
