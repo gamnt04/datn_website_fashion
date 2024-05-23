@@ -1,9 +1,4 @@
-import {
-  SearchIcon,
-  CartIcon,
-  HeartIcon,
-  NoteIcon,
-} from "../../../../resources/svg/Icon/Icon";
+
 import "./style.css";
 const Delivery = () => {
   return (
@@ -20,7 +15,7 @@ const Delivery = () => {
             </li>
           </ul>
         </div>
-        <div className="p-5 ">
+        <div className="p-5 mb-20 ">
           <h1 className="text-2xl text-pretty font-semibold font_text ">
             Shipments and returns
           </h1>
