@@ -27,7 +27,7 @@ const Header = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="border-[#f68e56] hover:border-b-2">
+              <a href="/blogs" className="border-[#f68e56] hover:border-b-2">
                 BLOG
               </a>
             </li>
