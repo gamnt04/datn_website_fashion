@@ -17,7 +17,7 @@ const Header = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="border-[#f68e56] hover:border-b-2">
+              <a href="/products" className="border-[#f68e56] hover:border-b-2">
                 SHOP
               </a>
             </li>
@@ -32,7 +32,7 @@ const Header = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="border-[#f68e56] hover:border-b-2">
+              <a href="/contact" className="border-[#f68e56] hover:border-b-2">
                 CONTACT
               </a>
             </li>
