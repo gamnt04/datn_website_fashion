@@ -21,7 +21,7 @@ const Favourite = () => {
           </ul>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-4 mt-5">
+      <div className="grid grid-cols-4 gap-4 mt-5 mb-20">
         <div className="">
           <div className="relative w-full max-h-72 border rounded-sm overflow-hidden img-hover-scale">
             <img

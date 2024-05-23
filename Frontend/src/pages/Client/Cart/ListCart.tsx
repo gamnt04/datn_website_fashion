@@ -124,7 +124,7 @@ const ListCart = () => {
                         </div>
                     </div>
                 </div>
-                <div className=" mb-10">
+                <div className=" mb-20">
                     <div className="h-20 bg-white flex border rounded-sm shadow-sm text-sm uppercase tracking-wider text-black font-medium items-center">
                         <div className="px-6 py-3 text-left">
                             <input type="checkbox" className="form-checkbox h-4 w-4 text-orange-500" />

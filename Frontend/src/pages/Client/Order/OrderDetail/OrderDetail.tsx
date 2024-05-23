@@ -39,7 +39,7 @@ const OrderDetail = () => {
                 </a>
               </div>
             </div>
-            <div className="mx-auto py-[20px] pl-[40px]">
+            <div className="mx-auto py-[10px] pl-[40px]">
               <table className="">
                 <tbody>
                   <tr>
@@ -244,8 +244,8 @@ const OrderDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="">
-              <div className="flex justify-between py-[12px] px-[24px]">
+            <div className="pt-[12px] px-[24px]">
+              <div className="flex justify-between ">
                 <div className="flex justify-start">
                   <h2 className="text-[20px]">Địa Chỉ Nhận Hàng</h2>
                 </div>
@@ -254,6 +254,243 @@ const OrderDetail = () => {
                   <span>SPX Express</span>
                   <span>SPXVN043123953865</span>
                 </div>
+              </div>
+              <div className="flex">
+                <div className="max-w-[40%] border-r-[1px] border-[#D8D8D8]">
+                  <div className="pt-[10px] pr-[24px]">
+                    <div className="">
+                      <h3 className="text-[16px] mb-[7px]">Kiều Bảo Chung</h3>
+                    </div>
+                    <div className="">
+                      {" "}
+                      <span className="text-[14px] text-[#0000008A]">
+                        (+84) 359774443
+                      </span>
+                    </div>
+                    <div className="">
+                      <span className="text-[14px] text-[#0000008A]">
+                        27 Ngách 6/59 Hẻm 6/59/10 Miêu Nha, Tdp Số 2, Phường Tây
+                        Mỗ, Quận Nam Từ Liêm, Hà Nội
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="max-w-[60%] pt-[4px] pl-[12px] pb-[12px]">
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#26AA99] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        14:49 20-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Giao hàng thành công
+                      </div>
+                      <a href="" className="text-[14px] text-[#0055AA]">
+                        Xem hình ảnh giao hàng.
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#D8D8D8] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        07:25 20-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Đơn hàng sẽ sớm được giao, vui lòng chú ý điện thoại
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#D8D8D8] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        07:25 20-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Đơn hàng sẽ sớm được giao, vui lòng chú ý điện thoại
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#D8D8D8] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        23:01 19-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Đơn hàng đã đến trạm giao hàng 20-HNI Tu Liem 2 Hub
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#D8D8D8] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        19:48 19-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Đơn hàng đã rời kho phân loại
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#D8D8D8] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        14:55 19-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Đơn hàng đã đến kho phân loại BN B Mega SOC
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    <div className="w-[24px] pt-[5px]">
+                      <div className="rounded-full mx-auto bg-[#D8D8D8] w-[11px] h-[11px]"></div>
+                    </div>
+                    <div className="max-w-[150px]">
+                      <div className="text-[14px] pr-[12px]">
+                        13:34 19-05-2024
+                      </div>
+                    </div>
+                    <div className="max-w-[398px]">
+                      <div className="text-[14px] text-[#0000008A]">
+                        Đơn hàng đã rời bưu cục
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="item_order bg-white rounded-md my-[20px] ">
+                <div className=" ">
+                  <div className="flex pb-[12px] border-b-2 justify-between">
+                    <div className="justify-start items-center ">
+                      <a
+                        href=""
+                        className="px-[10px] py-[5px] bg-[#222222] text-white text-[14px]"
+                      >
+                        Xem ngay
+                      </a>
+                    </div>
+                  </div>
+                  <div className="">
+                    <div className="flex py-[12px] w-full">
+                      <div className="w-[85%] flex">
+                        <div className="">
+                          <img
+                            src="https://picsum.photos/81/81"
+                            alt=""
+                            className="max-w-[81px] max-h-[81px]"
+                          />
+                        </div>
+                        <div className="pl-[12px]">
+                          <h2 className="text-[16px]">
+                            THẢM LÓT CHÂN XE VISION HÀNG CAO CẤP Đời 2014-2024
+                          </h2>
+                          <span className="text-[14px] mb-[5px] text-[#0000008A]">
+                            Phân loại hàng: Thảm 2021-2024
+                          </span>
+                          <div className="text-[14px] mb-[5px]">
+                            x <span>1</span>
+                          </div>
+                          <span className="border-2 text-[12px] p-1 text-[#26aa99] border-[#26aa99]">
+                            Trả hàng miễn phí 15 ngày
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex w-[15%] justify-end items-center ">
+                        <span className="line-through text-[#0000008A] px-[10px]">
+                          ₫65.000
+                        </span>
+                        <span className="text-[#ee4d2d]">₫45.000</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="">
+              <div className=" flex justify-end border-y-[1px] border-dashed border-[#eaeaea] ">
+                <div className="py-[10px] border-r-[1px] border-dashed">
+                  <span className="text-[14px] text-[#0000008A] pr-[10px] ">
+                    Tổng tiền hàng
+                  </span>
+                </div>
+                <div className="w-[240px] py-[10px] text-end text-[14px]">
+                  <span className="pr-[24px]">₫45.000</span>
+                </div>
+              </div>
+              <div className=" flex justify-end border-y-[1px] border-dashed border-[#eaeaea] ">
+                <div className="py-[10px] border-r-[1px] border-dashed">
+                  <span className="text-[14px] text-[#0000008A] pr-[10px] ">
+                    Phí vận chuyển
+                  </span>
+                </div>
+                <div className="w-[240px] py-[10px] text-end text-[14px]">
+                  <span className="pr-[24px]">₫18.300</span>
+                </div>
+              </div>
+              <div className=" flex justify-end border-y-[1px] border-dashed border-[#eaeaea] ">
+                <div className="py-[10px] border-r-[1px] border-dashed">
+                  <span className="text-[14px] text-[#0000008A] pr-[10px] ">
+                    Giảm giá phí vận chuyển
+                  </span>
+                </div>
+                <div className="w-[240px] py-[10px] text-end text-[14px]">
+                  <span className="pr-[24px]">-₫14.800</span>
+                </div>
+              </div>
+              <div className=" flex justify-end border-y-[1px] border-dashed border-[#eaeaea] ">
+                <div className="py-[10px] border-r-[1px] border-dashed">
+                  <span className="text-[14px] text-[#0000008A] pr-[10px] ">
+                    Thành tiền
+                  </span>
+                </div>
+                <div className="w-[240px] py-[10px] text-end text-[24px]">
+                  <span className="pr-[24px] text-[#f68e56]">₫45.000</span>
+                </div>
+              </div>
+            </div>
+            <div className="border-[1px] border-[#FFBF00]  bg-[#FFFDF7] my-[10px]">
+              <div className="px-[24px] text-[14px] py-[10px] text-[#0000008A]">
+                Vui lòng thanh toán{" "}
+                <span className="text-[#f68e56]">₫48.500</span> khi nhận hàng.
+              </div>
+            </div>
+            <div className=" flex justify-end rounded-sm bg-[#FAFAFA] ">
+              <div className="py-[10px] border-r-[1px] border-dashed">
+                <span className="text-[14px] text-[#0000008A] pr-[10px] ">
+                  Phương thức Thanh toán
+                </span>
+              </div>
+              <div className="w-[240px] py-[10px] text-end text-[14px]">
+                <span className="pr-[24px]">Thanh toán khi nhận hàng</span>
               </div>
             </div>
           </div>
