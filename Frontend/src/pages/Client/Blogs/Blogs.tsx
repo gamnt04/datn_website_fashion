@@ -35,7 +35,10 @@ const Blogs = () => {
                 />
               </div>
               <div className="view_blog bg-[#1C1C1C] py-[15px]">
-                <a href="" className=" pl-[17px] text-white text-[20px]">
+                <a
+                  href="/blogs/detailblog"
+                  className=" pl-[17px] text-white text-[20px]"
+                >
                   View full details
                 </a>
               </div>
@@ -70,7 +73,10 @@ const Blogs = () => {
                 />
               </div>
               <div className="view_blog bg-[#1C1C1C] py-[15px]">
-                <a href="" className=" pl-[17px] text-white text-[20px]">
+                <a
+                  href="/blogs/detailblog"
+                  className=" pl-[17px] text-white text-[20px]"
+                >
                   View full details
                 </a>
               </div>
@@ -105,7 +111,10 @@ const Blogs = () => {
                 />
               </div>
               <div className="view_blog bg-[#1C1C1C] py-[15px]">
-                <a href="" className=" pl-[17px] text-white text-[20px]">
+                <a
+                  href="/blogs/detailblog"
+                  className=" pl-[17px] text-white text-[20px]"
+                >
                   View full details
                 </a>
               </div>
@@ -142,7 +151,10 @@ const Blogs = () => {
                 />
               </div>
               <div className="view_blog bg-[#1C1C1C] py-[15px]">
-                <a href="" className=" pl-[17px] text-white text-[20px]">
+                <a
+                  href="/blogs/detailblog"
+                  className=" pl-[17px] text-white text-[20px]"
+                >
                   View full details
                 </a>
               </div>
