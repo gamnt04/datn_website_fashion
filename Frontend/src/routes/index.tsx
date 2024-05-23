@@ -10,6 +10,10 @@ import ListProducts from "../pages/Client/listProducts/ListProducts";
 import Blogs from "../pages/Client/Blogs/Blogs";
 import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
 import ProductDetail from "../pages/Client/ProductDetail/ProductDetail";
+
+import Profile from "../pages/Client/Profile/Profile";
+import AllOrder from "../pages/Client/Order/AllOrder/AllOrder";
+import RefundRetunr from "../pages/Client/Order/RefundRetunr/RefundRetunr";
 import Home from "../pages/Client/Home/Home";
 import Contact from "../pages/Client/Contact/Contact";
 import Login from "../pages/Client/User/Login";
@@ -19,15 +23,14 @@ import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/Admin/Dashboard/Dashboard";
 import ClientLayout from "../layouts/ClientLayout";
 import Category from "../pages/Admin/Category/List";
-
-
+import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 
 const RouterComponent = () => {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<ClientLayout />} >
+          <Route path="/" element={<ClientLayout />}>
             <Route index element={<Home />} />
             <Route path="cart" element={<ListCart />} />
             <Route path="favourite" element={<Favourite />} />
@@ -35,6 +38,30 @@ const RouterComponent = () => {
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
             <Route path="cart/pay" element={<Pay />} />
+
+            <Route path="/admin" element={<h1>Đây là Trang Admin</h1>} />
+            <Route index element={<h1>Dashboard</h1>} />
+            <Route path="/admin/product" element={<h1>Products</h1>} />
+
+            <Route path="/" element={<Home />} />
+            <Route index element={<Home />} />
+            <Route path="cart" element={<ListCart />} />
+            <Route path="favourite" element={<Favourite />} />
+            <Route path="delivery" element={<Delivery />} />
+            <Route path="faqs" element={<FAQ />} />
+            <Route path="about-us" element={<AboutUS />} />
+            <Route path="/products" element={<ListProducts />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/blogs/detailblog" element={<DetailBlogs />} />
+            <Route path="/detailP" element={<ProductDetail />} />
+            <Route path="/allorder" element={<AllOrder />} />
+            <Route path="/allorder/refundretunr" element={<RefundRetunr />} />
+            <Route path="/allorder/orderdetail" element={<OrderDetail />} />
+
+            <Route path="/admin" element={<h1>Đây là Trang Admin</h1>} />
+            <Route index element={<h1>Dashboard</h1>} />
+            <Route path="/admin/product" element={<h1>Products</h1>} />
             <Route path="/products" element={<ListProducts />} />
             <Route path="contact" element={<Contact />} />
             <Route path="login" element={<Login />} />
