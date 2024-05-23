@@ -10,7 +10,7 @@ const ListProducts = () => {
   const navigate = useNavigate();
 
   const handleNavigation = () => {
-    navigate("/detailP");
+    navigate("/products/detailP");
   };
 
   const handleTabClick = (tab: any) => {
@@ -230,11 +230,18 @@ const ListProducts = () => {
               <div className="product-actions top-2 pl-56">
                 <HeartIcon />
               </div>
-              <img
-                src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                alt=""
-                className="w-full h-full object-cover"
-              />
+              <div className="figure">
+                <img
+                  src="https://cottonusa.co/cdn/shop/files/navyms_f924065a-9e11-4bd3-868d-43cccb88ed33.png?v=1698295592&width=800"
+                  alt="Image"
+                  className="Sirv image-main"
+                />
+                <img
+                  src="src/resources/images/products/90chinh-mau-nen.webp"
+                  alt="Image"
+                  className="Sirv image-hover"
+                />
+              </div>
               <div className="product-actions absolute bottom-[-230px] left-2 flex ml-[70px] justify-center items-center opacity-0 transition-opacity duration-300">
                 <div
                   className="like-button bg-white/80 rounded-full w-[50px] h-[50px]   flex justify-center items-center  cursor-pointer hover:bg-[#F3F3F3] "
@@ -471,58 +478,50 @@ const ListProducts = () => {
                     <div>
                       <div className="flex justify-center items-center space-x-10 text-lg text-gray-400 pt-16 pb-3">
                         <div
-                          className={`cursor-pointer transition-colors duration-300 ${
-                            activeTab === "description"
-                              ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                              : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                          } ${
-                            activeTab === "description"
+                          className={`cursor-pointer transition-colors duration-300 ${activeTab === "description"
+                            ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            } ${activeTab === "description"
                               ? "  text-[#F68E56]"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => handleTabClick("description")}
                         >
                           Description
                         </div>
 
                         <div
-                          className={`cursor-pointer ${
-                            activeTab === "featured"
-                              ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                              : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                          } ${
-                            activeTab === "description"
+                          className={`cursor-pointer ${activeTab === "featured"
+                            ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            } ${activeTab === "description"
                               ? "  text-[#6B7280]"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => handleTabClick("featured")}
                         >
                           Featured
                         </div>
                         <div
-                          className={`cursor-pointer ${
-                            activeTab === "delivery"
-                              ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                              : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                          } ${
-                            activeTab === "description"
+                          className={`cursor-pointer ${activeTab === "delivery"
+                            ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            } ${activeTab === "description"
                               ? "  text-[#6B7280]"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => handleTabClick("delivery")}
                         >
                           Delivery
                         </div>
                         <div
-                          className={`cursor-pointer ${
-                            activeTab === "howToUse"
-                              ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                              : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-                          } ${
-                            activeTab === "description"
+                          className={`cursor-pointer ${activeTab === "howToUse"
+                            ? "text-orange-500 underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            : "text-gray-500 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
+                            } ${activeTab === "description"
                               ? "  text-[#6B7280]"
                               : ""
-                          }`}
+                            }`}
                           onClick={() => handleTabClick("howToUse")}
                         >
                           How to use

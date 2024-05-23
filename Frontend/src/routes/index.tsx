@@ -41,7 +41,7 @@ const RouterComponent = () => {
             <Route path="register" element={<Register />} />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blogs/detailblog" element={<DetailBlogs />} />
-            <Route path="/detailP" element={<ProductDetail />} />
+            <Route path="/products/detailP" element={<ProductDetail />} />
           </Route>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
