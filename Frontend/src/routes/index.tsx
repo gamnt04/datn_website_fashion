@@ -24,6 +24,8 @@ import Dashboard from "../pages/Admin/Dashboard/Dashboard";
 import ClientLayout from "../layouts/ClientLayout";
 import Category from "../pages/Admin/Category/List";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
+import OrderList from "../pages/Admin/Orders/OrderList";
+import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
 
 const RouterComponent = () => {
   return (
@@ -73,6 +75,8 @@ const RouterComponent = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
+            <Route path="/admin/orders" element={<OrderList />} />
+            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
           </Route>
         </Routes>
       </Router>
