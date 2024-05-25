@@ -1,5 +1,4 @@
 
-import "./style.css";
 const Delivery = () => {
   return (
     <div className="container mx-auto max-w-[1200px]">

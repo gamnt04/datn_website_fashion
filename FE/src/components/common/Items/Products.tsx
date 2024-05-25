@@ -8,7 +8,7 @@ const Products  = ({data } : dataProps) => {
 
   return (
     <div className="w-full text-center">
-          <div className="w-full h-[400px] *:w-full *:h-full bg-[#F6F6F6] *:px-20 *:py-16 *:drop-shadow">
+          <div className="w-full h-[400px] *:w-full *:h-full bg-[#F6F6F6] *:lg:px-20 *:mb:px-10 *:lg:py-16 *:mb:py-6 *:drop-shadow">
             <img src={data}/>
           </div>
 

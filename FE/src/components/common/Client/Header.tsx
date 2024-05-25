@@ -4,10 +4,18 @@ import { Link, NavLink } from "react-router-dom"
 
 const Header = () => {
   const [toggle, setToggle] = useState<boolean>(false);
+  const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const [scrollHeader, setScrollHeader] = useState<string>('fixed bg-white duration-300 z-[4] top-0 w-full h-[100px] grid grid-cols-[95%] justify-center');
   // change search
   const changeInput = () => {
     setToggle(!toggle);
+    (toggle_Menu_Mobile) ?
+      setToggle_Menu_Mobile(false) : ''
+  }
+
+  // toogle menu mobile
+  const toggleMenuMobile = () => {
+    setToggle_Menu_Mobile(!toggle_Menu_Mobile)
   }
   // search
   // const [keyUrl, setKeyUrl] = useState<string>();
@@ -24,7 +32,7 @@ const Header = () => {
   //     try {
   //       const data = await SearchData(keyUrl);
   //       console.log(data);
-        
+
   //       setItemsSearch(data);
 
   //     } catch (error) {
@@ -43,9 +51,29 @@ const Header = () => {
     });
   }, [scrollHeader]);
 
-  return (
+  return (<>
     <div className={scrollHeader}>
       <header className="relative h-full flex justify-between items-center w-full">
+        {/* menu mobile */}
+        <button onClick={toggleMenuMobile} className="*:w-[40px] *:h-[40px] cursor-pointer mb:block lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
+        </button>
+
+        {/* toggle menu mobile */}
+        <div style={{ transform: toggle_Menu_Mobile ? 'translateX(0%)' : 'translateX(-200%)' }} className="lg:hidden fixed w-[40vw] duration-300 left-0 top-0 z-[-1] pt-[100px] bg-white">
+          <nav className="flex flex-col justify-between *:my-2 *:px-8 *:py-2 *:font-medium *:capitalize *:relative *:duration-300">
+            <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/"}> home </NavLink>
+            <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/shops"}> shop </NavLink>
+            <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/categories"}> categories </NavLink>
+            <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/blog"}> blog </NavLink>
+            <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/contact"}> contact </NavLink>
+            <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/pages"}> pages </NavLink>
+          </nav>
+
+        </div>
+
+
+
         {/* logo */}
         <Link to="/" className="h-auto mr-2 w-28 ">
           <img
@@ -54,9 +82,9 @@ const Header = () => {
           />
         </Link>
 
-        {/* menu */}
-          {/* sau dung map de render routing*/}
-        <nav className="flex justify-between fixed left-1/2 -translate-x-1/2 *:mx-4 *:font-semibold *:uppercase *:relative *:duration-300 *:after:content-[''] 
+        {/* menu desktop*/}
+        {/* sau dung map de render routing*/}
+        <nav className="mb:hidden lg:block flex justify-between fixed left-1/2 -translate-x-1/2 *:xl:mx-4 *:lg:mx-2 *:font-semibold *:uppercase *:relative *:duration-300 *:after:content-[''] 
         *:after:duration-300 *:after:absolute *:after:w-0 *:after:right-1/2 *:after:bottom-[-30%] *:after:h-[2px] *:after:bg-orange-600 *:after:rounded-lg 
         *:before:content-[''] *:before:absolute *:before:h-[2px] *:before:right-0 *:before:bg-orange-600  *:before:bottom-[-30%]  *:before:rounded-lg">
           <NavLink className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/"}> home </NavLink>
@@ -173,9 +201,9 @@ const Header = () => {
                 className="lucide lucide-search"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
             </button>
           </form>
-        <button onClick={changeInput} className="border w-[40px] h-[40px] border-none hover:scale-[1.05] duration-300 bg-black text-white font-bold rounded-[50%] -translate-x-[20%] grid place-items-center">X</button> 
+          <button onClick={changeInput} className="border w-[40px] h-[40px] border-none hover:scale-[1.05] duration-300 bg-black text-white font-bold rounded-[50%] -translate-x-[20%] grid place-items-center">X</button>
         </div>
-        
+
         {/* items search */}
         <div className="absolute w-[55vw] h-auto border bg-white mt-[100px] *:list-none *:px-2 *:py-1">
           {/* {
@@ -186,11 +214,12 @@ const Header = () => {
         </div>
 
       </div>
-      {/* lớp giả */}
-      <div onClick={changeInput} style={{ transform: toggle ? 'translateY(0)' : 'translateY(-200%)' }} className="fixed w-full border-none z-[4] h-full bg-[#33333388]"></div>
+      {/* lớp phủ */}
+      <div onClick={changeInput} style={{ display: toggle ? 'block' : 'none' }} className="fixed w-full border-none z-[4] h-full bg-[#33333388]"></div>
     </div>
-
-  )
+    {/* lớp phủ */}
+    <div onClick={toggleMenuMobile} style={{ display: toggle_Menu_Mobile ? 'block' : 'none' }} className="fixed w-screen border-none z-[1] top-0 left-0 h-screen bg-[#33333388]"></div>
+  </>)
 }
 
 export default Header

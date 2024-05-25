@@ -5,7 +5,6 @@ import {
   NoteIcon,
   ArrowRight,
 } from "../../../../resources/svg/Icon/Icon";
-import "./style.css";
 const AboutUS = () => {
   return (
     <div className="container mx-auto max-w-[1200px]">
