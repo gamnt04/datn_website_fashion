@@ -18,9 +18,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
         <div className="p-4 pb-2 flex justify-between items-center">
           <img
             src="https://img.logoipsum.com/243.svg"
-            className={`overflow-hidden transition-all ${
-              expanded ? "w-32" : "w-0"
-            }`}
+            className={`overflow-hidden transition-all ${expanded ? "w-32" : "w-0"
+              }`}
             alt=""
           />
           <button
@@ -42,9 +41,8 @@ export default function Sidebar({ children }: { children: ReactNode }) {
             className="w-10 h-10 rounded-md"
           />
           <div
-            className={`flex justify-between items-center overflow-hidden transition-all ${
-              expanded ? "w-52 ml-3" : "w-0"
-            }`}
+            className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"
+              }`}
           >
             <div className="leading-4">
               <h4 className="font-semibold">John Doe</h4>
