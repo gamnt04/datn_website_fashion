@@ -1,66 +1,42 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
 import dayjs from "dayjs";
-type order = {
-  id: number;
-  datetime: string;
-  price: number;
-};
+import { GetAllOrder } from "../../../services/orderProduct";
+import { IOrder } from "../../../common/interfaces/OrderProducts";
+import { GetAllProducts } from "../../../services/product";
+
 const MainContent = () => {
   const [orderday, setOrderday] = useState<number>(0);
+  const [revenueday, setRevenueday] = useState<number>(0);
+  const [totalProducts, settotalProducts] = useState<number>(0);
+
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get<order[]>(
-          "http://localhost:3000/orders"
-        );
+        const data = await GetAllOrder();
         const today = dayjs().startOf("day");
-        const ordertoday = data.filter((order) =>
+        const ordertoday = data.filter((order: IOrder) =>
           dayjs(order.datetime).isSame(today, "day")
         );
         setOrderday(ordertoday.length);
+        const totalRevenueDay = ordertoday.reduce(
+          (sum: number, order: IOrder) => sum + order.price,
+          0
+        );
+        setRevenueday(totalRevenueDay);
       } catch (error) {
         console.log(error);
       }
     })();
   }, []);
-  const [revenueday, setRevenueday] = useState<number>(0);
   useEffect(() => {
     (async () => {
-      try {
-        const { data } = await axios.get<order[]>(
-          "http://localhost:3000/orders"
-        );
-        const today = dayjs().startOf("day");
-        const ordertoday = data.filter((order) =>
-          dayjs(order.datetime).isSame(today, "day")
-        );
-        const totalRevenueday = ordertoday.reduce(
-          (sum, order) => sum + order.price,
-          0
-        );
-        setRevenueday(totalRevenueday);
-      } catch (error) {
-        console.log(error);
-      }
+      const data = await GetAllProducts();
+      settotalProducts(data.length);
     })();
-  });
+  }, []);
 
-  const [users, setUsers] = useState<number>(0);
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get<order[]>(
-          "http://localhost:3000/orders"
-        );
-        setUsers(data.length);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  });
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
@@ -127,7 +103,7 @@ const MainContent = () => {
           <div className="mt-4 flex items-end justify-between">
             <div>
               <h4 className="text-title-md font-bold text-black dark:text-white">
-                {users}
+                {totalProducts}
               </h4>
               <span className="text-sm font-medium">Số Lượng Sản Phẩm </span>
             </div>
