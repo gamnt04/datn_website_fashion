@@ -9,11 +9,12 @@
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
       "quantity": 2,
-      "price": "200.000",
-      "status": "Đã giao hàng",
+      "price": "200000",
+      "status": "Đã hủy",
       "details": "Order details for Order ID: 2",
-      "datetime": "20/10/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "20/10/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "40000"
     },
     {
       "id": 2,
@@ -23,12 +24,13 @@
       "address": "Nguyên Xá, Minh Khai, Bắc Từ Liêm, TP.Hà Nội",
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
-      "quantity": 2,
-      "price": "200.000",
+      "quantity": 4,
+      "price": "2000000",
       "status": "Đang vận chuyển",
       "details": "Order details for Order ID: 2",
-      "datetime": "20/10/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "20/10/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "50000"
     },
     {
       "id": 3,
@@ -38,12 +40,13 @@
       "address": "Nguyên Xá, Minh Khai, Bắc Từ Liêm, TP.Hà Nội",
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
-      "quantity": 2,
-      "price": "200.000",
+      "quantity": 7,
+      "price": "200000",
       "status": "Đã giao hàng",
       "details": "Order details for Order ID: 2",
-      "datetime": "20/10/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "20/10/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "50000"
     },
     {
       "id": 4,
@@ -54,11 +57,12 @@
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
       "quantity": 2,
-      "price": "200.000",
-      "status": "Đã giao hàng",
+      "price": "2000000",
+      "status": "Đã hủy",
       "details": "Order details for Order ID: 2",
-      "datetime": "20/10/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "20/10/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "15000"
     },
     {
       "id": 5,
@@ -69,11 +73,12 @@
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
       "quantity": 2,
-      "price": "200.000",
+      "price": "2000000",
       "status": "Đã hủy",
       "details": "Order details for Order ID: 2",
-      "datetime": "20/10/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "20/10/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "20000"
     },
     {
       "id": 6,
@@ -84,11 +89,12 @@
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
       "quantity": 2,
-      "price": "200.000",
-      "status": "Đang vận chuyển",
+      "price": "2000000",
+      "status": "Đã giao hàng",
       "details": "Order details for Order ID: 2",
-      "datetime": "20/10/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "20/10/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "500000"
     },
     {
       "id": 7,
@@ -99,11 +105,12 @@
       "image": "https://picsum.photos/300/300",
       "productName": "Smartphone",
       "quantity": 2,
-      "price": "200.000",
+      "price": "2000000",
       "status": "Đã giao hàng",
       "details": "Order details for Order ID: 2",
-      "datetime": "24/05/2024",
-      "hinhthuc": "Thanh toán tiền mặt"
+      "createDate": "24/05/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "30000"
     }
   ]
 }
