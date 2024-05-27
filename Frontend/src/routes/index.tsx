@@ -76,7 +76,10 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="/admin/orders" element={<OrderList />} />
-            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
+            <Route
+              path="/admin/orders/:id/orderDetali"
+              element={<OrdersDetali />}
+            />
           </Route>
         </Routes>
       </Router>
