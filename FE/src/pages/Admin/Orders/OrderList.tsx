@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import OrderTable from "./OrderTable";
 import axios from "axios";
 
-
 const OrderList = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
@@ -33,11 +32,11 @@ const OrderList = () => {
         <div className="mt-16">
             <div>
                 <div className="flex justify-between my-3">
-                    <h1 className="text-3xl font-bold mb-6">Order List</h1>
+                    <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng</h1>
                     <select
                         name="status"
                         id="status"
-                        className="w-[200px] border rounded-lg px-2"
+                        className="w-[200px] h-[50px] border rounded-lg px-2"
                         value={status}
                         onChange={handleStatusChange}
                     >
