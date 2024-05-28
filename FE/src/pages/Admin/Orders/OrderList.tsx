@@ -25,59 +25,33 @@ const OrderList = () => {
     }
   }, [status, orders]);
 
-<<<<<<< HEAD:Frontend/src/pages/Admin/Orders/OrderList.tsx
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setStatus(event.target.value);
   };
 
   return (
-    <div className="mt-16">
-      <div>
-        <div className="flex justify-between my-3">
-          <h1 className="text-3xl font-bold mb-6">Order List</h1>
-          <select
-            name="status"
-            id="status"
-            className="w-[200px] border rounded-lg px-2"
-            value={status}
-            onChange={handleStatusChange}
-          >
-            <option value="">Lọc trạng thái</option>
-            <option value="Chờ xác nhận">Chờ xác nhận</option>
-            <option value="Đang chuẩn bị hàng">Đang chuẩn bị hàng</option>
-            <option value="Đang vận chuyển">Đang vận chuyển</option>
-            <option value="Đã giao hàng">Đã giao hàng</option>
-            <option value="Đã hủy">Đã hủy</option>
-          </select>
-=======
-    const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setStatus(event.target.value);
-    };
-    return (
-        <div className="mt-16">
-            <div>
-                <div className="flex justify-between my-3">
-                    <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng</h1>
-                    <select
-                        name="status"
-                        id="status"
-                        className="w-[200px] h-[50px] border rounded-lg px-2"
-                        value={status}
-                        onChange={handleStatusChange}
-                    >
-                        <option value="">Lọc trạng thái</option>
-                        <option value="Chờ xác nhận">Chờ xác nhận</option>
-                        <option value="Đang chuẩn bị hàng">Đang chuẩn bị hàng</option>
-                        <option value="Đang vận chuyển">Đang vận chuyển</option>
-                        <option value="Đã giao hàng">Đã giao hàng</option>
-                        <option value="Đã hủy">Đã hủy</option>
-                    </select>
-                </div>
-                <OrderTable orders={filteredOrders} />
-            </div>
->>>>>>> dc6f6cb4fbfe6f1cd720e56123b59718decd3898:FE/src/pages/Admin/Orders/OrderList.tsx
+    <div>
+      <div className="mt-16">
+        <div>
+          <div className="flex justify-between my-3">
+            <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng</h1>
+            <select
+              name="status"
+              id="status"
+              className="w-[200px] h-[50px] border rounded-lg px-2"
+              value={status}
+              onChange={handleStatusChange}
+            >
+              <option value="">Lọc trạng thái</option>
+              <option value="Chờ xác nhận">Chờ xác nhận</option>
+              <option value="Đang chuẩn bị hàng">Đang chuẩn bị hàng</option>
+              <option value="Đang vận chuyển">Đang vận chuyển</option>
+              <option value="Đã giao hàng">Đã giao hàng</option>
+              <option value="Đã hủy">Đã hủy</option>
+            </select>
+          </div>
+          <OrderTable orders={filteredOrders} />
         </div>
-        <OrderTable orders={filteredOrders} />
       </div>
     </div>
   );
