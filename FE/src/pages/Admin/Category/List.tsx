@@ -11,6 +11,8 @@ import CategoryCreate from "./Create";
 
 const Category = () => {
   const { data, isLoading } = useCategoryQuery();
+  console.log(data);
+
   const [showDialog, setShowDialog] = useState(false);
   const [remove, setRemove] = useState<ICategory>();
   const formatDate = (dateString: any) => {
