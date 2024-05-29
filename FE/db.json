@@ -112,5 +112,10 @@
       "hinhthuc": "Thanh toán tiền mặt",
       "voucher": "30000"
     }
+  ],
+  "categories": [
+    {
+      "name": "Loại sản phẩm 1"
+    }
   ]
 }

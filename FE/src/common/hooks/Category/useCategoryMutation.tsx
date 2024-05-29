@@ -2,7 +2,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Message from "../../../components/base/Message/Message";
-import { create, remove, update } from "../../../services/category";
+import { createCategories, remove, update } from "../../../services/category";
 import { ICategory } from "../../interfaces/Category";
 import { CategoryJoiSchema } from "../../validations/category";
 
@@ -27,7 +27,7 @@ const useCategoryMutation = ({
     mutationFn: async (category: ICategory) => {
       switch (action) {
         case "CREATE":
-          return await create(category);
+          return await createCategories(category);
         case "DELETE":
           return await remove(category);
         case "UPDATE":
@@ -43,7 +43,7 @@ const useCategoryMutation = ({
           queryKey: ["CATEGORY_KEY"],
         });
       } else {
-        <Message 
+        <Message
           message={"Có lỗi xảy ra vui lòng thử lại !"}
           timeout={5000}
           openMessage={true}
