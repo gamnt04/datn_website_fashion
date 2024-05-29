@@ -1,7 +1,7 @@
 import { ICategory } from "../common/interfaces/Category";
 import instance from "../configs/axios";
 
-export const get = async () => {
+export const getAll = async () => {
   try {
     const { data } = await instance.get(`/category`);
     return data.data;
@@ -9,7 +9,6 @@ export const get = async () => {
     console.log(error);
   }
 };
-
 export const getById = async (id: string) => {
   try {
     const { data } = await instance.get(`/category/${id}`);
@@ -18,8 +17,7 @@ export const getById = async (id: string) => {
     console.log(error);
   }
 };
-
-export const create = async (category: ICategory) => {
+export const createCategories = async (category: ICategory) => {
   try {
     const { data } = await instance.post("/category", category);
     return data;
