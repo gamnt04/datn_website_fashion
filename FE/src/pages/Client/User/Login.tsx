@@ -2,6 +2,12 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import Joi from "joi";
+import { useForm } from "react-hook-form";
+import { useLocalStorage } from "../../../common/hooks/Storage/useStorage";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
+
 const signinSchema = Joi.object({
   email: Joi.string()
     .email({ tlds: { allow: false } })
@@ -9,10 +15,11 @@ const signinSchema = Joi.object({
     .required(),
   password: Joi.string().min(6).required()
 })
-import { useForm } from "react-hook-form";
-import { useLocalStorage } from "../../../common/hooks/Storage/useStorage";
+
 const Login = () => {
-  const [, setUser] = useLocalStorage('user', {})
+  const [, setUser] = useLocalStorage('user', {});
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -23,22 +30,27 @@ const Login = () => {
       email: '',
       password: ''
     }
-  })
+  });
 
   const { mutate } = useMutation({
     mutationFn: async (formData: { email: string; password: string }) => {
-      const { data } = await axios.post('http://localhost:2004/api/v1/auth/signin', formData)
-      console.log(data);
-
-      return data
+      const { data } = await axios.post('http://localhost:2004/api/v1/auth/signin', formData);
+      return data;
     },
-    onSuccess: (data) => setUser(data),
-    onError: (error) => console.log(error)
-  })
+    onSuccess: (data) => {
+      setUser(data);
+      toast.success("Đăng nhập thành công!", { autoClose: 800 });
+      setTimeout(() => navigate('/'), 1000);
+    },
+    onError: () => {
+      toast.error("Đăng nhập thất bại!");
+    }
+  });
 
   const onSubmit = (formData: { email: string; password: string }) => {
-    mutate(formData)
-  }
+    mutate(formData);
+  };
+
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">

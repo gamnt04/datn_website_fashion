@@ -11,8 +11,6 @@ import CategoryCreate from "./Create";
 
 const Category = () => {
   const { data, isLoading } = useCategoryQuery();
-  console.log(data);
-
   const [showDialog, setShowDialog] = useState(false);
   const [remove, setRemove] = useState<ICategory>();
   const formatDate = (dateString: any) => {
@@ -109,7 +107,7 @@ const Category = () => {
                           scope="col"
                           className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                         >
-                          Chức năng
+                          Thao tác
                         </th>
                       </tr>
                     </thead>
@@ -148,7 +146,7 @@ const Category = () => {
                               </div>
                               <button
                                 onClick={() => handleRemove(category)}
-                                className="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none"
+                                className="text-white border rounded-lg bg-rose-500 hover:bg-rose-400 p-3 transition-colors duration-200 hover:text-black focus:outline-none"
                               >
                                 Xóa
                               </button>
