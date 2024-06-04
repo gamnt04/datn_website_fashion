@@ -1,4 +1,0 @@
-- crud category collection = null
-- Xóa danh mục => category product = null
-- cập nhật danh mục sản phẩm thay đổi danh mục mới xóa sản phẩm trong danh mục cũ
-- 
