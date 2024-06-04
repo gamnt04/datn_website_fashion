@@ -4,11 +4,9 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IOrders } from "../../../common/interfaces/Orders";
 
-
 const OrdersDetali = () => {
     const [detali, setDetali] = useState<IOrders>()
     const { id } = useParams()
-    // const changePage = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -28,6 +26,11 @@ const OrdersDetali = () => {
             toast.error("Đơn hàng đã bị hủy, không thể cập nhật trạng thái!");
             return;
         }
+
+        if (!window.confirm("Bạn có chắc chắn muốn xác nhận đơn hàng này không?")) {
+            return;
+        }
+
         const statusOrder: any = {
             "Chờ xác nhận": "Đang chuẩn bị hàng",
             "Đang chuẩn bị hàng": "Đang vận chuyển",
@@ -43,15 +46,20 @@ const OrdersDetali = () => {
                 const { data } = await axios.patch(`http://localhost:3000/orders/${id}`, { status: nextStatus });
                 setDetali(data);
                 toast.success("Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
-                // changePage('/admin/orders');
             }
         } catch (error) {
             console.log(error);
             toast.error("Cập nhật trạng thái đơn hàng thất bại!")
         }
     };
+
     const handleCancelOrder = async () => {
         if (!detali) return;
+
+        if (!window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+            return;
+        }
+
         try {
             const { data } = await axios.patch(`http://localhost:3000/orders/${id}`, { status: "Đã hủy" });
             setDetali(data);
@@ -61,6 +69,7 @@ const OrdersDetali = () => {
             toast.error("Hủy đơn hàng thất bại!");
         }
     };
+
     if (!detali) return <p>Loading...</p>;
     const totalPrice = detali.price * detali.quantity;
     const shippingFee = 20000; // Giả định phí vận chuyển là 20,000 VND
@@ -84,7 +93,6 @@ const OrdersDetali = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-
                         <tr>
                             <td className="py-4 px-6 text-sm font-medium text-gray-900">
                                 <img src={detali.image} width={100} alt="" />
@@ -94,7 +102,6 @@ const OrdersDetali = () => {
                             <td className="py-4 px-6 text-sm font-medium text-gray-900">{detali.quantity}</td>
                             <td className="py-4 px-6 text-sm font-medium text-gray-900">{formatCurrency(totalPrice)} </td>
                         </tr>
-
                     </tbody>
                 </table>
                 <div className="bg-white divide-y divide-gray-200">
@@ -132,14 +139,12 @@ const OrdersDetali = () => {
                             <p>Số điện thoại:</p>
                             <p>Địa chỉ Email:</p>
                             <p>Địa chỉ khách hàng:</p>
-
                         </div>
                         <div>
                             <p>{detali.userName}</p>
                             <p>{detali.phone}</p>
                             <p>{detali.email}</p>
                             <p>{detali.address}</p>
-
                         </div>
                     </div>
                     <div className="flex gap-6">
@@ -164,12 +169,10 @@ const OrdersDetali = () => {
                             Từ chối xác nhận
                         </button>
                     )}
-
                 </div>
-            </div >
+            </div>
         </>
     )
 };
 
 export default OrdersDetali;
-

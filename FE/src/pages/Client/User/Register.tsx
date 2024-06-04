@@ -1,10 +1,41 @@
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 const Register = () => {
+
+  const navigate = useNavigate()
+  const { register, handleSubmit, formState: errors } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+
+      confirmPassword: ''
+    }
+  })
+  const { mutate } = useMutation({
+    mutationFn: async (formData) => {
+      // console.log(formData);
+      const { data } = await axios.post('http://localhost:2004/api/v1/auth/signup', formData);
+      return data
+    },
+    onSuccess: () => {
+      toast.success("Đăng nhập ký thành công!", { autoClose: 800 });
+    },
+    onError: (error) => console.log(error)
+  })
+  const onSubmit = (formData: any) => {
+    mutate(formData);
+    navigate('/login')
+  }
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl">
+            <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl" onSubmit={handleSubmit(onSubmit)}>
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign Up
               </h3>
@@ -33,6 +64,7 @@ const Register = () => {
               <input
                 id="email"
                 type="email"
+                {...register('email', { required: true })}
                 placeholder="mail@loopple.com"
                 className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none mb-7 focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
@@ -45,6 +77,7 @@ const Register = () => {
               <input
                 id="password"
                 type="password"
+                {...register('password', { required: true })}
                 placeholder="Enter a password"
                 className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
@@ -58,6 +91,7 @@ const Register = () => {
               <input
                 id="password"
                 type="password"
+                {...register('confirmPassword', { required: true })}
                 placeholder="Enter a password"
                 className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
