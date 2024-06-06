@@ -117,5 +117,51 @@
     {
       "name": "Loại sản phẩm 1"
     }
+  ],
+  "categories": [
+    {
+      "id": "abc",
+      "nameCategories": "ao"
+    },
+    {
+      "id": "xyz",
+      "nameCategories": "quan"
+    },
+    {
+      "id": "jqk",
+      "nameCategories": "mu"
+    }
+  ],
+  "products": [
+    {
+      "idCategories": "abc",
+      "name": "Day la ao so 1",
+      "price": 699669
+    },
+    {
+      "idCategories": "abc",
+      "name": "Day la ao so 1",
+      "price": 8668
+    },
+    {
+      "idCategories": "xyz",
+      "name": "Day la quan so 1",
+      "price": 699669
+    },
+    {
+      "idCategories": "xyz",
+      "name": "Day la quan so 2",
+      "price": 8668
+    },
+    {
+      "idCategories": "jqk",
+      "name": "Day la mu so 1",
+      "price": 333333
+    },
+    {
+      "idCategories": "jqk",
+      "name": "Day la mu so 2",
+      "price": 999999
+    }
   ]
 }

@@ -1,3 +1,6 @@
+<<<<<<< HEAD:FE/src/pages/Client/(Auth)/[Login].tsx
+import { Link } from "react-router-dom";
+=======
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -15,6 +18,7 @@ const signinSchema = Joi.object({
     .required(),
   password: Joi.string().min(6).required()
 })
+>>>>>>> e317833b165177d6b46b4e78a9aa5a6b0683810c:FE/src/pages/Client/User/Login.tsx
 
 const Login = () => {
   const [, setUser] = useLocalStorage('user', {});
@@ -129,12 +133,12 @@ const Login = () => {
               </button>
               <p className="text-sm text-gray-600">
                 Not registered yet?{" "}
-                <a
-                  href="/register"
+                <Link
+                  to="/login/register"
                   className="font-bold text-blue-600 hover:underline"
                 >
                   Create an Account
-                </a>
+                </Link>
               </p>
             </form>
           </div>

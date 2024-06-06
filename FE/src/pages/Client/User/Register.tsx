@@ -1,8 +1,12 @@
+<<<<<<< HEAD:FE/src/pages/Client/(Auth)/[Register].tsx
+import { Link } from "react-router-dom";
+=======
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+>>>>>>> e317833b165177d6b46b4e78a9aa5a6b0683810c:FE/src/pages/Client/User/Register.tsx
 
 const Register = () => {
 
@@ -120,12 +124,12 @@ const Register = () => {
               </button>
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="font-bold text-blue-600 hover:underline"
                 >
                   Sign In
-                </a>
+                </Link>
               </p>
             </form>
           </div>
