@@ -1,4 +1,6 @@
-const Login = () => {
+import { Link } from "react-router-dom";
+
+const Register = () => {
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
@@ -6,7 +8,7 @@ const Login = () => {
           <div className="flex items-center xl:p-7">
             <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
-                Sign In
+                Sign Up
               </h3>
               <p className="mb-4 text-gray-600">
                 Enter your email and password
@@ -17,7 +19,7 @@ const Login = () => {
                   src="https://raw.githubusercontent.com/Loopple/loopple-public-assets/main/motion-tailwind/img/logos/logo-google.png"
                   alt="Google Logo"
                 />
-                Sign in with Google
+                Sign up with Google
               </a>
               <div className="flex items-center mb-3">
                 <hr className="flex-grow border-gray-300" />
@@ -48,6 +50,19 @@ const Login = () => {
                 placeholder="Enter a password"
                 className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
+
+              <label
+                htmlFor="password"
+                className="mb-2 text-sm font-semibold text-gray-900 text-start"
+              >
+                Confirm Password*
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter a password"
+                className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
+              />
               <div className="flex flex-row justify-between mb-8">
                 <label className="relative inline-flex items-center cursor-pointer select-none">
                   <input type="checkbox" className="sr-only peer" />
@@ -58,27 +73,27 @@ const Login = () => {
                     />
                   </div>
                   <span className="ml-3 text-sm font-normal text-gray-600">
-                    Keep me logged in
+                    I agree to the terms and conditions
                   </span>
                 </label>
-                <a
+                {/* <a
                   href="#"
                   className="text-sm font-medium text-blue-600 hover:underline"
                 >
                   Forget password?
-                </a>
+                </a> */}
               </div>
               <button className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 bg-gray-900 rounded-2xl hover:bg-[#f68e56] focus:ring-4 focus:ring-[#f68e56] md:w-96">
-                Sign In
+                Create Account
               </button>
               <p className="text-sm text-gray-600">
-                Not registered yet?{" "}
-                <a
-                  href="/register"
+                Already have an account?{" "}
+                <Link
+                  to="/login"
                   className="font-bold text-blue-600 hover:underline"
                 >
-                  Create an Account
-                </a>
+                  Sign In
+                </Link>
               </p>
             </form>
           </div>
@@ -89,4 +104,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
