@@ -14,8 +14,8 @@ import Profile from "../pages/Client/Profile/Profile";
 import AllOrder from "../pages/Client/Order/AllOrder/AllOrder";
 import RefundRetunr from "../pages/Client/Order/RefundRetunr/RefundRetunr";
 import Contact from "../pages/Client/Contact/Contact";
-import Login from "../pages/Client/(Auth)/[Login]";
-import Register from "../pages/Client/(Auth)/[Register]";
+import Login from "../pages/Client/User/Login";
+import Register from "../pages/Client/User/Register";
 
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/Admin/Dashboard/Dashboard";
@@ -75,7 +75,10 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="/admin/orders" element={<OrderList />} />
-            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
+            <Route
+              path="/admin/orders/:id/orderDetali"
+              element={<OrdersDetali />}
+            />
           </Route>
         </Routes>
       </Router>
