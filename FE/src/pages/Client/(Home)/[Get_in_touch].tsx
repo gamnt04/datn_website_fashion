@@ -1,7 +1,7 @@
 
 const Get_in_touch = () => {
   return (<>
-  <div className=" container py-16 border-b text-center ">
+  <div className=" container py-16 border-b text-center">
         <h2 className="text-[48px] font-normal pb-[15px]">Get in touch</h2>
         <p className="text-[18px] text-[#ABABAB] pb-[30px]">
           Subcrible for latest stories and promotions (35% save)
@@ -12,7 +12,7 @@ const Get_in_touch = () => {
             name=""
             id=""
             placeholder="Email"
-            className="w-[640px] h-[46px] border-2 pl-[20px] "
+            className="lg:w-[640px] h-[46px] border-2 pl-[20px] "
           />
           <button className="btn-submit ml-[20px] w-[122px] h-[46px] bg-[#1C1C1C] text-white">
             Subscribe

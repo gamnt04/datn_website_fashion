@@ -7,10 +7,10 @@ const Products_Shop = () => {
     const a : Array<number> = [1, 2, 3, 4, 5, 6, 7, 8];
 
   return (<div className="py-10">
-         <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[24%_24%_24%_24%] justify-between gap-y-[20px]">
+         <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] auto-rows-[400px] justify-between gap-y-6">
             {
-                a?.map(() => (
-                    <Products data={img_product}/>
+                a?.map((i : number) => (
+                    <Products data={{img_product, i}}/>
                 ))
             }
          </div>
