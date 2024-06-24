@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className="xl:w-full xl:flex xl:justify-center">
-      <div className="xl:w-[1440px] mb:w-full xl:px-0 mb:px-6 grid grid-cols-1 py-10 gap-4 sm:grid-cols-2 md:grid-cols-4 ">
-        <div>
+    <div className="xl:w-full xl:flex xl:justify-center border-t">
+      <div className="xl:w-[1440px] mb:w-full xl:px-0 mb:px-6 grid grid-cols-1 py-10 gap-4 sm:grid-cols-2 lg:grid-cols-3 ">
+        <div className="flex justify-between items-center xl:flex-col xl:items-start">
           <Link to="/" className="*:h-14 mr-2 *:w-18">
             <img
               src="../../src/assets/Images/Logo/logo.png"
@@ -12,91 +12,96 @@ const Footer = () => {
             />
           </Link>
 
-          <p className="text-[#999999] mt-[30px] mb-[15px] w-60">
-            Address: Stark Funiture Store 4956 Polk Street, Arizona, United States
-          </p>
+          <div>
+            <p className="text-[#999999] mt-[30px] mb-[15px] w-60">
+              Address: Stark Funiture Store 4956 Polk Street, Arizona, United States
+            </p>
 
-          <ul>
-            <li className="text-[#999999] mb-[7px]">
-              Phone:
-              <a className="underline hover:text-black" href="">
-                520-901-7672
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999]">
-              Email:
-              <a className="underline hover:text-black" href="">
-                demo@demo.com
-              </a>
-            </li>
-          </ul>
+            <ul>
+              <li className="text-[#999999] mb-[7px]">
+                Phone:
+                <a className="underline hover:text-black" href="">
+                  520-901-7672
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999]">
+                Email:
+                <a className="underline hover:text-black" href="">
+                  demo@demo.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {/* chưa hoàn thiện */}
+        <div className="grid grid-cols-2">
+          <div>
+            <h4 className="text-lg font-medium">About Us</h4>
+            <ul>
+              <li className="text-[#999999] mt-[30px] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  Our Company
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  Contact Us
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  FAQs
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999]">
+                <a className="hover:underline hover:text-black" href="">
+                  Terms and conditions
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-medium">Information</h4>
+            <ul>
+              <li className="text-[#999999] mt-[30px] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  Delivery
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  Search
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  Size Guide
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li className="text-[#999999] mb-[15px]">
+                <a className="hover:underline hover:text-black" href="">
+                  Support
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div>
-          <h4 className="text-lg font-medium">About Us</h4>
-          <ul>
-            <li className="text-[#999999] mt-[30px] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                Our Company
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                Contact Us
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                FAQs
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999]">
-              <a className="hover:underline hover:text-black" href="">
-                Terms and conditions
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-lg font-medium">Information</h4>
-          <ul>
-            <li className="text-[#999999] mt-[30px] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                Delivery
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                Search
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                Size Guide
-              </a>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-[#999999] mb-[15px]">
-              <a className="hover:underline hover:text-black" href="">
-                Support
-              </a>
-            </li>
-          </ul>
-        </div>
 
         <div>
           <div>
