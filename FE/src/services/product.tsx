@@ -28,7 +28,7 @@ export const createProduct = async (product: IProduct) => {
 export const removeProduct = async (id: string) => {
   try {
     const { data } = await instance.delete(`/products/${id}`);
-    return data.data;
+    return data;
   } catch (error) {
     console.log(error);
   }
