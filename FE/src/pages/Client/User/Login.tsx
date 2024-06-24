@@ -1,6 +1,5 @@
-<<<<<<< HEAD:FE/src/pages/Client/(Auth)/[Login].tsx
 import { Link } from "react-router-dom";
-=======
+
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -9,46 +8,48 @@ import { useForm } from "react-hook-form";
 import { useLocalStorage } from "../../../common/hooks/Storage/useStorage";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const signinSchema = Joi.object({
   email: Joi.string()
     .email({ tlds: { allow: false } })
     .min(3)
     .required(),
-  password: Joi.string().min(6).required()
-})
->>>>>>> e317833b165177d6b46b4e78a9aa5a6b0683810c:FE/src/pages/Client/User/Login.tsx
+  password: Joi.string().min(6).required(),
+});
 
 const Login = () => {
-  const [, setUser] = useLocalStorage('user', {});
+  const [, setUser] = useLocalStorage("user", {});
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     resolver: joiResolver(signinSchema),
     defaultValues: {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    },
   });
 
   const { mutate } = useMutation({
     mutationFn: async (formData: { email: string; password: string }) => {
-      const { data } = await axios.post('http://localhost:2004/api/v1/auth/signin', formData);
+      const { data } = await axios.post(
+        "http://localhost:2004/api/v1/auth/signin",
+        formData
+      );
       return data;
     },
     onSuccess: (data) => {
       setUser(data);
       toast.success("Đăng nhập thành công!", { autoClose: 800 });
-      setTimeout(() => navigate('/'), 1000);
+      setTimeout(() => navigate("/"), 1000);
     },
     onError: () => {
       toast.error("Đăng nhập thất bại!");
-    }
+    },
   });
 
   const onSubmit = (formData: { email: string; password: string }) => {
@@ -60,7 +61,10 @@ const Login = () => {
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl"
+            >
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign In
               </h3>
@@ -87,7 +91,7 @@ const Login = () => {
                 Email*
               </label>
               <input
-                {...register('email', { required: true, minLength: 3 })}
+                {...register("email", { required: true, minLength: 3 })}
                 id="email"
                 type="email"
                 placeholder="mail@loopple.com"
@@ -101,7 +105,7 @@ const Login = () => {
                 Password*
               </label>
               <input
-                {...register('password', { required: true, minLength: 6 })}
+                {...register("password", { required: true, minLength: 6 })}
                 id="password"
                 type="password"
                 placeholder="Enter a password"
