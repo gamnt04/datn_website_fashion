@@ -6,6 +6,7 @@ const Register = () => {
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
+
             <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign Up
@@ -35,7 +36,6 @@ const Register = () => {
               <input
                 id="email"
                 type="email"
-
                 placeholder="mail@loopple.com"
                 className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none mb-7 focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
@@ -48,7 +48,6 @@ const Register = () => {
               <input
                 id="password"
                 type="password"
-
                 placeholder="Enter a password"
                 className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
@@ -62,7 +61,6 @@ const Register = () => {
               <input
                 id="password"
                 type="password"
-
                 placeholder="Enter a password"
                 className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
