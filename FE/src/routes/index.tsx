@@ -27,8 +27,6 @@ import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
 import IndexHome from "../pages/Client/(Home)/[Index]";
 import IndexShops from "../pages/Client/(Shop)/[Index]";
 import ProductDetail from "../pages/Client/(ProductDetail)/[ProductDetail]";
-import Order_All from "../pages/Client/Order/Order-All/Order_All";
-
 const RouterComponent = () => {
   return (
     <>
@@ -60,6 +58,7 @@ const RouterComponent = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
+            <Route path="/admin/listpro" element={<ListProduct />} />
             <Route path="/admin/orders" element={<OrderList />} />
             <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
           </Route>

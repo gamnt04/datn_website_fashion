@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 
-const Login = () => {
-
 
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
+
             <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl">
+
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign In
               </h3>

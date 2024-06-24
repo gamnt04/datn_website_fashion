@@ -49,7 +49,7 @@ const Category = () => {
             />
           )}
           <div className="flex flex-col mt-5">
-            <div className="flex relative justify-between items-center mb-3">
+            <div className="relative flex items-center justify-between mb-3">
               <h1 className="text-lg">Danh sách danh mục</h1>
               <CategoryCreate />
             </div>
@@ -146,7 +146,7 @@ const Category = () => {
                               </div>
                               <button
                                 onClick={() => handleRemove(category)}
-                                className="text-white border rounded-lg bg-rose-500 hover:bg-rose-400 p-3 transition-colors duration-200 hover:text-black focus:outline-none"
+                                className="p-3 text-white transition-colors duration-200 border rounded-lg bg-rose-500 hover:bg-rose-400 hover:text-black focus:outline-none"
                               >
                                 Xóa
                               </button>
