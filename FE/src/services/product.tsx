@@ -25,7 +25,7 @@ export const createProduct = async (product: IProduct) => {
   }
 };
 
-export const removeProduct = async (id: string | number) => {
+export const removeProduct = async (id: string) => {
   try {
     const { data } = await instance.delete(`/products/${id}`);
     return data;
@@ -36,7 +36,7 @@ export const removeProduct = async (id: string | number) => {
 
 export const updateProduct = async (product: IProduct) => {
   try {
-    const { data } = await instance.put(`/products/${product.id}`, product);
+    const { data } = await instance.put(`/products/${product._id}`, product);
     console.log(data);
     return data;
   } catch (error) {
