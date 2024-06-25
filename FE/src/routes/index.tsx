@@ -8,7 +8,6 @@ import Pay from "../pages/Client/pay/Pay";
 import ListProducts from "../pages/Client/listProducts/ListProducts";
 import Blogs from "../pages/Client/Blogs/Blogs";
 import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
-import Profile from "../pages/Client/Profile/Profile";
 import AllOrder from "../pages/Client/Order/AllOrder/AllOrder";
 import Contact from "../pages/Client/Contact/Contact";
 import Login from "../pages/Client/User/Login";
@@ -24,6 +23,8 @@ import IndexShops from "../pages/Client/(Shop)/[Index]";
 import ProductDetail from "../pages/Client/(ProductDetail)/[ProductDetail]";
 import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
+import Profile from "../pages/Client/Profile/Profile";
+
 
 const RouterComponent = () => {
   return (
@@ -44,8 +45,9 @@ const RouterComponent = () => {
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
             <Route path="shops/detail_product" element={<ProductDetail />} />
             <Route path="allorder" element={<AllOrder />} >
-              <Route path="/allorder/order" element={<Order_All />} />
               <Route index element={<Profile />} />
+              <Route path="/allorder/order" element={<Order_All />} />
+
               <Route path="/allorder/address" element={<Address />} />
             </Route>
             <Route path="contact" element={<Contact />} />

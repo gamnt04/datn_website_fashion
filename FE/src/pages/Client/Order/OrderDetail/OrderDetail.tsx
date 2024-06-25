@@ -1,17 +1,12 @@
-import { useState } from "react";
-
+import React from "react";
 const OrderDetail = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const handleTogggle = () => {
-    setIsOpen(!isOpen)
-  }
   return (
-    <div className="mt-24">
+    <div>
       <div className="container mx-auto max-w-[1200px]">
         <div className="flex space-x-5">
-          <div className="basis-28 lg:basis-3/12  bg-[#F5F5F5]">
-            <div className="lg:flex gap-4 pt-[15px] px-3 pb-[15px] border-b-2 ">
-              <div className="flex justify-center">
+          <div className="w-[19%] bg-[#F5F5F5]">
+            <div className="flex px-7 pt-[15px] pb-[15px] border-b-2">
+              <div className=" px-3">
                 <img
                   className="w-[46px] h-[46px] rounded-full"
                   src="https://picsum.photos/300/300"
@@ -19,10 +14,10 @@ const OrderDetail = () => {
                 />
               </div>
               <div className="">
-                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">Dương Hải Nam</h3>
+                <h3 className="text-[#333] font-semibold text-sm">User Name</h3>
                 <a
                   href=""
-                  className="text-[#9B9B9B] text-[12px] lg:text-sm flex items-center justify-center font-normal"
+                  className=" text-[#9B9B9B] font-normal text-[14px] flex pt-[5px]  font-normal"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +29,7 @@ const OrderDetail = () => {
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    className="lucide lucide-pencil pr-[3px] lg:block hidden"
+                    className="lucide lucide-pencil pr-[3px]"
                   >
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                     <path d="m15 5 4 4" />
@@ -43,92 +38,150 @@ const OrderDetail = () => {
                 </a>
               </div>
             </div>
-            <div className="px-3">
-              <ul className="mb-12 *:my-4">
-                <li>
-                  <a href="#" onClick={handleTogggle} className="flex justify-center lg:flex lg:justify-start lg:gap-4 *:text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-circle-user"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="10" r="3" />
-                      <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
-                    </svg>
-                    <p className="hidden lg:block" >Tài khoản của tôi</p>
-                  </a>
-                  {isOpen && (
-                    <ul className="pt-2">
-                      <li><a href="#" className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Hồ sơ</a></li>
-                      <li><a href="#" className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Địa chỉ</a></li>
-                      <li><a href="#" className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Đổi mật khẩu</a></li>
-                    </ul>
-                  )}
-                </li>
-                <li>
-                  <a href="#" className="flex justify-center  lg:flex lg:justify-start lg:gap-4 *:text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-clipboard-list"
-                    >
-                      <rect
-                        width="8"
-                        height="4"
-                        x="8"
-                        y="2"
-                        rx="1"
-                        ry="1"
-                      />
-                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                      <path d="M12 11h4" />
-                      <path d="M12 16h4" />
-                      <path d="M8 11h.01" />
-                      <path d="M8 16h.01" />
-                    </svg>
-                    <p className="hidden lg:block" >Đơn hàng của tôi</p>
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex justify-center  lg:flex lg:justify-start lg:gap-4 *:text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-log-out"
-                    >
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                      <polyline points="16 17 21 12 16 7" />
-                      <line x1="21" x2="9" y1="12" y2="12" />
-                    </svg>
-                    <p className="hidden lg:block" >Đăng xuất</p>
-                  </a>
-                </li>
-              </ul>
+            <div className="mx-auto py-[10px] pl-[40px]">
+              <table className="">
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className=" w-[24px]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#0145AD"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-circle-user"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <circle cx="12" cy="10" r="3" />
+                          <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td className="">
+                      <a href="" className="pl-[10px] py-[10px]">
+                        <span className="text-sm">Tài Khoản Của Tôi</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td className="">
+                      <a href="" className="pl-[10px] py-[15px]">
+                        <span className="text-sm text-[#7D7D7D]">Hồ Sơ</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td className="">
+                      <a href="" className="pl-[10px] py-[15px]">
+                        <span className="text-sm text-[#7D7D7D]">
+                          Đổi Mật Khẩu
+                        </span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr className="py-[20px]">
+                    <td>
+                      <div className=" w-[24px]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#0145AD"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-clipboard-list"
+                        >
+                          <rect
+                            width="8"
+                            height="4"
+                            x="8"
+                            y="2"
+                            rx="1"
+                            ry="1"
+                          />
+                          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                          <path d="M12 11h4" />
+                          <path d="M12 16h4" />
+                          <path d="M8 11h.01" />
+                          <path d="M8 16h.01" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="" className="pl-[10px] ">
+                        <span className="text-sm">Đơn Mua</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr className="space-y-[20px]">
+                    <td>
+                      <div className=" w-[24px]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#0145AD"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-log-out"
+                        >
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" />
+                          <line x1="21" x2="9" y1="12" y2="12" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="" className="pl-[10px] ">
+                        <span className="text-sm">Đăng Xuất</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr className="space-y-[20px]">
+                    <td>
+                      <div className=" w-[24px]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#0145AD"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-circle-dollar-sign"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                          <path d="M12 18V6" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="" className="pl-[10px] ">
+                        <span className="text-sm">Ví Của Tôi</span>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <div className="basis-full">
+          <div className="w-[81%] bg-[#FFFFFF] ">
             <div className="border-2 rounded-md flex  max-h-[75px] px-[24px] ">
               <button className="flex space-x-1 justify-start items-center  py-4">
                 <svg

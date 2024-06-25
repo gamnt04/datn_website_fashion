@@ -26,7 +26,7 @@
       "productName": "Smartphone",
       "quantity": 4,
       "price": "2000000",
-      "status": "Đã giao hàng",
+      "status": "Chờ xác nhận",
       "details": "Order details for Order ID: 2",
       "createDate": "20/10/2024",
       "hinhthuc": "Thanh toán tiền mặt",
@@ -42,7 +42,7 @@
       "productName": "Smartphone",
       "quantity": 7,
       "price": "200000",
-      "status": "Đang vận chuyển",
+      "status": "Đang chuẩn bị hàng",
       "details": "Order details for Order ID: 2",
       "createDate": "20/10/2024",
       "hinhthuc": "Thanh toán tiền mặt",
@@ -111,6 +111,11 @@
       "createDate": "24/05/2024",
       "hinhthuc": "Thanh toán tiền mặt",
       "voucher": "30000"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Loại sản phẩm 1"
     }
   ],
   "categories": [
