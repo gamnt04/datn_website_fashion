@@ -1,70 +1,14 @@
 import { Link } from "react-router-dom";
 
-import { joiResolver } from "@hookform/resolvers/joi";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import Joi from "joi";
-import { useForm } from "react-hook-form";
-import { useLocalStorage } from "../../../common/hooks/Storage/useStorage";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
-
-const signinSchema = Joi.object({
-  email: Joi.string()
-    .email({ tlds: { allow: false } })
-    .min(3)
-    .required(),
-  password: Joi.string().min(6).required(),
-});
-
 const Login = () => {
-  const [, setUser] = useLocalStorage("user", {});
-  const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: joiResolver(signinSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: async (formData: { email: string; password: string }) => {
-      const { data } = await axios.post(
-        "http://localhost:2004/api/v1/auth/signin",
-        formData
-      );
-      return data;
-    },
-    onSuccess: (data) => {
-      setUser(data);
-      toast.success("Đăng nhập thành công!", { autoClose: 800 });
-      setTimeout(() => navigate("/"), 1000);
-    },
-    onError: () => {
-      toast.error("Đăng nhập thất bại!");
-    },
-  });
-
-  const onSubmit = (formData: { email: string; password: string }) => {
-    mutate(formData);
-  };
 
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg">
+    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-24">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl"
-            >
+            <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign In
               </h3>
@@ -91,13 +35,11 @@ const Login = () => {
                 Email*
               </label>
               <input
-                {...register("email", { required: true, minLength: 3 })}
                 id="email"
                 type="email"
                 placeholder="mail@loopple.com"
                 className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none mb-7 focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
-              {errors.email && <p>{errors.email.message}</p>}
               <label
                 htmlFor="password"
                 className="mb-2 text-sm font-semibold text-gray-900 text-start"
@@ -105,13 +47,12 @@ const Login = () => {
                 Password*
               </label>
               <input
-                {...register("password", { required: true, minLength: 6 })}
                 id="password"
                 type="password"
                 placeholder="Enter a password"
                 className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
               />
-              {errors.password && <p>{errors.password.message}</p>}
+
               <div className="flex flex-row justify-between mb-8">
                 <label className="relative inline-flex items-center cursor-pointer select-none">
                   <input type="checkbox" className="sr-only peer" />
