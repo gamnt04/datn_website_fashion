@@ -5,10 +5,11 @@ const AllOrder = () => {
   const handleTogggle = () => {
     setIsOpen(!isOpen)
   }
+
   return (
-    <div className="mt-28 mb-4">
+    <div className="mt-28 mb-4 ">
       <div className="container mx-auto max-w-[1200px]">
-        <div className="flex flex-row space-x-5">
+        <div className="flex flex-row space-x-5 relative">
           <div className="basis-28 lg:basis-3/12 border rounded-lg">
             <div className="lg:flex gap-4 pt-[15px] px-3 pb-[15px] border-b-2 ">
               <div className="flex justify-center">
@@ -21,7 +22,7 @@ const AllOrder = () => {
               <div className="">
                 <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">Dương Hải Nam</h3>
                 <a
-                  href=""
+                  href="/allorder"
                   className="text-[#9B9B9B] text-[12px] lg:text-sm flex items-center justify-center font-normal"
                 >
                   <svg
@@ -67,8 +68,8 @@ const AllOrder = () => {
                   </a>
                   {isOpen && (
                     <ul className="pt-2">
-                      <li><NavLink to={`/allorder/profile`} className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Hồ sơ</NavLink></li>
-                      <li><a href="#" className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Địa chỉ</a></li>
+                      <li><NavLink to={`/allorder`} className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Hồ sơ</NavLink></li>
+                      <li><NavLink to={`/allorder/address`} className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Địa chỉ</NavLink></li>
                       <li><a href="#" className="flex justify-center lg:justify-start lg:ml-10 text-sm text-center text-[#7D7D7D] py-1">Đổi mật khẩu</a></li>
                     </ul>
                   )}
