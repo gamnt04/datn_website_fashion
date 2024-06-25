@@ -45,7 +45,6 @@ const Profile = () => {
             <div className="order-1 border-b p-3 my-4 basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
               <div className="flex justify-center">
                 <img src="https://picsum.photos/300/300" className="w-44 h-44 rounded-full" alt="" />
-
               </div>
               <div className="flex justify-center">
                 {/* <input type="file" placeholder="Chọn ảnh" /> */}

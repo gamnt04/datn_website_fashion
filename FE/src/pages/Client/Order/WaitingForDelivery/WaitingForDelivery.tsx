@@ -3,9 +3,9 @@ const WaitingForDelivery = () => {
 
   return (
     <>
-      <div className="bg-white shadow-xl my-4 px-2">
+      <div className="bg-white border-b my-4 px-2">
         <div className="flex gap-2 py-5 border-b-2 justify-between">
-          <a href="" className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
+          <a href="" className="px-[15px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
             Xem ngay
           </a>
           <div className="flex">
@@ -89,7 +89,7 @@ const WaitingForDelivery = () => {
               được giao đến bạn và sản phẩm nhận được không có vấn
               đề nào.
             </p>
-            <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
+            <button className="basis-2/6 lg:basis-2/12 bg-black px-2 py-2 text-white text-[12px]">
               Đã Nhận Hàng
             </button>
           </div>
