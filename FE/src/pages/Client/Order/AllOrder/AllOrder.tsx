@@ -7,7 +7,7 @@ const AllOrder = () => {
   }
 
   return (
-    <div className="mt-28 mb-4 ">
+    <div className="mt-28 mb-4">
       <div className="container mx-auto max-w-[1200px]">
         <div className="flex flex-row space-x-5 relative">
           <div className="basis-28 lg:basis-3/12 border rounded-lg">

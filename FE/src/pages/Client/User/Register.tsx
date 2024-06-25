@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 const Register = () => {
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-28">
+    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-24">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
