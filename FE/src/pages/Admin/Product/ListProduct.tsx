@@ -81,14 +81,14 @@ const ListProduct = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                     {data?.map((product: IProduct, index: number) => (
-                      <tr key={product._id}>
+                      <tr key={index}>
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                           {index + 1}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           <img
                             src={product.image}
-                            alt="Product Image"
+                            alt={product.name}
                             className="object-cover w-12 h-12 rounded-lg"
                           />
                         </td>
@@ -110,11 +110,10 @@ const ListProduct = () => {
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <button
                             onClick={() => handleRemove(product._id!)}
-                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${
-                              removingProductId === product._id
-                                ? "bg-gray-500"
-                                : "bg-rose-500 hover:bg-rose-400"
-                            } focus:outline-none`}
+                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${removingProductId === product._id
+                              ? "bg-gray-500"
+                              : "bg-rose-500 hover:bg-rose-400"
+                              } focus:outline-none`}
                             disabled={removingProductId === product._id}
                           >
                             {removingProductId === product._id

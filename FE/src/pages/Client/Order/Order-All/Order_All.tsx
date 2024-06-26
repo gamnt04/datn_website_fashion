@@ -14,7 +14,7 @@ const Order_All = () => {
     };
     return (
         <>
-            <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs shadow-lg">
+            <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs ">
                 {['Chờ Xác Nhận', 'Chờ Lấy Hàng', 'Chờ Giao Hàng', 'Hoàn Thành', 'Đã Hủy', 'Trả Hàng / Hoàn Tiền'].map((menu) => (
                     <li
                         key={menu}

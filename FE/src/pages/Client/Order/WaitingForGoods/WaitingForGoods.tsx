@@ -2,14 +2,16 @@
 const WaitingForGoods = () => {
     return (
         <>
+            {/* không có đơn hàng thì sẽ hiện ra trang này */}
             <div className="w-full h-[400px] flex flex-col justify-center items-center">
                 <img src="../../src/assets/Images/Products/no_products.png" className="w-44 h-40" alt="" />
                 <p>Chưa có sản phẩm nào</p>
             </div>
-            <div className="bg-white shadow-xl my-4 px-2">
+            {/* còn có đơn hàng thì hiện ra trang này */}
+            <div className="bg-white border-b my-4 px-2">
                 {/* <div>
                     <div className="flex gap-2 py-5 border-b-2 justify-between">
-                        <a href="" className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
+                        <a href="" className="px-[15px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
                             Xem ngay
                         </a>
                         <div className="flex">
@@ -93,7 +95,7 @@ const WaitingForGoods = () => {
                                 được giao đến bạn và sản phẩm nhận được không có vấn
                                 đề nào.
                             </p>
-                            <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
+                            <button className="basis-2/6 lg:basis-2/12 bg-black px-2 py-2 text-white text-[12px]">
                                 Đã Nhận Hàng
                             </button>
                         </div>
