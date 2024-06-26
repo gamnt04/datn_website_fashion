@@ -25,7 +25,7 @@ import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import Profile from "../pages/Client/Profile/Profile";
 import ListProduct from "../pages/Admin/Product/ListProduct";
-import AddProduct from "../pages/Admin/Product/AddProduct";
+import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 const RouterComponent = () => {
   return (
     <>
