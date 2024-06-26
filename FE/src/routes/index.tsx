@@ -28,6 +28,7 @@ import IndexHome from "../pages/Client/(Home)/[Index]";
 import IndexShops from "../pages/Client/(Shop)/[Index]";
 import ProductDetail from "../pages/Client/(ProductDetail)/[ProductDetail]";
 import ListProduct from "../pages/Admin/Product/ListProduct";
+import AddProduct from "../pages/Admin/Product/AddProduct";
 const RouterComponent = () => {
   return (
     <>
@@ -75,6 +76,7 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="/admin/listpro" element={<ListProduct />} />
+            <Route path="/admin/add" element={<AddProduct />} />
             <Route path="/admin/orders" element={<OrderList />} />
             <Route
               path="/admin/orders/:id/orderDetali"
