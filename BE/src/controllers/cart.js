@@ -7,7 +7,15 @@ export const getCartByIdUser = async (req, res) => {
   const { userId } = req.params;
   try {
     const cart = await Cart.findOne({ userId }).populate("products.productId");
-    return res.status(StatusCodes.OK).json({ cart });
+    const dataCart = {
+      products: cart.products.map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        thumbnail: item.productId.thumbnail,
+        quantity: item.quantity
+      }))
+    };
+    return res.status(StatusCodes.OK).json({ dataCart });
   } catch (error) {
     console.error(error);
     return res
