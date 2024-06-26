@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import { GetAllOrder } from "../../../services/orderProduct";
 import { IOrder } from "../../../common/interfaces/OrderProducts";
-import { GetAllProducts } from "../../../services/product";
+import { getAllProduct } from "../../../services/product";
 
 const MainContent = () => {
   const [orderday, setOrderday] = useState<number>(0);
@@ -40,11 +40,13 @@ const MainContent = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await GetAllProducts();
+        const data = await getAllProduct();
         setTotalProducts(data.length);
       } catch (error) {
         console.log(error);
       }
+      const data = await getAllProduct();
+      setTotalProducts(data.length);
     })();
   }, []);
 
@@ -65,9 +67,9 @@ const MainContent = () => {
               <path d="M11 10.9219C9.38438 10.9219 8.07812 9.61562 8.07812 8C8.07812 6.38438 9.38438 5.07812 11 5.07812C12.6156 5.07812 13.9219 6.38438 13.9219 8C13.9219 9.61562 12.6156 10.9219 11 10.9219ZM11 6.625C10.2437 6.625 9.625 7.24375 9.625 8C9.625 8.75625 10.2437 9.375 11 9.375C11.7563 9.375 12.375 8.75625 12.375 8C12.375 7.24375 11.7563 6.625 11 6.625Z" />
             </svg>
           </div>
-          <div className="mt-4 flex items-end justify-between">
+          <div className="flex items-end justify-between mt-4">
             <div>
-              <h4 className="text-title-md font-bold text-black dark:text-white">
+              <h4 className="font-bold text-black text-title-md dark:text-white">
                 {orderday}
               </h4>
               <span className="text-sm font-medium">Đơn Hàng Hôm Nay </span>
@@ -88,9 +90,9 @@ const MainContent = () => {
               <path d="M11 10.9219C9.38438 10.9219 8.07812 9.61562 8.07812 8C8.07812 6.38438 9.38438 5.07812 11 5.07812C12.6156 5.07812 13.9219 6.38438 13.9219 8C13.9219 9.61562 12.6156 10.9219 11 10.9219ZM11 6.625C10.2437 6.625 9.625 7.24375 9.625 8C9.625 8.75625 10.2437 9.375 11 9.375C11.7563 9.375 12.375 8.75625 12.375 8C12.375 7.24375 11.7563 6.625 11 6.625Z" />
             </svg>
           </div>
-          <div className="mt-4 flex items-end justify-between">
+          <div className="flex items-end justify-between mt-4">
             <div>
-              <h4 className="text-title-md font-bold text-black dark:text-white">
+              <h4 className="font-bold text-black text-title-md dark:text-white">
                 {revenueday.toLocaleString()}đ
               </h4>
               <span className="text-sm font-medium">Doanh Thu Hôm Nay </span>
@@ -111,9 +113,9 @@ const MainContent = () => {
               <path d="M11 10.9219C9.38438 10.9219 8.07812 9.61562 8.07812 8C8.07812 6.38438 9.38438 5.07812 11 5.07812C12.6156 5.07812 13.9219 6.38438 13.9219 8C13.9219 9.61562 12.6156 10.9219 11 10.9219ZM11 6.625C10.2437 6.625 9.625 7.24375 9.625 8C9.625 8.75625 10.2437 9.375 11 9.375C11.7563 9.375 12.375 8.75625 12.375 8C12.375 7.24375 11.7563 6.625 11 6.625Z" />
             </svg>
           </div>
-          <div className="mt-4 flex items-end justify-between">
+          <div className="flex items-end justify-between mt-4">
             <div>
-              <h4 className="text-title-md font-bold text-black dark:text-white">
+              <h4 className="font-bold text-black text-title-md dark:text-white">
                 {totalProducts}
               </h4>
               <span className="text-sm font-medium">Số Lượng Sản Phẩm </span>
