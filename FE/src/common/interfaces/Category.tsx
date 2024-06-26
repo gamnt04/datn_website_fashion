@@ -6,6 +6,6 @@ export interface ICategory {
   slug?: string;
   products?: string[];
   collections?: string[];
-  createdAt?: ReactNode;
-  updatedAt?: ReactNode;
+  createdAt?: string | number;
+  updatedAt?: string | number;
 }
