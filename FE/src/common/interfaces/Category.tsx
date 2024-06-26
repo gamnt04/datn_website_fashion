@@ -5,7 +5,6 @@ export interface ICategory {
   _id?: string;
   slug?: string;
   products?: string[];
-  collections?: string[];
-  createdAt?: ReactNode;
-  updatedAt?: ReactNode;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
