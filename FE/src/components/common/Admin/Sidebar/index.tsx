@@ -52,15 +52,15 @@ const SidebarComponent = () => {
           active={selectedItem === "Tài khoản"}
           onClick={() => handleItemClick("Tài khoản")}
         />
-        <Link to="/admin/product">
+        <Link to="products">
           <SidebarItem
             icon={<Boxes size={20} />}
             text="Sản phẩm"
-            active={selectedItem === "product"}
-            onClick={() => handleItemClick("product")}
+            active={selectedItem === "products"}
+            onClick={() => handleItemClick("products")}
           />
         </Link>
-        <Link to="/admin/category">
+        <Link to="category">
           <SidebarItem
             icon={<Folder size={20} />}
             text="Danh mục"
@@ -76,7 +76,7 @@ const SidebarComponent = () => {
             onClick={() => handleItemClick("collection")}
           />
         </Link>
-        <Link to="/admin/orders">
+        <Link to="orders">
           <SidebarItem
             icon={<Truck size={20} />}
             text="Orders"

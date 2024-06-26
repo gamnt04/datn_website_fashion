@@ -1,12 +1,35 @@
 import { Link } from 'react-router-dom';
 import img_product from '../../../assets/Images/Products/product_1.png';
 import Products from '../../../components/common/Items/Products';
+import { useRef } from 'react';
+import ScrollTop from '../../../common/hooks/Customers/ScrollTop';
 
 const Trending_Products = () => {
-  const a : Array<number> = [1, 2, 3, 4, 5, 6, 7, 8];
+  const a : Array<number> = [1, 2, 3, 4, 5, 6, 7, 8,9, 10, 11, 12, 13, 14, 15, 16,17,18,19,20,21,22,23,24,25];
+  const sizeListItems = useRef<HTMLDivElement | null>(null);
+  const backItems = useRef<HTMLButtonElement | null>(null);
+  const nextItems = useRef<HTMLButtonElement | null>(null);
+  
+  const handleNext = () => {
+    if (sizeListItems.current) {
+      const offsetWidthListItems = sizeListItems.current.offsetWidth || 0;
+      const sizeGapColumn = parseFloat(window.getComputedStyle(sizeListItems.current).getPropertyValue('column-gap').replace('%', ''));
+      sizeListItems.current.scrollLeft = (sizeListItems.current.scrollLeft + offsetWidthListItems) + (sizeGapColumn / 100 * (offsetWidthListItems));
+    }
+  };
+  
+
+ const handlePrevious = () => {
+  if (sizeListItems.current) {
+    const offsetWidthListItems = sizeListItems.current.offsetWidth || 0;
+    const sizeGapColumn = parseFloat(window.getComputedStyle(sizeListItems.current).getPropertyValue('column-gap').replace('%', ''));
+    sizeListItems.current.scrollLeft = (sizeListItems.current.scrollLeft  - offsetWidthListItems) - (sizeGapColumn / 100 * (offsetWidthListItems));
+  }
+  }
+  
 
   return (
-    <div className="py-16 text-center border-b">
+    <div className="py-16 text-center border-b overflow-hidden">
         {/* title */}
         <div className="text-center flex flex-col items-center">
           <span className="text-4xl font-medium tracking-wide">Trending Products</span>
@@ -21,27 +44,24 @@ const Trending_Products = () => {
 
 
         {/* products */}
-        <div className="mb-[50px]">
-          
-        <div className="overflow-x-scroll hidden_scroll_x grid mt-10 grid-flow-col gap-x-[2.66%] mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[23%] gap-y-[50px] justify-between">
-
+        <div className="mb-[50px] w-auto">
+        <div ref={sizeListItems} className="overflow-x-scroll hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[23%]">
           {/* --  */}
-          {a?.map(() => 
-          (<Products data={img_product}/>)
+          {a?.map((i) => 
+          (<Products data={{img_product, i}}/>)
           )}
-
           {/* -- */}
-
         </div>
+
         {/* back, next page */}
         <div className='flex items-center *:mx-8 justify-center mt-[20px] *:duration-300 *:text-lg'>
-          <button className='opacity-50 cursor-no-drop'>&#10094;</button>
-          <button className='hover:scale-[1.3]'>&#10095;</button>
+          <button ref={backItems} onClick={handlePrevious} className='opacity-50 cursor-drop'>&#10094;</button>
+          <button ref={nextItems} onClick={handleNext} className='hover:scale-[1.3]'>&#10095;</button>
         </div>
         </div>
 
         {/* view all */}
-        <Link className='border px-10 py-2 bg-black text-white' to={''}>View All</Link>
+        <Link onClick={ScrollTop} className='border px-10 py-2 bg-black rounded-md border-none cursor-pointer text-white' to={'/shops'}>View All</Link>
     </div>
   )
 }
