@@ -11,11 +11,11 @@ const IndexHome = () => {
     return (<div className="mt-[100px]">
 
         <Banner />
-        <div className="w-[95%] mx-[2.5%]">
+        <div className="w-full">
             <Outstanding />
         </div>
         <Fres />
-        <div className="w-[95%] mx-[2.5%]">
+        <div className="w-full">
             <Trending_Products />
             <Ourblog />
             <Brand />

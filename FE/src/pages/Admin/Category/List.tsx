@@ -107,7 +107,7 @@ const Category: React.FC = () => {
             />
           )}
           <div className="flex flex-col mt-5">
-            <div className="flex relative justify-between items-center mb-3">
+            <div className="relative flex items-center justify-between mb-3">
               <h1 className="text-lg">Danh sách danh mục</h1>
               <CategoryCreate />
             </div>
@@ -239,10 +239,7 @@ const Category: React.FC = () => {
                                   Xóa
                                 </button>
                               </div>
-                            </td>
-                          </tr>
-                        )
-                      )}
+
                     </tbody>
                   </table>
                 </div>

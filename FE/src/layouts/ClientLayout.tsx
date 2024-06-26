@@ -6,8 +6,13 @@ const ClientLayout = () => {
   return (
     <>
       <Header />
-      <Outlet />
+      <div className="xl:w-full xl:flex xl:justify-center">
+        <div className="xl:w-[1440px]">
+          <Outlet />
+        </div>
+      </div>
       <Footer />
+
     </>
   );
 };
