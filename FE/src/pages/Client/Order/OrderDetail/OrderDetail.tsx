@@ -1,4 +1,4 @@
-import React from "react";
+
 const OrderDetail = () => {
   return (
     <div>
@@ -17,7 +17,7 @@ const OrderDetail = () => {
                 <h3 className="text-[#333] font-semibold text-sm">User Name</h3>
                 <a
                   href=""
-                  className=" text-[#9B9B9B] font-normal text-[14px] flex pt-[5px]  font-normal"
+                  className=" text-[#9B9B9B]  text-[14px] flex pt-[5px]  font-normal"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
