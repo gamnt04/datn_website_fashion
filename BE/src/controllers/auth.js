@@ -8,7 +8,7 @@ import { signupSchema } from "../validations/auth";
 
 
 export const signup = async (req, res) => {
-    const { email, password, name, avatar } = req.body;
+    const { email, password, confirmPassword, userName } = req.body;
     const { error } = signupSchema.validate(req.body, { abortEarly: false });
     console.log(error);
     if (error) {
