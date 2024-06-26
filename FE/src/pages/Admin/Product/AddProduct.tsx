@@ -2,31 +2,25 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { createProduct } from "../../../services/product";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IProduct } from "../../../common/interfaces/Product";
 
-type AddProductForm = {
-  name: string;
-  price: number;
-  image: FileList | null; // Thay đổi kiểu dữ liệu của image thành FileList | null
-  description: string;
-  slug: string;
-  gallery: FileList | null;
-};
+
 
 const AddProduct = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AddProductForm>();
+  } = useForm<IProduct>();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<AddProductForm> = async (data) => {
+  const onSubmit: SubmitHandler<IProduct> = async (data) => {
     try {
-      const { gallery, image, ...formData } = data; // Lấy gallery và image ra khỏi formData
+      const { gallery, image, ...formData }: any = data; // Lấy gallery và image ra khỏi formData
       const uploadedImageUrls = await uploadImage(image); // Upload ảnh chính (image)
       const uploadedGalleryUrls = await uploadGallery(gallery); // Upload ảnh trong gallery
 
-      const newData = {
+      const newData: IProduct = {
         ...formData,
         image: uploadedImageUrls[0], // Giả sử chỉ có một ảnh chính được upload
         gallery: uploadedGalleryUrls,
@@ -34,7 +28,7 @@ const AddProduct = () => {
 
       await createProduct(newData);
       alert("Thêm mới thành công");
-      navigate("/admin/listpro");
+      navigate("/admin/products");
     } catch (error) {
       console.error("Thêm mới thất bại:", error);
       alert("Thêm mới thất bại");

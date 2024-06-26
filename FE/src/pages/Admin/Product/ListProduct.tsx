@@ -41,7 +41,7 @@ const ListProduct = () => {
         <Loading />
       ) : (
         <div className="flex flex-col mt-5">
-          <Link to="/admin/add">
+          <Link to="/admin/products/add">
             <button className="bg-red-400 border">Thêm mới sản phẩm</button>
           </Link>
           <div className="relative flex items-center justify-between mb-3">
