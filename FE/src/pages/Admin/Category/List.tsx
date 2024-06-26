@@ -139,6 +139,33 @@ const Category: React.FC = () => {
                 />
               </div>
             </div>
+            <div className="flex items-center mb-5">
+              <h1>Sắp xếp theo :</h1>
+              <div>
+                <button
+                  className={`w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200`}
+                  onClick={() => handleDateFilter("all")}
+                >
+                  Tất cả
+                </button>
+              </div>
+              <div>
+                <button
+                  className={`w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200`}
+                  onClick={handleAlphabetFilter}
+                >
+                  {alphabetFilter === "asc" ? "A-Z" : "Z-A"}
+                </button>
+              </div>
+              <div className="ml-5">
+                <input
+                  type="date"
+                  value={selectedDate ?? ""}
+                  onChange={handleDateChange}
+                  className="border border-gray-300 w-40 h-8 rounded-md hover:bg-orange-200 focus:bg-orange-200 px-2"
+                />
+              </div>
+            </div>
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                 <div className="overflow-hidden border border-gray-200 md:rounded-lg">
@@ -202,6 +229,7 @@ const Category: React.FC = () => {
                                   className="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                                 />
                                 <span>{index + 1}</span>
+
                               </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
@@ -238,6 +266,7 @@ const Category: React.FC = () => {
                           </tr>
                         )
                       )}
+
                     </tbody>
                   </table>
                 </div>
