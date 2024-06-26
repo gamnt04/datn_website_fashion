@@ -11,7 +11,7 @@ export const createProduct = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find();
     if (products.length === 0) {
       return res.status(404).json({ message: "Khong co san pham" });
     }

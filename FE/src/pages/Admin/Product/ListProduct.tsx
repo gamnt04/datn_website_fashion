@@ -6,6 +6,7 @@ import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 const ListProduct = () => {
   const { data, isLoading } = useProductQuery();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
@@ -40,6 +41,9 @@ const ListProduct = () => {
         <Loading />
       ) : (
         <div className="flex flex-col mt-5">
+          <Link to="/admin/add">
+            <button className="bg-red-400 border">Thêm mới sản phẩm</button>
+          </Link>
           <div className="relative flex items-center justify-between mb-3">
             <h1 className="text-lg">Danh sách sản phẩm</h1>
           </div>
