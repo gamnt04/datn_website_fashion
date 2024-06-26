@@ -24,6 +24,7 @@ import ProductDetail from "../pages/Client/(ProductDetail)/[ProductDetail]";
 import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import Profile from "../pages/Client/Profile/Profile";
+import ListProduct from "../pages/Admin/Product/ListProduct";
 
 
 const RouterComponent = () => {
@@ -47,7 +48,6 @@ const RouterComponent = () => {
             <Route path="allorder" element={<AllOrder />} >
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
-
               <Route path="/allorder/address" element={<Address />} />
             </Route>
             <Route path="contact" element={<Contact />} />
@@ -58,8 +58,9 @@ const RouterComponent = () => {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/admin/category" element={<Category />} />
-            <Route path="/admin/orders" element={<OrderList />} />
+            <Route path="products" element={<ListProduct />} />
+            <Route path="category" element={<Category />} />
+            <Route path="orders" element={<OrderList />} />
             <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
           </Route>
         </Routes>
