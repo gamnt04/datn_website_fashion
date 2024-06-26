@@ -9,31 +9,42 @@ import { GetAllProducts } from "../../../services/product";
 const MainContent = () => {
   const [orderday, setOrderday] = useState<number>(0);
   const [revenueday, setRevenueday] = useState<number>(0);
-  const [totalProducts, settotalProducts] = useState<number>(0);
+  const [totalProducts, setTotalProducts] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
       try {
         const data = await GetAllOrder();
         const today = dayjs().startOf("day");
-        const ordertoday = data.filter((order: IOrder) =>
-          dayjs(order.datetime).isSame(today, "day")
-        );
-        setOrderday(ordertoday.length);
-        const totalRevenueDay = ordertoday.reduce(
-          (sum: number, order: IOrder) => sum + order.price,
-          0
-        );
-        setRevenueday(totalRevenueDay);
+        if (data && data.length > 0) {
+          // Kiểm tra data có dữ liệu không
+          const ordertoday = data.filter((order: IOrder) =>
+            dayjs(order.createDate).isSame(today, "day")
+          );
+          setOrderday(ordertoday.length);
+          const totalRevenueDay = ordertoday.reduce(
+            (sum: number, order: IOrder) => sum + order.totalPrice, // Sử dụng totalPrice thay vì price
+            0
+          );
+          setRevenueday(totalRevenueDay);
+        } else {
+          setOrderday(0);
+          setRevenueday(0);
+        }
       } catch (error) {
         console.log(error);
       }
     })();
   }, []);
+
   useEffect(() => {
     (async () => {
-      const data = await GetAllProducts();
-      settotalProducts(data.length);
+      try {
+        const data = await GetAllProducts();
+        setTotalProducts(data.length);
+      } catch (error) {
+        console.log(error);
+      }
     })();
   }, []);
 
