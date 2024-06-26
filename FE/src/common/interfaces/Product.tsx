@@ -4,8 +4,8 @@ export interface IProduct {
   _id?: string;
   slug: string;
   price: number;
-  image: string;
-  gallery: string[];
+  image: FileList;
+  gallery: FileList | string[];
   description: string;
   countInStock: number;
   featured: string;

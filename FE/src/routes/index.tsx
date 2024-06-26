@@ -25,6 +25,7 @@ import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import Profile from "../pages/Client/Profile/Profile";
 import ListProduct from "../pages/Admin/Product/ListProduct";
+import AddProduct from "../pages/Admin/Product/AddProduct";
 const RouterComponent = () => {
   return (
     <>
@@ -57,6 +58,7 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
+            <Route path="products/add" element={<AddProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route
               path="/admin/orders/:id/orderDetali"
