@@ -8,6 +8,7 @@ import ordersRouter from "./routers/orders";
 import authRouter from "./routers/auth";
 import productRouter from "./routers/product";
 import cartRouter from "./routers/cart";
+import productRouter from "./routers/products";
 const app = express();
 dotenv.config();
 // middleware
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(morgan("tiny"));
 // connectDB
 connectDB("mongodb://localhost:27017/DATN");
+connectDB(process.env.DB_URI);
 // routers
 app.use("/api/v1", categoryRouter);
 app.use("/api/v1", ordersRouter);

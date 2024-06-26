@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
-import { SearchIcon, CartIcon, HeartIcon, NoteIcon } from "../../../resources/svg/Icon/Icon";
 const Pay = () => {
     return (
-        <div className="container mx-auto max-w-[1200px]">
+        <div className="max-w-[1400px] mt-4">
             <div className="mb-20">
                 <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
                     <ul className="flex gap-2">
@@ -11,11 +10,11 @@ const Pay = () => {
                         <li><a href="#">Thanh Toán</a></li>
                     </ul>
                 </div>
-                <div className="flex">
+                <div className="flex mb:flex-col md:flex-row">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                         <div className="col-span-1">
                             <form action="">
-                                <h1 className="text-lg font-bold mb-4">Thông Tin Giao Hàng</h1>
+                                <h1 className="text-lg font-bold mb-4">Thông Tin Khach Hàng</h1>
                                 <div className="mb-4">
                                     <input type="text" placeholder="Họ Và Tên" className="w-full p-3 border rounded text-sm" />
                                 </div>
@@ -36,9 +35,11 @@ const Pay = () => {
                         <div className="col-span-1">
                             <div className="mb-4">
                                 <h1 className="text-lg font-bold mb-4">Vận Chuyển</h1>
-                                <div className="text-gray-700 w-full p-4 border rounded text-sm font-thin">
-                                    Miễn Phí Vận Chuyển Cho Tất Cả Đơn Hàng
-                                </div>
+                                <select className="text-gray-700 w-full p-4 border rounded text-sm">
+                                    <option value="">Miễn Phí Vận Chuyển</option>
+                                    <option value="">Giao Hang Hoa Toc</option>
+                                    <option value="">Giao Hang Tiet Kiem</option>
+                                </select>
                             </div>
                             <div className="">
                                 <h1 className="text-lg font-bold mb-2">Thanh Toán</h1>
@@ -46,22 +47,22 @@ const Pay = () => {
                                     <form action="" className="w-full">
                                         <div className="border-b mb-2  p-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" name="paymentMethod" value="vnpay" className="mr-2" />
-                                                <p className="flex-1 text-sm font-thin">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
+                                                <input type="radio" name="paymentMethod" value="vnpay" className="mr-2" checked/>
+                                                <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
                                                 <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
                                             </label>
                                         </div>
                                         <div className="border-b p-2 mb-2 w-full">
                                             <label className="flex items-center w-full">
                                                 <input type="radio" name="paymentMethod" value="vnpay-qr" className="mr-2" />
-                                                <p className="flex-1 text-sm font-thin">Thanh toán qua VNPAY-QR</p>
+                                                <p className="flex-1 text-sm">Thanh toán qua VNPAY-QR</p>
                                                 <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
                                             </label>
                                         </div>
                                         <div className="mb-2 p-2 w-full">
                                             <label className="flex items-center w-full">
                                                 <input type="radio" name="paymentMethod" value="cod" className="mr-2" />
-                                                <p className="text-sm font-thin">Thanh toán khi nhận hàng (COD)</p>
+                                                <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                             </label>
                                         </div>
                                     </form>
@@ -122,7 +123,7 @@ const Pay = () => {
 
 
 
-                        <div className="flex space-x-2">
+                        {/* <div className="flex space-x-2">
                             <input type="text" placeholder="Nhập mã giảm giá" className="flex-1 p-2 border rounded" />
                             <button className="px-4 py-2 bg-blue-500 text-white rounded">Áp Dụng</button>
                         </div>
@@ -153,7 +154,7 @@ const Pay = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="space-y-2">
                             <div className="flex justify-between">
@@ -169,7 +170,7 @@ const Pay = () => {
                                 <span className="font-bold text-xl text-yellow-500">12.049.055đ</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <a href="/cart" className="text-blue-500">Quay Về Giỏ Hàng</a>
+                                <Link to="/cart" className="text-blue-500">Quay Về Giỏ Hàng</Link>
                                 <button className="px-4 py-2 bg-green-500 text-white rounded">Đặt Hàng</button>
                             </div>
                         </div>
