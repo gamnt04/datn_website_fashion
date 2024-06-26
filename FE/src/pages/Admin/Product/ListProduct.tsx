@@ -7,6 +7,7 @@ import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import AddProduct from "./AddProducts/Index";
 const ListProduct = () => {
   const { data, isLoading } = useProductQuery();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
@@ -41,11 +42,10 @@ const ListProduct = () => {
         <Loading />
       ) : (
         <div className="flex flex-col mt-5">
-          <Link to="/admin/products/add">
-            <button className="bg-red-400 border">Thêm mới sản phẩm</button>
-          </Link>
+
           <div className="relative flex items-center justify-between mb-3">
-            <h1 className="text-lg">Danh sách sản phẩm</h1>
+            <h1 className="text-2xl font-medium">Danh sách sản phẩm</h1>
+            <AddProduct />
           </div>
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -89,7 +89,7 @@ const ListProduct = () => {
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="object-cover w-12 h-12 rounded-lg"
+                            className="object-cover w-20 h-20 rounded-md border "
                           />
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
