@@ -1,14 +1,25 @@
 import { Link } from "react-router-dom";
+import useSignIn from "../../../common/hooks/Auth/useSignIn";
+import { signInSchema } from "../../../common/validations/auth/SignIn";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
-
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: joiResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    }
+  })
+  const { onSubmit } = useSignIn()
 
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg mt-24">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <form className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign In
               </h3>
@@ -28,30 +39,33 @@ const Login = () => {
                 <p className="mx-4 text-gray-600">or</p>
                 <hr className="flex-grow border-gray-300" />
               </div>
-              <label
-                htmlFor="email"
-                className="mb-2 text-sm font-semibold text-gray-900 text-start"
-              >
-                Email*
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="mail@loopple.com"
-                className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none mb-7 focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
-              />
-              <label
-                htmlFor="password"
-                className="mb-2 text-sm font-semibold text-gray-900 text-start"
-              >
-                Password*
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Enter a password"
-                className="flex items-center w-full px-5 py-4 mb-5 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
-              />
+              <div className="mb-3">
+                <label htmlFor="email" className="mb-2 text-sm font-semibold text-gray-900 flex"> Email*</label>
+                <input
+                  id="email"
+                  type="email"
+                  {...register('email', { required: true, })}
+                  placeholder="mail@loopple.com"
+                  className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
+                />
+                {errors.email && <p className="text-start mt-4 text-red-400">{errors.email.message}</p>}
+              </div>
+              <div className="mb-3">
+                <label
+                  htmlFor="password"
+                  className="mb-2 text-sm font-semibold text-gray-900 flex"
+                >
+                  Password*
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  {...register('password', { required: true, minLength: 6, maxLength: 30 })}
+                  placeholder="Enter a password"
+                  className="flex items-center w-full px-5 py-4  text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
+                />
+                {errors.password && <p className="text-start mt-4 text-red-400">{errors.password.message}</p>}
+              </div>
 
               <div className="flex flex-row justify-between mb-8">
                 <label className="relative inline-flex items-center cursor-pointer select-none">

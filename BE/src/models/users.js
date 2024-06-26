@@ -11,11 +11,20 @@ const userSchema = new Schema(
             type: String,
             required: true,
         },
-        name: {
+        userName: {
             type: String,
             required: true,
             minlength: 3,
             maxlength: 30,
+        },
+        fullName: {
+            type: String
+        },
+        address: {
+            type: String
+        },
+        phone: {
+            type: Number
         },
         role: {
             type: String,
