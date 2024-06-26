@@ -5,7 +5,8 @@ import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Dialogs from "../../../components/base/Dialogs/Dialog";
 import Loading from "../../../components/base/Loading/Loading";
-import CategoryCreate from "./Create";
+import UpdateComponent from "./Create";
+import CategoryUpdate from "./update";
 // import CategoryUpdate from "./Update/index";
 
 const Category: React.FC = () => {
@@ -107,9 +108,36 @@ const Category: React.FC = () => {
             />
           )}
           <div className="flex flex-col mt-5">
-            <div className="relative flex items-center justify-between mb-3">
+            <div className="flex relative justify-between items-center mb-3">
               <h1 className="text-lg">Danh sách danh mục</h1>
-              <CategoryCreate />
+              <UpdateComponent />
+            </div>
+            <div className="flex items-center mb-5">
+              <h1>Sắp xếp theo :</h1>
+              <div>
+                <button
+                  className={`w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200`}
+                  onClick={() => handleDateFilter("all")}
+                >
+                  Tất cả
+                </button>
+              </div>
+              <div>
+                <button
+                  className={`w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200`}
+                  onClick={handleAlphabetFilter}
+                >
+                  {alphabetFilter === "asc" ? "A-Z" : "Z-A"}
+                </button>
+              </div>
+              <div className="ml-5">
+                <input
+                  type="date"
+                  value={selectedDate ?? ""}
+                  onChange={handleDateChange}
+                  className="border border-gray-300 w-40 h-8 rounded-md hover:bg-orange-200 focus:bg-orange-200 px-2"
+                />
+              </div>
             </div>
             <div className="flex items-center mb-5">
               <h1>Sắp xếp theo :</h1>
@@ -174,12 +202,6 @@ const Category: React.FC = () => {
                           scope="col"
                           className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                         >
-                          Brand
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >
                           Ngày tạo
                         </th>
                         <th
@@ -207,6 +229,7 @@ const Category: React.FC = () => {
                                   className="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                                 />
                                 <span>{index + 1}</span>
+
                               </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
@@ -214,9 +237,6 @@ const Category: React.FC = () => {
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                               Có {category.products?.length} sản phẩm
-                            </td>
-                            <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              Có {category.collections?.length} nhãn hàng
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                               {category.createdAt &&
@@ -230,7 +250,10 @@ const Category: React.FC = () => {
                             <td className="px-4 py-4 text-sm whitespace-nowrap">
                               <div className="flex items-center gap-x-6">
                                 <div className="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
-                                  {/* <CategoryUpdate data={data} id={category._id} /> */}
+                                  <CategoryUpdate
+                                    data={data}
+                                    id={category._id}
+                                  />
                                 </div>
                                 <button
                                   onClick={() => handleRemove(category)}
@@ -239,6 +262,10 @@ const Category: React.FC = () => {
                                   Xóa
                                 </button>
                               </div>
+                            </td>
+                          </tr>
+                        )
+                      )}
 
                     </tbody>
                   </table>
