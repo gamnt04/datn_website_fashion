@@ -3,8 +3,8 @@ import { createProduct } from "../../../../services/product";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IProduct } from "../../../../common/interfaces/Product";
-
-
+import { useEffect, useState } from "react";
+import Message from "../../../../components/base/Message/Message";
 
 const AddProduct = () => {
   const {
@@ -12,7 +12,10 @@ const AddProduct = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IProduct>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const [showMessage, setShowMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
     try {
@@ -27,11 +30,12 @@ const AddProduct = () => {
       };
 
       await createProduct(newData);
-      alert("Thêm mới thành công");
-      navigate("/admin/products");
+      setSuccessMessage("Thêm Sản Phẩm thành công !");
+      setShowMessage(true);
     } catch (error) {
       console.error("Thêm mới thất bại:", error);
-      alert("Thêm mới thất bại");
+      setErrorMessage("Thêm Sản Phẩm Lỗi !");
+      setShowMessage(true);
     }
   };
 
@@ -92,14 +96,45 @@ const AddProduct = () => {
     }
   };
 
+  useEffect(() => {
+    if (showMessage) {
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+        setSuccessMessage("");
+        setErrorMessage("");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage]);
+
   return (
     <div className="container mx-auto">
+      {successMessage && (
+        <Message
+          message={successMessage}
+          timeout={2000}
+          openMessage={showMessage}
+          type={"success"}
+        />
+      )}
+      {errorMessage && (
+        <Message
+          message={errorMessage}
+          timeout={2000}
+          openMessage={showMessage}
+          type={"warning"}
+        />
+      )}
       <div className="flex justify-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-
-
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        >
           <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
+            <label
+              htmlFor="name"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
               Name
             </label>
             <input
@@ -108,11 +143,16 @@ const AddProduct = () => {
               {...register("name", { required: "Không bỏ trống" })}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">{errors.name?.message}</div>
+            <div className="text-red-500 text-xs italic">
+              {errors.name?.message}
+            </div>
           </div>
 
           <div className="mb-4">
-            <label htmlFor="price" className="block text-gray-700 text-sm font-bold mb-2">
+            <label
+              htmlFor="price"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
               Price
             </label>
             <input
@@ -121,10 +161,15 @@ const AddProduct = () => {
               {...register("price", { required: "Không bỏ trống" })}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">{errors.price?.message}</div>
+            <div className="text-red-500 text-xs italic">
+              {errors.price?.message}
+            </div>
           </div>
           <div className="mb-4">
-            <label htmlFor="slug" className="block text-gray-700 text-sm font-bold mb-2">
+            <label
+              htmlFor="slug"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
               Danh mục
             </label>
             <input
@@ -133,10 +178,15 @@ const AddProduct = () => {
               {...register("slug", { required: "Không bỏ trống" })}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">{errors.slug?.message}</div>
+            <div className="text-red-500 text-xs italic">
+              {errors.slug?.message}
+            </div>
           </div>
           <div className="mb-4">
-            <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">
+            <label
+              htmlFor="description"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
               Description
             </label>
             <textarea
@@ -144,26 +194,37 @@ const AddProduct = () => {
               {...register("description", { required: "Không bỏ trống" })}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">{errors.description?.message}</div>
+            <div className="text-red-500 text-xs italic">
+              {errors.description?.message}
+            </div>
           </div>
-
 
           <div className="mb-4">
             <div className="mb-4">
-              <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">
+              <label
+                htmlFor="image"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
                 Image
               </label>
               <input
                 type="file"
                 id="product_image"
-                {...register("image", { required: "Vui lòng chọn ảnh sản phẩm" })}
+                {...register("image", {
+                  required: "Vui lòng chọn ảnh sản phẩm",
+                })}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
-              <div className="text-red-500 text-xs italic">{errors.image?.message}</div>
+              <div className="text-red-500 text-xs italic">
+                {errors.image?.message}
+              </div>
             </div>
 
             <div>
-              <label htmlFor="gallery" className="block text-gray-700 text-sm font-bold mb-2">
+              <label
+                htmlFor="gallery"
+                className="block text-gray-700 text-sm font-bold mb-2"
+              >
                 Gallery
               </label>
               <input
@@ -173,7 +234,9 @@ const AddProduct = () => {
                 {...register("gallery")}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
-              <div className="text-red-500 text-xs italic">{errors.gallery?.message}</div>
+              <div className="text-red-500 text-xs italic">
+                {errors.gallery?.message}
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-between">
@@ -187,9 +250,6 @@ const AddProduct = () => {
         </form>
       </div>
     </div>
-
-
-
   );
 };
 
