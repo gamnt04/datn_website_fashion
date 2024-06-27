@@ -10,7 +10,6 @@ export interface IProduct {
   countInStock: number;
   featured: string;
   tag: string[];
-  collections?: string[];
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
 }
