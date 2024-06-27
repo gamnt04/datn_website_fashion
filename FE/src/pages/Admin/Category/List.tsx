@@ -5,7 +5,8 @@ import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Dialogs from "../../../components/base/Dialogs/Dialog";
 import Loading from "../../../components/base/Loading/Loading";
-import CategoryCreate from "./Create";
+import UpdateComponent from "./Create";
+import CategoryUpdate from "./update";
 // import CategoryUpdate from "./Update/index";
 
 const Category: React.FC = () => {
@@ -15,6 +16,7 @@ const Category: React.FC = () => {
   const [alphabetFilter, setAlphabetFilter] = useState<"asc" | "desc">("asc");
   const [dateFilter, setDateFilter] = useState<"all" | "selectedDate">("all");
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const formatDate = (dateString: string | number) => {
     if (!dateString) return "";
@@ -57,6 +59,10 @@ const Category: React.FC = () => {
     setDateFilter("selectedDate");
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
   const filteredData = data?.sort((a: ICategory, b: ICategory) => {
     const nameA = a.name ?? "";
     const nameB = b.name ?? "";
@@ -89,6 +95,11 @@ const Category: React.FC = () => {
     }
   });
 
+  const searchFilteredData = dateFilteredData?.filter(
+    (category: ICategory | any) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       {isLoading ? (
@@ -107,10 +118,11 @@ const Category: React.FC = () => {
             />
           )}
           <div className="flex flex-col mt-5">
-            <div className="relative flex items-center justify-between mb-3">
+            <div className="flex relative justify-between items-center mb-3">
               <h1 className="text-lg">Danh sách danh mục</h1>
-              <CategoryCreate />
+              <UpdateComponent />
             </div>
+
             <div className="flex items-center mb-5">
               <h1>Sắp xếp theo :</h1>
               <div>
@@ -135,6 +147,15 @@ const Category: React.FC = () => {
                   value={selectedDate ?? ""}
                   onChange={handleDateChange}
                   className="border border-gray-300 w-40 h-8 rounded-md hover:bg-orange-200 focus:bg-orange-200 px-2"
+                />
+              </div>
+              <div className="ml-5">
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="border border-gray-300 w-40 h-8 rounded-md px-2"
                 />
               </div>
             </div>
@@ -174,12 +195,6 @@ const Category: React.FC = () => {
                           scope="col"
                           className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                         >
-                          Brand
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                        >
                           Ngày tạo
                         </th>
                         <th
@@ -197,7 +212,7 @@ const Category: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                      {dateFilteredData?.map(
+                      {searchFilteredData?.map(
                         (category: ICategory, index: number) => (
                           <tr key={index + 1}>
                             <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
@@ -216,9 +231,6 @@ const Category: React.FC = () => {
                               Có {category.products?.length} sản phẩm
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              Có {category.collections?.length} nhãn hàng
-                            </td>
-                            <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                               {category.createdAt &&
                                 formatDate(category.createdAt)}
                             </td>
@@ -229,7 +241,10 @@ const Category: React.FC = () => {
                             <td className="px-4 py-4 text-sm whitespace-nowrap">
                               <div className="flex items-center gap-x-6">
                                 <div className="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
-                                  {/* <CategoryUpdate data={data} id={category._id} /> */}
+                                  <CategoryUpdate
+                                    data={data}
+                                    id={category._id}
+                                  />
                                 </div>
                                 <button
                                   onClick={() => handleRemove(category)}

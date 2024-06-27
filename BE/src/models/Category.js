@@ -15,12 +15,6 @@ const categorySchema = mongoose.Schema(
         ref: "Product",
       },
     ],
-    collections: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Collection",
-      },
-    ],
     slug: {
       type: String,
       slug: "name",
