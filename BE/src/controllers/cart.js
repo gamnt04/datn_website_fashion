@@ -47,3 +47,46 @@ export const addProductsToCart = async (req, res) => {
       .json({ error: "Internal Server Error" });
   }
 };
+export const removeProductToCart = async (req, res) => {
+  const { userId, productId } = req.body;
+  try {
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart Not Found" });
+    }
+    cart.products = cart.products.filter(
+      (product) =>
+        product.productId && product.productId.toString() !== productId
+    );
+    await cart.save();
+    return res.status(StatusCodes.OK).json({ cart });
+  } catch (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: "Internal Server Error" });
+  }
+};
+export const updateQuantityProductsInCart = async (req, res) => {
+  const { userId, productId, quantity } = req.body;
+  try {
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart Not Found" });
+    }
+    const product = cart.products.find(
+      (item) => item.productId.toString() === productId
+    );
+    if (!product) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Product Not Found" });
+    }
+    product.quantity += quantity;
+    await cart.save();
+    return res.status(StatusCodes.OK).json({ cart });
+  } catch (error) {}
+};
