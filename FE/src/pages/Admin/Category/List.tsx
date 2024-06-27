@@ -16,6 +16,7 @@ const Category: React.FC = () => {
   const [alphabetFilter, setAlphabetFilter] = useState<"asc" | "desc">("asc");
   const [dateFilter, setDateFilter] = useState<"all" | "selectedDate">("all");
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const formatDate = (dateString: string | number) => {
     if (!dateString) return "";
@@ -58,6 +59,10 @@ const Category: React.FC = () => {
     setDateFilter("selectedDate");
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
   const filteredData = data?.sort((a: ICategory, b: ICategory) => {
     const nameA = a.name ?? "";
     const nameB = b.name ?? "";
@@ -89,6 +94,11 @@ const Category: React.FC = () => {
         return true;
     }
   });
+
+  const searchFilteredData = dateFilteredData?.filter(
+    (category: ICategory | any) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -137,6 +147,15 @@ const Category: React.FC = () => {
                   value={selectedDate ?? ""}
                   onChange={handleDateChange}
                   className="border border-gray-300 w-40 h-8 rounded-md hover:bg-orange-200 focus:bg-orange-200 px-2"
+                />
+              </div>
+              <div className="ml-5">
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="border border-gray-300 w-40 h-8 rounded-md px-2"
                 />
               </div>
             </div>
@@ -193,7 +212,7 @@ const Category: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                      {dateFilteredData?.map(
+                      {searchFilteredData?.map(
                         (category: ICategory, index: number) => (
                           <tr key={index + 1}>
                             <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
