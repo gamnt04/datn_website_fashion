@@ -115,7 +115,7 @@ const Category: React.FC = () => {
               <h1>Sắp xếp theo :</h1>
               <div>
                 <button
-                  className={`w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200`}
+                  className="w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200"
                   onClick={() => handleDateFilter("all")}
                 >
                   Tất cả
@@ -123,7 +123,7 @@ const Category: React.FC = () => {
               </div>
               <div>
                 <button
-                  className={`w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200`}
+                  className="w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200"
                   onClick={handleAlphabetFilter}
                 >
                   {alphabetFilter === "asc" ? "A-Z" : "Z-A"}
@@ -226,7 +226,6 @@ const Category: React.FC = () => {
                               {category.updatedAt &&
                                 formatDate(category.updatedAt)}
                             </td>
-
                             <td className="px-4 py-4 text-sm whitespace-nowrap">
                               <div className="flex items-center gap-x-6">
                                 <div className="text-gray-500 transition-colors duration-200 dark:hover:text-indigo-500 dark:text-gray-300 hover:text-indigo-500 focus:outline-none">
@@ -239,7 +238,10 @@ const Category: React.FC = () => {
                                   Xóa
                                 </button>
                               </div>
-
+                            </td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                   </table>
                 </div>
