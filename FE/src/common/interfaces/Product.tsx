@@ -1,16 +1,16 @@
 import { ReactNode } from "react";
 export interface IProduct {
   name: string;
-  id: string;
+  _id?: string;
   slug: string;
   price: number;
-  image: string;
-  gallery: string[];
+  image: FileList;
+  category_id: string[];
+  gallery: FileList | string[];
   description: string;
   countInStock: number;
   featured: string;
   tag: string[];
-  collections?: string[];
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
 }

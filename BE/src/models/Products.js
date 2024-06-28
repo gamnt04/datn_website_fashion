@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    category: {
+    category_id: {
       type: mongoose.Schema.ObjectId,
       ref: "Category",
     },
@@ -44,4 +44,4 @@ const productSchema = new mongoose.Schema(
   { timestamps: true, versionKey: 0 }
 );
 
-export default mongoose.model("Product", productSchema);
+export default mongoose.model("Products", productSchema);

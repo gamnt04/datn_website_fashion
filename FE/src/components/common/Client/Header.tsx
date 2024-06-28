@@ -20,18 +20,18 @@ const Header = () => {
 
   // change title by redux 
   const dispatch = useDispatch();
-  const ChangeTitle_1  = () => {
-    dispatch({type: "Title_change_1"});
+  const ChangeTitle_1 = () => {
+    dispatch({ type: "Title_change_1" });
   }
 
   // Fn scroll top and change title 
   const ScrollTop_and_Change = async () => {
-     await ScrollTop();
-     await ChangeTitle_2();
+    await ScrollTop();
+    await ChangeTitle_2();
   }
 
   const ChangeTitle_2 = () => {
-    dispatch({type: "Title_change_2"});
+    dispatch({ type: "Title_change_2" });
   }
 
 
@@ -162,7 +162,7 @@ const Header = () => {
             *:p-1 *:border right-0 *:rounded -translate-y-1/2 translate-x-1/2 group-hover:translate-x-0 before:translate-x-1/2">
               <Link className="hover:scale-110" to={'/login'}>Sign in</Link>
               <Link className="hover:scale-110" to={'/login/register'}>Sign up</Link>
-              <Link className="hover:scale-110" to={''}><SettingIcon /><span>Setting</span></Link>
+              <Link className="hover:scale-110" to={'/allorder'}><SettingIcon /><span>Setting</span></Link>
             </div>
           </div>
 
