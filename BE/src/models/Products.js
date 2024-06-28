@@ -1,3 +1,4 @@
+// models/Products.ts
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -12,8 +13,9 @@ const productSchema = new mongoose.Schema(
       unique: true,
     },
     category_id: {
-      type: mongoose.Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
+      required: true,
     },
     price: {
       type: Number,
@@ -24,7 +26,7 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
     gallery: {
-      type: Array,
+      type: [String],
     },
     description: {
       type: String,
@@ -38,10 +40,10 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
     tag: {
-      type: Array,
+      type: [String],
     },
   },
-  { timestamps: true, versionKey: 0 }
+  { timestamps: true, versionKey: false }
 );
 
 export default mongoose.model("Products", productSchema);
