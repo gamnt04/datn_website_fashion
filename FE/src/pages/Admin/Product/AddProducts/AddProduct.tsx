@@ -1,3 +1,4 @@
+// components/AddProduct/AddProduct.tsx
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createProduct } from "../../../../services/product";
 import axios from "axios";
@@ -9,23 +10,25 @@ import { ICategory } from "../../../../common/interfaces/Category";
 
 const AddProduct = () => {
   const { data } = useCategoryQuery();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IProduct>();
+  // const navigate = useNavigate();
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const onSubmit: SubmitHandler<IProduct> = async (formData) => {
+  const onSubmit: SubmitHandler<IProduct> = async (data) => {
     try {
-      const { gallery, image, ...data }: any = formData; // Lấy gallery và image ra khỏi formData
+      const { gallery, image, ...formData }: any = data; // Lấy gallery và image ra khỏi formData
       const uploadedImageUrls = await uploadImage(image); // Upload ảnh chính (image)
       const uploadedGalleryUrls = await uploadGallery(gallery); // Upload ảnh trong gallery
 
       const newData: IProduct = {
-        ...data,
+        ...formData,
         image: uploadedImageUrls[0], // Giả sử chỉ có một ảnh chính được upload
         gallery: uploadedGalleryUrls,
       };
@@ -37,6 +40,7 @@ const AddProduct = () => {
       console.error("Thêm mới thất bại:", error);
       setErrorMessage("Thêm Sản Phẩm Lỗi !");
       setShowMessage(true);
+      console.log(error);
     }
   };
 
@@ -184,10 +188,6 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-
-            <div className="text-xs italic text-red-500">
-              {errors.category_id?.message}
-            </div>
           </div>
           <div className="mb-4">
             <label
@@ -241,69 +241,17 @@ const AddProduct = () => {
                 {...register("gallery")}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               />
+              <div className="text-xs italic text-red-500">
+                {errors.gallery?.message}
+              </div>
             </div>
           </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="countInStock"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Count In Stock
-            </label>
-            <input
-              type="number"
-              placeholder="Count In Stock"
-              {...register("countInStock", { required: "Không bỏ trống" })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.countInStock?.message}
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="featured"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Featured
-            </label>
-            <input
-              type="text"
-              placeholder="Featured"
-              {...register("featured", { required: "Không bỏ trống" })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.featured?.message}
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="tag"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Tag
-            </label>
-            <input
-              type="text"
-              placeholder="Tag"
-              {...register("tag", { required: "Không bỏ trống" })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.tag?.message}
-            </div>
-          </div>
-
-          <div className="mb-4">
+          <div className="flex items-center justify-between">
             <button
               type="submit"
               className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             >
-              Add Product
+              Thêm mới
             </button>
           </div>
         </form>
