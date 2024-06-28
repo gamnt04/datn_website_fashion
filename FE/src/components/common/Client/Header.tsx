@@ -100,7 +100,7 @@ const Header = () => {
           </Link>
 
 
-          {/* menu desktop  ahihi test commit*/}
+          {/* menu desktop */}
           {/* map() => render routing*/}
           <nav className="mb:hidden lg:block lg:flex justify-between items-center *:xl:mx-5 *:lg:mx-4 *:font-semibold
          *:capitalize *:relative *:duration-300 *:after:content-[''] *:after:duration-300 *:after:absolute *:after:w-0 *:after:right-1/2 *:after:bottom-[-30%] *:after:h-[2px] *:after:bg-orange-600
