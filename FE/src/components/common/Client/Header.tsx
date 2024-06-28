@@ -25,9 +25,9 @@ const Header = () => {
 
   // change title by redux 
   const dispatch = useDispatch();
-  const ChangeTitle_1 = () => {
-    dispatch({ type: "Title_change_1" });
-  }
+  // const ChangeTitle_1 = () => {
+  //   dispatch({ type: "Title_change_1" });
+  // }
 
   // Fn scroll top and change title 
   const ScrollTop_and_Change = async () => {
