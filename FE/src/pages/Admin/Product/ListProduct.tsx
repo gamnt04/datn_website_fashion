@@ -6,7 +6,6 @@ import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import AddProduct from "./AddProducts/Index";
 const ListProduct = () => {
   const { data, isLoading } = useProductQuery();
@@ -42,7 +41,6 @@ const ListProduct = () => {
         <Loading />
       ) : (
         <div className="flex flex-col mt-5">
-
           <div className="relative flex items-center justify-between mb-3">
             <h1 className="text-2xl font-medium">Danh sách sản phẩm</h1>
             <AddProduct />
@@ -89,7 +87,7 @@ const ListProduct = () => {
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="object-cover w-20 h-20 rounded-md border "
+                            className="object-cover w-20 h-20 border rounded-md "
                           />
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
@@ -110,10 +108,11 @@ const ListProduct = () => {
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <button
                             onClick={() => handleRemove(product._id!)}
-                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${removingProductId === product._id
-                              ? "bg-gray-500"
-                              : "bg-rose-500 hover:bg-rose-400"
-                              } focus:outline-none`}
+                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${
+                              removingProductId === product._id
+                                ? "bg-gray-500"
+                                : "bg-rose-500 hover:bg-rose-400"
+                            } focus:outline-none`}
                             disabled={removingProductId === product._id}
                           >
                             {removingProductId === product._id
