@@ -1,6 +1,4 @@
 import Cart from "../models/cart.js";
-import Product from "../models/product.js";
-import User from "../models/cart";
 import { StatusCodes } from "http-status-codes";
 
 export const getCartByIdUser = async (req, res) => {
