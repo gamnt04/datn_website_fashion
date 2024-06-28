@@ -15,7 +15,6 @@ const Register = () => {
     defaultValues: {
       email: "",
       password: "",
-
       confirmPassword: "",
     },
   });
