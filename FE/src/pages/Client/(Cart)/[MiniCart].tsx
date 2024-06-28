@@ -3,9 +3,9 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop"
 import { RecycleIcon } from "../../../resources/svg/Icon/Icon"
 
 const MiniCart = () => {
-    return (<div className="absolute rounded bg-white shadow mb:w-[70%] lg:w-[25%] duration-300 right-[7%] group-hover:scale-100 scale-0 shadow-2xl 
-    p-4 group-hover:translate-y-[15px] group-hover:translate-x-0 translate-x-1/2 -translate-y-1/2 before:content-[''] 
-    before:absolute before:w-[35px] before:h-[20px] before:right-[-5px] before:top-0 before:translate-y-[-100%]">
+    return (<div className="absolute rounded bg-white shadow mb:w-[70vw] lg:w-[25vw] duration-300 right-0 group-hover:scale-100 scale-0 shadow-2xl 
+    p-4 group-hover:translate-y-[15px] lg:group-hover:translate-x-0 group-hover:translate-x-1/2 translate-x-1/2 -translate-y-1/2
+    before:absolute before:w-[65px] before:h-[40px] before:right-[-5px] before:top-0 before:translate-y-[-20px] before:bg-none">
             <div className="mb-[20px]">
                 <span className="text-sm">You have 3 items in you cart</span>
             </div>

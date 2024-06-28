@@ -15,14 +15,14 @@ const Ourblog = () => {
                 suspension.
             </p>
 
-            <div className="grid grid-cols-1 gap-9 mt-14 sm:grid-cols-2 md:grid-cols-3 ">
+            <div className="grid grid-cols-1 gap-9 mt-14 sm:grid-cols-2 md:grid-cols-3 *:rounded">
                 {a?.map(() =>
                 (
                     <div className="overflow-hidden hover:shadow-xl group pb-10 duration-500 cursor-pointer">
                         <img
                             src={img_blog}
                             alt=""
-                            className="w-full group-hover:scale-105 h-[215px] transition-transform duration-300 transform"
+                            className="w-full rounded group-hover:scale-105 h-[215px] transition-transform duration-300 transform"
                         />
                         <div className="px-8 ">
                             <h3 className="text-2xl font-normal text-[#222222] mt-6">
