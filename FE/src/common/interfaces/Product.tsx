@@ -5,6 +5,7 @@ export interface IProduct {
   slug: string;
   price: number;
   image: FileList;
+  category_id: string[];
   gallery: FileList | string[];
   description: string;
   countInStock: number;

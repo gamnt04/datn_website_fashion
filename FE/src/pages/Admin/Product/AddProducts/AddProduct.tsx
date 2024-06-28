@@ -4,26 +4,28 @@ import axios from "axios";
 import { IProduct } from "../../../../common/interfaces/Product";
 import { useEffect, useState } from "react";
 import Message from "../../../../components/base/Message/Message";
+import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
+import { ICategory } from "../../../../common/interfaces/Category";
 
 const AddProduct = () => {
+  const { data } = useCategoryQuery();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IProduct>();
-  // const navigate = useNavigate();
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const onSubmit: SubmitHandler<IProduct> = async (data) => {
+  const onSubmit: SubmitHandler<IProduct> = async (formData) => {
     try {
-      const { gallery, image, ...formData }: any = data; // Lấy gallery và image ra khỏi formData
+      const { gallery, image, ...data }: any = formData; // Lấy gallery và image ra khỏi formData
       const uploadedImageUrls = await uploadImage(image); // Upload ảnh chính (image)
       const uploadedGalleryUrls = await uploadGallery(gallery); // Upload ảnh trong gallery
 
       const newData: IProduct = {
-        ...formData,
+        ...data,
         image: uploadedImageUrls[0], // Giả sử chỉ có một ảnh chính được upload
         gallery: uploadedGalleryUrls,
       };
@@ -171,14 +173,20 @@ const AddProduct = () => {
             >
               Danh mục
             </label>
-            <input
-              type="text"
-              placeholder="Danh mục"
-              {...register("slug", { required: "Không bỏ trống" })}
+            <select
+              {...register("category_id", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
+            >
+              <option value="">-- Chọn danh mục --</option>
+              {data?.map((category: ICategory) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+
             <div className="text-xs italic text-red-500">
-              {errors.slug?.message}
+              {errors.category_id?.message}
             </div>
           </div>
           <div className="mb-4">
@@ -233,17 +241,69 @@ const AddProduct = () => {
                 {...register("gallery")}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               />
-              <div className="text-xs italic text-red-500">
-                {errors.gallery?.message}
-              </div>
             </div>
           </div>
-          <div className="flex items-center justify-between">
+
+          <div className="mb-4">
+            <label
+              htmlFor="countInStock"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Count In Stock
+            </label>
+            <input
+              type="number"
+              placeholder="Count In Stock"
+              {...register("countInStock", { required: "Không bỏ trống" })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.countInStock?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="featured"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Featured
+            </label>
+            <input
+              type="text"
+              placeholder="Featured"
+              {...register("featured", { required: "Không bỏ trống" })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.featured?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="tag"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Tag
+            </label>
+            <input
+              type="text"
+              placeholder="Tag"
+              {...register("tag", { required: "Không bỏ trống" })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.tag?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
             <button
               type="submit"
               className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             >
-              Thêm mới
+              Add Product
             </button>
           </div>
         </form>
