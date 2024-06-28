@@ -1,11 +1,15 @@
-
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import useSignUp from "../../../common/hooks/Auth/useSignUp";
+import ToastContainer from "../../../common/hooks/Auth/useSignUp";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { signUpSchema } from "../../../common/validations/auth/SignUp";
 const Register = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
     resolver: joiResolver(signUpSchema),
     defaultValues: {
       userName: "",
@@ -13,18 +17,24 @@ const Register = () => {
       password: "",
       confirmPassword: ""
     }
-  })
-  const { onSubmit } = useSignUp()
+  });
+  const { onSubmit } = useSignUp();
   return (
     <div className="container flex flex-col mx-auto rounded-lg mt-24">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border"
+            >
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign Up
               </h3>
-              <p className="mb-4 text-gray-600"> Enter your email and password </p>
+              <p className="mb-4 text-gray-600">
+                {" "}
+                Enter your email and password{" "}
+              </p>
               <a className="flex items-center justify-center w-full py-4 mb-6 text-sm font-medium text-gray-900 transition duration-300 border border-gray-200 bg-gray-50 rounded-2xl hover:bg-gray-100 focus:ring-4 focus:ring-gray-300">
                 <img
                   className="h-5 mr-2"
@@ -39,26 +49,49 @@ const Register = () => {
                 <hr className="flex-grow border-gray-300" />
               </div>
               <div className="mb-3">
-                <label htmlFor="userName" className="mb-2 text-sm font-semibold text-gray-900 flex ">UserName</label>
+                <label
+                  htmlFor="userName"
+                  className="mb-2 text-sm font-semibold text-gray-900 flex "
+                >
+                  UserName
+                </label>
                 <input
                   id="userName"
                   type="text"
                   placeholder="UserName"
-                  {...register('userName', { required: true, minLength: 3, maxLength: 30 })}
+                  {...register("userName", {
+                    required: true,
+                    minLength: 3,
+                    maxLength: 30
+                  })}
                   className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
                 />
-                {errors.userName && <p className="text-start mt-4 text-red-400">{errors.userName.message}</p>}
+                {errors.userName && (
+                  <p className="text-start mt-4 text-red-400">
+                    {errors.userName.message}
+                  </p>
+                )}
               </div>
               <div className="mb-3">
-                <label htmlFor="email" className="mb-2 text-sm font-semibold text-gray-900 flex"> Email*</label>
+                <label
+                  htmlFor="email"
+                  className="mb-2 text-sm font-semibold text-gray-900 flex"
+                >
+                  {" "}
+                  Email*
+                </label>
                 <input
                   id="email"
                   type="email"
-                  {...register('email', { required: true, })}
+                  {...register("email", { required: true })}
                   placeholder="mail@loopple.com"
                   className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
                 />
-                {errors.email && <p className="text-start mt-4 text-red-400">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-start mt-4 text-red-400">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
               <div className="mb-3">
                 <label
@@ -70,11 +103,19 @@ const Register = () => {
                 <input
                   id="password"
                   type="password"
-                  {...register('password', { required: true, minLength: 6, maxLength: 30 })}
+                  {...register("password", {
+                    required: true,
+                    minLength: 6,
+                    maxLength: 30
+                  })}
                   placeholder="Enter a password"
                   className="flex items-center w-full px-5 py-4  text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
                 />
-                {errors.password && <p className="text-start mt-4 text-red-400">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-start mt-4 text-red-400">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <div className="mb-3">
                 <label
@@ -86,11 +127,15 @@ const Register = () => {
                 <input
                   id="confirmPassword"
                   type="password"
-                  {...register('confirmPassword', { required: true })}
+                  {...register("confirmPassword", { required: true })}
                   placeholder="Enter a password"
                   className="flex items-center w-full px-5 py-4  text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
                 />
-                {errors.confirmPassword && <p className="text-start mt-4 text-red-400">{errors.confirmPassword.message}</p>}
+                {errors.confirmPassword && (
+                  <p className="text-start mt-4 text-red-400">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-row justify-between mb-8 mt-4">
                 <label className="relative inline-flex items-center cursor-pointer select-none">
