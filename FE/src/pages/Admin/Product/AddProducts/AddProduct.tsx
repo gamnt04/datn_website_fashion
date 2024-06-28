@@ -1,6 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createProduct } from "../../../../services/product";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IProduct } from "../../../../common/interfaces/Product";
 import { useEffect, useState } from "react";
@@ -128,12 +127,12 @@ const AddProduct = () => {
       <div className="flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+          className="px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
         >
           <div className="mb-4">
             <label
               htmlFor="name"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block mb-2 text-sm font-bold text-gray-700"
             >
               Name
             </label>
@@ -141,9 +140,9 @@ const AddProduct = () => {
               type="text"
               placeholder="Name"
               {...register("name", { required: "Không bỏ trống" })}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">
+            <div className="text-xs italic text-red-500">
               {errors.name?.message}
             </div>
           </div>
@@ -151,7 +150,7 @@ const AddProduct = () => {
           <div className="mb-4">
             <label
               htmlFor="price"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block mb-2 text-sm font-bold text-gray-700"
             >
               Price
             </label>
@@ -159,16 +158,16 @@ const AddProduct = () => {
               type="number"
               placeholder="Price"
               {...register("price", { required: "Không bỏ trống" })}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">
+            <div className="text-xs italic text-red-500">
               {errors.price?.message}
             </div>
           </div>
           <div className="mb-4">
             <label
               htmlFor="slug"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block mb-2 text-sm font-bold text-gray-700"
             >
               Danh mục
             </label>
@@ -176,25 +175,25 @@ const AddProduct = () => {
               type="text"
               placeholder="Danh mục"
               {...register("slug", { required: "Không bỏ trống" })}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">
+            <div className="text-xs italic text-red-500">
               {errors.slug?.message}
             </div>
           </div>
           <div className="mb-4">
             <label
               htmlFor="description"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block mb-2 text-sm font-bold text-gray-700"
             >
               Description
             </label>
             <textarea
               placeholder="Description"
               {...register("description", { required: "Không bỏ trống" })}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
-            <div className="text-red-500 text-xs italic">
+            <div className="text-xs italic text-red-500">
               {errors.description?.message}
             </div>
           </div>
@@ -203,7 +202,7 @@ const AddProduct = () => {
             <div className="mb-4">
               <label
                 htmlFor="image"
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block mb-2 text-sm font-bold text-gray-700"
               >
                 Image
               </label>
@@ -213,9 +212,9 @@ const AddProduct = () => {
                 {...register("image", {
                   required: "Vui lòng chọn ảnh sản phẩm",
                 })}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               />
-              <div className="text-red-500 text-xs italic">
+              <div className="text-xs italic text-red-500">
                 {errors.image?.message}
               </div>
             </div>
@@ -223,7 +222,7 @@ const AddProduct = () => {
             <div>
               <label
                 htmlFor="gallery"
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block mb-2 text-sm font-bold text-gray-700"
               >
                 Gallery
               </label>
@@ -232,9 +231,9 @@ const AddProduct = () => {
                 id="product_gallery"
                 multiple
                 {...register("gallery")}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               />
-              <div className="text-red-500 text-xs italic">
+              <div className="text-xs italic text-red-500">
                 {errors.gallery?.message}
               </div>
             </div>
@@ -242,7 +241,7 @@ const AddProduct = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="bg-blue-500 w-full hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             >
               Thêm mới
             </button>
