@@ -4,7 +4,7 @@ export interface IProduct {
   _id?: string;
   slug: string;
   price: number;
-  image: FileList;
+  image: FileList | string[];
   category_id: string[];
   gallery: FileList | string[];
   description: string;
