@@ -8,7 +8,7 @@ import Get_in_touch from "./[Get_in_touch]";
 
 
 const IndexHome = () => {
-    return (<div className="mt-[100px]">
+    return (<div className="lg:mt-[40px] mt-[60px]">
 
         <Banner />
         <div className="w-full">

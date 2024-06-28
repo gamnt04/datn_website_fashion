@@ -14,7 +14,7 @@ const Products = ({ data }: dataProps) => {
   }
 
   return (
-    <div className="w-full h-full text-start  flex flex-col justify-between">
+    <div className="w-full text-start flex flex-col gap-y-6">
       <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
         <Link onClick={ScrollTop} to={'/shops/detail_product'} className="h-full cursor-pointer *:drop-shadow">
           <img className="group-hover:scale-105 duration-500 w-full h-full lg:px-8 mb:px-10 lg:py-6 mb:py-6" loading="lazy" src={data.img_product} />

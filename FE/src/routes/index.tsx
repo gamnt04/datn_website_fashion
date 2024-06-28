@@ -24,9 +24,9 @@ import Category from "../pages/Admin/Category/List";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 import OrderList from "../pages/Admin/Orders/OrderList";
 import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
-import IndexHome from "../pages/Client/(Home)/[Index]";
-import IndexShops from "../pages/Client/(Shop)/[Index]";
-import ProductDetail from "../pages/Client/(ProductDetail)/[ProductDetail]";
+import IndexHome from "../pages/Client/(Home)/page";
+import IndexShops from "../pages/Client/(Shop)/page";
+import ProductDetail from "../pages/Client/(ProductDetail)/page";
 
 const RouterComponent = () => {
   return (

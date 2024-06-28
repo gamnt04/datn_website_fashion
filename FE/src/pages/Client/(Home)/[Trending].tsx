@@ -45,7 +45,7 @@ const Trending_Products = () => {
 
         {/* products */}
         <div className="mb-[50px] w-auto">
-        <div ref={sizeListItems} className="overflow-x-scroll hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[23%]">
+        <div ref={sizeListItems} className="overflow-x-scroll hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col lg:gap-x-[1.25%] gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[19%]">
           {/* --  */}
           {a?.map((i) => 
           (<Products data={{img_product, i}}/>)
@@ -61,7 +61,9 @@ const Trending_Products = () => {
         </div>
 
         {/* view all */}
+        <div className='hover:scale-105 duration-300'>
         <Link onClick={ScrollTop} className='border px-10 py-2 bg-black rounded-md border-none cursor-pointer text-white' to={'/shops'}>View All</Link>
+        </div>
     </div>
   )
 }

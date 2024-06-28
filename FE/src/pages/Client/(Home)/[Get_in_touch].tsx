@@ -1,7 +1,7 @@
 
 const Get_in_touch = () => {
   return (<>
-  <div className=" container py-16 border-b text-center">
+  <div className=" container py-16 text-center">
         <h2 className="text-[48px] font-normal pb-[15px]">Get in touch</h2>
         <p className="text-[18px] text-[#ABABAB] pb-[30px]">
           Subcrible for latest stories and promotions (35% save)
