@@ -13,7 +13,7 @@ const Products = ({ data }: dataProps) => {
   };
 
   return (
-    <div className="w-full h-full text-start  flex flex-col justify-between">
+    <div className="w-full text-start flex flex-col gap-y-6">
       <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
         <Link
           onClick={ScrollTop}

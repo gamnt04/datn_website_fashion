@@ -18,14 +18,15 @@ import ClientLayout from "../layouts/ClientLayout";
 import Category from "../pages/Admin/Category/List";
 import OrderList from "../pages/Admin/Orders/OrderList";
 import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
-import IndexHome from "../pages/Client/(Home)/[Index]";
-import IndexShops from "../pages/Client/(Shop)/[Index]";
-import ProductDetail from "../pages/Client/(ProductDetail)/[ProductDetail]";
+import IndexHome from "../pages/Client/(Home)/page";
+import IndexShops from "../pages/Client/(Shop)/page";
+import ProductDetail from "../pages/Client/(ProductDetail)/page";
+import Profile from "../pages/Client/Profile/Profile";
 import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
-import Profile from "../pages/Client/Profile/Profile";
 import ListProduct from "../pages/Admin/Product/ListProduct";
-import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
+import AddProduct from "../pages/Admin/Product/AddProducts/Index";
+
 const RouterComponent = () => {
   return (
     <>
