@@ -16,11 +16,20 @@ const Products = () => {
   };
 
   return (
+<<<<<<< HEAD
     <>
       {data?.map((item: IProduct) => (
         <div
           className="w-full h-full text-start flex flex-col justify-between"
           key={item._id}
+=======
+    <div className="w-full text-start flex flex-col gap-y-6">
+      <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
+        <Link
+          onClick={ScrollTop}
+          to={"/shops/detail_product"}
+          className="h-full cursor-pointer *:drop-shadow"
+>>>>>>> main
         >
           <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
             <Link
@@ -81,8 +90,53 @@ const Products = () => {
             ))}
           </div>
         </div>
+<<<<<<< HEAD
       ))}
     </>
+=======
+      </div>
+
+      <div>
+        <Link
+          onClick={ScrollTop}
+          to={"/shops/detail_product"}
+          className="text-xl font-medium text-gray-700 hover:text-black"
+        >
+          Dome Lamp {data.i}
+        </Link>
+        <p className="text-sm font-normal text-[#999999] my-2">
+          Title san pham
+        </p>
+        <p className="text-md font-semibold text-[#222222]">2.000.000 VND</p>
+        {/* <div className="flex justify-center mt-4 items-center gap-x-4">
+          <Link
+            className="md:block mb:hidden bg-black text-white py-2 px-4 rounded hover:scale-105 duration-300 cursor-pointer"
+            to={""}
+          >
+            Buy Now
+          </Link>
+        </div> */}
+      </div>
+
+      <div className="flex justify-center gap-2 mt-4 *:cursor-pointer">
+        <img
+          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-gray-900"
+          src={data.img_product}
+          alt=""
+        />
+        <img
+          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-gray-900"
+          src={data.img_product}
+          alt=""
+        />
+        <img
+          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-gray-900"
+          src={data.img_product}
+          alt=""
+        />
+      </div>
+    </div>
+>>>>>>> main
   );
 };
 

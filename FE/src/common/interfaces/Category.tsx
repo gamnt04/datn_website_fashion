@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export interface ICategory {
   name?: string;
   _id?: string;

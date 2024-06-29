@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 
 const Outstanding = () => {
   return (
-    <div className="grid mb:grid-cols-1 mb:gap-y-[20px] lg:grid-cols-[47.5%_47.5%] justify-between *:mb:h-auto *:lg:h-[400px] *:w-full py-16">
+    <div className="grid mb:grid-cols-1 mb:gap-y-[20px] lg:grid-cols-[47.5%_47.5%] justify-between *:mb:h-auto *:lg:h-[400px] *:w-full py-16 *:rounded">
         {/* left */}
         <div className="grid grid-cols-2 *:w-full cursor-pointer *:h-full px-12 bg-[#FFEEE6] group *:duration-500 overflow-hidden">
             <div className="py-14 *:w-full *:h-full">

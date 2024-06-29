@@ -18,9 +18,11 @@ export const getProductById = async (id: string) => {
 };
 export const createProduct = async (product: IProduct) => {
   try {
+    console.log("Sending product:", product); // Log dữ liệu trước khi gửi
     const { data } = await instance.post("/products", product);
     return data;
   } catch (error) {
+    // Log lỗi chi tiết
     console.log(error);
   }
 };
