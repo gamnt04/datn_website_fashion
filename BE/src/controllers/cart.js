@@ -13,6 +13,7 @@ export const getCartByIdUser = async (req, res) => {
         quantity: item.quantity
       }))
     };
+    console.log("123");
     return res.status(StatusCodes.OK).json({ dataCart });
   } catch (error) {
     console.error(error);

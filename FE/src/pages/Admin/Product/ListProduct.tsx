@@ -12,13 +12,11 @@ const ListProduct = () => {
   const [removingProductId, setRemovingProductId] = useState<string | null>(
     null
   );
-
   const queryClient = useQueryClient();
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-
   const handleRemove = async (id: string) => {
     if (window.confirm("Bạn có muốn xóa sản phẩm này không?")) {
       setRemovingProductId(id);
