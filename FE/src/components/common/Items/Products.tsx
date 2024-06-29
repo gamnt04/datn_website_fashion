@@ -65,19 +65,19 @@ const Products = ({ data }: dataProps) => {
         </div> */}
       </div>
 
-      <div className="flex justify-center gap-2 mt-4">
+      <div className="flex justify-center gap-2 mt-4 *:cursor-pointer">
         <img
-          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-[#F68E56]"
+          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-gray-900"
           src={data.img_product}
           alt=""
         />
         <img
-          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-[#F68E56]"
+          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-gray-900"
           src={data.img_product}
           alt=""
         />
         <img
-          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-[#F68E56]"
+          className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-gray-900"
           src={data.img_product}
           alt=""
         />

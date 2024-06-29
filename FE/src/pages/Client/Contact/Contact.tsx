@@ -1,14 +1,10 @@
 const Contact = () => {
   return (
-    <div className="">
-      <div className="bg-[#f5f5f5]">
-        <div className="flex gap-5  h-[109px] items-center max-w-[1200px] mx-auto">
-          <p className="text-[#999999] underline">Home</p>
-          <p>/</p>
-          <p>Contact</p>
-        </div>
-      </div>
-      <div className="  max-w-[1200px] mx-auto  grid grid-cols-1 gap-4 my-10 sm:grid-cols-2 md:grid-cols-2">
+    <div className="lg:mt-[40px] mt-[60px]">
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+                Home &#10148; Products &#10148; Contact
+            </div>
+      <div className="mx-auto grid grid-cols-1 gap-4 my-10 sm:grid-cols-2 md:grid-cols-2">
         <div>
           <h2 className="text-xl text-[#222222] font-semibold">
             Stay in touch! Contact us
