@@ -8,7 +8,7 @@ const MenuShop = () => {
       <div className="hidden lg:block w-full h-auto flex flex-col my-10 shadow-xl rounded overflow-hidden">
       {/* categories */}
       <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4" open>
-        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-100 bg-gray-900">
+        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
           <strong className="mb:text-sm lg:text-lg font-semibold">Product Categories</strong>
           <span className="shrink-0 transition duration-300 group-open:-rotate-180">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -26,7 +26,7 @@ const MenuShop = () => {
       {/* filter price */}
       <div className="border-b py-2">
         <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4" open>
-          <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-100 bg-gray-900">
+          <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
             <strong>Price</strong>
             <span className="shrink-0 transition duration-300 group-open:-rotate-180">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -44,7 +44,7 @@ const MenuShop = () => {
       {/*filter color */}
       <div className="border-b py-2">
         <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4">
-          <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-100 bg-gray-900">
+          <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
             <strong>Color</strong>
             <span className="shrink-0 transition duration-300 group-open:-rotate-180">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -96,7 +96,7 @@ const MenuShop = () => {
       {/* filter by size */}
       <div className="py-2">
             <details className="group [&_summary::-webkit-details-marker]:block *:px-4">
-              <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-100 bg-gray-900">
+              <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
                 <strong>Size</strong>
                 <span className="shrink-0 transition duration-300 group-open:-rotate-180">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
