@@ -1,5 +1,5 @@
 export interface IOrder {
   id: number;
-  datetime: string;
-  price: number;
+  createDate: string;
+  totalPrice: number;
 }
