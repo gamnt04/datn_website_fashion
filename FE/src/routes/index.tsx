@@ -34,15 +34,16 @@ const RouterComponent = () => {
         <Routes>
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
-            <Route path="shops" element={<IndexShops />} />
-            <Route path="cart" element={<ListCart />} />
-            <Route path="cart/pay" element={<Pay />} />
+            <Route path="/shops" element={<IndexShops />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/cart" element={<ListCart />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="/cart/pay" element={<Pay />} />
             <Route path="favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
-            <Route path="products" element={<ListProducts />} />
-            <Route path="blogs" element={<Blogs />} />
+            {/* <Route path="products" element={<ListProducts />} /> */}
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
             <Route path="shops/detail_product" element={<ProductDetail />} />
             <Route path="allorder" element={<AllOrder />}>
@@ -50,7 +51,6 @@ const RouterComponent = () => {
               <Route path="/allorder/order" element={<Order_All />} />
               <Route path="/allorder/address" element={<Address />} />
             </Route>
-            <Route path="contact" element={<Contact />} />
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
           </Route>

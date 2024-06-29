@@ -1,28 +1,14 @@
 import React from "react";
 const Blogs = () => {
   return (
-    <div className="">
-      <div className=" w-full bg-[#F5F5F5]">
-        <nav className="container mx-auto py-[40px]   max-w-[1200px]">
-          <ul className="flex">
-            <li>
-              <a href="" className=" text-[16px] text-[#A3A3A3]">
-                Home
-              </a>
-            </li>
-            <span className="px-[10px]">/</span>
-            <li>
-              <a href="" className=" text-[16px]">
-                News
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div className="container mx-auto max-w-[1200px] pt-[20px]">
+    <div className="lg:mt-[40px] mt-[60px]">
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+                Home &#10148; Products &#10148; Blog
+            </div>
+      <div className="container mx-auto pt-[20px]">
         <h2 className="text-[25px] font-bold ">News</h2>
       </div>
-      <div className="grid grid-cols-3 gap-6 mx-auto max-w-[1200px]  ">
+      <div className="grid grid-cols-3 gap-6 mx-auto">
         <div className="">
           <div className="pt-[20px]">
             <div className="item_blog border  ">
