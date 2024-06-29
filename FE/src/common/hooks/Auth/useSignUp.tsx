@@ -1,13 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
-// import { useToast } from 'react-toastify'
 import { useNavigate } from "react-router-dom";
 
+// Định nghĩa kiểu dữ liệu cho formData
+interface SignUpFormData {
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const useSignUp = () => {
-  // const { toast } = useToast()
   const navigate = useNavigate();
   const { mutate } = useMutation({
-    mutationFn: async (formData) => {
+    mutationFn: async (formData: SignUpFormData) => {
       const { data } = await instance.post(`auth/signup`, formData);
       return data;
     },
@@ -17,12 +23,15 @@ const useSignUp = () => {
       //     title: "Đăng ký thành công",
       //     variant: "success"
       // })
-    }
+    },
+    onError: (error) => console.log(error) // Thêm xử lý lỗi
   });
-  const onSubmit = (formData: any) => {
+
+  const onSubmit = (formData: SignUpFormData) => {
     mutate(formData);
     navigate("/login");
   };
+
   return { onSubmit };
 };
 

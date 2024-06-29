@@ -1,20 +1,25 @@
 import Cart from "../models/cart.js";
 import { StatusCodes } from "http-status-codes";
 
-export const getCartByIdUser = async (req, res) => {
+export const getCartByUserId = async (req, res) => {
   const { userId } = req.params;
   try {
     const cart = await Cart.findOne({ userId }).populate("products.productId");
+    if (!cart) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart not found" });
+    }
     const dataCart = {
       products: cart.products.map((item) => ({
         productId: item.productId._id,
         name: item.productId.name,
+        price: item.productId.price,
         thumbnail: item.productId.thumbnail,
         quantity: item.quantity
       }))
     };
-    console.log("123");
-    return res.status(StatusCodes.OK).json({ dataCart });
+    return res.status(StatusCodes.OK).json(dataCart);
   } catch (error) {
     console.error(error);
     return res
@@ -22,8 +27,7 @@ export const getCartByIdUser = async (req, res) => {
       .json({ error: "Internal Server Error" });
   }
 };
-
-export const addProductsToCart = async (req, res) => {
+export const addItemToCart = async (req, res) => {
   const { userId, productId, quantity } = req.body;
   try {
     let cart = await Cart.findOne({ userId });
@@ -31,7 +35,7 @@ export const addProductsToCart = async (req, res) => {
       cart = new Cart({ userId, products: [] });
     }
     const existProductIndex = cart.products.findIndex(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() == productId
     );
     if (existProductIndex !== -1) {
       cart.products[existProductIndex].quantity += quantity;
