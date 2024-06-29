@@ -1,12 +1,97 @@
 import { Link } from "react-router-dom";
 import { RecycleIcon } from "../../../resources/svg/Icon/Icon";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { useLocalStorage } from "../../../common/hooks/Storage/useStorage";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { IProduct } from "../../../common/interfaces/Product";
+import { reduce } from "lodash";
 const ListCart = () => {
+  const renderImage = (image: File | string): string => {
+    if (typeof image === "string") {
+      return image;
+    } else {
+      return URL.createObjectURL(image);
+    }
+  };
+  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  console.log(userId);
-
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["cart", userId],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `http://localhost:2004/api/v1/carts/${userId}`
+      );
+      return data;
+    }
+  });
+  const incrementQuantity = useMutation({
+    mutationFn: async (productId) => {
+      const { data } = await axios.post(
+        `http://localhost:2004/api/v1/cart/increase-product-quantity-in-cart`,
+        {
+          userId,
+          productId
+        }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart", userId]
+      });
+    }
+  });
+  const decreaseQuantity = useMutation({
+    mutationFn: async (productId) => {
+      const { data } = await axios.post(
+        `http://localhost:2004/api/v1/cart/decrease-product-quantity-in-cart`,
+        {
+          userId,
+          productId
+        }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart", userId]
+      });
+    }
+  });
+  const removeProductInCart = useMutation({
+    mutationFn: async (productId) => {
+      const { data } = await axios.post(
+        `http://localhost:2004/api/v1/cart/remove-product-to-cart`,
+        { userId, productId }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart", userId]
+      });
+    }
+  });
+  const calculateTotal = () => {
+    if (!data || !data.products) return 0;
+    return reduce(
+      data.products,
+      (total, product) => total + product.price * product.quantity,
+      0
+    );
+  };
+  const calculateTotalProduct = () => {
+    if (!data || !data.products) return 0;
+    return reduce(
+      data.products,
+      (total, product) => total + product.quantity,
+      0
+    );
+  };
+  if (isLoading) return <p>loading...</p>;
+  if (isError) return <p>Error...</p>;
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
       <div className="flex items-center border bg-gray-100 h-20 p-4">
@@ -35,48 +120,68 @@ const ListCart = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-y">
-                <td className="w-[80px] py-5">
-                  <img
-                    className="relative bg-[#f2f2f2f2] rounded p-2 z-[1] w-[80px] h-[80px] duration-300"
-                    src="assets/Images/ethnic.png"
-                    alt=""
-                  />
-                </td>
-                <td className="pl-4 pr-2 md:w-[300px] mb:w-[120px]">
-                  <div className="flex flex-col md:text-base mb:text-xs">
-                    <strong className="font-semibold">
-                      Day la ten san pham gio hang v1
+              {data?.products.map((item: IProduct, index: number) => (
+                <tr className="border-y" key={index}>
+                  <td className="w-[80px] py-5">
+                    <img
+                      className="relative bg-[#f2f2f2f2] rounded p-2 z-[1] w-[80px] h-[80px] duration-300"
+                      src={item.image}
+                      alt=""
+                    />
+                  </td>
+                  <td className="pl-4 pr-2 md:w-[300px] mb:w-[120px]">
+                    <div className="flex flex-col md:text-base mb:text-xs">
+                      <strong className="font-semibold">{item.name}</strong>
+                      <span>Loai: Ao</span>
+                      <span>Size: S</span>
+                    </div>
+                  </td>
+                  <td className="px-3">
+                    <strong className="font-medium md:text-base mb:text-xs">
+                      {item.price}
                     </strong>
-                    <span>Loai: Ao</span>
-                    <span>Size: S</span>
-                  </div>
-                </td>
-                <td className="px-3">
-                  <strong className="font-medium md:text-base mb:text-xs">
-                    $80.00
-                  </strong>
-                </td>
-                <td className="pr-3 ">
-                  <div className="w-[80%] flex items-center justify-around border md:py-2 mb:py-1 *:md:text-base *:mb:text-xs px-1 rounded-lg border-black *:font-medium">
-                    <button>
-                      <strong className="font-medium">-</strong>
+                  </td>
+                  <td className="pr-3 ">
+                    <div className="w-[80%] flex items-center justify-around border md:py-2 mb:py-1 *:md:text-base *:mb:text-xs px-1 rounded-lg border-black *:font-medium">
+                      <button>
+                        <strong
+                          className="font-medium"
+                          onClick={() => {
+                            decreaseQuantity.mutate(item.productId);
+                          }}
+                        >
+                          -
+                        </strong>
+                      </button>
+                      <strong className="cursor-default">
+                        {item.quantity}
+                      </strong>
+                      <button>
+                        <strong
+                          className="font-medium"
+                          onClick={() =>
+                            incrementQuantity.mutate(item.productId)
+                          }
+                        >
+                          +
+                        </strong>
+                      </button>
+                    </div>
+                  </td>
+                  <td className="pl-5">
+                    <strong className="font-medium md:text-base mb:text-xs">
+                      {item.price * item.quantity}
+                    </strong>
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => removeProductInCart.mutate(item.productId)}
+                    >
+                      <RecycleIcon />
                     </button>
-                    <strong className="cursor-default">1</strong>
-                    <button>
-                      <strong className="font-medium">+</strong>
-                    </button>
-                  </div>
-                </td>
-                <td className="pl-5">
-                  <strong className="font-medium md:text-base mb:text-xs">
-                    $80.00
-                  </strong>
-                </td>
-                <td>
-                  <RecycleIcon />
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -85,11 +190,11 @@ const ListCart = () => {
           <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
             <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
               <strong>Tong gia tri don hang</strong>
-              <strong>$200.00</strong>
+              <strong>{calculateTotal()}$</strong>
             </div>
             <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
               <strong>So luong don hang :</strong>
-              <strong>10</strong>
+              <strong>{calculateTotalProduct()}</strong>
             </div>
             <div className="flex flex-col border-y py-5 my-5">
               <span className="text-xs mb-2">Nhap ma giam gia</span>
@@ -106,7 +211,7 @@ const ListCart = () => {
             </div>
             <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
               <strong>Can thanh toan :</strong>
-              <strong>$200.00</strong>
+              <strong>{calculateTotal()}$</strong>
             </div>
             <Link onClick={ScrollTop} to="pay">
               <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
