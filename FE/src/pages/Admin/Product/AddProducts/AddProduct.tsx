@@ -1,11 +1,16 @@
+// components/AddProduct/AddProduct.tsx
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createProduct } from "../../../../services/product";
 import axios from "axios";
 import { IProduct } from "../../../../common/interfaces/Product";
 import { useEffect, useState } from "react";
 import Message from "../../../../components/base/Message/Message";
+import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
+import { ICategory } from "../../../../common/interfaces/Category";
 
 const AddProduct = () => {
+  const { data } = useCategoryQuery();
+
   const {
     register,
     handleSubmit,
@@ -35,6 +40,7 @@ const AddProduct = () => {
       console.error("Thêm mới thất bại:", error);
       setErrorMessage("Thêm Sản Phẩm Lỗi !");
       setShowMessage(true);
+      console.log(error);
     }
   };
 
@@ -171,15 +177,17 @@ const AddProduct = () => {
             >
               Danh mục
             </label>
-            <input
-              type="text"
-              placeholder="Danh mục"
-              {...register("slug", { required: "Không bỏ trống" })}
+            <select
+              {...register("category_id", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.slug?.message}
-            </div>
+            >
+              <option value="">-- Chọn danh mục --</option>
+              {data?.map((category: ICategory) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="mb-4">
             <label

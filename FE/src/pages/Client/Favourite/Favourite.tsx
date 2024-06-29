@@ -1,203 +1,24 @@
+import Products from "../../../components/common/Items/Products";
+import img_product from '../../../assets/Images/Products/product_1.png';
 import {
-  SearchIcon,
-  CartIcon,
   HeartIcon,
-  NoteIcon,
 } from "../../../resources/svg/Icon/Icon";
 const Favourite = () => {
+  const a : Array<number> = [1, 2, 3, 4, 5, 6, 7, 8,9, 10, 11, 12, 13, 14, 15, 16,17,18,19,20,21,22,23,24,25];
   return (
-    <div className="container mx-auto max-w-[1200px]">
-      <div>
-        <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
-          <ul className="flex gap-2">
-            <li className="text-red-500">
-              <a href="#">Home </a>
-            </li>
-            <li> / </li>
-            <li>
-              <a href="#">Wishlist</a>
-            </li>
-          </ul>
+    <div className="lg:mt-[40px] mt-[60px]">
+       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+                Home &#10148; Products &#10148; Favorites
+            </div>
+      <div className="mt-8 grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[19%_19%_19%_19%_19%] xl:auto-rows-[450px] justify-between gap-y-8 ">
+          {/* --  */}
+          {a?.map((i) => 
+          (<Products data={{img_product, i}}/>)
+          )}
+          {/* -- */}
         </div>
-      </div>
-      <div className="grid grid-cols-4 gap-4 mt-5 mb-20">
-        <div className="">
-          <div className="relative w-full max-h-72 border rounded-sm overflow-hidden img-hover-scale">
-            <img
-              src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 right-0 p-2">
-              <HeartIcon />
-            </div>
-          </div>
-          <div className="text-center mt-5">
-            <p className="text-lg font-thin">Dép Màu Đen</p>
-            <p className="font-sans">Thượng Đình</p>
-            <span className="text-lg font-sans">18.800.000 VND</span>
-            <div className="text-center mt-2">
-              <label className="inline-block cursor-pointer mr-2">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-              <label className="inline-block cursor-pointer">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="">
-          <div className="relative w-full max-h-72 border rounded-sm overflow-hidden img-hover-scale">
-            <img
-              src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 right-0 p-2">
-              <HeartIcon />
-            </div>
-          </div>
-          <div className="text-center mt-5">
-            <p className="text-lg font-thin">Dép Màu Đen</p>
-            <p className="font-sans">Thượng Đình</p>
-            <span className="text-lg font-sans">18.800.000 VND</span>
-            <div className="text-center mt-2">
-              <label className="inline-block cursor-pointer mr-2">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-              <label className="inline-block cursor-pointer">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="">
-          <div className="relative w-full max-h-72 border rounded-sm overflow-hidden img-hover-scale">
-            <img
-              src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 right-0 p-2">
-              <HeartIcon />
-            </div>
-          </div>
-          <div className="text-center mt-5">
-            <p className="text-lg font-thin">Dép Màu Đen</p>
-            <p className="font-sans">Thượng Đình</p>
-            <span className="text-lg font-sans">18.800.000 VND</span>
-            <div className="text-center mt-2">
-              <label className="inline-block cursor-pointer mr-2">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-              <label className="inline-block cursor-pointer">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="">
-          <div className="relative w-full max-h-72 border rounded-sm overflow-hidden img-hover-scale">
-            <img
-              src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 right-0 p-2">
-              <HeartIcon />
-            </div>
-          </div>
-          <div className="text-center mt-5">
-            <p className="text-lg font-thin">Dép Màu Đen</p>
-            <p className="font-sans">Thượng Đình</p>
-            <span className="text-lg font-sans">18.800.000 VND</span>
-            <div className="text-center mt-2">
-              <label className="inline-block cursor-pointer mr-2">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-              <label className="inline-block cursor-pointer">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="">
-          <div className="relative w-full max-h-72 border rounded-sm overflow-hidden img-hover-scale">
-            <img
-              src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-0 right-0 p-2">
-              <HeartIcon />
-            </div>
-          </div>
-          <div className="text-center mt-5">
-            <p className="text-lg font-thin">Dép Màu Đen</p>
-            <p className="font-sans">Thượng Đình</p>
-            <span className="text-lg font-sans">18.800.000 VND</span>
-            <div className="text-center mt-2">
-              <label className="inline-block cursor-pointer mr-2">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-              <label className="inline-block cursor-pointer">
-                {/* <input type="checkbox" className="absolute opacity-0 cursor-pointer" /> */}
-                <img
-                  src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                  alt=""
-                  className="w-7 h-7 border rounded-full overflow-hidden hover:border-orange-500"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
+    
   );
 };
 export default Favourite;
