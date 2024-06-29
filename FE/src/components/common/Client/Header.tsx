@@ -110,9 +110,9 @@ const Header = () => {
               shops
             </NavLink>
             {/* <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/categories"}> categories </NavLink> */}
-            <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/blog"}> blog </NavLink>
+            <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/blogs"}> blog </NavLink>
             <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/contact"}> contact </NavLink>
-            <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/pages"}> pages </NavLink>
+            <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/about-us"}> pages </NavLink>
           </nav>
         </div>
 
@@ -138,7 +138,7 @@ const Header = () => {
           </div>
 
           {/* heart */}
-          <Link to={''} className="opacity-75 hover:opacity-100 hover:scale-[1.1]">
+          <Link to={'/favourite'} className="opacity-75 hover:opacity-100 hover:scale-[1.1]">
             <HeartIcon />
           </Link>
           {/* option / menu */}
