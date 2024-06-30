@@ -21,7 +21,6 @@ export const getCartByUserId = async (req, res) => {
     };
     return res.status(StatusCodes.OK).json(dataCart);
   } catch (error) {
-    console.error(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: "Internal Server Error" });
