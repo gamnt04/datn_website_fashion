@@ -4,6 +4,40 @@ import jwt from "jsonwebtoken";
 import User from "../models/users";
 import { signupSchema } from "../validations/auth";
 
+export const GetAllUser = async (req, res) => {
+  try {
+    const users = await User.find();
+    if (users.length === 0) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error getting all products:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+export const GetAuthById = async (req, res) => {
+  try {
+    const id = req.params.userId;
+    const user = await User.findById(id);
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+    if (user._id.toString() !== id) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+    return res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    console.error("MongoDB Query Error:", error.message);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "MongoDB Query Error" });
+  }
+};
 export const signup = async (req, res) => {
   const { email, password, confirmPassword, userName } = req.body;
   const { error } = signupSchema.validate(req.body, { abortEarly: false });
@@ -11,14 +45,14 @@ export const signup = async (req, res) => {
   if (error) {
     const messages = error.details.map((item) => item.message);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      messages,
+      messages
     });
   }
 
   const existUser = await User.findOne({ email });
   if (existUser) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Email đã tồn tại"],
+      messages: ["Email đã tồn tại"]
     });
   }
 
@@ -28,11 +62,11 @@ export const signup = async (req, res) => {
   const user = await User.create({
     ...req.body,
     password: hashedPassword,
-    role,
+    role
   });
 
   return res.status(StatusCodes.CREATED).json({
-    user,
+    user
   });
 };
 export const signin = async (req, res) => {
@@ -40,21 +74,21 @@ export const signin = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(StatusCodes.NOT_FOUND).json({
-      messages: ["Email không tồn tại"],
+      messages: ["Email không tồn tại"]
     });
   }
   const isMatch = await bcryptjs.compare(password, user.password);
   if (!isMatch) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Mật khẩu không chính xác"],
+      messages: ["Mật khẩu không chính xác"]
     });
   }
   const token = jwt.sign({ userId: user._id }, "123456", {
-    expiresIn: "7d",
+    expiresIn: "7d"
   });
   return res.status(StatusCodes.OK).json({
     user,
-    token,
+    token
   });
 };
 
@@ -99,7 +133,7 @@ export const get_address = async (req, res) => {
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
@@ -107,12 +141,12 @@ export const get_address = async (req, res) => {
     const addresses = user.address;
 
     return res.status(StatusCodes.OK).json({
-      addresses,
+      addresses
     });
   } catch (error) {
     console.error("Lỗi khi lấy danh sách địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi lấy danh sách địa chỉ",
+      message: "Lỗi khi lấy danh sách địa chỉ"
     });
   }
 };
@@ -124,13 +158,13 @@ export const update_address = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
     const addressToUpdate = user.address.id(addressId);
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
     addressToUpdate.set(address);
@@ -138,12 +172,12 @@ export const update_address = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: addressToUpdate,
+      address: addressToUpdate
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ",
+      message: "Lỗi khi cập nhật địa chỉ"
     });
   }
 };
@@ -157,7 +191,7 @@ export const delete_address = async (req, res) => {
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
@@ -168,12 +202,12 @@ export const delete_address = async (req, res) => {
     await user.save();
 
     return res.status(StatusCodes.OK).json({
-      message: "Đã xóa địa chỉ thành công",
+      message: "Đã xóa địa chỉ thành công"
     });
   } catch (error) {
     console.error("Lỗi khi xóa địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi xóa địa chỉ",
+      message: "Lỗi khi xóa địa chỉ"
     });
   }
 };

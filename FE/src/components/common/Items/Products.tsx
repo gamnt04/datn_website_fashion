@@ -4,8 +4,11 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import useProductQuery from "../../../common/hooks/Category/useProductQuery";
 import { IProduct } from "../../../common/interfaces/Product";
 import { useCart } from "../../../common/hooks/Cart/useCart";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 
 const Products = () => {
+  const [user] = useLocalStorage("user", {});
+  const account = user?.user;
   const { addToCart } = useCart();
   const { data } = useProductQuery();
   const renderImage = (image: File | string): string => {
@@ -14,6 +17,9 @@ const Products = () => {
     } else {
       return URL.createObjectURL(image);
     }
+  };
+  const onLoginWarning = () => {
+    alert("Please log in to your account");
   };
 
   return (
@@ -35,17 +41,36 @@ const Products = () => {
             </Link>
             {/* hover show icon cart */}
             <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-              <button
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                onClick={() =>
-                  addToCart.mutate({ productId: item._id, quantity: 1 })
-                }
-              >
-                <CartIcon />
-              </button>
-              <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
-                <HeartIcon />
-              </button>
+              {account ? (
+                <>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() =>
+                      addToCart.mutate({ productId: item._id, quantity: 1 })
+                    }
+                  >
+                    <CartIcon />
+                  </button>
+                  <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
+                    <HeartIcon />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() => onLoginWarning()}
+                  >
+                    <CartIcon />
+                  </button>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() => onLoginWarning()}
+                  >
+                    <HeartIcon />
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
