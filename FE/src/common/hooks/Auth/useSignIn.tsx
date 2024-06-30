@@ -24,12 +24,23 @@ const useSignIn = () => {
       //     duration: 5000,
       //     isClosable: true,
       // });
+      navigate("/");
     },
-    onError: (error) => console.log(error)
+    onError: (error) => {
+      console.log(error);
+      alert("Đăng nhập thất bại");
+      // toast({
+      //     title: "Đăng nhập thất bại",
+      //     description: "Incorrect email or password.",
+      //     status: "error",
+      //     duration: 5000,
+      //     isClosable: true,
+      // });
+    }
   });
   const onSubmit = (formData: { email: string; password: string }) => {
     mutate(formData);
-    navigate("/");
+
   };
   return { onSubmit };
 };
