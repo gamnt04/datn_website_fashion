@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 
 export interface IProduct {
-  productId(productId: any): void;
   quantity: number;
   name: string;
   _id?: string;
