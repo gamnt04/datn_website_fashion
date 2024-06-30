@@ -3,10 +3,7 @@ import { RecycleIcon } from "../../../resources/svg/Icon/Icon";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { ToastContainer } from "react-toastify";
 import { useCart } from "../../../common/hooks/Cart/useCart"; // Đường dẫn tùy chỉnh theo cấu trúc thư mục của bạn
-import { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
-<<<<<<< HEAD
-import { debounce } from "lodash";
 
 const ListCart = () => {
   const {
@@ -21,97 +18,6 @@ const ListCart = () => {
   } = useCart();
 
   if (isLoading) return <p>Loading...</p>;
-=======
-import { reduce } from "lodash";
-import { useState } from "react";
-const ListCart = () => {
-  const renderImage = (image: File | string): string => {
-    if (typeof image === "string") {
-      return image;
-    } else {
-      return URL.createObjectURL(image);
-    }
-  };
-  const queryClient = useQueryClient();
-  const [user] = useLocalStorage("user", {});
-  const [editQuantityProductId, setEditQuantityProductId] = useState(null);
-  const [updateQuantity, setUpdateQuantity] = useState(null);
-  const userId = user?.user?._id;
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["cart", userId],
-    queryFn: async () => {
-      const { data } = await axios.get(
-        `http://localhost:2004/api/v1/carts/${userId}`
-      );
-      return data;
-    }
-  });
-  const incrementQuantity = useMutation({
-    mutationFn: async (productId) => {
-      const { data } = await axios.post(
-        `http://localhost:2004/api/v1/cart/increase-product-quantity-in-cart`,
-        {
-          userId,
-          productId
-        }
-      );
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart", userId]
-      });
-    }
-  });
-  const decreaseQuantity = useMutation({
-    mutationFn: async (productId) => {
-      const { data } = await axios.post(
-        `http://localhost:2004/api/v1/cart/decrease-product-quantity-in-cart`,
-        {
-          userId,
-          productId
-        }
-      );
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart", userId]
-      });
-    }
-  });
-  const removeProductInCart = useMutation({
-    mutationFn: async (productId) => {
-      const { data } = await axios.post(
-        `http://localhost:2004/api/v1/cart/remove-product-to-cart`,
-        { userId, productId }
-      );
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart", userId]
-      });
-    }
-  });
-  const calculateTotal = () => {
-    if (!data || !data.products) return 0;
-    return reduce(
-      data.products,
-      (total: any, product: any) => total + product.price * product.quantity,
-      0
-    );
-  };
-  const calculateTotalProduct = () => {
-    if (!data || !data.products) return 0;
-    return reduce(
-      data.products,
-      (total: any, product: any) => total + product.quantity,
-      0
-    );
-  };
-  if (isLoading) return <p>loading...</p>;
->>>>>>> main
   if (isError) return <p>Error...</p>;
 
   return (
@@ -143,7 +49,7 @@ const ListCart = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.products.map((item: any, index: number) => (
+              {data?.products.map((item: IProduct, index: number) => (
                 <tr className="border-y" key={index}>
                   <td>
                     <input type="checkbox" />
