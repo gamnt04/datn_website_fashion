@@ -17,7 +17,31 @@ export const useCart = () => {
       return data;
     }
   });
-
+  const addToCart = useMutation({
+    mutationFn: async ({
+      productId,
+      quantity
+    }: {
+      productId: string;
+      quantity: number;
+    }) => {
+      const { data } = await axios.post(
+        `http://localhost:2004/api/v1/cart/add-to-cart`,
+        {
+          userId,
+          productId,
+          quantity
+        }
+      );
+      toast.success("add product successfully !");
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart", userId]
+      });
+    }
+  });
   const incrementQuantity = useMutation({
     mutationFn: async (productId) => {
       const { data } = await axios.post(
@@ -83,7 +107,7 @@ export const useCart = () => {
           `http://localhost:2004/api/v1/cart/remove-product-to-cart`,
           { userId, productId }
         );
-        toast.success("Success full");
+        // toast.success("Success full");
         return data;
       }
     },
@@ -120,6 +144,7 @@ export const useCart = () => {
     decreaseQuantity,
     removeProductInCart,
     updateQuantity,
+    addToCart,
     calculateTotal,
     calculateTotalProduct
   };
