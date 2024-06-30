@@ -118,32 +118,22 @@ export const get_address = async (req, res) => {
 };
 
 export const update_address = async (req, res) => {
-  const { userId, addressId } = req.params; // Lấy userId và addressId từ params
-  const updatedAddress = req.body; // Địa chỉ mới từ request body
-
+  const { userId, addressId } = req.params;
+  const { address } = req.body;
   try {
-    // Tìm người dùng dựa vào userId
     const user = await User.findById(userId);
-
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy người dùng",
       });
     }
-
-    // Tìm địa chỉ cần cập nhật trong mảng addresses của người dùng
     const addressToUpdate = user.address.id(addressId);
-
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy địa chỉ",
       });
     }
-
-    // Cập nhật thông tin của địa chỉ
-    addressToUpdate.set(updatedAddress);
-
-    // Lưu lại người dùng đã được cập nhật vào cơ sở dữ liệu
+    addressToUpdate.set(address);
     await user.save();
 
     return res.status(StatusCodes.OK).json({
