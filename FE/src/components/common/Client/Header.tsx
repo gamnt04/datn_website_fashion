@@ -1,18 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import MiniCart from "../../../pages/Client/(Cart)/[MiniCart]";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import { useDispatch } from "react-redux";
 import { useCart } from "../../../common/hooks/Cart/useCart";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 // import { SearchData } from "../../Services/Search";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
   const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
-
+  const [user] = useLocalStorage("user", {});
+  const account = user?.user;
   useEffect(() => {
     typeof window !== "undefined" &&
       window.addEventListener("scroll", () => {
@@ -31,13 +34,11 @@ const Header = () => {
         }
       });
   }, []);
-
   // change title by redux
   const dispatch = useDispatch();
   // const ChangeTitle_1 = () => {
   //   dispatch({ type: "Title_change_1" });
   // }
-
   // Fn scroll top and change title
   const ScrollTop_and_Change = async () => {
     await ScrollTop();
@@ -76,7 +77,12 @@ const Header = () => {
   //   })() : '';
   // }, [keyUrl]);
   // console.log(itemsSearch);
-
+  const onlogin = () => {
+    const comfirm = window.confirm("Do you want to go to the login page?");
+    if (comfirm) {
+      navigate("/login");
+    }
+  };
   return (
     <>
       <div
@@ -287,31 +293,51 @@ const Header = () => {
             </form>
             {/* cart */}
             <div className="group *:duration-300 relative py-1">
-              <Link to={"/cart"} onClick={ScrollTop} className="relative">
-                <CartIcon />
-                {calculateTotalProduct() > 0 ? (
-                  <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-                    {calculateTotalProduct() > 99
-                      ? "99+"
-                      : calculateTotalProduct()}
-                  </span>
-                ) : (
-                  <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-                    0
-                  </span>
-                )}
-              </Link>
-              {/* mini cart hover => active */}
-              <MiniCart />
+              {account ? (
+                <Link to="/cart" onClick={ScrollTop} className="relative">
+                  <CartIcon />
+                  {calculateTotalProduct() > 0 ? (
+                    <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
+                      {calculateTotalProduct() > 99
+                        ? "99+"
+                        : calculateTotalProduct()}
+                    </span>
+                  ) : (
+                    <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
+                      0
+                    </span>
+                  )}
+                  <MiniCart />
+                </Link>
+              ) : (
+                <div onClick={() => onlogin()} className="relative">
+                  <CartIcon />
+                  <MiniCart />
+                </div>
+              )}
             </div>
 
             {/* heart */}
-            <Link
-              to={"/favourite"}
-              className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
-            >
-              <HeartIcon />
-            </Link>
+            {account ? (
+              <>
+                <Link
+                  to={"/favourite"}
+                  className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
+                >
+                  <HeartIcon />
+                </Link>
+              </>
+            ) : (
+              <>
+                <div
+                  onClick={() => onlogin()}
+                  className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
+                >
+                  <HeartIcon />
+                </div>
+              </>
+            )}
+
             {/* option / menu */}
             <div className="cursor-pointer hover:scale-105 duration-300 border">
               <Link
