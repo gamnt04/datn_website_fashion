@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { IProduct } from "../../../common/interfaces/Product";
 import { reduce } from "lodash";
+import { useState } from "react";
 const ListCart = () => {
   const renderImage = (image: File | string): string => {
     if (typeof image === "string") {
@@ -16,6 +17,8 @@ const ListCart = () => {
   };
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
+  const [editQuantityProductId, setEditQuantityProductId] = useState(null);
+  const [updateQuantity, setUpdateQuantity] = useState(null);
   const userId = user?.user?._id;
   const { data, isLoading, isError } = useQuery({
     queryKey: ["cart", userId],
