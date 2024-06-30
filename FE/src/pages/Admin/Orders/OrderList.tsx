@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import OrderTable from "./OrderTable";
-import axios from "axios";
+import instance from "../../../configs/axios";
 
 const OrderList = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -9,7 +9,7 @@ const OrderList = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get("http://localhost:3000/orders");
+        const { data } = await instance.get("/orders");
         setOrders(data);
         setFilteredOrders(data);
       } catch (error) {

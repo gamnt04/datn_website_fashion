@@ -81,7 +81,7 @@ const ListCart = () => {
     if (!data || !data.products) return 0;
     return reduce(
       data.products,
-      (total, product) => total + product.price * product.quantity,
+      (total: any, product: any) => total + product.price * product.quantity,
       0
     );
   };
@@ -89,7 +89,7 @@ const ListCart = () => {
     if (!data || !data.products) return 0;
     return reduce(
       data.products,
-      (total, product) => total + product.quantity,
+      (total: any, product: any) => total + product.quantity,
       0
     );
   };
@@ -123,7 +123,7 @@ const ListCart = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.products.map((item: IProduct, index: number) => (
+              {data?.products.map((item: any, index: number) => (
                 <tr className="border-y" key={index}>
                   <td className="w-[80px] py-5">
                     <img
