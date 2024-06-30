@@ -26,6 +26,7 @@ import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/Index";
+import { ToastContainer } from "react-toastify";
 
 const RouterComponent = () => {
   return (
@@ -67,6 +68,7 @@ const RouterComponent = () => {
             />
           </Route>
         </Routes>
+        <ToastContainer />
       </Router>
     </>
   );

@@ -1,7 +1,6 @@
 // import img_product from "../../../assets/Images/Products/product_1.png";
 import Products from "../../../components/common/Items/Products";
 import ListPage from "./[ListPage]";
-
 const Products_Shop = () => {
   return (
     <div className="py-10">
