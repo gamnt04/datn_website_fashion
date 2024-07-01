@@ -12,7 +12,7 @@ export const signup = async (req, res) => {
     const { error } = signupSchema.validate(req.body, { abortEarly: false });
     console.log(error);
     if (error) {
-        const messages = error.details.map((item) => item.message);
+        const messages = error.details.map((item) => item.message); zzz
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             messages,
         });
