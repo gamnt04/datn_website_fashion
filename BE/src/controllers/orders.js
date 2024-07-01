@@ -72,11 +72,11 @@ export const updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     const validStatus = [
-      "pending",
-      "confirmed",
-      "shipped",
-      "delivered",
-      "cancelled"
+      "Chờ xác nhận",
+      "Đang chuẩn bị hàng",
+      "Đang vận chuyển",
+      "Đã giao hàng",
+      "Đã hủy"
     ];
 
     if (!validStatus.includes(status)) {
@@ -92,7 +92,7 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order not found" });
     }
 
-    if (order.status === "delivered" || order.status === "cancelled") {
+    if (order.status === "Đã giao hàng" || order.status === "Đã hủy") {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" });

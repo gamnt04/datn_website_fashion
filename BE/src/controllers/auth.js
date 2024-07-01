@@ -48,17 +48,14 @@ export const signup = async (req, res) => {
       messages
     });
   }
-
   const existUser = await User.findOne({ email });
   if (existUser) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       messages: ["Email đã tồn tại"]
     });
   }
-
   const hashedPassword = await bcryptjs.hash(password, 12);
   const role = (await User.countDocuments({})) === 0 ? "admin" : "user";
-
   const user = await User.create({
     ...req.body,
     password: hashedPassword,
@@ -94,7 +91,6 @@ export const signin = async (req, res) => {
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
-
   // Kiểm tra newAddress từ request body
   if (
     !newAddress ||
@@ -107,17 +103,13 @@ export const add_address = async (req, res) => {
       .status(400)
       .json({ error: "Thông tin địa chỉ không được để trống" });
   }
-
   // Tìm người dùng theo userId
   const user = await User.findById(userId);
-
   if (!user) {
     return res.status(404).json({ error: "Người dùng không tồn tại" });
   }
-
   // Thêm địa chỉ vào mảng addresses của người dùng
   user.address.push(newAddress);
-
   // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
   await user.save();
 
