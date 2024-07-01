@@ -46,7 +46,10 @@ const RouterComponent = () => {
             <Route path="about-us" element={<AboutUS />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
-            <Route path="shops/detail_product" element={<ProductDetail />} />
+            <Route
+              path="shops/detail_product/:id"
+              element={<ProductDetail />}
+            />
             <Route path="allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
