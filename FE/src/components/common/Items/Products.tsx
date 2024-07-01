@@ -3,15 +3,16 @@ import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import useProductQuery from "../../../common/hooks/Category/useProductQuery";
 import { IProduct } from "../../../common/interfaces/Product";
+import { useCart } from "../../../common/hooks/Cart/useCart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useFavoriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
 const Products = () => {
-  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
-  const userId = user?.user?._id;
+  const account = user?.user;
+  const { addToCart } = useCart();
   const { data } = useProductQuery();
+  const { addFavoriteProduct } = useFavoriteProducts();
   const renderImage = (image: File | string): string => {
     if (typeof image === "string") {
       return image;
@@ -19,30 +20,9 @@ const Products = () => {
       return URL.createObjectURL(image);
     }
   };
-  const { mutate } = useMutation({
-    mutationFn: async ({
-      productId,
-      quantity
-    }: {
-      productId: string;
-      quantity: number;
-    }) => {
-      const { data } = await axios.post(
-        `http://localhost:2004/api/v1/cart/add-to-cart`,
-        {
-          userId,
-          productId,
-          quantity
-        }
-      );
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart", userId]
-      });
-    }
-  });
+  const onLoginWarning = () => {
+    alert("Please log in to your account");
+  };
 
   return (
     <>
@@ -51,7 +31,7 @@ const Products = () => {
           <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
             <Link
               onClick={ScrollTop}
-              to={"/shops/detail_product"}
+              to={`/shops/detail_product/${item._id}`}
               className="h-full cursor-pointer *:drop-shadow"
             >
               <img
@@ -63,15 +43,41 @@ const Products = () => {
             </Link>
             {/* hover show icon cart */}
             <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-              <button
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                onClick={() => mutate({ productId: item._id, quantity: 1 })}
-              >
-                <CartIcon />
-              </button>
-              <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
-                <HeartIcon />
-              </button>
+              {account ? (
+                <>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() =>
+                      addToCart.mutate({ productId: item._id, quantity: 1 })
+                    }
+                  >
+                    <CartIcon />
+                  </button>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() =>
+                      addFavoriteProduct.mutate({ productId: item._id })
+                    }
+                  >
+                    <HeartIcon />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() => onLoginWarning()}
+                  >
+                    <CartIcon />
+                  </button>
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() => onLoginWarning()}
+                  >
+                    <HeartIcon />
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

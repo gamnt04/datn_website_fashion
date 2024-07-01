@@ -21,7 +21,6 @@ export const getCartByUserId = async (req, res) => {
     };
     return res.status(StatusCodes.OK).json(dataCart);
   } catch (error) {
-    console.error(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: "Internal Server Error" });
@@ -78,17 +77,18 @@ export const updateQuantityProductsInCart = async (req, res) => {
     if (!cart) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Cart Not Found" });
+        .json({ error: "Cart not found" });
     }
+
     const product = cart.products.find(
       (item) => item.productId.toString() === productId
     );
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Product Not Found" });
+        .json({ error: "Product not found" });
     }
-    product.quantity += quantity;
+    product.quantity = quantity;
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
   } catch (error) {}
