@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import useSignUp from "../../../common/hooks/Auth/useSignUp";
-import ToastContainer from "../../../common/hooks/Auth/useSignUp";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { signUpSchema } from "../../../common/validations/auth/SignUp";
 const Register = () => {
@@ -18,7 +17,7 @@ const Register = () => {
       confirmPassword: ""
     }
   });
-  const { onSubmit } = useSignUp();
+  const { onSubmit }: any = useSignUp();
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
