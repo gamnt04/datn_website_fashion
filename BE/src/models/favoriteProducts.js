@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const cartSchema = new Schema(
+export const favoriteProductSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -14,9 +14,10 @@ const cartSchema = new Schema(
           ref: "Products",
           required: true
         },
-        quantity: {
-          type: Number,
-          required: true
+        status: {
+          type: String,
+          enum: ["available", "unavailable"],
+          default: "available"
         }
       }
     ]
@@ -26,5 +27,4 @@ const cartSchema = new Schema(
     versionKey: false
   }
 );
-
-export default mongoose.model("Cart", cartSchema);
+export default mongoose.model("FavoriteProducts", favoriteProductSchema);
