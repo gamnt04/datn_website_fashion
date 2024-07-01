@@ -5,12 +5,14 @@ import useProductQuery from "../../../common/hooks/Category/useProductQuery";
 import { IProduct } from "../../../common/interfaces/Product";
 import { useCart } from "../../../common/hooks/Cart/useCart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { useFavoriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
 const Products = () => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { addToCart } = useCart();
   const { data } = useProductQuery();
+  const { addFavoriteProduct } = useFavoriteProducts();
   const renderImage = (image: File | string): string => {
     if (typeof image === "string") {
       return image;
@@ -29,7 +31,7 @@ const Products = () => {
           <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
             <Link
               onClick={ScrollTop}
-              to={"/shops/detail_product"}
+              to={`/shops/detail_product/${item._id}`}
               className="h-full cursor-pointer *:drop-shadow"
             >
               <img
@@ -51,7 +53,12 @@ const Products = () => {
                   >
                     <CartIcon />
                   </button>
-                  <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
+                  <button
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                    onClick={() =>
+                      addFavoriteProduct.mutate({ productId: item._id })
+                    }
+                  >
                     <HeartIcon />
                   </button>
                 </>
