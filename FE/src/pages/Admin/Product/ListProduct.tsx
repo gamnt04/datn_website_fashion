@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from "date-fns";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useProductQuery from "../../../common/hooks/Category/useProductQuery";
 import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
 import AddProduct from "./AddProducts/Index";
+
 const ListProduct = () => {
   const { data, isLoading } = useProductQuery();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
     null
   );
-
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -33,6 +35,10 @@ const ListProduct = () => {
         setRemovingProductId(null);
       }
     }
+  };
+
+  const handleUpdate = (id: string) => {
+    navigate(`edit/${id}`);
   };
 
   return (
@@ -106,6 +112,12 @@ const ListProduct = () => {
                           {formatDate(product.updatedAt)}
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
+                          <button
+                            onClick={() => handleUpdate(product._id!)}
+                            className="p-3 mr-2 text-white transition-colors duration-200 bg-blue-500 border rounded-lg hover:bg-blue-400 focus:outline-none"
+                          >
+                            Cập nhật
+                          </button>
                           <button
                             onClick={() => handleRemove(product._id!)}
                             className={`p-3 text-white transition-colors duration-200 border rounded-lg ${

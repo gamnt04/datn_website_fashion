@@ -1,10 +1,16 @@
 // services/product.ts
 import Products from "../models/Products";
+import Category from "../models/Category";
 import slugify from "slugify";
-
+import mongoose from "mongoose";
 export const createProduct = async (req, res) => {
   try {
     console.log("Receiving product data:", req.body);
+
+    // Validate category_id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.body.category_id)) {
+      return res.status(400).json({ message: "Invalid category_id format" });
+    }
 
     let slug = slugify(req.body.name, { lower: true });
 
@@ -69,6 +75,11 @@ export const deleteProductById = async (req, res) => {
 
 export const updateProductById = async (req, res) => {
   try {
+    // Validate if req.params.id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid product ID format" });
+    }
+
     const product = await Products.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
