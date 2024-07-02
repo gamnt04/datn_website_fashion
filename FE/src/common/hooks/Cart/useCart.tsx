@@ -122,7 +122,7 @@ export const useCart = () => {
     if (!data || !data.products) return 0;
     return reduce(
       data.products,
-      (total, product) => total + product.price * product.quantity,
+      (total: any, product: any) => total + product.price * product.quantity,
       0
     );
   };
@@ -131,7 +131,7 @@ export const useCart = () => {
     if (!data || !data.products) return 0;
     return reduce(
       data.products,
-      (total, product) => total + product.quantity,
+      (total: any, product: any) => total + product.quantity,
       0
     );
   };

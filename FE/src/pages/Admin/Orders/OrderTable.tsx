@@ -1,13 +1,12 @@
-
 import { Link } from "react-router-dom";
 
-
-const OrderTable = ({ orders }: any) => {
+const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
     const formatDate = (datetime: any) => {
         if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
         const date = new Date(datetime);
         return date.toLocaleDateString(); // Lấy ngày tháng năm
     };
+
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 h-auto">
@@ -25,7 +24,7 @@ const OrderTable = ({ orders }: any) => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {orders?.map((order: any) => (
-                        <tr key={order.id}>
+                        <tr key={order._id}>
                             <td className="py-4 px-3 text-sm font-medium text-gray-900">{order.orderNumber}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.userName}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.phone}</td>
@@ -34,7 +33,6 @@ const OrderTable = ({ orders }: any) => {
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.payment}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order.status}</td>
                             <td className="py-4 px-3 text-sm text-gray-500 flex justify-center items-center gap-5 relative">
-
                                 <Link to={`/admin/orders/${order._id}/orderDetali`}>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +40,7 @@ const OrderTable = ({ orders }: any) => {
                                         viewBox="0 0 24 24"
                                         strokeWidth="1.5"
                                         stroke="currentColor"
-                                        className="size-6  cursor-pointer"
+                                        className="size-6 cursor-pointer"
                                     >
                                         <path
                                             strokeLinecap="round"
@@ -51,26 +49,37 @@ const OrderTable = ({ orders }: any) => {
                                         />
                                     </svg>
                                 </Link>
-
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div className="flex justify-center gap-4 *:border *:w-[50px] *:h-[50px] *:rounded-lg my-6" >
-                <button className="hover:bg-slate-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6 ml-3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            <div className="flex justify-center gap-4 my-6">
+                <button
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="hover:bg-slate-300 border-2 w-12 h-12"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
                 </button>
-                <button className="hover:bg-slate-300">1</button>
-                <button className="hover:bg-slate-300">2</button>
-                <button className="hover:bg-slate-300">3</button>
-                <button className="hover:bg-slate-300">4</button>
-                <button className="hover:bg-slate-300">5</button>
-                <button className="hover:bg-slate-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6 ml-3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                {[...Array(totalPages).keys()].map((page) => (
+                    <button
+                        key={page + 1}
+                        onClick={() => onPageChange(page + 1)}
+                        className={`hover:bg-slate-300 border-2 w-12 h-12 ${currentPage === page + 1 ? 'bg-slate-300' : ''}`}
+                    >
+                        {page + 1}
+                    </button>
+                ))}
+                <button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="hover:bg-slate-300 border-2 w-12 h-12"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
                 </button>
             </div>
