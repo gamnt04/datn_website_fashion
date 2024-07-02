@@ -5,7 +5,6 @@ import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
 import Pay from "../pages/Client/pay/Pay";
-import ListProducts from "../pages/Client/listProducts/ListProducts";
 import Blogs from "../pages/Client/Blogs/Blogs";
 import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
 import AllOrder from "../pages/Client/Order/AllOrder/AllOrder";
@@ -27,6 +26,7 @@ import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/Index";
 import { ToastContainer } from "react-toastify";
+import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
 
 const RouterComponent = () => {
   return (
@@ -64,6 +64,7 @@ const RouterComponent = () => {
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
             <Route path="products/add" element={<AddProduct />} />
+            <Route path="products/edit/:id" element={<UpdateProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route
               path="/admin/orders/:id/orderDetali"
