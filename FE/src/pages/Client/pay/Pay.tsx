@@ -5,6 +5,7 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { useForm } from "react-hook-form";
 import { reduce } from "lodash";
 
+
 const Pay = () => {
 
     const { register, handleSubmit } = useForm()
@@ -13,9 +14,10 @@ const Pay = () => {
     const { data } = useQuery({
         queryKey: ["cart", userId],
         queryFn: async () => {
-            const { data } = await instance.get(
-                `/carts/${userId}`
+            const { data } = await instance.get(`/carts/${userId}`
             );
+            console.log(data);
+
             return data;
         }
     });
@@ -131,22 +133,23 @@ const Pay = () => {
                                     </div>
                                     <div>
                                         <p className="font-medium">{item.name}</p>
-                                        <p className="text-gray-500">{item.color} / {item.size}</p>
+                                        {/* <p className="text-gray-500">{item.color} / {item.size}</p> */}
+                                        <p className="text-gray-500">Xanh xám / 4XL</p>
                                         <p className="text-gray-500">Số Lượng: {item.quantity}</p>
                                     </div>
                                 </div>
                             ))}
 
                             {/* <div className="flex space-x-4 p-3">
-                                    <div>
-                                        <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
-                                    </div>
-                                    <div>
-                                        <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
-                                        <p className="text-gray-500">Xanh xám / 4XL</p>
-                                        <p className="text-gray-500">Số Lượng: 1</p>
-                                    </div>
-                                </div> */}
+                                <div>
+                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
+                                </div>
+                                <div>
+                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
+                                    <p className="text-gray-500">Xanh xám / 4XL</p>
+                                    <p className="text-gray-500">Số Lượng: 1</p>
+                                </div>
+                            </div> */}
                             {/* <div className="flex space-x-4 p-3">
                                 <div>
                                     <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
