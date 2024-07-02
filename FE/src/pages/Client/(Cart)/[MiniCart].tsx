@@ -13,15 +13,16 @@ const MiniCart = () => {
 
   return (
     <div
-      className="absolute rounded bg-white shadow mb:w-[70vw] lg:w-[25vw] duration-300 right-0 group-hover:scale-100 scale-0 shadow-2xl 
+      className="absolute rounded bg-white mb:w-[70vw] lg:w-[25vw] duration-300 right-0 group-hover:scale-100 scale-0 shadow-2xl 
     p-4 group-hover:translate-y-[15px] lg:group-hover:translate-x-0 group-hover:translate-x-1/2 translate-x-1/2 -translate-y-1/2
     before:absolute before:w-[65px] before:h-[40px] before:right-[-5px] before:top-0 before:translate-y-[-20px] before:bg-none"
     >
       {account ? (
         <>
           {!data?.products || data?.products.length === 0 ? (
-            <div className="text-center p-4">
-              <p>Please add products to your cart</p>
+            <div className="w-full h-[200px] flex flex-col justify-center items-center">
+              <img src="../../src/assets/Images/Products/no_products.png" className="w-44 h-40" alt="" />
+              <p>Chưa có sản phẩm nào</p>
             </div>
           ) : (
             <>
