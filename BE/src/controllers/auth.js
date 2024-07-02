@@ -45,7 +45,7 @@ export const signup = async (req, res) => {
   if (error) {
     const messages = error.details.map((item) => item.message); zzz
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      messages,
+      messages
     });
   }
   const existUser = await User.findOne({ email });
@@ -91,7 +91,6 @@ export const signin = async (req, res) => {
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
-
   // Kiểm tra newAddress từ request body
   if (
     !newAddress ||
@@ -104,17 +103,13 @@ export const add_address = async (req, res) => {
       .status(400)
       .json({ error: "Thông tin địa chỉ không được để trống" });
   }
-
   // Tìm người dùng theo userId
   const user = await User.findById(userId);
-
   if (!user) {
     return res.status(404).json({ error: "Người dùng không tồn tại" });
   }
-
   // Thêm địa chỉ vào mảng addresses của người dùng
   user.address.push(newAddress);
-
   // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
   await user.save();
 
