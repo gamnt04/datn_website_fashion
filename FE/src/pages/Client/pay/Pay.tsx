@@ -4,11 +4,23 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { useForm } from "react-hook-form";
 import { reduce } from "lodash";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { paySchema } from "../../../common/validations/pay/Pay";
 
 
 const Pay = () => {
 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: joiResolver(paySchema),
+        defaultValues: {
+            userName: "",
+            phone: "",
+            email: "",
+            address: "",
+            payment: "vnpay"
+        }
+    }
+    )
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
     const { data } = useQuery({
@@ -31,11 +43,13 @@ const Pay = () => {
             const { data } = await instance.post("/orders", order);
             return data;
         },
-        onSuccess: () => {
+        onSuccess: async () => {
             // navigate("/thankyou")
-            // 
             alert("Đặt hàng thành công")
         },
+        onError: () => {
+            alert("Đặt hàng thất bại")
+        }
     });
     const calcuateTotal = () => {
         if (!data || !data.products) return 0
@@ -65,16 +79,36 @@ const Pay = () => {
                         <div className="col-span-1">
                             <h1 className="text-lg font-bold mb-4">Thông Tin Khach Hàng</h1>
                             <div className="mb-4">
-                                <input type="text" placeholder="Họ Và Tên" className="w-full p-3 border rounded text-sm" {...register("userName")} />
+                                <input type="text" placeholder="Họ Và Tên" className="w-full p-3 border rounded text-sm" {...register("userName", { required: true })} />
+                                {errors.userName && (
+                                    <p className="text-start mt-4 text-sm text-red-400">
+                                        {errors.userName.message}
+                                    </p>
+                                )}
                             </div>
                             <div className="mb-4">
-                                <input type="tel" placeholder="Số Điện Thoại" className="w-full p-3 border rounded text-sm" {...register("phone")} />
+                                <input type="tel" placeholder="Số Điện Thoại" className="w-full p-3 border rounded text-sm" {...register("phone", { required: true })} />
+                                {errors.phone && (
+                                    <p className="text-start mt-4 text-sm text-red-400">
+                                        {errors.phone.message}
+                                    </p>
+                                )}
                             </div>
                             <div className="mb-4">
-                                <input type="email" placeholder="Email" className="w-full p-3 border rounded text-sm" {...register("email")} />
+                                <input type="email" placeholder="Email" className="w-full p-3 border rounded text-sm" {...register("email", { required: true })} />
+                                {errors.email && (
+                                    <p className="text-start mt-4 text-sm text-red-400">
+                                        {errors.email.message}
+                                    </p>
+                                )}
                             </div>
                             <div className="mb-4">
-                                <input type="text" placeholder="Địa Chỉ" className="w-full p-3 border rounded text-sm" {...register("address")} />
+                                <input type="text" placeholder="Địa Chỉ" className="w-full p-3 border rounded text-sm" {...register("address", { required: true })} />
+                                {errors.address && (
+                                    <p className="text-start mt-4 text-sm text-red-400">
+                                        {errors.address.message}
+                                    </p>
+                                )}
                             </div>
                             {/* <div className="mb-4">
                                 <textarea placeholder="Ghi Chú" className="w-full p-3 border rounded text-sm"></textarea>
@@ -101,21 +135,21 @@ const Pay = () => {
                                         </select> */}
                                         <div className="border-b mb-2  p-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" value="vnpay" className="mr-2" defaultChecked {...register("payment")} />
+                                                <input type="radio" value="vnpay" className="mr-2" defaultChecked {...register("payment", { required: true })} />
                                                 <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
                                                 <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
                                             </label>
                                         </div>
                                         <div className="border-b p-2 mb-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" value="vnpay-qr" className="mr-2" {...register("payment")} />
+                                                <input type="radio" value="vnpay-qr" className="mr-2" {...register("payment", { required: true })} />
                                                 <p className="flex-1 text-sm">Thanh toán qua VNPAY-QR</p>
                                                 <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
                                             </label>
                                         </div>
                                         <div className="mb-2 p-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment")} />
+                                                <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment", { required: true })} />
                                                 <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                             </label>
                                         </div>
