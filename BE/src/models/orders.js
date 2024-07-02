@@ -22,6 +22,9 @@ const orderItemSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  image: {
+    type: String,
+  },
   quantity: {
     type: Number,
     required: true
@@ -36,12 +39,37 @@ const orderSchema = new mongoose.Schema({
   items: [orderItemSchema],
   orderNumber: {
     type: String,
-    required: true,
-    unique: true
+    auto: true,
+    unique: true,
   },
-  customerName: {
-    type: String,
-    required: true
+  customerInfo: {
+    type: {
+      userName: {
+        type: String,
+        required: true,
+      },
+      phone: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      payment: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      address: {
+        type: String
+      },
+      code: {
+        type: String
+      }
+    },
+    required: true,
   },
   totalPrice: {
     type: Number,
@@ -49,8 +77,8 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "confirmed", "shipped", "delivered"],
-    default: "pending"
+    enum: ["Chờ xác nhận", "Đang chuẩn bị hàng", "Đang vận chuyển", "Đã giao hàng", "Đã hủy"],
+    default: "Chờ xác nhận"
   },
   datetime: {
     type: Date,

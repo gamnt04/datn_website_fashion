@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from "date-fns";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useProductQuery from "../../../common/hooks/Category/useProductQuery";
+import { useNavigate } from "react-router-dom";
 import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
@@ -14,13 +14,11 @@ const ListProduct = () => {
   const [removingProductId, setRemovingProductId] = useState<string | null>(
     null
   );
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-
   const handleRemove = async (id: string) => {
     if (window.confirm("Bạn có muốn xóa sản phẩm này không?")) {
       setRemovingProductId(id);
@@ -36,6 +34,7 @@ const ListProduct = () => {
       }
     }
   };
+  const navigate = useNavigate();
 
   const handleUpdate = (id: string) => {
     navigate(`edit/${id}`);

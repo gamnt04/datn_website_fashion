@@ -7,20 +7,10 @@ import {
 } from "../../../../resources/svg/Icon/Icon";
 const AboutUS = () => {
   return (
-    <div className="container mx-auto max-w-[1200px]">
-      <div>
-        <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
-          <ul className="flex gap-2">
-            <li className="text-red-500">
-              <a href="#">Home </a>
-            </li>
-            <li> / </li>
-            <li>
-              <a href="#">About us</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+    <div className="container mx-auto lg:mt-[40px] mt-[60px]">
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+                Home &#10148; Pages &#10148; About-Us
+            </div>
       <div className="mb-20">
         <div className="text-center mb-16">
           <div className="mb-20 mt-9 ">

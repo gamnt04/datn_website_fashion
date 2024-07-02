@@ -1,32 +1,34 @@
 import { useMutation } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { useNavigate } from "react-router-dom";
-// import { useToast } from 'react-toastify';
+import useLocalStorage from "../../hooks/Storage/useStorage";
 
 const useSignIn = () => {
-  // const toast = useToast();
   const navigate = useNavigate();
+  const [, setUser] = useLocalStorage("user", {});
+
   const { mutate } = useMutation({
-    mutationFn: async (formData) => {
+    mutationFn: async (formData: { email: string; password: string }) => {
       const { data } = await instance.post(`auth/signin`, formData);
       localStorage.setItem("user", JSON.stringify(data));
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setUser(data);
       alert("Đăng nhập thành công");
-      // toast({
-      //     title: "Đăng ký thành công",
-      //     description: "You have successfully signed in.",
-      //     status: "success",
-      //     duration: 5000,
-      //     isClosable: true,
-      // });
+      navigate("/");
+      window.location.reload();
+    },
+    onError: (error) => {
+      console.log(error);
+      alert("Đăng nhập thất bại");
     }
   });
-  const onSubmit = (formData: any) => {
+
+  const onSubmit = (formData: { email: string; password: string }) => {
     mutate(formData);
-    navigate("/");
   };
+
   return { onSubmit };
 };
 

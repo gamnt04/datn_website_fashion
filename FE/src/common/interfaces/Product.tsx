@@ -1,5 +1,8 @@
 import { ReactNode } from "react";
+
 export interface IProduct {
+  productId: string;
+  quantity: number;
   name: string;
   _id?: string;
   slug: string;
@@ -9,7 +12,7 @@ export interface IProduct {
   gallery: FileList | string[];
   description: string;
   countInStock: number;
-  featured: string;
+  featured: boolean;
   tag: string[];
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
