@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
-import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
+import {
+  CartIcon,
+  HeartIcon,
+  HeartIconRed
+} from "../../../resources/svg/Icon/Icon";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import useProductQuery from "../../../common/hooks/Category/useProductQuery";
 import { IProduct } from "../../../common/interfaces/Product";
@@ -11,8 +15,13 @@ const Products = () => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { addToCart } = useCart();
-  const { data } = useProductQuery();
-  const { addFavoriteProduct } = useFavoriteProducts();
+  const { data: Products } = useProductQuery();
+  const {
+    data: FavoriteProducts,
+    removeFavoriteProduct,
+    addFavoriteProduct
+  } = useFavoriteProducts();
+
   const renderImage = (image: File | string): string => {
     if (typeof image === "string") {
       return image;
@@ -20,13 +29,18 @@ const Products = () => {
       return URL.createObjectURL(image);
     }
   };
+
+  const isFavorite = (id: string) => {
+    return FavoriteProducts?.products?.some((item) => item.productId === id);
+  };
+
   const onLoginWarning = () => {
     alert("Please log in to your account");
   };
 
   return (
     <>
-      {data?.map((item: IProduct) => (
+      {Products?.map((item: IProduct) => (
         <div className="w-full text-start flex flex-col gap-y-6" key={item._id}>
           <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
             <Link
@@ -53,14 +67,23 @@ const Products = () => {
                   >
                     <CartIcon />
                   </button>
-                  <button
-                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                    onClick={() =>
-                      addFavoriteProduct.mutate({ productId: item._id })
-                    }
-                  >
-                    <HeartIcon />
-                  </button>
+                  {isFavorite(item._id) ? (
+                    <button
+                      className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                      onClick={() => removeFavoriteProduct.mutate(item._id)}
+                    >
+                      <HeartIconRed />
+                    </button>
+                  ) : (
+                    <button
+                      className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+                      onClick={() =>
+                        addFavoriteProduct.mutate({ productId: item._id })
+                      }
+                    >
+                      <HeartIcon />
+                    </button>
+                  )}
                 </>
               ) : (
                 <>
@@ -84,10 +107,10 @@ const Products = () => {
           <div>
             <Link
               onClick={ScrollTop}
-              to={"/shops/detail_product"}
+              to={`/shops/detail_product/${item._id}`}
               className="text-xl font-medium text-gray-700 hover:text-black"
             >
-              Dome Lamp {data.i}
+              Dome Lamp
             </Link>
             <p className="text-sm font-normal text-[#999999] my-2">
               {item.name}
