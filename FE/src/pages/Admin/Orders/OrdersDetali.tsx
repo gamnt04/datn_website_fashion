@@ -16,6 +16,8 @@ const OrdersDetali = () => {
             try {
                 const { data } = await instance.get(`/orders/${userId}/${id}`);
                 setDetali(data);
+                console.log(data?.items[0].image);
+
             } catch (error) {
                 console.log(error);
                 toast.error("Failed to fetch order details.");
@@ -70,7 +72,7 @@ const OrdersDetali = () => {
 
     return (
         <>
-            <h1 className="font-bold text-xl text-orange-400 mt-11">Chi tiết sản phẩm</h1>
+            <h1 className="font-bold text-3xl text-orange-400 mt-16 text-center">Chi tiết đơn hàng</h1>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <table className="min-w-full bg-white border border-gray-200 h-auto">
                     <thead className="bg-gray-50">
@@ -113,7 +115,7 @@ const OrdersDetali = () => {
                         </span>
                         <p>Mã voucher:</p>
                     </div>
-                    <p className="flex justify-end py-4">Tông tiền:<span className="text-orange-300 pl-2"> {detali.totalPrice} </span></p>
+                    <p className="flex justify-end py-4 font-bold">Tổng tiền:<span className="text-orange-300 pl-2"> {detali.totalPrice} </span></p>
                 </div>
             </div>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
@@ -149,22 +151,23 @@ const OrdersDetali = () => {
                         </div>
                         <div>
                             <p>{detali.totalPrice}</p>
-                            <p>{detali.discount}</p>
+                            <p>10000</p>
                             <p>20000 đ</p>
-                            <p className="text-orange-300">{detali.totalPrice - detali.discount + 20000}</p>
+                            <p className="text-orange-300">{detali.totalPrice - 10000 + 20000}</p>
                         </div>
                     </div>
                 </div>
                 <div className="flex gap-5 justify-center mt-[60px]">
                     <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
-                        {detali.status !== "Đã hủy" ? "Xác nhận đơn" : "Đơn hàng đã bị hủy"}
+                        {detali.status !== "Đã hủy" ? (detali.status === "Đã giao hàng" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
                     </button>
-                    {detali.status !== "Đang chuẩn bị hàng" && detali.status !== "Đang vận chuyển" && detali.status !== "Đã giao hàng" && (
-                        <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder} disabled={detali.status === "Đã hủy"}>
+                    {detali.status !== "Đang chuẩn bị hàng" && detali.status !== "Đang vận chuyển" && detali.status !== "Đã giao hàng" && detali.status !== "Đã hủy" && (
+                        <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
                             Từ chối xác nhận
                         </button>
                     )}
                 </div>
+
             </div>
         </>
     );
