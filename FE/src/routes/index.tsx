@@ -26,6 +26,8 @@ import Address from "../pages/Client/Profile/Address";
 import Profile from "../pages/Client/Profile/Profile";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
+import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
+
 const RouterComponent = () => {
   return (
     <>
@@ -59,6 +61,7 @@ const RouterComponent = () => {
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
             <Route path="products/add" element={<AddProduct />} />
+            <Route path="products/edit/:id" element={<UpdateProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route
               path="/admin/orders/:id/orderDetali"
