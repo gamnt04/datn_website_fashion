@@ -8,6 +8,7 @@ import ordersRouter from "./routers/orders";
 import authRouter from "./routers/auth";
 import cartRouter from "./routers/cart";
 import productRouter from "./routers/products";
+import favoriteProductsRouter from "./routers/favoriteProducts";
 const app = express();
 dotenv.config();
 // middleware
@@ -23,4 +24,5 @@ app.use("/api/v1", ordersRouter);
 app.use("/api/v1", authRouter);
 app.use("/api/v1", productRouter);
 app.use("/api/v1", cartRouter);
+app.use("/api/v1", favoriteProductsRouter);
 export const viteNodeApp = app;

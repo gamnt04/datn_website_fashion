@@ -15,7 +15,7 @@ const Login = () => {
   const { onSubmit } = useSignIn()
 
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-24">
+    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
@@ -87,7 +87,7 @@ const Login = () => {
                   Forget password?
                 </a>
               </div>
-              <button className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 bg-gray-900 rounded-2xl hover:bg-[#f68e56] focus:ring-4 focus:ring-[#f68e56] md:w-96">
+              <button type="submit" className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 bg-gray-900 rounded-2xl hover:bg-[#f68e56] focus:ring-4 focus:ring-[#f68e56] md:w-96">
                 Sign In
               </button>
               <p className="text-sm text-gray-600">

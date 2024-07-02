@@ -1,5 +1,54 @@
 import { Link } from "react-router-dom";
+import instance from "../../../configs/axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { useForm } from "react-hook-form";
+import { reduce } from "lodash";
+
+
 const Pay = () => {
+
+    const { register, handleSubmit } = useForm()
+    const [user] = useLocalStorage("user", {});
+    const userId = user?.user?._id;
+    const { data } = useQuery({
+        queryKey: ["cart", userId],
+        queryFn: async () => {
+            const { data } = await instance.get(`/carts/${userId}`
+            );
+            console.log(data);
+
+            return data;
+        }
+    });
+    const { mutate } = useMutation({
+        mutationFn: async (order: {
+            userId: string;
+            items: [];
+            totalPrice: number;
+            customerInfo: object;
+        }) => {
+            const { data } = await instance.post("/orders", order);
+            return data;
+        },
+        onSuccess: () => {
+            // navigate("/thankyou")
+            // 
+            alert("Đặt hàng thành công")
+        },
+    });
+    const calcuateTotal = () => {
+        if (!data || !data.products) return 0
+        return reduce(data.products, (total: any, product: any) => total + product.price * product.quantity, 0)
+    }
+    const onSubmit = (formData: object) => {
+        mutate({
+            userId,
+            items: data?.products,
+            totalPrice: calcuateTotal(),
+            customerInfo: formData,
+        });
+    };
     return (
         <div className="max-w-[1400px] mt-4">
             <div className="mb-20">
@@ -10,27 +59,26 @@ const Pay = () => {
                         <li><a href="#">Thanh Toán</a></li>
                     </ul>
                 </div>
-                <div className="flex mb:flex-col md:flex-row">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+
+                <form action="" onSubmit={handleSubmit(onSubmit)} className="lg:flex flex-row">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 w-full basis-4/6">
                         <div className="col-span-1">
-                            <form action="">
-                                <h1 className="text-lg font-bold mb-4">Thông Tin Khach Hàng</h1>
-                                <div className="mb-4">
-                                    <input type="text" placeholder="Họ Và Tên" className="w-full p-3 border rounded text-sm" />
-                                </div>
-                                <div className="mb-4">
-                                    <input type="tel" placeholder="Số Điện Thoại" className="w-full p-3 border rounded text-sm" />
-                                </div>
-                                <div className="mb-4">
-                                    <input type="email" placeholder="Email" className="w-full p-3 border rounded text-sm" />
-                                </div>
-                                <div className="mb-4">
-                                    <input type="text" placeholder="Địa Chỉ" className="w-full p-3 border rounded text-sm" />
-                                </div>
-                                <div className="mb-4">
-                                    <textarea placeholder="Ghi Chú" className="w-full p-3 border rounded text-sm"></textarea>
-                                </div>
-                            </form>
+                            <h1 className="text-lg font-bold mb-4">Thông Tin Khach Hàng</h1>
+                            <div className="mb-4">
+                                <input type="text" placeholder="Họ Và Tên" className="w-full p-3 border rounded text-sm" {...register("userName")} />
+                            </div>
+                            <div className="mb-4">
+                                <input type="tel" placeholder="Số Điện Thoại" className="w-full p-3 border rounded text-sm" {...register("phone")} />
+                            </div>
+                            <div className="mb-4">
+                                <input type="email" placeholder="Email" className="w-full p-3 border rounded text-sm" {...register("email")} />
+                            </div>
+                            <div className="mb-4">
+                                <input type="text" placeholder="Địa Chỉ" className="w-full p-3 border rounded text-sm" {...register("address")} />
+                            </div>
+                            {/* <div className="mb-4">
+                                <textarea placeholder="Ghi Chú" className="w-full p-3 border rounded text-sm"></textarea>
+                            </div> */}
                         </div>
                         <div className="col-span-1">
                             <div className="mb-4">
@@ -44,42 +92,65 @@ const Pay = () => {
                             <div className="">
                                 <h1 className="text-lg font-bold mb-2">Thanh Toán</h1>
                                 <div className="w-full p-2 border rounded-t text-xs mb-2">
-                                    <form action="" className="w-full">
+                                    <div className="w-full">
+                                        {/* <select className="text-gray-700 w-full p-4 rounded text-sm">
+                                            <option value="">Thanh toán khi nhận hàng (COD)</option>
+                                            <option value="">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</option>
+                                            <option value="">Thanh toán qua VNPAY-QR</option>
+
+                                        </select> */}
                                         <div className="border-b mb-2  p-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" name="paymentMethod" value="vnpay" className="mr-2" checked/>
+                                                <input type="radio" value="vnpay" className="mr-2" defaultChecked {...register("payment")} />
                                                 <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
                                                 <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
                                             </label>
                                         </div>
                                         <div className="border-b p-2 mb-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" name="paymentMethod" value="vnpay-qr" className="mr-2" />
+                                                <input type="radio" value="vnpay-qr" className="mr-2" {...register("payment")} />
                                                 <p className="flex-1 text-sm">Thanh toán qua VNPAY-QR</p>
                                                 <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
                                             </label>
                                         </div>
                                         <div className="mb-2 p-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" name="paymentMethod" value="cod" className="mr-2" />
+                                                <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment")} />
                                                 <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                             </label>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
-
-
-
-
-
-
                             </div>
                         </div>
                     </div>
-
-                    <div className="p-4 space-y-4  border rounded text-sm mt-5 mb-5">
+                    <div className=" basis-2/5 p-4 space-y-4  w-full border rounded text-sm mt-5 mb-5">
                         <div className="product-list-wrapper">
-                            <div className="flex space-x-4 p-3">
+                            {data?.products.map((item: any, index: number) => (
+                                <div className="flex space-x-4 p-3" key={index}>
+                                    <div>
+                                        <img src={item.image} className="w-16 h-20" alt="Product Image" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">{item.name}</p>
+                                        {/* <p className="text-gray-500">{item.color} / {item.size}</p> */}
+                                        <p className="text-gray-500">Xanh xám / 4XL</p>
+                                        <p className="text-gray-500">Số Lượng: {item.quantity}</p>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {/* <div className="flex space-x-4 p-3">
+                                <div>
+                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
+                                </div>
+                                <div>
+                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
+                                    <p className="text-gray-500">Xanh xám / 4XL</p>
+                                    <p className="text-gray-500">Số Lượng: 1</p>
+                                </div>
+                            </div> */}
+                            {/* <div className="flex space-x-4 p-3">
                                 <div>
                                     <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
                                 </div>
@@ -108,22 +179,12 @@ const Pay = () => {
                                     <p className="text-gray-500">Xanh xám / 4XL</p>
                                     <p className="text-gray-500">Số Lượng: 1</p>
                                 </div>
-                            </div>
-                            <div className="flex space-x-4 p-3">
-                                <div>
-                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
-                                </div>
-                                <div>
-                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
-                                    <p className="text-gray-500">Xanh xám / 4XL</p>
-                                    <p className="text-gray-500">Số Lượng: 1</p>
-                                </div>
-                            </div>
+                            </div> */}
                         </div>
 
 
 
-                        {/* <div className="flex space-x-2">
+                        <div className="flex space-x-2">
                             <input type="text" placeholder="Nhập mã giảm giá" className="flex-1 p-2 border rounded" />
                             <button className="px-4 py-2 bg-blue-500 text-white rounded">Áp Dụng</button>
                         </div>
@@ -154,7 +215,7 @@ const Pay = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div> */}
+                        </div>
 
                         <div className="space-y-2">
                             <div className="flex justify-between">
@@ -167,19 +228,20 @@ const Pay = () => {
                             </div>
                             <div className="flex justify-between mt-5">
                                 <p className="text-gray-700">Tổng Cộng:</p>
-                                <span className="font-bold text-xl text-yellow-500">12.049.055đ</span>
+                                <span className="font-bold text-xl text-yellow-500">{calcuateTotal()}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <Link to="/cart" className="text-blue-500">Quay Về Giỏ Hàng</Link>
-                                <button className="px-4 py-2 bg-green-500 text-white rounded">Đặt Hàng</button>
+                                <button className="px-4 py-2 bg-green-500 text-white rounded" type="submit">Đặt Hàng</button>
                             </div>
                         </div>
                     </div>
+                </form>
 
-                </div>
 
-            </div>
-        </div>
+
+            </div >
+        </div >
     );
 };
 

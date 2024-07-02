@@ -1,32 +1,35 @@
 import { useEffect, useState } from "react";
 import OrderTable from "./OrderTable";
-import axios from "axios";
+import instance from "../../../configs/axios";
 
 const OrderList = () => {
   const [orders, setOrders] = useState<any[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
+
   const [status, setStatus] = useState<string>("");
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axios.get("http://localhost:3000/orders");
-        setOrders(data);
-        setFilteredOrders(data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
-  useEffect(() => {
-    if (status) {
-      setFilteredOrders(orders.filter((order) => order.status === status));
-    } else {
-      setFilteredOrders(orders);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  const fetchOrders = async (page: number, status: string = "") => {
+    try {
+      const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
+      setOrders(data.orders);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.log(error);
     }
-  }, [status, orders]);
+  };
+
+  useEffect(() => {
+    fetchOrders(currentPage, status);
+  }, [currentPage, status]);
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setStatus(event.target.value);
+    setCurrentPage(1); // Reset to first page when status changes
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -50,7 +53,12 @@ const OrderList = () => {
               <option value="Đã hủy">Đã hủy</option>
             </select>
           </div>
-          <OrderTable orders={filteredOrders} />
+          <OrderTable
+            orders={orders}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>
