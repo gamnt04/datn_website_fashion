@@ -2,11 +2,13 @@
 import { format } from "date-fns";
 import { useState } from "react";
 import useProductQuery from "../../../common/hooks/Category/useProductQuery";
+import { useNavigate } from "react-router-dom";
 import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
 import AddProduct from "./AddProducts/Index";
+
 const ListProduct = () => {
   const { data, isLoading } = useProductQuery();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
@@ -31,6 +33,11 @@ const ListProduct = () => {
         setRemovingProductId(null);
       }
     }
+  };
+  const navigate = useNavigate();
+
+  const handleUpdate = (id: string) => {
+    navigate(`edit/${id}`);
   };
 
   return (
@@ -104,6 +111,12 @@ const ListProduct = () => {
                           {formatDate(product.updatedAt)}
                         </td>
                         <td className="px-4 py-4 text-sm">
+                          <button
+                            onClick={() => handleUpdate(product._id!)}
+                            className="p-3 mr-2 text-white transition-colors duration-200 bg-blue-500 border rounded-lg hover:bg-blue-400 focus:outline-none"
+                          >
+                            Cập nhật
+                          </button>
                           <button
                             onClick={() => handleRemove(product._id!)}
                             className={`p-3 text-white transition-colors duration-200 border rounded-lg ${removingProductId === product._id
