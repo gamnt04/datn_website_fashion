@@ -43,7 +43,7 @@ export const signup = async (req, res) => {
   const { error } = signupSchema.validate(req.body, { abortEarly: false });
   console.log(error);
   if (error) {
-    const messages = error.details.map((item) => item.message);
+    const messages = error.details.map((item) => item.message); zzz
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       messages
     });
@@ -51,7 +51,7 @@ export const signup = async (req, res) => {
   const existUser = await User.findOne({ email });
   if (existUser) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Email đã tồn tại"]
+      messages: ["Email đã tồn tại"],
     });
   }
   const hashedPassword = await bcryptjs.hash(password, 12);
@@ -59,13 +59,13 @@ export const signup = async (req, res) => {
   const user = await User.create({
     ...req.body,
     password: hashedPassword,
-    role
+    role,
   });
-
   return res.status(StatusCodes.CREATED).json({
     user
   });
-};
+}
+
 export const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -204,4 +204,4 @@ export const delete_address = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {};
+export const logout = async (req, res) => { };
