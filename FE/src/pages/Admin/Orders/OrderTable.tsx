@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 
 
 const OrderTable = ({ orders }: any) => {
+    const formatDate = (datetime: any) => {
+        if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
+        const date = new Date(datetime);
+        return date.toLocaleDateString(); // Lấy ngày tháng năm
+    };
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 h-auto">
@@ -25,7 +30,7 @@ const OrderTable = ({ orders }: any) => {
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.userName}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.phone}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.email}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{order?.datetime}</td>
+                            <td className="py-4 px-3 text-sm text-gray-500">{formatDate(order?.datetime)}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.payment}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order.status}</td>
                             <td className="py-4 px-3 text-sm text-gray-500 flex justify-center items-center gap-5 relative">
