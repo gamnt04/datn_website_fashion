@@ -1,6 +1,7 @@
 import {
   CartIcon,
   HeartIcon,
+  HeartIconRed,
   TrashIcon
 } from "../../../resources/svg/Icon/Icon";
 import { useFavoriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
@@ -13,7 +14,7 @@ const Favourite = () => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { addToCart } = useCart();
-  const { addFavoriteProduct, removeFavoriteProduct } = useFavoriteProducts();
+  const { removeFavoriteProduct } = useFavoriteProducts();
 
   const onLoginWarning = () => {
     alert("Please log in to your account");
@@ -65,18 +66,10 @@ const Favourite = () => {
                         <button
                           className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
                           onClick={() =>
-                            addFavoriteProduct.mutate({ productId: item._id })
+                            removeFavoriteProduct.mutate(item.productId)
                           }
                         >
-                          <HeartIcon />
-                        </button>
-                        <button
-                          className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                          onClick={() => {
-                            removeFavoriteProduct.mutate(item.productId);
-                          }}
-                        >
-                          <TrashIcon />
+                          <HeartIconRed />
                         </button>
                       </>
                     ) : (
