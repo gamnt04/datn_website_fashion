@@ -259,7 +259,6 @@ const Header = () => {
       </form>
 
       {/* lớp phủ */}
-      {/* lớp phủ */}
       <div
         onClick={toggleMenuMobile}
         style={{ display: toggle_Menu_Mobile ? "block" : "none" }}
