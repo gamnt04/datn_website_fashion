@@ -23,9 +23,8 @@ const AddProduct = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
   const [imageSelected, setImageSelected] = useState(false);
-  imageSelected;
   const galleryInputRef = useRef<HTMLInputElement>(null);
-
+  imageSelected;
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
     try {
       const { gallery, image, ...formData }: any = data;
@@ -156,6 +155,7 @@ const AddProduct = () => {
       galleryInputRef.current.value = "";
     }
   };
+
   const removeImagePreview = () => {
     setImagePreview(null);
     setImageSelected(false);
@@ -244,10 +244,10 @@ const AddProduct = () => {
               htmlFor="description"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
-              Description
+              Mô tả
             </label>
             <textarea
-              placeholder="Description"
+              placeholder="Mô tả"
               {...register("description", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
@@ -257,12 +257,89 @@ const AddProduct = () => {
           </div>
 
           <div className="mb-4">
+            <label
+              htmlFor="colors"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Màu sắc
+            </label>
+            <input
+              type="color"
+              placeholder="Màu sắc"
+              {...register("colors")}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.colors?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="sizes"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Kích thước
+            </label>
+            <div className="flex space-x-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  value="S"
+                  {...register("sizes")}
+                  className="form-checkbox"
+                />
+                <span className="ml-2">S</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  value="M"
+                  {...register("sizes")}
+                  className="form-checkbox"
+                />
+                <span className="ml-2">M</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  value="L"
+                  {...register("sizes")}
+                  className="form-checkbox"
+                />
+                <span className="ml-2">L</span>
+              </label>
+            </div>
+            <div className="text-xs italic text-red-500">
+              {errors.sizes?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="countInStock"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Số lượng trong kho
+            </label>
+            <input
+              type="number"
+              placeholder="Số lượng trong kho"
+              {...register("countInStock", { required: "Không bỏ trống" })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.countInStock?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
             <div className="mb-4">
               <label
                 htmlFor="image"
                 className="block mb-2 text-sm font-bold text-gray-700"
               >
-                Image
+                Hình ảnh
               </label>
               <input
                 type="file"
@@ -299,7 +376,7 @@ const AddProduct = () => {
                 htmlFor="gallery"
                 className="block mb-2 text-sm font-bold text-gray-700"
               >
-                Gallery
+                Bộ sưu tập
               </label>
               <input
                 type="file"
@@ -333,6 +410,7 @@ const AddProduct = () => {
               </div>
             </div>
           </div>
+
           <div className="flex items-center justify-between">
             <button
               type="submit"
