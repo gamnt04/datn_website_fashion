@@ -59,13 +59,13 @@ const ListProduct = () => {
                       <th className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         STT
                       </th>
-                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
                         Ảnh sản phẩm
                       </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         Tên sản phẩm
                       </th>
-                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
                         Giá sản phẩm
                       </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -74,10 +74,10 @@ const ListProduct = () => {
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         Ngày tạo
                       </th>
-                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
                         Ngày chỉnh sửa
                       </th>
-                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
                         Thao tác
                       </th>
                     </tr>
@@ -88,20 +88,20 @@ const ListProduct = () => {
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                           {index + 1}
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           <img
                             src={product.image}
                             alt={product.name}
                             className="object-cover w-20 h-20 border rounded-md "
                           />
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 ">
                           {product.name}
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           {product.price}
                         </td>
-                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           {product.description}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
@@ -110,7 +110,7 @@ const ListProduct = () => {
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           {formatDate(product.updatedAt)}
                         </td>
-                        <td className="px-4 py-4 text-sm whitespace-nowrap">
+                        <td className="px-4 py-4 text-sm">
                           <button
                             onClick={() => handleUpdate(product._id!)}
                             className="p-3 mr-2 text-white transition-colors duration-200 bg-blue-500 border rounded-lg hover:bg-blue-400 focus:outline-none"
@@ -119,11 +119,10 @@ const ListProduct = () => {
                           </button>
                           <button
                             onClick={() => handleRemove(product._id!)}
-                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${
-                              removingProductId === product._id
-                                ? "bg-gray-500"
-                                : "bg-rose-500 hover:bg-rose-400"
-                            } focus:outline-none`}
+                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${removingProductId === product._id
+                              ? "bg-gray-500"
+                              : "bg-rose-500 hover:bg-rose-400"
+                              } focus:outline-none`}
                             disabled={removingProductId === product._id}
                           >
                             {removingProductId === product._id
