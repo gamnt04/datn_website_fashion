@@ -1,4 +1,3 @@
-// models/Products.ts
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -6,42 +5,48 @@ const productSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      lowercase: true
+      lowercase: true,
     },
     slug: {
       type: String,
-      unique: true
+      unique: true,
     },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true
+      required: true,
     },
     price: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
     },
     image: {
-      type: String
+      type: String,
     },
     gallery: {
-      type: [String]
+      type: [String],
     },
     description: {
-      type: String
+      type: String,
     },
     countInStock: {
       type: Number,
-      default: 0
+      default: 0,
     },
     featured: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tag: {
-      type: [String]
-    }
+      type: [String],
+    },
+    colors: {
+      type: [String],
+    },
+    sizes: {
+      type: [String],
+    },
   },
   { timestamps: true, versionKey: false }
 );
