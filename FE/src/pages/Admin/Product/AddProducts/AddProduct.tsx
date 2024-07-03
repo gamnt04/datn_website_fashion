@@ -1,12 +1,11 @@
-// components/AddProduct/AddProduct.tsx
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createProduct } from "../../../../services/product";
 import axios from "axios";
-import { IProduct } from "../../../../common/interfaces/Product";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Message from "../../../../components/base/Message/Message";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { IProduct } from "../../../../common/interfaces/Product";
 
 const AddProduct = () => {
   const { data } = useCategoryQuery();
@@ -15,21 +14,27 @@ const AddProduct = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<IProduct>();
-  // const navigate = useNavigate();
+
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
+  const [imageSelected, setImageSelected] = useState(false);
+  imageSelected;
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
     try {
-      const { gallery, image, ...formData }: any = data; // Lấy gallery và image ra khỏi formData
-      const uploadedImageUrls = await uploadImage(image); // Upload ảnh chính (image)
-      const uploadedGalleryUrls = await uploadGallery(gallery); // Upload ảnh trong gallery
+      const { gallery, image, ...formData }: any = data;
+      const uploadedImageUrls = image ? await uploadImage(image) : [];
+      const uploadedGalleryUrls = gallery ? await uploadGallery(gallery) : [];
 
       const newData: IProduct = {
         ...formData,
-        image: uploadedImageUrls[0], // Giả sử chỉ có một ảnh chính được upload
+        image: uploadedImageUrls[0], // Assuming only one main image is uploaded
         gallery: uploadedGalleryUrls,
       };
 
@@ -40,7 +45,6 @@ const AddProduct = () => {
       console.error("Thêm mới thất bại:", error);
       setErrorMessage("Thêm Sản Phẩm Lỗi !");
       setShowMessage(true);
-      console.log(error);
     }
   };
 
@@ -53,7 +57,7 @@ const AddProduct = () => {
     const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
     const formData = new FormData();
-    formData.append("file", file[0]); // Chỉ lấy file đầu tiên nếu có nhiều file được chọn
+    formData.append("file", file[0]);
     formData.append("upload_preset", PRESET_NAME);
     formData.append("folder", FOLDER_NAME);
 
@@ -63,7 +67,7 @@ const AddProduct = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      return [response.data.secure_url]; // Trả về mảng đường dẫn (ở đây chỉ có một đường dẫn)
+      return [response.data.secure_url];
     } catch (error) {
       console.error("Error uploading image:", error);
       throw new Error("Failed to upload image");
@@ -111,6 +115,52 @@ const AddProduct = () => {
       return () => clearTimeout(timer);
     }
   }, [showMessage]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setImageSelected(true);
+    } else {
+      setImageSelected(false);
+    }
+  };
+
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const previews = Array.from(files).map((file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        return new Promise<string>((resolve) => {
+          reader.onloadend = () => {
+            resolve(reader.result as string);
+          };
+        });
+      });
+
+      Promise.all(previews).then((images) => {
+        setGalleryPreview(images);
+        setValue("gallery", images);
+      });
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setGalleryPreview((prev) => prev.filter((_, i) => i !== index));
+    if (galleryInputRef.current) {
+      galleryInputRef.current.value = "";
+    }
+  };
+  const removeImagePreview = () => {
+    setImagePreview(null);
+    setImageSelected(false);
+    setValue("image", []);
+  };
 
   return (
     <div className="container mx-auto">
@@ -221,7 +271,24 @@ const AddProduct = () => {
                   required: "Vui lòng chọn ảnh sản phẩm",
                 })}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                onChange={handleImageChange}
               />
+              {imagePreview && (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Image Preview"
+                    className="h-20 mt-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImagePreview}
+                    className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
               <div className="text-xs italic text-red-500">
                 {errors.image?.message}
               </div>
@@ -240,7 +307,27 @@ const AddProduct = () => {
                 multiple
                 {...register("gallery")}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                onChange={handleGalleryChange}
+                ref={galleryInputRef}
               />
+              <div className="flex flex-wrap gap-2 mt-2">
+                {galleryPreview.map((url, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={url}
+                      alt={`Gallery Preview ${index + 1}`}
+                      className="h-20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage(index)}
+                      className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
               <div className="text-xs italic text-red-500">
                 {errors.gallery?.message}
               </div>
