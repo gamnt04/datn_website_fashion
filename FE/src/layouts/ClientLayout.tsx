@@ -7,7 +7,7 @@ const ClientLayout = () => {
     <>
       <Header />
       <div className="xl:w-full xl:flex xl:justify-center">
-        <div className="xl:w-[1440px]">
+        <div className="xl:w-[1440px] md:w-[95vw] w-[345px] mx-auto">
           <Outlet />
         </div>
       </div>
