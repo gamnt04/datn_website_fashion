@@ -1,4 +1,4 @@
-import Cart from "../models/cart.js";
+import Cart from "../../models/Cart/cart";
 import { StatusCodes } from "http-status-codes";
 
 export const getCartByUserId = async (req, res) => {
@@ -133,9 +133,19 @@ export const decreaseProductQuantity = async (req, res) => {
       return res.status(404).json({ message: "Product not found in cart" });
     }
 
-    if (product.quantity > 1) {
-      product.quantity--;
-    }
+
+    for (let i = 0; i < cart.products.length; i ++) {
+      if (cart.products[i].product_id == productId){
+        cart.products[i].quantity --;
+          if (cart.products[i].quantity === 0) {
+            cart.items.splice(i, 1);
+          }
+      }
+  };
+
+    // if (product.quantity > 1) {
+    //   product.quantity--;
+    // }
 
     await cart.save();
     res.status(200).json(cart);
