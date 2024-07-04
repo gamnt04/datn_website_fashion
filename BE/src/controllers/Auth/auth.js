@@ -1,8 +1,8 @@
 import bcryptjs from "bcryptjs";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import User from "../models/users";
-import { signupSchema } from "../validations/auth";
+import User from "../../models/Auth/users";
+import { signupSchema } from "../../validations/auth";
 
 export const GetAllUser = async (req, res) => {
   try {
