@@ -52,6 +52,15 @@ const Address = () => {
     });
   };
 
+  const clearAddressInfo = () => {
+    setAddressInfo({
+      fullName: "",
+      phoneNumber: "",
+      addressDetails: "",
+      addressType: "",
+    });
+  };
+
   const handleDeleteAddress = async (addressId: string) => {
     try {
       const confirm = window.confirm("Bạn có chắc muốn xóa địa chỉ?");
@@ -65,6 +74,23 @@ const Address = () => {
       }
     } catch (error) {
       console.error("Error deleting address:", error);
+    }
+  };
+
+  const handleAddAddress = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await instance.post(`/auth/add_address`, {
+        userId,
+        newAddress: addressInfo,
+      });
+      fetchAddresses();
+      setIsOpen(false); // Close modal
+      clearAddressInfo(); // Clear form fields
+      alert("Thêm địa chỉ thành công");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error adding address:", error);
     }
   };
 
@@ -167,8 +193,8 @@ const Address = () => {
                 />
                 <input
                   type="text"
-                  name="phone"
-                  value={addressInfo.phone}
+                  name="phoneNumber"
+                  value={addressInfo.phoneNumber}
                   onChange={handleInputChange}
                   placeholder="Số điện thoại"
                   required
@@ -178,8 +204,8 @@ const Address = () => {
                 <input
                   type="text"
                   className="w-full"
-                  name="address"
-                  value={addressInfo.address}
+                  name="addressDetails"
+                  value={addressInfo.addressDetails}
                   onChange={handleInputChange}
                   placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
                   required
