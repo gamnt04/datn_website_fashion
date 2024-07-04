@@ -14,6 +14,7 @@ export const getCartByUserId = async (req, res) => {
       products: cart.products.map((item) => ({
         productId: item.productId._id,
         name: item.productId.name,
+        image: item.productId.image,
         price: item.productId.price,
         thumbnail: item.productId.thumbnail,
         quantity: item.quantity
@@ -91,7 +92,7 @@ export const updateQuantityProductsInCart = async (req, res) => {
     product.quantity = quantity;
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
-  } catch (error) {}
+  } catch (error) { }
 };
 export const increaseProductQuantity = async (req, res) => {
   const { userId, productId } = req.body;
