@@ -1,13 +1,11 @@
 import mongoose from "mongoose";
-import slug from "mongoose-slug-updater";
-mongoose.plugin(slug);
 
 const categorySchema = mongoose.Schema(
   {
-    name: {
+    name_category: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     products: [
       {
@@ -15,12 +13,13 @@ const categorySchema = mongoose.Schema(
         ref: "Products",
         required: true,
       },
-    ],
-    slug: {
-      type: String,
-      slug: "name",
-      unique: true,
-    },
+    ]
+    // ,
+    // slug: {
+    //   type: String,
+    //   slug: "name",
+    //   unique: true,
+    // },
   },
 
   {

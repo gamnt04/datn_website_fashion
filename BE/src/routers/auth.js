@@ -8,16 +8,16 @@ import {
   signin,
   signup,
   update_address
-} from "../controllers/auth";
-const router = express.Router();
+} from "../controllers/Auth/auth";
+const Routes_auth = express.Router();
 
-router.post("/auth/signup", signup);
-router.post("/auth/signin", signin);
-router.get("/auth/:userId", GetAuthById);
-router.get("/auths", GetAllUser);
-router.post("/auth/add_address", add_address);
-router.get("/auth/:userId", get_address);
-router.put("/auth/:userId/:addressId", update_address); // Cập nhật địa chỉ của người dùng
-router.delete("/auth/:userId/:addressId", delete_address); // Xóa địa chỉ của người dùng
+Routes_auth.post("/auth/signup", signup);
+Routes_auth.post("/auth/signin", signin);
+Routes_auth.get("/auth/:userId", GetAuthById);
+Routes_auth.get("/auths", GetAllUser);
+Routes_auth.post("/auth/add_address", add_address);
+Routes_auth.get("/auth/:userId", get_address);
+Routes_auth.put("/auth/:userId/:addressId", update_address); // Cập nhật địa chỉ của người dùng
+Routes_auth.delete("/auth/:userId/:addressId", delete_address); // Xóa địa chỉ của người dùng
 
-export default router;
+export default Routes_auth;

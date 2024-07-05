@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import Order from "../models/orders";
+import Order from "../../models/Orders/orders";
 
 export const createOrder = async (req, res) => {
   try {
