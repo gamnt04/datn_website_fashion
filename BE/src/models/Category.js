@@ -12,7 +12,8 @@ const categorySchema = mongoose.Schema(
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        ref: "Products",
+        required: true,
       },
     ],
     slug: {
