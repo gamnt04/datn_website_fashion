@@ -7,6 +7,7 @@ import Routes_categories from './routers/category';
 import Routes_orders from './routers/orders';
 import Routes_auth from './routers/auth';
 import Routes_Favorites from './routers/favoriteProducts';
+import Routes_Carts from './routers/cart';
 
 dotenv.config();
 const app = express();
@@ -20,7 +21,7 @@ app.use('/api/v1', Routes_Products)
 
 app.use("/api/v1", Routes_categories);
 app.use("/api/v1", Routes_orders);
-app.use("/api/v1", Routes_auth);
+app.use("/api/v1", Routes_Carts);
 app.use("/api/v1", Routes_auth);
 app.use("/api/v1", Routes_Favorites);
 

@@ -1,36 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import MiniCart from "../../../pages/Client/(Cart)/[MiniCart]";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 // import { useDispatch } from "react-redux";
-import { useCart } from "../../../common/hooks/Cart/useCart";
+// import { useCart } from "../../../common/hooks/Cart/useCart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
+import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 // import { SearchData } from "../../Services/Search";
 
 const Header = () => {
   const navigate = useNavigate();
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
-  const { calculateTotalProduct } = useCart();
+  // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
+  const {data} = List_Cart(account._id);
   useEffect(() => {
     typeof window !== "undefined" &&
       window.addEventListener("scroll", () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -121,13 +122,13 @@ const Header = () => {
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
-            <Nav_Mobile/>
+            <Nav_Mobile />
           </div>
 
           <div className="flex items-center gap-x-20">
             {/* logo */}
             <Link
-            onClick={ScrollTop}
+              onClick={ScrollTop}
               to="/"
               className="lg:relative absolute lg:left-0 lg:translate-x-0 left-[35%] -translate-x-full h-auto mr-2 flex items-start"
             >
@@ -140,7 +141,7 @@ const Header = () => {
 
             {/* menu desktop  ahihi test commit*/}
             {/* map() => render routing*/}
-           <Nav_Desktop/>
+            <Nav_Desktop />
           </div>
 
           {/* options */}
@@ -173,28 +174,17 @@ const Header = () => {
             </form>
             {/* cart */}
             <div className="group *:duration-300 relative py-1">
-              {account ? (
-                <Link to="/cart" onClick={ScrollTop} className="relative">
-                  <CartIcon />
-                  {calculateTotalProduct() > 0 ? (
-                    <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-                      {calculateTotalProduct() > 99
-                        ? "99+"
-                        : calculateTotalProduct()}
-                    </span>
-                  ) : (
-                    <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-                      0
-                    </span>
-                  )}
-                  <MiniCart />
-                </Link>
-              ) : (
+              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">{data?.products.length}</span>
+              {/* {account ? '/cart' : (
                 <div onClick={() => onlogin()} className="relative">
                   <CartIcon />
                   <MiniCart />
                 </div>
-              )}
+              )} */}
+                  
+                  <Link to={account ? '/cart' : '/login'}>
+                  <CartIcon />
+                  </Link>
             </div>
 
             {/* heart */}
@@ -219,13 +209,16 @@ const Header = () => {
             )}
 
             {/* option / menu */}
-            <div className="cursor-pointer hover:scale-105 duration-300 border">
-              <Link
+            <div className="cursor-pointer hover:scale-105 duration-300">
+              {account && <Link to={'/allorder'}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user-round-check"><path d="M2 21a8 8 0 0 1 13.292-6" /><circle cx="10" cy="8" r="5" /><path d="m16 19 2 2 4-4" /></svg>
+              </Link>}
+              {account ? '' : <Link
                 to={"/login"}
                 className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
               >
                 Login
-              </Link>
+              </Link>}
             </div>
           </nav>
         </header>
@@ -269,3 +262,23 @@ const Header = () => {
 };
 
 export default Header;
+
+
+
+// (
+//   <Link to="/cart" onClick={ScrollTop} className="relative">
+//     <CartIcon />
+//     {calculateTotalProduct() > 0 ? (
+//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
+//         {calculateTotalProduct() > 99
+//           ? "99+"
+//           : calculateTotalProduct()}
+//       </span>
+//     ) : (
+//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
+//         0
+//       </span>
+//     )}
+//     {/* <MiniCart /> */}
+//   </Link>
+// )

@@ -25,7 +25,7 @@ export async function get_items_client (req, res) {
     const {
         _page = 1,
         _sort = '',
-        _limit = 20,
+        _limit = 12,
         _search = '',
         _category_id = ''
     } = req.query;
