@@ -8,6 +8,7 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 const MiniCart = () => {
   const { data, removeProductInCart, calculateTotal, calculateTotalProduct } =
     useCart();
+
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
 

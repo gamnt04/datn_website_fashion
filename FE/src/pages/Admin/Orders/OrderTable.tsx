@@ -12,14 +12,14 @@ const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
             <table className="min-w-full bg-white border border-gray-200 h-auto">
                 <thead className="bg-gray-50">
                     <tr>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên người mua</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SĐT</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày Đặt</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hình thức</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                        <th className="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tên người mua</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">SĐT</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày Đặt</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Hình thức</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -29,9 +29,9 @@ const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.userName}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.phone}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.email}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{formatDate(order?.datetime)}</td>
+                            <td className="py-4 px-3 text-sm text-gray-500 text-center">{formatDate(order?.datetime)}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.payment}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{order.status}</td>
+                            <td className="py-4 px-3 text-sm text-gray-500 text-center">{order.status}</td>
                             <td className="py-4 px-3 text-sm text-gray-500 flex justify-center items-center gap-5 relative">
                                 <Link to={`/admin/orders/${order._id}/orderDetali`}>
                                     <svg
