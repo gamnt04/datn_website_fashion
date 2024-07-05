@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { createOrder, getOrderById, getOrders, updateOrderStatus } from "../controllers/Orders/orders";
+import { createOrder, getOneOrderUser, getOrderById, getOrders, updateOrderStatus } from "../controllers/orders";
 
-const Routes_orders = Router()
-Routes_orders.post("/orders", createOrder);
-Routes_orders.get("/orders", getOrders);
-Routes_orders.get("/orders/:userId/:orderId", getOrderById);
-Routes_orders.patch("/orders/:userId/:orderId", updateOrderStatus);
-export default Routes_orders
+const router = Router()
+router.post("/orders", createOrder);
+router.get("/orders", getOrders);
+router.get("/orders/:userId/:orderId", getOrderById);
+router.get("/orders/:userId", getOneOrderUser);
+router.patch("/orders/:userId/:orderId", updateOrderStatus);
+export default router
+

@@ -10,6 +10,7 @@
 //   const [user] = useLocalStorage("user", {});
 //   const account = user?.user;
 
+
 //   return (
 //     <div
 //       className="absolute rounded bg-white mb:w-[70vw] lg:w-[25vw] duration-300 right-0 group-hover:scale-100 scale-0 shadow-2xl 
