@@ -13,11 +13,15 @@ const OrderList = () => {
     try {
       const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
       setOrders(data.orders);
+
+
       setTotalPages(data.totalPages);
     } catch (error) {
       console.log(error);
     }
+
   };
+  console.log(status);
 
   useEffect(() => {
     fetchOrders(currentPage, status);
