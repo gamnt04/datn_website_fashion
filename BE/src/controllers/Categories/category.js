@@ -1,7 +1,7 @@
-import category from "../models/Category.js";
-import { categoryValidator } from "../validations/category.js";
+import Category from "../../models/Items/Category.js";
+import { categoryValidator } from "../../validations/category.js";
 
-export const create = async (req, res) => {
+export const create_category = async (req, res) => {
   try {
     const { error } = categoryValidator.validate(req.body, {
       abortEarly: false,
@@ -12,7 +12,7 @@ export const create = async (req, res) => {
         message: errors,
       });
     }
-    const data = await category(req.body).save();
+    const data = await Category(req.body).save();
     if (!data) {
       throw new Error(`Error creating`);
     }
@@ -28,7 +28,7 @@ export const create = async (req, res) => {
   }
 };
 
-export const get = async (req, res) => {
+export const get_category = async (req, res) => {
   try {
     const keyword = req.query.keyword;
     let objWhere = {};
@@ -36,7 +36,7 @@ export const get = async (req, res) => {
       objWhere.name = new RegExp(keyword, "i");
     }
 
-    const data = await category.find(objWhere);
+    const data = await Category.find(objWhere);
     if (!data) {
       throw new Error(`Failed to get categories`);
     }
@@ -51,9 +51,9 @@ export const get = async (req, res) => {
     });
   }
 };
-export const getById = async (req, res) => {
+export const getById_category = async (req, res) => {
   try {
-    const data = await category.findById(req.params.id);
+    const data = await Category.findById(req.params.id);
     if (!data) {
       throw new Error(`Failed to get category detail`);
     }
@@ -68,40 +68,40 @@ export const getById = async (req, res) => {
     });
   }
 };
-export const update = async (req, res) => {
-  try {
-    const { error } = categoryValidator.validate(req.body, {
-      abortEarly: false,
-      allowUnknown: true,
-    });
-    if (error) {
-      const errors = error.details.map((err) => err.message);
-      return res.status(400).json({
-        message: errors,
-      });
-    }
-    const data = await category.findByIdAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      { new: true }
-    );
-    if (!data) {
-      throw new Error(`Failed to update category`);
-    }
-    return res.status(200).json({
-      data,
-    });
-  } catch (error) {
-    return res.json({
-      name: error.name,
-      message: error.message,
-    });
-  }
-};
+// export const update = async (req, res) => {
+//   try {
+//     const { error } = categoryValidator.validate(req.body, {
+//       abortEarly: false,
+//       allowUnknown: true,
+//     });
+//     if (error) {
+//       const errors = error.details.map((err) => err.message);
+//       return res.status(400).json({
+//         message: errors,
+//       });
+//     }
+//     const data = await category.findByIdAndUpdate(
+//       { _id: req.params.id },
+//       req.body,
+//       { new: true }
+//     );
+//     if (!data) {
+//       throw new Error(`Failed to update category`);
+//     }
+//     return res.status(200).json({
+//       data,
+//     });
+//   } catch (error) {
+//     return res.json({
+//       name: error.name,
+//       message: error.message,
+//     });
+//   }
+// };
 
-export const remove = async (req, res) => {
+export const remove_category = async (req, res) => {
   try {
-    const data = await category.findByIdAndDelete({ _id: req.params.id });
+    const data = await Category.findByIdAndDelete({ _id: req.params.id });
     if (!data) {
       throw new Error(`Failed to delete category`);
     }
@@ -116,9 +116,9 @@ export const remove = async (req, res) => {
     });
   }
 };
-export const statistical = async (req, res) => {
+export const statistical_category = async (req, res) => {
   try {
-    const categorys = await category.distinct("category");
+    const categorys = await Category.distinct("category");
     const categoryCount = categorys.length;
     return res.status(200).json({ count: categoryCount });
   } catch (error) {

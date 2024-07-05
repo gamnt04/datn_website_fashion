@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import FavoriteProducts from "../models/favoriteProducts";
+import FavoriteProducts from "../../models/Favorite/favoriteProducts";
 export const GetFavoriteProductByUserId = async (req, res) => {
   const { userId } = req.params;
   try {

@@ -3,13 +3,13 @@ import {
   GetFavoriteProductByUserId,
   addFavoriteProducts,
   removeFavoriteProduct
-} from "../controllers/favoriteProducts";
+} from "../controllers/Favorites_Items/favoriteProducts";
 
-const router = express.Router();
+const Routes_Favorites = express.Router();
 //Lấy danh sách sản phẩm trong phần yêu thích
-router.get("/favorite/products/:userId", GetFavoriteProductByUserId);
+Routes_Favorites.get("/favorite/products/:userId", GetFavoriteProductByUserId);
 //thêm sản phầm vào danh mục yêu thích
-router.post("/favorite/add-products", addFavoriteProducts);
-router.post("/favorite/remove-product", removeFavoriteProduct);
+Routes_Favorites.post("/favorite/add-products", addFavoriteProducts);
+Routes_Favorites.post("/favorite/remove-product", removeFavoriteProduct);
 
-export default router;
+export default Routes_Favorites;
