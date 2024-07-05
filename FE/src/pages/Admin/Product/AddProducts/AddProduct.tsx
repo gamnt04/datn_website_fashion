@@ -190,7 +190,7 @@ const AddProduct = () => {
               htmlFor="name"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
-              Name
+              Tên sản phẩm
             </label>
             <input
               type="text"
@@ -208,7 +208,7 @@ const AddProduct = () => {
               htmlFor="price"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
-              Price
+              Giá sản phẩm
             </label>
             <input
               type="number"
@@ -220,6 +220,7 @@ const AddProduct = () => {
               {errors.price?.message}
             </div>
           </div>
+
           <div className="mb-4">
             <label
               htmlFor="slug"
@@ -229,7 +230,7 @@ const AddProduct = () => {
             </label>
             <select
               {...register("category_id", { required: "Không bỏ trống" })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 leading-tight border rounded shadow appearance-none text focus:outline-none focus:shadow-outline"
             >
               <option value="">-- Chọn danh mục --</option>
               {data?.map((category: ICategory) => (
@@ -238,7 +239,12 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
+
+            <div className="text-xs italic text-red-500">
+              {errors.category_id?.message}
+            </div>
           </div>
+
           <div className="mb-4">
             <label
               htmlFor="description"
