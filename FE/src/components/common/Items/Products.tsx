@@ -1,122 +1,67 @@
 import { Link } from "react-router-dom";
-import {
-  CartIcon,
-  HeartIcon,
-  HeartIconRed
-} from "../../../resources/svg/Icon/Icon";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import useProductQuery from "../../../common/hooks/Category/useProductQuery";
-import { IProduct } from "../../../common/interfaces/Product";
-import { useCart } from "../../../common/hooks/Cart/useCart";
+import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
+import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { useFavoriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
-const Products = () => {
+const Products = ({items} : any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
-  const { addToCart } = useCart();
-  const { data: Products } = useProductQuery();
-  const {
-    data: FavoriteProducts,
-    removeFavoriteProduct,
-    addFavoriteProduct
-  } = useFavoriteProducts();
-
-  const renderImage = (image: File | string): string => {
-    if (typeof image === "string") {
-      return image;
-    } else {
-      return URL.createObjectURL(image);
+  const {mutate} = Mutation_Cart("ADD");
+  function addCart (id : string) {
+    const item = {
+      userId : account,
+      productId : id,
+      quantity : 1
     }
-  };
-
-  const isFavorite = (id: string) => {
-    return FavoriteProducts?.products?.some((item) => item.productId === id);
-  };
-
-  const onLoginWarning = () => {
-    alert("Please log in to your account");
-  };
-
+    mutate(item)
+  }
   return (
     <>
-      {Products?.map((item: IProduct) => (
-        <div className="w-full text-start flex flex-col gap-y-6" key={item._id}>
+        <div className="w-full text-start flex flex-col gap-y-6" key={items._id}>
           <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
             <Link
               onClick={ScrollTop}
-              to={`/shops/detail_product/${item._id}`}
+              to={`/shops/detail_product/${items._id}`}
               className="h-full cursor-pointer *:drop-shadow"
             >
               <img
                 className="group-hover:scale-105 duration-500 w-full h-full lg:px-8 mb:px-10 lg:py-6 mb:py-6"
                 loading="lazy"
-                src={item.image}
-                alt={item.name}
+                src={items.image}
+                alt={items.name}
               />
             </Link>
             {/* hover show icon cart */}
             <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-              {account ? (
                 <>
-                  <button
-                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                    onClick={() =>
-                      addToCart.mutate({ productId: item._id, quantity: 1 })
-                    }
-                  >
+                  <button onClick={() => addCart(items._id)}
+                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
                     <CartIcon />
                   </button>
-                  {isFavorite(item._id) ? (
                     <button
                       className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                      onClick={() => removeFavoriteProduct.mutate(item._id)}
-                    >
-                      <HeartIconRed />
-                    </button>
-                  ) : (
-                    <button
-                      className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                      onClick={() =>
-                        addFavoriteProduct.mutate({ productId: item._id })
-                      }
+                      
                     >
                       <HeartIcon />
                     </button>
-                  )}
                 </>
-              ) : (
-                <>
-                  <button
-                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                    onClick={() => onLoginWarning()}
-                  >
-                    <CartIcon />
-                  </button>
-                  <button
-                    className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                    onClick={() => onLoginWarning()}
-                  >
-                    <HeartIcon />
-                  </button>
-                </>
-              )}
             </div>
           </div>
 
           <div>
             <Link
               onClick={ScrollTop}
-              to={`/shops/detail_product/${item._id}`}
+              to={`/shops/detail_product/${items._id}`}
               className="text-xl font-medium text-gray-700 hover:text-black"
             >
-              Dome Lamp
+              {items.name_product}
             </Link>
             <p className="text-sm font-normal text-[#999999] my-2">
-              {item.name}
+              {items.name}
             </p>
             <p className="text-md font-semibold text-[#222222]">
-              2.000.000 VND
+            {items.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
             </p>
             <div className="flex justify-center mt-4 items-center gap-x-4">
               <Link
@@ -128,7 +73,7 @@ const Products = () => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-2 mt-4">
+          {/* <div className="flex justify-center gap-2 mt-4">
             {item.gallery?.map((image: File | string, index: number) => (
               <img
                 key={index}
@@ -137,9 +82,8 @@ const Products = () => {
                 alt={`Gallery image ${index + 1}`}
               />
             ))}
-          </div>
+          </div> */}
         </div>
-      ))}
     </>
   );
 };

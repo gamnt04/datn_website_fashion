@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import ListCart from "../pages/Client/(Cart)/[ListCart]";
-import Favourite from "../pages/Client/Favourite/Favourite";
+// import Favourite from "../pages/Client/Favourite/Favourite";
 import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
@@ -40,7 +40,7 @@ const RouterComponent = () => {
             <Route path="/cart" element={<ListCart />} />
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
-            <Route path="favourite" element={<Favourite />} />
+            {/* <Route path="favourite" element={<Favourite />} /> */}
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
@@ -50,7 +50,7 @@ const RouterComponent = () => {
               path="shops/detail_product/:id"
               element={<ProductDetail />}
             />
-            <Route path="allorder" element={<AllOrder />}>
+            <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
               <Route path="/allorder/address" element={<Address />} />
