@@ -13,9 +13,9 @@ export const getCartByUserId = async (req, res) => {
     const dataCart = {
       products: cart.products.map((item) => ({
         productId: item.productId._id,
-        name: item.productId.name,
-        image: item.productId.image,
-        price: item.productId.price,
+        name: item.productId.name_product,
+        image: item.productId.image_product,
+        price: item.productId.price_product,
         thumbnail: item.productId.thumbnail,
         quantity: item.quantity
       }))
@@ -33,7 +33,7 @@ export const addItemToCart = async (req, res) => {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({ userId, products: [] });
-    }
+    };
     const existProductIndex = cart.products.findIndex(
       (item) => item.productId.toString() == productId
     );
@@ -102,16 +102,13 @@ export const increaseProductQuantity = async (req, res) => {
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
-
     const product = cart.products.find(
       (item) => item.productId.toString() === productId
     );
     if (!product) {
       return res.status(404).json({ message: "Product not found in cart" });
     }
-
     product.quantity++;
-
     await cart.save();
     res.status(200).json(cart);
   } catch (error) {
@@ -136,10 +133,10 @@ export const decreaseProductQuantity = async (req, res) => {
 
 
     for (let i = 0; i < cart.products.length; i ++) {
-      if (cart.products[i].product_id == productId){
+      if (cart.products[i].productId == productId){
         cart.products[i].quantity --;
           if (cart.products[i].quantity === 0) {
-            cart.items.splice(i, 1);
+            cart.products.splice(i, 1);
           }
       }
   };
