@@ -23,7 +23,7 @@ const OrdersDetali = () => {
                 toast.error("Failed to fetch order details.");
             }
         })();
-    }, [id, userId]);
+    }, [userId]);
 
     const handleStatusUpdate = async () => {
         if (!detali) return;
@@ -77,23 +77,23 @@ const OrdersDetali = () => {
                 <table className="min-w-full bg-white border border-gray-200 h-auto">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ảnh sản phẩm</th>
-                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên sản phẩm</th>
-                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
-                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
-                            <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
+                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ảnh sản phẩm</th>
+                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tên sản phẩm</th>
+                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
+                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
+                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {detali.items.map((item) => (
                             <tr key={item._id}>
-                                <td className="py-4 px-6 text-sm font-medium text-gray-900">
-                                    <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover" />
+                                <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
+                                    <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
                                 </td>
-                                <td className="py-4 px-6 text-sm text-gray-500">{item.name}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500">{item.price}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500">{item.quantity}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500">{item.price * item.quantity}</td>
+                                <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item.name}</td>
+                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price}</td>
+                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.quantity}</td>
+                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price * item.quantity}</td>
                             </tr>
                         ))}
                     </tbody>
