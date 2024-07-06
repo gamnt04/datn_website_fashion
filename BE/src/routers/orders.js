@@ -4,8 +4,8 @@ import { createOrder, getOneOrderUser, getOrderById, getOrders, updateOrderStatu
 const router = Router()
 router.post("/orders", createOrder);
 router.get("/orders", getOrders);
-router.get("/orders/:userId/:orderId", getOrderById);
-router.get("/orders/:userId", getOneOrderUser);
-router.patch("/orders/:userId/:orderId", updateOrderStatus);
+router.post("/orders/get_order_user", getOneOrderUser);
+router.get("/orders/:id", getOrderById);
+router.patch("/orders/:id", updateOrderStatus);
 export default router
 
