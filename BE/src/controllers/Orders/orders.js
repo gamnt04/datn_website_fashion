@@ -46,8 +46,9 @@ export const getOrders = async (req, res) => {
 };
 export const getOrderById = async (req, res) => {
   try {
-    const { userId, orderId } = req.params;
-    const order = await Order.findOne({ userId, _id: orderId });
+
+    const order = await Order.findById(req.params.id);
+    console.log(order);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -61,8 +62,8 @@ export const getOrderById = async (req, res) => {
   }
 };
 export const getOneOrderUser = async (req, res) => {
+  const { userId } = req.body;
   try {
-    const { userId } = req.params;
     const order = await Order.find({ userId });
     if (!order) {
       return res
@@ -96,7 +97,8 @@ export const updateOrder = async (req, res) => {
 };
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { id } = req.params;
+    console.log(id);
     const { status } = req.body;
 
     const validStatus = [
@@ -113,7 +115,8 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Invalid status" });
     }
 
-    const order = await Order.findOne({ _id: orderId });
+    const order = await Order.findOne({ _id: id });
+    console.log(order);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)

@@ -19,7 +19,7 @@ const Order_All = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await instance.get(`/orders/${userId}`);
+                const { data } = await instance.post(`/orders/get_order_user`, { userId });
                 setOrders(data);
                 console.log(data);
 
@@ -68,7 +68,7 @@ const Order_All = () => {
                 {activeMenu === 'Chờ Xác Nhận' && <Waitforconfirmation dataProps={fiterOrrder('Chờ xác nhận')} />}
                 {activeMenu === 'Đang chuẩn bị hàng' && <WaitingForGoods dataProps={fiterOrrder('Đang chuẩn bị hàng')} />}
                 {activeMenu === 'Đang vận chuyển' && <WaitingForDelivery dataProps={fiterOrrder('Đang vận chuyển')} />}
-                {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('Đã Hủy')} />}
+                {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('Đã hủy')} />}
                 {activeMenu === 'Hoàn Thành' && <Complete dataProps={fiterOrrder('Đã giao hàng')} />}
                 {activeMenu === 'Trả Hàng / Hoàn Tiền' && <RefundRetunr />}
             </div>

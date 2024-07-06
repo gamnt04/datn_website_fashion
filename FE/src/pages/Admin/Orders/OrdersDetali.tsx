@@ -2,28 +2,24 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../../../configs/axios";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IOrder } from "../../../common/interfaces/Orders";
 
 const OrdersDetali = () => {
     const [detali, setDetali] = useState<IOrder | null>(null);
     const { id } = useParams();
-    const [user] = useLocalStorage("user", {});
-    const userId = user?.user?._id;
-
+    console.log(id);
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await instance.get(`/orders/${userId}/${id}`);
+                const { data } = await instance.get(`/orders/${id}`);
                 setDetali(data);
-                console.log(data?.items[0].image);
-
+                console.log(data);
             } catch (error) {
                 console.log(error);
                 toast.error("Failed to fetch order details.");
             }
         })();
-    }, [userId]);
+    }, [id]);
 
     const handleStatusUpdate = async () => {
         if (!detali) return;
@@ -41,9 +37,9 @@ const OrdersDetali = () => {
         };
         const nextStatus = statusOrder[detali.status] || "Đã giao hàng";
         try {
-            const { data } = await instance.patch(`/orders/${userId}/${id}`, { status: nextStatus });
-            setDetali(data);
+            const { data } = await instance.patch(`/orders/${id}`, { status: nextStatus });
             console.log(data);
+            setDetali(data);
             toast.success(detali.status === "Đã giao hàng" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
         } catch (error) {
             console.log(error);
@@ -58,7 +54,7 @@ const OrdersDetali = () => {
             return;
         }
         try {
-            const { data } = await instance.patch(`/orders/${userId}/${id}`, { status: "Đã hủy" });
+            const { data } = await instance.patch(`/orders/${id}`, { status: "Đã hủy" });
             setDetali(data);
             toast.success("Đơn hàng đã bị hủy thành công!");
             window.location.reload();
