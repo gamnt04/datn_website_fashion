@@ -1,11 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { createProduct } from "../../../../services/product";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import Message from "../../../../components/base/Message/Message";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
 import { IProduct } from "../../../../common/interfaces/Product";
+import { add_items_client } from "../../../../_lib/Items/Products";
 
 const AddProduct = () => {
   const { data } = useCategoryQuery();
@@ -26,18 +26,23 @@ const AddProduct = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   imageSelected;
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
+    console.log(data);
     try {
-      const { gallery, image, ...formData }: any = data;
-      const uploadedImageUrls = image ? await uploadImage(image) : [];
-      const uploadedGalleryUrls = gallery ? await uploadGallery(gallery) : [];
+      const { gallery_product, image_product, ...formData }: any = data;
+      const uploadedImageUrls = image_product ? await uploadImage(image_product) : [];
+      const uploadedGalleryUrls = gallery_product ? await uploadGallery(gallery_product) : [];
 
       const newData: IProduct = {
         ...formData,
-        image: uploadedImageUrls[0], // Assuming only one main image is uploaded
-        gallery: uploadedGalleryUrls,
+        image_product: uploadedImageUrls[0], // Assuming only one main image is uploaded
+        gallery_product: 'uploadedGalleryUrls',
+        featured_product: false,
+        quantity_product: 130,
+        tag_product: "Ahihi tag1"
       };
 
-      await createProduct(newData);
+
+      await add_items_client(newData);
       setSuccessMessage("Thêm Sản Phẩm thành công !");
       setShowMessage(true);
     } catch (error) {
@@ -144,7 +149,7 @@ const AddProduct = () => {
 
       Promise.all(previews).then((images) => {
         setGalleryPreview(images);
-        setValue("gallery", images);
+        setValue("gallery_product", images);
       });
     }
   };
@@ -159,7 +164,7 @@ const AddProduct = () => {
   const removeImagePreview = () => {
     setImagePreview(null);
     setImageSelected(false);
-    setValue("image", []);
+    setValue("image_product", []);
   };
 
   return (
@@ -195,11 +200,11 @@ const AddProduct = () => {
             <input
               type="text"
               placeholder="Name"
-              {...register("name", { required: "Không bỏ trống" })}
+              {...register("name_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.name?.message}
+              {errors.name_product?.message}
             </div>
           </div>
 
@@ -213,11 +218,11 @@ const AddProduct = () => {
             <input
               type="number"
               placeholder="Price"
-              {...register("price", { required: "Không bỏ trống" })}
+              {...register("price_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.price?.message}
+              {errors.price_product?.message}
             </div>
           </div>
 
@@ -254,15 +259,15 @@ const AddProduct = () => {
             </label>
             <textarea
               placeholder="Mô tả"
-              {...register("description", { required: "Không bỏ trống" })}
+              {...register("description_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.description?.message}
+              {errors.description_product?.message}
             </div>
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label
               htmlFor="colors"
               className="block mb-2 text-sm font-bold text-gray-700"
@@ -278,9 +283,9 @@ const AddProduct = () => {
             <div className="text-xs italic text-red-500">
               {errors.colors?.message}
             </div>
-          </div>
+          </div> */}
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label
               htmlFor="sizes"
               className="block mb-2 text-sm font-bold text-gray-700"
@@ -319,7 +324,7 @@ const AddProduct = () => {
             <div className="text-xs italic text-red-500">
               {errors.sizes?.message}
             </div>
-          </div>
+          </div> */}
 
           <div className="mb-4">
             <label
@@ -331,11 +336,11 @@ const AddProduct = () => {
             <input
               type="number"
               placeholder="Số lượng trong kho"
-              {...register("countInStock", { required: "Không bỏ trống" })}
+              {...register("countInStock_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.countInStock?.message}
+              {errors.countInStock_product?.message}
             </div>
           </div>
 
@@ -350,7 +355,7 @@ const AddProduct = () => {
               <input
                 type="file"
                 id="product_image"
-                {...register("image", {
+                {...register("image_product", {
                   required: "Vui lòng chọn ảnh sản phẩm",
                 })}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -373,7 +378,7 @@ const AddProduct = () => {
                 </div>
               )}
               <div className="text-xs italic text-red-500">
-                {errors.image?.message}
+                {errors.image_product?.message}
               </div>
             </div>
 
@@ -388,7 +393,7 @@ const AddProduct = () => {
                 type="file"
                 id="product_gallery"
                 multiple
-                {...register("gallery")}
+                {...register("gallery_product")}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                 onChange={handleGalleryChange}
                 ref={galleryInputRef}
@@ -412,7 +417,7 @@ const AddProduct = () => {
                 ))}
               </div>
               <div className="text-xs italic text-red-500">
-                {errors.gallery?.message}
+                {errors.gallery_product?.message}
               </div>
             </div>
           </div>
