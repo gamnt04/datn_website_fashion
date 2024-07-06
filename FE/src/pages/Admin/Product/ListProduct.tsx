@@ -90,19 +90,19 @@ const ListProduct = () => {
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           <img
-                            src={product.image}
-                            alt={product.name}
+                            src={product.image_product}
+                            alt={product.name_product}
                             className="object-cover w-20 h-20 border rounded-md "
                           />
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 ">
-                          {product.name}
+                          {product.name_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {product.price}
+                          {product.price_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {product.description}
+                          {product.description_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           {formatDate(product.createdAt)}

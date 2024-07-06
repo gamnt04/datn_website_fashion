@@ -16,8 +16,8 @@ const Header = () => {
   // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
   const [user] = useLocalStorage("user", {});
-  const account = user?.user;
-  const {data} = List_Cart(account._id);
+  const account = user?.user?._id;
+  const { data } = List_Cart(account);
   useEffect(() => {
     typeof window !== "undefined" &&
       window.addEventListener("scroll", () => {
@@ -181,10 +181,10 @@ const Header = () => {
                   <MiniCart />
                 </div>
               )} */}
-                  
-                  <Link to={account ? '/cart' : '/login'}>
-                  <CartIcon />
-                  </Link>
+
+              <Link to={account ? '/cart' : '/login'}>
+                <CartIcon />
+              </Link>
             </div>
 
             {/* heart */}
