@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import mongoosePaginate from 'mongoose-paginate-v2';
-import mongooseDelete from 'mongoose-delete';
+import mongoosePaginate from "mongoose-paginate-v2";
+import mongooseDelete from "mongoose-delete";
 
 const productSchema = new mongoose.Schema(
   {
@@ -10,55 +10,57 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
     // slug: {
-    //   type: String,
+    //   type: String,f
     //   unique: true
     // },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category"
-      },
+      ref: "Category",
+    },
     price_product: {
       type: Number,
       required: true,
-      min : 1,
-      default: 1
+      min: 1,
+      default: 1,
     },
     image_product: {
       type: String,
-      required : true
+      required: true,
     },
     gallery_product: {
-      type: [String]
+      type: [String],
     },
     description_product: {
       type: String,
-      minlength : 6,
-      maxlength : 5000
+      minlength: 6,
+      maxlength: 5000,
     },
     quantity_product: {
-      type : Number,
-      default : 1,
-      min : 1
+      type: Number,
+      default: 1,
+      min: 1,
     },
     countInStock_product: {
       type: Number,
-      min : 1,
-      default: 1
+      min: 1,
+      default: 1,
     },
     featured_product: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tag_product: {
-      type: [String]
-    }
+      type: [String],
+    },
   },
   { timestamps: true, versionKey: false }
 );
 
 productSchema.plugin(mongoosePaginate);
-productSchema.plugin(mongooseDelete, 
-  { deletedAt : true },
-   { overrideMethods: 'all' });
+productSchema.plugin(
+  mongooseDelete,
+  { deletedAt: true },
+  { overrideMethods: "all" }
+);
 
 export default mongoose.model("Products", productSchema);

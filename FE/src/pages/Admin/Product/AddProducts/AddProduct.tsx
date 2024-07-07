@@ -1,11 +1,20 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { createProduct } from "../../../../services/product";
-import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import Message from "../../../../components/base/Message/Message";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
 import { IProduct } from "../../../../common/interfaces/Product";
+import { add_items_client } from "../../../../_lib/Items/Products";
+import {
+  uploadImage,
+  uploadGallery,
+} from "../../../../systems/utils/uploadImage";
+import {
+  handleImageChange,
+  handleGalleryChange,
+  removeImagePreview,
+  removeGalleryImage,
+} from "../../../../systems/utils/eventAddPro";
 
 const AddProduct = () => {
   const { data } = useCategoryQuery();
@@ -27,80 +36,27 @@ const AddProduct = () => {
   imageSelected;
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
     try {
-      const { gallery, image, ...formData }: any = data;
-      const uploadedImageUrls = image ? await uploadImage(image) : [];
-      const uploadedGalleryUrls = gallery ? await uploadGallery(gallery) : [];
+      const { gallery_product, image_product, ...formData }: any = data;
+      const uploadedImageUrls = image_product
+        ? await uploadImage(image_product)
+        : [];
+      const uploadedGalleryUrls = gallery_product
+        ? await uploadGallery(gallery_product)
+        : [];
 
       const newData: IProduct = {
         ...formData,
-        image: uploadedImageUrls[0], // Assuming only one main image is uploaded
-        gallery: uploadedGalleryUrls,
+        image_product: uploadedImageUrls[0], // Assuming only one main image is uploaded
+        gallery_product: uploadedGalleryUrls,
       };
 
-      await createProduct(newData);
+      await add_items_client(newData);
       setSuccessMessage("Thêm Sản Phẩm thành công !");
       setShowMessage(true);
     } catch (error) {
       console.error("Thêm mới thất bại:", error);
       setErrorMessage("Thêm Sản Phẩm Lỗi !");
       setShowMessage(true);
-    }
-  };
-
-  const uploadImage = async (file: FileList | null) => {
-    if (!file) return [];
-
-    const CLOUD_NAME = "dwya9mxip";
-    const PRESET_NAME = "upImgProduct";
-    const FOLDER_NAME = "PRODUCTS";
-    const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-    const formData = new FormData();
-    formData.append("file", file[0]);
-    formData.append("upload_preset", PRESET_NAME);
-    formData.append("folder", FOLDER_NAME);
-
-    try {
-      const response = await axios.post(api, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return [response.data.secure_url];
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw new Error("Failed to upload image");
-    }
-  };
-
-  const uploadGallery = async (files: FileList | null) => {
-    if (!files) return [];
-
-    const CLOUD_NAME = "dwya9mxip";
-    const PRESET_NAME = "upImgProduct";
-    const FOLDER_NAME = "PRODUCTS";
-    const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-    const uploadPromises = Array.from(files).map(async (file) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", PRESET_NAME);
-      formData.append("folder", FOLDER_NAME);
-
-      const response = await axios.post(api, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data.secure_url;
-    });
-
-    try {
-      const uploadedUrls = await Promise.all(uploadPromises);
-      return uploadedUrls;
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      throw new Error("Failed to upload images");
     }
   };
 
@@ -114,53 +70,6 @@ const AddProduct = () => {
       return () => clearTimeout(timer);
     }
   }, [showMessage]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      setImageSelected(true);
-    } else {
-      setImageSelected(false);
-    }
-  };
-
-  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const previews = Array.from(files).map((file) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        return new Promise<string>((resolve) => {
-          reader.onloadend = () => {
-            resolve(reader.result as string);
-          };
-        });
-      });
-
-      Promise.all(previews).then((images) => {
-        setGalleryPreview(images);
-        setValue("gallery", images);
-      });
-    }
-  };
-
-  const removeGalleryImage = (index: number) => {
-    setGalleryPreview((prev) => prev.filter((_, i) => i !== index));
-    if (galleryInputRef.current) {
-      galleryInputRef.current.value = "";
-    }
-  };
-
-  const removeImagePreview = () => {
-    setImagePreview(null);
-    setImageSelected(false);
-    setValue("image", []);
-  };
 
   return (
     <div className="container mx-auto">
@@ -187,7 +96,7 @@ const AddProduct = () => {
         >
           <div className="mb-4">
             <label
-              htmlFor="name"
+              htmlFor="name_product"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
               Tên sản phẩm
@@ -195,11 +104,11 @@ const AddProduct = () => {
             <input
               type="text"
               placeholder="Name"
-              {...register("name", { required: "Không bỏ trống" })}
+              {...register("name_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.name?.message}
+              {errors.name_product?.message}
             </div>
           </div>
 
@@ -213,11 +122,11 @@ const AddProduct = () => {
             <input
               type="number"
               placeholder="Price"
-              {...register("price", { required: "Không bỏ trống" })}
+              {...register("price_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.price?.message}
+              {errors.price_product?.message}
             </div>
           </div>
 
@@ -247,83 +156,26 @@ const AddProduct = () => {
 
           <div className="mb-4">
             <label
-              htmlFor="description"
+              htmlFor="description_product"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
               Mô tả
             </label>
             <textarea
               placeholder="Mô tả"
-              {...register("description", { required: "Không bỏ trống" })}
+              {...register("description_product", {
+                required: "Không bỏ trống",
+              })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.description?.message}
+              {errors.description_product?.message}
             </div>
           </div>
 
           <div className="mb-4">
             <label
-              htmlFor="colors"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Màu sắc
-            </label>
-            <input
-              type="color"
-              placeholder="Màu sắc"
-              {...register("colors")}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.colors?.message}
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="sizes"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Kích thước
-            </label>
-            <div className="flex space-x-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="S"
-                  {...register("sizes")}
-                  className="form-checkbox"
-                />
-                <span className="ml-2">S</span>
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="M"
-                  {...register("sizes")}
-                  className="form-checkbox"
-                />
-                <span className="ml-2">M</span>
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="L"
-                  {...register("sizes")}
-                  className="form-checkbox"
-                />
-                <span className="ml-2">L</span>
-              </label>
-            </div>
-            <div className="text-xs italic text-red-500">
-              {errors.sizes?.message}
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="countInStock"
+              htmlFor="countInStock_product"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
               Số lượng trong kho
@@ -331,18 +183,40 @@ const AddProduct = () => {
             <input
               type="number"
               placeholder="Số lượng trong kho"
-              {...register("countInStock", { required: "Không bỏ trống" })}
+              {...register("countInStock_product", {
+                required: "Không bỏ trống",
+              })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.countInStock?.message}
+              {errors.countInStock_product?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="quantity_product"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Số lượng
+            </label>
+            <input
+              type="number"
+              placeholder="Số lượng "
+              {...register("quantity_product", {
+                required: "Không bỏ trống",
+              })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.quantity_product?.message}
             </div>
           </div>
 
           <div className="mb-4">
             <div className="mb-4">
               <label
-                htmlFor="image"
+                htmlFor="image_product"
                 className="block mb-2 text-sm font-bold text-gray-700"
               >
                 Hình ảnh
@@ -350,11 +224,13 @@ const AddProduct = () => {
               <input
                 type="file"
                 id="product_image"
-                {...register("image", {
+                {...register("image_product", {
                   required: "Vui lòng chọn ảnh sản phẩm",
                 })}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                onChange={handleImageChange}
+                onChange={(e) =>
+                  handleImageChange(e, setImagePreview, setImageSelected)
+                }
               />
               {imagePreview && (
                 <div className="relative">
@@ -365,7 +241,13 @@ const AddProduct = () => {
                   />
                   <button
                     type="button"
-                    onClick={removeImagePreview}
+                    onClick={() =>
+                      removeImagePreview(
+                        setImagePreview,
+                        setImageSelected,
+                        setValue
+                      )
+                    }
                     className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full"
                   >
                     X
@@ -373,13 +255,13 @@ const AddProduct = () => {
                 </div>
               )}
               <div className="text-xs italic text-red-500">
-                {errors.image?.message}
+                {errors.image_product?.message}
               </div>
             </div>
 
             <div>
               <label
-                htmlFor="gallery"
+                htmlFor="gallery_product"
                 className="block mb-2 text-sm font-bold text-gray-700"
               >
                 Bộ sưu tập
@@ -388,9 +270,11 @@ const AddProduct = () => {
                 type="file"
                 id="product_gallery"
                 multiple
-                {...register("gallery")}
+                {...register("gallery_product")}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                onChange={handleGalleryChange}
+                onChange={(e) =>
+                  handleGalleryChange(e, setGalleryPreview, setValue)
+                }
                 ref={galleryInputRef}
               />
               <div className="flex flex-wrap gap-2 mt-2">
@@ -398,12 +282,18 @@ const AddProduct = () => {
                   <div key={index} className="relative">
                     <img
                       src={url}
-                      alt={`Gallery Preview ${index + 1}`}
+                      alt="Gallery Image Preview"
                       className="h-20"
                     />
                     <button
                       type="button"
-                      onClick={() => removeGalleryImage(index)}
+                      onClick={() =>
+                        removeGalleryImage(
+                          index,
+                          setGalleryPreview,
+                          galleryInputRef
+                        )
+                      }
                       className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full"
                     >
                       X
@@ -412,7 +302,7 @@ const AddProduct = () => {
                 ))}
               </div>
               <div className="text-xs italic text-red-500">
-                {errors.gallery?.message}
+                {errors.gallery_product?.message}
               </div>
             </div>
           </div>
@@ -422,7 +312,7 @@ const AddProduct = () => {
               type="submit"
               className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             >
-              Thêm mới
+              Thêm Sản Phẩm
             </button>
           </div>
         </form>

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from "date-fns";
 import { useState } from "react";
-import useProductQuery from "../../../common/hooks/Category/useProductQuery";
 import { useNavigate } from "react-router-dom";
 import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
 import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
 import AddProduct from "./AddProducts/Index";
+import { Query_Products } from "../../../common/hooks/Products/Products";
 
 const ListProduct = () => {
-  const { data, isLoading } = useProductQuery();
+  const { data, isLoading } = Query_Products();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
     null
   );
@@ -90,19 +90,19 @@ const ListProduct = () => {
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           <img
-                            src={product.image}
-                            alt={product.name}
+                            src={product.image_product}
+                            alt={product.name_product}
                             className="object-cover w-20 h-20 border rounded-md "
                           />
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 ">
-                          {product.name}
+                          {product.name_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {product.price}
+                          {product.price_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {product.description}
+                          {product.description_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           {formatDate(product.createdAt)}
