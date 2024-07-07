@@ -26,7 +26,7 @@ const Pay = () => {
     const { data } = useQuery({
         queryKey: ["cart", userId],
         queryFn: async () => {
-            const { data } = await instance.get(`/carts/${userId}`
+            const { data } = await instance.get(`/cart/${userId}`
             );
             console.log(data);
 
@@ -41,6 +41,8 @@ const Pay = () => {
             customerInfo: object;
         }) => {
             const { data } = await instance.post("/orders", order);
+            console.log(data);
+
             return data;
         },
         onSuccess: async () => {
@@ -61,7 +63,10 @@ const Pay = () => {
             items: data?.products,
             totalPrice: calcuateTotal(),
             customerInfo: formData,
+
         });
+        console.log(data?.products);
+
     };
     return (
         <div className="max-w-[1400px] mt-4">
