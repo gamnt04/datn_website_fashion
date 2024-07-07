@@ -119,11 +119,10 @@ const ListProduct = () => {
                           </button>
                           <button
                             onClick={() => handleRemove(product._id!)}
-                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${
-                              removingProductId === product._id
-                                ? "bg-gray-500"
-                                : "bg-rose-500 hover:bg-rose-400"
-                            } focus:outline-none`}
+                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${removingProductId === product._id
+                              ? "bg-gray-500"
+                              : "bg-rose-500 hover:bg-rose-400"
+                              } focus:outline-none`}
                             disabled={removingProductId === product._id}
                           >
                             {removingProductId === product._id

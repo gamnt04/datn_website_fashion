@@ -2,6 +2,8 @@ import { IOrder } from "../../../../common/interfaces/Orders"
 
 
 const WaitingForDelivery = ({ dataProps }: any) => {
+  console.log(dataProps);
+
   return (
     <>
       {!dataProps || dataProps.length === 0 ? (

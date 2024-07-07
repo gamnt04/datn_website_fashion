@@ -5,6 +5,8 @@ import { RecycleIcon } from "../../../resources/svg/Icon/Icon";
 import Dow_btn from "./dow";
 import Up_btn from "./up";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
+import { Link } from "react-router-dom";
 
 const ListCart = () => {
   const [user] = useLocalStorage("user", {});
@@ -14,13 +16,13 @@ const ListCart = () => {
   // if (isError) return <p>Error...</p>;
   const { mutate } = Mutation_Cart('REMOVE');
   function remove_item(id: any) {
-      if (window.confirm('Xac nhan xoa san pham ?')) {
-        const data_item = {
-          userId: userId,
-          productId: id
-        }
-        mutate(data_item)
+    if (window.confirm('Xac nhan xoa san pham ?')) {
+      const data_item = {
+        userId: userId,
+        productId: id
       }
+      mutate(data_item)
+    }
 
   }
   return (
@@ -111,40 +113,40 @@ const ListCart = () => {
               </table>
             </div>
 
-            {/* <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-                <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
-                  <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                    <strong>Tổng giá trị đơn hàng</strong>
-                    <strong>{calculateTotal()}$</strong>
-                  </div>
-                  <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
-                    <strong>Số lượng đơn hàng :</strong>
-                    <strong>{calculateTotalProduct()}</strong>
-                  </div>
-                  <div className="flex flex-col border-y py-5 my-5">
-                    <span className="text-xs mb-2">Nhập mã giảm giá</span>
-                    <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                      <input
-                        className="px-4 outline-none"
-                        type="text"
-                        placeholder="Enter Code"
-                      />
-                      <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
-                        Apply
-                      </button>
-                    </form>
-                  </div>
-                  <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                    <strong>Cần thanh toán :</strong>
-                    <strong>{calculateTotal()}$</strong>
-                  </div>
-                  <Link onClick={ScrollTop} to="pay">
-                    <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
-                      Tiến hành thanh toán
-                    </button>
-                  </Link>
+            <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
+              <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
+                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                  <strong>Tổng giá trị đơn hàng</strong>
+                  <strong>$</strong>
                 </div>
-              </div> */}
+                <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
+                  <strong>Số lượng đơn hàng :</strong>
+                  <strong></strong>
+                </div>
+                <div className="flex flex-col border-y py-5 my-5">
+                  <span className="text-xs mb-2">Nhập mã giảm giá</span>
+                  <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
+                    <input
+                      className="px-4 outline-none"
+                      type="text"
+                      placeholder="Enter Code"
+                    />
+                    <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
+                      Apply
+                    </button>
+                  </form>
+                </div>
+                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                  <strong>Cần thanh toán :</strong>
+                  <strong>$</strong>
+                </div>
+                <Link onClick={ScrollTop} to="pay">
+                  <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                    Tiến hành thanh toán
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
         )}
       </>

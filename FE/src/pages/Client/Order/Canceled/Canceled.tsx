@@ -1,6 +1,8 @@
 import { IOrder } from "../../../../common/interfaces/Orders";
 
 const Canceled = ({ dataProps }: any) => {
+  console.log(dataProps);
+
   return (
     <>
       {!dataProps || dataProps.length === 0 ? (

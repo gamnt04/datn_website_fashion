@@ -35,6 +35,7 @@ const AddProduct = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   imageSelected;
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
+    console.log(data);
     try {
       const { gallery_product, image_product, ...formData }: any = data;
       const uploadedImageUrls = image_product
