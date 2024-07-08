@@ -1,12 +1,20 @@
-// components/AddProduct/AddProduct.tsx
 import { SubmitHandler, useForm } from "react-hook-form";
-import { createProduct } from "../../../../services/product";
-import axios from "axios";
-import { IProduct } from "../../../../common/interfaces/Product";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Message from "../../../../components/base/Message/Message";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { IProduct } from "../../../../common/interfaces/Product";
+import { add_items_client } from "../../../../_lib/Items/Products";
+import {
+  uploadImage,
+  uploadGallery,
+} from "../../../../systems/utils/uploadImage";
+import {
+  handleImageChange,
+  handleGalleryChange,
+  removeImagePreview,
+  removeGalleryImage,
+} from "../../../../systems/utils/eventAddPro";
 
 const AddProduct = () => {
   const { data } = useCategoryQuery();
@@ -15,89 +23,41 @@ const AddProduct = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<IProduct>();
-  // const navigate = useNavigate();
+
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
+  const [imageSelected, setImageSelected] = useState(false);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  imageSelected;
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
+    console.log(data);
     try {
-      const { gallery, image, ...formData }: any = data; // Lấy gallery và image ra khỏi formData
-      const uploadedImageUrls = await uploadImage(image); // Upload ảnh chính (image)
-      const uploadedGalleryUrls = await uploadGallery(gallery); // Upload ảnh trong gallery
+      const { gallery_product, image_product, ...formData }: any = data;
+      const uploadedImageUrls = image_product
+        ? await uploadImage(image_product)
+        : [];
+      const uploadedGalleryUrls = gallery_product
+        ? await uploadGallery(gallery_product)
+        : [];
 
       const newData: IProduct = {
         ...formData,
-        image: uploadedImageUrls[0], // Giả sử chỉ có một ảnh chính được upload
-        gallery: uploadedGalleryUrls,
+        image_product: uploadedImageUrls[0], // Assuming only one main image is uploaded
+        gallery_product: uploadedGalleryUrls,
       };
 
-      await createProduct(newData);
+      await add_items_client(newData);
       setSuccessMessage("Thêm Sản Phẩm thành công !");
       setShowMessage(true);
     } catch (error) {
       console.error("Thêm mới thất bại:", error);
       setErrorMessage("Thêm Sản Phẩm Lỗi !");
       setShowMessage(true);
-      console.log(error);
-    }
-  };
-
-  const uploadImage = async (file: FileList | null) => {
-    if (!file) return [];
-
-    const CLOUD_NAME = "dwya9mxip";
-    const PRESET_NAME = "upImgProduct";
-    const FOLDER_NAME = "PRODUCTS";
-    const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-    const formData = new FormData();
-    formData.append("file", file[0]); // Chỉ lấy file đầu tiên nếu có nhiều file được chọn
-    formData.append("upload_preset", PRESET_NAME);
-    formData.append("folder", FOLDER_NAME);
-
-    try {
-      const response = await axios.post(api, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return [response.data.secure_url]; // Trả về mảng đường dẫn (ở đây chỉ có một đường dẫn)
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw new Error("Failed to upload image");
-    }
-  };
-
-  const uploadGallery = async (files: FileList | null) => {
-    if (!files) return [];
-
-    const CLOUD_NAME = "dwya9mxip";
-    const PRESET_NAME = "upImgProduct";
-    const FOLDER_NAME = "PRODUCTS";
-    const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-    const uploadPromises = Array.from(files).map(async (file) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", PRESET_NAME);
-      formData.append("folder", FOLDER_NAME);
-
-      const response = await axios.post(api, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data.secure_url;
-    });
-
-    try {
-      const uploadedUrls = await Promise.all(uploadPromises);
-      return uploadedUrls;
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      throw new Error("Failed to upload images");
     }
   };
 
@@ -137,19 +97,19 @@ const AddProduct = () => {
         >
           <div className="mb-4">
             <label
-              htmlFor="name"
+              htmlFor="name_product"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
-              Name
+              Tên sản phẩm
             </label>
             <input
               type="text"
               placeholder="Name"
-              {...register("name", { required: "Không bỏ trống" })}
+              {...register("name_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.name?.message}
+              {errors.name_product?.message}
             </div>
           </div>
 
@@ -158,18 +118,19 @@ const AddProduct = () => {
               htmlFor="price"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
-              Price
+              Giá sản phẩm
             </label>
             <input
               type="number"
               placeholder="Price"
-              {...register("price", { required: "Không bỏ trống" })}
+              {...register("price_product", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.price?.message}
+              {errors.price_product?.message}
             </div>
           </div>
+
           <div className="mb-4">
             <label
               htmlFor="slug"
@@ -179,7 +140,7 @@ const AddProduct = () => {
             </label>
             <select
               {...register("category_id", { required: "Không bỏ trống" })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              className="w-full px-3 py-2 leading-tight border rounded shadow appearance-none text focus:outline-none focus:shadow-outline"
             >
               <option value="">-- Chọn danh mục --</option>
               {data?.map((category: ICategory) => (
@@ -188,70 +149,171 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
+
+            <div className="text-xs italic text-red-500">
+              {errors.category_id?.message}
+            </div>
           </div>
+
           <div className="mb-4">
             <label
-              htmlFor="description"
+              htmlFor="description_product"
               className="block mb-2 text-sm font-bold text-gray-700"
             >
-              Description
+              Mô tả
             </label>
             <textarea
-              placeholder="Description"
-              {...register("description", { required: "Không bỏ trống" })}
+              placeholder="Mô tả"
+              {...register("description_product", {
+                required: "Không bỏ trống",
+              })}
               className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
             />
             <div className="text-xs italic text-red-500">
-              {errors.description?.message}
+              {errors.description_product?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="countInStock_product"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Số lượng trong kho
+            </label>
+            <input
+              type="number"
+              placeholder="Số lượng trong kho"
+              {...register("countInStock_product", {
+                required: "Không bỏ trống",
+              })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.countInStock_product?.message}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="quantity_product"
+              className="block mb-2 text-sm font-bold text-gray-700"
+            >
+              Số lượng
+            </label>
+            <input
+              type="number"
+              placeholder="Số lượng "
+              {...register("quantity_product", {
+                required: "Không bỏ trống",
+              })}
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            />
+            <div className="text-xs italic text-red-500">
+              {errors.quantity_product?.message}
             </div>
           </div>
 
           <div className="mb-4">
             <div className="mb-4">
               <label
-                htmlFor="image"
+                htmlFor="image_product"
                 className="block mb-2 text-sm font-bold text-gray-700"
               >
-                Image
+                Hình ảnh
               </label>
               <input
                 type="file"
                 id="product_image"
-                {...register("image", {
+                {...register("image_product", {
                   required: "Vui lòng chọn ảnh sản phẩm",
                 })}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                onChange={(e) =>
+                  handleImageChange(e, setImagePreview, setImageSelected)
+                }
               />
+              {imagePreview && (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Image Preview"
+                    className="h-20 mt-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeImagePreview(
+                        setImagePreview,
+                        setImageSelected,
+                        setValue
+                      )
+                    }
+                    className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
               <div className="text-xs italic text-red-500">
-                {errors.image?.message}
+                {errors.image_product?.message}
               </div>
             </div>
 
             <div>
               <label
-                htmlFor="gallery"
+                htmlFor="gallery_product"
                 className="block mb-2 text-sm font-bold text-gray-700"
               >
-                Gallery
+                Bộ sưu tập
               </label>
               <input
                 type="file"
                 id="product_gallery"
                 multiple
-                {...register("gallery")}
+                {...register("gallery_product")}
                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                onChange={(e) =>
+                  handleGalleryChange(e, setGalleryPreview, setValue)
+                }
+                ref={galleryInputRef}
               />
+              <div className="flex flex-wrap gap-2 mt-2">
+                {galleryPreview.map((url, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={url}
+                      alt="Gallery Image Preview"
+                      className="h-20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        removeGalleryImage(
+                          index,
+                          setGalleryPreview,
+                          galleryInputRef
+                        )
+                      }
+                      className="absolute top-0 right-0 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded-full"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
               <div className="text-xs italic text-red-500">
-                {errors.gallery?.message}
+                {errors.gallery_product?.message}
               </div>
             </div>
           </div>
+
           <div className="flex items-center justify-between">
             <button
               type="submit"
               className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             >
-              Thêm mới
+              Thêm Sản Phẩm
             </button>
           </div>
         </form>

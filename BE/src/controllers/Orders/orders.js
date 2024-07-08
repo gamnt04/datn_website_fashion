@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import Order from "../models/orders";
+import Order from "../../models/Orders/orders";
 
 export const createOrder = async (req, res) => {
   try {
@@ -19,13 +19,25 @@ export const createOrder = async (req, res) => {
 };
 export const getOrders = async (req, res) => {
   try {
-    const order = await Order.find();
-    if (order.length === 0) {
+    const { page = 1, status } = req.query;
+    const limit = 7;
+    const skip = (page - 1) * limit;
+    const query = status ? { status } : {};
+    const orders = await Order.find(query).skip(skip).limit(limit);
+    const totalOrders = await Order.countDocuments(query);
+
+    if (orders.length === 0) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "No orders found" });
     }
-    return res.status(StatusCodes.OK).json(order);
+
+    return res.status(StatusCodes.OK).json({
+      totalOrders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      orders,
+    });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -34,8 +46,25 @@ export const getOrders = async (req, res) => {
 };
 export const getOrderById = async (req, res) => {
   try {
-    const { userId, orderId } = req.params;
-    const order = await Order.findOne({ userId, _id: orderId });
+
+    const order = await Order.findById(req.params.id);
+    console.log(order);
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
+    }
+    return res.status(StatusCodes.OK).json(order);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+export const getOneOrderUser = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const order = await Order.find({ userId });
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -68,7 +97,8 @@ export const updateOrder = async (req, res) => {
 };
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { id } = req.params;
+    console.log(id);
     const { status } = req.body;
 
     const validStatus = [
@@ -85,7 +115,8 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Invalid status" });
     }
 
-    const order = await Order.findOne({ _id: orderId });
+    const order = await Order.findOne({ _id: id });
+    console.log(order);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)

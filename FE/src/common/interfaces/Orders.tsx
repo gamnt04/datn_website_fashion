@@ -18,6 +18,7 @@ export interface IOrder {
     address?: string;
     code?: string;
   };
+  discount: number;
   totalPrice: number;
   status?: "Chờ xác nhận" | "Đang chuẩn bị hàng" | "Đang vận chuyển" | "Đã giao hàng" | "Đã hủy";
   datetime?: Date;

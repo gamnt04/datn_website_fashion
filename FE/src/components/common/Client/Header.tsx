@@ -1,53 +1,55 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import MiniCart from "../../../pages/Client/(Cart)/[MiniCart]";
+import { Link, useNavigate } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
-import { useDispatch } from "react-redux";
-import { useCart } from "../../../common/hooks/Cart/useCart";
+// import { useDispatch } from "react-redux";
+// import { useCart } from "../../../common/hooks/Cart/useCart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import Nav_Mobile, { Nav_Desktop } from "./Nav";
+import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 // import { SearchData } from "../../Services/Search";
 
 const Header = () => {
   const navigate = useNavigate();
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
-  const { calculateTotalProduct } = useCart();
+  // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
   const [user] = useLocalStorage("user", {});
-  const account = user?.user;
+  const account = user?.user?._id;
+  const { data } = List_Cart(account);
   useEffect(() => {
     typeof window !== "undefined" &&
       window.addEventListener("scroll", () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
   }, []);
   // change title by redux
-  const dispatch = useDispatch();
-  // const ChangeTitle_1 = () => {
-  //   dispatch({ type: "Title_change_1" });
-  // }
-  // Fn scroll top and change title
-  const ScrollTop_and_Change = async () => {
-    await ScrollTop();
-    await ChangeTitle_2();
-  };
+  // const dispatch = useDispatch();
+  // // const ChangeTitle_1 = () => {
+  // //   dispatch({ type: "Title_change_1" });
+  // // }
+  // // Fn scroll top and change title
+  // const ScrollTop_and_Change = async () => {
+  //   await ScrollTop();
+  //   await ChangeTitle_2();
+  // };
 
-  const ChangeTitle_2 = () => {
-    dispatch({ type: "Title_change_2" });
-  };
+  // const ChangeTitle_2 = () => {
+  //   dispatch({ type: "Title_change_2" });
+  // };
 
   // toogle menu mobile
   const toggleMenuMobile = () => {
@@ -118,71 +120,15 @@ const Header = () => {
                 ? "translateX(0%)"
                 : "translateX(-200%)"
             }}
-            className="lg:hidden fixed w-[40vw] duration-300 z-[-1] pt-[100px] bg-white"
+            className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
-            <nav className="flex flex-col justify-between *:my-1 *:px-8 *:py-2 *:font-medium *:capitalize *:relative *:duration-300">
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 bg-gray-200"
-                    : "opacity-[0.70] hover:bg-gray-200"
-                }
-                to={"/"}
-              >
-                {" "}
-                home{" "}
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 bg-gray-200"
-                    : "opacity-[0.70] hover:bg-gray-200"
-                }
-                to={"/shops"}
-              >
-                {" "}
-                shop{" "}
-              </NavLink>
-              {/* <NavLink className={({ isActive }) => isActive ? "opacity-100 bg-gray-200" : "opacity-[0.70] hover:bg-gray-200"} to={"/categories"}> categories </NavLink> */}
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 bg-gray-200"
-                    : "opacity-[0.70] hover:bg-gray-200"
-                }
-                to={"/blog"}
-              >
-                {" "}
-                blog{" "}
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 bg-gray-200"
-                    : "opacity-[0.70] hover:bg-gray-200"
-                }
-                to={"/contact"}
-              >
-                {" "}
-                contact{" "}
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 bg-gray-200"
-                    : "opacity-[0.70] hover:bg-gray-200"
-                }
-                to={"/pages"}
-              >
-                {" "}
-                pages{" "}
-              </NavLink>
-            </nav>
+            <Nav_Mobile />
           </div>
 
           <div className="flex items-center gap-x-20">
             {/* logo */}
             <Link
+              onClick={ScrollTop}
               to="/"
               className="lg:relative absolute lg:left-0 lg:translate-x-0 left-[35%] -translate-x-full h-auto mr-2 flex items-start"
             >
@@ -195,72 +141,7 @@ const Header = () => {
 
             {/* menu desktop  ahihi test commit*/}
             {/* map() => render routing*/}
-            <nav
-              className="mb:hidden lg:block lg:flex justify-between items-center *:xl:mx-5 *:lg:mx-4 *:font-semibold
-         *:capitalize *:relative *:duration-300 *:after:content-[''] *:after:duration-300 *:after:absolute *:after:w-0 *:after:right-1/2 *:after:bottom-[-30%] *:after:h-[2px] *:after:bg-orange-600
-          *:after:rounded-lg *:before:content-[''] *:before:absolute *:before:h-[2px] *:before:right-0 *:before:bg-orange-600  *:before:bottom-[-30%]  *:before:rounded-lg"
-            >
-              <NavLink
-                onClick={ScrollTop}
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 before:w-full"
-                    : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
-                }
-                to={"/"}
-              >
-                {" "}
-                home{" "}
-              </NavLink>
-              <NavLink
-                onClick={ScrollTop_and_Change}
-                className={({ isActive }) =>
-                  isActive
-                    ? "group opacity-100 before:w-full flex items-center group"
-                    : "group group flex items-center opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
-                }
-                to={"shops"}
-              >
-                shops
-              </NavLink>
-              {/* <NavLink onClick={ScrollTop} className={({ isActive }) => isActive ? "opacity-100 before:w-full" : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"} to={"/categories"}> categories </NavLink> */}
-              <NavLink
-                onClick={ScrollTop}
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 before:w-full"
-                    : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
-                }
-                to={"/blogs"}
-              >
-                {" "}
-                blog{" "}
-              </NavLink>
-              <NavLink
-                onClick={ScrollTop}
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 before:w-full"
-                    : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
-                }
-                to={"/contact"}
-              >
-                {" "}
-                contact{" "}
-              </NavLink>
-              <NavLink
-                onClick={ScrollTop}
-                className={({ isActive }) =>
-                  isActive
-                    ? "opacity-100 before:w-full"
-                    : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
-                }
-                to={"/about-us"}
-              >
-                {" "}
-                pages{" "}
-              </NavLink>
-            </nav>
+            <Nav_Desktop />
           </div>
 
           {/* options */}
@@ -293,28 +174,17 @@ const Header = () => {
             </form>
             {/* cart */}
             <div className="group *:duration-300 relative py-1">
-              {account ? (
-                <Link to="/cart" onClick={ScrollTop} className="relative">
-                  <CartIcon />
-                  {calculateTotalProduct() > 0 ? (
-                    <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-                      {calculateTotalProduct() > 99
-                        ? "99+"
-                        : calculateTotalProduct()}
-                    </span>
-                  ) : (
-                    <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-                      0
-                    </span>
-                  )}
-                  <MiniCart />
-                </Link>
-              ) : (
+              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">{data?.products.length}</span>
+              {/* {account ? '/cart' : (
                 <div onClick={() => onlogin()} className="relative">
                   <CartIcon />
                   <MiniCart />
                 </div>
-              )}
+              )} */}
+
+              <Link to={account ? '/cart' : '/login'}>
+                <CartIcon />
+              </Link>
             </div>
 
             {/* heart */}
@@ -339,13 +209,16 @@ const Header = () => {
             )}
 
             {/* option / menu */}
-            <div className="cursor-pointer hover:scale-105 duration-300 border">
-              <Link
+            <div className="cursor-pointer hover:scale-105 duration-300">
+              {account && <Link to={'/allorder'}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user-round-check"><path d="M2 21a8 8 0 0 1 13.292-6" /><circle cx="10" cy="8" r="5" /><path d="m16 19 2 2 4-4" /></svg>
+              </Link>}
+              {account ? '' : <Link
                 to={"/login"}
                 className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
               >
                 Login
-              </Link>
+              </Link>}
             </div>
           </nav>
         </header>
@@ -353,7 +226,7 @@ const Header = () => {
       {/* form search mobile */}
       <form
         ref={toggleForm}
-        className={`relative w-[298px] *:h-[36px] lg:invisible gap-x-2 shadow-2xl mt-6 z-[-1] duration-300 mx-auto top-[50px]`}
+        className={`relative w-[298px] *:h-[36px] lg:invisible gap-x-2 shadow-2xl mt-6 duration-300 mx-auto top-[50px]`}
       >
         <input
           type="text"
@@ -379,7 +252,6 @@ const Header = () => {
       </form>
 
       {/* lớp phủ */}
-      {/* lớp phủ */}
       <div
         onClick={toggleMenuMobile}
         style={{ display: toggle_Menu_Mobile ? "block" : "none" }}
@@ -390,3 +262,23 @@ const Header = () => {
 };
 
 export default Header;
+
+
+
+// (
+//   <Link to="/cart" onClick={ScrollTop} className="relative">
+//     <CartIcon />
+//     {calculateTotalProduct() > 0 ? (
+//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
+//         {calculateTotalProduct() > 99
+//           ? "99+"
+//           : calculateTotalProduct()}
+//       </span>
+//     ) : (
+//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
+//         0
+//       </span>
+//     )}
+//     {/* <MiniCart /> */}
+//   </Link>
+// )
