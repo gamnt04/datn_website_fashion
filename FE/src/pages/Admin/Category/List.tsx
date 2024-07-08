@@ -7,7 +7,6 @@ import Dialogs from "../../../components/base/Dialogs/Dialog";
 import Loading from "../../../components/base/Loading/Loading";
 import UpdateComponent from "./Create";
 import CategoryUpdate from "./update";
-// import CategoryUpdate from "./Update/index";
 
 const Category: React.FC = () => {
   const { data, isLoading } = useCategoryQuery();
@@ -228,7 +227,7 @@ const Category: React.FC = () => {
                               {category.name}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              Có {category.products?.length} sản phẩm
+                              Có {category.products?.length || 0} sản phẩm
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                               {category.createdAt &&
