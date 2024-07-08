@@ -1,36 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Canceled from '../Canceled/Canceled';
 import Complete from '../Complete/Complete';
 import RefundRetunr from '../RefundRetunr/RefundRetunr';
 import WaitingForDelivery from '../WaitingForDelivery/WaitingForDelivery';
 import Waitforconfirmation from '../Waitforconfirmation/Waitforconfirmation';
 import WaitingForGoods from '../WaitingForGoods/WaitingForGoods';
-import instance from '../../../../configs/axios';
+
 import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
+import { List_One_Order_User } from '../../../../common/hooks/Order/querry_Order';
 
 const Order_All = () => {
     const [activeMenu, setActiveMenu] = useState('Chờ Xác Nhận');
-    const [orders, setOrders] = useState<any[]>([]);
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
     const handleMenuClick = (menu: any) => {
         setActiveMenu(menu);
     };
-    useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await instance.post(`/orders/get_order_user`, { userId });
-                setOrders(data);
-                console.log(data);
-
-            } catch (error) {
-                console.log(error);
-            }
-        })();
-    }, [userId]);
+    const { data } = List_One_Order_User(userId);
     const fiterOrrder = (status: string) => {
-        console.log(orders.filter((order) => order.status === status))
-        return orders.filter((order) => order.status === status);
+        return data?.filter((orders: any) => orders.status === status);
     }
     return (
         <>
