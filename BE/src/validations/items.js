@@ -14,7 +14,7 @@ export const validate_items = Joi.object({
     "any.required": "Ảnh là bắt buộc!",
     "string.empty": "Ảnh không được để khoảng trắng!",
   }),
-  gallery_product: Joi.array().required().messages({
+  gallery_product: Joi.required().messages({
     "any.required": "gallery_product là bắt buộc!",
     "string.empty": "gallery_product không được để khoảng trắng!",
     "string.min": "gallery_product tối thiểu là 6 kí tự!",
