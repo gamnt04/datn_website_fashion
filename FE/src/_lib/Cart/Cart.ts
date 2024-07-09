@@ -1,14 +1,14 @@
 import { reduce } from "lodash";
 import instance from "../../configs/axios";
 
-export async function list_cart(id: string) {
+export const list_cart = async (id: string) => {
   try {
     const res = await instance.get(`cart/${id}`);
     return res.data;
   } catch (error) {
     console.error(error || "Loi server!");
   }
-}
+};
 
 export const add_cart = async (data: any) => {
   try {
