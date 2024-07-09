@@ -233,8 +233,16 @@ const Pay = () => {
         //     </div >
         // </div >
         <>
-            <div className=" mt-28">
-                <div className="py-6 px-6 border">
+
+            <div className="mt-20">
+                <div className="mb-6">
+                    <div className="flex items-center gap-3 bg-[#F5F5F5] py-6">
+                        <img src="../../src/assets/Images/Logo/logo.png" className="w-[50px] h-[50px]" alt="" />
+                        <span className="h-[50px] border-black border-r-2"></span>
+                        <h1 className="text-2xl font-bold">Thanh Toán</h1>
+                    </div>
+                </div>
+                <div className="py-6 px-6 border rounded-md shadow-sm">
                     <div className="flex gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -248,18 +256,18 @@ const Pay = () => {
                             <p className="font-bold">0357219726</p>
                             <p>Thôn Nà Cuối, Xã Đồng Ý, Huyện Bắc Sơn, Lạng Sơn</p>
                         </div>
-                        <div className="flex gap-6">
-                            <button className="border py-2 px-4">Mặc định</button>
+                        <div className="flex gap-8">
+                            <button className="border py-2 px-4 rounded-sm border-black">Mặc định</button>
                             <button className="text-blue-400 underline">Thay đổi</button>
                         </div>
                     </div>
                 </div>
-                <div className="border my-4">
+                <div className="border my-8 rounded-md shadow-sm">
                     <table className="w-full">
-                        <thead className=" *:text-left *:py-3 *:px-6">
+                        <thead className="*:text-left *:py-3 *:px-6 *:font-normal">
                             <th className="w-[800px]">Sản phẩm</th>
                             <th>Đơn giá</th>
-                            <th>Số lượng</th>
+                            <th className="text-center">Số lượng</th>
                             <th>Thành tiền</th>
                         </thead>
                         <tbody>
@@ -269,7 +277,7 @@ const Pay = () => {
                                         <img src="https://picsum.photos/300/300" className="w-[100px]" alt="" />
                                         <div className="flex flex-col">
                                             <p className="mb-3 font-bold">PRODUCTS 1</p>
-                                            <p className="border py-2 px-4">Đổi trả miễn phí 15 ngày</p>
+                                            <p className="border border-black rounded-sm py-2 px-4">Đổi trả miễn phí 15 ngày</p>
                                         </div>
                                     </div>
                                     <div className="mr-12">
@@ -277,37 +285,44 @@ const Pay = () => {
                                     </div>
                                 </td>
                                 <td>200.000 VND</td>
-                                <td>1</td>
+                                <td className="text-center">1</td>
                                 <td>200.000 VND</td>
                             </tr>
                         </tbody>
                     </table>
                     <div className="p-6 flex justify-end gap-6 border-t">
-                        <div className="mr-60">
-                            <p>Voucher của Shop </p>
+                        <div className="mr-10">
+                            <p>Voucher:</p>
                         </div>
                         <div className="flex items-center gap-5">
-                            <p className="py-1 px-3 border">-50K</p>
+                            <p className="py-1 px-3 border-black border rounded-sm">-50K</p>
                             <button className="text-blue-400 underline">Chọn Voucher Khác</button>
                         </div>
                     </div>
-                    <div className="flex gap-16 border-t-2 border-b p-6">
-                        <p>Đơn vị vận chuyển:</p>
-                        <div>
-                            <div className="flex justify-between">
-                                <p>Nhanh</p>
-                                <button className="text-blue-400 underline">Thay đổi</button>
-                            </div>
-                            <span>Nhận hàng vào 9 Tháng 7 - 10 Tháng 7</span>
+                    <div className="flex justify-between gap-16 border-t-2 border-b">
+                        <div className="p-6">
+                            <label className="mr-2">Lời nhắn:</label>
+                            <input type="text" placeholder="Lưu ý cho người bán" className="border w-[300px] p-2 outline-none border-black rounded-sm " />
                         </div>
-                        <p>₫32.800</p>
+                        <div className="flex gap-16 border-l-2 py-6 pl-24 pr-6">
+                            <p>Đơn vị vận chuyển:</p>
+                            <div>
+                                <div className="flex justify-between">
+                                    <p>Nhanh</p>
+                                    <button className="text-blue-400 underline">Thay đổi</button>
+                                </div>
+                                <span className="text-sm">Nhận hàng vào 9 Tháng 7 - 10 Tháng 7</span>
+                            </div>
+                            <p>₫32.800</p>
+                        </div>
                     </div>
                     <div className="flex items-center justify-end gap-8 p-6">
                         <p>Tổng số tiền ( 1 sản phẩm):</p>
                         <p className="text-xl text-yellow-500">₫631.800</p>
                     </div>
                 </div>
-                <div className="border my-4">
+                <div className="border mt-4 mb-8 rounded-md shadow-sm">
+
                     <div className="border-b flex justify-between px-6 py-6">
                         <p className="text-xl">Phương thức thanh toán</p>
                         <div className="flex gap-8">
@@ -337,11 +352,11 @@ const Pay = () => {
                     </div>
                     <div className="flex justify-between items-center py-6 px-6">
                         <p>Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo <span className="text-blue-400">Điều khoản</span></p>
-                        <button className="w-[200px] py-4 bg-black text-white font-bold">Đặt hàng</button>
+                        <button className="w-[200px] py-3 bg-black text-white font-bold rounded-md">Đặt hàng</button>
                     </div>
 
                 </div>
-            </div>
+            </div >
         </>
     );
 };
