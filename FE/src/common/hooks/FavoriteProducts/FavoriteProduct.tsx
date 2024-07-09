@@ -28,6 +28,11 @@ export const useFavoriteProducts = () => {
       );
       toast.success("add product successfully !");
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["favoriteProducts", userId]
+      });
     }
   });
   const removeFavoriteProduct = useMutation({
