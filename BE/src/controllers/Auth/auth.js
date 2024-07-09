@@ -153,29 +153,49 @@ export const get_address = async (req, res) => {
   }
 };
 
-export const update_address = async (req, res) => {
-  const { userId, addressId } = req.params;
-  const { address } = req.body;
+export const updateUserAddress = async (req, res) => {
+  const userId = req.params.userId;
+  const addressId = req.params.addressId;
+  const updatedAddress = req.body; // Thông tin địa chỉ mới cần cập nhật
+
   try {
+    // Tìm người dùng trong CSDL bằng userId
     const user = await User.findById(userId);
+    
+    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy người dùng"
       });
     }
-    const addressToUpdate = user.address.id(addressId);
+    
+    // Tìm địa chỉ cần cập nhật trong mảng address của người dùng
+    let addressToUpdate = user.address.id(addressId);
+    
+    // Kiểm tra nếu không tìm thấy địa chỉ
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy địa chỉ"
       });
     }
-    addressToUpdate.set(address);
-    await user.save();
-
+    
+    // Cập nhật thông tin địa chỉ mới
+    addressToUpdate.set(updatedAddress);
+    console.log();
+    // Lưu thay đổi vào CSDL
+    await user.save(updatedAddress);
+    
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
+
       address: addressToUpdate
     });
+
+      updatedAddress: addressToUpdate,
+        
+    } );
+ 
+
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
