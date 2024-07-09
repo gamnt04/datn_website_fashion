@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
-import img_product from '../../../assets/Images/Products/product_1.png';
 import Products from '../../../components/common/Items/Products';
 import { useRef } from 'react';
 import ScrollTop from '../../../common/hooks/Customers/ScrollTop';
+import { Query_Products } from '../../../common/hooks/Products/Products';
 
 const Trending_Products = () => {
-  const a : Array<number> = [1, 2, 3, 4, 5, 6, 7, 8,9, 10, 11, 12, 13, 14, 15, 16,17,18,19,20,21,22,23,24,25];
+  const {data, isPending} = Query_Products();
   const sizeListItems = useRef<HTMLDivElement | null>(null);
   const backItems = useRef<HTMLButtonElement | null>(null);
   const nextItems = useRef<HTMLButtonElement | null>(null);
@@ -45,14 +45,14 @@ const Trending_Products = () => {
 
         {/* products */}
         <div className="mb-[50px] w-auto">
-        <div ref={sizeListItems} className="overflow-x-scroll hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[23%]">
-          {/* --  */}
-          {a?.map((i) => 
-          (<Products data={{img_product, i}}/>)
-          )}
-          {/* -- */}
+        <div ref={sizeListItems} className="overflow-x-scroll hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col lg:gap-x-[1.25%] gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[19%]">
+          {isPending && <span>Loading ...</span>}
+          {
+            data?.map((item : any) => {
+              return (<Products key={item._id} items={item}/>)
+            })
+          }
         </div>
-
         {/* back, next page */}
         <div className='flex items-center *:mx-8 justify-center mt-[20px] *:duration-300 *:text-lg'>
           <button ref={backItems} onClick={handlePrevious} className='opacity-50 cursor-drop'>&#10094;</button>
@@ -61,7 +61,9 @@ const Trending_Products = () => {
         </div>
 
         {/* view all */}
+        <div className='hover:scale-105 duration-300'>
         <Link onClick={ScrollTop} className='border px-10 py-2 bg-black rounded-md border-none cursor-pointer text-white' to={'/shops'}>View All</Link>
+        </div>
     </div>
   )
 }

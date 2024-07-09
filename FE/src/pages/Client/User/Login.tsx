@@ -5,21 +5,28 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm } from "react-hook-form";
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: joiResolver(signInSchema),
     defaultValues: {
       email: "",
       password: "",
-    }
-  })
-  const { onSubmit } = useSignIn()
+    },
+  });
+  const { onSubmit } = useSignIn();
 
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-24">
+    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border"
+            >
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Sign In
               </h3>
@@ -40,15 +47,25 @@ const Login = () => {
                 <hr className="flex-grow border-gray-300" />
               </div>
               <div className="mb-3">
-                <label htmlFor="email" className="mb-2 text-sm font-semibold text-gray-900 flex"> Email*</label>
+                <label
+                  htmlFor="email"
+                  className="mb-2 text-sm font-semibold text-gray-900 flex"
+                >
+                  {" "}
+                  Email*
+                </label>
                 <input
                   id="email"
                   type="email"
-                  {...register('email', { required: true, })}
+                  {...register("email", { required: true })}
                   placeholder="mail@loopple.com"
                   className="flex items-center w-full px-5 py-4 text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
                 />
-                {errors.email && <p className="text-start mt-4 text-red-400">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-start mt-4 text-red-400">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
               <div className="mb-3">
                 <label
@@ -60,11 +77,19 @@ const Login = () => {
                 <input
                   id="password"
                   type="password"
-                  {...register('password', { required: true, minLength: 6, maxLength: 30 })}
+                  {...register("password", {
+                    required: true,
+                    minLength: 6,
+                    maxLength: 30,
+                  })}
                   placeholder="Enter a password"
                   className="flex items-center w-full px-5 py-4  text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 outline-none focus:bg-gray-50 rounded-2xl focus:ring-2 focus:ring-gray-200"
                 />
-                {errors.password && <p className="text-start mt-4 text-red-400">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-start mt-4 text-red-400">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-row justify-between mb-8">
@@ -87,7 +112,10 @@ const Login = () => {
                   Forget password?
                 </a>
               </div>
-              <button className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 bg-gray-900 rounded-2xl hover:bg-[#f68e56] focus:ring-4 focus:ring-[#f68e56] md:w-96">
+              <button
+                type="submit"
+                className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 bg-gray-900 rounded-2xl hover:bg-[#f68e56] focus:ring-4 focus:ring-[#f68e56] md:w-96"
+              >
                 Sign In
               </button>
               <p className="text-sm text-gray-600">

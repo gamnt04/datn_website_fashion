@@ -1,5 +1,5 @@
 export interface ICategory {
-  name?: string;
+  name_category?: string;
   _id?: string;
   slug?: string;
   products?: string[];

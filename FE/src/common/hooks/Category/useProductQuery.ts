@@ -19,7 +19,7 @@ const useProductQuery = (id?: string) => {
         console.error("Error fetching product data:", error);
         throw new Error("Failed to fetch product data"); // Ném một lỗi để xử lý trong React Query
       }
-    },
+    }
   });
 
   return { data, ...rest };
