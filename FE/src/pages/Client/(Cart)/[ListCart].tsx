@@ -11,19 +11,20 @@ import { Link } from "react-router-dom";
 const ListCart = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError } = List_Cart(userId);
+  const { data, isPending, isError, calculateTotal, calculateTotalProduct } =
+    List_Cart(userId);
   // if (isPending) return <p>Loading...</p>;
   // if (isError) return <p>Error...</p>;
-  const { mutate } = Mutation_Cart('REMOVE');
+  const { mutate } = Mutation_Cart("REMOVE");
+
   function remove_item(id: any) {
-    if (window.confirm('Xac nhan xoa san pham ?')) {
+    if (window.confirm("Xac nhan xoa san pham ?")) {
       const data_item = {
         userId: userId,
         productId: id
-      }
-      mutate(data_item)
+      };
+      mutate(data_item);
     }
-
   }
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
@@ -74,9 +75,7 @@ const ListCart = () => {
                       </td>
                       <td className="pl-4 pr-2 md:w-[300px] mb:w-[120px]">
                         <div className="flex flex-col md:text-base mb:text-xs">
-                          <strong className="font-semibold">
-                            {item.name}
-                          </strong>
+                          <strong className="font-semibold">{item.name}</strong>
                           <span>Loại: Áo</span>
                           <span>Size: S</span>
                         </div>
@@ -88,8 +87,12 @@ const ListCart = () => {
                       </td>
                       <td className="pr-3">
                         <div className="w-[80%] flex items-center justify-around border md:py-2 mb:py-1 *:md:text-base *:mb:text-xs px-1 rounded-lg border-black *:font-medium">
-
-                          <Dow_btn dataProps={{ id_item: item.productId, quantity_item: item.quantity }} />
+                          <Dow_btn
+                            dataProps={{
+                              id_item: item.productId,
+                              quantity_item: item.quantity
+                            }}
+                          />
                           <strong className="cursor-pointer">
                             {item.quantity}
                           </strong>
@@ -102,8 +105,7 @@ const ListCart = () => {
                         </strong>
                       </td>
                       <td>
-                        <button onClick={() => remove_item(item.productId)}
-                        >
+                        <button onClick={() => remove_item(item.productId)}>
                           <RecycleIcon />
                         </button>
                       </td>
@@ -117,11 +119,11 @@ const ListCart = () => {
               <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
-                  <strong>$</strong>
+                  <strong>${calculateTotal()}</strong>
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>
-                  <strong></strong>
+                  <strong>{calculateTotalProduct()}</strong>
                 </div>
                 <div className="flex flex-col border-y py-5 my-5">
                   <span className="text-xs mb-2">Nhập mã giảm giá</span>
@@ -138,7 +140,7 @@ const ListCart = () => {
                 </div>
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Cần thanh toán :</strong>
-                  <strong>$</strong>
+                  <strong>${calculateTotal()}</strong>
                 </div>
                 <Link onClick={ScrollTop} to="pay">
                   <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
