@@ -46,7 +46,6 @@ export const getOrders = async (req, res) => {
 };
 export const getOrderById = async (req, res) => {
   try {
-
     const order = await Order.findById(req.params.id);
     console.log(order);
     if (!order) {
