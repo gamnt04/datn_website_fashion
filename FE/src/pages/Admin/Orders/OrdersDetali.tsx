@@ -1,29 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../../../configs/axios";
 import { IOrder } from "../../../common/interfaces/Orders";
+import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
+// import { Mutation_Order } from "../../../common/hooks/Order/mutation_Order";
 
 const OrdersDetali = () => {
     const [detali, setDetali] = useState<IOrder | null>(null);
     const { id } = useParams();
-    console.log(id);
-    useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await instance.get(`/orders/${id}`);
-                setDetali(data);
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-                toast.error("Failed to fetch order details.");
-            }
-        })();
-    }, [id]);
-
+    const { data } = Query_Orders(id)
     const handleStatusUpdate = async () => {
-        if (!detali) return;
-        if (detali.status === "Đã hủy") {
+        if (!data) return;
+        if (data.status === "Đã hủy") {
             toast.error("Đơn hàng đã bị hủy, không thể cập nhật trạng thái!");
             return;
         }
@@ -35,18 +24,19 @@ const OrdersDetali = () => {
             "Đang chuẩn bị hàng": "Đang vận chuyển",
             "Đang vận chuyển": "Đã giao hàng",
         };
-        const nextStatus = statusOrder[detali.status] || "Đã giao hàng";
+        const nextStatus = statusOrder[data.status] || "Đã giao hàng";
         try {
             const { data } = await instance.patch(`/orders/${id}`, { status: nextStatus });
             console.log(data);
             setDetali(data);
-            toast.success(detali.status === "Đã giao hàng" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
+            toast.success(data.status === "Đã giao hàng" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
         } catch (error) {
             console.log(error);
             toast.error("Cập nhật trạng thái đơn hàng thất bại!");
         }
         window.location.reload();
     };
+    // const { on_Submit } = Mutation_Order("UPDATE")
 
     const handleCancelOrder = async () => {
         if (!detali) return;
@@ -64,7 +54,7 @@ const OrdersDetali = () => {
         }
     };
 
-    if (!detali) return <p>Loading...</p>;
+    if (!data) return <p>Loading...</p>;
 
     return (
         <>
@@ -81,7 +71,7 @@ const OrdersDetali = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {detali.items.map((item) => (
+                        {data.items.map((item: any) => (
                             <tr key={item._id}>
                                 <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
                                     <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
@@ -111,17 +101,17 @@ const OrdersDetali = () => {
                         </span>
                         <p>Mã voucher:</p>
                     </div>
-                    <p className="flex justify-end py-4 font-bold">Tổng tiền:<span className="text-orange-300 pl-2"> {detali.totalPrice} </span></p>
+                    <p className="flex justify-end py-4 font-bold">Tổng tiền:<span className="text-orange-300 pl-2"> {data.totalPrice} </span></p>
                 </div>
             </div>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
                     <p>Phương thức thành toán</p>
-                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{detali.customerInfo.payment}</p>
+                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data.customerInfo.payment}</p>
                 </div>
                 <div className="flex items-center gap-4 border-b py-3">
                     <p>Trạng thái đơn hàng</p>
-                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{detali.status}</p>
+                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data.status}</p>
                 </div>
                 <div className="flex justify-between my-4">
                     <div className="flex gap-6">
@@ -132,10 +122,10 @@ const OrdersDetali = () => {
                             <p>Địa chỉ khách hàng:</p>
                         </div>
                         <div>
-                            <p>{detali.customerInfo.userName}</p>
-                            <p>{detali.customerInfo.phone}</p>
-                            <p>{detali.customerInfo.email}</p>
-                            <p>{detali.customerInfo.address}</p>
+                            <p>{data.customerInfo.userName}</p>
+                            <p>{data.customerInfo.phone}</p>
+                            <p>{data.customerInfo.email}</p>
+                            <p>{data.customerInfo.address}</p>
                         </div>
                     </div>
                     <div className="flex gap-6">
@@ -146,18 +136,18 @@ const OrdersDetali = () => {
                             <p>Tổng thanh toán:</p>
                         </div>
                         <div>
-                            <p>{detali.totalPrice}</p>
+                            <p>{data.totalPrice}</p>
                             <p>10000</p>
                             <p>20000 đ</p>
-                            <p className="text-orange-300">{detali.totalPrice - 10000 + 20000}</p>
+                            <p className="text-orange-300">{data.totalPrice - 10000 + 20000}</p>
                         </div>
                     </div>
                 </div>
                 <div className="flex gap-5 justify-center mt-[60px]">
                     <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
-                        {detali.status !== "Đã hủy" ? (detali.status === "Đã giao hàng" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
+                        {data.status !== "Đã hủy" ? (data.status === "Đã giao hàng" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
                     </button>
-                    {detali.status !== "Đang chuẩn bị hàng" && detali.status !== "Đang vận chuyển" && detali.status !== "Đã giao hàng" && detali.status !== "Đã hủy" && (
+                    {data.status !== "Đang chuẩn bị hàng" && data.status !== "Đang vận chuyển" && data.status !== "Đã giao hàng" && data.status !== "Đã hủy" && (
                         <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
                             Từ chối xác nhận
                         </button>
