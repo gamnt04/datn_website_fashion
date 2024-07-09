@@ -38,14 +38,9 @@ export const Add_Order = async (order: any) => {
     console.log(error);
   }
 };
-// export const Update_Status = async (id: string) => {
-//   const statusOrder: Record<string, string> = {
-//     "Chờ xác nhận": "Đang chuẩn bị hàng",
-//     "Đang chuẩn bị hàng": "Đang vận chuyển",
-//     "Đang vận chuyển": "Đã giao hàng",
-//   };
+// export const Update_Status = async (id: string, status: string) => {
 //   try {
-//     const { data } = await instance.patch(`/orders/${id}`, { status: statusOrder });
+//     const { data } = await instance.patch(`/orders/${id}`, { status });
 //     console.log(data);
 //     return data;
 //   } catch (error) {
