@@ -1,27 +1,27 @@
 import { Router } from "express";
 import {
-  addProductsToCart,
+  addItemToCart,
   decreaseProductQuantity,
-  getCartByIdUser,
+  getCartByUserId,
   increaseProductQuantity,
   removeProductToCart,
   updateQuantityProductsInCart
-} from "../controllers/cart";
+} from "../controllers/Cart/cart";
 
-const router = Router();
+const Routes_Carts = Router();
 //Lấy danh sách sản phẩm trong giỏ hàng
-router.get("/cart/:userId", getCartByIdUser);
+Routes_Carts.get("/cart/:userId", getCartByUserId);
 //thêm sản phẩm vào giỏ hàng
-router.post("/cart/add-to-cart", addProductsToCart);
+Routes_Carts.post("/cart", addItemToCart);
 //Cập nhật số lượng sản phẩm bằng cách nhập vào input
-router.post(
+Routes_Carts.post(
   "/cart/update-quantity-products-to-cart",
   updateQuantityProductsInCart
 );
 //Xóa sản phẩm trong giỏ hàng
-router.delete("/cart/remove-product-to-cart", removeProductToCart);
+Routes_Carts.post("/cart/remove", removeProductToCart);
 //Tăng số lượng sản phẩm trong giỏ hàng
-router.post("/cart/increase-product-quantity-in-cart", increaseProductQuantity);
+Routes_Carts.post("/cart/up", increaseProductQuantity);
 //giảm số lượng sản phẩm trong giỏ hàng
-router.post("/cart/decrease-product-quantity-in-cart", decreaseProductQuantity);
-export default router;
+Routes_Carts.post("/cart/dow", decreaseProductQuantity);
+export default Routes_Carts;

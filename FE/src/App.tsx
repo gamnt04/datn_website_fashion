@@ -13,8 +13,6 @@ const App = () => {
     )
   }, [dispatch])
 
-
-
   return (
     <>
       <RouterComponent />

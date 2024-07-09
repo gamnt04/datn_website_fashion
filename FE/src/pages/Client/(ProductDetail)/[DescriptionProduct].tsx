@@ -1,276 +1,104 @@
+import { useState } from "react"
 
 const DescriptionProduct = () => {
+  const [toggleDes, setTogleDes] = useState<boolean>(true);
   return (
-    <div>
-        
-    
-    <div className="flex justify-center items-center space-x-10 text-lg text-gray-800 *:duration-300 pt-16 pb-3">
-            <div
-              className="text-orange-500 cursor-pointer underline underline-offset-8 decoration-2 decoration-[#F68E56] hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-            >
-              Description
+    <>
+      {/* description */}
+      < div className="flex flex-col border-t lg:py-10 lg:mt-10 mb:py-[34px] mb:mt-8" >
+        {/* menu description */}
+        <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 *:whitespace-nowrap *:px-6 *:lg:py-2.5 *:mb:py-[7px] *:rounded *:border *:place-items-center *:lg:text-base *:mb:text-xs" >
+          <button onClick={() => setTogleDes(true)} className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${toggleDes ? 'border-[#05422C] text-[#05422C] bg-[#F2F6F4]' : ''}`}>Mô tả</button>
+          <button onClick={() => setTogleDes(false)} className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${toggleDes ? '' : 'border-[#05422C] text-[#05422C] bg-[#F2F6F4]'}`}>
+            Đánh giá(350)
+          </button>
+        </ul >
+        {/* text description */}
+        <div className={toggleDes ? 'block' : 'hidden'} >
+          <section className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:py-6 mb:pt-[19px]">
+            <p>Jungle Diamonds is a slightly indica dominant hybrid strain (60% indica/40% sativa) created through
+              crossing the infamous Slurricane X Gorilla Glue #4 strains. Named for its gorgeous appearance and
+              breeder,
+              Jungle Diamonds is a favorite of indica and hybrid lovers alike thanks to its delicious taste and
+              tingly,
+              arousing high. Jungle Diamonds buds have sparkling oversized spade-shaped olive green nugs with vivid
+              amber hairs and a thick frosty blanket of glittering tiny blue-tinted white crystal trichomes. As you
+              pull
+              apart each sticky little nugget, aromas of spicy mocha coffee and fruity herbs are released. </p>
+            <p>The flavor is of sweet chocolate with hints of fresh ripe berries to it, too. The Jungle Diamonds high
+              is
+              just as delicious, with happy effects that will boost the spirits and kick negative thoughts and moods
+              to
+              the curb. You feel a tingly sense in your body from start to finish that serves to remove any aches
+              or
+              pains while leaving you pretty aroused at times. This is accompanied by a blissfully unfocused heady
+              lift
+              that leaves your head in the clouds without causing sedation. With these effects and its pretty high
+              17-24% THC level, Jungle Diamonds is ideal for experienced patients with chronic pain, cramps or muscle
+              spasms and appetite loss or nausea.</p>
+          </section>
+        </div >
+        {/* detail comment */}
+        <section className={toggleDes ? 'hidden' : 'block'}  >
+          <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
+            {/* content comment 1 */}
+            <div className="border rounded-2xl lg:p-6 mb:p-5">
+              {/* user and time comment */}
+              <div className="flex items-center *:flex *:items-center gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
+                {/* <Image width={36} height={36} src="/Images/vikki_user_icon.png" alt='' /> */}
+                <strong className="text-base text-[#1A1E26] font-medium gap-x-4">Vikki Starr <span className="text-sm text-[#9D9EA2] font-light">|</span> <span className="text-sm text-[#9D9EA2] font-light">January 15, 2023</span></strong>
+              </div>
+              {/* text comment */}
+              <section className="flex flex-col gap-y-4">
+                <nav className="flex items-center gap-x-1">
+                  {/* <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' /> */}
+                </nav>
+                <p className="text-[#1A1E26] text-base">Ahihihihihihihihhi san pham totooooooooo ahihihihihih</p>
+              </section>
             </div>
-
-            {/* <div
-              className="cursor-pointer decoration-2 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-            >
-              Evaluate
+            {/* content comment 2 */}
+            <div className="border rounded-2xl lg:p-6 mb:p-5">
+              {/* user and time comment */}
+              <div className="flex items-center *:flex *:items-center gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
+                {/* <Image width={36} height={36} src="/Images/vikki_user_icon.png" alt='' /> */}
+                <strong className="text-base text-[#1A1E26] font-medium gap-x-4">Terry Baskey <span className="text-sm text-[#9D9EA2] font-light">|</span> <span className="text-sm text-[#9D9EA2] font-light">January 15, 2023</span></strong>
+              </div>
+              {/* text comment */}
+              <section className="flex flex-col gap-y-4">
+                <nav className="flex items-center gap-x-1">
+                  {/* <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' />
+      <Image width={100} height={100} src="/Images/star.png" alt='' /> */}
+                </nav>
+                <p className="text-[#1A1E26] text-base">Ahihihihihihihihhi san pham totooooooooo ahihihihihih</p>
+              </section>
             </div>
-            <div
-              className="cursor-pointer decoration-2 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-            >
-              Delivery
-            </div> */}
-            <div
-              className="cursor-pointer decoration-2 hover:text-orange-500 hover:underline hover:underline-offset-8 hover:decoration-2 hover:decoration-[#F68E56]"
-            >
-              How to use
+            {/*btn show more */}
+            <div className="flex justify-center my-1">
+              <button className="px-5 py-2 text-[#17AF26] text-sm rounded-[100px] border hover:bg-[#F9F9F9] cursor-pointer duration-300">Show
+                More</button>
+            </div>
+            {/* add comment */}
+            <div className="flex flex-col gap-y-6 border-t lg:pt-7 lg:pb-[22px]">
+              <form className="-mt-1.5">
+                <span>Your Review</span>
+                <div className="overflow-hidden lg:p-4 rounded-lg border border-gray-200 shadow-sm focus-within:border-none focus-within:ring-1 focus-within:none mt-2">
+                  <textarea id="OrderNotes" className="w-full resize-none outline-none border-none align-top focus:ring-0 sm:text-sm" rows={3} placeholder="Enter your review" defaultValue={""} />
+                </div>
+                <button className="px-10 py-4 bg-black rounded hover:scale-105 duration-300 text-base text-white mt-4">Submit</button>
+              </form>
             </div>
           </div>
-          <div className="pl-4 list-disc space-y-2">
-            {/* Mo ta */}
-          <div className="mt-6 flex flex-col *:mt-4 *:md:text-sm *:mb:text-xs">
-            <span>- Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham,Day la mo ta chi tiet cua san pham</span>
-            <span>- Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham,Day la mo ta chi tiet cua san pham</span>
-            <span>- Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham,Day la mo ta chi tiet cua san pham</span>
-            <span>- Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham, Day la mo ta chi tiet cua san pham,Day la mo ta chi tiet cua san pham</span>
-          </div>
-            <div className="mx-auto bg-[#FFFBF8] mt-5">
-              {/* header danh gia */}
-              {/* <div className="flex p-8">
-                <div className="">
-                  <p className="">5 tren 5</p>
-                  <div className="flex justify-center items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="0.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-star"
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="0.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-star"
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="0.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-star"
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="0.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-star"
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="0.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="lucide lucide-star"
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex space-x-3 pl-[15px] text-[14px] ">
-                  <div className="border-black border-[1px] px-[10px]  ">
-                    Tất cả
-                  </div>
-                  <div className="border-black border-[1px]  p-3">5 sao</div>
-                  <div className="border-black border-[1px]  p-3">4 sao</div>
-                  <div className="border-black border-[1px]  p-3">3 sao</div>
-                  <div className="border-black border-[1px]  p-3">2 sao</div>
-                  <div className="border-black border-[1px]  p-3">1 sao</div>
-                  <div className="border-black border-[1px]  p-3">
-                    Có bình luận
-                  </div>
-                  <div className="border-black border-[1px]  p-3">
-                    Có hình ảnh/ Video
-                  </div>
-                </div>
-              </div> */}
-              {/* header danh gia */}
-            </div>
-
-            {/* nguoi dung danh gia */}
-            {/* <div className=" mx-auto ">
-              <div className="flex pl-5 ">
-                <div>
-                  <img
-                    src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                    alt=""
-                    className="w-10 h-10 object-cover rounded-full"
-                  />
-                </div>
-                <div className="pl-5 ">
-                  <div className="text-[12px]">
-                    <p>Ten nguoi dung</p>
-                    <div className="flex pt-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="0.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="lucide lucide-star"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="0.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="lucide lucide-star"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="0.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="lucide lucide-star"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="0.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="lucide lucide-star"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="0.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="lucide lucide-star"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    </div> */}
-
-                    {/* time reviews*/}
-                    {/* <div className="flex pt-1">
-                      <p>2024-01-01</p>
-                      <p className="pl-2">11:00</p>
-                      <p className="pl-2">|</p>
-                      <p className="pl-2">Phân loại: xanh lục(L)</p>
-                    </div> */}
-                    {/* end time reviews*/}
-                  {/* </div> */}
-
-                  {/* <div className="text-14px">
-                    <p className="pt-3 ">Màu sắc:</p>
-                    <p className="pt-3">Description:</p>
-                  </div> */}
-
-                  {/* pictures reviews */}
-                  {/* <div className="flex pt-3">
-                    <img
-                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                      alt=""
-                      className="w-16 h-16  object-cover"
-                    />
-                    <img
-                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                      alt=""
-                      className="w-20 h-16 pl-2 object-cover"
-                    />
-                    <img
-                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                      alt=""
-                      className="w-20 h-16 pl-2 object-cover"
-                    />
-                    <img
-                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                      alt=""
-                      className="w-20 h-16 pl-2 object-cover"
-                    />
-                    <img
-                      src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                      alt=""
-                      className="w-20 h-16 pl-2 object-cover"
-                    />
-                  </div> */}
-                  {/*end pictures reviews */}
-                {/* </div> */}
-              {/* </div> */}
-            {/* </div> */}
-            {/* end nguoi dung danh gia */}
-          </div>
-           
-      </div>
-   )
+        </section >
+      </div >
+    </>
+  )
 }
 
 export default DescriptionProduct

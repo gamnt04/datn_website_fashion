@@ -6,20 +6,11 @@ import {
   ArrowRight,
 } from "../../../../resources/svg/Icon/Icon";
 const AboutUS = () => {
+  const arr = [1, 2, 3];
   return (
-    <div className="container mx-auto max-w-[1200px]">
-      <div>
-        <div className="flex items-center bg-gray-100 h-20 p-4 mx-w-[1200px]">
-          <ul className="flex gap-2">
-            <li className="text-red-500">
-              <a href="#">Home </a>
-            </li>
-            <li> / </li>
-            <li>
-              <a href="#">About us</a>
-            </li>
-          </ul>
-        </div>
+    <div className="container lg:mt-[40px] mt-[60px]">
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+        Home &#10148; Pages &#10148; About-Us
       </div>
       <div className="mb-20">
         <div className="text-center mb-16">
@@ -27,7 +18,7 @@ const AboutUS = () => {
             <p className="font-bold text-xl mb-5 uppercase tracking-wider ">
               Meet our team
             </p>
-            <nav className="w-[700px]  mx-auto text-center font-thin text-gray-500 ">
+            <nav className="lg:w-[700px] w-[90%] mx-auto lg:text-base text-sm text-center text-gray-500 ">
               Claritas est etiam processus dynamicus, qui sequitur mutationem
               consuetudium lectorum. Mirum est notare quam littera gothica.
               Lorem Khaled Ipsum is a major key to success. They don’t want us
@@ -41,31 +32,35 @@ const AboutUS = () => {
               stay fresh.
             </nav>
           </div>
-          <div className="grid grid-cols-3 gap-4 *:bg-gray-100">
-            <div className="border p-4">
-              <img
-                src="../../../src/resources/images/logo/images.jpg"
-                alt=""
-                className="w-full h-48"
-              />
-              <div className="text-left mt-5  font-thin">
-                <p className="font-bold text-gray-500">Patrict</p>
-                <p className="text-sm">CEO & Founder of Stark Store.</p>
-                <nav className="text-sm">
-                  Claritas est etiam processus dynamicus, qui sequitur
-                  mutationem consuetudium lectorum. Mirum est notare quam
-                  littera.
-                </nav>
-              </div>
-            </div>
+          <div className="grid lg:grid-cols-3 md:grid-cold-2 grid-cols-1 gap-8 *:bg-gray-100 *:cursor-pointer *:duration-300 *:rounded">
+            {
+              arr?.map(() => (
+                <div className="border p-4 hover:scale-105">
+                  <img
+                    src="../../../src/resources/images/logo/images.jpg"
+                    alt=""
+                    className="w-full h-48"
+                  />
+                  <div className="text-left mt-5">
+                    <p className="font-bold text-gray-500">Patrict</p>
+                    <p className="text-sm">CEO & Founder of Stark Store.</p>
+                    <nav className="text-sm">
+                      Claritas est etiam processus dynamicus, qui sequitur
+                      mutationem consuetudium lectorum. Mirum est notare quam
+                      littera.
+                    </nav>
+                  </div>
+                </div>
+              ))
+            }
 
-            <div className="border p-4">
+            {/* <div className="border p-4">
               <img
                 src="../../../src/resources/images/logo/images.jpg"
                 alt=""
                 className="w-full h-48"
               />
-              <div className="text-left mt-5  font-thin">
+              <div className="text-left mt-5">
                 <p className="font-bold text-gray-500">Patrict</p>
                 <p className="text-sm">CEO & Founder of Stark Store.</p>
                 <nav className="text-sm">
@@ -81,7 +76,7 @@ const AboutUS = () => {
                 alt=""
                 className="w-full h-48"
               />
-              <div className="text-left mt-5  font-thin">
+              <div className="text-left mt-5">
                 <p className="font-bold text-gray-500">Patrict</p>
                 <p className="text-sm">CEO & Founder of Stark Store.</p>
                 <nav className="text-sm">
@@ -90,20 +85,37 @@ const AboutUS = () => {
                   littera.
                 </nav>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div>
           <iframe
-            width="1200"
-            height="500"
+          className="lg:w-[1200px] w-full"
             src="https://www.youtube.com/embed/_9VUPq3SxOc"
           ></iframe>
         </div>
-        <div className="mb-5 mt-5 text-center">
-          <h2 className="p-5 text-center text-4xl">Our Collector</h2>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="border border-gray-300">
+        <div className="my-10 text-center">
+          <h2 className="font-bold text-xl mb-5 uppercase tracking-wider ">Our Collector</h2>
+          <div className="grid lg:grid-cols-3 md:grid-cold-2 grid-cols-1 gap-8 text-center *:duration-300 *:cursor-pointer *:overflow-hidden *:rounded *:lg:shadow-lg *:shadow">
+            {
+              arr?.map(() => (
+                <div className="text-center image-container hover:scale-105">
+                  <img
+                    src="../../../src/resources/images/products/interior-design-concept-sale-home-260nw-2169578877.webp"
+                    alt=""
+                    className="w-full h-96"
+                  />
+                  <p className="text-lg mt-5 p-3 flex justify-center items-center">
+                    Áo ahihi
+                    <div className="w-5 h-5 ml-2">
+                      <ArrowRight />
+                    </div>
+                  </p>
+                </div>
+              ))
+            }
+
+            {/* <div className="border border-gray-300">
               <div className="text-center image-container">
                 <img
                   src="../../../src/resources/images/products/interior-design-concept-sale-home-260nw-2169578877.webp"
@@ -132,22 +144,7 @@ const AboutUS = () => {
                   </div>
                 </p>
               </div>
-            </div>
-            <div className="border border-gray-300">
-              <div className="text-center image-container">
-                <img
-                  src="../../../src/resources/images/products/interior-design-concept-sale-home-260nw-2169578877.webp"
-                  alt=""
-                  className="w-full h-96"
-                />
-                <p className="text-lg font-thin mt-5 p-3 flex justify-center items-center">
-                  Dép Màu Đen
-                  <div className="w-5 h-5 ml-2">
-                    <ArrowRight />
-                  </div>
-                </p>
-              </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex justify-center mt-5 ">

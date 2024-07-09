@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 
@@ -694,7 +694,7 @@ const ListProducts = () => {
           </button>
         </div>
         <div className="">
-          <ul className="flex justify-center flex space-x-5">
+          <ul className="flex justify-center space-x-5">
             <li className="link_icon px-4 py-4 border-2 border-[#ABABAB] rounded-full flex items-center justify-center">
               <a href="" className="flex items-center justify-center">
                 <svg

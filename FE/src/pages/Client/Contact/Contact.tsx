@@ -1,14 +1,10 @@
 const Contact = () => {
   return (
-    <div className="">
-      <div className="bg-[#f5f5f5]">
-        <div className="flex gap-5  h-[109px] items-center max-w-[1200px] mx-auto">
-          <p className="text-[#999999] underline">Home</p>
-          <p>/</p>
-          <p>Contact</p>
-        </div>
-      </div>
-      <div className="  max-w-[1200px] mx-auto  grid grid-cols-1 gap-4 my-10 sm:grid-cols-2 md:grid-cols-2">
+    <div className="lg:mt-[40px] mt-[60px]">
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+                Home &#10148; Products &#10148; Contact
+            </div>
+      <div className="mx-auto grid grid-cols-1 gap-4 my-10 sm:grid-cols-2 md:grid-cols-2">
         <div>
           <h2 className="text-xl text-[#222222] font-semibold">
             Stay in touch! Contact us
@@ -19,29 +15,29 @@ const Contact = () => {
             taking away layers without losing the aesthetic appeal of the space.
           </p>
           <input
-            className="w-[584px] h-[45px] mt-4 border border-[#999999] rounded-md pl-4"
+            className="lg:w-[584px] md:w-[90%] w-full h-[45px] mt-4 border border-[#999999] rounded-md pl-4"
             type="text"
             placeholder="Name"
             required
           />
 
           <input
-            className="w-[584px] h-[45px] mt-4 border border-[#999999] rounded-md pl-4"
+            className="lg:w-[584px] md:w-[90%] w-full h-[45px] mt-4 border border-[#999999] rounded-md pl-4"
             type="email"
             placeholder="Email*"
             required
           />
           <input
-            className="w-[584px] h-[45px] mt-4 border border-[#999999] rounded-md pl-4"
+            className="lg:w-[584px] md:w-[90%] w-full h-[45px] mt-4 border border-[#999999] rounded-md pl-4"
             type="text"
             placeholder="Phone number"
           />
           <input
-            className="w-[584px] h-[45px] mt-4 border border-[#999999] rounded-md pl-4 pb-24 pt-7"
+            className="lg:w-[584px] md:w-[90%] w-full h-[45px] mt-4 border border-[#999999] rounded-md pl-4 pb-24 pt-7"
             type="text"
             placeholder="Comment"
           />
-          <button className="w-[584px] h-[45px] bg-black text-white mt-4 rounded-md text-sm hover:bg-[#f68e56]">
+          <button className="lg:w-[584px] md:w-[90%] w-full h-[45px] bg-black text-white mt-4 rounded-md text-sm hover:bg-[#f68e56]">
             Send
           </button>
         </div>
@@ -49,8 +45,7 @@ const Contact = () => {
         <div>
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d717.0503634761782!2d105.73999147053436!3d21.053666594456768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313454f9ec100009%3A0x784cd6eb9706cb3d!2zTmcuIDYwIFAuIE5ndXnDqm4gWMOhLCBOZ3V5w6puIFjDoSwgTWluaCBLaGFpLCBC4bqvYyBU4burIExpw6ptLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1716068409544!5m2!1svi!2s"
-            width="600"
-            height="500"
+            className="lg:w-[584px] w-full h-[300px]"
             style={{ border: "0" }}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
@@ -59,7 +54,7 @@ const Contact = () => {
         </div>
       </div>
 
-      <div className=" container mx-auto max-w-[1200px]  text-center mt-16">
+      {/* <div className=" container mx-auto max-w-[1200px]  text-center mt-16">
         <h2 className="text-[48px] font-normal pb-[15px]">Get in touch</h2>
         <p className="text-[18px] text-[#ABABAB] pb-[30px]">
           Subcrible for latest stories and promotions (35% save)
@@ -159,7 +154,7 @@ const Contact = () => {
           <p className="text-[#ABABAB]">Don’t worry. We won't spam.</p>
         </div>
         <hr className="my-10" />
-      </div>
+      </div> */}
     </div>
   );
 };

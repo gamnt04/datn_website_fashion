@@ -63,8 +63,8 @@ const Category: React.FC = () => {
   };
 
   const filteredData = data?.sort((a: ICategory, b: ICategory) => {
-    const nameA = a.name ?? "";
-    const nameB = b.name ?? "";
+    const nameA = a.name_category ?? "";
+    const nameB = b.name_category ?? "";
 
     if (alphabetFilter === "asc") {
       return nameA.localeCompare(nameB);
@@ -224,7 +224,7 @@ const Category: React.FC = () => {
                               </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              {category.name}
+                              {category.name_category}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                               Có {category.products?.length || 0} sản phẩm
