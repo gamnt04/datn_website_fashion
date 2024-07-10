@@ -41,3 +41,10 @@ export const remove_quantity = async (data: any) => {
     console.log(error || "Loi server !");
   }
 };
+export const remove_multiple_products = async (data: any) => {
+  try {
+    await instance.post("/cart/remove-multiple", data);
+  } catch (error) {
+    console.log(error || "Server error!");
+  }
+};
