@@ -22,12 +22,12 @@ const ListCart = () => {
     if (window.confirm("Xac nhan xoa san pham ?")) {
       const data_item = {
         userId: userId,
-        productId: id
+        productId: id,
       };
       mutate(data_item);
     }
   }
-  const { calcuateTotal } = Pay_Mutation()
+  const { calcuateTotal } = Pay_Mutation();
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
       <div className="flex items-center border bg-gray-100 h-20 p-4">
@@ -46,7 +46,11 @@ const ListCart = () => {
         {!data?.products || data?.products.length === 0 ? (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="w-full h-[200px] flex flex-col justify-center items-center">
-              <img src="../../src/assets/Images/Products/no_products.png" className="w-44 h-40" alt="" />
+              <img
+                src="../../src/assets/Images/Products/no_products.png"
+                className="w-44 h-40"
+                alt=""
+              />
               <p>Chưa có sản phẩm nào</p>
             </div>
           </div>
@@ -95,7 +99,7 @@ const ListCart = () => {
                           <Dow_btn
                             dataProps={{
                               id_item: item.productId,
-                              quantity_item: item.quantity
+                              quantity_item: item.quantity,
                             }}
                           />
                           <strong className="cursor-pointer">
@@ -124,12 +128,11 @@ const ListCart = () => {
               <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
-<<<<<<< HEAD
-                  <strong>${calculateTotal()}</strong>
-=======
-                  <p className="font-bold text-xl text-yellow-500"> {calcuateTotal()}  <strong className="text-black ml-3">$</strong></p>
-
->>>>>>> 9224d7ac9a3d9b6a0f00f690f9165ea8c42fc681
+                  <p className="font-bold text-xl text-yellow-500">
+                    {" "}
+                    {calcuateTotal()}{" "}
+                    <strong className="text-black ml-3">$</strong>
+                  </p>
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>
