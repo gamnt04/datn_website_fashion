@@ -33,7 +33,7 @@ export const addItemToCart = async (req, res) => {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({ userId, products: [] });
-    };
+    }
     const existProductIndex = cart.products.findIndex(
       (item) => item.productId.toString() == productId
     );
@@ -71,6 +71,26 @@ export const removeProductToCart = async (req, res) => {
       .json({ error: "Internal Server Error" });
   }
 };
+export const removeMultipleProductsFormCart = async (req, res) => {
+  try {
+    const { userId, productIds } = req.body;
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart Not Found" });
+    }
+    cart.products = cart.products.filter(
+      (product) => !productIds.includes(product.productId.toString())
+    );
+    await cart.save();
+    return res.status(StatusCodes.OK).json({ cart });
+  } catch (error) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: "Internal Server Error" });
+  }
+};
 export const updateQuantityProductsInCart = async (req, res) => {
   const { userId, productId, quantity } = req.body;
   try {
@@ -92,7 +112,7 @@ export const updateQuantityProductsInCart = async (req, res) => {
     product.quantity = quantity;
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
-  } catch (error) { }
+  } catch (error) {}
 };
 export const increaseProductQuantity = async (req, res) => {
   const { userId, productId } = req.body;
@@ -131,15 +151,14 @@ export const decreaseProductQuantity = async (req, res) => {
       return res.status(404).json({ message: "Product not found in cart" });
     }
 
-
-    for (let i = 0; i < cart.products.length; i ++) {
-      if (cart.products[i].productId == productId){
-        cart.products[i].quantity --;
-          if (cart.products[i].quantity === 0) {
-            cart.products.splice(i, 1);
-          }
+    for (let i = 0; i < cart.products.length; i++) {
+      if (cart.products[i].productId == productId) {
+        cart.products[i].quantity--;
+        if (cart.products[i].quantity === 0) {
+          cart.products.splice(i, 1);
+        }
       }
-  };
+    }
 
     // if (product.quantity > 1) {
     //   product.quantity--;
