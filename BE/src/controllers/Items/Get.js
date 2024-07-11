@@ -63,6 +63,12 @@ export async function get_items_client(req, res) {
 
 export const getProductById = async (req, res) => {
   try {
+    if (req.params.id === "trash") {
+      // Xử lý lấy danh sách sản phẩm đã xóa
+      const trashProducts = await Products.find({ deletedAt: { $ne: null } });
+      return res.status(StatusCodes.OK).json(trashProducts);
+    }
+
     const product = await Products.findById(req.params.id);
     if (!product) {
       return res
@@ -73,7 +79,18 @@ export const getProductById = async (req, res) => {
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Lỗi server !",
     });
+  }
+};
+
+export const getTrash = async (req, res) => {
+  try {
+    const trashProducts = await Products.find({ deletedAt: { $ne: null } });
+    res.status(StatusCodes.OK).json(trashProducts);
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
   }
 };
