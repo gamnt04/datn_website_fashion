@@ -1,15 +1,22 @@
 import instance from "../configs/axios";
-
-export const GetAllOrder = async (page: number, status: string = "") => {
+export const GetAllOrder = async () => {
   try {
-    const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
-    console.log(data);
+    const { data } = await instance.get(`orders`);
 
     return data;
   } catch (error) {
     console.log(error);
   }
 };
+// export const GetAllOrder = async (page: number, status: string = "") => {
+//   try {
+//     const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
+
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 export const getOrderById = async (id: string) => {
   try {
     const { data } = await instance.get(`/orders/${id}`);
@@ -47,7 +54,6 @@ export const Add_Order = async (order: any) => {
 //     console.log(error);
 //   }
 // };
-
 
 // router.post("/orders", createOrder);
 // router.get("/orders", getOrders);
