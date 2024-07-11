@@ -2,11 +2,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   add_cart,
   dow_quantity,
+  remove_multiple_products,
   remove_quantity,
   up_quantity
 } from "../../../_lib/Cart/Cart";
 
-type Actions = "ADD" | "UP" | "DOW" | "REMOVE";
+type Actions = "ADD" | "UP" | "DOW" | "REMOVE" | "REMOVE_MULTIPLE";
 
 export function Mutation_Cart(action: Actions) {
   const queryClient = useQueryClient();
@@ -21,7 +22,8 @@ export function Mutation_Cart(action: Actions) {
           return await dow_quantity(data);
         case "REMOVE":
           return await remove_quantity(data);
-
+        case "REMOVE_MULTIPLE":
+          return await remove_multiple_products(data);
         default:
           return;
       }

@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
-import { removeProduct } from "../../../services/product";
 import { useQueryClient } from "@tanstack/react-query";
 import AddProduct from "./AddProducts/Index";
 import { Query_Products } from "../../../common/hooks/Products/Products";
-
+import { remove_items_client } from "../../../_lib/Items/Products";
 const ListProduct = () => {
   const { data, isLoading } = Query_Products();
+  const navigate = useNavigate();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
     null
   );
@@ -23,7 +23,7 @@ const ListProduct = () => {
     if (window.confirm("Bạn có muốn xóa sản phẩm này không?")) {
       setRemovingProductId(id);
       try {
-        await removeProduct(id);
+        await remove_items_client(id);
         alert("Xóa thành công");
         queryClient.invalidateQueries("products");
       } catch (error) {
@@ -34,7 +34,6 @@ const ListProduct = () => {
       }
     }
   };
-  const navigate = useNavigate();
 
   const handleUpdate = (id: string) => {
     navigate(`edit/${id}`);
@@ -119,10 +118,11 @@ const ListProduct = () => {
                           </button>
                           <button
                             onClick={() => handleRemove(product._id!)}
-                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${removingProductId === product._id
-                              ? "bg-gray-500"
-                              : "bg-rose-500 hover:bg-rose-400"
-                              } focus:outline-none`}
+                            className={`p-3 text-white transition-colors duration-200 border rounded-lg ${
+                              removingProductId === product._id
+                                ? "bg-gray-500"
+                                : "bg-rose-500 hover:bg-rose-400"
+                            } focus:outline-none`}
                             disabled={removingProductId === product._id}
                           >
                             {removingProductId === product._id
