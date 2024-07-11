@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { GetAllOrder } from "../../../services/orderProduct";
+// import { GetAllOrder } from "../../../services/orderProduct";
 import { IOrder } from "../../../common/interfaces/OrderProducts";
 import { getAllProduct } from "../../../services/product";
+import { get_order_client } from "../../../services/orderProduct";
 
 const MainContent = () => {
   const [orderday, setOrderday] = useState<number>(0);
@@ -14,7 +15,7 @@ const MainContent = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await GetAllOrder();
+        const data = await get_order_client();
         const today = dayjs().startOf("day");
         if (data && data.length > 0) {
           // Kiểm tra data có dữ liệu không

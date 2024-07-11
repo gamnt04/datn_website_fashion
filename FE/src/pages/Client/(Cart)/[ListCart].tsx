@@ -8,25 +8,47 @@ import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
+import { useState } from "react";
 
 const ListCart = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const { data, isPending, isError, calculateTotal, calculateTotalProduct } =
     List_Cart(userId);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   // if (isPending) return <p>Loading...</p>;
   // if (isError) return <p>Error...</p>;
-  const { mutate } = Mutation_Cart("REMOVE");
+  const { mutate: removeSingle } = Mutation_Cart("REMOVE");
+  const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
 
-  function remove_item(id: any) {
-    if (window.confirm("Xac nhan xoa san pham ?")) {
+  const remove_item = (id: any) => {
+    if (window.confirm("Xác nhận xóa sản phẩm?")) {
       const data_item = {
         userId: userId,
         productId: id,
       };
-      mutate(data_item);
+      removeSingle(data_item);
     }
-  }
+
+  };
+  const handleRemoveMultiple = () => {
+    if (window.confirm("Bạn có muốn xóa không ?")) {
+      const product_item = {
+        userId: userId,
+        productIds: selectedProductIds
+      };
+      removeMultiple(product_item);
+    }
+  };
+  const handleCheckboxChange = (productId: string) => {
+    if (selectedProductIds.includes(productId)) {
+      setSelectedProductIds(
+        selectedProductIds.filter((id) => id !== productId)
+      );
+    } else {
+      setSelectedProductIds([...selectedProductIds, productId]);
+    }
+  };
   const { calcuateTotal } = Pay_Mutation();
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
@@ -59,6 +81,9 @@ const ListCart = () => {
             <div className="md:w-[70%] mb:w-full *:w-full">
               <table className="*:text-left table-auto">
                 <thead>
+                  <button onClick={handleRemoveMultiple}>
+                    Remove Selected Products
+                  </button>
                   <tr className="*:font-medium *:md:text-sm *:mb:text-xs *:pb-6">
                     <th></th>
                     <th>Sản phẩm</th>
@@ -73,7 +98,14 @@ const ListCart = () => {
                   {data?.products.map((item: any, index: number) => (
                     <tr className="border-y" key={index}>
                       <td>
-                        <input type="checkbox" />
+                        <div key={item.productId}>
+                          <input
+                            type="checkbox"
+                            onChange={() =>
+                              handleCheckboxChange(item.productId)
+                            }
+                          />
+                        </div>
                       </td>
                       <td className="w-[80px] py-5">
                         <img
@@ -128,11 +160,13 @@ const ListCart = () => {
               <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
+
                   <p className="font-bold text-xl text-yellow-500">
                     {" "}
                     {calcuateTotal()}{" "}
                     <strong className="text-black ml-3">$</strong>
                   </p>
+
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>
