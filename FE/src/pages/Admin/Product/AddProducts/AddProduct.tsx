@@ -149,7 +149,6 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-
             <div className="text-xs italic text-red-500">
               {errors.category_id?.message}
             </div>
