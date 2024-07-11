@@ -1,4 +1,7 @@
 import instance from "../configs/axios";
+export const GetAllOrder = async () => {
+  try {
+    const { data } = await instance.get(`orders`);
 const baseUri = 'http://localhost:2004/api/v1/orders';
 
 // export const GetAllOrder = async (page: number, status: string = "") => {
@@ -34,7 +37,20 @@ export async function get_order_client(page?: number, status?: string) {
   } catch (error) {
     console.log(error || "Loi server!")
   }
+<<<<<<< HEAD
+};
+// export const GetAllOrder = async (page: number, status: string = "") => {
+//   try {
+//     const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
+
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+=======
 }
+>>>>>>> 12a7e5c95e15205ca155a1a3a5ecb50c719b4458
 export const getOrderById = async (id: string) => {
   try {
     const { data } = await instance.get(`/orders/${id}`);
@@ -72,7 +88,6 @@ export const Add_Order = async (order: any) => {
 //     console.log(error);
 //   }
 // };
-
 
 // router.post("/orders", createOrder);
 // router.get("/orders", getOrders);
