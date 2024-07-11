@@ -68,6 +68,9 @@ const ListProduct = () => {
                         Giá sản phẩm
                       </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        Danh mục
+                      </th>
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         Miêu tả
                       </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
