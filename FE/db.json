@@ -2,38 +2,54 @@
   "orders": [
     {
       "id": 1,
-      "userName": "Jane Smith",
-      "phone": "0357219736",
-      "email": "namdhph33318@fpt.edu.vn",
-      "address": "Nguyên Xá, Minh Khai, Bắc Từ Liêm, TP.Hà Nội",
+      "userName": "John Doe",
+      "phone": "0123456789",
+      "email": "johndoe@example.com",
+      "address": "123 Main St, Cityville, ST 12345",
       "image": "https://picsum.photos/300/300",
-      "productName": "Smartphone",
-      "quantity": 2,
-      "totalPrice": 200000,
-      "status": "Đã hủy",
-      "details": "Order details for Order ID: 2",
-      "datetime": "06/24/2024",
+      "productName": "Laptop",
+      "quantity": 1,
+      "totalPrice": 1500,
+      "status": "Completed",
+      "details": "Order details for Order ID: 1",
+      "datetime": "07/10/2024",
       "hinhthuc": "Thanh toán tiền mặt",
-      "voucher": "40000"
+      "voucher": "50000"
     },
     {
       "id": 2,
-      "userName": "Jane Smith",
-      "phone": "0357219736",
-      "email": "namdhph33318@fpt.edu.vn",
-      "address": "Nguyên Xá, Minh Khai, Bắc Từ Liêm, TP.Hà Nội",
+      "userName": "Alice Johnson",
+      "phone": "0987654321",
+      "email": "alicejohnson@example.com",
+      "address": "456 Elm St, Townsville, ST 67890",
       "image": "https://picsum.photos/300/300",
-      "productName": "Smartphone",
-      "quantity": 2,
-      "totalPrice": 200001,
-      "status": "Đã hủy",
+      "productName": "Tablet",
+      "quantity": 3,
+      "totalPrice": 900,
+      "status": "Processing",
       "details": "Order details for Order ID: 2",
-      "datetime": "06/24/2024",
+      "datetime": "07/09/2024",
       "hinhthuc": "Thanh toán tiền mặt",
-      "voucher": "40000"
+      "voucher": "30000"
     },
     {
       "id": 3,
+      "userName": "Bob Brown",
+      "phone": "0112233445",
+      "email": "bobbrown@example.com",
+      "address": "789 Oak St, Village, ST 54321",
+      "image": "https://picsum.photos/300/300",
+      "productName": "Smartwatch",
+      "quantity": 2,
+      "totalPrice": 500,
+      "status": "Shipped",
+      "details": "Order details for Order ID: 3",
+      "datetime": "07/08/2024",
+      "hinhthuc": "Thanh toán tiền mặt",
+      "voucher": "20000"
+    },
+    {
+      "id": 4,
       "userName": "Jane Smith",
       "phone": "0357219736",
       "email": "namdhph33318@fpt.edu.vn",
@@ -44,7 +60,7 @@
       "totalPrice": 200003,
       "status": "Đã hủy",
       "details": "Order details for Order ID: 2",
-      "datetime": "06/25/2024",
+      "datetime": "07/11/2024",
       "hinhthuc": "Thanh toán tiền mặt",
       "voucher": "40000"
     }
@@ -182,52 +198,6 @@
   "categories": [
     {
       "name": "Loại sản phẩm 1"
-    }
-  ],
-  "categories": [
-    {
-      "id": "abc",
-      "nameCategories": "ao"
-    },
-    {
-      "id": "xyz",
-      "nameCategories": "quan"
-    },
-    {
-      "id": "jqk",
-      "nameCategories": "mu"
-    }
-  ],
-  "products": [
-    {
-      "idCategories": "abc",
-      "name": "Day la ao so 1",
-      "price": 699669
-    },
-    {
-      "idCategories": "abc",
-      "name": "Day la ao so 1",
-      "price": 8668
-    },
-    {
-      "idCategories": "xyz",
-      "name": "Day la quan so 1",
-      "price": 699669
-    },
-    {
-      "idCategories": "xyz",
-      "name": "Day la quan so 2",
-      "price": 8668
-    },
-    {
-      "idCategories": "jqk",
-      "name": "Day la mu so 1",
-      "price": 333333
-    },
-    {
-      "idCategories": "jqk",
-      "name": "Day la mu so 2",
-      "price": 999999
     }
   ]
 }
