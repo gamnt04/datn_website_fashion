@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../../models/Auth/users";
 import { signupSchema } from "../../validations/auth";
 
+
 export const GetAllUser = async (req, res) => {
   try {
     const users = await User.find();
