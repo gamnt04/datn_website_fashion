@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
+const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     const formatDate = (datetime: any) => {
         if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
         const date = new Date(datetime);
@@ -56,27 +56,28 @@ const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
             </table>
             <div className="flex justify-center gap-4 my-6">
                 <button
-                    onClick={() => onPageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
                     className="hover:bg-slate-300 border-2 w-12 h-12"
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
                 </button>
-                {[...Array(totalPages).keys()].map((page) => (
+                {/* Render nút phân trang một cách động */}
+                {Array.from({ length: totalPages }, (_, index) => (
                     <button
-                        key={page + 1}
-                        onClick={() => onPageChange(page + 1)}
-                        className={`hover:bg-slate-300 border-2 w-12 h-12 ${currentPage === page + 1 ? 'bg-slate-300' : ''}`}
+                        key={index + 1}
+                        className={`hover:bg-slate-300 border-2 w-12 h-12 ${currentPage === index + 1 ? 'bg-slate-300' : ''}`}
+                        onClick={() => goToPage(index + 1)}
                     >
-                        {page + 1}
+                        {index + 1}
                     </button>
                 ))}
                 <button
-                    onClick={() => onPageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
                     className="hover:bg-slate-300 border-2 w-12 h-12"
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
