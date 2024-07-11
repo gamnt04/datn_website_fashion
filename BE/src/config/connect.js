@@ -9,3 +9,4 @@ export async function connectDB(uri) {
     console.error(error);
   }
 }
+

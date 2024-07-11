@@ -90,6 +90,29 @@ export const signin = async (req, res) => {
   });
 };
 
+// Hàm cập nhật người dùng
+export const updateUser = async (req, res) => {
+  const userId = req.params.userId; // Lấy userId từ params
+  const updatedData = req.body; // Dữ liệu cập nhật từ request body
+
+  try {
+    // Tìm người dùng trong CSDL bằng userId và cập nhật dữ liệu mới
+    const user = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+    // Kiểm tra nếu không tìm thấy người dùng
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy người dùng để cập nhật" });
+    }
+
+    // Trả về thông báo thành công và thông tin người dùng đã cập nhật
+    return res.status(StatusCodes.OK).json({ message: "Cập nhật người dùng thành công", user });
+  } catch (error) {
+    // Bắt lỗi nếu có và trả về thông báo lỗi
+    console.error("Lỗi khi cập nhật người dùng:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+}
+
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
   // Kiểm tra newAddress từ request body
@@ -147,33 +170,23 @@ export const get_address = async (req, res) => {
 export const updateUserAddress = async (req, res) => {
   const userId = req.params.userId;
   const addressId = req.params.addressId;
-  const updatedAddress = req.body; // Thông tin địa chỉ mới cần cập nhật
+  const updatedAddress = req.body; 
 
   try {
-    // Tìm người dùng trong CSDL bằng userId
     const user = await User.findById(userId);
-    
-    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy người dùng",
       });
     }
-    
-    // Tìm địa chỉ cần cập nhật trong mảng address của người dùng
     let addressToUpdate = user.address.id(addressId);
-    
-    // Kiểm tra nếu không tìm thấy địa chỉ
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy địa chỉ",
       });
     }
-    
-    // Cập nhật thông tin địa chỉ mới
     addressToUpdate.set(updatedAddress);
     console.log();
-    // Lưu thay đổi vào CSDL
     await user.save(updatedAddress);
     
     return res.status(StatusCodes.OK).json({

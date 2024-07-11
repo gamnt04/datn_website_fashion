@@ -7,7 +7,7 @@ const Address = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [addressInfo, setAddressInfo] = useState({
-    _id: "",
+ 
     fullName: "",
     phoneNumber: "",
     addressDetails: "",
@@ -100,6 +100,39 @@ const Address = () => {
       alert("Đã xảy ra lỗi khi cập nhật địa chỉ. Vui lòng thử lại sau.");
     }
   };
+
+  
+   const handleAddAddress = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      // Kiểm tra hợp lệ của các trường nhập liệu
+   
+
+      await instance.post(`/auth/add_address`, {
+        userId,
+        newAddress: addressInfo,
+      });
+
+      fetchAddresses(); // Cập nhật lại danh sách địa chỉ sau khi thêm thành công
+      setIsOpen(false); // Đóng modal sau khi thêm thành công
+
+      // Xóa trống các trường nhập liệu
+      setAddressInfo({
+        fullName: "",
+        phoneNumber: "",
+        addressDetails: "",
+        addressType: "",
+      });
+
+      alert("Thêm địa chỉ thành công");
+      window.location.reload()
+    } catch (error) {
+      console.error("Error adding address:", error);
+      alert("Đã xảy ra lỗi khi thêm địa chỉ. Vui lòng thử lại sau.");
+    }
+  };
+
+
 
   return (
     <>
@@ -200,8 +233,8 @@ const Address = () => {
                 />
                 <input
                   type="text"
-                  name="phone"
-                  value={addressInfo.phone}
+                  name="phoneNumber"
+                  value={addressInfo.phoneNumber}
                   onChange={handleInputChange}
                   placeholder="Số điện thoại"
                   required
@@ -211,8 +244,8 @@ const Address = () => {
                 <input
                   type="text"
                   className="w-full"
-                  name="address"
-                  value={addressInfo.address}
+                  name="addressDetails"
+                  value={addressInfo.addressDetails}
                   onChange={handleInputChange}
                   placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
                   required
