@@ -1,14 +1,14 @@
 import { reduce } from "lodash";
 import instance from "../../configs/axios";
 
-export async function list_cart(id: string) {
+export const list_cart = async (id: string) => {
   try {
     const res = await instance.get(`cart/${id}`);
     return res.data;
   } catch (error) {
     console.error(error || "Loi server!");
   }
-}
+};
 
 export const add_cart = async (data: any) => {
   try {
@@ -39,5 +39,12 @@ export const remove_quantity = async (data: any) => {
     await instance.post("/cart/remove", data);
   } catch (error) {
     console.log(error || "Loi server !");
+  }
+};
+export const remove_multiple_products = async (data: any) => {
+  try {
+    await instance.post("/cart/remove-multiple", data);
+  } catch (error) {
+    console.log(error || "Server error!");
   }
 };
