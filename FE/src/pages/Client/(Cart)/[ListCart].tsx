@@ -16,8 +16,8 @@ const ListCart = () => {
   const { data, isPending, isError, calculateTotal, calculateTotalProduct } =
     List_Cart(userId);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  // if (isPending) return <p>Loading...</p>;
-  // if (isError) return <p>Error...</p>;
+  if (isPending) return <p>Loading...</p>;
+  if (isError) return <p>Error...</p>;
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
 
@@ -78,11 +78,11 @@ const ListCart = () => {
         ) : (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="md:w-[70%] mb:w-full *:w-full">
+              <button onClick={handleRemoveMultiple} className="my-[10px]">
+                Remove Selected Products
+              </button>
               <table className="*:text-left table-auto">
                 <thead>
-                  <button onClick={handleRemoveMultiple}>
-                    Remove Selected Products
-                  </button>
                   <tr className="*:font-medium *:md:text-sm *:mb:text-xs *:pb-6">
                     <th></th>
                     <th>Sản phẩm</th>
