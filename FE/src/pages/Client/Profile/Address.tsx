@@ -7,6 +7,7 @@ const Address = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [addressInfo, setAddressInfo] = useState({
+ 
     fullName: "",
     phoneNumber: "",
     addressDetails: "",
@@ -15,14 +16,14 @@ const Address = () => {
   const [addresses, setAddresses] = useState([]);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  console.log(userId);
+  const [selectedAddress, setSelectedAddress] = useState<Auth | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await instance.get(`/auth/${userId}`);
         setAddresses(data);
-        console.log(data?.address[0].phoneNumber);
+        // console.log(data?.address[0].phoneNumber);
       } catch (error) {}
     })();
   }, [userId]);
@@ -40,24 +41,23 @@ const Address = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleToggleUpdate = () => {
+  const handleToggleUpdate = (address: Auth) => {
+    setSelectedAddress(address);
+    setAddressInfo({
+      _id: address._id,
+      fullName: address.fullName,
+      phoneNumber: address.phoneNumber,
+      addressDetails: address.addressDetails,
+      addressType: address.addressType,
+    });
     setIsOpenUpdate(!isOpenUpdate);
   };
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAddressInfo({
       ...addressInfo,
       [name]: value,
-    });
-  };
-
-  const clearAddressInfo = () => {
-    setAddressInfo({
-      fullName: "",
-      phoneNumber: "",
-      addressDetails: "",
-      addressType: "",
     });
   };
 
@@ -77,22 +77,62 @@ const Address = () => {
     }
   };
 
-  const handleAddAddress = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpdateAddress = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(selectedAddress?._id);
+
+    if (!selectedAddress) {
+      console.error("Không có địa chỉ được chọn để cập nhật");
+      return;
+    }
+    try {
+      await instance.put(
+        `/auth/${userId}/${selectedAddress?._id}`,
+        addressInfo
+      );
+
+      fetchAddresses(); // Refresh addresses after successful update
+      setIsOpenUpdate(false); // Close update modal
+      alert("Cập nhật địa chỉ thành công");
+      window.location.reload();
+    } catch (error) {
+      console.error("Lỗi khi cập nhật địa chỉ:", error);
+      alert("Đã xảy ra lỗi khi cập nhật địa chỉ. Vui lòng thử lại sau.");
+    }
+  };
+
+  
+   const handleAddAddress = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      // Kiểm tra hợp lệ của các trường nhập liệu
+   
+
       await instance.post(`/auth/add_address`, {
         userId,
         newAddress: addressInfo,
       });
-      fetchAddresses();
-      setIsOpen(false); // Close modal
-      clearAddressInfo(); // Clear form fields
+
+      fetchAddresses(); // Cập nhật lại danh sách địa chỉ sau khi thêm thành công
+      setIsOpen(false); // Đóng modal sau khi thêm thành công
+
+      // Xóa trống các trường nhập liệu
+      setAddressInfo({
+        fullName: "",
+        phoneNumber: "",
+        addressDetails: "",
+        addressType: "",
+      });
+
       alert("Thêm địa chỉ thành công");
-      window.location.reload();
+      window.location.reload()
     } catch (error) {
       console.error("Error adding address:", error);
+      alert("Đã xảy ra lỗi khi thêm địa chỉ. Vui lòng thử lại sau.");
     }
   };
+
+
 
   return (
     <>
@@ -143,7 +183,7 @@ const Address = () => {
               <div className="">
                 <div className="hidden lg:block">
                   <div className="flex gap-2 justify-end text-blue-400 py-2">
-                    <a href="#" onClick={handleToggleUpdate}>
+                    <a href="#" onClick={() => handleToggleUpdate(address)}>
                       Cập nhật
                     </a>
                     <button onClick={() => handleDeleteAddress(address._id!)}>
@@ -268,8 +308,8 @@ const Address = () => {
                 />
                 <input
                   type="text"
-                  name="phone"
-                  value={addressInfo.phone}
+                  name="phoneNumber"
+                  value={addressInfo.phoneNumber}
                   onChange={handleInputChange}
                   placeholder="Số điện thoại"
                   required
@@ -279,8 +319,8 @@ const Address = () => {
                 <input
                   type="text"
                   className="w-full"
-                  name="address"
-                  value={addressInfo.address}
+                  name="addressDetails"
+                  value={addressInfo.addressDetails}
                   onChange={handleInputChange}
                   placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
                   required
@@ -307,7 +347,7 @@ const Address = () => {
               </div>
             </form>
             <button
-              onClick={handleToggleUpdate}
+              onClick={() => setIsOpenUpdate(false)}
               className="bg-red-500 text-white absolute top-5 right-5 rounded-md px-2 py-2"
             >
               Đóng
