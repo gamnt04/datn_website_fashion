@@ -308,8 +308,8 @@ const Address = () => {
                 />
                 <input
                   type="text"
-                  name="phone"
-                  value={addressInfo.phone}
+                  name="phoneNumber"
+                  value={addressInfo.phoneNumber}
                   onChange={handleInputChange}
                   placeholder="Số điện thoại"
                   required
@@ -319,8 +319,8 @@ const Address = () => {
                 <input
                   type="text"
                   className="w-full"
-                  name="address"
-                  value={addressInfo.address}
+                  name="addressDetails"
+                  value={addressInfo.addressDetails}
                   onChange={handleInputChange}
                   placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
                   required
