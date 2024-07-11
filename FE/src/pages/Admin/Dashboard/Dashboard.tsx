@@ -197,7 +197,7 @@ const MainContent = () => {
           <div className="flex items-end justify-between mt-4">
             <div>
               <h4 className="font-bold text-black text-title-md dark:text-white">
-                {dataProducts.length}
+                {dataProducts?.length}
               </h4>
               <span className="text-sm font-medium">Số Lượng Sản Phẩm </span>
             </div>
