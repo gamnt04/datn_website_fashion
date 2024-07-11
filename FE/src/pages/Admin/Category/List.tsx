@@ -11,11 +11,10 @@ import CategoryUpdate from "./update";
 const Category: React.FC = () => {
   const { data, isLoading } = useCategoryQuery();
   const [showDialog, setShowDialog] = useState(false);
-  const [remove, setRemove] = useState<ICategory>();
+  const [remove, setRemove] = useState<ICategory | null>(null);
   const [alphabetFilter, setAlphabetFilter] = useState<"asc" | "desc">("asc");
-  const [dateFilter, setDateFilter] = useState<"all" | "selectedDate">("all");
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
   const formatDate = (dateString: string | number) => {
     if (!dateString) return "";
@@ -46,25 +45,19 @@ const Category: React.FC = () => {
     setAlphabetFilter(alphabetFilter === "asc" ? "desc" : "asc");
   };
 
-  const handleDateFilter = (selectedValue: "all" | "selectedDate") => {
-    setDateFilter(selectedValue);
-    if (selectedValue !== "selectedDate") {
-      setSelectedDate("");
-    }
+  const handleStartDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setStartDate(event.target.value);
   };
 
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(event.target.value);
-    setDateFilter("selectedDate");
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(event.target.value);
   };
 
   const filteredData = data?.sort((a: ICategory, b: ICategory) => {
-    const nameA = a.name_category ?? "";
-    const nameB = b.name_category ?? "";
+    const nameA = a.name ?? "";
+    const nameB = b.name ?? "";
 
     if (alphabetFilter === "asc") {
       return nameA.localeCompare(nameB);
@@ -74,30 +67,23 @@ const Category: React.FC = () => {
   });
 
   const dateFilteredData = filteredData?.filter((category: ICategory) => {
-    if (dateFilter === "all") return true;
-
     if (!category.createdAt || isNaN(new Date(category.createdAt).getTime()))
       return false;
 
     const createdAt = new Date(category.createdAt);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
-    switch (dateFilter) {
-      case "selectedDate":
-        const selected = new Date(selectedDate);
-        return (
-          createdAt.getFullYear() === selected.getFullYear() &&
-          createdAt.getMonth() === selected.getMonth() &&
-          createdAt.getDate() === selected.getDate()
-        );
-      default:
-        return true;
+    if (start && end) {
+      return createdAt >= start && createdAt <= end;
+    } else if (start) {
+      return createdAt >= start;
+    } else if (end) {
+      return createdAt <= end;
     }
-  });
 
-  const searchFilteredData = dateFilteredData?.filter(
-    (category: ICategory | any) =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    return true;
+  });
 
   return (
     <>
@@ -127,34 +113,25 @@ const Category: React.FC = () => {
               <div>
                 <button
                   className="w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200"
-                  onClick={() => handleDateFilter("all")}
-                >
-                  Tất cả
-                </button>
-              </div>
-              <div>
-                <button
-                  className="w-28 h-8 border border-gray-300 ml-5 rounded-md hover:bg-orange-200"
                   onClick={handleAlphabetFilter}
                 >
                   {alphabetFilter === "asc" ? "A-Z" : "Z-A"}
                 </button>
               </div>
-              <div className="ml-5">
+              <div className="ml-5 flex items-center gap-x-3">
+                <label>Từ ngày:</label>
                 <input
                   type="date"
-                  value={selectedDate ?? ""}
-                  onChange={handleDateChange}
+                  value={startDate}
+                  onChange={handleStartDateChange}
                   className="border border-gray-300 w-40 h-8 rounded-md hover:bg-orange-200 focus:bg-orange-200 px-2"
                 />
-              </div>
-              <div className="ml-5">
+                <label>Đến ngày:</label>
                 <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="border border-gray-300 w-40 h-8 rounded-md px-2"
+                  type="date"
+                  value={endDate}
+                  onChange={handleEndDateChange}
+                  className="border border-gray-300 w-40 h-8 rounded-md hover:bg-orange-200 focus:bg-orange-200 px-2"
                 />
               </div>
             </div>
@@ -188,6 +165,12 @@ const Category: React.FC = () => {
                           scope="col"
                           className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                         >
+                          Ảnh danh mục
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                        >
                           Sản phẩm
                         </th>
                         <th
@@ -211,7 +194,7 @@ const Category: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                      {searchFilteredData?.map(
+                      {dateFilteredData?.map(
                         (category: ICategory, index: number) => (
                           <tr key={index + 1}>
                             <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
@@ -224,7 +207,14 @@ const Category: React.FC = () => {
                               </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              {category.name_category}
+                              {category.name}
+                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                              <img
+                                src={category.image_category}
+                                alt={category.name}
+                                className="object-cover w-20 h-20 border rounded-md "
+                              />
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                               Có {category.products?.length || 0} sản phẩm
