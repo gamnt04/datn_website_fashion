@@ -8,8 +8,7 @@ export const list_Auth = async () => {
     console.log(error);
   }
 };
-
-export const SignIn = async (user: any) => {
+export const list_Auth_By_Id = async (userId: string) => {
   try {
     const { data } = await instance.post(`auth/signin`, user);
     return data;
@@ -37,6 +36,7 @@ export const SignOut = async () => {
 export const list_Auth_By_Id = async (id: number) => {
   try {
     const data = await instance.get(`auths/${id}`);
+    const data = await instance.get(`/auth/${userId}`);
     return data;
   } catch (error) {
     console.log(error);

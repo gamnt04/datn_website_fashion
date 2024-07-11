@@ -1,25 +1,30 @@
 import mongoose from "mongoose";
+import slug from "mongoose-slug-updater";
+mongoose.plugin(slug);
 
 const categorySchema = mongoose.Schema(
   {
-    name_category: {
+    name: {
       type: String,
       required: true,
-      // unique: true,
+      unique: true,
+    },
+    image_category: {
+      type: String,
+      required: true,
+      unique: true,
     },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Products",
-        required: true,
+        ref: "Product",
       },
-    ]
-    // ,
-    // slug: {
-    //   type: String,
-    //   slug: "name",
-    //   unique: true,
-    // },
+    ],
+    slug: {
+      type: String,
+      slug: "name",
+      unique: true,
+    },
   },
 
   {
