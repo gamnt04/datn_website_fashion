@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IProduct } from "../../../common/interfaces/Product";
 import Loading from "../../../components/base/Loading/Loading";
@@ -8,17 +7,39 @@ import { useQueryClient } from "@tanstack/react-query";
 import AddProduct from "./AddProducts/Index";
 import { Query_Products } from "../../../common/hooks/Products/Products";
 import { remove_items_client } from "../../../_lib/Items/Products";
-const ListProduct = () => {
+import { getAll } from "../../../services/category";
+import { ICategory } from "../../../common/interfaces/Category";
+const StockProduct = () => {
   const { data, isLoading } = Query_Products();
   const navigate = useNavigate();
   const [removingProductId, setRemovingProductId] = useState<string | null>(
     null
   );
   const queryClient = useQueryClient();
+  const [categories, setCategories] = useState<ICategory[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await getAll();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.log("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
+
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find((cat) => cat._id === categoryId);
+    return category ? category.name : "Unknown Category";
+  };
+
   const handleRemove = async (id: string) => {
     if (window.confirm("Bạn có muốn xóa sản phẩm này không?")) {
       setRemovingProductId(id);
@@ -46,7 +67,7 @@ const ListProduct = () => {
       ) : (
         <div className="flex flex-col mt-5">
           <div className="relative flex items-center justify-between mb-3">
-            <h1 className="text-2xl font-medium">Danh sách sản phẩm</h1>
+            <h1 className="text-2xl font-medium">Kho </h1>
             <AddProduct />
           </div>
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -61,19 +82,20 @@ const ListProduct = () => {
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
                         Ảnh sản phẩm
                       </th>
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                        ID
+                      </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         Tên sản phẩm
                       </th>
-                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                        Giá sản phẩm
-                      </th>
+
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         Danh mục
                       </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        Miêu tả
+                        Tồn kho
                       </th>
-                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                      <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
                         Ngày tạo
                       </th>
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
@@ -98,13 +120,17 @@ const ListProduct = () => {
                           />
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 ">
+                          {product._id}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 ">
                           {product.name_product}
                         </td>
+
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {product.price_product}
+                          {getCategoryName(product.category_id)}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {product.description_product}
+                          {product.countInStock_product}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           {formatDate(product.createdAt)}
@@ -112,7 +138,7 @@ const ListProduct = () => {
                         <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                           {formatDate(product.updatedAt)}
                         </td>
-                        <td className="px-4 py-4 text-sm">
+                        <td className="flex px-4 py-4 text-sm">
                           <button
                             onClick={() => handleUpdate(product._id!)}
                             className="p-3 mr-2 text-white transition-colors duration-200 bg-blue-500 border rounded-lg hover:bg-blue-400 focus:outline-none"
@@ -146,4 +172,4 @@ const ListProduct = () => {
   );
 };
 
-export default ListProduct;
+export default StockProduct;

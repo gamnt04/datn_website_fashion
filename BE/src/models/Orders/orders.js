@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 // Hàm để sinh orderNumber
 const generateOrderNumber = () => {
@@ -92,4 +93,6 @@ orderSchema.pre("save", function (next) {
   }
   next();
 });
+orderSchema.plugin(mongoosePaginate);
+
 export default mongoose.model("Order", orderSchema);
