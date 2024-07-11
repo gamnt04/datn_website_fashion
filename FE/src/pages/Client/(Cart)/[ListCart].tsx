@@ -124,12 +124,7 @@ const ListCart = () => {
               <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
-<<<<<<< HEAD
                   <strong>${calculateTotal()}</strong>
-=======
-                  <p className="font-bold text-xl text-yellow-500"> {calcuateTotal()}  <strong className="text-black ml-3">$</strong></p>
-
->>>>>>> 9224d7ac9a3d9b6a0f00f690f9165ea8c42fc681
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>

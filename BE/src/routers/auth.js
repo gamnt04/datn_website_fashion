@@ -7,7 +7,7 @@ import {
   get_address,
   signin,
   signup,
-  updateUserAddress
+  updateUserAddress,
 } from "../controllers/Auth/auth";
 const Routes_auth = express.Router();
 
