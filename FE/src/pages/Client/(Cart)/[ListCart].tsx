@@ -25,10 +25,11 @@ const ListCart = () => {
     if (window.confirm("Xác nhận xóa sản phẩm?")) {
       const data_item = {
         userId: userId,
-        productId: id
+        productId: id,
       };
       removeSingle(data_item);
     }
+
   };
   const handleRemoveMultiple = () => {
     if (window.confirm("Bạn có muốn xóa không ?")) {
@@ -130,7 +131,7 @@ const ListCart = () => {
                           <Dow_btn
                             dataProps={{
                               id_item: item.productId,
-                              quantity_item: item.quantity
+                              quantity_item: item.quantity,
                             }}
                           />
                           <strong className="cursor-pointer">
@@ -160,13 +161,12 @@ const ListCart = () => {
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
 
-                  <strong>${calculateTotal()}</strong>
-
                   <p className="font-bold text-xl text-yellow-500">
                     {" "}
                     {calcuateTotal()}{" "}
                     <strong className="text-black ml-3">$</strong>
                   </p>
+
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>

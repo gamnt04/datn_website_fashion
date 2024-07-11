@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { GetAllOrder } from "../../../services/orderProduct";
+// import { GetAllOrder } from "../../../services/orderProduct";
 import { IOrder } from "../../../common/interfaces/OrderProducts";
 import { getAllProduct } from "../../../services/product";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Query_Products } from "../../../common/hooks/Products/Products";
+import { get_order_client } from "../../../services/orderProduct";
 
 const MainContent = () => {
   // const [orderday, setOrderday] = useState<number>(0);
@@ -17,6 +18,31 @@ const MainContent = () => {
 
   const { data: dataAuth } = List_Auth();
   const { data: dataProducts } = Query_Products();
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const data = await get_order_client();
+  //       const today = dayjs().startOf("day");
+  //       if (data && data.length > 0) {
+  //         // Kiểm tra data có dữ liệu không
+  //         const ordertoday = data.filter((order: IOrder) =>
+  //           dayjs(order.createDate).isSame(today, "day")
+  //         );
+  //         setOrderday(ordertoday.length);
+  //         const totalRevenueDay = ordertoday.reduce(
+  //           (sum: number, order: IOrder) => sum + order.totalPrice, // Sử dụng totalPrice thay vì price
+  //           0
+  //         );
+  //         setRevenueday(totalRevenueDay);
+  //       } else {
+  //         setOrderday(0);
+  //         setRevenueday(0);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   })();
+  // }, []);
 
   // if (data && Array.isArray(data)) {
   // setTotalAuth(data?.data.length);

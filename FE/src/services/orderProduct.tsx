@@ -2,11 +2,42 @@ import instance from "../configs/axios";
 export const GetAllOrder = async () => {
   try {
     const { data } = await instance.get(`orders`);
+const baseUri = 'http://localhost:2004/api/v1/orders';
 
-    return data;
+// export const GetAllOrder = async (page: number, status: string = "") => {
+//   try {
+//     const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
+//     console.log(data);
+
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+export async function get_order_client(page?: number, status?: string) {
+  try {
+    let uri = baseUri;
+    const params = [];
+    if (page) {
+      params.push(`_page=${page}`);
+    }
+    if (status) {
+      params.push(`_status=${status}`);
+    }
+
+    if (params.length > 0) {
+      uri += `?${params.join('&')}`;
+    }
+    const res = await fetch(uri);
+    if (!res.ok) {
+      console.warn("Kiem tra lai server hoac internet !");
+    }
+    const { data, totalDocs, totalPages } = await res.json();
+    return { data: data.docs, totalDocs, totalPages };
   } catch (error) {
-    console.log(error);
+    console.log(error || "Loi server!")
   }
+<<<<<<< HEAD
 };
 // export const GetAllOrder = async (page: number, status: string = "") => {
 //   try {
@@ -17,6 +48,9 @@ export const GetAllOrder = async () => {
 //     console.log(error);
 //   }
 // };
+=======
+}
+>>>>>>> 12a7e5c95e15205ca155a1a3a5ecb50c719b4458
 export const getOrderById = async (id: string) => {
   try {
     const { data } = await instance.get(`/orders/${id}`);
