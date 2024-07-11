@@ -15,4 +15,5 @@ export interface IProduct {
   quantity_product: number;
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
+  deletedAt?: ReactNode;
 }

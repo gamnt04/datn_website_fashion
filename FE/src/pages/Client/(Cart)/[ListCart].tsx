@@ -22,15 +22,15 @@ const ListCart = () => {
     if (window.confirm("Xac nhan xoa san pham ?")) {
       const data_item = {
         userId: userId,
-        productId: id
+        productId: id,
       };
       mutate(data_item);
     }
   }
-  const { calcuateTotal } = Pay_Mutation()
+  const { calcuateTotal } = Pay_Mutation();
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
-      <div className="flex items-center border bg-gray-100 h-20 p-4">
+      <div className="flex items-center h-20 p-4 bg-gray-100 border">
         <ul className="flex gap-2">
           <li className="text-red-500">
             <a href="#">Home</a>
@@ -46,7 +46,11 @@ const ListCart = () => {
         {!data?.products || data?.products.length === 0 ? (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="w-full h-[200px] flex flex-col justify-center items-center">
-              <img src="../../src/assets/Images/Products/no_products.png" className="w-44 h-40" alt="" />
+              <img
+                src="../../src/assets/Images/Products/no_products.png"
+                className="h-40 w-44"
+                alt=""
+              />
               <p>Chưa có sản phẩm nào</p>
             </div>
           </div>
@@ -95,7 +99,7 @@ const ListCart = () => {
                           <Dow_btn
                             dataProps={{
                               id_item: item.productId,
-                              quantity_item: item.quantity
+                              quantity_item: item.quantity,
                             }}
                           />
                           <strong className="cursor-pointer">
@@ -121,29 +125,28 @@ const ListCart = () => {
             </div>
 
             <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-              <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
+              <div className="flex flex-col w-full h-full border rounded-lg lg:p-6 mb:p-4">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
-<<<<<<< HEAD
-                  <strong>${calculateTotal()}</strong>
-=======
-                  <p className="font-bold text-xl text-yellow-500"> {calcuateTotal()}  <strong className="text-black ml-3">$</strong></p>
-
->>>>>>> 9224d7ac9a3d9b6a0f00f690f9165ea8c42fc681
+                  <p className="text-xl font-bold text-yellow-500">
+                    {" "}
+                    {calcuateTotal()}{" "}
+                    <strong className="ml-3 text-black">$</strong>
+                  </p>
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>
                   <strong>{calculateTotalProduct()}</strong>
                 </div>
-                <div className="flex flex-col border-y py-5 my-5">
-                  <span className="text-xs mb-2">Nhập mã giảm giá</span>
+                <div className="flex flex-col py-5 my-5 border-y">
+                  <span className="mb-2 text-xs">Nhập mã giảm giá</span>
                   <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
                     <input
                       className="px-4 outline-none"
                       type="text"
                       placeholder="Enter Code"
                     />
-                    <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
+                    <button className="grid text-gray-100 bg-black place-items-center md:text-base mb:text-sm">
                       Apply
                     </button>
                   </form>
@@ -153,7 +156,7 @@ const ListCart = () => {
                   <strong>${calculateTotal()}</strong>
                 </div>
                 <Link onClick={ScrollTop} to="pay">
-                  <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                  <button className="px-4 py-3 mt-4 mr-5 font-semibold text-white duration-200 bg-black border border-black rounded hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                     Tiến hành thanh toán
                   </button>
                 </Link>

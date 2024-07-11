@@ -9,11 +9,15 @@ export async function get_items_client(page?: number) {
       uri += `?_page=${page}`;
     }
     const res = await fetch(`${uri}`);
+
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
     }
     const { data } = await res.json();
-    return data.docs;
+    const activeProducts = data.docs.filter(
+      (product: any) => !product.deletedAt
+    );
+    return activeProducts;
   } catch (error) {
     console.log(error || "Loi server!");
   }
@@ -85,10 +89,10 @@ export async function edit_items_client(id: string, product: IProduct) {
   }
 }
 
-export async function remove_items_client(id: any) {
+export async function remove_items_client(id: string) {
   try {
     const res = await fetch(`${baseUri}/${id}`, {
-      method: "delete",
+      method: "DELETE",
     });
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
@@ -97,5 +101,36 @@ export async function remove_items_client(id: any) {
     return data.docs;
   } catch (error) {
     console.log(error || "Loi server!");
+  }
+}
+
+export const deleteProduct = async (id: string) => {
+  const response = await fetch(
+    `http://localhost:2004/api/v1/products/permanent/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
+  return response.json();
+};
+
+export const restoreProduct = async (id: string) => {
+  const response = await fetch(`http://localhost:2004/api/v1/products/${id}`, {
+    method: "PATCH",
+  });
+  return response.json();
+};
+
+export async function getDeletedProducts() {
+  try {
+    const response = await fetch(`${baseUri}/trash`);
+    if (!response.ok) {
+      throw new Error("Không thể lấy danh sách sản phẩm đã xóa mềm");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách sản phẩm đã xóa mềm:", error);
+    throw error;
   }
 }
