@@ -8,9 +8,8 @@ import {
   signin,
   // signout,
   signup,
-  updateUserAddress
-
-  updateUser
+  updateUserAddress,
+  updateUser,
 } from "../controllers/Auth/auth";
 const Routes_auth = express.Router();
 
