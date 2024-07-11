@@ -46,7 +46,6 @@ export const getOrders = async (req, res) => {
 };
 export const getOrderById = async (req, res) => {
   try {
-
     const order = await Order.findById(req.params.id);
     console.log(order);
     if (!order) {
@@ -141,3 +140,49 @@ export const updateOrderStatus = async (req, res) => {
       .json({ error: error.message });
   }
 };
+export async function get_orders_client(req, res) {
+  const {
+    _page = 1,
+    _limit = 7,
+    _sort = '',
+    _search = '',
+    _status = ''
+  } = req.query;
+
+  const options = {
+    page: _page,
+    limit: _limit,
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }  // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+  };
+
+  const query = {};
+
+  // if (_search) {
+  //   query._id = { $regex: _search, $options: 'i' };  // Tìm kiếm theo tên khách hàng
+  // }
+
+  if (_status) {
+    query.status = _status;  // Lọc theo trạng thái đơn hàng
+  }
+
+  try {
+    const data = await Order.paginate(query, options);
+
+    if (!data || data.docs.length < 1) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không có dữ liệu!"
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      message: "Hoàn thành!",
+      data,
+      totalDocs: data.totalDocs, // Tổng số đơn hàng
+      totalPages: data.totalPages // Tổng số trang
+    });
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Lỗi server!"
+    });
+  }
+}
