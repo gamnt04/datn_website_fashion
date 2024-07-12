@@ -4,7 +4,8 @@ import {
   get_orders_client,
   getOneOrderUser,
   getOrderById,
-  updateOrderStatus,
+  getOrders,
+  updateOrderStatus
 } from "../controllers/Orders/orders";
 
 const router = Router();
@@ -14,4 +15,4 @@ router.get("/orders", get_orders_client);
 router.post("/orders/get_order_user", getOneOrderUser);
 router.get("/orders/:id", getOrderById);
 router.patch("/orders/:id", updateOrderStatus);
-export default router
+export default router;
