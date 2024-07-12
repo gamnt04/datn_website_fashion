@@ -6,14 +6,15 @@ import {
   delete_address,
   get_address,
   signin,
-  // signout,
   signup,
   updateUserAddress,
+  updateUser
 } from "../controllers/Auth/auth";
 const Routes_auth = express.Router();
 Routes_auth.post("/auth/signup", signup);
 Routes_auth.post("/auth/signin", signin);
 Routes_auth.get("/auth/:userId", GetAuthById);
+Routes_auth.put("/auth/:userId", updateUser);
 Routes_auth.get("/auths", GetAllUser);
 Routes_auth.post("/auth/add_address", add_address);
 Routes_auth.get("/auth/:userId", get_address);
