@@ -48,63 +48,6 @@ const [avatarFile, setAvatarFile] = useState(null);
     });
   };
 
-//   const handleSaveProfile = async (e: any) => {
-//     e.preventDefault();
-//     try {
-//       const userId = user?.user?._id;
-
-//       // Nếu có chọn ảnh mới, thực hiện cập nhật ảnh đại diện
-//       if (avatarFile) {
-//         const formData = new FormData();
-//         formData.append("avatar", avatarFile);
-
-//         const { data } = await instance.put(
-//           `/auth/${userId}/avatar`,
-//           formData,
-//           {
-//             headers: {
-//               "Content-Type": "multipart/form-data",
-//             },
-//           }
-//         );
-//         setProfileInfo({
-//           ...profileInfo,
-//           avatar: data.avatar || "",
-//         });
-//         alert("Đã cập nhật ảnh đại diện thành công");
-//       }
-
-//       // Tiếp tục cập nhật thông tin người dùng
-//       await instance.put(`/auth/${userId}`, {
-//         ...profileInfo,
-//       });
-//       fetchUserData();
-//       alert("Cập nhật thông tin thành công");
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật thông tin:", error);
-//       alert("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.");
-//     }
-//   };
-
-//   const handleFileInputChange = (e: any) => {
-//     const file = e.target.files[0];
-//     setAvatarFile(file); 
-//     const reader = new FileReader();
-//     reader.onloadend = () => {
-//       setProfileInfo({
-//         ...profileInfo,
-//         avatar: reader.result, 
-//       });
-//     };
-//     if (file) {
-//       reader.readAsDataURL(file);
-//     }
-//   };
-
-// console.log(profileInfo);
-
-
-
 
   return (
     <>
