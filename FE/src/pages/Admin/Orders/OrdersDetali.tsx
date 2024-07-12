@@ -1,18 +1,20 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../../../configs/axios";
-import { IOrder } from "../../../common/interfaces/Orders";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
-// import { Mutation_Order } from "../../../common/hooks/Order/mutation_Order";
 
 const OrdersDetali = () => {
-    const [detali, setDetali] = useState<IOrder | null>(null);
-    const { id } = useParams();
-    const { data } = Query_Orders(id)
+    const { id } = useParams<{ id: string }>();
+    const { data, refetch } = Query_Orders(id);
+
+    useEffect(() => {
+        refetch();
+    }, [id]);
+
     const handleStatusUpdate = async () => {
         if (!data) return;
-        if (data.status === "Đã hủy") {
+        if (data.status === "5") {
             toast.error("Đơn hàng đã bị hủy, không thể cập nhật trạng thái!");
             return;
         }
@@ -20,34 +22,32 @@ const OrdersDetali = () => {
             return;
         }
         const statusOrder: Record<string, string> = {
-            "Chờ xác nhận": "Đang chuẩn bị hàng",
-            "Đang chuẩn bị hàng": "Đang vận chuyển",
-            "Đang vận chuyển": "Đã giao hàng",
+            "1": "2",
+            "2": "3",
+            "3": "4",
         };
-        const nextStatus = statusOrder[data.status] || "Đã giao hàng";
+        const nextStatus = statusOrder[data.status] || "4";
         try {
-            const { data } = await instance.patch(`/orders/${id}`, { status: nextStatus });
-            console.log(data);
-            setDetali(data);
-            toast.success(data.status === "Đã giao hàng" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
+            const response = await instance.patch(`/orders/${id}`, { status: nextStatus });
+            console.log(response.data);
+            toast.success(response.data.status === "4" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
+            refetch();
         } catch (error) {
             console.log(error);
             toast.error("Cập nhật trạng thái đơn hàng thất bại!");
         }
-        window.location.reload();
     };
-    // const { on_Submit } = Mutation_Order("UPDATE")
 
     const handleCancelOrder = async () => {
-        if (!detali) return;
+        if (!data) return;
         if (!window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
             return;
         }
         try {
-            const { data } = await instance.patch(`/orders/${id}`, { status: "Đã hủy" });
-            setDetali(data);
+            const response = await instance.patch(`/orders/${id}`, { status: "5" });
+            console.log(response.data);
             toast.success("Đơn hàng đã bị hủy thành công!");
-            window.location.reload();
+            refetch();
         } catch (error) {
             console.log(error);
             toast.error("Hủy đơn hàng thất bại!");
@@ -77,9 +77,9 @@ const OrdersDetali = () => {
                                     <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
                                 </td>
                                 <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item.name}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price}</td>
+                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
                                 <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.quantity}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price * item.quantity}</td>
+                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -101,17 +101,20 @@ const OrdersDetali = () => {
                         </span>
                         <p>Mã voucher:</p>
                     </div>
-                    <p className="flex justify-end py-4 font-bold">Tổng tiền:<span className="text-orange-300 pl-2"> {data.totalPrice} </span></p>
+                    <p className="flex justify-end py-4 font-bold">Tổng tiền:<span className="text-orange-300 pl-2"> {data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })} </span></p>
                 </div>
             </div>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
-                    <p>Phương thức thành toán</p>
+                    <p>Phương thức thanh toán</p>
                     <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data.customerInfo.payment}</p>
                 </div>
                 <div className="flex items-center gap-4 border-b py-3">
                     <p>Trạng thái đơn hàng</p>
-                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data.status}</p>
+                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data?.status == 1 ? "Chờ xác nhận" :
+                        data?.status == 2 ? "Đang chuẩn bị hàng" :
+                            data?.status == 3 ? "Đang vận chuyển" :
+                                data?.status == 4 ? "Đã giao hàng" : "Đã hủy"}</p>
                 </div>
                 <div className="flex justify-between my-4">
                     <div className="flex gap-6">
@@ -136,18 +139,18 @@ const OrdersDetali = () => {
                             <p>Tổng thanh toán:</p>
                         </div>
                         <div>
-                            <p>{data.totalPrice}</p>
+                            <p>{data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                             <p>10000</p>
                             <p>20000 đ</p>
-                            <p className="text-orange-300">{data.totalPrice - 10000 + 20000}</p>
+                            <p className="text-orange-300">{(data.totalPrice - 10000 + 20000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                         </div>
                     </div>
                 </div>
                 <div className="flex gap-5 justify-center mt-[60px]">
                     <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
-                        {data.status !== "Đã hủy" ? (data.status === "Đã giao hàng" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
+                        {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
                     </button>
-                    {data.status !== "Đang chuẩn bị hàng" && data.status !== "Đang vận chuyển" && data.status !== "Đã giao hàng" && data.status !== "Đã hủy" && (
+                    {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
                         <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
                             Từ chối xác nhận
                         </button>

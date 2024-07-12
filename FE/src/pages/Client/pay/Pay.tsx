@@ -229,7 +229,7 @@ const Pay = () => {
                             </div>
                             <div className="flex justify-between mt-5">
                                 <p className="text-gray-700">Tổng Cộng:</p>
-                                <span className="font-bold text-xl text-yellow-500">{calculateTotal()}</span>
+                                <span className="font-bold text-xl text-yellow-500">{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <Link to="/cart" className="text-blue-500">Quay Về Giỏ Hàng</Link>
