@@ -104,7 +104,7 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                         đề nào.
                                     </p>
                                     <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
-                                        Đã Nhận Hàng
+                                        Chờ xác nhận
                                     </button>
                                 </div>
                             </div>
