@@ -12,7 +12,6 @@ import {
   updateUser
 } from "../controllers/Auth/auth";
 const Routes_auth = express.Router();
-
 Routes_auth.post("/auth/signup", signup);
 Routes_auth.post("/auth/signin", signin);
 // Routes_auth.post("/auth/signout", signout);
