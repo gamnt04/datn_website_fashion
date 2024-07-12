@@ -16,6 +16,7 @@ export const GetAllUser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 export const GetAuthById = async (req, res) => {
   try {
     const id = req.params.userId;
