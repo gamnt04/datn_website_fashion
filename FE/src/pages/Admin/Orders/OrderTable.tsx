@@ -7,6 +7,12 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
         return date.toLocaleDateString(); // Lấy ngày tháng năm
     };
 
+    // for (let i = 0; i < orders.length; i++) {
+    //     console.log(orders[i]);
+    // }
+    console.log(orders);
+
+
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 h-auto">
@@ -31,7 +37,12 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.email}</td>
                             <td className="py-4 px-3 text-sm text-gray-500 text-center">{formatDate(order?.datetime)}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.payment}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500 text-center">{order.status}</td>
+                            <td className="py-4 px-3 text-sm text-gray-500 text-center">
+                                {order?.status == 1 ? "Chờ xác nhận" :
+                                    order?.status == 2 ? "Đang chuẩn bị" :
+                                        order?.status == 3 ? "Đang vận chuyển" :
+                                            order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
+                            </td>
                             <td className="py-4 px-3 text-sm text-gray-500 flex justify-center items-center gap-5 relative">
                                 <Link to={`/admin/orders/${order._id}/orderDetali`}>
                                     <svg
@@ -51,6 +62,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                                 </Link>
                             </td>
                         </tr>
+
                     ))}
                 </tbody>
             </table>

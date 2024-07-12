@@ -123,7 +123,7 @@ const ListCart = () => {
                       </td>
                       <td className="px-3">
                         <strong className="font-medium md:text-base mb:text-xs">
-                          {item.price}
+                          {item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                         </strong>
                       </td>
                       <td className="pr-3">
@@ -142,7 +142,7 @@ const ListCart = () => {
                       </td>
                       <td className="pl-5">
                         <strong className="font-medium md:text-base mb:text-xs">
-                          {item.price * item.quantity}
+                          {(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                         </strong>
                       </td>
                       <td>
@@ -160,13 +160,9 @@ const ListCart = () => {
               <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
-
                   <p className="font-bold text-xl text-yellow-500">
-                    {" "}
-                    {calcuateTotal()}{" "}
-                    <strong className="text-black ml-3">$</strong>
+                    {calcuateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                   </p>
-
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Số lượng đơn hàng :</strong>
@@ -187,7 +183,7 @@ const ListCart = () => {
                 </div>
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Cần thanh toán :</strong>
-                  <strong>${calculateTotal()}</strong>
+                  <strong>{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</strong>
                 </div>
                 <Link onClick={ScrollTop} to="pay">
                   <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">

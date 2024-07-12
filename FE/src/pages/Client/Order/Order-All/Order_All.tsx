@@ -22,7 +22,7 @@ const Order_All = () => {
     const fiterOrrder = (status: string) => {
         return data?.filter((orders: any) => orders.status === status);
     }
-    console.log(fiterOrrder('Chờ xác nhận'));
+    console.log(fiterOrrder('1'));
 
     return (
         <>
@@ -57,11 +57,11 @@ const Order_All = () => {
                 </svg>
             </div>
             <div className="">
-                {activeMenu === 'Chờ Xác Nhận' && <Waitforconfirmation dataProps={fiterOrrder('Chờ xác nhận')} />}
-                {activeMenu === 'Đang Chuẩn Bị Hàng' && <WaitingForGoods dataProps={fiterOrrder('Đang chuẩn bị hàng')} />}
-                {activeMenu === 'Đang Vận Chuyển' && <WaitingForDelivery dataProps={fiterOrrder('Đang vận chuyển')} />}
-                {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('Đã hủy')} />}
-                {activeMenu === 'Hoàn Thành' && <Complete dataProps={fiterOrrder('Đã giao hàng')} />}
+                {activeMenu === 'Chờ Xác Nhận' && <Waitforconfirmation dataProps={fiterOrrder('1')} />}
+                {activeMenu === 'Đang Chuẩn Bị Hàng' && <WaitingForGoods dataProps={fiterOrrder('2')} />}
+                {activeMenu === 'Đang Vận Chuyển' && <WaitingForDelivery dataProps={fiterOrrder('3')} />}
+                {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('5')} />}
+                {activeMenu === 'Hoàn Thành' && <Complete dataProps={fiterOrrder('4')} />}
                 {activeMenu === 'Trả Hàng / Hoàn Tiền' && <RefundRetunr />}
             </div>
         </>
