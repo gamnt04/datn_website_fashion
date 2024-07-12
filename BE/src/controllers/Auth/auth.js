@@ -170,23 +170,33 @@ export const get_address = async (req, res) => {
 export const updateUserAddress = async (req, res) => {
   const userId = req.params.userId;
   const addressId = req.params.addressId;
+
   const updatedAddress = req.body; 
 
+
   try {
+    // Tìm người dùng trong CSDL bằng userId
     const user = await User.findById(userId);
+    
+    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy người dùng",
       });
     }
+
     let addressToUpdate = user.address.id(addressId);
+
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không tìm thấy địa chỉ",
       });
     }
+    
+    // Cập nhật thông tin địa chỉ mới
     addressToUpdate.set(updatedAddress);
     console.log();
+
     await user.save(updatedAddress);
     
     return res.status(StatusCodes.OK).json({
