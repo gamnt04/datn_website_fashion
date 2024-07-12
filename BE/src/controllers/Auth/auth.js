@@ -221,40 +221,25 @@ export const delete_address = async (req, res) => {
   }
 };
 
-// Route PUT để cập nhật ảnh đại diện của người dùng
-export const updateAvatar = async (req, res) => {
+// Hàm cập nhật người dùng
+export const updateUser = async (req, res) => {
+  const userId = req.params.userId; // Lấy userId từ params
+  const updatedData = req.body; // Dữ liệu cập nhật từ request body
+
   try {
-    const userId = req.params.userId;
+    // Tìm người dùng trong CSDL bằng userId và cập nhật dữ liệu mới
+    const user = await User.findByIdAndUpdate(userId, updatedData, { new: true });
 
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    const avatarData = fs.readFileSync(req.file.path); // Đọc dữ liệu của file ảnh
-    const contentType = req.file.mimetype; // Lấy kiểu dữ liệu của ảnh từ Multer
-
-    // Cập nhật dữ liệu ảnh đại diện trong database
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        avatar: {
-          data: avatarData,
-          contentType: contentType,
-        },
-      },
-      { new: true }
-    );
-
-    // Xóa file ảnh đã tải lên khỏi thư mục tạm của Multer
-    fs.unlinkSync(req.file.path);
-
+    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy người dùng để cập nhật" });
     }
 
-    res.json({ message: 'Avatar updated successfully', user });
-  } catch (err) {
-    console.error('Error updating avatar:', err);
-    res.status(500).json({ error: 'Server error' });
+    // Trả về thông báo thành công và thông tin người dùng đã cập nhật
+    return res.status(StatusCodes.OK).json({ message: "Cập nhật người dùng thành công", user });
+  } catch (error) {
+    // Bắt lỗi nếu có và trả về thông báo lỗi
+    console.error("Lỗi khi cập nhật người dùng:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
-};
+}
