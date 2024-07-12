@@ -36,10 +36,18 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+
     avatar: {
       type: String,
       default: "../upload/default-avatar.jpeg",
     },
+
+      birthDate: {
+    type: Date,
+    get: function(value) {
+      return value ? value.toISOString().split('T')[0] : undefined;
+    },
+  },
   },
   { timestamps: true, versionKey: false }
 );
