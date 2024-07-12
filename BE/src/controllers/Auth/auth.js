@@ -221,7 +221,6 @@ export const delete_address = async (req, res) => {
   }
 };
 
-// Hàm cập nhật người dùng
 export const updateUser = async (req, res) => {
   const userId = req.params.userId; // Lấy userId từ params
   const updatedData = req.body; // Dữ liệu cập nhật từ request body
@@ -242,4 +241,27 @@ export const updateUser = async (req, res) => {
     console.error("Lỗi khi cập nhật người dùng:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
-}
+};
+
+// export const updateUserAvatar = async (req, res) => {
+//   const userId = req.params.userId;
+//   const { avatar } = req.body; // Nhận dữ liệu avatar dưới dạng base64 từ client
+
+//   try {
+//     // Cập nhật avatar của user
+//     const user = await User.findByIdAndUpdate(
+//       userId,
+//       { avatar },
+//       { new: true }
+//     );
+// console.log(user);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     res.json({ avatar: user.avatar }); // Trả về avatar đã cập nhật thành công
+//   } catch (error) {
+//     console.error('Error updating avatar:', error);
+//     res.status(500).json({ message: 'Failed to update avatar' });
+//   }
+// };
