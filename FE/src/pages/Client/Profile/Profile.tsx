@@ -3,7 +3,8 @@ import instance from "../../../configs/axios";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 
 const Profile = () => {
-  const [user, setUser] = useLocalStorage("user", {});
+const [avatarFile, setAvatarFile] = useState(null);
+   const [user, setUser] = useLocalStorage("user", {});
   const [profileInfo, setProfileInfo] = useState({
     userName: "",
     fullName: "",
@@ -21,17 +22,21 @@ const Profile = () => {
     try {
       const userId = user?.user?._id;
       const { data } = await instance.get(`/auth/${userId}`);
-      const userData = data.user; // Adjust this based on your backend response structure
-      setProfileInfo({
-        userName: userData.userName,
-        fullName: userData.fullName,
-        email: userData.email,
-        phoneNumber: userData.phone,
-        birthDate: userData.birthDate,
-        avatar: userData.avatar,
-      });
+      const userData = data; // Cần phải dựa vào cấu trúc phản hồi từ backend để lấy dữ liệu người dùng
+      if (userData) {
+        setProfileInfo({
+          userName: userData.userName || "",
+          fullName: userData.fullName || "",
+          email: userData.email || "",
+          phoneNumber: userData.phone || "",
+          birthDate: userData.birthDate || "",
+          avatar: userData.avatar || "",
+        });
+      } else {
+        console.error("Không có dữ liệu người dùng trả về từ backend");
+      }
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Lỗi khi lấy thông tin người dùng:", error);
     }
   };
 
@@ -43,19 +48,63 @@ const Profile = () => {
     });
   };
 
-  const handleSaveProfile = async (e: any) => {
-    e.preventDefault();
-    try {
-      const userId = user?.user?._id;
-      await instance.put(`/auth/${userId}`, {
-        ...profileInfo,
-      });
-      alert("Cập nhật thông tin thành công");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.");
-    }
-  };
+//   const handleSaveProfile = async (e: any) => {
+//     e.preventDefault();
+//     try {
+//       const userId = user?.user?._id;
+
+//       // Nếu có chọn ảnh mới, thực hiện cập nhật ảnh đại diện
+//       if (avatarFile) {
+//         const formData = new FormData();
+//         formData.append("avatar", avatarFile);
+
+//         const { data } = await instance.put(
+//           `/auth/${userId}/avatar`,
+//           formData,
+//           {
+//             headers: {
+//               "Content-Type": "multipart/form-data",
+//             },
+//           }
+//         );
+//         setProfileInfo({
+//           ...profileInfo,
+//           avatar: data.avatar || "",
+//         });
+//         alert("Đã cập nhật ảnh đại diện thành công");
+//       }
+
+//       // Tiếp tục cập nhật thông tin người dùng
+//       await instance.put(`/auth/${userId}`, {
+//         ...profileInfo,
+//       });
+//       fetchUserData();
+//       alert("Cập nhật thông tin thành công");
+//     } catch (error) {
+//       console.error("Lỗi khi cập nhật thông tin:", error);
+//       alert("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.");
+//     }
+//   };
+
+//   const handleFileInputChange = (e: any) => {
+//     const file = e.target.files[0];
+//     setAvatarFile(file); 
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setProfileInfo({
+//         ...profileInfo,
+//         avatar: reader.result, 
+//       });
+//     };
+//     if (file) {
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+// console.log(profileInfo);
+
+
+
 
   return (
     <>
@@ -69,7 +118,7 @@ const Profile = () => {
         <div className="py-8">
           <div className="flex flex-row flex-wrap lg:flex-nowrap text-sm">
             <div className="basis-full order-2 lg:order-1 lg:basis-2/3">
-              <form onSubmit={handleSaveProfile} className="w-full">
+              <form  className="w-full">
                 <div className="flex items-center gap-5 py-2 lg:py-3">
                   <p className="w-36 text-left lg:text-right py-1 text-[#777777]">
                     Tên đăng nhập
@@ -145,11 +194,20 @@ const Profile = () => {
                   alt="Avatar"
                 />
               </div>
-              <div className="flex justify-center">
-                {/* <input type="file" placeholder="Chọn ảnh" /> */}
-                <button className="border py-3 px-6 my-9 rounded-lg">
+               <div className="flex justify-center">
+                <input
+                  type="file"
+                  accept="image/*"
+               
+                  className="hidden"
+                  id="avatar-input"
+                />
+                <label
+                  htmlFor="avatar-input"
+                  className="border py-3 px-6 my-9 rounded-lg cursor-pointer"
+                >
                   Chọn ảnh
-                </button>
+                </label>
               </div>
             </div>
           </div>
