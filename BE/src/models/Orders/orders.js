@@ -81,6 +81,10 @@ const orderSchema = new mongoose.Schema({
     enum: ["Chờ xác nhận", "Đang chuẩn bị hàng", "Đang vận chuyển", "Đã giao hàng", "Đã hủy"],
     default: "Chờ xác nhận"
   },
+  //   cancelledByAdmin: {
+  //     type: Boolean,        {phần hủy đơn}
+  //     default: false
+  // },
   datetime: {
     type: Date,
     default: Date.now
