@@ -78,13 +78,13 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Chờ xác nhận", "Đang chuẩn bị hàng", "Đang vận chuyển", "Đã giao hàng", "Đã hủy"],
-    default: "Chờ xác nhận"
+    enum: ["1", "2", "3", "4", "5"],
+    default: "1"
   },
-  //   cancelledByAdmin: {
-  //     type: Boolean,        {phần hủy đơn}
-  //     default: false
-  // },
+  cancelledByAdmin: {
+    type: Boolean,
+    default: false
+  },
   datetime: {
     type: Date,
     default: Date.now
