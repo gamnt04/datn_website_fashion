@@ -1,14 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  GetAllOrder,
+  get_order_client,
   getOneOrderUser,
   getOrderById
 } from "../../../services/orderProduct";
-// import {
-//   get_order_client,
-//   getOneOrderUser,
-//   getOrderById
-// } from "../../../services/orderProduct";
 
 export function List_One_Order_User(userId: string) {
   const { data, ...rest } = useQuery({
@@ -20,17 +15,6 @@ export function List_One_Order_User(userId: string) {
 
   return { data, ...rest };
 }
-export const Query_Orders = (id?: string, page?: any, status: string = "") => {
-  const key = id ? ["Orders_Key", id] : ["Orders_Key"];
-  const { data, ...rest } = useQuery({
-    queryKey: key,
-    queryFn: async () => {
-      return id ? getOrderById(id) : GetAllOrder(page, status);
-    }
-  });
-
-  return { data, ...rest };
-};
 export const Query_Orders = (id?: string, page?: number, status?: string) => {
   const key = id ? ["Orders_Key", id] : ["Orders_Key"];
 
