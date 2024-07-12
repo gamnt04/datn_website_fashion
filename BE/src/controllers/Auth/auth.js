@@ -243,4 +243,40 @@ export const delete_address = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {};
+// Route PUT để cập nhật ảnh đại diện của người dùng
+export const updateAvatar = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const avatarData = fs.readFileSync(req.file.path); // Đọc dữ liệu của file ảnh
+    const contentType = req.file.mimetype; // Lấy kiểu dữ liệu của ảnh từ Multer
+
+    // Cập nhật dữ liệu ảnh đại diện trong database
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        avatar: {
+          data: avatarData,
+          contentType: contentType,
+        },
+      },
+      { new: true }
+    );
+
+    // Xóa file ảnh đã tải lên khỏi thư mục tạm của Multer
+    fs.unlinkSync(req.file.path);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ message: 'Avatar updated successfully', user });
+  } catch (err) {
+    console.error('Error updating avatar:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
