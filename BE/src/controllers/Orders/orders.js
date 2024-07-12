@@ -186,3 +186,30 @@ export async function get_orders_client(req, res) {
     });
   }
 }
+
+// export const cancelOrder = async (req, res) => {
+//   try {
+//     const orderId = req.params.orderId;
+//     try {
+//       const order = await Order.findById(orderId);
+
+//       if (!order) {
+//         return res.status(404).json({ error: 'Đơn hàng không tồn tại' });
+//       }
+
+//       if (order.cancelledByAdmin) {
+//         return res.status(400).json({ error: 'Đơn hàng đã được hủy bởi admin trước đó' });
+//       }
+//       // Cập nhật trạng thái hủy đơn hàng
+//       order.cancelledByAdmin = true;
+//       await order.save();
+
+//       res.json({ message: 'Đơn hàng đã được hủy bởi admin thành công' });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'Lỗi server, vui lòng thử lại sau' });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }     hủy đơn hàng
