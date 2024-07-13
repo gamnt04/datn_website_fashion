@@ -14,9 +14,26 @@ const BlogList: React.FC = () => {
         console.error("Error fetching blogs:", error);
       }
     };
-
     fetchBlogs();
   }, []);
+
+ const handleDelete = async (id: string) => {
+    try {
+      const confirm = window.confirm("Are you sure you want to delete this blog?");
+      if (confirm) {
+        const response = await instance.delete(`/blog/${id}`);
+        if (response.status === 200) {
+          alert("Blog deleted successfully!");
+          window.location.reload()
+        } else {
+          throw new Error("Failed to delete blog");
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      alert("Failed to delete blog. Please try again later.");
+    }
+  };
 
   return (
     <div className="container mx-auto mt-8">
@@ -43,7 +60,7 @@ const BlogList: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap">{blog.published ? "Yes" : "No"}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button>Edit</button>
-                  <button>Remove</button>
+                  <button onClick={() => handleDelete(blog._id!)}>Remove</button>
                 </td>
               </tr>
             ))}
