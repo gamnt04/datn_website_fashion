@@ -1,4 +1,4 @@
-import { useProduct } from "../../../common/hooks/Products/Products";
+
 import ImageProducts from "./ImageProducts";
 import InforProduct from "./InforProduct";
 import ProductRelated from "./RelatedProducts";
