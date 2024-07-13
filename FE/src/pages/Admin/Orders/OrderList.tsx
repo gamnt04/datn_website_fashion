@@ -1,41 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import OrderTable from "./OrderTable";
-import instance from "../../../configs/axios";
+import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 
 const OrderList = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading, totalPages } = Query_Orders(undefined, currentPage, statusFilter);
+  console.log(data);
 
-  const [status, setStatus] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-
-  const fetchOrders = async (page: number, status: string = "") => {
-    try {
-      const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
-      setOrders(data.orders);
-
-
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      console.log(error);
-    }
-
+  const handleStatusChange = (e: any) => {
+    setStatusFilter(e.target.value);
   };
-  console.log(status);
-
-  useEffect(() => {
-    fetchOrders(currentPage, status);
-  }, [currentPage, status]);
-
-  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(event.target.value);
-    setCurrentPage(1); // Reset to first page when status changes
-  };
-
-  const handlePageChange = (page: number) => {
+  const goToPage = (page: any) => {
     setCurrentPage(page);
   };
-
   return (
     <div>
       <div className="mt-16">
@@ -46,22 +24,23 @@ const OrderList = () => {
               name="status"
               id="status"
               className="w-[200px] h-[50px] border rounded-lg px-2"
-              value={status}
+              value={statusFilter}
               onChange={handleStatusChange}
             >
               <option value="">Lọc trạng thái</option>
-              <option value="Chờ xác nhận">Chờ xác nhận</option>
-              <option value="Đang chuẩn bị hàng">Đang chuẩn bị hàng</option>
-              <option value="Đang vận chuyển">Đang vận chuyển</option>
-              <option value="Đã giao hàng">Đã giao hàng</option>
-              <option value="Đã hủy">Đã hủy</option>
+              <option value="1">Chờ xác nhận</option>
+              <option value="2">Đang chuẩn bị hàng</option>
+              <option value="3">Đang vận chuyển</option>
+              <option value="4">Đã giao hàng</option>
+              <option value="5">Đã hủy</option>
             </select>
           </div>
           <OrderTable
-            orders={orders}
+            orders={data}
+            isLoading={isLoading}
             currentPage={currentPage}
+            goToPage={goToPage}
             totalPages={totalPages}
-            onPageChange={handlePageChange}
           />
         </div>
       </div>

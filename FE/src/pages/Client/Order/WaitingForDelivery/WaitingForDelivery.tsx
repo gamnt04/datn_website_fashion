@@ -41,9 +41,11 @@ const WaitingForDelivery = ({ dataProps }: any) => {
                       <circle cx="17" cy="18" r="2" />
                       <circle cx="7" cy="18" r="2" />
                     </svg>
-                    <span className="text-[#26aa99] text-[12px] lg:text-sm pl-[10px]">
-                      {item.status}
-                    </span>
+                    {Number(item.status) === 3 && (
+                      <span className="text-[12px] lg:text-sm pl-[10px] text-[#26aa99]">
+                        Đang vận chuyển
+                      </span>
+                    )}
                   </a>
                 </div>
               </div>

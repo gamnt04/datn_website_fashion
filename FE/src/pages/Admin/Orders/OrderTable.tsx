@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 
-const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
+const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     const formatDate = (datetime: any) => {
         if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
         const date = new Date(datetime);
         return date.toLocaleDateString(); // Lấy ngày tháng năm
     };
+
+    // for (let i = 0; i < orders.length; i++) {
+    //     console.log(orders[i]);
+    // }
+    console.log(orders);
+
 
     return (
         <div className="overflow-x-auto">
@@ -31,7 +37,12 @@ const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.email}</td>
                             <td className="py-4 px-3 text-sm text-gray-500 text-center">{formatDate(order?.datetime)}</td>
                             <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.payment}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500 text-center">{order.status}</td>
+                            <td className="py-4 px-3 text-sm text-gray-500 text-center">
+                                {order?.status == 1 ? "Chờ xác nhận" :
+                                    order?.status == 2 ? "Đang chuẩn bị" :
+                                        order?.status == 3 ? "Đang vận chuyển" :
+                                            order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
+                            </td>
                             <td className="py-4 px-3 text-sm text-gray-500 flex justify-center items-center gap-5 relative">
                                 <Link to={`/admin/orders/${order._id}/orderDetali`}>
                                     <svg
@@ -51,32 +62,34 @@ const OrderTable = ({ orders, currentPage, totalPages, onPageChange }: any) => {
                                 </Link>
                             </td>
                         </tr>
+
                     ))}
                 </tbody>
             </table>
             <div className="flex justify-center gap-4 my-6">
                 <button
-                    onClick={() => onPageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
                     className="hover:bg-slate-300 border-2 w-12 h-12"
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
                 </button>
-                {[...Array(totalPages).keys()].map((page) => (
+                {/* Render nút phân trang một cách động */}
+                {Array.from({ length: totalPages }, (_, index) => (
                     <button
-                        key={page + 1}
-                        onClick={() => onPageChange(page + 1)}
-                        className={`hover:bg-slate-300 border-2 w-12 h-12 ${currentPage === page + 1 ? 'bg-slate-300' : ''}`}
+                        key={index + 1}
+                        className={`hover:bg-slate-300 border-2 w-12 h-12 ${currentPage === index + 1 ? 'bg-slate-300' : ''}`}
+                        onClick={() => goToPage(index + 1)}
                     >
-                        {page + 1}
+                        {index + 1}
                     </button>
                 ))}
                 <button
-                    onClick={() => onPageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
                     className="hover:bg-slate-300 border-2 w-12 h-12"
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />

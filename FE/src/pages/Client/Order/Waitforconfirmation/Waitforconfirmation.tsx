@@ -39,9 +39,11 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                             <circle cx="17" cy="18" r="2" />
                                             <circle cx="7" cy="18" r="2" />
                                         </svg>
-                                        <span className="text-[#26aa99] text-[12px] lg:text-sm pl-[10px]">
-                                            {item.status}
-                                        </span>
+                                        {Number(item.status) === 1 && (
+                                            <span className="text-[12px] lg:text-sm pl-[10px] text-[#26aa99]">
+                                                Chờ xác nhận
+                                            </span>
+                                        )}
                                     </a>
                                 </div>
                             </div>
@@ -104,7 +106,7 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                         đề nào.
                                     </p>
                                     <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
-                                        Đã Nhận Hàng
+                                        Chờ xác nhận
                                     </button>
                                 </div>
                             </div>

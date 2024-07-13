@@ -16,6 +16,7 @@ export const GetAllUser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 export const GetAuthById = async (req, res) => {
   try {
     const id = req.params.userId;
@@ -46,13 +47,13 @@ export const signup = async (req, res) => {
     const messages = error.details.map((item) => item.message);
     zzz;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      messages
+      messages,
     });
   }
   const existUser = await User.findOne({ email });
   if (existUser) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Email đã tồn tại"]
+      messages: ["Email đã tồn tại"],
     });
   }
   const hashedPassword = await bcryptjs.hash(password, 12);
@@ -60,10 +61,10 @@ export const signup = async (req, res) => {
   const user = await User.create({
     ...req.body,
     password: hashedPassword,
-    role
+    role,
   });
   return res.status(StatusCodes.CREATED).json({
-    user
+    user,
   });
 };
 
@@ -72,36 +73,27 @@ export const signin = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(StatusCodes.NOT_FOUND).json({
-      messages: ["Email không tồn tại"]
+      messages: ["Email không tồn tại"],
     });
   }
   const isMatch = await bcryptjs.compare(password, user.password);
   if (!isMatch) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Mật khẩu không chính xác"]
+      messages: ["Mật khẩu không chính xác"],
     });
   }
   const token = jwt.sign({ userId: user._id }, "123456", {
-    expiresIn: "7d"
+    expiresIn: "7d",
   });
   return res.status(StatusCodes.OK).json({
     user,
-    token
+    token,
   });
 };
-export const signout = (req, res) => {
-  try {
-    return res.status(200).json({ message: "Đăng Xuất Tài Khoản Thành Công" });
-  } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
-  }
-};
+
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
-  // Kiểm tra newAddress từ request body
   if (
     !newAddress ||
     !newAddress.fullName ||
@@ -135,7 +127,7 @@ export const get_address = async (req, res) => {
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng"
+        message: "Không tìm thấy người dùng",
       });
     }
 
@@ -143,12 +135,12 @@ export const get_address = async (req, res) => {
     const addresses = user.address;
 
     return res.status(StatusCodes.OK).json({
-      addresses
+      addresses,
     });
   } catch (error) {
     console.error("Lỗi khi lấy danh sách địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi lấy danh sách địa chỉ"
+      message: "Lỗi khi lấy danh sách địa chỉ",
     });
   }
 };
@@ -156,7 +148,9 @@ export const get_address = async (req, res) => {
 export const updateUserAddress = async (req, res) => {
   const userId = req.params.userId;
   const addressId = req.params.addressId;
-  const updatedAddress = req.body; // Thông tin địa chỉ mới cần cập nhật
+
+  const updatedAddress = req.body; 
+
 
   try {
     // Tìm người dùng trong CSDL bằng userId
@@ -165,38 +159,38 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng"
+        message: "Không tìm thấy người dùng",
       });
     }
-    
-    // Tìm địa chỉ cần cập nhật trong mảng address của người dùng
+
     let addressToUpdate = user.address.id(addressId);
-    
-    // Kiểm tra nếu không tìm thấy địa chỉ
+
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ"
+        message: "Không tìm thấy địa chỉ",
       });
     }
     
     // Cập nhật thông tin địa chỉ mới
     addressToUpdate.set(updatedAddress);
     console.log();
-    // Lưu thay đổi vào CSDL
+
     await user.save(updatedAddress);
     
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
+
 
       address: addressToUpdate
     });
 
 
 
+
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ"
+      message: "Lỗi khi cập nhật địa chỉ",
     });
   }
 };
@@ -210,7 +204,7 @@ export const delete_address = async (req, res) => {
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng"
+        message: "Không tìm thấy người dùng",
       });
     }
 
@@ -221,14 +215,57 @@ export const delete_address = async (req, res) => {
     await user.save();
 
     return res.status(StatusCodes.OK).json({
-      message: "Đã xóa địa chỉ thành công"
+      message: "Đã xóa địa chỉ thành công",
     });
   } catch (error) {
     console.error("Lỗi khi xóa địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi xóa địa chỉ"
+      message: "Lỗi khi xóa địa chỉ",
     });
   }
 };
 
-export const logout = async (req, res) => {};
+export const updateUser = async (req, res) => {
+  const userId = req.params.userId; // Lấy userId từ params
+  const updatedData = req.body; // Dữ liệu cập nhật từ request body
+
+  try {
+    // Tìm người dùng trong CSDL bằng userId và cập nhật dữ liệu mới
+    const user = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+    // Kiểm tra nếu không tìm thấy người dùng
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy người dùng để cập nhật" });
+    }
+
+    // Trả về thông báo thành công và thông tin người dùng đã cập nhật
+    return res.status(StatusCodes.OK).json({ message: "Cập nhật người dùng thành công", user });
+  } catch (error) {
+    // Bắt lỗi nếu có và trả về thông báo lỗi
+    console.error("Lỗi khi cập nhật người dùng:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
+// export const updateUserAvatar = async (req, res) => {
+//   const userId = req.params.userId;
+//   const { avatar } = req.body; // Nhận dữ liệu avatar dưới dạng base64 từ client
+
+//   try {
+//     // Cập nhật avatar của user
+//     const user = await User.findByIdAndUpdate(
+//       userId,
+//       { avatar },
+//       { new: true }
+//     );
+// console.log(user);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     res.json({ avatar: user.avatar }); // Trả về avatar đã cập nhật thành công
+//   } catch (error) {
+//     console.error('Error updating avatar:', error);
+//     res.status(500).json({ message: 'Failed to update avatar' });
+//   }
+// };
