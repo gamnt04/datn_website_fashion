@@ -12,6 +12,7 @@ const BlogList: React.FC = () => {
     tags: [],
     published: false,
   });
+   const [editingBlogId, setEditingBlogId] = useState<string | null>(null); 
 
 
 
@@ -45,8 +46,16 @@ const BlogList: React.FC = () => {
     }
   };
 
-    const toggleForm = () => {
+  const toggleForm = () => {
     setShowForm(!showForm); // Toggle giá trị của showForm
+    setEditingBlogId(null); // Đặt editingBlogId về null khi ẩn form
+    setNewBlog({ // Reset form
+      title: "",
+      content: "",
+      author: "",
+      tags: [],
+      published: false,
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,10 +66,11 @@ const BlogList: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleAddSubmit  = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await instance.post("/blogs/add_blog", newBlog);
+      const response = await instance.post("/blog/add_blog", newBlog);
       if (response.status === 201) {
         alert("Blog created successfully!");
         setShowForm(false); // Ẩn form sau khi đăng bài thành công
@@ -76,6 +86,44 @@ const BlogList: React.FC = () => {
     }
   };
 
+   const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      if (editingBlogId) {
+        const response = await instance.put(`/blog/${editingBlogId}`, newBlog);
+        if (response.status === 200) {
+          alert("Blog updated successfully!");
+          setShowForm(false); // Ẩn form sau khi cập nhật thành công
+          setEditingBlogId(null); // Đặt editingBlogId về null sau khi cập nhật
+          setNewBlog({ // Reset form
+            title: "",
+            content: "",
+            author: "",
+            tags: [],
+            published: false,
+          });
+          window.location.reload(); // Làm mới trang để hiển thị danh sách mới
+        } else {
+          throw new Error("Failed to update blog");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      alert("Failed to update blog. Please try again later.");
+    }
+  };
+
+  const handleEdit = (blog: Blog) => {
+    setEditingBlogId(blog._id); // Lưu ID của blog đang chỉnh sửa
+    setNewBlog({ // Đặt thông tin của blog vào form
+      title: blog.title,
+      content: blog.content,
+      author: blog.author,
+      tags: blog.tags || [],
+      published: blog.published || false,
+    });
+    setShowForm(true); // Hiển thị form khi bắt đầu chỉnh sửa
+  };
 
   return (
     <div className="container mx-auto mt-8">
@@ -84,8 +132,8 @@ const BlogList: React.FC = () => {
       </button>
       {showForm ? ( // Hiển thị form khi showForm true
          <div className="max-w-lg mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <h2 className="text-2xl font-bold mb-4">Add New Blog</h2>
-          <form onSubmit={handleSubmit}>
+          <h2 className="text-2xl font-bold mb-4">{editingBlogId ? "Edit Blog" : "Add New Blog"}</h2>
+          <form onSubmit={editingBlogId ? handleEditSubmit : handleAddSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                 Title
@@ -96,7 +144,7 @@ const BlogList: React.FC = () => {
                 type="text"
                 placeholder="Enter title"
                 name="title"
-                value={newBlog.title}
+                 value={newBlog.title}
                 onChange={handleChange}
                 required
               />
@@ -110,7 +158,7 @@ const BlogList: React.FC = () => {
                 id="content"
                 placeholder="Enter content"
                 name="content"
-                value={newBlog.content}
+                 value={newBlog.content}
                 onChange={handleChange}
                 rows={5}
                 required
@@ -141,7 +189,7 @@ const BlogList: React.FC = () => {
                 type="text"
                 placeholder="Enter tags (comma separated)"
                 name="tags"
-                value={newBlog.tags?.join(", ") || ""}
+                   value={newBlog.tags?.join(", ") || ""}
                 onChange={(e) => setNewBlog((prev) => ({ ...prev, tags: e.target.value.split(", ") }))}
               />
             </div>
@@ -153,7 +201,7 @@ const BlogList: React.FC = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="published"
                 name="published"
-                value={newBlog.published ? "true" : "false"}
+                 value={newBlog.published ? "true" : "false"}
                 onChange={(e) => setNewBlog((prev) => ({ ...prev, published: e.target.value === "true" }))}
                 required
               >
@@ -166,12 +214,12 @@ const BlogList: React.FC = () => {
                 className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
               >
-                Create Blog
+                  {editingBlogId ? "Update Blog" : "Create Blog"}
               </button>
               <button
                 className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
-                onClick={toggleForm}
+               onClick={toggleForm}
               >
                 Cancel
               </button>
@@ -202,7 +250,7 @@ const BlogList: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap">{blog.author}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{blog.published ? "Yes" : "No"}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <button>Edit</button>
+                  <button onClick={() => {handleEdit(blog)}}>Edit</button>
                   <button onClick={() => handleDelete(blog._id!)}>Remove</button>
                 </td>
               </tr>
