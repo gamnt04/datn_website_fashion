@@ -179,10 +179,14 @@ export const updateUserAddress = async (req, res) => {
     
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      updatedAddress: addressToUpdate,
-        
-    } );
- 
+
+
+      address: addressToUpdate
+    });
+
+
+
+
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

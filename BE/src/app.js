@@ -9,6 +9,9 @@ import Routes_auth from "./routers/auth";
 import Routes_blog from "./routers/blogs";
 import Routes_Favorites from "./routers/favoriteProducts";
 import Routes_Carts from "./routers/cart";
+import router from "./routers/contact";
+import router_Contact from "./routers/contact";
+import Router_Contact from "./routers/contact";
 
 dotenv.config();
 const app = express();
@@ -24,6 +27,9 @@ app.use("/api/v1", Routes_orders);
 app.use("/api/v1", Routes_Carts);
 app.use("/api/v1", Routes_auth);
 app.use("/api/v1", Routes_Favorites);
+
+app.use("/api/v1", Router_Contact)
+
 app.use("/api/v1", Routes_blog);
 
 export const viteNodeApp = app;
