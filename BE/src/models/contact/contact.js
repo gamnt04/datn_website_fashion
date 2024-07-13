@@ -8,8 +8,7 @@ const contactSchema = new Schema(
     },
     email: {
         type: String,
-        required: true,
-        match: [/^\S+@\S+\.\S+$/, 'Vui lòng sử dụng địa chỉ email hợp lệ']
+        required: true
         },
     message: {
         type: String,
