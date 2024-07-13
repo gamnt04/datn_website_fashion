@@ -4,6 +4,7 @@ import {
   decreaseProductQuantity,
   getCartByUserId,
   increaseProductQuantity,
+  removeMultipleProductsFormCart,
   removeProductToCart,
   updateQuantityProductsInCart
 } from "../controllers/Cart/cart";
@@ -18,6 +19,8 @@ Routes_Carts.post(
   "/cart/update-quantity-products-to-cart",
   updateQuantityProductsInCart
 );
+//Xóa nhiều sản phẩm trong giỏ hàng
+Routes_Carts.post("/cart/remove-multiple", removeMultipleProductsFormCart);
 //Xóa sản phẩm trong giỏ hàng
 Routes_Carts.post("/cart/remove", removeProductToCart);
 //Tăng số lượng sản phẩm trong giỏ hàng

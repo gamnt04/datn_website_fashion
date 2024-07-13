@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 // Hàm để sinh orderNumber
 const generateOrderNumber = () => {
@@ -77,8 +78,12 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Chờ xác nhận", "Đang chuẩn bị hàng", "Đang vận chuyển", "Đã giao hàng", "Đã hủy"],
-    default: "Chờ xác nhận"
+    enum: ["1", "2", "3", "4", "5"],
+    default: "1"
+  },
+  cancelledByAdmin: {
+    type: Boolean,
+    default: false
   },
   datetime: {
     type: Date,
@@ -92,4 +97,6 @@ orderSchema.pre("save", function (next) {
   }
   next();
 });
+orderSchema.plugin(mongoosePaginate);
+
 export default mongoose.model("Order", orderSchema);

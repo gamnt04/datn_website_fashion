@@ -17,13 +17,17 @@ const Order_All = () => {
         setActiveMenu(menu);
     };
     const { data } = List_One_Order_User(userId);
+    console.log(data);
+
     const fiterOrrder = (status: string) => {
         return data?.filter((orders: any) => orders.status === status);
     }
+    console.log(fiterOrrder('1'));
+
     return (
         <>
             <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs ">
-                {['Chờ Xác Nhận', 'Đang chuẩn bị hàng', 'Đang vận chuyển', 'Hoàn Thành', 'Đã Hủy', 'Trả Hàng / Hoàn Tiền'].map((menu) => (
+                {['Chờ Xác Nhận', 'Đang Chuẩn Bị Hàng', 'Đang Vận Chuyển', 'Hoàn Thành', 'Đã Hủy', 'Trả Hàng / Hoàn Tiền'].map((menu) => (
                     <li
                         key={menu}
                         className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400 ${activeMenu === menu ? 'border-b-2 border-yellow-400' : ''}`}
@@ -53,11 +57,11 @@ const Order_All = () => {
                 </svg>
             </div>
             <div className="">
-                {activeMenu === 'Chờ Xác Nhận' && <Waitforconfirmation dataProps={fiterOrrder('Chờ xác nhận')} />}
-                {activeMenu === 'Đang chuẩn bị hàng' && <WaitingForGoods dataProps={fiterOrrder('Đang chuẩn bị hàng')} />}
-                {activeMenu === 'Đang vận chuyển' && <WaitingForDelivery dataProps={fiterOrrder('Đang vận chuyển')} />}
-                {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('Đã hủy')} />}
-                {activeMenu === 'Hoàn Thành' && <Complete dataProps={fiterOrrder('Đã giao hàng')} />}
+                {activeMenu === 'Chờ Xác Nhận' && <Waitforconfirmation dataProps={fiterOrrder('1')} />}
+                {activeMenu === 'Đang Chuẩn Bị Hàng' && <WaitingForGoods dataProps={fiterOrrder('2')} />}
+                {activeMenu === 'Đang Vận Chuyển' && <WaitingForDelivery dataProps={fiterOrrder('3')} />}
+                {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('5')} />}
+                {activeMenu === 'Hoàn Thành' && <Complete dataProps={fiterOrrder('4')} />}
                 {activeMenu === 'Trả Hàng / Hoàn Tiền' && <RefundRetunr />}
             </div>
         </>
