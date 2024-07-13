@@ -55,3 +55,21 @@ export const createBlog = async (req, res) => {
   }
 };
 
+export const updateBlogById = async (req, res) => {
+  try {
+    const id = req.params.blogId;
+    const { title, content, author, tags, published } = req.body;
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      id,
+      { title, content, author, tags, published },
+      { new: true }
+    );
+    if (!updatedBlog) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy blog để cập nhật" });
+    }
+    res.status(StatusCodes.OK).json({message: "Update blog thành công",updatedBlog});
+  } catch (error) {
+    console.error(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Lỗi khi cập nhật blog" });
+  }
+};
