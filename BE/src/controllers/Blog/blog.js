@@ -1,8 +1,5 @@
-import bcryptjs from "bcryptjs";
+
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
-import User from "../../models/Auth/users";
-import { signupSchema } from "../../validations/auth";
 import Blog from "../../models/Blog/blog";
 
 export const GetAllBlogs = async (req,res) => {
@@ -37,3 +34,24 @@ try {
       .json({ error: "MongoDB Query Error" });
   }
 }
+
+export const createBlog = async (req, res) => {
+  try {
+    const { title, content, author, tags, published } = req.body;
+    const newBlog = new Blog({
+      title,
+      content,
+      author,
+      tags,
+      published
+    });
+    
+    const savedBlog = await newBlog.save();
+    res.status(StatusCodes.CREATED).json( {message: "Thêm blog thành công",savedBlog});
+   
+  } catch (error) {
+    console.error(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Lỗi khi tạo blog mới" });
+  }
+};
+
