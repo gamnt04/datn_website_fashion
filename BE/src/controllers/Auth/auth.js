@@ -94,7 +94,6 @@ export const signin = async (req, res) => {
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
-  // Kiểm tra newAddress từ request body
   if (
     !newAddress ||
     !newAddress.fullName ||
