@@ -7,5 +7,5 @@ Routes_blog.get("/blog/:blogId", getBlogsById);
 Routes_blog.get("/blogs", GetAllBlogs);
 Routes_blog.post("/blogs/add_blog", createBlog);
 Routes_blog.put("/blogs/:blogId", updateBlogById);
-Routes_blog.delete("/blogs/:blogId", deleteBlogById);
+Routes_blog.delete("/blog/:blogId", deleteBlogById);
 export default Routes_blog;
