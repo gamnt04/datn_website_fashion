@@ -73,3 +73,17 @@ export const updateBlogById = async (req, res) => {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Lỗi khi cập nhật blog" });
   }
 };
+
+export const deleteBlogById = async (req, res) => {
+  try {
+    const id = req.params.blogId;
+    const deletedBlog = await Blog.findByIdAndDelete(id);
+    if (!deletedBlog) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy blog để xóa" });
+    }
+    res.status(StatusCodes.OK).json({ message: "Xóa blog thành công" });
+  } catch (error) {
+    console.error(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Lỗi khi xóa blog" });
+  }
+};
