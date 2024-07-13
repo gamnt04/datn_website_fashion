@@ -191,10 +191,7 @@ export const updateUserAddress = async (req, res) => {
       address: addressToUpdate
     });
 
-      updatedAddress: addressToUpdate,
-        
-    } );
- 
+
 
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);

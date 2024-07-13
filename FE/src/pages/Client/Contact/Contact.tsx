@@ -1,39 +1,55 @@
 import React, { useRef } from 'react';
-import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
-const ContactForm: React.FC = () => {
 
+const ContactForm: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);
 
-  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (form.current) {
-      emailjs.sendForm('service_cwchhdc', 'template_dxp3ou9', form.current, '-8ltdcjwh1bPb37dn')
-        .then(
-          () => {
-            toast.success('Gửi email thành công!', {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
+      const formData = new FormData(form.current);
+
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message')
+      };
+
+      try {
+        const response = await fetch('http://localhost:2004/api/v1/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          (error) => {
-            toast.error('Gửi email thất bại: ' + error.text, {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
-          },
-        );
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          toast.success('Gửi email thành công!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message);
+        }
+      } catch (error: any) {
+        toast.error('Gửi email thất bại: ' + error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
     }
   };
 
@@ -57,7 +73,7 @@ const ContactForm: React.FC = () => {
             <input
               className="lg:w-[584px] md:w-[90%] w-full h-[45px] border border-[#999999] rounded-md pl-4"
               type="text"
-              name="to_name"
+              name="name"
               placeholder="Name"
               required
             />
@@ -65,7 +81,7 @@ const ContactForm: React.FC = () => {
             <input
               className="lg:w-[584px] md:w-[90%] w-full h-[45px] border border-[#999999] rounded-md pl-4"
               type="email"
-              name="from_name"
+              name="email"
               placeholder="Email"
               required
             />
@@ -100,35 +116,3 @@ const ContactForm: React.FC = () => {
 };
 
 export default ContactForm;
-
-{/* <div>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d717.0503634761782!2d105.73999147053436!3d21.053666594456768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313454f9ec100009%3A0x784cd6eb9706cb3d!2zTmcuIDYwIFAuIE5ndXnDqm4gWMOhLCBOZ3V5w6puIFjDoSwgTWluaCBLaGFpLCBC4bqvYyBU4burIExpw6ptLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1716068409544!5m2!1svi!2s"
-            className="lg:w-[584px] w-full h-[300px]"
-            style={{ border: "0" }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Google Maps"
-          ></iframe>
-        </div>
-
-<div>
-<iframe
-  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d717.0503634761782!2d105.73999147053436!3d21.053666594456768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313454f9ec100009%3A0x784cd6eb9706cb3d!2zTmcuIDYwIFAuIE5ndXnDqm4gWMOhLCBOZ3V5w6puIFjDoSwgTWluaCBLaGFpLCBC4bqvYyBU4burIExpw6ptLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1716068409544!5m2!1svi!2s"
-  className="lg:w-[584px] w-full h-[300px]"
-  style={{ border: "0" }}
-  loading="lazy"
-  referrerPolicy="no-referrer-when-downgrade"
-  title="Google Maps"
-></iframe>
-</div>
-<div>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d717.0503634761782!2d105.73999147053436!3d21.053666594456768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313454f9ec100009%3A0x784cd6eb9706cb3d!2zTmcuIDYwIFAuIE5ndXnDqm4gWMOhLCBOZ3V5w6puIFjDoSwgTWluaCBLaGFpLCBC4bqvYyBU4burIExpw6ptLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1716068409544!5m2!1svi!2s"
-            className="lg:w-[584px] w-full h-[300px]"
-            style={{ border: "0" }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Google Maps"
-          ></iframe>
-        </div> */}
