@@ -39,7 +39,6 @@ const userSchema = new Schema(
 
     avatar: {
       type: String,
-      default: "../upload/default-avatar.jpeg",
     },
 
       birthDate: {

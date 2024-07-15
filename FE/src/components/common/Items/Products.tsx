@@ -8,14 +8,21 @@ const Products = ({ items }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
+
+  if (!items || !items._id) {
+    console.error("Items is undefined or missing _id:", items);
+    return null; // hoặc trả về một giao diện hiển thị lỗi
+  }
+
   function addCart(id: string) {
     const item = {
       userId: account,
       productId: id,
       quantity: 1
     }
-    mutate(item)
+    mutate(item);
   }
+
   return (
     <>
       <div className="w-full text-start flex flex-col justify-between gap-y-6 shadow-md " key={items?._id}>
