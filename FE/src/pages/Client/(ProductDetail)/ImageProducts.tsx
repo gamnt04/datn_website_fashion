@@ -59,7 +59,7 @@ const ImageProducts = () => {
                 <div className="handle_show_Image width={100} height={100}_product relative cursor-pointer w-full lg:h-[520px] mb:h-[342px] bg-white overflow-hidden grid place-items-center rounded-xl">
                     <img
                         src="../../../src/resources/images/products/90chinh-mau-nen.webp"
-                        alt=""
+                        alt="ahii"
                         className="w-full h-full rounded"
                     />
                     <div className="absolute bottom-0 cursor-pointer hover:scale-110 duration-300 right-0 -translate-x-1/2 -translate-y-1/2 lg:w-10 lg:h-10 mb:w-8 mb:h-8 lg:p-2.5 mb:p-2 rounded-[50%] bg-white grid place-items-center">

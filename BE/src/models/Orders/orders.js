@@ -81,10 +81,10 @@ const orderSchema = new mongoose.Schema({
     enum: ["1", "2", "3", "4", "5"],
     default: "1"
   },
-  cancelledByAdmin: {
-    type: Boolean,
-    default: false
-  },
+  // cancelledByAdmin: {
+  //   type: Boolean,
+  //   default: false
+  // },
   datetime: {
     type: Date,
     default: Date.now

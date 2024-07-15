@@ -199,8 +199,6 @@ const ListCart = () => {
       {/* <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
         <span>Please log in to your account</span>
       </div> */}
-
-      <ToastContainer />
     </div>
   );
 };
