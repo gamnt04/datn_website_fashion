@@ -7,7 +7,7 @@ const Address = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [addressInfo, setAddressInfo] = useState({
- 
+
     fullName: "",
     phoneNumber: "",
     addressDetails: "",
@@ -24,7 +24,7 @@ const Address = () => {
         const { data } = await instance.get(`/auth/${userId}`);
         setAddresses(data);
         // console.log(data?.address[0].phoneNumber);
-      } catch (error) {}
+      } catch (error) { }
     })();
   }, [userId]);
 
@@ -70,7 +70,7 @@ const Address = () => {
           prevAddresses.filter((address) => address._id !== addressId)
         );
         alert("Xóa địa chỉ thành công");
-        window.location.reload();
+
       }
     } catch (error) {
       console.error("Error deleting address:", error);
@@ -101,12 +101,12 @@ const Address = () => {
     }
   };
 
-  
-   const handleAddAddress = async (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleAddAddress = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       // Kiểm tra hợp lệ của các trường nhập liệu
-   
+
 
       await instance.post(`/auth/add_address`, {
         userId,
