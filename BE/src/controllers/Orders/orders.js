@@ -176,6 +176,7 @@ export async function get_orders_client(req, res) {
 // export const cancelOrder = async (req, res) => {
 //   try {
 //     const orderId = req.params.orderId;
+//     console.log(orderId);
 //     try {
 //       const order = await Order.findById(orderId);
 
@@ -189,7 +190,6 @@ export async function get_orders_client(req, res) {
 //       // Cập nhật trạng thái hủy đơn hàng
 //       order.cancelledByAdmin = true;
 //       await order.save();
-
 //       res.json({ message: 'Đơn hàng đã được hủy bởi admin thành công' });
 //     } catch (error) {
 //       console.error(error);
@@ -198,4 +198,6 @@ export async function get_orders_client(req, res) {
 //   } catch (error) {
 //     console.log(error);
 //   }
-// }     hủy đơn hàng
+// }
+
+
