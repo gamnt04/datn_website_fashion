@@ -27,6 +27,9 @@ import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/Index";
 import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
+import BlogList from "../pages/Admin/Blogs/BlogList";
+import ContactForm from "../pages/Client/Contact/Contact";
+import ListContact from "../pages/Admin/contact/ListContact";
 
 const RouterComponent = () => {
   return (
@@ -71,6 +74,8 @@ const RouterComponent = () => {
               path="/admin/orders/:id/orderDetali"
               element={<OrdersDetali />}
             />
+            <Route path="/admin/contact" element={<ListContact />} />
+            <Route path="blogs" element={<BlogList/>}/>
           </Route>
         </Routes>
         {/* <ToastContainer /> */}
