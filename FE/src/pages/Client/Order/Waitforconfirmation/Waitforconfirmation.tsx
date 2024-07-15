@@ -99,15 +99,20 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                         <p>Thành tiền : <span className="text-xl text-[#f68e56]">{item.totalPrice}</span></p>
                                     </div>
                                 </div>
-                                <div className="flex flex-row items-center gap-4 w-full py-4">
-                                    <p className="basis-4/6 lg:basis-10/12 text-[#0000008A] text-[12px]">
+                                <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 w-full py-4 px-2">
+                                    <p className="lg:basis-9/12 text-[#0000008A] text-[12px]">
                                         Vui lòng chỉ nhấn "Đã nhận được hàng" khi đơn hàng đã
                                         được giao đến bạn và sản phẩm nhận được không có vấn
                                         đề nào.
                                     </p>
-                                    <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
-                                        Chờ xác nhận
-                                    </button>
+                                    <div className="flex gap-3 lg:basis-3/12 w-full">
+                                        <button className="bg-[#222222] w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
+                                            Chờ xác nhận
+                                        </button>
+                                        <button className="bg-red-500 w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
+                                            Hủy đơn hàng
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
