@@ -28,7 +28,10 @@ export function Pay_Mutation() {
         onError: () => {
             alert("Đặt hàng thất bại")
         }
+
+
     })
+    // console.log(order);
     const calcuateTotal = () => {
         if (!data || !data.products) return 0
         return reduce(data.products, (total: any, product: any) => total + product.price * product.quantity, 0)

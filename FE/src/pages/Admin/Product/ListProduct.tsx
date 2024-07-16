@@ -134,8 +134,8 @@ const ListProduct = () => {
                           <button
                             onClick={() => handleRemove(product._id!)}
                             className={`p-3 text-white border rounded-lg ${removingProductId === product._id
-                                ? "bg-gray-500"
-                                : "bg-rose-500 hover:bg-rose-400"
+                              ? "bg-gray-500"
+                              : "bg-rose-500 hover:bg-rose-400"
                               } focus:outline-none`}
                             disabled={removingProductId === product._id}
                           >
