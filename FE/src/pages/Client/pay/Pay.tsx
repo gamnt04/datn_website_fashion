@@ -1,33 +1,17 @@
 import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { paySchema } from "../../../common/validations/pay/Pay";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { Link } from "react-router-dom";
-// import { useState } from "react";
+import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 
 
 const Pay = () => {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
-
-    // const [showOptions, setShowOptions] = useState(false);
-
-    // const toggleOptions = () => {
-    //     setShowOptions(!showOptions);
-    // }
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: joiResolver(paySchema),
-        defaultValues: {
-            userName: "",
-            phone: "",
-            email: "",
-            address: "",
-            payment: "vnpay"
-        }
-    }
-    )
+    const { data: auth } = List_Auth(userId)
+    console.log(auth?.address);
+    const { register, handleSubmit } = useForm()
     const { onSubmit, data } = Pay_Mutation();
     const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
     return (
@@ -45,38 +29,45 @@ const Pay = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 w-full basis-4/6">
                         <div className="col-span-1">
                             <h1 className="text-lg font-bold mb-4">Thông Tin Khach Hàng</h1>
-                            <div className="mb-4">
-                                <input type="text" placeholder="Họ Và Tên" className="w-full p-3 border rounded text-sm" {...register("userName", { required: true })} />
-                                {errors.userName && (
-                                    <p className="text-start mt-4 text-sm text-red-400">
-                                        {errors.userName.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <input type="tel" placeholder="Số Điện Thoại" className="w-full p-3 border rounded text-sm" {...register("phone", { required: true })} />
-                                {errors.phone && (
-                                    <p className="text-start mt-4 text-sm text-red-400">
-                                        {errors.phone.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <input type="email" placeholder="Email" className="w-full p-3 border rounded text-sm" {...register("email", { required: true })} />
-                                {errors.email && (
-                                    <p className="text-start mt-4 text-sm text-red-400">
-                                        {errors.email.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-4">
-                                <input type="text" placeholder="Địa Chỉ" className="w-full p-3 border rounded text-sm" {...register("address", { required: true })} />
-                                {errors.address && (
-                                    <p className="text-start mt-4 text-sm text-red-400">
-                                        {errors.address.message}
-                                    </p>
-                                )}
-                            </div>
+                            {auth?.address.map((item: any) => {
+                                if (item.fullName === "admin") {
+                                    console.log(item.fullName);
+
+                                    return (
+                                        <>
+                                            <div className="mb-4">
+                                                <input type="text" placeholder="Họ Và Tên" value={item?.fullName} className="w-full p-3 border rounded text-sm" {...register("userName")} />
+
+                                            </div>
+                                            <div className="mb-4">
+                                                <input type="tel" placeholder="Số Điện Thoại" value={item?.phoneNumber} className="w-full p-3 border rounded text-sm" {...register("phone")} />
+                                                {/* {errors.phone && (
+                                                    <p className="text-start mt-4 text-sm text-red-400">
+                                                        {errors.phone.message}
+                                                    </p>
+                                                )} */}
+                                            </div>
+                                            <div className="mb-4">
+                                                <input type="email" placeholder="Email" value={auth?.email} className="w-full p-3 border rounded text-sm" {...register("email")} />
+                                                {/* {errors.email && (
+                                                    <p className="text-start mt-4 text-sm text-red-400">
+                                                        {errors.email.message}
+                                                    </p>
+                                                )} */}
+                                            </div>
+                                            <div className="mb-4">
+                                                <input type="text" placeholder="Địa Chỉ" value={item?.addressType + " " + item?.addressDetails} className="w-full p-3 border rounded text-sm" {...register("address")} />
+                                                {/* {errors.address && (
+                                                    <p className="text-start mt-4 text-sm text-red-400">
+                                                        {errors.address.message}
+                                                    </p>
+                                                )} */}
+                                            </div>
+                                        </>
+                                    )
+                                }
+
+                            })}
                             {/* <div className="mb-4">
                                 <textarea placeholder="Ghi Chú" className="w-full p-3 border rounded text-sm"></textarea>
                             </div> */}
@@ -94,12 +85,6 @@ const Pay = () => {
                                 <h1 className="text-lg font-bold mb-2">Thanh Toán</h1>
                                 <div className="w-full p-2 border rounded-t text-xs mb-2">
                                     <div className="w-full">
-                                        {/* <select className="text-gray-700 w-full p-4 rounded text-sm">
-                                            <option value="">Thanh toán khi nhận hàng (COD)</option>
-                                            <option value="">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</option>
-                                            <option value="">Thanh toán qua VNPAY-QR</option>
-
-                                        </select> */}
                                         <div className="border-b mb-2  p-2 w-full">
                                             <label className="flex items-center w-full">
                                                 <input type="radio" value="vnpay" className="mr-2" defaultChecked {...register("payment", { required: true })} />
@@ -140,56 +125,12 @@ const Pay = () => {
                                     </div>
                                 </div>
                             ))}
-
-                            {/* <div className="flex space-x-4 p-3">
-                                <div>
-                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
-                                </div>
-                                <div>
-                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
-                                    <p className="text-gray-500">Xanh xám / 4XL</p>
-                                    <p className="text-gray-500">Số Lượng: 1</p>
-                                </div>
-                            </div> */}
-                            {/* <div className="flex space-x-4 p-3">
-                                <div>
-                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
-                                </div>
-                                <div>
-                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
-                                    <p className="text-gray-500">Xanh xám / 4XL</p>
-                                    <p className="text-gray-500">Số Lượng: 1</p>
-                                </div>
-                            </div>
-                            <div className="flex space-x-4 p-3">
-                                <div>
-                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
-                                </div>
-                                <div>
-                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
-                                    <p className="text-gray-500">Xanh xám / 4XL</p>
-                                    <p className="text-gray-500">Số Lượng: 1</p>
-                                </div>
-                            </div>
-                            <div className="flex space-x-4 p-3">
-                                <div>
-                                    <img src="/../../../src/resources/images/products/90chinh-mau-nen.webp" className="w-16 h-20" alt="Product Image" />
-                                </div>
-                                <div>
-                                    <p className="font-medium">Áo Polo Nam Pique Mắt Chim Basic Co Giãn Thoáng Khí</p>
-                                    <p className="text-gray-500">Xanh xám / 4XL</p>
-                                    <p className="text-gray-500">Số Lượng: 1</p>
-                                </div>
-                            </div> */}
                         </div>
-
-
-
-                        <div className="flex space-x-2">
+                        {/* <div className="flex space-x-2">
                             <input type="text" placeholder="Nhập mã giảm giá" className="flex-1 p-2 border rounded" />
                             <button className="px-4 py-2 bg-blue-500 text-white rounded">Áp Dụng</button>
-                        </div>
-                        <div>
+                        </div> */}
+                        {/* <div>
                             <div className="grid grid-flow-col col-span-2 border border-gray-300  rounded p-2">
                                 <div>
                                     <img src="/../../../src/resources/svg/Icon/th.jpg" alt="" className="w-14 h-16" />
@@ -216,10 +157,10 @@ const Pay = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
+                        <div className="space-y-2 border-t-2 ">
+                            <div className="flex justify-between pt-4">
                                 <p className="text-gray-700">Tạm Tính:</p>
                                 <span className="font-medium">12.049.055đ</span>
                             </div>

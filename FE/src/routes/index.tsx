@@ -30,6 +30,7 @@ import TrashProduct from "../pages/Admin/Product/TrashProduct";
 import BlogList from "../pages/Admin/Blogs/BlogList";
 import ContactForm from "../pages/Client/Contact/Contact";
 import ListContact from "../pages/Admin/contact/ListContact";
+import Page from "../pages/Admin/Product/page";
 
 const RouterComponent = () => {
   return (
@@ -66,6 +67,7 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
+            <Route path="product" element={<Page />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
@@ -75,7 +77,7 @@ const RouterComponent = () => {
               element={<OrdersDetali />}
             />
             <Route path="/admin/contact" element={<ListContact />} />
-            <Route path="blogs" element={<BlogList/>}/>
+            <Route path="blogs" element={<BlogList />} />
           </Route>
         </Routes>
         {/* <ToastContainer /> */}

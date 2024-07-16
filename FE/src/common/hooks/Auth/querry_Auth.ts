@@ -3,9 +3,9 @@ import { list_Auth, list_Auth_By_Id } from "../../../_lib/Auth/Auth";
 
 export const List_Auth = (userId: string) => {
   const { data, ...rest } = useQuery({
-    queryKey: userId ? ["AUTH_KEY", userId] : ["AUTH_KEY", ''],
+    queryKey: userId ? ["AUTH_KEY", userId] : ["AUTH_KEY"],
     queryFn: async () => {
-      return userId ? list_Auth_By_Id(userId) : list_Auth();
+      return userId ? await list_Auth_By_Id(userId) : await list_Auth();
     }
   });
   console.log(data);

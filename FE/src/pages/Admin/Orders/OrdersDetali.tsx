@@ -7,11 +7,14 @@ import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 const OrdersDetali = () => {
     const { id } = useParams<{ id: string }>();
     const { data, refetch } = Query_Orders(id);
+    console.log(data);
+
 
     useEffect(() => {
         refetch();
     }, [id]);
-
+    // const { mutate } = Mutation_Order('UPDATE')
+    // const [status, setStatus] = useState()
     const handleStatusUpdate = async () => {
         if (!data) return;
         if (data.status === "5") {
@@ -71,17 +74,20 @@ const OrdersDetali = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {data.items.map((item: any) => (
-                            <tr key={item._id}>
-                                <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
-                                    <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
-                                </td>
-                                <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item.name}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.quantity}</td>
-                                <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
-                            </tr>
-                        ))}
+                        {data.items.map((item: any) => {
+
+                            return (
+                                <tr key={item._id}>
+                                    <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
+                                        <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
+                                    </td>
+                                    <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item.name}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.quantity}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
                 <div className="bg-white divide-y divide-gray-200">
@@ -147,6 +153,9 @@ const OrdersDetali = () => {
                     </div>
                 </div>
                 <div className="flex gap-5 justify-center mt-[60px]">
+                    {/* <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={() => mutate({ status: data?.status, id: data?._id })}>
+                        Từ chối xác nhận
+                    </button> */}
                     <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
                         {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
                     </button>
