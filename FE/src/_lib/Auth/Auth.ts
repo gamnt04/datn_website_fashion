@@ -10,7 +10,7 @@ export const list_Auth = async () => {
 };
 export const list_Auth_By_Id = async (userId: string) => {
   try {
-    const { data } = await instance.post(`auth/signin`, userId);
+    const { data } = await instance.get(`auth/${userId}`);
     return data;
   } catch (error) {
     console.log(error);

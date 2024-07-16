@@ -98,6 +98,7 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    console.log(status);
     const validStatuses = ["1", "2", "3", "4", "5"];
     if (!validStatuses.includes(status)) {
       return res
