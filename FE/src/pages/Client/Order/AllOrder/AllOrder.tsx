@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { List_Auth } from "../../../../common/hooks/Auth/querry_Auth";
+import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 const AllOrder = () => {
   const [isOpen, setIsOpen] = useState(false)
   const handleTogggle = () => {
     setIsOpen(!isOpen)
   }
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const { data } = List_Auth(userId)
+  console.log(data?.avatar);
 
   return (
     <div className="mt-28 mb-4">
@@ -15,12 +21,12 @@ const AllOrder = () => {
               <div className="flex justify-center">
                 <img
                   className="w-[46px] h-[46px] rounded-full"
-                  src="https://picsum.photos/300/300"
+                  src={data?.avatar}
                   alt=""
                 />
               </div>
               <div className="">
-                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">Dương Hải Nam</h3>
+                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">{data?.userName}</h3>
                 <a
                   href="/allorder"
                   className="text-[#9B9B9B] text-center text-[12px] lg:text-sm flex items-center justify-center font-normal"
