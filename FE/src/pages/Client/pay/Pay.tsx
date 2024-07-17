@@ -4,6 +4,8 @@ import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { Link } from "react-router-dom";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
+import { useState } from "react";
+import { add } from "lodash";
 
 
 const Pay = () => {
@@ -14,6 +16,11 @@ const Pay = () => {
     const { register, handleSubmit } = useForm()
     const { onSubmit, data } = Pay_Mutation();
     const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
+    const [showOptions, setShowOptions] = useState(false);
+
+    const toggleOptions = () => {
+        setShowOptions(!showOptions);
+    }
     return (
         <div className="max-w-[1400px] mt-4">
             <div className="mb-20">
@@ -24,20 +31,16 @@ const Pay = () => {
                         <li><a href="#">Thanh Toán</a></li>
                     </ul>
                 </div>
-
                 <form action="" onSubmit={handleSubmit(onSubmit)} className="lg:flex flex-row">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 w-full basis-4/6">
                         <div className="col-span-1">
                             <h1 className="text-lg font-bold mb-4">Thông Tin Khach Hàng</h1>
                             {auth?.address.map((item: any) => {
                                 if (item.fullName === "admin") {
-                                    console.log(item.fullName);
-
                                     return (
                                         <>
                                             <div className="mb-4">
                                                 <input type="text" placeholder="Họ Và Tên" value={item?.fullName} className="w-full p-3 border rounded text-sm" {...register("userName")} />
-
                                             </div>
                                             <div className="mb-4">
                                                 <input type="tel" placeholder="Số Điện Thoại" value={item?.phoneNumber} className="w-full p-3 border rounded text-sm" {...register("phone")} />
@@ -56,7 +59,7 @@ const Pay = () => {
                                                 )} */}
                                             </div>
                                             <div className="mb-4">
-                                                <input type="text" placeholder="Địa Chỉ" value={item?.addressType + " " + item?.addressDetails} className="w-full p-3 border rounded text-sm" {...register("address")} />
+                                                <input type="text" placeholder="Địa Chỉ" value={item?.addressType + "- " + item?.addressDetails} className="w-full p-3 border rounded text-sm" {...register("address")} />
                                                 {/* {errors.address && (
                                                     <p className="text-start mt-4 text-sm text-red-400">
                                                         {errors.address.message}
@@ -101,7 +104,7 @@ const Pay = () => {
                                         </div>
                                         <div className="mb-2 p-2 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment", { required: true })} />
+                                                <input type="radio" value="Thanh toán khi nhận hàng" className="mr-2" {...register("payment", { required: true })} />
                                                 <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                             </label>
                                         </div>
@@ -170,11 +173,11 @@ const Pay = () => {
                             </div>
                             <div className="flex justify-between mt-5">
                                 <p className="text-gray-700">Tổng Cộng:</p>
-                                <span className="font-bold text-xl text-yellow-500">{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+                                <span className="font-bold text-xl ">{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <Link to="/cart" className="text-blue-500">Quay Về Giỏ Hàng</Link>
-                                <button className="px-4 py-2 bg-green-500 text-white rounded" type="submit">Đặt Hàng</button>
+                                <Link to="/cart" className="text-slate-400 underline">Quay Về Giỏ Hàng</Link>
+                                <button className="px-4 py-2 bg-black text-white rounded" type="submit">Đặt Hàng</button>
                             </div>
                         </div>
                     </div>
@@ -203,14 +206,21 @@ const Pay = () => {
         //                     <p>Địa chỉ nhận hàng</p>
         //                 </div>
         //                 <div className="flex gap-12">
-        //                     <div className="flex items-center gap-4">
-        //                         <h1 className="font-bold">Dương Hải Nam</h1>
-        //                         <p className="font-bold">0357219726</p>
-        //                         <p>Thôn Nà Cuối, Xã Đồng Ý, Huyện Bắc Sơn, Lạng Sơn</p>
-        //                     </div>
-        //                     <div className="flex gap-8">
-        //                         <button className="border py-2 px-4 rounded-sm border-black">Mặc định</button>
-        //                         <button className="text-blue-400 underline">Thay đổi</button>
+        //                     {auth?.address?.map((item: any) => {
+        //                         if (item.fullName === "admin") {
+        //                             return (
+        //                                 <div className="flex items-center gap-4">
+        //                                     <h1 className="font-bold">{item?.fullName}</h1>
+        //                                     <p className="font-bold">{item?.phoneNumber}</p>
+        //                                     <p>{item?.addressType + " - " + item?.addressDetails}</p>
+        //                                 </div>
+        //                             )
+        //                         }
+        //                     })}
+
+        //                     <div className="flex items-center gap-8">
+        //                         <div className="border py-2 px-4 rounded-sm border-black">Mặc định</div>
+        //                         <div className="text-blue-400 underline">Thay đổi</div>
         //                     </div>
         //                 </div>
         //             </div>
@@ -250,7 +260,7 @@ const Pay = () => {
         //                     </div>
         //                     <div className="flex items-center gap-5">
         //                         <p className="py-1 px-3 border-black border rounded-sm">-50K</p>
-        //                         <button className="text-blue-400 underline">Chọn Voucher Khác</button>
+        //                         <div className="text-blue-400 underline">Chọn Voucher Khác</div>
         //                     </div>
         //                 </div>
         //                 <div className="flex justify-between gap-16 border-t-2 border-b">
@@ -263,7 +273,7 @@ const Pay = () => {
         //                         <div>
         //                             <div className="flex justify-between">
         //                                 <p>Nhanh</p>
-        //                                 <button className="text-blue-400 underline">Thay đổi</button>
+        //                                 <div className="text-blue-400 underline">Thay đổi</div>
         //                             </div>
         //                             <span className="text-sm">Nhận hàng vào 9 Tháng 7 - 10 Tháng 7</span>
         //                         </div>
@@ -281,12 +291,12 @@ const Pay = () => {
         //                     <p className="text-xl">Phương thức thanh toán</p>
         //                     <div className="flex gap-8">
         //                         <p>Phương thức thanh toán</p>
-        //                         <button
+        //                         <div
         //                             className="text-blue-400 underline"
         //                             onClick={toggleOptions}
         //                         >
         //                             Thay đổi
-        //                         </button>
+        //                         </div>
         //                     </div>
         //                     {showOptions && (
         //                         <div className="mt-4">
