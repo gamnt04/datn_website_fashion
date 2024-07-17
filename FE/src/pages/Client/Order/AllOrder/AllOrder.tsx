@@ -10,8 +10,6 @@ const AllOrder = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const { data } = List_Auth(userId)
-  console.log(data?.avatar);
-
   return (
     <div className="mt-28 mb-4">
       <div className="container mx-auto max-w-[1200px]">
