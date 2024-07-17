@@ -61,7 +61,7 @@ const OrdersDetali = () => {
 
     return (
         <>
-            <h1 className="font-bold text-3xl text-orange-400 mt-16 text-center">Chi tiết đơn hàng</h1>
+            <h1 className="font-bold text-3xl text-black mt-16 text-center">Chi tiết đơn hàng</h1>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <table className="min-w-full bg-white border border-gray-200 h-auto">
                     <thead className="bg-gray-50">
@@ -107,17 +107,17 @@ const OrdersDetali = () => {
                         </span>
                         <p>Mã voucher:</p>
                     </div>
-                    <p className="flex justify-end py-4 font-bold">Tổng tiền:<span className="text-orange-300 pl-2"> {data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })} </span></p>
+                    <p className="flex justify-end items-end py-4 font-bold">Tổng tiền:<span className="text-black pl-2 text-xl"> {data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })} </span></p>
                 </div>
             </div>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
                     <p>Phương thức thanh toán</p>
-                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data.customerInfo.payment}</p>
+                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data.customerInfo.payment}</p>
                 </div>
                 <div className="flex items-center gap-4 border-b py-3">
                     <p>Trạng thái đơn hàng</p>
-                    <p className="w-auto p-3 border-2 border-orange-300 text-orange-300">{data?.status == 1 ? "Chờ xác nhận" :
+                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data?.status == 1 ? "Chờ xác nhận" :
                         data?.status == 2 ? "Đang chuẩn bị hàng" :
                             data?.status == 3 ? "Đang vận chuyển" :
                                 data?.status == 4 ? "Đã giao hàng" : "Đã hủy"}</p>
@@ -148,7 +148,7 @@ const OrdersDetali = () => {
                             <p>{data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                             <p>10000</p>
                             <p>20000 đ</p>
-                            <p className="text-orange-300">{(data.totalPrice - 10000 + 20000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                            <p className="font-bold">{(data.totalPrice - 10000 + 20000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                         </div>
                     </div>
                 </div>
