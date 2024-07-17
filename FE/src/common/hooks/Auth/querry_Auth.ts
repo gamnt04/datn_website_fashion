@@ -8,6 +8,5 @@ export const List_Auth = (userId: string) => {
       return userId ? await list_Auth_By_Id(userId) : await list_Auth();
     }
   });
-  console.log(data);
   return { data, ...rest };
 };

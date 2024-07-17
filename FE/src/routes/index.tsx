@@ -31,7 +31,7 @@ import BlogList from "../pages/Admin/Blogs/BlogList";
 import ContactForm from "../pages/Client/Contact/Contact";
 import ListContact from "../pages/Admin/contact/ListContact";
 import Page from "../pages/Admin/Product/page";
-
+import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 const RouterComponent = () => {
   return (
     <>
@@ -50,13 +50,11 @@ const RouterComponent = () => {
             <Route path="about-us" element={<AboutUS />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
-            <Route
-              path="shops/detail_product/:id"
-              element={<ProductDetail />}
-            />
+            <Route path="shops/detail_product/:id" element={<ProductDetail />} />
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
+              <Route path="/allorder/order/:id/detail" element={<OrderDetail />} />
               <Route path="/allorder/address" element={<Address />} />
             </Route>
             <Route path="login" element={<Login />} />
@@ -72,10 +70,7 @@ const RouterComponent = () => {
             <Route path="products/edit/:id" element={<UpdateProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
-            <Route
-              path="/admin/orders/:id/orderDetali"
-              element={<OrdersDetali />}
-            />
+            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="blogs" element={<BlogList />} />
           </Route>
