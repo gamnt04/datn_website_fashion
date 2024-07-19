@@ -1,14 +1,33 @@
+import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { useProduct } from "../../../common/hooks/Products/Products";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IProduct } from "../../../common/interfaces/Product";
 
-const InforProduct = () => {
+interface InforProductProp {
+  product: IProduct;
+}
+const InforProduct: React.FC<InforProductProp> = ({ product }) => {
+  const { name_product, price_product, _id, quantity_product, sizes } = product;
+  const [user] = useLocalStorage("user", {});
+  const account = user?.user;
+  const { mutate } = Mutation_Cart("ADD");
+
+  const addCart = (id: string) => {
+    const item = {
+      userId: account,
+      productId: id,
+      quantity: 1
+    };
+    mutate(item);
+  };
+
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       <div className="flex flex-col lg:gap-y-2">
         {/* row 1 */}
         <div className="lg:pb-5 flex flex-col lg:gap-y-2">
           <span className="text-gray-700 font-bold lg:text-base mb:text-sm">
-            Loai san pham demo
+            {name_product}
           </span>
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
           <div className="flex flex-col gap-y-2 justify-between">
@@ -30,7 +49,7 @@ const InforProduct = () => {
                 <del className="font-light lg:text-sm mb:text-sm text-[#9D9EA2]">
                   200.00 đ
                 </del>
-                120.00 đ
+                {price_product}
               </span>
             </div>
           </div>
@@ -50,9 +69,11 @@ const InforProduct = () => {
             Size
           </span>
           <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-4 *:py-2 *:rounded *:border *:duration-300">
-            <button className="hover:bg-black hover:text-white">X</button>
-            <button className="hover:bg-black hover:text-white">Y</button>
-            <button className="hover:bg-black hover:text-white">Z</button>
+            {sizes?.map((size, index) => (
+              <button className="hover:bg-black hover:text-white" key={index}>
+                {size}
+              </button>
+            ))}
           </div>
         </div>
         {/* row 4 */}
@@ -89,7 +110,7 @@ const InforProduct = () => {
                     <path d="M5 12h14" />
                   </svg>
                 </button>
-                <div className="bg-[#F4F4F4]">2</div>
+                <input className="bg-[#F4F4F4]" value={2} />
                 <button>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +130,7 @@ const InforProduct = () => {
                 </button>
               </div>
               <span className="text-gray-800 lg:tracking-[0.5px] border-l pl-4 border-black">
-                Còn lại 100 sản phẩm
+                Còn lại {quantity_product} sản phẩm
               </span>
             </div>
             <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
@@ -118,7 +139,10 @@ const InforProduct = () => {
           </div>
           <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded-xl *:duration-300">
             {/* add cart */}
-            <button className="hover:scale-105 flex place-items-center gap-x-4 text-white bg-black lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
+            <button
+              onClick={() => addCart(_id)}
+              className="hover:scale-105 flex place-items-center gap-x-4 text-white bg-black lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12"
+            >
               <span>Thêm vào giỏ</span>
             </button>
             {/* add cart */}
