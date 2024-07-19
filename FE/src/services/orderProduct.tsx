@@ -63,10 +63,13 @@ export const Add_Order = async (order: any) => {
     console.log(error);
   }
 };
-export const Update_Status = async (id: string) => {
+export const Update_Status = async (items: any) => {
+  console.log(items);
+
+
   try {
-    const { data } = await instance.patch(`/orders/${id}`);
-    // console.log(data);
+    const { data } = await instance.patch(`orders/${items.id}`, items.status);
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);

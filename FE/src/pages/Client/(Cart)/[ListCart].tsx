@@ -15,8 +15,7 @@ const ListCart = () => {
   const { data, isPending, isError, calculateTotal, calculateTotalProduct } =
     List_Cart(userId);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  if (isPending) return <p>Loading...</p>;
-  if (isError) return <p>Error...</p>;
+
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
 
@@ -48,6 +47,8 @@ const ListCart = () => {
     }
   };
   const { calcuateTotal } = Pay_Mutation();
+  if (isPending) return <p>Loading...</p>;
+  if (isError) return <p>Error...</p>;
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
       <div className="flex items-center border bg-gray-100 h-20 p-4">

@@ -1,6 +1,5 @@
 import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
 import { ReactNode, createContext, useState } from "react";
-
 interface SidebarContextType {
   expanded: boolean;
 }
