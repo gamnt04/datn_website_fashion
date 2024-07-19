@@ -139,7 +139,7 @@ const AddProduct = () => {
               Danh mục
             </label>
             <select
-              {...register("category_id", { required: "Không bỏ trống" })}
+              {...register("category_id")}
               className="w-full px-3 py-2 leading-tight border rounded shadow appearance-none text focus:outline-none focus:shadow-outline"
             >
               <option value="">-- Chọn danh mục --</option>
@@ -149,9 +149,9 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-            <div className="text-xs italic text-red-500">
+            {/* <div className="text-xs italic text-red-500">
               {errors.category_id?.message}
-            </div>
+            </div> */}
           </div>
 
           <div className="mb-4">
@@ -172,27 +172,6 @@ const AddProduct = () => {
               {errors.description_product?.message}
             </div>
           </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="countInStock_product"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Số lượng trong kho
-            </label>
-            <input
-              type="number"
-              placeholder="Số lượng trong kho"
-              {...register("countInStock_product", {
-                required: "Không bỏ trống",
-              })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.countInStock_product?.message}
-            </div>
-          </div>
-
           <div className="mb-4">
             <label
               htmlFor="quantity_product"
