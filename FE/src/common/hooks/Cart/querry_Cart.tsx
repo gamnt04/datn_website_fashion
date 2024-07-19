@@ -14,9 +14,7 @@ export const List_Cart = (userId: string) => {
     if (!data || !data.products) return 0;
     return reduce(
       data.products,
-      (total, product) =>
-        total + product.price_product * product.quantity_product,
-      0
+      (total, product) => total + product.price_product * product.quantity_product, 0
     );
   };
 
