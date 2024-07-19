@@ -25,8 +25,7 @@ const ListCart = () => {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-
-  const remove_item = (id: number | string) => {
+  const remove_item = (id: any) => {
     const data_item = {
       userId: userId,
       productId: id,
