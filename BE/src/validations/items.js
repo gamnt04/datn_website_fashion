@@ -37,6 +37,7 @@ export const validate_items = Joi.object({
     "number.empty": "Số lượng trong kho không được để khoảng trống!",
   }),
   category_id: Joi.string(),
+  attributes: Joi.optional(),
   featured_product: Joi.boolean(),
   tag_product: Joi.string(),
 });
