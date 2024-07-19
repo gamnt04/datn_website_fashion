@@ -5,22 +5,21 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { Link } from "react-router-dom";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { useState } from "react";
-import { add } from "lodash";
 
 
 const Pay = () => {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
-    const { data: auth } = List_Auth(userId)
-    console.log(auth?.address);
+    const { data: auth, isLoading } = List_Auth(userId)
     const { register, handleSubmit } = useForm()
     const { onSubmit, data } = Pay_Mutation();
     const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
     const [showOptions, setShowOptions] = useState(false);
 
-    const toggleOptions = () => {
-        setShowOptions(!showOptions);
-    }
+    // const toggleOptions = () => {
+    //     setShowOptions(!showOptions);
+    // }
+    if (isLoading) return <p>Loading...</p>
     return (
         <div className="max-w-[1400px] mt-4">
             <div className="mb-20">
@@ -44,36 +43,17 @@ const Pay = () => {
                                             </div>
                                             <div className="mb-4">
                                                 <input type="tel" placeholder="Số Điện Thoại" value={item?.phoneNumber} className="w-full p-3 border rounded text-sm" {...register("phone")} />
-                                                {/* {errors.phone && (
-                                                    <p className="text-start mt-4 text-sm text-red-400">
-                                                        {errors.phone.message}
-                                                    </p>
-                                                )} */}
                                             </div>
                                             <div className="mb-4">
                                                 <input type="email" placeholder="Email" value={auth?.email} className="w-full p-3 border rounded text-sm" {...register("email")} />
-                                                {/* {errors.email && (
-                                                    <p className="text-start mt-4 text-sm text-red-400">
-                                                        {errors.email.message}
-                                                    </p>
-                                                )} */}
                                             </div>
                                             <div className="mb-4">
                                                 <input type="text" placeholder="Địa Chỉ" value={item?.addressType + "- " + item?.addressDetails} className="w-full p-3 border rounded text-sm" {...register("address")} />
-                                                {/* {errors.address && (
-                                                    <p className="text-start mt-4 text-sm text-red-400">
-                                                        {errors.address.message}
-                                                    </p>
-                                                )} */}
                                             </div>
                                         </>
                                     )
                                 }
-
                             })}
-                            {/* <div className="mb-4">
-                                <textarea placeholder="Ghi Chú" className="w-full p-3 border rounded text-sm"></textarea>
-                            </div> */}
                         </div>
                         <div className="col-span-1">
                             <div className="mb-4">
@@ -86,26 +66,26 @@ const Pay = () => {
                             </div>
                             <div className="">
                                 <h1 className="text-lg font-bold mb-2">Thanh Toán</h1>
-                                <div className="w-full p-2 border rounded-t text-xs mb-2">
+                                <div className="w-full px-4 border rounded-t text-xs mb-2">
                                     <div className="w-full">
-                                        <div className="border-b mb-2  p-2 w-full">
+                                        <div className="border-b mb-2 px-2 py-5 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" value="vnpay" className="mr-2" defaultChecked {...register("payment", { required: true })} />
-                                                <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
-                                                <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
+                                                <input type="radio" value="Thanh toán khi nhận hàng" className="mr-2" defaultChecked {...register("payment", { required: true })} />
+                                                <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                             </label>
                                         </div>
-                                        <div className="border-b p-2 mb-2 w-full">
+                                        <div className="border-b px-2 py-5 mb-2 w-full">
                                             <label className="flex items-center w-full">
                                                 <input type="radio" value="vnpay-qr" className="mr-2" {...register("payment", { required: true })} />
                                                 <p className="flex-1 text-sm">Thanh toán qua VNPAY-QR</p>
-                                                <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" />
+                                                {/* <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" /> */}
                                             </label>
                                         </div>
-                                        <div className="mb-2 p-2 w-full">
+                                        <div className="mb-2 px-2 py-5 w-full">
                                             <label className="flex items-center w-full">
-                                                <input type="radio" value="Thanh toán khi nhận hàng" className="mr-2" {...register("payment", { required: true })} />
-                                                <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
+                                                <input type="radio" value="vnpay" className="mr-2"  {...register("payment", { required: true })} />
+                                                <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
+                                                {/* <img src="/src/resources/svg/Icon/tải xuống.png" className="w-10 h-10" alt="VNPAY Icon" /> */}
                                             </label>
                                         </div>
                                     </div>
@@ -129,39 +109,6 @@ const Pay = () => {
                                 </div>
                             ))}
                         </div>
-                        {/* <div className="flex space-x-2">
-                            <input type="text" placeholder="Nhập mã giảm giá" className="flex-1 p-2 border rounded" />
-                            <button className="px-4 py-2 bg-blue-500 text-white rounded">Áp Dụng</button>
-                        </div> */}
-                        {/* <div>
-                            <div className="grid grid-flow-col col-span-2 border border-gray-300  rounded p-2">
-                                <div>
-                                    <img src="/../../../src/resources/svg/Icon/th.jpg" alt="" className="w-14 h-16" />
-                                </div>
-                                <div className="text-center ">
-                                    <p className="font-bold"> Voucher 100K cho đơn nguyên giá từ 299K </p>
-                                    <p className="text-xs font-sans mb-3">*Dành riêng cho khách hàng của chương trình ZaloPay</p>
-                                    <div className="flex justify-center gap-1">
-                                        <p className="border border-gray-300 rounded w-32 p-1 text-xs font-bold text-gray-500">KHACHHANGMOI</p>
-                                        <button className="bg-blue-950 border rounded w-20 text-white">lưu Mã</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="grid grid-flow-col col-span-2 border border-gray-300  rounded p-2">
-                                <div>
-                                    <img src="/../../../src/resources/svg/Icon/th.jpg" alt="" className="w-14 h-16" />
-                                </div>
-                                <div className="text-center ">
-                                    <p className="font-bold"> Voucher 100K cho đơn nguyên giá từ 199K </p>
-                                    <p className="text-xs font-sans mb-3">*Dành riêng cho khách hàng của chương trình ZaloPay</p>
-                                    <div className="flex justify-center gap-1">
-                                        <p className="border border-gray-300 rounded w-32 p-1 text-xs font-bold text-gray-500">KHACHHANGMOI</p>
-                                        <button className="bg-blue-950 border rounded w-20 text-white">lưu Mã</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
-
                         <div className="space-y-2 border-t-2 ">
                             <div className="flex justify-between pt-4">
                                 <p className="text-gray-700">Tạm Tính:</p>
@@ -182,9 +129,6 @@ const Pay = () => {
                         </div>
                     </div>
                 </form>
-
-
-
             </div >
         </div >
         // <>
