@@ -1,7 +1,5 @@
-import { ToastContainer } from "react-toastify"; // Import ToastContainer from react-toastify
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { RecycleIcon } from "../../../resources/svg/Icon/Icon";
 import Dow_btn from "./dow";
 import Up_btn from "./up";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
@@ -9,35 +7,48 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import { useState } from "react";
-
+import { Button, Checkbox, Input, message, Popconfirm, Table, TableProps } from "antd"
+import { DeleteOutlined } from "@ant-design/icons";
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+  tags: string[];
+}
 const ListCart = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError, calculateTotal, calculateTotalProduct } =
-    List_Cart(userId);
+  const { data, isPending, isError, calculateTotal, calculateTotalProduct } = List_Cart(userId);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-
   const remove_item = (id: any) => {
-    if (window.confirm("Xác nhận xóa sản phẩm?")) {
-      const data_item = {
-        userId: userId,
-        productId: id,
-      };
-      removeSingle(data_item);
-    }
+
+    const data_item = {
+      userId: userId,
+      productId: id,
+    };
+    removeSingle(data_item);
+    messageApi.open({
+      type: "success",
+      content: "Xóa thành công",
+    })
 
   };
   const handleRemoveMultiple = () => {
-    if (window.confirm("Bạn có muốn xóa không ?")) {
-      const product_item = {
-        userId: userId,
-        productIds: selectedProductIds
-      };
-      removeMultiple(product_item);
-    }
+    const product_item = {
+      userId: userId,
+      productIds: selectedProductIds
+    };
+    removeMultiple(product_item);
+    messageApi.open({
+      type: "success",
+      content: "Xóa thành công",
+    })
+
   };
   const handleCheckboxChange = (productId: string) => {
     if (selectedProductIds.includes(productId)) {
@@ -48,11 +59,100 @@ const ListCart = () => {
       setSelectedProductIds([...selectedProductIds, productId]);
     }
   };
+  const dataSort = data?.products?.map((product: any) => ({
+    key: product?.productId,
+    ...product
+  }))
+  const columns: TableProps<DataType>['columns'] = [
+    {
+      key: "checkbox",
+      dataIndex: "checkbox",
+      render: (_: any, product: any) => {
+        return (
+          <Checkbox onChange={() =>
+            handleCheckboxChange(product?.productId)
+          }></Checkbox>
+        )
+      }
+    },
+    {
+      key: "image",
+      dataIndex: "image",
+      render: (_: any, product: any) => {
+        return <>
+          <img src={product?.image} className="w-[100px] h-[80px] object-cover" alt="" />
+        </>
+      }
+    },
+    {
+      title: 'Sản phẩm',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Đơn giá',
+      dataIndex: 'price',
+      key: 'price',
+      render: (_: any, product: any) => {
+        return <div>
+          {product?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+        </div>
+      }
+    },
+    {
+      key: "quantity",
+      title: "Số lượng",
+      dataIndex: "quantity",
+      render: (_: any, product: any) => {
+        return <div className="flex space-x-2">
+          <Dow_btn
+            dataProps={{
+              id_item: product?.productId,
+              quantity_item: product?.quantity,
+            }}
+          />
+          <Input value={product?.quantity} className="w-[40px] text-center" />
+          <Up_btn dataProps={product?.productId} />
+        </div>
+      }
+    },
+    {
+      title: 'Tổng tiền',
+      dataIndex: 'totalPrice',
+      key: 'totalPrice',
+      render: (_: any, product: any) => {
+        return <div>
+          {(product?.price * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+        </div>
+      }
+    },
+    {
+      key: "action",
+      dataIndex: "action",
+      render: (_: any, product: any) => {
+        return <div className="flex justify-center space-x-2">
+          <Popconfirm
+            title="Xóa sản phẩm khỏi giỏ hàng?"
+            description="Bạn có chắc chắn muốn xóa không?"
+            onConfirm={() => remove_item(product?.productId)}
+            // onCancel={cancel}
+            okText="Có"
+            cancelText="Không"
+          >
+            <DeleteOutlined style={{ fontSize: '24px' }} />
+          </Popconfirm>
+
+        </div>
+      }
+    },
+
+  ];
   const { calcuateTotal } = Pay_Mutation();
   if (isPending) return <p>Loading...</p>;
   if (isError) return <p>Error...</p>;
   return (
     <div className="w-[95%] mx-[2.5%] mt-[110px]">
+      {contextHolder}
       <div className="flex items-center border bg-gray-100 h-20 p-4">
         <ul className="flex gap-2">
           <li className="text-red-500">
@@ -65,7 +165,6 @@ const ListCart = () => {
         </ul>
       </div>
       <>
-        {" "}
         {!data?.products || data?.products.length === 0 ? (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="w-full h-[200px] flex flex-col justify-center items-center">
@@ -79,82 +178,19 @@ const ListCart = () => {
           </div>
         ) : (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-            <div className="md:w-[70%] mb:w-full *:w-full">
-              <button onClick={handleRemoveMultiple} className="my-[10px]">
-                Remove Selected Products
-              </button>
-              <table className="*:text-left table-auto">
-                <thead>
-                  <tr className="*:font-medium *:md:text-sm *:mb:text-xs *:pb-6">
-                    <th></th>
-                    <th>Sản phẩm</th>
-                    <th></th>
-                    <th className="px-2">Đơn giá</th>
-                    <th className="px-2">Số lượng</th>
-                    <th className="pl-5">Tổng tiền</th>
-                    <th className="px-2" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {data?.products.map((item: any, index: number) => (
-                    <tr className="border-y" key={index}>
-                      <td>
-                        <div key={item.productId}>
-                          <input
-                            type="checkbox"
-                            onChange={() =>
-                              handleCheckboxChange(item.productId)
-                            }
-                          />
-                        </div>
-                      </td>
-                      <td className="w-[80px] py-5">
-                        <img
-                          className="relative bg-[#f2f2f2] rounded p-2 z-[1] w-[80px] h-[80px] duration-300"
-                          src={item.image}
-                          alt=""
-                        />
-                      </td>
-                      <td className="pl-4 pr-2 md:w-[300px] mb:w-[120px]">
-                        <div className="flex flex-col md:text-base mb:text-xs">
-                          <strong className="font-semibold">{item.name}</strong>
-                          <span>Loại: Áo</span>
-                          <span>Size: S</span>
-                        </div>
-                      </td>
-                      <td className="px-3">
-                        <strong className="font-medium md:text-base mb:text-xs">
-                          {item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-                        </strong>
-                      </td>
-                      <td className="pr-3">
-                        <div className="w-[80%] flex items-center justify-around border md:py-2 mb:py-1 *:md:text-base *:mb:text-xs px-1 rounded-lg border-black *:font-medium">
-                          <Dow_btn
-                            dataProps={{
-                              id_item: item.productId,
-                              quantity_item: item.quantity,
-                            }}
-                          />
-                          <strong className="cursor-pointer">
-                            {item.quantity}
-                          </strong>
-                          <Up_btn dataProps={item.productId} />
-                        </div>
-                      </td>
-                      <td className="pl-5">
-                        <strong className="font-medium md:text-base mb:text-xs">
-                          {(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-                        </strong>
-                      </td>
-                      <td>
-                        <button onClick={() => remove_item(item.productId)}>
-                          <RecycleIcon />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="md:w-[70%] mb:w-full w-full">
+              <Popconfirm
+                title="Xóa sản phẩm khỏi giỏ hàng?"
+                description="Bạn có chắc chắn muốn xóa không?"
+                onConfirm={() => handleRemoveMultiple()}
+                // onCancel={cancel}
+                okText="Có"
+                cancelText="Không"
+              >
+                <DeleteOutlined style={{ fontSize: '24px' }} />
+              </Popconfirm>
+              {/* <Button onClick={handleRemoveMultiple} danger> Xóa tất cả</Button> */}
+              <Table columns={columns} dataSource={dataSort} />
             </div>
 
             <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
@@ -191,6 +227,7 @@ const ListCart = () => {
                     Tiến hành thanh toán
                   </button>
                 </Link>
+
               </div>
             </div>
           </div>
@@ -200,7 +237,7 @@ const ListCart = () => {
       {/* <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
         <span>Please log in to your account</span>
       </div> */}
-    </div>
+    </div >
   );
 };
 
