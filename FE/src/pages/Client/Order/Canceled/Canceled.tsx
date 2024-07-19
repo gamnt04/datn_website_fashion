@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import { IOrder } from "../../../../common/interfaces/Orders";
 
 const Canceled = ({ dataProps }: any) => {
-  console.log(dataProps);
-
   return (
     <>
       {!dataProps || dataProps.length === 0 ? (
@@ -108,7 +106,7 @@ const Canceled = ({ dataProps }: any) => {
                     đề nào.
                   </p>
                   <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
-                    Đã Nhận Hàng
+                    Mua Lại
                   </button>
                 </div>
               </div>

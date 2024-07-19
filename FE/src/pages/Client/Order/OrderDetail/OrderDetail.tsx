@@ -100,7 +100,7 @@ const OrderDetail = () => {
         <div className="border-b">
           <div className="px-5 py-4 flex gap-10 justify-end">
             <h1 className="font-bold">Phương thức thanh toán</h1>
-            <p>Thanh toán khi nhận hàng</p>
+            <p>{data?.customerInfo?.payment}</p>
           </div>
         </div>
       </div>
