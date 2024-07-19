@@ -16,7 +16,7 @@ const MainContent = () => {
   // const [revenuemonth, setRevenuemonth] = useState<number>(0);
   // const [totalProducts, setTotalProducts] = useState<number>(0);
 
-  const { data: dataAuth } = List_Auth();
+  const { data: dataAuth } = List_Auth("");
   const { data: dataProducts } = Query_Products();
   // useEffect(() => {
   //   (async () => {

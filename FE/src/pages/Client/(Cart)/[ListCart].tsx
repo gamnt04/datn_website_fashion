@@ -1,4 +1,3 @@
-import { ToastContainer } from "react-toastify"; // Import ToastContainer from react-toastify
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { RecycleIcon } from "../../../resources/svg/Icon/Icon";
@@ -21,15 +20,14 @@ const ListCart = () => {
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
 
-  const remove_item = (id: any) => {
+  const remove_item = (id: number | string) => {
     if (window.confirm("Xác nhận xóa sản phẩm?")) {
       const data_item = {
         userId: userId,
-        productId: id,
+        productId: id
       };
       removeSingle(data_item);
     }
-
   };
   const handleRemoveMultiple = () => {
     if (window.confirm("Bạn có muốn xóa không ?")) {
@@ -98,7 +96,7 @@ const ListCart = () => {
                   {data?.products.map((item: any, index: number) => (
                     <tr className="border-y" key={index}>
                       <td>
-                        <div key={item.productId}>
+                        <div key={item._id}>
                           <input
                             type="checkbox"
                             onChange={() =>
@@ -116,14 +114,19 @@ const ListCart = () => {
                       </td>
                       <td className="pl-4 pr-2 md:w-[300px] mb:w-[120px]">
                         <div className="flex flex-col md:text-base mb:text-xs">
-                          <strong className="font-semibold">{item.name}</strong>
+                          <strong className="font-semibold">
+                            {item.name_product}
+                          </strong>
                           <span>Loại: Áo</span>
                           <span>Size: S</span>
                         </div>
                       </td>
                       <td className="px-3">
                         <strong className="font-medium md:text-base mb:text-xs">
-                          {item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                          {item.price_product.toLocaleString("vi", {
+                            style: "currency",
+                            currency: "VND"
+                          })}
                         </strong>
                       </td>
                       <td className="pr-3">
@@ -131,7 +134,7 @@ const ListCart = () => {
                           <Dow_btn
                             dataProps={{
                               id_item: item.productId,
-                              quantity_item: item.quantity,
+                              quantity_item: item.quantity
                             }}
                           />
                           <strong className="cursor-pointer">
@@ -142,7 +145,12 @@ const ListCart = () => {
                       </td>
                       <td className="pl-5">
                         <strong className="font-medium md:text-base mb:text-xs">
-                          {(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                          {(
+                            item.price_product * item.quantity_product
+                          ).toLocaleString("vi", {
+                            style: "currency",
+                            currency: "VND"
+                          })}
                         </strong>
                       </td>
                       <td>
@@ -161,7 +169,10 @@ const ListCart = () => {
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
                   <p className="font-bold text-xl text-yellow-500">
-                    {calcuateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                    {calcuateTotal().toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND"
+                    })}
                   </p>
                 </div>
                 <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
@@ -183,7 +194,12 @@ const ListCart = () => {
                 </div>
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Cần thanh toán :</strong>
-                  <strong>{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</strong>
+                  <strong>
+                    {calculateTotal().toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND"
+                    })}
+                  </strong>
                 </div>
                 <Link onClick={ScrollTop} to="pay">
                   <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
