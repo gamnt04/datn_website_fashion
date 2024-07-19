@@ -1,8 +1,46 @@
 import { Link } from "react-router-dom"
 import { IOrder } from "../../../../common/interfaces/Orders"
-
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import instance from "../../../../configs/axios"
+// import Swal from "sweetalert2"
+import { toast } from "react-toastify"
 
 const Waitforconfirmation = ({ dataProps }: any) => {
+    const queryClient = useQueryClient()
+    const { mutate } = useMutation({
+        mutationFn: async (id: string) => {
+            const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+            return data
+
+            // Swal.fire({
+            //     title: "Bạn có muốn xóa không?",
+            //     icon: "warning",
+            //     showCancelButton: true,
+            //     confirmButtonColor: "#3085d6",
+            //     cancelButtonColor: "#d33",
+            //     confirmButtonText: "Có"
+            // }).then(async (result: any) => {
+            //     if (result.isConfirmed) {
+            //         const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+            //         Swal.fire({
+            //             title: "Đã hủy!",
+            //             text: "Đơn hàng của bạn đã đc hủy",
+            //             icon: "success"
+            //         });
+            //         return data
+            //     }
+            // });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["Order_key"]
+            })
+            toast("Đơn hàng đã được hủy")
+        },
+        onError: () => {
+            toast("Thất bại")
+        }
+    })
     return (
         <>
             {!dataProps || dataProps.length === 0 ? (
@@ -110,7 +148,7 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                         <button className="bg-[#222222] w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
                                             Chờ xác nhận
                                         </button>
-                                        <button className="bg-red-500 w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
+                                        <button onClick={() => mutate(item._id!)} className="bg-red-500 w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
                                             Hủy đơn hàng
                                         </button>
                                     </div>
