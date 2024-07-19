@@ -178,7 +178,7 @@ const ListCart = () => {
           </div>
         ) : (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-            <div className="md:w-[70%] mb:w-full *:w-full">
+            <div className="md:w-[70%] mb:w-full w-full">
               <Popconfirm
                 title="Xóa sản phẩm khỏi giỏ hàng?"
                 description="Bạn có chắc chắn muốn xóa không?"
