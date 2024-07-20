@@ -13,6 +13,8 @@ const categorySchema = mongoose.Schema(
       type: String,
       // required: true,
       unique: true,
+      // required: true,
+      // unique: true,
     },
     products: [
       {
@@ -25,6 +27,17 @@ const categorySchema = mongoose.Schema(
     //   slug: "name",
     //   unique: true,
     // },
+    // products: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Product",
+    //   },
+    // ],
+    slug: {
+      type: String,
+      slug: "name",
+      unique: true,
+    },
   },
 
   {

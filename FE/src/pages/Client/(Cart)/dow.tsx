@@ -1,6 +1,7 @@
 import React from 'react'
 import { Mutation_Cart } from '../../../common/hooks/Cart/mutation_Carts';
 import useLocalStorage from '../../../common/hooks/Storage/useStorage';
+import { Button } from 'antd';
 
 const Dow_btn = ({ dataProps }: any) => {
     const [user] = useLocalStorage("user", {});
@@ -24,13 +25,7 @@ const Dow_btn = ({ dataProps }: any) => {
         }
     }
     return (
-        <button onClick={dow}>
-            <strong
-                className="font-medium"
-            >
-                -
-            </strong>
-        </button>
+        <Button onClick={dow}> - </Button>
     )
 }
 

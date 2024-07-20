@@ -26,9 +26,15 @@ import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/Index";
 import { ToastContainer } from "react-toastify";
+import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
 import EditProduct from "../pages/Admin/Product/EditProduct/index";
 
+import BlogList from "../pages/Admin/Blogs/BlogList";
+import ContactForm from "../pages/Client/Contact/Contact";
+import ListContact from "../pages/Admin/contact/ListContact";
+import Page from "../pages/Admin/Product/page";
+import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 const RouterComponent = () => {
   return (
     <>
@@ -54,6 +60,10 @@ const RouterComponent = () => {
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
+              <Route
+                path="/allorder/order/:id/detail"
+                element={<OrderDetail />}
+              />
               <Route path="/allorder/address" element={<Address />} />
             </Route>
             <Route path="login" element={<Login />} />
@@ -64,6 +74,7 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
+            <Route path="product" element={<Page />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<EditProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
@@ -72,9 +83,11 @@ const RouterComponent = () => {
               path="/admin/orders/:id/orderDetali"
               element={<OrdersDetali />}
             />
+            <Route path="/admin/contact" element={<ListContact />} />
+            <Route path="blogs" element={<BlogList />} />
           </Route>
         </Routes>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
       </Router>
     </>
   );

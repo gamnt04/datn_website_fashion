@@ -1,7 +1,46 @@
+import { Link } from "react-router-dom"
 import { IOrder } from "../../../../common/interfaces/Orders"
-
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import instance from "../../../../configs/axios"
+// import Swal from "sweetalert2"
+import { toast } from "react-toastify"
 
 const Waitforconfirmation = ({ dataProps }: any) => {
+    const queryClient = useQueryClient()
+    const { mutate } = useMutation({
+        mutationFn: async (id: string) => {
+            const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+            return data
+
+            // Swal.fire({
+            //     title: "Bạn có muốn xóa không?",
+            //     icon: "warning",
+            //     showCancelButton: true,
+            //     confirmButtonColor: "#3085d6",
+            //     cancelButtonColor: "#d33",
+            //     confirmButtonText: "Có"
+            // }).then(async (result: any) => {
+            //     if (result.isConfirmed) {
+            //         const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+            //         Swal.fire({
+            //             title: "Đã hủy!",
+            //             text: "Đơn hàng của bạn đã đc hủy",
+            //             icon: "success"
+            //         });
+            //         return data
+            //     }
+            // });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["Order_key"]
+            })
+            toast("Đơn hàng đã được hủy")
+        },
+        onError: () => {
+            toast("Thất bại")
+        }
+    })
     return (
         <>
             {!dataProps || dataProps.length === 0 ? (
@@ -16,9 +55,9 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                         <div className="bg-white shadow-xl my-4 px-2">
 
                             <div className="flex gap-2 py-5 border-b-2 justify-between">
-                                <a href="" className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
+                                <Link to={`/allorder/order/${item._id}/detail`} className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
                                     Xem ngay
-                                </a>
+                                </Link>
                                 <div className="flex">
                                     <a href="" className="flex items-center">
                                         <svg
@@ -39,9 +78,11 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                             <circle cx="17" cy="18" r="2" />
                                             <circle cx="7" cy="18" r="2" />
                                         </svg>
-                                        <span className="text-[#26aa99] text-[12px] lg:text-sm pl-[10px]">
-                                            {item.status}
-                                        </span>
+                                        {Number(item.status) === 1 && (
+                                            <span className="text-[12px] lg:text-sm pl-[10px] text-[#26aa99]">
+                                                Chờ xác nhận
+                                            </span>
+                                        )}
                                     </a>
                                 </div>
                             </div>
@@ -97,15 +138,20 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                                         <p>Thành tiền : <span className="text-xl text-[#f68e56]">{item.totalPrice}</span></p>
                                     </div>
                                 </div>
-                                <div className="flex flex-row items-center gap-4 w-full py-4">
-                                    <p className="basis-4/6 lg:basis-10/12 text-[#0000008A] text-[12px]">
+                                <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 w-full py-4 px-2">
+                                    <p className="lg:basis-9/12 text-[#0000008A] text-[12px]">
                                         Vui lòng chỉ nhấn "Đã nhận được hàng" khi đơn hàng đã
                                         được giao đến bạn và sản phẩm nhận được không có vấn
                                         đề nào.
                                     </p>
-                                    <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
-                                        Đã Nhận Hàng
-                                    </button>
+                                    <div className="flex gap-3 lg:basis-3/12 w-full">
+                                        <button className="bg-[#222222] w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
+                                            Chờ xác nhận
+                                        </button>
+                                        <button onClick={() => mutate(item._id!)} className="bg-red-500 w-full lg:w-[50%] px-2 py-2 text-white text-[12px] rounded-md">
+                                            Hủy đơn hàng
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
