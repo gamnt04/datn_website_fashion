@@ -25,7 +25,6 @@ export const addItemToCart = async (req, res) => {
     }
 };
 
-
 export const updateQuantityProductsInCart = async (req, res) => {
     const { userId, productId, quantity } = req.body;
     try {

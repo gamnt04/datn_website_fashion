@@ -1,5 +1,4 @@
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
-import { useProduct } from "../../../common/hooks/Products/Products";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IProduct } from "../../../common/interfaces/Product";
 
@@ -7,12 +6,13 @@ interface InforProductProp {
   product: IProduct;
 }
 const InforProduct: React.FC<InforProductProp> = ({ product }) => {
-  const { name_product, price_product, _id, quantity_product, sizes } = product;
+  console.log(product);
+  const { name_product, price_product, _id, quantity_product } = product;
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
 
-  const addCart = (id: string) => {
+  const addCart = (id?: string | number) => {
     const item = {
       userId: account,
       productId: id,
@@ -55,25 +55,16 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
           </div>
         </div>
         {/* row 2 */}
-        <div className="flex flex-col gap-y-1 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium">
-          <span className="text-sm lg:text-base tracking-[1px]">
-            Mô tả ngắn
-          </span>
-          <p className="text-sm lg:text-base text-gray-600">
-            Ahihi day la mo ta ngan cua san pham demo ahihihihihihihihihihih
-          </p>
-        </div>
-        {/* row 3 */}
         <div>
           <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
             Size
           </span>
           <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-4 *:py-2 *:rounded *:border *:duration-300">
-            {sizes?.map((size, index) => (
+            {/* {sizes?.map((size, index) => (
               <button className="hover:bg-black hover:text-white" key={index}>
                 {size}
               </button>
-            ))}
+            ))} */}
           </div>
         </div>
         {/* row 4 */}
@@ -110,7 +101,7 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
                     <path d="M5 12h14" />
                   </svg>
                 </button>
-                <input className="bg-[#F4F4F4]" value={2} />
+                <input className="bg-[#F4F4F4] text-center rounded" value={2} />
                 <button>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

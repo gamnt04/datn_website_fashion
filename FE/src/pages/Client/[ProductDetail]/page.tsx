@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import ImageProducts from "./ImageProducts";
 import InforProduct from "./InforProduct";
 import ProductRelated from "./RelatedProducts";
-import DescriptionProduct from "./[DescriptionProduct]";
+import DescriptionProduct from "./DescriptionProduct";
 import { Query_Products } from "../../../common/hooks/Products/Products";
 
 const ProductDetail = () => {

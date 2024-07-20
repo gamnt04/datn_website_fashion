@@ -25,7 +25,7 @@ const Products_Shop = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] auto-rows-[400px] justify-between gap-y-6">
+              <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] justify-between gap-y-6">
                 {data.map((item: any) => (
                   <Products key={item._id} items={item} />
                 ))}
