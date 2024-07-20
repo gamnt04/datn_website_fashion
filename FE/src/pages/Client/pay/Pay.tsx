@@ -13,7 +13,6 @@ const Pay = () => {
     const { onSubmit, data } = Pay_Mutation();
     const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
     const [showOptions, setShowOptions] = useState(false);
-
     const toggleOptions = () => {
         setShowOptions(!showOptions);
     }
@@ -140,16 +139,16 @@ const Pay = () => {
                             {showOptions && (
                                 <div className="mt-4">
                                     <label className="flex items-center w-full">
-                                        <input type="radio" value="Thanh toán tiền mặt" className="mr-2" defaultChecked {...register("payment", { required: true })} />
+                                        <input type="radio" value="Thanh toán khi nhân hàng" className="mr-2" defaultChecked {...register("payment", { required: true })} />
                                         <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                     </label>
                                     <label className="flex items-center w-full">
-                                        <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment", { required: true })} />
+                                        <input type="radio" value="VNPAY" className="mr-2" {...register("payment", { required: true })} />
                                         <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
                                     </label>
                                     <label className="flex items-center w-full">
-                                        <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment", { required: true })} />
-                                        <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
+                                        <input type="radio" value="MoMo" className="mr-2" {...register("payment", { required: true })} />
+                                        <p className="text-sm">Thanh toán bằng MoMo)</p>
                                     </label>
                                 </div>
                             )}
