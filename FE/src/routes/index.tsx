@@ -26,8 +26,8 @@ import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/Index";
 import { ToastContainer } from "react-toastify";
-import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
+import EditProduct from "../pages/Admin/Product/EditProduct/index";
 
 const RouterComponent = () => {
   return (
@@ -65,7 +65,7 @@ const RouterComponent = () => {
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
             <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/edit/:id" element={<UpdateProduct />} />
+            <Route path="products/edit/:id" element={<EditProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route
