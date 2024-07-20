@@ -8,60 +8,72 @@ const Products = ({ items }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-  function addCart(id: string) {
+
+  if (!items || !items._id) {
+    console.error("Items is undefined or missing _id:", items);
+    return null; // hoặc trả về một giao diện hiển thị lỗi
+  }
+
+  const addCart = (id: string) => {
     const item = {
       userId: account,
       productId: id,
       quantity: 1
-    }
-    mutate(item)
-  }
+    };
+    mutate(item);
+  };
+
   return (
     <>
-      <div className="w-full text-start flex flex-col gap-y-6" key={items._id}>
-        <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
+      <div
+        className="w-full text-start flex flex-col justify-between gap-y-6 shadow-md "
+        key={items?._id}
+      >
+        <div className="relative group rounded w-full h-[60%] overflow-hidden bg-[#F6F6F6]">
           <Link
             onClick={ScrollTop}
-            to={`/shops/detail_product/${items._id}`}
+            to={`/shops/detail_product/${items?._id}`}
             className="h-full cursor-pointer *:drop-shadow"
           >
             <img
               className="group-hover:scale-105 duration-500 w-full h-full lg:px-8 mb:px-10 lg:py-6 mb:py-6"
               loading="lazy"
-              src={items.image_product}
-              alt={items.name}
+              src={items?.image_product}
+              alt={items?.name}
             />
           </Link>
           {/* hover show icon cart */}
           <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
             <>
-              <button onClick={() => addCart(items._id)}
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
+              <button
+                onClick={() => addCart(items?._id)}
+                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+              >
                 <CartIcon />
               </button>
-              <button
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-
-              >
+              <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
                 <HeartIcon />
               </button>
             </>
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col justify-between h-[38%] pb-6 px-2">
           <Link
             onClick={ScrollTop}
-            to={`/shops/detail_product/${items._id}`}
-            className="text-xl font-medium text-gray-700 hover:text-black"
+            to={`/shops/detail_product/${items?._id}`}
+            className="text-xl font-medium text-gray-700 hover:text-black line-clamp-2"
           >
-            {items.name_product}
+            {items?.name_product}
           </Link>
-          <p className="text-sm font-normal text-[#999999] my-2">
-            {items.name_product}
-          </p>
+          {/* <p className="text-sm font-normal text-red-900  my-2 ">
+            {items?.name_product}
+          </p> */}
           <p className="text-md font-semibold text-[#222222]">
-            {items.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+            {items?.price_product.toLocaleString("vi", {
+              style: "currency",
+              currency: "VND"
+            })}
           </p>
           <div className="flex justify-center mt-4 items-center gap-x-4">
             <Link

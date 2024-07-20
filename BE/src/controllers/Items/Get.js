@@ -45,6 +45,7 @@ export async function get_items_client(req, res) {
       ];
     }
     const data = await Products.paginate(querry, options);
+    // console.log(data);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Khong co data!",

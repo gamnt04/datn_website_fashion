@@ -68,6 +68,14 @@ const SidebarComponent = () => {
             onClick={() => handleItemClick("category")}
           />
         </Link>
+        <Link to="/admin/contact">
+          <SidebarItem
+            icon={<Package size={20} />}
+            text="Contact"
+            active={selectedItem === "contact"}
+            onClick={() => handleItemClick("contact")}
+          />
+        </Link>
         <Link to="/admin/collection">
           <SidebarItem
             icon={<Package size={20} />}
@@ -91,6 +99,7 @@ const SidebarComponent = () => {
           active={selectedItem === "Billings"}
           onClick={() => handleItemClick("Billings")}
         />
+        
         <hr className="my-3" />
         <SidebarItem
           icon={<Settings size={20} />}

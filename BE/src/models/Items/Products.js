@@ -40,11 +40,12 @@ const productSchema = new mongoose.Schema(
       default: 1,
       min: 1,
     },
-    countInStock_product: {
-      type: Number,
-      min: 1,
-      default: 1,
-    },
+    attributes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Attributes'
+      }
+    ],
     featured_product: {
       type: Boolean,
       default: false,

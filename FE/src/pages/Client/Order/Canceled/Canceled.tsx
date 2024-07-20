@@ -1,8 +1,7 @@
+import { Link } from "react-router-dom";
 import { IOrder } from "../../../../common/interfaces/Orders";
 
 const Canceled = ({ dataProps }: any) => {
-  console.log(dataProps);
-
   return (
     <>
       {!dataProps || dataProps.length === 0 ? (
@@ -17,9 +16,9 @@ const Canceled = ({ dataProps }: any) => {
             <div className="bg-white shadow-xl my-4 px-2">
 
               <div className="flex gap-2 py-5 border-b-2 justify-between">
-                <a href="" className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
+                <Link to={`/allorder/order/${item._id}/detail`} className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm">
                   Xem ngay
-                </a>
+                </Link>
                 <div className="flex">
                   <a href="" className="flex items-center">
                     <svg
@@ -40,9 +39,11 @@ const Canceled = ({ dataProps }: any) => {
                       <circle cx="17" cy="18" r="2" />
                       <circle cx="7" cy="18" r="2" />
                     </svg>
-                    <span className="text-[#26aa99] text-[12px] lg:text-sm pl-[10px]">
-                      {item.status}
-                    </span>
+                    {Number(item.status) === 5 && (
+                      <span className="text-[12px] lg:text-sm pl-[10px] text-[#26aa99]">
+                        Đã hủy
+                      </span>
+                    )}
                   </a>
                 </div>
               </div>
@@ -105,7 +106,7 @@ const Canceled = ({ dataProps }: any) => {
                     đề nào.
                   </p>
                   <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
-                    Đã Nhận Hàng
+                    Mua Lại
                   </button>
                 </div>
               </div>
