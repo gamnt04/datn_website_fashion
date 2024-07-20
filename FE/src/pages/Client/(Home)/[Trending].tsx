@@ -3,9 +3,11 @@ import Products from '../../../components/common/Items/Products';
 import { useRef } from 'react';
 import ScrollTop from '../../../common/hooks/Customers/ScrollTop';
 import { Query_Products } from '../../../common/hooks/Products/Products';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 
 const Trending_Products = () => {
-  const { data, isPending } = Query_Products();
+  const { data, isLoading } = Query_Products();
   const sizeListItems = useRef<HTMLDivElement | null>(null);
   const backItems = useRef<HTMLButtonElement | null>(null);
   const nextItems = useRef<HTMLButtonElement | null>(null);
@@ -42,23 +44,37 @@ const Trending_Products = () => {
         </nav>
       </div>
 
+      {isLoading ? (
+        <div className="flex justify-center items-center h-[200px]">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      ) : (
+        <>
+          {/* products */}
+          {data?.length === 0 ? (
+            <div className="flex justify-center items-center">
+              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
+            </div>
+          ) : (
+            <div className="mb-[50px] w-auto">
+              <div ref={sizeListItems} className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col lg:gap-x-[1.25%] gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[19%]">
+                {
+                  data?.map((item: any) => {
+                    return (<Products key={item._id} items={item} />)
+                  })
+                }
+              </div>
+              {/* back, next page */}
+              <div className='flex items-center *:mx-8 justify-center mt-[20px] *:duration-300 *:text-lg'>
+                <button ref={backItems} onClick={handlePrevious} className='opacity-50 cursor-drop'>&#10094;</button>
+                <button ref={nextItems} onClick={handleNext} className='hover:scale-[1.3]'>&#10095;</button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
-      {/* products */}
-      <div className="mb-[50px] w-auto">
-        <div ref={sizeListItems} className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col lg:gap-x-[1.25%] gap-x-[2.66%] mb:auto-cols-[48%] xl:auto-rows-[450px] md:auto-cols-[33%] lg:auto-cols-[19%]">
-          {isPending && <span>Loading ...</span>}
-          {
-            data?.map((item: any) => {
-              return (<Products key={item._id} items={item} />)
-            })
-          }
-        </div>
-        {/* back, next page */}
-        <div className='flex items-center *:mx-8 justify-center mt-[20px] *:duration-300 *:text-lg'>
-          <button ref={backItems} onClick={handlePrevious} className='opacity-50 cursor-drop'>&#10094;</button>
-          <button ref={nextItems} onClick={handleNext} className='hover:scale-[1.3]'>&#10095;</button>
-        </div>
-      </div>
+
 
       {/* view all */}
       <div className='hover:scale-105 duration-300'>
