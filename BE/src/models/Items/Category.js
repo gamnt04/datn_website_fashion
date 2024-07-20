@@ -12,8 +12,21 @@ const categorySchema = mongoose.Schema(
     image_category: {
       type: String,
       // required: true,
+      unique: true,
+      // required: true,
       // unique: true,
     },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+    // slug: {
+    //   type: String,
+    //   slug: "name",
+    //   unique: true,
+    // },
     // products: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
