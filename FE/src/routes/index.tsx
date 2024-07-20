@@ -25,8 +25,11 @@ import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/Index";
+import { ToastContainer } from "react-toastify";
 import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
+import EditProduct from "../pages/Admin/Product/EditProduct/index";
+
 import BlogList from "../pages/Admin/Blogs/BlogList";
 import ContactForm from "../pages/Client/Contact/Contact";
 import ListContact from "../pages/Admin/contact/ListContact";
@@ -50,11 +53,17 @@ const RouterComponent = () => {
             <Route path="about-us" element={<AboutUS />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
-            <Route path="shops/detail_product/:id" element={<ProductDetail />} />
+            <Route
+              path="shops/detail_product/:id"
+              element={<ProductDetail />}
+            />
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
-              <Route path="/allorder/order/:id/detail" element={<OrderDetail />} />
+              <Route
+                path="/allorder/order/:id/detail"
+                element={<OrderDetail />}
+              />
               <Route path="/allorder/address" element={<Address />} />
             </Route>
             <Route path="login" element={<Login />} />
@@ -67,10 +76,13 @@ const RouterComponent = () => {
             <Route path="products" element={<ListProduct />} />
             <Route path="product" element={<Page />} />
             <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/edit/:id" element={<UpdateProduct />} />
+            <Route path="products/edit/:id" element={<EditProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
-            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
+            <Route
+              path="/admin/orders/:id/orderDetali"
+              element={<OrdersDetali />}
+            />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="blogs" element={<BlogList />} />
           </Route>
