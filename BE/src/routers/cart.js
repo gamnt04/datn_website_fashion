@@ -1,13 +1,10 @@
 import { Router } from "express";
 import {
-  addItemToCart,
-  decreaseProductQuantity,
   getCartByUserId,
-  increaseProductQuantity,
   removeMultipleProductsFormCart,
   removeProductToCart,
-  updateQuantityProductsInCart
 } from "../controllers/Cart/cart";
+import { addItemToCart, decreaseProductQuantity, increaseProductQuantity, updateQuantityProductsInCart } from "../controllers/Cart/Options";
 
 const Routes_Carts = Router();
 //Lấy danh sách sản phẩm trong giỏ hàng
