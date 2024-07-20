@@ -1,42 +1,22 @@
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
-import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { HeartIcon } from "../../../resources/svg/Icon/Icon";
 
 const Products = ({ items }: any) => {
-  const [user] = useLocalStorage("user", {});
-  const account = user?.user;
-  const { mutate } = Mutation_Cart("ADD");
-
-  if (!items || !items._id) {
-    console.error("Items is undefined or missing _id:", items);
-    return null; // hoặc trả về một giao diện hiển thị lỗi
-  }
-
-  const addCart = (id: string) => {
-    const item = {
-      userId: account,
-      productId: id,
-      quantity: 1
-    };
-    mutate(item);
-  };
-
   return (
     <>
       <div
-        className="w-full text-start flex flex-col justify-between gap-y-6 shadow-md "
+        className="w-full text-start flex flex-col justify-between gap-y-4 border hover:border-black duration-300 rounded"
         key={items?._id}
       >
-        <div className="relative group rounded w-full h-[60%] overflow-hidden bg-[#F6F6F6]">
+        <div className="relative group rounded w-full h-[200px] lg:h-[250px] overflow-hidden bg-[#F6F6F6]">
           <Link
             onClick={ScrollTop}
             to={`/shops/detail_product/${items?._id}`}
             className="h-full cursor-pointer *:drop-shadow"
           >
             <img
-              className="group-hover:scale-105 duration-500 w-full h-full lg:px-8 mb:px-10 lg:py-6 mb:py-6"
+              className="duration-300 w-full h-full mb:px-10 group-hover:scale-105"
               loading="lazy"
               src={items?.image_product}
               alt={items?.name}
@@ -44,21 +24,13 @@ const Products = ({ items }: any) => {
           </Link>
           {/* hover show icon cart */}
           <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-            <>
-              <button
-                onClick={() => addCart(items?._id)}
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-              >
-                <CartIcon />
-              </button>
-              <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
-                <HeartIcon />
-              </button>
-            </>
+            <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
+              <HeartIcon />
+            </button>
           </div>
         </div>
-
-        <div className="flex flex-col justify-between h-[38%] pb-6 px-2">
+        {/* name and price */}
+        <div className="flex flex-col justify-between gap-y-4 lg:gap-y-6 pb-6 px-4 lg:px-6">
           <Link
             onClick={ScrollTop}
             to={`/shops/detail_product/${items?._id}`}
@@ -75,14 +47,6 @@ const Products = ({ items }: any) => {
               currency: "VND"
             })}
           </p>
-          <div className="flex justify-center mt-4 items-center gap-x-4">
-            <Link
-              className="md:block mb:hidden bg-black text-white py-2 px-4 rounded hover:scale-105 duration-300 cursor-pointer"
-              to={""}
-            >
-              Buy Now
-            </Link>
-          </div>
         </div>
 
         {/* <div className="flex justify-center gap-2 mt-4">
