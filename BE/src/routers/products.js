@@ -16,7 +16,7 @@ Routes_Products.post("/products", createProduct);
 Routes_Products.put("/products/:id", updateProductById);
 Routes_Products.get("/products/trash", getTrash);
 Routes_Products.delete("/products/:id", deleteProductById);
-Routes_Products.delete("/products/permanent/:id", destroy_delete);
-Routes_Products.patch("/products/:id", restore_item);
+Routes_Products.delete("/products/destroy/:id", destroy_delete);
+Routes_Products.patch("/products/recycle/:id", restore_item);
 
 export default Routes_Products;
