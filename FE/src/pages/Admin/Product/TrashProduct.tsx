@@ -30,18 +30,22 @@ const TrashProduct = () => {
   };
 
   const handleDeletePermanently = async (id: any) => {
-    try {
-      await deleteProduct(id);
-      fetchDeletedProducts(); // Refresh the list after deletion
-    } catch (error) {
-      console.error("Lỗi khi xóa sản phẩm vĩnh viễn:", error);
+    if (window.confirm("Bạn chắc chắn muốn xóa vĩnh viễn sản phẩm này")) {
+      try {
+        await deleteProduct(id);
+        alert("Xóa thành công");
+        fetchDeletedProducts();
+      } catch (error) {
+        alert("Xóa thất bại");
+        console.error("Lỗi khi xóa sản phẩm vĩnh viễn:", error);
+      }
     }
   };
 
   const handleRestore = async (id: any) => {
     try {
       await restoreProduct(id);
-      fetchDeletedProducts(); // Refresh the list after restoration
+      fetchDeletedProducts();
     } catch (error) {
       console.error("Lỗi khi khôi phục sản phẩm:", error);
     }
@@ -68,28 +72,29 @@ const TrashProduct = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
                       STT
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
                       Ảnh sản phẩm
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
                       Tên sản phẩm
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
                       Giá sản phẩm
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
-                      Miêu tả
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
+                      Số lượng trong kho
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
+
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
                       Ngày tạo
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
-                      Ngày xóa
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
+                      Ngày chỉnh sửa
                     </th>
-                    <th className="px-4 py-3 text-sm font-normal text-left text-gray-500">
+                    <th className="px-4 py-3 text-sm font-semibold text-black">
                       Thao tác
                     </th>
                   </tr>

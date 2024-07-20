@@ -11,7 +11,7 @@ const categorySchema = mongoose.Schema(
     },
     image_category: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
     },
     products: [
@@ -20,11 +20,11 @@ const categorySchema = mongoose.Schema(
         ref: "Product",
       },
     ],
-    slug: {
-      type: String,
-      slug: "name",
-      unique: true,
-    },
+    // slug: {
+    //   type: String,
+    //   slug: "name",
+    //   unique: true,
+    // },
   },
 
   {

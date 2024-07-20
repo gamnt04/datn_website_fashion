@@ -6,9 +6,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { X } from "lucide-react";
-import CreateComponent from "./AddProduct";
+import UpdateComponent from "./EditProduct";
 
-export default function AddProduct() {
+export default function EditProduct() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -22,16 +22,14 @@ export default function AddProduct() {
   return (
     <div>
       <Button
-        variant="contained"
-        color="primary"
-        sx={{ minWidth: "auto", padding: "10px 20px", textTransform: "none" }}
+        sx={{ color: "inherit", padding: 0, minWidth: "auto" }}
         onClick={handleClickOpen}
       >
-        + Thêm sản phẩm
+        Sửa
       </Button>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <div className="text-center">Thêm Sản phẩm</div>
+          <div className="text-center">Sửa sản phẩm</div>
           <div
             className="absolute top-0 right-0 cursor-pointer"
             onClick={handleClose}
@@ -41,7 +39,7 @@ export default function AddProduct() {
         </DialogTitle>
         <DialogContent>
           <Box className="p-5">
-            <CreateComponent />
+            <UpdateComponent />
           </Box>
         </DialogContent>
         <DialogActions>
