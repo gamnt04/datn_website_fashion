@@ -174,7 +174,7 @@ const Header = () => {
             </form>
             {/* cart */}
             <div className="group *:duration-300 relative py-1">
-              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">{data?.products.length}</span>
+              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
               {/* {account ? '/cart' : (
                 <div onClick={() => onlogin()} className="relative">
                   <CartIcon />

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./dow";
@@ -6,25 +7,26 @@ import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
-import { useState } from "react";
-import { Button, Checkbox, Input, message, Popconfirm, Table, TableProps } from "antd"
-import { DeleteOutlined } from "@ant-design/icons";
+import { Checkbox, Input, message, Popconfirm, Table, TableProps, Spin } from "antd";
+import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
+
 interface DataType {
   key: string;
   name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  price: number;
+  quantity: number;
+  totalPrice: number;
 }
+
 const ListCart = () => {
   const [messageApi, contextHolder] = message.useMessage();
-
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const { data, isPending, isError, calculateTotal, calculateTotalProduct } = List_Cart(userId);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
+  const { calcuateTotal: calcTotal } = Pay_Mutation();
   const remove_item = (id: any) => {
     const data_item = {
       userId: userId,
@@ -34,54 +36,50 @@ const ListCart = () => {
     messageApi.open({
       type: "success",
       content: "Xóa thành công",
-    })
-
+    });
   };
+
   const handleRemoveMultiple = () => {
     const product_item = {
       userId: userId,
-      productIds: selectedProductIds
+      productIds: selectedProductIds,
     };
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
       content: "Xóa thành công",
-    })
-
+    });
   };
+
   const handleCheckboxChange = (productId: string) => {
     if (selectedProductIds.includes(productId)) {
-      setSelectedProductIds(
-        selectedProductIds.filter((id) => id !== productId)
-      );
+      setSelectedProductIds(selectedProductIds.filter((id) => id !== productId));
     } else {
       setSelectedProductIds([...selectedProductIds, productId]);
     }
   };
+
   const dataSort = data?.products?.map((product: any) => ({
     key: product?.productId,
-    ...product
-  }))
+    ...product,
+  }));
+
   const columns: TableProps<DataType>['columns'] = [
     {
       key: "checkbox",
       dataIndex: "checkbox",
       render: (_: any, product: any) => {
         return (
-          <Checkbox onChange={() =>
-            handleCheckboxChange(product?.productId)
-          }></Checkbox>
-        )
-      }
+          <Checkbox onChange={() => handleCheckboxChange(product?.productId)}></Checkbox>
+        );
+      },
     },
     {
       key: "image",
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <>
-          <img src={product?.image} className="w-[100px] h-[80px] object-cover" alt="" />
-        </>
-      }
+        return <img src={product?.image} className="w-[100px] h-[80px] object-cover" alt="" />;
+      },
     },
     {
       title: 'Sản phẩm',
@@ -93,64 +91,68 @@ const ListCart = () => {
       dataIndex: 'price',
       key: 'price',
       render: (_: any, product: any) => {
-        return <div>
-          {product?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-        </div>
-      }
+        return <div>{product?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+      },
     },
     {
       key: "quantity",
       title: "Số lượng",
       dataIndex: "quantity",
       render: (_: any, product: any) => {
-        return <div className="flex space-x-2">
-          <Dow_btn
-            dataProps={{
-              id_item: product?.productId,
-              quantity_item: product?.quantity,
-            }}
-          />
-          <Input value={product?.quantity} className="w-[40px] text-center" />
-          <Up_btn dataProps={product?.productId} />
-        </div>
-      }
+        return (
+          <div className="flex space-x-2">
+            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity }} />
+            <Input value={product?.quantity} className="w-[40px] text-center" />
+            <Up_btn dataProps={product?.productId} />
+          </div>
+        );
+      },
     },
     {
       title: 'Tổng tiền',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
       render: (_: any, product: any) => {
-        return <div>
-          {(product?.price * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-        </div>
-      }
+        return <div>{(product?.price * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+      },
     },
     {
       key: "action",
       dataIndex: "action",
       render: (_: any, product: any) => {
-        return <div className="flex justify-center space-x-2">
-          <Popconfirm
-            title="Xóa sản phẩm khỏi giỏ hàng?"
-            description="Bạn có chắc chắn muốn xóa không?"
-            onConfirm={() => remove_item(product?.productId)}
-            // onCancel={cancel}
-            okText="Có"
-            cancelText="Không"
-          >
-            <DeleteOutlined style={{ fontSize: '24px' }} />
-          </Popconfirm>
-
-        </div>
-      }
+        return (
+          <div className="flex justify-center space-x-2">
+            <Popconfirm
+              title="Xóa sản phẩm khỏi giỏ hàng?"
+              description="Bạn có chắc chắn muốn xóa không?"
+              onConfirm={() => remove_item(product?.productId)}
+              okText="Có"
+              cancelText="Không"
+            >
+              <DeleteOutlined style={{ fontSize: '24px' }} />
+            </Popconfirm>
+          </div>
+        );
+      },
     },
-
   ];
-  const { calcuateTotal } = Pay_Mutation();
-  if (isPending) return <p>Loading...</p>;
-  if (isError) return <p>Error...</p>;
+
+
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <p>Error...</p>;
+  }
+
   return (
-    <div className="w-[95%] mx-[2.5%] mt-[110px]">
+    <div className="w-[95%] mx-[2.5%] mt-[70px]">
       {contextHolder}
       <div className="flex items-center border bg-gray-100 h-20 p-4">
         <ul className="flex gap-2">
@@ -164,15 +166,10 @@ const ListCart = () => {
         </ul>
       </div>
       <>
-        {!data?.products || data?.products.length === 0 ? (
+        {data?.products?.length === 0 ? (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-            <div className="w-full h-[200px] flex flex-col justify-center items-center">
-              <img
-                src="../../src/assets/Images/Products/no_products.png"
-                className="w-44 h-40"
-                alt=""
-              />
-              <p>Chưa có sản phẩm nào</p>
+            <div className="flex justify-center items-center h-screen">
+              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
             </div>
           </div>
         ) : (
@@ -182,13 +179,11 @@ const ListCart = () => {
                 title="Xóa sản phẩm khỏi giỏ hàng?"
                 description="Bạn có chắc chắn muốn xóa không?"
                 onConfirm={() => handleRemoveMultiple()}
-                // onCancel={cancel}
                 okText="Có"
                 cancelText="Không"
               >
                 <DeleteOutlined style={{ fontSize: '24px' }} />
               </Popconfirm>
-              {/* <Button onClick={handleRemoveMultiple} danger> Xóa tất cả</Button> */}
               <Table columns={columns} dataSource={dataSort} />
             </div>
 
@@ -197,7 +192,7 @@ const ListCart = () => {
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
                   <p className="font-bold text-xl text-yellow-500">
-                    {calcuateTotal().toLocaleString("vi", {
+                    {calcTotal().toLocaleString("vi", {
                       style: "currency",
                       currency: "VND"
                     })}
@@ -210,11 +205,7 @@ const ListCart = () => {
                 <div className="flex flex-col border-y py-5 my-5">
                   <span className="text-xs mb-2">Nhập mã giảm giá</span>
                   <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                    <input
-                      className="px-4 outline-none"
-                      type="text"
-                      placeholder="Enter Code"
-                    />
+                    <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
                     <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
                       Apply
                     </button>
@@ -234,17 +225,12 @@ const ListCart = () => {
                     Tiến hành thanh toán
                   </button>
                 </Link>
-
               </div>
             </div>
           </div>
         )}
       </>
-      {/* check account */}
-      {/* <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-        <span>Please log in to your account</span>
-      </div> */}
-    </div >
+    </div>
   );
 };
 
