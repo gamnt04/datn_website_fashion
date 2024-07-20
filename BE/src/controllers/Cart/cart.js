@@ -7,8 +7,8 @@ export const getCartByUserId = async (req, res) => {
     const cart = await Cart.findOne({ userId }).populate("products.productId");
     if (!cart) {
       return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Cart not found" });
+        .status(StatusCodes.OK)
+        .json([]);
     }
     const dataCart = {
       products: cart.products.map((item) => ({
@@ -112,7 +112,7 @@ export const updateQuantityProductsInCart = async (req, res) => {
     product.quantity = quantity;
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
-  } catch (error) {}
+  } catch (error) { }
 };
 export const increaseProductQuantity = async (req, res) => {
   const { userId, productId } = req.body;
