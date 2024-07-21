@@ -131,8 +131,8 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
             </div>
           </div>
         </div>
-        <div className=" flex justify-center">
-          <button className=" bg-blue-600 py-2 px-4 rounded-lg text-white mt-5 items-center">
+        <div className="flex justify-center ">
+          <button className="items-center px-4 py-2 mt-5 text-white bg-blue-600 rounded-lg ">
             Xác nhận
           </button>
         </div>
