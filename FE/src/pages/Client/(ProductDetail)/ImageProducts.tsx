@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
 interface ImageProductProp {
   product: IProduct;
 }
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   const { image_product, gallery_product } = product;
+  const [currentImage, setCurrentImage] = useState(image_product);
+
   return (
     <div className="w-full h-full lg:mt-0 mt-4">
       <div className="w-full flex flex-col lg:items-center lg:gap-y-6 gap-y-3.5">
         <div className="handle_show_Image width={100} height={100}_product relative cursor-pointer w-full lg:h-[520px] mb:h-[342px] bg-white overflow-hidden grid place-items-center rounded-xl">
           <img
-            src={image_product}
+            src={currentImage}
             alt="Product"
             className="w-full h-full rounded"
           />
@@ -32,15 +34,18 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
           </div>
         </div>
         <div className="lg:w-16 lg:h-16 mb:w-14 mb:h-14 p-2 bg-[#F4F4F4] rounded-lg duration-300 cursor-pointer flex items-center gap-x-4">
-          {gallery_product?.map((gallery, index) => (
-            <button key={index} className="hover:scale-110">
+          {gallery_product && gallery_product.length > 0 ? (
+            gallery_product?.map((gallery: any, index: number) => (
               <img
                 src={gallery}
                 alt={`Gallery ${index}`}
-                className="bg-gray-100 p-2"
+                className="w-16 h-16 bg-gray-100 p-2 rounded-lg"
+                onClick={() => setCurrentImage(gallery)}
               />
-            </button>
-          ))}
+            ))
+          ) : (
+            <div className="">Images No Found</div>
+          )}
         </div>
       </div>
     </div>
