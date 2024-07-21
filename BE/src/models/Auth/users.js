@@ -39,14 +39,15 @@ const userSchema = new Schema(
 
     avatar: {
       type: String,
+      default: "https://vectorified.com/images/default-avatar-icon-12.png"
     },
 
-      birthDate: {
-    type: Date,
-    get: function(value) {
-      return value ? value.toISOString().split('T')[0] : undefined;
+    birthDate: {
+      type: Date,
+      get: function (value) {
+        return value ? value.toISOString().split('T')[0] : undefined;
+      },
     },
-  },
   },
   { timestamps: true, versionKey: false }
 );
