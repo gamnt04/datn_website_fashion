@@ -1,6 +1,6 @@
-import Get_in_touch from "../(Home)/[Get_in_touch]";
-import MenuShop from "./[MenuShop]";
-import Products_Shop from "./[Products]";
+import Get_in_touch from "../(Home)/Get_in_touch";
+import MenuShop from "./MenuShop";
+import Products_Shop from "./Products";
 
 const IndexShops = () => {
   return (

@@ -3,11 +3,7 @@ import Products from "../../models/Items/Products";
 
 export async function restore_item(req, res) {
   try {
-    const product = await Products.findByIdAndUpdate(
-      req.params.id,
-      { deletedAt: null },
-      { new: true }
-    );
+    const product = await Products.restore({_id : req.params.id});
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
