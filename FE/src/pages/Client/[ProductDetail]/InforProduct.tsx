@@ -26,13 +26,16 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     const item = {
       userId: account,
       productId: id,
-      quantity: 1,
+      quantity: quantity_item,
+      color: color,
+      size: size,
     };
+    console.log(item);
     mutate(item);
   };
   useEffect(() => {
     if (!dataAttr) {
-      setQuantity_attr(stock);
+      setQuantity_attr(stock)
     }
   }, [dataAttr]);
 
@@ -42,10 +45,11 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         setColor(item);
         for (let i of dataAttr?.values) {
           for (let k of i.size) {
-            if (!k?.name_size || k?.name_size == "") {
+            if (!k?.name_size || k?.name_size == '') {
               i?.color == item && setQuantity_attr(k?.stock_attribute);
-            } else {
-              setArr_Size(i?.size);
+            }
+            else {
+              setArr_Size(i?.size)
             }
           }
         }
@@ -76,6 +80,22 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           alert("Vượt quá số lượng sản phẩm!");
         }
         return;
+    }
+  }
+  function handle_quantity_item(action : any) {
+    switch (action) {
+      case 'dow':
+        if (quantity_item > 1) {
+          setQuantity_item(quantity_item - 1)
+        }
+        return
+      case 'up':
+        if (quantity_item < quantity_attr) {
+          setQuantity_item(quantity_item + 1)
+        } else {
+          alert('Vượt quá số lượng sản phẩm!')
+        }
+        return
     }
   }
 
@@ -148,10 +168,10 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                     </button>
                   ))}
                 </div>
-              </div>
-            )}
-          </>
-        )}
+              )
+            }
+          </>)
+        }
         {/* row 5 */}
         <div className="py-5 *:w-full rounded-xl lg:-mt-5 -mt-1">
           {/* quantity */}
@@ -159,14 +179,12 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             {/* up , dow quantity */}
             <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
-                <button onClick={() => handle_quantity_item("dow")}>
+
+                <button onClick={() => handle_quantity_item('dow')}>
                   <Dow />
                 </button>
-                <input
-                  className="bg-[#F4F4F4] text-center rounded"
-                  value={quantity_item}
-                />
-                <button onClick={() => handle_quantity_item("up")}>
+                <input className="bg-[#F4F4F4] text-center rounded" value={quantity_item} />
+                <button onClick={() => handle_quantity_item('up')}>
                   <Up />
                 </button>
               </div>
@@ -177,7 +195,9 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </div>
           <div className="flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
-            <span className="text-[#EB2606]">242.00 đ</span>
+            <span className="text-[#EB2606]">
+              242.00 đ
+            </span>
           </div>
 
           <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300">

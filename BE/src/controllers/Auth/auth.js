@@ -39,58 +39,137 @@ export const GetAuthById = async (req, res) => {
       .json({ error: "MongoDB Query Error" });
   }
 };
-export const signup = async (req, res) => {
-  const { email, password, confirmPassword, userName } = req.body;
-  const { error } = signupSchema.validate(req.body, { abortEarly: false });
-  console.log(error);
-  if (error) {
-    const messages = error.details.map((item) => item.message);
-    zzz;
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      messages,
-    });
-  }
-  const existUser = await User.findOne({ email });
-  if (existUser) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Email đã tồn tại"],
-    });
-  }
-  const hashedPassword = await bcryptjs.hash(password, 12);
-  const role = (await User.countDocuments({})) === 0 ? "admin" : "user";
-  const user = await User.create({
-    ...req.body,
-    password: hashedPassword,
-    role,
-  });
-  return res.status(StatusCodes.CREATED).json({
-    user,
-  });
-};
 
-export const signin = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      messages: ["Email không tồn tại"],
+
+const generateRefreshToken = (userId) => {
+    return jwt.sign({ userId }, "123456", { expiresIn: "7d" });
+};
+const generateAccessToken = (userId) => {
+    return jwt.sign({ userId }, "123456", { expiresIn: "15m" });
+};
+export const signup = async (req, res) => {
+    const { email, password } = req.body;
+    const { error } = signupSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+        const messages = error.details.map((item) => item.message);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            messages,
+        });
+    }
+
+    const existUser = await User.findOne({ email });
+    if (existUser) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            messages: ["Email đã tồn tại"],
+        });
+    }
+    // Mã hóa mật khẩu
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    // Nếu không có user nào trong hệ thống thì tạo user đầu tiên là admin
+    const role = (await User.countDocuments({})) === 0 ? "admin" : "user";
+
+    const user = await User.create({
+        ...req.body,
+        password: hashedPassword,
+        role,
     });
-  }
-  const isMatch = await bcryptjs.compare(password, user.password);
+    return res.status(StatusCodes.CREATED).json({message: "Đăng ký tài khoản thành công",
+        user,
+    });
+};
+export const signin = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        // user = { _id: , name: , xxx}
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+                messages: ["Email không tồn tại"],
+            });
+        }  
+        const isMatch = await bcryptjs.compare(password, user.password);
   if (!isMatch) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       messages: ["Mật khẩu không chính xác"],
     });
   }
-  const token = jwt.sign({ userId: user._id }, "123456", {
+    const token = jwt.sign({ userId: user._id }, "123456", {
     expiresIn: "7d",
   });
-  return res.status(StatusCodes.OK).json({
-    user,
+            // const accessToken = generateAccessToken(user._id);
+            // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
+
+            return res.status(StatusCodes.OK).json({message: "Đăng nhập thành công",
+                user,
     token,
-  });
+            });
+        } catch (error) {
+        console.error(`Error finding user with email ${email}:`, error);
+    }
+};
+export const logout = async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        if (!token) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: "No token provided" });
+        }
+        // Lưu token vào danh sách đen (blacklist) để ngăn không cho token đó được sử dụng nữa
+        const blacklistedToken = new BlacklistedToken({ token });
+        await blacklistedToken.save();
+
+        // Gửi phản hồi thành công
+        res.status(StatusCodes.OK).json({ message: "Đăng xuất thành công" });
+    } catch (error) {
+        console.error(`Error during logout:`, error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
+    }
 };
 
+// be/src/controllers/auth.js
+export const refreshToken = async (req, res) => {
+    try {
+        const oldToken = req.headers.authorization;
+        if (!oldToken) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: "No token provided" });
+        }
+
+        // Kiểm tra token có trong blacklist
+        const isBlacklisted = await isTokenBlacklisted(oldToken);
+        if (isBlacklisted) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Token is blacklisted" });
+        }
+
+        // Giải mã oldToken để lấy userId
+        let decoded;
+        try {
+            decoded = jwt.verify(oldToken, "123456"); // Sử dụng cùng secret key như khi tạo token
+        } catch (error) {
+            if (error.name === "TokenExpiredError") {
+                return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Token expired" });
+            } else {
+                return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Invalid token" });
+            }
+        }
+
+        const userId = decoded.userId;
+        if (!userId) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid token payload" });
+        }
+
+        // Tạo refreshToken mới
+        const newToken = generateRefreshToken(userId);
+
+        // Trả về refreshToken mới cho client
+        res.status(StatusCodes.OK).json({ newToken });
+    } catch (error) {
+        console.error(`Error during token refresh:`, error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
+    }
+};
+export const isTokenBlacklisted = async (token) => {
+    const tokenInBlacklist = await BlacklistedToken.findOne({ token });
+    return !!tokenInBlacklist;
+};
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
@@ -246,26 +325,3 @@ export const updateUser = async (req, res) => {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
-
-// export const updateUserAvatar = async (req, res) => {
-//   const userId = req.params.userId;
-//   const { avatar } = req.body; // Nhận dữ liệu avatar dưới dạng base64 từ client
-
-//   try {
-//     // Cập nhật avatar của user
-//     const user = await User.findByIdAndUpdate(
-//       userId,
-//       { avatar },
-//       { new: true }
-//     );
-// console.log(user);
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     res.json({ avatar: user.avatar }); // Trả về avatar đã cập nhật thành công
-//   } catch (error) {
-//     console.error('Error updating avatar:', error);
-//     res.status(500).json({ message: 'Failed to update avatar' });
-//   }
-// };
