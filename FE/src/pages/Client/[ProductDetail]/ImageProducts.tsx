@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
+import { set } from "lodash";
+
 interface ImageProductProp {
   product: IProduct;
 }
+
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   const { image_product, gallery_product } = product;
+  const [currentImage, setCurrentImage] = useState(image_product);
+
   return (
     <div className="w-full h-full lg:mt-0 mt-4">
       <div className="w-full flex flex-col lg:items-center lg:gap-y-6 gap-y-3.5">
-        <div className="handle_show_Image width={100} height={100}_product relative cursor-pointer w-full lg:h-[520px] mb:h-[342px] bg-white overflow-hidden grid place-items-center rounded-xl">
+        <div className="relative cursor-pointer w-full lg:h-[520px] mb:h-[342px] bg-white overflow-hidden grid place-items-center rounded-xl">
           <img
-            src={image_product}
+            src={currentImage}
             alt="Product"
             className="w-full h-full rounded"
           />
@@ -31,14 +36,24 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
             </svg>
           </div>
         </div>
-        <div className="*:lg:w-16 *:lg:h-16 mb:w-14 mb:h-14 p-2 *:border rounded-lg duration-300 cursor-pointer flex items-center gap-x-4">
-          {gallery_product?.map((gallery, index) => (
-              <img
-                src={gallery}
-                alt={`Gallery ${index}`}
-                className="bg-gray-100 hover:border-black"
-              />
-          ))}
+        <div className="flex gap-4 mt-4">
+          {gallery_product && gallery_product.length > 0 ? (
+            gallery_product.map((gallery, index) => (
+              <button
+                key={index}
+                className="hover:scale-110"
+                onClick={() => setCurrentImage(gallery)}
+              >
+                <img
+                  src={gallery}
+                  alt={`Gallery ${index}`}
+                  className="w-16 h-16 bg-gray-100 p-2 rounded-lg"
+                />
+              </button>
+            ))
+          ) : (
+            <p>No gallery images available.</p>
+          )}
         </div>
       </div>
     </div>
