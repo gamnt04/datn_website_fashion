@@ -7,7 +7,8 @@ import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 
 const Header = () => {
   const navigate = useNavigate();
-  const [checkacc, setCheck_acc] = useState(true)
+  const ref_user = useRef<HTMLAnchorElement>(null);
+  const ref_login = useRef<HTMLAnchorElement>(null);
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
   // const { calculateTotalProduct } = useCart();
@@ -34,14 +35,25 @@ const Header = () => {
       });
   }, []);
   useEffect(() => {
-    function check_local() {
-      setCheck_acc(false)
+    function change_local() {
+      if (account) {
+        ref_login.current?.classList.add('hidden');
+        ref_login.current?.classList.remove('block');
+        ref_user.current?.classList.add('block');
+        ref_user.current?.classList.remove('hidden');
+      } else {
+        ref_login.current?.classList.add('block');
+        ref_login.current?.classList.remove('hidden');
+        ref_user.current?.classList.add('hidden');
+        ref_user.current?.classList.remove('block');
+      }
     }
-    window.addEventListener('storage', check_local);
+    change_local();
+    window.addEventListener('storage', change_local);
     return () => {
-      window.removeEventListener('storage', check_local);
+      window.removeEventListener('storage', change_local);
     }
-  }, [])
+  }, [account])
   // toogle menu mobile
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
@@ -177,16 +189,15 @@ const Header = () => {
 
             {/* option / menu */}
             <div className="cursor-pointer hover:scale-105 duration-300">
-              {checkacc && <Link to={'/allorder'}>
+              <Link ref={ref_user} to={'/allorder'}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-check"><path d="M2 21a8 8 0 0 1 13.292-6" /><circle cx="10" cy="8" r="5" /><path d="m16 19 2 2 4-4" /></svg>
-              </Link>}
-              {account &&
-                <Link
-                  to={"/login"}
-                  className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
-                >
-                  Login
-                </Link>}
+              </Link>
+              <Link ref={ref_login}
+                to={"/login"}
+                className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
+              >
+                Login
+              </Link>
             </div>
           </nav>
         </header>
