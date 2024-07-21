@@ -5,8 +5,12 @@ interface ImageProductProp {
 }
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   const { image_product, gallery_product } = product;
+<<<<<<< HEAD:FE/src/pages/Client/(ProductDetail)/ImageProducts.tsx
   const [currentImage, setCurrentImage] = useState(image_product);
 
+=======
+  console.log(gallery_product);
+>>>>>>> main:FE/src/pages/Client/[ProductDetail]/ImageProducts.tsx
   return (
     <div className="w-full h-full lg:mt-0 mt-4">
       <div className="w-full flex flex-col lg:items-center lg:gap-y-6 gap-y-3.5">
@@ -33,6 +37,7 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
             </svg>
           </div>
         </div>
+<<<<<<< HEAD:FE/src/pages/Client/(ProductDetail)/ImageProducts.tsx
         <div className="lg:w-16 lg:h-16 mb:w-14 mb:h-14 p-2 bg-[#F4F4F4] rounded-lg duration-300 cursor-pointer flex items-center gap-x-4">
           {gallery_product && gallery_product.length > 0 ? (
             gallery_product?.map((gallery: any, index: number) => (
@@ -46,6 +51,16 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
           ) : (
             <div className="">Images No Found</div>
           )}
+=======
+        <div className="*:lg:w-16 *:lg:h-16 mb:w-14 mb:h-14 p-2 *:border rounded-lg duration-300 cursor-pointer flex items-center gap-x-4">
+          {gallery_product?.map((gallery, index) => (
+              <img
+                src={gallery}
+                alt={`Gallery ${index}`}
+                className="bg-gray-100 hover:border-black"
+              />
+          ))}
+>>>>>>> main:FE/src/pages/Client/[ProductDetail]/ImageProducts.tsx
         </div>
       </div>
     </div>

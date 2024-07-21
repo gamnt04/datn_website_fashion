@@ -26,17 +26,9 @@ export const validate_items = Joi.object({
     "string.min": "Mô tả tối thiểu là 6 kí tự!",
     "string.max": "Mô tả tối đa 5000 kí tự!",
   }),
-  quantity_product: Joi.number().min(1).required().messages({
-    "any.required": "Số lượng sản phẩm là bắt buộc!",
-    "number.min": "Số lượng sản phẩm ít nhất là 1!",
-    "number.empty": "Số lượng sản phẩm không được để trống!",
-  }),
-  countInStock_product: Joi.number().min(1).required().messages({
-    "any.required": "Số lượng trong kho là bắt buộc!",
-    "number.min": "Số lượng trong kho ít nhất là 1!",
-    "number.empty": "Số lượng trong kho không được để khoảng trống!",
-  }),
   category_id: Joi.string(),
+  attributes: Joi.optional(),
+  stock : Joi.optional(),
   featured_product: Joi.boolean(),
   tag_product: Joi.string(),
 });

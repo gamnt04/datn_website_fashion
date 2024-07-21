@@ -3,6 +3,10 @@ import {
   get_detail_items,
   get_items_client
 } from "../../../_lib/Items/Products";
+<<<<<<< HEAD
+=======
+// import { reduce } from "lodash";
+>>>>>>> main
 
 export const Query_Products = (id?: string | number, page?: number) => {
   const key = id ? ["Product_Key", id] : ["Product_Key"];
@@ -11,7 +15,13 @@ export const Query_Products = (id?: string | number, page?: number) => {
     queryFn: async () => {
       return id ? get_detail_items(id) : get_items_client(page);
     }
+<<<<<<< HEAD
   });
 
   return { data, ...rest };
+=======
+  })
+  console.log(data);
+  return { data, ...rest }
+>>>>>>> main
 };

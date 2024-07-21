@@ -1,10 +1,10 @@
-import Banner from "./[Banner]";
-import Trending_Products from "./[Trending]";
-import Fres from "./[Fres]";
-import Outstanding from "./[Outstanding]";
-import Ourblog from "./[Ourblog]";
-import Brand from "./[Brand]";
-import Get_in_touch from "./[Get_in_touch]";
+import Banner from "./Banner";
+import Trending_Products from "./Trending";
+import Fres from "./Fres";
+import Outstanding from "./Outstanding";
+import Ourblog from "./Ourblog";
+import Brand from "./Brand";
+import Get_in_touch from "./Get_in_touch";
 
 
 const IndexHome = () => {
