@@ -18,28 +18,16 @@ export const SearchIcon = () => (
 );
 
 export const CartIcon = () => (
-  <svg
-    className="icon icon-cart-empty"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlnsXlink="http://www.w3.org/1999/xlink"
-    version="1.1"
-    id="Layer_1"
-    x="0px"
-    y="0px"
-    viewBox="0 0 86.8 77.5"
-    style={{ width: "20px", height: "20px", fill: "#222222" }}
-    xmlSpace="preserve"
-  >
-    <path d="M68.7,77.5c-5.6,0-10.1-4.5-10.1-10.1s4.5-10.1,10.1-10.1s10.2,4.5,10.2,10.1C78.9,73,74.3,77.5,68.7,77.5z M68.7,62.6  c-2.6,0-4.7,2.2-4.7,4.8c0,2.6,2.2,4.7,4.8,4.7s4.7-2.2,4.7-4.8C73.5,64.8,71.3,62.6,68.7,62.6z"></path>
-    <polygon points="23.4,51.5 12.4,5.4 0,5.4 0,0 16.7,0 27.8,46.1 73.4,46.1 80,19.9 48,19.9 48,14.5 86.8,14.5 77.7,51.5 "></polygon>
-    <path d="M29.9,77.5c-5.5,0-10.1-4.7-10.1-10.2S24.5,57.2,30,57.2c5.6,0,10.1,4.6,10.1,10.2C40,73,35.4,77.5,29.9,77.5z M29.9,62.6  c-2.6,0-4.7,2.2-4.7,4.8c0,2.5,2.2,4.7,4.7,4.7c2.6,0,4.7-2.2,4.7-4.8C34.6,64.8,32.4,62.6,29.9,62.6z"></path>
-  </svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-bag">
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/>
+  <path d="M16 10a4 4 0 0 1-8 0"/></svg>
 );
 export const TrashIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width="20"
+    height="20"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
