@@ -30,6 +30,7 @@ import ListContact from "../pages/Admin/contact/ListContact";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
+import List_Category from "../pages/Admin/Category/List_Category";
 const RouterComponent = () => {
   return (
     <>
@@ -68,6 +69,7 @@ const RouterComponent = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
+            <Route path="/admin/test" element={<List_Category />} />
             <Route path="products" element={<ListProduct />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} />

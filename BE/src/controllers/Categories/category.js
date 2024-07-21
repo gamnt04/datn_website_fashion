@@ -115,20 +115,11 @@ export const update = async (req, res) => {
         message: errors,
       });
     }
-
-    // Kiểm tra trùng lặp trước khi cập nhật
-    const existingCategory = await Category.findOne({
-      image_category: req.body.image_category,
-    });
-    if (existingCategory && existingCategory._id.toString() !== req.params.id) {
-      return res.status(400).json({
-        message: "Image category already exists",
-      });
-    }
-
-    const data = await Category.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const data = await Category.findByIdAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
     if (!data) {
       throw new Error(`Failed to update category`);
     }
@@ -136,12 +127,13 @@ export const update = async (req, res) => {
       data,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.json({
       name: error.name,
       message: error.message,
     });
   }
 };
+
 export const remove = async (req, res) => {
   try {
     const data = await Category.findByIdAndDelete({ _id: req.params.id });

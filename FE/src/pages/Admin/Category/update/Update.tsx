@@ -24,10 +24,11 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
+      name_category: "",
       image_category: "",
     },
   });
+
   const mutation = useMutation({
     mutationFn: async (category: ICategory) => {
       const { data } = await update(category);
@@ -43,6 +44,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       setErrorMessage(error.message || "Đã có lỗi xảy ra");
     },
   });
+
   useEffect(() => {
     const findDataById = data.find((data: ICategory) => data._id === id);
     if (!findDataById) return;
@@ -51,15 +53,16 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
 
   const onSubmit = async (formData: ICategory) => {
     try {
-      let imageUrl = formData.image_category;
+      let imageUrl = formData.image_category; // giữ nguyên URL nếu không thay đổi
 
+      // Kiểm tra nếu có tệp tin mới được chọn
       if (
         formData.image_category &&
         formData.image_category[0] instanceof File
       ) {
         const file = formData.image_category[0];
-        const uploadedUrls = await uploadImage(file);
-        imageUrl = uploadedUrls[0];
+        const uploadedUrls = await uploadImage(file); // tải lên ảnh mới
+        imageUrl = uploadedUrls[0]; // lấy URL của ảnh mới
       }
 
       const updatedCategory = {
@@ -106,11 +109,13 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
                     <Input
                       type="text"
                       placeholder="Nhập tên danh mục..."
-                      {...register("name", { required: true })}
+                      {...register("name_category", { required: true })}
                     />
                   </div>
                   <p>
-                    {errors.name && <span>Vui lòng không được để trống</span>}
+                    {errors.name_category && (
+                      <span>Vui lòng không được để trống</span>
+                    )}
                   </p>
                 </div>
                 <div className="mt-2">
@@ -131,8 +136,8 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center ">
-          <button className="items-center px-4 py-2 mt-5 text-white bg-blue-600 rounded-lg ">
+        <div className=" flex justify-center">
+          <button className=" bg-blue-600 py-2 px-4 rounded-lg text-white mt-5 items-center">
             Xác nhận
           </button>
         </div>

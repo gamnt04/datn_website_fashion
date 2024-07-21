@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 const useSignIn = (userId: string) => {
   const navigate = useNavigate();
-  const [, setUser] = useLocalStorage("user", {});
   const queryClient = useQueryClient()
- 
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (formData: { email: string; password: string }) => {
@@ -15,14 +13,14 @@ const useSignIn = (userId: string) => {
       return data;
     },
     onSuccess: () => {
-      toast.success("Đăng nhập thành công!");
+      toast.success("Đăng nhập thành công!", {autoClose : 500});
       navigate("/");
       queryClient.invalidateQueries({
         queryKey: ["AUTH_KEY", userId]
       })
     },
     onError: (error) => {
-      toast.error("Đăng nhập thất bại!");
+      toast.error("Đăng nhập thất bại!", {autoClose : 500});
       return error;
     }
   });

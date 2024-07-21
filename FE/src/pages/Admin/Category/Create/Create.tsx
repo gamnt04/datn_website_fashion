@@ -74,7 +74,7 @@ const CreateComponent = () => {
                       <Input
                         type="text"
                         placeholder="Nhập tên danh mục..."
-                        {...register("name", { required: true })}
+                        {...register("name_category", { required: true })}
                       />
                     </div>
                   </div>
@@ -93,7 +93,9 @@ const CreateComponent = () => {
                     </div>
                   </div>
                   <p>
-                    {errors.name && <span>Vui lòng không được để trống</span>}
+                    {errors.image_category && (
+                      <span>Vui lòng không được để trống</span>
+                    )}
                   </p>
                   <p>
                     {errors.image_category && (
