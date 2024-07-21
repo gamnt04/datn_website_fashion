@@ -166,69 +166,62 @@ const ListCart = () => {
         </ul>
       </div>
       <>
-        {data?.products?.length === 0 ? (
-          <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-            <div className="flex justify-center items-center h-screen">
-              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
-            </div>
+        <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
+          <div className="md:w-[70%] mb:w-full w-full">
+            <Popconfirm
+              title="Xóa sản phẩm khỏi giỏ hàng?"
+              description="Bạn có chắc chắn muốn xóa không?"
+              onConfirm={() => handleRemoveMultiple()}
+              okText="Có"
+              cancelText="Không"
+            >
+              <DeleteOutlined style={{ fontSize: '24px' }} />
+            </Popconfirm>
+            <Table columns={columns} dataSource={dataSort} />
           </div>
-        ) : (
-          <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-            <div className="md:w-[70%] mb:w-full w-full">
-              <Popconfirm
-                title="Xóa sản phẩm khỏi giỏ hàng?"
-                description="Bạn có chắc chắn muốn xóa không?"
-                onConfirm={() => handleRemoveMultiple()}
-                okText="Có"
-                cancelText="Không"
-              >
-                <DeleteOutlined style={{ fontSize: '24px' }} />
-              </Popconfirm>
-              <Table columns={columns} dataSource={dataSort} />
-            </div>
 
-            <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-              <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
-                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                  <strong>Tổng giá trị đơn hàng</strong>
-                  <p className="font-bold text-xl text-yellow-500">
-                    {calcTotal().toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND"
-                    })}
-                  </p>
-                </div>
-                <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
-                  <strong>Số lượng đơn hàng :</strong>
-                  <strong>{calculateTotalProduct()}</strong>
-                </div>
-                <div className="flex flex-col border-y py-5 my-5">
-                  <span className="text-xs mb-2">Nhập mã giảm giá</span>
-                  <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                    <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
-                    <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
-                      Apply
-                    </button>
-                  </form>
-                </div>
-                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                  <strong>Cần thanh toán :</strong>
-                  <strong>
-                    {calculateTotal().toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND"
-                    })}
-                  </strong>
-                </div>
-                <Link onClick={ScrollTop} to="pay">
-                  <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
-                    Tiến hành thanh toán
-                  </button>
-                </Link>
+          <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
+            <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
+              <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                <strong>Tổng giá trị đơn hàng</strong>
+                <p className="font-bold text-xl text-yellow-500">
+                  {calcTotal().toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND"
+                  })}
+                </p>
               </div>
+              <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
+                <strong>Số lượng đơn hàng :</strong>
+                <strong>{calculateTotalProduct()}</strong>
+              </div>
+              <div className="flex flex-col border-y py-5 my-5">
+                <span className="text-xs mb-2">Nhập mã giảm giá</span>
+                <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
+                  <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
+                  <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
+                    Apply
+                  </button>
+                </form>
+              </div>
+              <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                <strong>Cần thanh toán :</strong>
+                <strong>
+                  {calculateTotal().toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND"
+                  })}
+                </strong>
+              </div>
+              <Link onClick={ScrollTop} to="pay">
+                <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                  Tiến hành thanh toán
+                </button>
+              </Link>
             </div>
           </div>
-        )}
+        </div>
+
       </>
     </div>
   );

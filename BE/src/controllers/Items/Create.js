@@ -62,7 +62,8 @@ export const createProduct = async (req, res) => {
           size: item.size.map(data_size => (
             {
               name_size: data_size.name_size ? data_size.name_size.toString() : '',
-              stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0
+              stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
+              price_attribute: data_size.price_attribute ? data_size.price_attribute : 1
             }
           ))
         }

@@ -10,6 +10,7 @@ import {
   UserCircle,
   Truck,
   Trash,
+  Bell,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -100,7 +101,13 @@ const SidebarComponent = () => {
           active={selectedItem === "Billings"}
           onClick={() => handleItemClick("Billings")}
         />
-
+        <Link to="/admin/notification">
+          <SidebarItem
+            icon={<Bell size={20} />}
+            text="Thông báo"
+            active={selectedItem === "Notification"}
+            onClick={() => handleItemClick("Notification")}
+          />      </Link>
         <hr className="my-3" />
         <SidebarItem
           icon={<Settings size={20} />}
@@ -114,7 +121,11 @@ const SidebarComponent = () => {
           active={selectedItem === "Help"}
           onClick={() => handleItemClick("Help")}
         />
+
       </Sidebar>
+
+
+
     </>
   );
 };
