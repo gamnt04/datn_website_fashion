@@ -15,13 +15,7 @@ export const Query_Products = (id?: string | number, page?: number) => {
     queryFn: async () => {
       return id ? get_detail_items(id) : get_items_client(page);
     }
-<<<<<<< HEAD
   });
 
   return { data, ...rest };
-=======
-  })
-  console.log(data);
-  return { data, ...rest }
->>>>>>> main
 };
