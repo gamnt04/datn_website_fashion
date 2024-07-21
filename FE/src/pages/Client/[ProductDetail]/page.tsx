@@ -18,19 +18,19 @@ const ProductDetail = () => {
       <div className="lg:grid lg:grid-cols-[573px_auto] gap-x-20 lg:mt-5">
         {/*  desktop : left  , mobile : row 1 */}
 
-        <ImageProducts product={data} />
+        <ImageProducts product={data?.product} />
         {/*desktop: right, mobile : row 2 */}
         {/* <Infor_Detail_Product /> */}
         <div>
-          <InforProduct product={data} />
+          <InforProduct dataProps={data} />
         </div>
       </div>
       {/* description */}
       <div>
-        <DescriptionProduct product={data} />
+        <DescriptionProduct product={data?.product} />
       </div>
       {/* related item */}
-      <ProductRelated product={data} />
+      <ProductRelated product={data?.product} />
     </div>
   );
 };
