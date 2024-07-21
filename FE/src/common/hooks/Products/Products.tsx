@@ -13,6 +13,5 @@ export const Query_Products = (id?: string | number, page?: number) => {
       return id ? get_detail_items(id) : get_items_client(page);
     }
   });
-
   return { data, ...rest };
 };
