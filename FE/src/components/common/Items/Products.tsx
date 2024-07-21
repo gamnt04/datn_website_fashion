@@ -4,7 +4,6 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { HeartIcon } from "../../../resources/svg/Icon/Icon";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { EyeIcon } from "lucide-react";
-import { Mutation_Preview } from "../../../common/hooks/Preview/Mutation_Preview";
 import ProductModal from "../../../pages/Client/Preview/ProductModal";
 
 const Products = ({ items }: any) => {
@@ -12,7 +11,6 @@ const Products = ({ items }: any) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const account = user?.user;
-  const { mutate: previewMutate } = Mutation_Preview();
 
   if (!items || !items._id) {
     console.error("Items is undefined or missing _id:", items);
@@ -24,15 +22,14 @@ const Products = ({ items }: any) => {
       // Gọi API để lấy thông tin sản phẩm
       const response = await fetch(
         `http://localhost:2004/api/v1/products/${id}`
+        
       ); // Thay thế với URL thực tế
       const product = await response.json();
-
       // Thay đổi trạng thái modal và sản phẩm được chọn
       setSelectedProduct(product);
       setModalOpen(true);
 
       // Gọi mutate để cập nhật trạng thái xem trước
-      previewMutate({ userId: account, productId: id });
     } catch (error) {
       console.error("Error fetching product preview:", error);
     }
