@@ -50,7 +50,6 @@ const UpdateProduct = () => {
           setValue("price_product", fetchedProduct.price_product);
           setValue("category_id", fetchedProduct.category_id);
           setValue("description_product", fetchedProduct.description_product);
-          setValue("countInStock_product", fetchedProduct.countInStock_product);
           setValue("quantity_product", fetchedProduct.quantity_product);
           setValue("image_product", fetchedProduct.image_product);
           setValue("gallery_product", fetchedProduct.gallery_product);
@@ -179,26 +178,6 @@ const UpdateProduct = () => {
           />
           <div className="text-xs italic text-red-500">
             {errors.description_product?.message}
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="countInStock_product"
-            className="block mb-2 text-sm font-bold text-gray-700"
-          >
-            Số lượng trong kho
-          </label>
-          <input
-            type="number"
-            placeholder="Số lượng trong kho"
-            {...register("countInStock_product", {
-              required: "Không bỏ trống",
-            })}
-            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-          />
-          <div className="text-xs italic text-red-500">
-            {errors.countInStock_product?.message}
           </div>
         </div>
 
