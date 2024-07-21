@@ -12,12 +12,12 @@ export const getAllProducts = async (req, res) => {
     }
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      products,
+      products
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 };
@@ -29,35 +29,34 @@ export async function get_items_client(req, res) {
     _sort = "",
     _limit = 12,
     _search = "",
-    _category_id = "",
+    _category_id = ""
   } = req.query;
   const options = {
     page: _page,
-    limit: _limit,
+    limit: _limit
   };
   try {
     const querry = {};
     if (_search) {
       querry.$and = [
         {
-          name_product: { $regex: new RegExp(_search, "i") },
-        },
+          name_product: { $regex: new RegExp(_search, "i") }
+        }
       ];
     }
     const data = await Products.paginate(querry, options);
-    console.log(data);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Khong co data!",
+        message: "Khong co data!"
       });
     }
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      data,
+      data
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 }
@@ -80,7 +79,7 @@ export const getProductById = async (req, res) => {
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server !",
+      message: error.message || "Lỗi server !"
     });
   }
 };

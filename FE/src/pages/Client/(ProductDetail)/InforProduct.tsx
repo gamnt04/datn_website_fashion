@@ -1,22 +1,42 @@
+import React, { useState } from "react";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
-import { useProduct } from "../../../common/hooks/Products/Products";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IProduct } from "../../../common/interfaces/Product";
 
-interface InforProductProp {
+interface ImageProductProp {
   product: IProduct;
 }
-const InforProduct: React.FC<InforProductProp> = ({ product }) => {
+
+const InforProduct: React.FC<ImageProductProp> = ({ product }) => {
   const { name_product, price_product, _id, quantity_product, sizes } = product;
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
 
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(price_product);
+
+  const handleIncreaseQuantity = () => {
+    if (quantity < quantity_product) {
+      const newQuantity = quantity + 1;
+      setQuantity(newQuantity);
+      setTotalPrice(newQuantity * price_product);
+    }
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      setTotalPrice(newQuantity * price_product);
+    }
+  };
+
   const addCart = (id: string) => {
     const item = {
       userId: account,
       productId: id,
-      quantity: 1
+      quantity: quantity
     };
     mutate(item);
   };
@@ -32,13 +52,6 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
           <div className="flex flex-col gap-y-2 justify-between">
             <section className="lg:w-[163px] mb:w-[157px] mb:mt-[8px] lg:mt-0 h-[21px] *:lg:text-sm *:mb:text-xs flex justify-between items-start">
-              {/* neu co danh gia bang sao thi bo vao */}
-              {/* <div className="flex items-start lg:gap-x-0 mb:gap-x-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                </svg>
-                                <strong>4.6/5</strong>
-                            </div> */}
               <div className="flex gap-x-2">
                 <strong>135</strong>
                 <span className="text-[#C8C9CB]">Reviews</span>
@@ -49,7 +62,7 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
                 <del className="font-light lg:text-sm mb:text-sm text-[#9D9EA2]">
                   200.00 đ
                 </del>
-                {price_product}
+                {totalPrice} đ
               </span>
             </div>
           </div>
@@ -91,10 +104,10 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
         <div className="py-5 *:w-full rounded-xl lg:-mt-5 -mt-1">
           {/* quantity */}
           <div className="py-5 flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
-            {/* up , dow quantity */}
+            {/* up, down quantity */}
             <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
-                <button>
+                <button onClick={handleDecreaseQuantity}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width={12}
@@ -110,8 +123,8 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
                     <path d="M5 12h14" />
                   </svg>
                 </button>
-                <input className="bg-[#F4F4F4]" value={2} />
-                <button>
+                <input className="bg-[#F4F4F4]" value={quantity} readOnly />
+                <button onClick={handleIncreaseQuantity}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width={12}
@@ -134,7 +147,7 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
               </span>
             </div>
             <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
-              242.00 đ
+              {totalPrice} đ
             </span>
           </div>
           <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded-xl *:duration-300">
