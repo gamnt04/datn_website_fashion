@@ -15,14 +15,14 @@ const useSignIn = (userId: string) => {
       return data;
     },
     onSuccess: () => {
-      toast.success("Đăng nhập thành công!");
+      toast.success("Đăng nhập thành công!", {autoClose : 500});
       navigate("/");
       queryClient.invalidateQueries({
         queryKey: ["AUTH_KEY", userId]
       })
     },
     onError: (error) => {
-      toast.error("Đăng nhập thất bại!");
+      toast.error("Đăng nhập thất bại!", {autoClose : 500});
       return error;
     }
   });
