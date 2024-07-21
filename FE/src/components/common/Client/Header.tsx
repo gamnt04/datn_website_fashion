@@ -2,20 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
-// import { useDispatch } from "react-redux";
-// import { useCart } from "../../../common/hooks/Cart/useCart";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
-// import { SearchData } from "../../Services/Search";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [checkacc, setCheck_acc] = useState(true)
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
   // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
-  const [user] = useLocalStorage("user", {});
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const account = user?.user?._id;
   const { data } = List_Cart(account);
   useEffect(() => {
@@ -36,49 +33,19 @@ const Header = () => {
         }
       });
   }, []);
-  // change title by redux
-  // const dispatch = useDispatch();
-  // // const ChangeTitle_1 = () => {
-  // //   dispatch({ type: "Title_change_1" });
-  // // }
-  // // Fn scroll top and change title
-  // const ScrollTop_and_Change = async () => {
-  //   await ScrollTop();
-  //   await ChangeTitle_2();
-  // };
-
-  // const ChangeTitle_2 = () => {
-  //   dispatch({ type: "Title_change_2" });
-  // };
-
+  useEffect(() => {
+    function check_local() {
+      setCheck_acc(false)
+    }
+    window.addEventListener('storage', check_local);
+    return () => {
+      window.removeEventListener('storage', check_local);
+    }
+  }, [])
   // toogle menu mobile
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
   };
-  // search
-  // const [keyUrl, setKeyUrl] = useState<string>();
-  // const [itemsSearch, setItemsSearch] = useState();
-  // const handleSearchData = (e: any) => {
-  //   setTimeout(() => {
-  //     setKeyUrl(e.target.value);
-  //   }, 2000)
-  // }
-  // useEffect(() => {
-  //   handleSearchData;
-  //    (keyUrl !== '') ?
-  //     (async () => {
-  //     try {
-  //       const data = await SearchData(keyUrl);
-  //       console.log(data);
-
-  //       setItemsSearch(data);
-
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   })() : '';
-  // }, [keyUrl]);
-  // console.log(itemsSearch);
   const onlogin = () => {
     const comfirm = window.confirm("Do you want to go to the login page?");
     if (comfirm) {
@@ -173,19 +140,19 @@ const Header = () => {
               </button>
             </form>
             {/* cart */}
-            <div className="group *:duration-300 relative py-1">
-              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
-              {/* {account ? '/cart' : (
+            {/* {account ? '/cart' : (
                 <div onClick={() => onlogin()} className="relative">
                   <CartIcon />
                   <MiniCart />
                 </div>
               )} */}
 
-              <Link to={account ? '/cart' : '/login'}>
+            <Link className="group *:duration-300 relative py-1" onClick={ScrollTop} to={account ? '/cart' : '/login'}>
+              <span className="absolute bg-red-500 px-1 text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
+              <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
                 <CartIcon />
-              </Link>
-            </div>
+              </div>
+            </Link>
 
             {/* heart */}
             {account ? (
@@ -210,15 +177,16 @@ const Header = () => {
 
             {/* option / menu */}
             <div className="cursor-pointer hover:scale-105 duration-300">
-              {account && <Link to={'/allorder'}>
+              {checkacc && <Link to={'/allorder'}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-check"><path d="M2 21a8 8 0 0 1 13.292-6" /><circle cx="10" cy="8" r="5" /><path d="m16 19 2 2 4-4" /></svg>
               </Link>}
-              {account ? '' : <Link
-                to={"/login"}
-                className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
-              >
-                Login
-              </Link>}
+              {account &&
+                <Link
+                  to={"/login"}
+                  className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
+                >
+                  Login
+                </Link>}
             </div>
           </nav>
         </header>
