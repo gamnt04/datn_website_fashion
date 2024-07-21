@@ -2,6 +2,7 @@
 import { StatusCodes } from "http-status-codes";
 import Category from "../../models/Items/Category";
 import Products from "../../models/Items/Products";
+import Attributes from '../../models/attribute/attribute';
 import { validate_items } from "../../validations/items";
 
 export const createProduct = async (req, res) => {
@@ -30,8 +31,17 @@ export const createProduct = async (req, res) => {
     // if (existingProduct) {
     //     slug = `${slug}-${Math.floor(Math.random() * 10000)}`;
     // }
+    const checkNameItem = await Products.find();
+    for(let check of checkNameItem) {
+      if(check.name_product == dataClient.name_product) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message : 'Tên sản phẩm đã tồn tại!!'
+        })
+      }
+    }
     const newProductData = {
       ...dataClient,
+      attributes : [],
       category_id: category_id ? category_id : check_name_category._id,
     };
     const { error } = validate_items.validate(dataClient, {
@@ -43,20 +53,41 @@ export const createProduct = async (req, res) => {
         message,
       });
     }
-
-    const data = await Products.create(newProductData);
-    await Category.findByIdAndUpdate(
-      category_id ? category_id : check_name_category._id,
-      {
-        $addToSet: {
-          products: data._id,
-        },
-      }
-    );
-    return res.status(201).json({
-      message: "Done !",
-      data,
-    });
+    if (dataClient.attributes) {
+      // const convertAttribute = JSON.parse(dataClient.attributes)
+      const data = await Products.create(newProductData);
+      const varriant = dataClient.attributes.map(item => (
+        {
+          color: item.color ? item.color : '',
+          size: item.size.map(data_size => (
+            {
+              name_size: data_size.name_size ? data_size.name_size.toString() : '',
+              stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0
+            }
+          ))
+        }
+      ));
+      const data_attr = {
+        id_item: data._id,
+        values: varriant
+      };
+      // console.log(data_attr);
+      const new_attr = await Attributes.create(data_attr);
+      await Products.findByIdAndUpdate(data._id, {
+        $push: { attributes: new_attr.values.map(e => e._id) }
+      })
+      return res.status(StatusCodes.CREATED).json({
+        message: 'OK',
+        data
+      })
+    }
+    else {
+      const data = await Products.create(newProductData);
+      return res.status(StatusCodes.CREATED).json({
+        message: 'OK',
+        data
+      })
+    }
   } catch (error) {
     console.error("Error creating product:", error);
     return res.status(500).json({ message: error.message || "Loi server" });

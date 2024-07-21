@@ -97,40 +97,27 @@ export const updateOrder = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
     const { status } = req.body;
-
-    const validStatus = [
-      "Chờ xác nhận",
-      "Đang chuẩn bị hàng",
-      "Đang vận chuyển",
-      "Đã giao hàng",
-      "Đã hủy"
-    ];
-
-    if (!validStatus.includes(status)) {
+    console.log(status);
+    const validStatuses = ["1", "2", "3", "4", "5"];
+    if (!validStatuses.includes(status)) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Invalid status" });
     }
-
-    const order = await Order.findOne({ _id: id });
-    console.log(order);
+    const order = await Order.findById(id);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
     }
-
-    if (order.status === "Đã giao hàng" || order.status === "Đã hủy") {
+    if (order.status === "4" || order.status === "5") {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" });
     }
-
     order.status = status;
     await order.save();
-
     return res
       .status(StatusCodes.OK)
       .json({ message: "Order status updated successfully" });
@@ -186,3 +173,32 @@ export async function get_orders_client(req, res) {
     });
   }
 }
+
+// export const cancelOrder = async (req, res) => {
+//   try {
+//     const orderId = req.params.orderId;
+//     console.log(orderId);
+//     try {
+//       const order = await Order.findById(orderId);
+
+//       if (!order) {
+//         return res.status(404).json({ error: 'Đơn hàng không tồn tại' });
+//       }
+
+//       if (order.cancelledByAdmin) {
+//         return res.status(400).json({ error: 'Đơn hàng đã được hủy bởi admin trước đó' });
+//       }
+//       // Cập nhật trạng thái hủy đơn hàng
+//       order.cancelledByAdmin = true;
+//       await order.save();
+//       res.json({ message: 'Đơn hàng đã được hủy bởi admin thành công' });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'Lỗi server, vui lòng thử lại sau' });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+

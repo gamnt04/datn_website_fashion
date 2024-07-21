@@ -6,6 +6,8 @@ const OrderList = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading, totalPages } = Query_Orders(undefined, currentPage, statusFilter);
+  console.log(data);
+
   const handleStatusChange = (e: any) => {
     setStatusFilter(e.target.value);
   };
@@ -26,11 +28,11 @@ const OrderList = () => {
               onChange={handleStatusChange}
             >
               <option value="">Lọc trạng thái</option>
-              <option value="Chờ xác nhận">Chờ xác nhận</option>
-              <option value="Đang chuẩn bị hàng">Đang chuẩn bị hàng</option>
-              <option value="Đang vận chuyển">Đang vận chuyển</option>
-              <option value="Đã giao hàng">Đã giao hàng</option>
-              <option value="Đã hủy">Đã hủy</option>
+              <option value="1">Chờ xác nhận</option>
+              <option value="2">Đang chuẩn bị hàng</option>
+              <option value="3">Đang vận chuyển</option>
+              <option value="4">Đã giao hàng</option>
+              <option value="5">Đã hủy</option>
             </select>
           </div>
           <OrderTable

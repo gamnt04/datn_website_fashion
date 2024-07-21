@@ -2420,7 +2420,7 @@ function getDefaultConfig() {
       }],
       /**
        * Stroke Width
-       * @see https://tailwindcss.com/docs/stroke-width
+       * @see https://tailwindcss.com/docs/strokeWidth
        */
       "stroke-w": [{
         stroke: [isLength, isArbitraryLength, isArbitraryNumber]
