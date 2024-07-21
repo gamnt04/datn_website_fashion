@@ -12,9 +12,9 @@ const Products = ({ items }: any) => {
     const item = {
       userId: account,
       productId: id,
-      quantity: 1
-    }
-    mutate(item)
+      quantity: 1,
+    };
+    mutate(item);
   }
   return (
     <>
@@ -35,14 +35,13 @@ const Products = ({ items }: any) => {
           {/* hover show icon cart */}
           <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
             <>
-              <button onClick={() => addCart(items._id)}
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
+              <button
+                onClick={() => addCart(items._id)}
+                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
+              >
                 <CartIcon />
               </button>
-              <button
-                className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-
-              >
+              <button className="p-2 rounded *:cursor-pointer border-none hover:scale-110">
                 <HeartIcon />
               </button>
             </>
@@ -61,7 +60,10 @@ const Products = ({ items }: any) => {
             {items.name_product}
           </p>
           <p className="text-md font-semibold text-[#222222]">
-            {items.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+            {items.price_product.toLocaleString("vi", {
+              style: "currency",
+              currency: "VND",
+            })}
           </p>
           <div className="flex justify-center mt-4 items-center gap-x-4">
             <Link
