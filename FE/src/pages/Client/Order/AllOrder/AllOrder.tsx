@@ -36,9 +36,9 @@ const AllOrder = () => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="#9B9B9B"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="lucide lucide-pencil pr-[3px] lg:block hidden"
                   >
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -59,9 +59,9 @@ const AllOrder = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       className="lucide lucide-circle-user"
                     >
                       <circle cx="12" cy="12" r="10" />
@@ -87,9 +87,9 @@ const AllOrder = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       className="lucide lucide-clipboard-list"
                     >
                       <rect
@@ -118,9 +118,9 @@ const AllOrder = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       className="lucide lucide-log-out"
                     >
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

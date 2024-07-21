@@ -13,3 +13,13 @@
 .hidden_scroll-x_trendingproducts::-webkit-scrollbar {
   display: none;
 }
+
+
+@keyframes animationScrollYHeader {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transfrom: translateY(0);
+  }
+}
