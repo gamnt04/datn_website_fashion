@@ -1,4 +1,3 @@
-
 import express from "express";
 import {
   GetAllUser,
@@ -6,10 +5,11 @@ import {
   add_address,
   delete_address,
   get_address,
-signin,
+  signin,
   signup,
   updateUserAddress,
-  updateUser,logout,
+  updateUser,
+  logout,
   // updateUserAvatar
 } from "../controllers/Auth/auth";
 const Routes_auth = express.Router();
@@ -26,4 +26,3 @@ Routes_auth.put("/auth/:userId/:addressId", updateUserAddress); // Cập nhật 
 Routes_auth.delete("/auth/:userId/:addressId", delete_address); // Xóa địa chỉ của người dùng
 
 export default Routes_auth;
-

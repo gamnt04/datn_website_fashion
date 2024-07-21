@@ -19,7 +19,7 @@ const testthu = () => {
   return (
     <div className="testthu-container">
       <header>
-        <h1>Welcome to the Test Component</h1>
+        <h1>f</h1>
       </header>
       <section>
         <p>
