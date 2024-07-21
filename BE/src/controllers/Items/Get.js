@@ -46,27 +46,23 @@ export async function get_items_client(req, res) {
       ];
     }
     const data = await Products.paginate(querry, options);
-<<<<<<< HEAD
-=======
     for (let item of data.docs) {
       let total_stock = 0;
       if (item.attributes || item.attributes.length > 1) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
         if (attr) {
-          attr.values.map(item => {
-            item.size.map(a => {
+          attr.values.map((item) => {
+            item.size.map((a) => {
               total_stock += a.stock_attribute;
-            })
-          })
+            });
+          });
         }
         item.stock_product = total_stock;
-      }
-      else {
+      } else {
         item.stock_product = item.stock;
       }
     }
     // console.log(data);
->>>>>>> main
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Khong co data!"
@@ -108,7 +104,7 @@ export const getProductById = async (req, res) => {
 
 export const getTrash = async (req, res) => {
   try {
-    const trashProducts = await Products.findWithDeleted({ deleted : true });
+    const trashProducts = await Products.findWithDeleted({ deleted: true });
     console.log(dataTrash);
     res.status(StatusCodes.OK).json(trashProducts);
   } catch (error) {
