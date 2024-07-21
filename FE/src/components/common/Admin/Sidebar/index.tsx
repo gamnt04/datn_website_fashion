@@ -9,6 +9,7 @@ import {
   Settings,
   UserCircle,
   Truck,
+  Trash,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -68,12 +69,20 @@ const SidebarComponent = () => {
             onClick={() => handleItemClick("category")}
           />
         </Link>
-        <Link to="/admin/collection">
+        <Link to="/admin/contact">
           <SidebarItem
             icon={<Package size={20} />}
-            text="Brand"
-            active={selectedItem === "collection"}
-            onClick={() => handleItemClick("collection")}
+            text="Contact"
+            active={selectedItem === "contact"}
+            onClick={() => handleItemClick("contact")}
+          />
+        </Link>
+        <Link to="/admin/products/trash">
+          <SidebarItem
+            icon={<Trash size={20} />}
+            text="Thùng rác"
+            active={selectedItem === "trash"}
+            onClick={() => handleItemClick("trash")}
           />
         </Link>
         <Link to="orders">
@@ -91,6 +100,7 @@ const SidebarComponent = () => {
           active={selectedItem === "Billings"}
           onClick={() => handleItemClick("Billings")}
         />
+
         <hr className="my-3" />
         <SidebarItem
           icon={<Settings size={20} />}

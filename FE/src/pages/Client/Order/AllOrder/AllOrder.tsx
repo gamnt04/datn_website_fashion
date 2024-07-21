@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { List_Auth } from "../../../../common/hooks/Auth/querry_Auth";
+import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 const AllOrder = () => {
   const [isOpen, setIsOpen] = useState(false)
   const handleTogggle = () => {
     setIsOpen(!isOpen)
   }
-
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const { data } = List_Auth(userId)
   return (
     <div className="mt-28 mb-4">
       <div className="container mx-auto max-w-[1200px]">
@@ -15,12 +19,12 @@ const AllOrder = () => {
               <div className="flex justify-center">
                 <img
                   className="w-[46px] h-[46px] rounded-full"
-                  src="https://picsum.photos/300/300"
+                  src={data?.avatar}
                   alt=""
                 />
               </div>
               <div className="">
-                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">Dương Hải Nam</h3>
+                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">{data?.userName}</h3>
                 <a
                   href="/allorder"
                   className="text-[#9B9B9B] text-center text-[12px] lg:text-sm flex items-center justify-center font-normal"
@@ -32,9 +36,9 @@ const AllOrder = () => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="#9B9B9B"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="lucide lucide-pencil pr-[3px] lg:block hidden"
                   >
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -55,9 +59,9 @@ const AllOrder = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       className="lucide lucide-circle-user"
                     >
                       <circle cx="12" cy="12" r="10" />
@@ -83,9 +87,9 @@ const AllOrder = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       className="lucide lucide-clipboard-list"
                     >
                       <rect
@@ -114,9 +118,9 @@ const AllOrder = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#0145AD"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       className="lucide lucide-log-out"
                     >
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

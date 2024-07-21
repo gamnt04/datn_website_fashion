@@ -28,6 +28,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       image_category: "",
     },
   });
+
   const mutation = useMutation({
     mutationFn: async (category: ICategory) => {
       const { data } = await update(category);
@@ -43,6 +44,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       setErrorMessage(error.message || "Đã có lỗi xảy ra");
     },
   });
+
   useEffect(() => {
     const findDataById = data.find((data: ICategory) => data._id === id);
     if (!findDataById) return;
@@ -51,15 +53,16 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
 
   const onSubmit = async (formData: ICategory) => {
     try {
-      let imageUrl = formData.image_category;
+      let imageUrl = formData.image_category; // giữ nguyên URL nếu không thay đổi
 
+      // Kiểm tra nếu có tệp tin mới được chọn
       if (
         formData.image_category &&
-        formData.image_category[0] instanceof File
+        formData.image_category[0] instanceof FileList
       ) {
         const file = formData.image_category[0];
-        const uploadedUrls = await uploadImage(file);
-        imageUrl = uploadedUrls[0];
+        const uploadedUrls = await uploadImage(file); // tải lên ảnh mới
+        imageUrl = uploadedUrls[0]; // lấy URL của ảnh mới
       }
 
       const updatedCategory = {

@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { useNavigate } from "react-router-dom";
 import useLocalStorage from "../../hooks/Storage/useStorage";
-
+import { toast } from "react-toastify";
 const useSignIn = () => {
   const navigate = useNavigate();
   const [, setUser] = useLocalStorage("user", {});
@@ -15,13 +15,12 @@ const useSignIn = () => {
     },
     onSuccess: (data) => {
       setUser(data);
-      alert("Đăng nhập thành công");
+      toast.success("Đăng nhập thành công!");
       navigate("/");
-      window.location.reload();
     },
     onError: (error) => {
-      console.log(error);
-      alert("Đăng nhập thất bại");
+      toast.error("Đăng nhập thất bại!");
+      return error;
     }
   });
 

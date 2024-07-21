@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
+import Attribute from "../../models/attribute/attribute";
 
 // list all
 export const getAllProducts = async (req, res) => {
@@ -12,12 +13,12 @@ export const getAllProducts = async (req, res) => {
     }
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      products,
+      products
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 };
@@ -29,40 +30,63 @@ export async function get_items_client(req, res) {
     _sort = "",
     _limit = 12,
     _search = "",
-    _category_id = "",
+    _category_id = ""
   } = req.query;
   const options = {
     page: _page,
-    limit: _limit,
+    limit: _limit
   };
   try {
     const querry = {};
     if (_search) {
       querry.$and = [
         {
-          name_product: { $regex: new RegExp(_search, "i") },
-        },
+          name_product: { $regex: new RegExp(_search, "i") }
+        }
       ];
     }
     const data = await Products.paginate(querry, options);
+    for (let item of data.docs) {
+      let total_stock = 0;
+      if (item.attributes || item.attributes.length > 1) {
+        const attr = await Attribute.findOne({ id_item: item._id.toString() });
+        if (attr) {
+          attr.values.map((item) => {
+            item.size.map((a) => {
+              total_stock += a.stock_attribute;
+            });
+          });
+        }
+        item.stock_product = total_stock;
+      } else {
+        item.stock_product = item.stock;
+      }
+    }
+    // console.log(data);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Khong co data!",
+        message: "Khong co data!"
       });
     }
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      data,
+      data
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 }
 
 export const getProductById = async (req, res) => {
   try {
+    if (req.params.id === "trash") {
+      // Xử lý lấy danh sách sản phẩm đã xóa
+      const trashProducts = await Products.find({ deletedAt: { $ne: null } });
+      return res.status(StatusCodes.OK).json(trashProducts);
+    }
+
     const product = await Products.findById(req.params.id);
     if (!product) {
       return res
@@ -73,7 +97,19 @@ export const getProductById = async (req, res) => {
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Lỗi server !"
     });
+  }
+};
+
+export const getTrash = async (req, res) => {
+  try {
+    const trashProducts = await Products.findWithDeleted({ deleted: true });
+    console.log(dataTrash);
+    res.status(StatusCodes.OK).json(trashProducts);
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
   }
 };

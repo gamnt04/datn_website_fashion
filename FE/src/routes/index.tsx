@@ -18,17 +18,18 @@ import Category from "../pages/Admin/Category/List";
 import OrderList from "../pages/Admin/Orders/OrderList";
 import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
 import IndexHome from "../pages/Client/(Home)/page";
-import IndexShops from "../pages/Client/(Shop)/page";
-import ProductDetail from "../pages/Client/(ProductDetail)/page";
+import IndexShops from "../pages/Client/Shop/page";
+import ProductDetail from "../pages/Client/[ProductDetail]/page";
 import Profile from "../pages/Client/Profile/Profile";
 import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
-import AddProduct from "../pages/Admin/Product/AddProducts/Index";
-import { ToastContainer } from "react-toastify";
-import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
-import StockProduct from "../pages/Admin/Product/InStock";
-
+import TrashProduct from "../pages/Admin/Product/TrashProduct";
+import BlogList from "../pages/Admin/Blogs/BlogList";
+import ListContact from "../pages/Admin/contact/ListContact";
+import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
+import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
+import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 const RouterComponent = () => {
   return (
     <>
@@ -54,6 +55,10 @@ const RouterComponent = () => {
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
+              <Route
+                path="/allorder/order/:id/detail"
+                element={<OrderDetail />}
+              />
               <Route path="/allorder/address" element={<Address />} />
             </Route>
             <Route path="login" element={<Login />} />
@@ -66,15 +71,17 @@ const RouterComponent = () => {
             <Route path="products" element={<ListProduct />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} />
-            <Route path="products/stock" element={<StockProduct />} />
+            <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route
               path="/admin/orders/:id/orderDetali"
               element={<OrdersDetali />}
             />
+            <Route path="/admin/contact" element={<ListContact />} />
+            <Route path="blogs" element={<BlogList />} />
           </Route>
         </Routes>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
       </Router>
     </>
   );
