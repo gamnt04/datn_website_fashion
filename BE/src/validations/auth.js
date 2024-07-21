@@ -1,9 +1,7 @@
 import Joi from "joi";
 
 export const signupSchema = Joi.object({
-    userName: Joi.string().min(3).max(30).required().messages({
-        "any.required": "Trường Name là bắt buộc",
-        "string.empty": "Trường Name không được để trống",
+    userName: Joi.string().min(3).max(30).messages({
         "string.min": "Trường Name phải có ít nhất {#limit} ký tự",
         "string.max": "Trường Name không được vượt quá {#limit} ký tự",
     }),
@@ -26,7 +24,6 @@ export const signupSchema = Joi.object({
         "string.uri": "Trường Avatar phải là đường dẫn hợp lệ",
     }),
 });
-
 export const signInpSchema = Joi.object({
     email: Joi.string().email().required().messages({
         "any.required": "Trường email bắt buộc phải nhập",
