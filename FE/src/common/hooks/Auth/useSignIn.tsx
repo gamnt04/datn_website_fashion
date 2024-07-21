@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 const useSignIn = (userId: string) => {
   const navigate = useNavigate();
-  const [, setUser] = useLocalStorage("user", {});
   const queryClient = useQueryClient()
- 
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (formData: { email: string; password: string }) => {
