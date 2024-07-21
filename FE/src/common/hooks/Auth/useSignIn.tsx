@@ -12,11 +12,11 @@ const useSignIn = () => {
       return data;
     },
     onSuccess: () => {
-      toast.success("Đăng nhập thành công!");
+      toast.success("Đăng nhập thành công!", {autoClose : 500});
       navigate("/");
     },
     onError: (error) => {
-      toast.error("Đăng nhập thất bại!");
+      toast.error("Đăng nhập thất bại!", {autoClose : 500});
       return error;
     }
   });
