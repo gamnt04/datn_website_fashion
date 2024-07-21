@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
+import MongooseDelete from "mongoose-delete";
 
 export async function restore_item(req, res) {
   try {
@@ -18,3 +19,16 @@ export async function restore_item(req, res) {
     });
   }
 }
+
+
+export const getTrash = async (req, res) => {
+  
+  try {
+    const trashProducts = await Products.find({deleted : true});
+    res.status(StatusCodes.OK).json(trashProducts);
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
+  }
+};

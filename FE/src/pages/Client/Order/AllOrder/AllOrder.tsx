@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { List_Auth } from "../../../../common/hooks/Auth/querry_Auth";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 const AllOrder = () => {
@@ -9,6 +9,12 @@ const AllOrder = () => {
   }
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
+  const routing = useNavigate();
+  useEffect(() => {
+    if(typeof window !== 'undefined' ) {
+      (!userId) && routing('/')
+    }
+  }, [userId])
   const { data } = List_Auth(userId)
   return (
     <div className="mt-28 mb-4">

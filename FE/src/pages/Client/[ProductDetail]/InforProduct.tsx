@@ -26,15 +26,18 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     const item = {
       userId: account,
       productId: id,
-      quantity: 1
+      quantity: quantity_item,
+      color: color,
+      size: size,
     };
+    console.log(item);
     mutate(item);
   };
   useEffect(() => {
     if (!dataAttr) {
       setQuantity_attr(stock)
     }
-  }, [dataAttr])
+  }, [dataAttr]);
 
 
   function handle_atrtribute(item?: any, action?: any) {
@@ -44,7 +47,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         for (let i of dataAttr?.values) {
           for (let k of i.size) {
             if (!k?.name_size || k?.name_size == '') {
-              i?.color == item && setQuantity_attr(k?.stock_attribute)
+              i?.color == item && setQuantity_attr(k?.stock_attribute);
             }
             else {
               setArr_Size(i?.size)
@@ -78,7 +81,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         }
         return
     }
-
   }
 
   return (

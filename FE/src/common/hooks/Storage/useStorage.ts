@@ -13,7 +13,6 @@ function useStorage(key: string, defaultValue: any, storageObject: Storage) {
   const [value, setValue] = useState(() => {
     const jsonValue = storageObject.getItem(key);
     if (jsonValue != null) return JSON.parse(jsonValue);
-
     if (typeof defaultValue === "function") {
       return defaultValue();
     } else {
