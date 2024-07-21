@@ -1,7 +1,7 @@
 export interface ICategory {
-  name?: string;
+  name_category: string | any;
   image_category?: FileList | string[] | any;
-  _id?: string;
+  _id?: string | any;
   slug?: string;
   products?: string[];
   createdAt?: string | number;
