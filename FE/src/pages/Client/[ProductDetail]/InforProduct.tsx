@@ -1,17 +1,25 @@
+import { useEffect, useState } from "react";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IProduct } from "../../../common/interfaces/Product";
+import { Button } from "../../../components/ui/button";
+import { Dow, Up } from "../../../resources/svg/Icon/Icon";
+import { Convert_Color } from "../../../_lib/Config/Config_Color";
 
 interface InforProductProp {
   product: IProduct;
 }
-const InforProduct: React.FC<InforProductProp> = ({ product }) => {
-  console.log(product);
-  const { name_product, price_product, _id, quantity_product } = product;
+const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
+  const [color, setColor] = useState();
+  const [arr_size, setArr_Size] = useState();
+  const [size, setSize] = useState();
+  const [quantity_attr, setQuantity_attr] = useState();
+  const dataItem = dataProps?.product;
+  const dataAttr = dataProps?.attr;
+  const { name_product, price_product, _id, stock } = dataItem;
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-
   const addCart = (id?: string | number) => {
     const item = {
       userId: account,
@@ -20,6 +28,40 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
     };
     mutate(item);
   };
+
+  useEffect(() => {
+    if(!dataAttr) {
+      setQuantity_attr(stock)
+    }
+  }, [dataAttr])
+
+
+  function handle_atrtribute(item?: any, action?: any) {
+    switch (action) {
+      case 'Color':
+        setColor(item);
+        for (let i of dataAttr?.values) {
+          for (let k of i.size) {
+            if (!k?.name_size || k?.name_size == '') {
+              i?.color == item && setQuantity_attr(k?.stock_attribute)
+            }
+            else {
+              setArr_Size(i?.size)
+            }
+          }
+        }
+        return;
+      case 'Size':
+        setSize(item);
+        for (let i of dataAttr?.values) {
+          for (let k of i.size) {
+            k?.name_size == item && setQuantity_attr(k?.stock_attribute)
+          }
+        }
+        return;
+      default: return;
+    }
+  }
 
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
@@ -55,91 +97,72 @@ const InforProduct: React.FC<InforProductProp> = ({ product }) => {
           </div>
         </div>
         {/* row 2 */}
-        <div>
-          <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
-            Size
-          </span>
-          <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-4 *:py-2 *:rounded *:border *:duration-300">
-            {/* {sizes?.map((size, index) => (
-              <button className="hover:bg-black hover:text-white" key={index}>
-                {size}
-              </button>
-            ))} */}
-          </div>
-        </div>
-        {/* row 4 */}
-        <div>
-          <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
-            Color
-          </span>
-          <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:relative *:border *:duration-300">
-            <button className="bg-red-500 hover:scale-110 after:absolute focus:after:w-4 focus:after:h-2 focus:after:border-l-2 focus:after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center"></button>
-            <button className="bg-blue-500 hover:scale-110 after:absolute after:border-0 focus:after:w-4 focus:after:h-2 focus:after:border-l-2 focus:after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center"></button>
-            <button className="bg-black hover:scale-110 after:absolute after:border-0 focus:after:w-4 focus:after:h-2 focus:after:border-l-2 focus:after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center"></button>
-          </div>
-        </div>
+        {
+          dataAttr && (<>
+            <div>
+              <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
+                Color
+              </span>
+              <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
+                {
+                  dataAttr?.values?.map((item: any) => (
+                    <button onClick={() => handle_atrtribute(item?.color, 'Color')} className={`${Convert_Color(item?.color)} ${color == item?.color ? 'after:block' : 'after:hidden'} hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}></button>
+                  ))
+                }
+              </div>
+            </div>
+            {/* row 4   */}
+            {
+              (arr_size) && (
+                <div>
+                  <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
+                    Size
+                  </span>
+                  <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-3 *:py-1 *:rounded *:border *:border-black *:duration-200">
+                    {
+                      arr_size?.map((item: any) => (
+                        <button onClick={() => handle_atrtribute(item?.name_size, 'Size')} className={`${size == item?.name_size && 'bg-black text-white'} hover:bg-black hover:text-white grid place-items-center`}>{item?.name_size}</button>
+                      ))
+                    }
+                  </div>
+                </div>
+              )
+            }
+          </>)
+        }
+
         {/* row 5 */}
         <div className="py-5 *:w-full rounded-xl lg:-mt-5 -mt-1">
           {/* quantity */}
           <div className="py-5 flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
             {/* up , dow quantity */}
-            <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex items-center gap-x-3 rounded-xl">
+            <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
                 <button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={12}
-                    height={12}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-minus"
-                  >
-                    <path d="M5 12h14" />
-                  </svg>
+                  <Dow />
                 </button>
                 <input className="bg-[#F4F4F4] text-center rounded" value={2} />
                 <button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={12}
-                    height={12}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-plus"
-                  >
-                    <path d="M5 12h14" />
-                    <path d="M12 5v14" />
-                  </svg>
+                  <Up />
                 </button>
               </div>
               <span className="text-gray-800 lg:tracking-[0.5px] border-l pl-4 border-black">
-                Còn lại {quantity_product} sản phẩm
+                Còn lại {quantity_attr} sản phẩm
               </span>
             </div>
-            <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
+          </div>
+          <div className="flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
+            <span>Tạm tính :</span>
+            <span className="text-[#EB2606]">
               242.00 đ
             </span>
           </div>
-          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded-xl *:duration-300">
+
+          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300">
             {/* add cart */}
-            <button
-              onClick={() => addCart(_id)}
-              className="hover:scale-105 flex place-items-center gap-x-4 text-white bg-black lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12"
-            >
-              <span>Thêm vào giỏ</span>
-            </button>
+            <Button className="hover:bg-black hover:text-white" onClick={() => addCart(_id)}>Thêm vào giỏ</Button>
             {/* add cart */}
-            <button className="hover:scale-105 flex place-items-center gap-x-4 text-white bg-black lg:px-[30px] mb:px-[22px] lg:h-14 mb:h-12">
-              Thanh toán
-            </button>
+            <Button className="hover:bg-black hover:text-white">Thanh toán</Button>
           </div>
         </div>
       </div>

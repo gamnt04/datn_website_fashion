@@ -5,7 +5,6 @@ interface ImageProductProp {
 }
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   const { image_product, gallery_product } = product;
-  console.log(gallery_product);
   return (
     <div className="w-full h-full lg:mt-0 mt-4">
       <div className="w-full flex flex-col lg:items-center lg:gap-y-6 gap-y-3.5">
