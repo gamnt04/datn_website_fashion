@@ -1,4 +1,4 @@
-import Get_in_touch from "../(Home)/[Get_in_touch]";
+import Get_in_touch from "../(Home)/Get_in_touch";
 
 const Blogs = () => {
   return (

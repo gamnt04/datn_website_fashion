@@ -13,7 +13,6 @@ const Pay = () => {
     const { onSubmit, data } = Pay_Mutation();
     const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
     const [showOptions, setShowOptions] = useState(false);
-
     const toggleOptions = () => {
         setShowOptions(!showOptions);
     }
@@ -40,9 +39,9 @@ const Pay = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="py-6 px-6 border rounded-md shadow-sm">
                         <div className="flex gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                             </svg>
                             <p>Địa chỉ nhận hàng</p>
                         </div>
@@ -140,16 +139,16 @@ const Pay = () => {
                             {showOptions && (
                                 <div className="mt-4">
                                     <label className="flex items-center w-full">
-                                        <input type="radio" value="Thanh toán tiền mặt" className="mr-2" defaultChecked {...register("payment", { required: true })} />
+                                        <input type="radio" value="Thanh toán khi nhân hàng" className="mr-2" defaultChecked {...register("payment", { required: true })} />
                                         <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
                                     </label>
                                     <label className="flex items-center w-full">
-                                        <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment", { required: true })} />
+                                        <input type="radio" value="VNPAY" className="mr-2" {...register("payment", { required: true })} />
                                         <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
                                     </label>
                                     <label className="flex items-center w-full">
-                                        <input type="radio" value="Thanh toán tiền mặt" className="mr-2" {...register("payment", { required: true })} />
-                                        <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
+                                        <input type="radio" value="MoMo" className="mr-2" {...register("payment", { required: true })} />
+                                        <p className="text-sm">Thanh toán bằng MoMo)</p>
                                     </label>
                                 </div>
                             )}
