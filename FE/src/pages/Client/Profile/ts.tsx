@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import instance from "../../../configs/axios";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { useNavigate, useRoutes } from "react-router-dom";
 
 const Profile = () => {
-const [avatarFile, setAvatarFile] = useState(null);
-   const [user, setUser] = useLocalStorage("user", {});
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [user, setUser] = useLocalStorage("user", {});
   const [profileInfo, setProfileInfo] = useState({
     userName: "",
     fullName: "",
@@ -47,61 +48,66 @@ const [avatarFile, setAvatarFile] = useState(null);
       [name]: value,
     });
   };
+  const routing = useNavigate();
+      console.log(user);
+      if (!localStorage.getItem('user')) {
+        routing('/')
+      }
 
-//   const handleSaveProfile = async (e: any) => {
-//     e.preventDefault();
-//     try {
-//       const userId = user?.user?._id;
+  //   const handleSaveProfile = async (e: any) => {
+  //     e.preventDefault();
+  //     try {
+  //       const userId = user?.user?._id;
 
-//       // Nếu có chọn ảnh mới, thực hiện cập nhật ảnh đại diện
-//       if (avatarFile) {
-//         const formData = new FormData();
-//         formData.append("avatar", avatarFile);
+  //       // Nếu có chọn ảnh mới, thực hiện cập nhật ảnh đại diện
+  //       if (avatarFile) {
+  //         const formData = new FormData();
+  //         formData.append("avatar", avatarFile);
 
-//         const { data } = await instance.put(
-//           `/auth/${userId}/avatar`,
-//           formData,
-//           {
-//             headers: {
-//               "Content-Type": "multipart/form-data",
-//             },
-//           }
-//         );
-//         setProfileInfo({
-//           ...profileInfo,
-//           avatar: data.avatar || "",
-//         });
-//         alert("Đã cập nhật ảnh đại diện thành công");
-//       }
+  //         const { data } = await instance.put(
+  //           `/auth/${userId}/avatar`,
+  //           formData,
+  //           {
+  //             headers: {
+  //               "Content-Type": "multipart/form-data",
+  //             },
+  //           }
+  //         );
+  //         setProfileInfo({
+  //           ...profileInfo,
+  //           avatar: data.avatar || "",
+  //         });
+  //         alert("Đã cập nhật ảnh đại diện thành công");
+  //       }
 
-//       // Tiếp tục cập nhật thông tin người dùng
-//       await instance.put(`/auth/${userId}`, {
-//         ...profileInfo,
-//       });
-//       fetchUserData();
-//       alert("Cập nhật thông tin thành công");
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật thông tin:", error);
-//       alert("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.");
-//     }
-//   };
+  //       // Tiếp tục cập nhật thông tin người dùng
+  //       await instance.put(`/auth/${userId}`, {
+  //         ...profileInfo,
+  //       });
+  //       fetchUserData();
+  //       alert("Cập nhật thông tin thành công");
+  //     } catch (error) {
+  //       console.error("Lỗi khi cập nhật thông tin:", error);
+  //       alert("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại sau.");
+  //     }
+  //   };
 
-//   const handleFileInputChange = (e: any) => {
-//     const file = e.target.files[0];
-//     setAvatarFile(file); 
-//     const reader = new FileReader();
-//     reader.onloadend = () => {
-//       setProfileInfo({
-//         ...profileInfo,
-//         avatar: reader.result, 
-//       });
-//     };
-//     if (file) {
-//       reader.readAsDataURL(file);
-//     }
-//   };
+  //   const handleFileInputChange = (e: any) => {
+  //     const file = e.target.files[0];
+  //     setAvatarFile(file); 
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setProfileInfo({
+  //         ...profileInfo,
+  //         avatar: reader.result, 
+  //       });
+  //     };
+  //     if (file) {
+  //       reader.readAsDataURL(file);
+  //     }
+  //   };
 
-// console.log(profileInfo);
+  // console.log(profileInfo);
 
 
 
@@ -118,7 +124,7 @@ const [avatarFile, setAvatarFile] = useState(null);
         <div className="py-8">
           <div className="flex flex-row flex-wrap lg:flex-nowrap text-sm">
             <div className="basis-full order-2 lg:order-1 lg:basis-2/3">
-              <form  className="w-full">
+              <form className="w-full">
                 <div className="flex items-center gap-5 py-2 lg:py-3">
                   <p className="w-36 text-left lg:text-right py-1 text-[#777777]">
                     Tên đăng nhập
@@ -194,11 +200,11 @@ const [avatarFile, setAvatarFile] = useState(null);
                   alt="Avatar"
                 />
               </div>
-               <div className="flex justify-center">
+              <div className="flex justify-center">
                 <input
                   type="file"
                   accept="image/*"
-               
+
                   className="hidden"
                   id="avatar-input"
                 />

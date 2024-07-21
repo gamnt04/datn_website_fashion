@@ -65,8 +65,6 @@ export const Add_Order = async (order: any) => {
 };
 export const Update_Status = async (items: any) => {
   console.log(items);
-
-
   try {
     const { data } = await instance.patch(`orders/${items.id}`, items.status);
     console.log(data);
@@ -75,4 +73,38 @@ export const Update_Status = async (items: any) => {
     console.log(error);
   }
 };
+
+
+
+
+
+// huy don hang có yêu cầu xác nhận
+
+export const Cancel_Order = async (id: any) => {
+  try {
+    const { data } = await instance.post(`/orders/${id}/cancel`);
+    if (data) {
+      console.log('Yêu cầu hủy đơn thành công', data);
+    } else {
+      console.log('Yêu cầu hủy đơn hàng thất bại', data);
+    }
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+export const confirmCancelOrder = async ({ id, confirm }: any) => {
+  try {
+    const { data } = await instance.post(`/orders/${id}/cancel/confirm`, { confirm });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 

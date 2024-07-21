@@ -13,7 +13,6 @@ const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
   const { data, isLoading } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
-  // Đảm bảo data là mảng và có cấu trúc đúng
   const dataSource = Array.isArray(data)
     ? data.map((category: ICategory) => ({
         key: category._id,
@@ -46,17 +45,6 @@ const List_Category: React.FC = () => {
       throw error;
     },
   });
-  //   const { mutate } = useCategoryMutation({ action: "DELETE" });
-
-  //   const handleDelete = (id: string | undefined) => {
-  //     if (!id) {
-  //       console.error("Category ID is missing");
-  //       return;
-  //     }
-
-  //     console.log(`Deleting category with ID: ${id}`); // Log the ID to debug
-  //     mutate(id);
-  //   };
   const createFilters = (products: ICategory[]) => {
     return products
       .map((product: ICategory) => product.name_category)
