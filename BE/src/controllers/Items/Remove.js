@@ -10,7 +10,6 @@ export const deleteProductById = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm để xóa" }); 
     }
-    console.log(product);
     return res
       .status(StatusCodes.OK)
       .json({ message: "Đã xóa sản phẩm thành công" });

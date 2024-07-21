@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { useNavigate } from "react-router-dom";
-import useLocalStorage from "../../hooks/Storage/useStorage";
 import { toast } from "react-toastify";
 const useSignIn = (userId: string) => {
   const navigate = useNavigate();
@@ -12,11 +11,10 @@ const useSignIn = (userId: string) => {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (formData: { email: string; password: string }) => {
       const { data } = await instance.post(`auth/signin`, formData);
-      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem('user', JSON.stringify(data));
       return data;
     },
-    onSuccess: (data) => {
-      setUser(data);
+    onSuccess: () => {
       toast.success("Đăng nhập thành công!");
       navigate("/");
       queryClient.invalidateQueries({

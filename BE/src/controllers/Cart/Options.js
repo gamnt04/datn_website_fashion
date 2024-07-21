@@ -2,7 +2,7 @@ import Cart from "../../models/Cart/cart";
 import { StatusCodes } from "http-status-codes";
 
 export const addItemToCart = async (req, res) => {
-    const { userId, productId, quantity } = req.body;
+    const { userId, productId, quantity, color, size } = req.body;
     try {
         let cart = await Cart.findOne({ userId });
         if (!cart) {
@@ -14,7 +14,7 @@ export const addItemToCart = async (req, res) => {
         if (existProductIndex !== -1) {
             cart.products[existProductIndex].quantity += quantity;
         } else {
-            cart.products.push({ productId, quantity });
+            cart.products.push({ productId, quantity, color, size });
         }
         await cart.save();
         return res.status(StatusCodes.OK).json({ cart });
