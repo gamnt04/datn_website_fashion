@@ -6,7 +6,6 @@ import { IProduct } from "../../../common/interfaces/Product";
 // import ImageProducts from "./ImageProducts";
 
 const ProductRelated = ({product} : IProduct) => {
-  console.log(product);
   const a: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   return (
