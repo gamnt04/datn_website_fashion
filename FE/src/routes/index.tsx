@@ -24,17 +24,12 @@ import Profile from "../pages/Client/Profile/Profile";
 import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
-import AddProduct from "../pages/Admin/Product/AddProducts/Index";
-import { ToastContainer } from "react-toastify";
-import UpdateProduct from "../pages/Admin/Product/AddProducts/EditProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
-import EditProduct from "../pages/Admin/Product/EditProduct/index";
-
 import BlogList from "../pages/Admin/Blogs/BlogList";
-import ContactForm from "../pages/Client/Contact/Contact";
 import ListContact from "../pages/Admin/contact/ListContact";
-import Page from "../pages/Admin/Product/page";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
+import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
+import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 const RouterComponent = () => {
   return (
     <>
@@ -74,9 +69,8 @@ const RouterComponent = () => {
             <Route index element={<Dashboard />} />
             <Route path="/admin/category" element={<Category />} />
             <Route path="products" element={<ListProduct />} />
-            <Route path="product" element={<Page />} />
             <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/edit/:id" element={<EditProduct />} />
+            <Route path="products/edit/:id" element={<UpdateProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route
