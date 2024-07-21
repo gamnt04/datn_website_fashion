@@ -28,7 +28,7 @@ export async function get_items_client(req, res) {
   const {
     _page = 1,
     _sort = "",
-    _limit = 12,
+    _limit = 20,
     _search = "",
     _category_id = ""
   } = req.query;
@@ -81,19 +81,17 @@ export async function get_items_client(req, res) {
 
 export const getProductById = async (req, res) => {
   try {
-    if (req.params.id === "trash") {
-      // Xử lý lấy danh sách sản phẩm đã xóa
-      const trashProducts = await Products.find({ deletedAt: { $ne: null } });
-      return res.status(StatusCodes.OK).json(trashProducts);
-    }
-
     const product = await Products.findById(req.params.id);
+    const attr = await Attribute.findOne({ id_item: product._id.toString() });
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
-    return res.status(StatusCodes.OK).json(product);
+    return res.status(StatusCodes.OK).json({
+      product,
+      attr
+    });
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

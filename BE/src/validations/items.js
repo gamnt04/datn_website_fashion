@@ -26,7 +26,7 @@ export const validate_items = Joi.object({
     "string.min": "Mô tả tối thiểu là 6 kí tự!",
     "string.max": "Mô tả tối đa 5000 kí tự!",
   }),
-  category_id: Joi.string(),
+  category_id: Joi.string().optional(),
   attributes: Joi.optional(),
   stock : Joi.optional(),
   featured_product: Joi.boolean(),
