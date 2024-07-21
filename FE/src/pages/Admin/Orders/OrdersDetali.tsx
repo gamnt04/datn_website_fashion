@@ -1,20 +1,33 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
+import { useMutation } from "@tanstack/react-query";
+import { confirmCancelOrder } from "../../../services/orderProduct";
 
 const OrdersDetali = () => {
     const { id } = useParams<{ id: string }>();
     const { data, refetch } = Query_Orders(id);
-    console.log(data);
 
-
-    useEffect(() => {
-        refetch();
-    }, [id]);
-    // const { mutate } = Mutation_Order('UPDATE')
-    // const [status, setStatus] = useState()
+    const { mutate } = useMutation({
+        mutationFn: async (comfirm: any) => {
+            const { data } = await confirmCancelOrder(comfirm);
+            return data;
+        },
+        onSuccess: (comfirm) => {
+            if (comfirm === true) {
+                toast.success("Bạn đã xác nhận hủy đơn hàng!");
+                refetch();
+            }
+            else {
+                toast.success("Bạn đang từ chối hủy đơn hàng!");
+                refetch();
+            }
+        },
+        onError: () => {
+            toast.error("Thất bại");
+        }
+    })
     const handleStatusUpdate = async () => {
         if (!data) return;
         if (data.status === "5") {
@@ -56,7 +69,8 @@ const OrdersDetali = () => {
             toast.error("Hủy đơn hàng thất bại!");
         }
     };
-
+    const cancellationRequested = data?.cancellationRequested;
+    const isPreparing = data?.status === 2
     if (!data) return <p>Loading...</p>;
 
     return (
@@ -152,17 +166,48 @@ const OrdersDetali = () => {
                         </div>
                     </div>
                 </div>
+
                 <div className="flex gap-5 justify-center mt-[60px]">
-                    {/* <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={() => mutate({ status: data?.status, id: data?._id })}>
-                        Từ chối xác nhận
-                    </button> */}
-                    <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
-                        {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
-                    </button>
-                    {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
-                        <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
-                            Từ chối xác nhận
-                        </button>
+
+                    {cancellationRequested ? (
+                        <>
+                            {!isPreparing ? (
+                                <>
+                                    <button
+                                        className="w-auto p-3 bg-green-500 rounded-lg text-white"
+                                        onClick={() => mutate({ id: data?._id, confirm: true })}
+                                    >
+                                        Xác nhận hủy
+                                    </button>
+                                    <button
+                                        className="w-auto p-3 bg-red-500 rounded-lg text-white"
+                                        onClick={() => mutate({ id: data?._id, confirm: false })}
+                                    >
+                                        Từ chối
+                                    </button>
+                                </>
+                            ) : (<>
+                                <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
+                                    {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
+                                </button>
+                                {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
+                                    <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
+                                        Từ chối xác nhận
+                                    </button>
+                                )}
+                            </>)}
+                        </>
+                    ) : (
+                        <>
+                            <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
+                                {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
+                            </button>
+                            {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
+                                <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
+                                    Từ chối xác nhận
+                                </button>
+                            )}
+                        </>
                     )}
                 </div>
 

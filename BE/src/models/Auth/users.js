@@ -1,3 +1,4 @@
+
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema(
@@ -19,6 +20,8 @@ const userSchema = new Schema(
     },
     fullName: {
       type: String,
+        minlength: 3,
+            maxlength: 30,
     },
     address: [
       {
@@ -38,8 +41,9 @@ const userSchema = new Schema(
     },
 
     avatar: {
-      type: String,
-    },
+            type: String,
+            default: "../upload/default-avatar.jpeg",
+        },
 
       birthDate: {
     type: Date,
@@ -52,3 +56,4 @@ const userSchema = new Schema(
 );
 
 export default mongoose.model("User", userSchema);
+

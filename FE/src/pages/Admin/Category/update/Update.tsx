@@ -6,19 +6,28 @@ import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { update } from "../../../../services/category";
+import { uploadImage } from "../../../../systems/utils/uploadImage";
+
 interface UpdateComponentProps {
   id?: string;
   data: ICategory[];
 }
+
 const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   const queryClient = useQueryClient();
   const [showMessage, setShowMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name_category: "",
+      image_category: "",
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: async (category: ICategory) => {
@@ -31,16 +40,42 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
         queryKey: ["CATEGORY_KEY"],
       });
     },
+    onError: (error: any) => {
+      setErrorMessage(error.message || "Đã có lỗi xảy ra");
+    },
   });
-  const onSubmit = async (data: ICategory) => {
-    mutation.mutate(data);
-    // console.log(data);
-  };
+
   useEffect(() => {
     const findDataById = data.find((data: ICategory) => data._id === id);
     if (!findDataById) return;
     reset(findDataById);
   }, [data, id, reset]);
+
+  const onSubmit = async (formData: ICategory) => {
+    try {
+      let imageUrl = formData.image_category; // giữ nguyên URL nếu không thay đổi
+
+      // Kiểm tra nếu có tệp tin mới được chọn
+      if (
+        formData.image_category &&
+        formData.image_category[0] instanceof File
+      ) {
+        const file = formData.image_category[0];
+        const uploadedUrls = await uploadImage(file); // tải lên ảnh mới
+        imageUrl = uploadedUrls[0]; // lấy URL của ảnh mới
+      }
+
+      const updatedCategory = {
+        ...formData,
+        image_category: imageUrl,
+      };
+
+      mutation.mutate(updatedCategory);
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
+  };
+
   useEffect(() => {
     if (showMessage) {
       setTimeout(() => {
@@ -48,8 +83,10 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       }, 3000);
     }
   }, [showMessage]);
+
   return (
     <div>
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <Message
         message={"Sửa danh mục thành công !"}
         timeout={3000}
@@ -72,19 +109,35 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
                     <Input
                       type="text"
                       placeholder="Nhập tên danh mục..."
-                      {...register("name", { required: true })}
+                      {...register("name_category", { required: true })}
                     />
                   </div>
                   <p>
-                    {errors.name && <span>Vui lòng không được để trống</span>}
+                    {errors.name_category && (
+                      <span>Vui lòng không được để trống</span>
+                    )}
+                  </p>
+                </div>
+                <div className="mt-2">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <Input
+                      type="file"
+                      placeholder="Nhập ảnh danh mục..."
+                      {...register("image_category")}
+                    />
+                  </div>
+                  <p>
+                    {errors.image_category && (
+                      <span>Vui lòng không được để trống</span>
+                    )}
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="flex justify-center ">
-          <button className="items-center px-4 py-2 mt-5 text-white bg-blue-600 rounded-lg ">
+        <div className=" flex justify-center">
+          <button className=" bg-blue-600 py-2 px-4 rounded-lg text-white mt-5 items-center">
             Xác nhận
           </button>
         </div>

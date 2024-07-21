@@ -6,11 +6,12 @@ const categorySchema = mongoose.Schema(
   {
     name_category: {
       type: String,
+      required: true,
       unique: true,
     },
     image_category: {
       type: String,
-      unique: true,
+      required: true,
     },
     slug: {
       type: String,
