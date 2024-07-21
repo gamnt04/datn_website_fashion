@@ -6,9 +6,8 @@ const Canceled = ({ dataProps }: any) => {
     <>
       {!dataProps || dataProps.length === 0 ? (
 
-        <div className="w-full h-[200px] flex flex-col justify-center items-center">
-          <img src="../../src/assets/Images/Products/no_products.png" className="w-44 h-40" alt="" />
-          <p>Chưa có sản phẩm nào</p>
+        <div className="flex justify-center items-center">
+          <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
         </div>
       ) : (
         <div>

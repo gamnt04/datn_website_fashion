@@ -26,8 +26,11 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     const item = {
       userId: account,
       productId: id,
-      quantity: 1,
+      quantity: quantity_item,
+      color: color,
+      size: size,
     };
+    console.log(item);
     mutate(item);
   };
   useEffect(() => {
