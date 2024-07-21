@@ -5,14 +5,12 @@ export interface IProduct {
   price_product: number;
   description_product: string;
   category_id: string[];
-  countInStock_product: number;
   featured_product: boolean;
   image_product: FileList | string[];
   gallery_product: FileList | string[];
-  colors?: string[];
-  sizes?: string[];
   tag_product: string[];
   quantity_product: number;
+  attributes: string[];
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
   deletedAt?: ReactNode;
