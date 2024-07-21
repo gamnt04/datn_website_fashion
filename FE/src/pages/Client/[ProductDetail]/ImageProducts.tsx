@@ -37,6 +37,16 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
           </div>
         </div>
         <div className="flex gap-4 mt-4">
+          <button
+            className="hover:scale-110"
+            onClick={() => setCurrentImage(image_product)}
+          >
+            <img
+              src={image_product}
+              className="w-16 h-16 bg-gray-100 p-2 rounded-lg"
+            />
+          </button>
+
           {gallery_product && gallery_product.length > 0 ? (
             gallery_product.map((gallery, index) => (
               <button
