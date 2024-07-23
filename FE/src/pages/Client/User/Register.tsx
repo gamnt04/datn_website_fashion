@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useSignUp from "../../../common/hooks/Auth/useSignUp";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { signUpSchema } from "../../../common/validations/auth/SignUp";
+import { Button } from "antd";
 const Register = () => {
   const {
     register,
@@ -156,9 +157,9 @@ const Register = () => {
                   Forget password?
                 </a> */}
               </div>
-              <button className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 bg-gray-900 rounded-2xl hover:bg-[#f68e56] focus:ring-4 focus:ring-[#f68e56] md:w-96">
-                Create Account
-              </button>
+              <Button type="primary" htmlType="submit" className="w-[100px] h-[50px]">
+                Đăng Kí
+              </Button>
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
                 <Link
