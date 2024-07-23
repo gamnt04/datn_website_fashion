@@ -81,8 +81,7 @@ export async function get_items_client(req, res) {
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Products.findById(req.params.id);
-    const attr = await Attribute.findOne({ id_item: product._id.toString() });
+    const product = await Products.findById(req.params.id).populate('attributes');
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
