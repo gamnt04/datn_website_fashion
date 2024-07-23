@@ -20,6 +20,7 @@ const AttributeSchema = new Schema(
                             required: true,
                             min: 1,
                         },
+                        price_attribute : Number
                        
                     }
                 ],

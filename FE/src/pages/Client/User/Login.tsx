@@ -4,34 +4,34 @@ import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 
 const Login = () => {
-  const { onSubmit,isPending, isError, error } = useSignIn();
+  const { onSubmit, isPending, isError, error } = useSignIn();
   type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
-};
+    username?: string;
+    password?: string;
+    remember?: string;
+  };
 
-if (isPending) return <div>Pending...</div>
-if (isError) return <div>{error.message}</div>
-
-
-
-const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-   onSubmit({ email: values.username ?? "", password: values.password ?? ""});
-};
+  if (isPending) return <div>Pending...</div>
+  if (isError) return <div>{error.message}</div>
 
 
-const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-  alert("Đăng nhập thất bại")
-};
+
+  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+    onSubmit({ email: values.username ?? "", password: values.password ?? "" });
+  };
+
+
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
+    alert("Đăng nhập thất bại")
+  };
 
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-<div className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
-    <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
+            <div className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+              <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Đăng nhập
               </h3>
               <p className="mb-4 text-gray-600">
@@ -50,64 +50,64 @@ const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
                 <p className="mx-4 text-gray-600">Hoặc</p>
                 <hr className="flex-grow border-gray-300" />
               </div>
-                <Form
-    name="basic"
+              <Form
+                name="basic"
                 initialValues={{ remember: true }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
                 layout="vertical"
                 className="space-y-4"
-  >
-    <Form.Item<FieldType>
-      label="Username"
-      name="username"
-      rules={[{ required: true, message: 'Please input your username!' }]}
-      className="w-[400px]"
-    >
-      <Input className="h-[50px]"/>
-    </Form.Item>
-
-    <Form.Item<FieldType>
-      label="Password"
-      name="password"
-      rules={[{ required: true, message: 'Please input your password!' }]}
-    >
-      <Input.Password className="h-[50px]"/>
-    </Form.Item>
-
-    <Form.Item<FieldType>
-      name="remember"
-      valuePropName="checked"
-      // wrapperCol={{ offset: 8, span: 16 }}
-    >
-     <div className="flex justify-between items-center">
-         <Checkbox>Ghi nhớ</Checkbox>
-           <a
-                  href="#"
-                  className="text-sm font-medium text-blue-600 hover:underline"
+              >
+                <Form.Item<FieldType>
+                  label="Email"
+                  name="username"
+                  rules={[{ required: true, message: 'Please input your username!' }]}
+                  className="w-[400px]"
                 >
-                  Quên mật khẩu?
-                </a>
-     </div>
-    </Form.Item>
+                  <Input className="h-[50px]" />
+                </Form.Item>
 
-    <Form.Item >
-      <Button type="primary" htmlType="submit" className="w-[100px] h-[50px]">
-        Đăng nhập
-      </Button>
-    </Form.Item>
-     <p className="text-sm text-gray-600">
-                Bạn chưa có tài khoản?{" "}
-                <Link
-                  to="/login/register"
-                  className="font-bold text-blue-600 hover:underline"
+                <Form.Item<FieldType>
+                  label="Password"
+                  name="password"
+                  rules={[{ required: true, message: 'Please input your password!' }]}
                 >
-                  Đăng ký tài khoản
-                </Link>
-              </p>
-  </Form>
-</div>
+                  <Input.Password className="h-[50px]" />
+                </Form.Item>
+
+                <Form.Item<FieldType>
+                  name="remember"
+                  valuePropName="checked"
+                // wrapperCol={{ offset: 8, span: 16 }}
+                >
+                  <div className="flex justify-between items-center">
+                    <Checkbox>Ghi nhớ</Checkbox>
+                    <a
+                      href="#"
+                      className="text-sm font-medium text-blue-600 hover:underline"
+                    >
+                      Quên mật khẩu?
+                    </a>
+                  </div>
+                </Form.Item>
+
+                <Form.Item >
+                  <Button type="primary" htmlType="submit" className="w-[100px] h-[50px]">
+                    Đăng nhập
+                  </Button>
+                </Form.Item>
+                <p className="text-sm text-gray-600">
+                  Bạn chưa có tài khoản?{" "}
+                  <Link
+                    to="/login/register"
+                    className="font-bold text-blue-600 hover:underline"
+                  >
+                    Đăng ký tài khoản
+                  </Link>
+                </p>
+              </Form>
+            </div>
           </div>
         </div>
       </div>
