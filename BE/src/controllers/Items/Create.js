@@ -8,6 +8,7 @@ import { validate_items } from "../../validations/items";
 export const createProduct = async (req, res) => {
   const { category_id } = req.body;
   const dataClient = req.body;
+
   try {
     if (category_id) {
       const category = await Category.findById(category_id);
@@ -17,14 +18,17 @@ export const createProduct = async (req, res) => {
         });
       }
     }
-    let check_name_category = await Category.findOne({
-      name: "Chưa phân loại",
-    });
-    if (!check_name_category) {
-      check_name_category = await Category.create({
+    else {
+      let check_name_category = await Category.findOne({
         name: "Chưa phân loại",
       });
+      if (!check_name_category) {
+        check_name_category = await Category.create({
+          name: "Chưa phân loại",
+        });
+      }
     }
+
     // let slug = slugify(dataClient.name_product, { lower: true });
 
     // let existingProduct = await Products.findOne({ slug });
@@ -44,6 +48,7 @@ export const createProduct = async (req, res) => {
       attributes: [],
       category_id: category_id ? category_id : check_name_category._id,
     };
+    console.log(category_id);
     const { error } = validate_items.validate(dataClient, {
       abortEarly: false,
     });
