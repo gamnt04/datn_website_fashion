@@ -22,18 +22,23 @@ export default function CategoryCreate() {
   return (
     <div>
       <Button
-        sx={{ color: "inherit", padding: 0, minWidth: "auto" }}
-        onClick={handleClickOpen} 
+        sx={{
+          color: "white",
+          padding: 1,
+          minWidth: "auto",
+          background: "blue",
+        }}
+        onClick={handleClickOpen}
       >
         Thêm danh mục
       </Button>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <div className="text-center">
-          Thêm danh mục
-
-          </div>
-          <div className="absolute top-0 right-0 cursor-pointer" onClick={handleClose}>
+          <div className="text-center">Thêm danh mục</div>
+          <div
+            className="absolute top-0 right-0 cursor-pointer"
+            onClick={handleClose}
+          >
             <X />
           </div>
         </DialogTitle>

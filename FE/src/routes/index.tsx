@@ -14,7 +14,6 @@ import Register from "../pages/Client/User/Register";
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/Admin/Dashboard/Dashboard";
 import ClientLayout from "../layouts/ClientLayout";
-import Category from "../pages/Admin/Category/List";
 import OrderList from "../pages/Admin/Orders/OrderList";
 import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
 import IndexHome from "../pages/Client/(Home)/page";
@@ -68,8 +67,7 @@ const RouterComponent = () => {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/admin/category" element={<Category />} />
-            <Route path="/admin/test" element={<List_Category />} />
+            <Route path="/admin/category" element={<List_Category />} />
             <Route path="products" element={<ListProduct />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} />
