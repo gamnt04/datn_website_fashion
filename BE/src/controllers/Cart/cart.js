@@ -17,7 +17,9 @@ export const getCartByUserId = async (req, res) => {
         image: item.productId.image_product,
         price: item.productId.price_product,
         thumbnail: item.productId.thumbnail,
-        quantity: item.quantity
+        quantity: item.quantity,
+        color: item.color,
+        size: item.size
       }))
     };
     return res.status(StatusCodes.OK).json(dataCart);

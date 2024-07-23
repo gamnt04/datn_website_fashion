@@ -23,6 +23,12 @@ const orderItemSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  size: {
+    type: String
+  },
+  color: {
+    type: String
+  },
   image: {
     type: String,
   },
