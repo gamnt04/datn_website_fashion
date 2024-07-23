@@ -1,19 +1,38 @@
 import { Link } from "react-router-dom";
 import { IOrder } from "../../../../common/interfaces/Orders"
+import { useMutation } from "@tanstack/react-query";
+import { Cancel_Order } from "../../../../services/orderProduct";
+import { message } from "antd";
 
 const WaitingForGoods = ({ dataProps }: any) => {
-    console.log(dataProps?.orders);
-
+    const [messageApi, contextHolder] = message.useMessage();
+    const { mutate } = useMutation({
+        mutationFn: async (id: any) => {
+            const { data } = await Cancel_Order(id);
+            return data;
+        },
+        onSuccess: () => {
+            messageApi.open({
+                type: "success",
+                content: "Yêu cầu hủy đơn hàng thành công",
+            });
+        },
+        onError: () => {
+            messageApi.open({
+                type: "error",
+                content: "Yêu cầu hủy đơn hàng thất bại",
+            });
+        }
+    })
     return (
         <>
             {!dataProps || dataProps.length === 0 ? (
-
-                <div className="w-full h-[200px] flex flex-col justify-center items-center">
-                    <img src="../../src/assets/Images/Products/no_products.png" className="w-44 h-40" alt="" />
-                    <p>Chưa có sản phẩm nào</p>
+                <div className="flex justify-center items-center">
+                    <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
                 </div>
             ) : (
                 <div>
+                    {contextHolder}
                     {dataProps.map((item: IOrder) => (
                         <div className="bg-white shadow-xl my-4 px-2">
 
@@ -110,6 +129,10 @@ const WaitingForGoods = ({ dataProps }: any) => {
                                     <button className="basis-2/6 lg:basis-2/12 bg-red-500 px-2 py-2 text-white text-[12px] rounded-md">
                                         Đã Nhận Hàng
                                     </button>
+                                    <button onClick={() => mutate(item?._id)} className="basis-2/6 lg:basis-2/12 bg-black px-2 py-2 text-white text-[12px] rounded-md">
+                                        Yêu cầu hủy đơn
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
