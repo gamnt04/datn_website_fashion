@@ -10,7 +10,7 @@ export const Query_Products = (id?: string | number, page?: number) => {
   const { data, ...rest } = useQuery({
     queryKey: key,
     queryFn: async () => {
-      return id ? get_detail_items(id) : get_items_client(page);
+      return id ? await get_detail_items(id) : await get_items_client(page);
     }
   });
   return { data, ...rest };
