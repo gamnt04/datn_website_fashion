@@ -1,34 +1,30 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Update_Status } from "../../../services/orderProduct";
+import { Cancel_Order } from "../../../services/orderProduct";
 
-type Action = "UPDATE" | "CANCEL";
 
-export function Mutation_Order(action: Action) {
+type Action = 'REQUEST_CANCEL' | 'CONFIRM_CANCEL';
+
+export async function useOrderMutations(action: Action) {
     const queryClient = useQueryClient();
-
-
-    const { mutate } = useMutation({
-        mutationFn: async (data) => {
-            console.log(data);
-
+    const { mutate, ...rest } = useMutation({
+        mutationFn: async (data: any) => {
             switch (action) {
-                case "UPDATE":
-                    return await Update_Status(data);
+                case "REQUEST_CANCEL":
+                    return await Cancel_Order(data.orderId);
+                // case "CONFIRM_CANCEL":
+                //     return await confirmCancelOrder(data);
                 default:
-                    return;
+                    throw new Error('Invalid action');
             }
         },
         onSuccess: () => {
-
             queryClient.invalidateQueries({
-                queryKey: ['Order_key']
+                queryKey: ['Order_Key']
             });
-            alert("Cập nhật thành công");
-        },
-        onError: () => {
-            alert("Cập nhật thất bại");
         }
-    }
-    );
-    return { mutate };
+    });
+
+
+
+    return { mutate, ...rest };
 }
