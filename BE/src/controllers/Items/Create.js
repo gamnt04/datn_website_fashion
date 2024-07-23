@@ -32,16 +32,16 @@ export const createProduct = async (req, res) => {
     //     slug = `${slug}-${Math.floor(Math.random() * 10000)}`;
     // }
     const checkNameItem = await Products.find();
-    for(let check of checkNameItem) {
-      if(check.name_product == dataClient.name_product) {
+    for (let check of checkNameItem) {
+      if (check.name_product == dataClient.name_product) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message : 'Tên sản phẩm đã tồn tại!!'
+          message: 'Tên sản phẩm đã tồn tại!!'
         })
       }
     }
     const newProductData = {
       ...dataClient,
-      attributes : [],
+      attributes: [],
       category_id: category_id ? category_id : check_name_category._id,
     };
     const { error } = validate_items.validate(dataClient, {
@@ -75,7 +75,7 @@ export const createProduct = async (req, res) => {
       // console.log(data_attr);
       const new_attr = await Attributes.create(data_attr);
       await Products.findByIdAndUpdate(data._id, {
-        $push: { attributes: new_attr.values.map(e => e._id) }
+        $push: { attributes: new_attr._id }
       })
       return res.status(StatusCodes.CREATED).json({
         message: 'OK',
