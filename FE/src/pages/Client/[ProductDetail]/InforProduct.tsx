@@ -126,9 +126,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 {dataAttr?.values?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
-                    className={`${Convert_Color(item?.color)} ${
-                      color == item?.color ? "after:block" : "after:hidden"
-                    } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
+                    className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
+                      } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
                   ></button>
                 ))}
               </div>
@@ -143,9 +142,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                   {arr_size?.map((item: any) => (
                     <button
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
-                      className={`${
-                        size == item?.name_size && "bg-black text-white"
-                      } hover:bg-black hover:text-white grid place-items-center`}
+                      className={`${size == item?.name_size && "bg-black text-white"
+                        } hover:bg-black hover:text-white grid place-items-center`}
                     >
                       {item?.name_size}
                     </button>

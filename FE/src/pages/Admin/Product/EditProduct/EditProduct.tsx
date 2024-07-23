@@ -43,14 +43,17 @@ const UpdateProduct = () => {
         return;
       }
       try {
-        const fetchedProduct = await get_detail_items(id);
+        const data = await get_detail_items(id);
+        const fetchedProduct = data.product;
+        console.log(`Products`, data);
+
         if (fetchedProduct) {
           setProduct(fetchedProduct);
           setValue("name_product", fetchedProduct.name_product);
           setValue("price_product", fetchedProduct.price_product);
           setValue("category_id", fetchedProduct.category_id);
           setValue("description_product", fetchedProduct.description_product);
-          setValue("quantity_product", fetchedProduct.quantity_product);
+          //setValue("quantity_product", fetchedProduct.quantity_product);
           setValue("image_product", fetchedProduct.image_product);
           setValue("gallery_product", fetchedProduct.gallery_product);
 
@@ -181,7 +184,7 @@ const UpdateProduct = () => {
           </div>
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label
             htmlFor="quantity_product"
             className="block mb-2 text-sm font-bold text-gray-700"
@@ -199,7 +202,7 @@ const UpdateProduct = () => {
           <div className="text-xs italic text-red-500">
             {errors.quantity_product?.message}
           </div>
-        </div>
+        </div> */}
 
         <div className="mb-4">
           <div className="mb-4">
