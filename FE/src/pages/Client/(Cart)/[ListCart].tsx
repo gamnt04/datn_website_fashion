@@ -7,7 +7,15 @@ import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
-import { Checkbox, Input, message, Popconfirm, Table, TableProps, Spin } from "antd";
+import {
+  Checkbox,
+  Input,
+  message,
+  Popconfirm,
+  Table,
+  TableProps,
+  Spin
+} from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 
 interface DataType {
@@ -22,7 +30,8 @@ const ListCart = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError, calculateTotal, calculateTotalProduct } = List_Cart(userId);
+  const { data, isPending, isError, calculateTotal, calculateTotalProduct } =
+    List_Cart(userId);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
@@ -30,30 +39,32 @@ const ListCart = () => {
   const remove_item = (id: any) => {
     const data_item = {
       userId: userId,
-      productId: id,
+      productId: id
     };
     removeSingle(data_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công",
+      content: "Xóa thành công"
     });
   };
 
   const handleRemoveMultiple = () => {
     const product_item = {
       userId: userId,
-      productIds: selectedProductIds,
+      productIds: selectedProductIds
     };
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công",
+      content: "Xóa thành công"
     });
   };
 
   const handleCheckboxChange = (productId: string) => {
     if (selectedProductIds.includes(productId)) {
-      setSelectedProductIds(selectedProductIds.filter((id) => id !== productId));
+      setSelectedProductIds(
+        selectedProductIds.filter((id) => id !== productId)
+      );
     } else {
       setSelectedProductIds([...selectedProductIds, productId]);
     }
@@ -61,38 +72,53 @@ const ListCart = () => {
 
   const dataSort = data?.products?.map((product: any) => ({
     key: product?.productId,
-    ...product,
+    ...product
   }));
 
-  const columns: TableProps<DataType>['columns'] = [
+  const columns: TableProps<DataType>["columns"] = [
     {
       key: "checkbox",
       dataIndex: "checkbox",
       render: (_: any, product: any) => {
         return (
-          <Checkbox onChange={() => handleCheckboxChange(product?.productId)}></Checkbox>
+          <Checkbox
+            onChange={() => handleCheckboxChange(product?.productId)}
+          ></Checkbox>
         );
-      },
+      }
     },
     {
       key: "image",
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <img src={product?.image} className="w-[100px] h-[80px] object-cover" alt="" />;
-      },
+        return (
+          <img
+            src={product?.image}
+            className="w-[100px] h-[80px] object-cover"
+            alt=""
+          />
+        );
+      }
     },
     {
-      title: 'Sản phẩm',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Sản phẩm",
+      dataIndex: "name",
+      key: "name"
     },
     {
-      title: 'Đơn giá',
-      dataIndex: 'price',
-      key: 'price',
+      title: "Đơn giá",
+      dataIndex: "price",
+      key: "price",
       render: (_: any, product: any) => {
-        return <div>{product?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
-      },
+        return (
+          <div>
+            {product?.price.toLocaleString("vi", {
+              style: "currency",
+              currency: "VND"
+            })}
+          </div>
+        );
+      }
     },
     {
       key: "quantity",
@@ -101,20 +127,32 @@ const ListCart = () => {
       render: (_: any, product: any) => {
         return (
           <div className="flex space-x-2">
-            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity }} />
+            <Dow_btn
+              dataProps={{
+                id_item: product?.productId,
+                quantity_item: product?.quantity
+              }}
+            />
             <Input value={product?.quantity} className="w-[40px] text-center" />
             <Up_btn dataProps={product?.productId} />
           </div>
         );
-      },
+      }
     },
     {
-      title: 'Tổng tiền',
-      dataIndex: 'totalPrice',
-      key: 'totalPrice',
+      title: "Tổng tiền",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
       render: (_: any, product: any) => {
-        return <div>{(product?.price * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
-      },
+        return (
+          <div>
+            {(product?.price * product?.quantity).toLocaleString("vi", {
+              style: "currency",
+              currency: "VND"
+            })}
+          </div>
+        );
+      }
     },
     {
       key: "action",
@@ -129,15 +167,13 @@ const ListCart = () => {
               okText="Có"
               cancelText="Không"
             >
-              <DeleteOutlined style={{ fontSize: '24px' }} />
+              <DeleteOutlined style={{ fontSize: "24px" }} />
             </Popconfirm>
           </div>
         );
-      },
-    },
+      }
+    }
   ];
-
-
 
   if (isPending) {
     return (
@@ -169,7 +205,10 @@ const ListCart = () => {
         {data?.products?.length === 0 ? (
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="flex justify-center items-center h-screen">
-              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
+              <img
+                src="../../src/assets/Images/Products/no-data.png"
+                alt="Không có sản phẩm"
+              />
             </div>
           </div>
         ) : (
@@ -182,7 +221,7 @@ const ListCart = () => {
                 okText="Có"
                 cancelText="Không"
               >
-                <DeleteOutlined style={{ fontSize: '24px' }} />
+                <DeleteOutlined style={{ fontSize: "24px" }} />
               </Popconfirm>
               <Table columns={columns} dataSource={dataSort} />
             </div>
@@ -205,7 +244,11 @@ const ListCart = () => {
                 <div className="flex flex-col border-y py-5 my-5">
                   <span className="text-xs mb-2">Nhập mã giảm giá</span>
                   <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                    <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
+                    <input
+                      className="px-4 outline-none"
+                      type="text"
+                      placeholder="Enter Code"
+                    />
                     <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
                       Apply
                     </button>
