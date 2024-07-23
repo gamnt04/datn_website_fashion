@@ -51,7 +51,6 @@ const Profile = () => {
     });
   };
 
-
   const handleAvatarChange = async (e: any) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -65,7 +64,6 @@ const Profile = () => {
       reader.readAsDataURL(file);
     }
   };
-
 
   const handleSaveProfile = async (e: any) => {
     e.preventDefault();
@@ -109,14 +107,12 @@ const Profile = () => {
     }
   };
 
-
   const handleEditField = (fieldName: any) => {
     setEditingField(fieldName); // Lưu tên trường đang chỉnh sửa vào state
   };
   const handleSaveField = () => {
     setEditingField(null); // Đặt lại trường đang chỉnh sửa về null sau khi lưu
   };
-
 
   return (
     <>
@@ -275,7 +271,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
     </>
   );
 };
