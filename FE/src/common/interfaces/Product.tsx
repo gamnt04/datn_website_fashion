@@ -5,15 +5,24 @@ export interface IProduct {
   price_product?: number;
   description_product?: string;
   category_id?: string[];
-  stock_product?: number;
-  attributes?: [];
+  stock_product: number;
+  attributes?: IAttribute[];
   featured_product?: boolean;
   image_product?: FileList | string;
   gallery_product?: string[];
   tag_product?: string[];
-  quantity_product?: number;
+  //quantity_product?: number;
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
   deletedAt?: ReactNode;
   deleted?: boolean;
+}
+
+export interface ISize {
+  name_size: string;
+  stock_attribute: number;
+}
+export interface IAttribute {
+  color: string;
+  size: ISize[];
 }
