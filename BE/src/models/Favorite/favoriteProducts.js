@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-export const favoriteProductSchema = new Schema(
+const { Schema } = mongoose;
+
+const favoriteProductSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -27,4 +29,5 @@ export const favoriteProductSchema = new Schema(
     versionKey: false
   }
 );
+
 export default mongoose.model("FavoriteProducts", favoriteProductSchema);

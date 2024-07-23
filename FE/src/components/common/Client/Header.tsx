@@ -18,20 +18,21 @@ const Header = () => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user?._id;
   const { data } = List_Cart(account);
+
   useEffect(() => {
     typeof window !== "undefined" &&
       window.addEventListener("scroll", () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -174,7 +175,9 @@ const Header = () => {
             </form>
             {/* cart */}
             <div className="group *:duration-300 relative py-1">
-              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
+              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">
+                {data?.products?.length}
+              </span>
               {/* {account ? '/cart' : (
                 <div onClick={() => onlogin()} className="relative">
                   <CartIcon />
@@ -182,7 +185,7 @@ const Header = () => {
                 </div>
               )} */}
 
-              <Link to={account ? '/cart' : '/login'}>
+              <Link to={account ? "/cart" : "/login"}>
                 <CartIcon />
               </Link>
             </div>
@@ -210,15 +213,36 @@ const Header = () => {
 
             {/* option / menu */}
             <div className="cursor-pointer hover:scale-105 duration-300">
-              {account && <Link to={'/allorder'}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-check"><path d="M2 21a8 8 0 0 1 13.292-6" /><circle cx="10" cy="8" r="5" /><path d="m16 19 2 2 4-4" /></svg>
-              </Link>}
-              {account ? '' : <Link
-                to={"/login"}
-                className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
-              >
-                Login
-              </Link>}
+              {account && (
+                <Link to={"/allorder"}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-user-round-check"
+                  >
+                    <path d="M2 21a8 8 0 0 1 13.292-6" />
+                    <circle cx="10" cy="8" r="5" />
+                    <path d="m16 19 2 2 4-4" />
+                  </svg>
+                </Link>
+              )}
+              {account ? (
+                ""
+              ) : (
+                <Link
+                  to={"/login"}
+                  className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </nav>
         </header>
@@ -262,8 +286,6 @@ const Header = () => {
 };
 
 export default Header;
-
-
 
 // (
 //   <Link to="/cart" onClick={ScrollTop} className="relative">
