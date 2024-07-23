@@ -14,10 +14,7 @@ const Pay = () => {
     const { register, handleSubmit, setValue } = useForm()
     const { onSubmit, data } = Pay_Mutation();
     const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
-    const [showOptions, setShowOptions] = useState(false);
-    const toggleOptions = () => {
-        setShowOptions(!showOptions);
-    }
+
     if (auth && auth.address) {
         const defaultAddress = auth.address.find((item: any) => item.fullName === "admin");
         if (defaultAddress) {
@@ -133,49 +130,34 @@ const Pay = () => {
 
                             <div className="border-b flex justify-between px-6 py-6">
                                 <p className="text-xl">Phương thức thanh toán</p>
-                                <div className="flex gap-8">
-                                    <p>Phương thức thanh toán</p>
-                                    <div
-                                        className="text-blue-400 underline"
-                                        onClick={toggleOptions}
+                                <div className="flex gap-8 items-center">
+                                    <select
+                                        className="border rounded p-2"
+                                        {...register("payment", { required: true })}
                                     >
-                                        Thay đổi
-                                    </div>
+                                        <option value="Thanh toán khi nhận hàng">Thanh toán khi nhận hàng</option>
+                                        <option value="VNPAY">Thanh toán qua VNPAY</option>
+                                        <option value="MoMo">Thanh toán bằng MoMo</option>
+                                    </select>
                                 </div>
-                                {showOptions && (
-                                    <div className="mt-4">
-                                        <label className="flex items-center w-full">
-                                            <input type="radio" value="Thanh toán khi nhân hàng" className="mr-2" defaultChecked {...register("payment", { required: true })} />
-                                            <p className="text-sm">Thanh toán khi nhận hàng (COD)</p>
-                                        </label>
-                                        <label className="flex items-center w-full">
-                                            <input type="radio" value="VNPAY" className="mr-2" {...register("payment", { required: true })} />
-                                            <p className="flex-1 text-sm">Thanh toán qua thẻ, ứng dụng ngân hàng VNPAY</p>
-                                        </label>
-                                        <label className="flex items-center w-full">
-                                            <input type="radio" value="MoMo" className="mr-2" {...register("payment", { required: true })} />
-                                            <p className="text-sm">Thanh toán bằng MoMo)</p>
-                                        </label>
-                                    </div>
-                                )}
                             </div>
                             <div className="flex justify-end py-6 px-6 border-b">
                                 <div>
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng tiền hàng</p>
-                                        <p>₫649.000</p>
+                                        <p>{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                     </div>
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Phí vận chuyển</p>
                                         <p>₫32.800</p>
                                     </div>
-                                    <div className="flex justify-between py-3 gap-16">
+                                    {/* <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng cộng Voucher giảm giá:</p>
                                         <p>-₫50.000</p>
-                                    </div>
+                                    </div> */}
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng thanh toán</p>
-                                        <p className="text-xl font-bold text-black">{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                        <p className="text-xl font-bold text-black">{(calculateTotal() + 32800).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                     </div>
                                 </div>
                             </div>

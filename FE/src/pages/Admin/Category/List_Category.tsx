@@ -1,4 +1,5 @@
-import { Button, message, Popconfirm, Table } from "antd";
+import React from "react";
+import { Button, message, Popconfirm, Table, Pagination, Input } from "antd";
 import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
@@ -6,14 +7,16 @@ import CategoryUpdate from "./update";
 import { ColumnsType } from "antd/es/table";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UpdateComponent from "./Create";
-
 import instance from "../../../configs/axios";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
   const { data, isLoading } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
-  // Đảm bảo data là mảng và có cấu trúc đúng
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [searchText, setSearchText] = React.useState("");
+  const pageSize = 4;
+
   const dataSource = Array.isArray(data)
     ? data.map((category: ICategory) => ({
         key: category._id,
@@ -46,17 +49,7 @@ const List_Category: React.FC = () => {
       throw error;
     },
   });
-  //   const { mutate } = useCategoryMutation({ action: "DELETE" });
 
-  //   const handleDelete = (id: string | undefined) => {
-  //     if (!id) {
-  //       console.error("Category ID is missing");
-  //       return;
-  //     }
-
-  //     console.log(`Deleting category with ID: ${id}`); // Log the ID to debug
-  //     mutate(id);
-  //   };
   const createFilters = (products: ICategory[]) => {
     return products
       .map((product: ICategory) => product.name_category)
@@ -66,6 +59,7 @@ const List_Category: React.FC = () => {
       )
       .map((name: string) => ({ text: name, value: name }));
   };
+
   const columns: ColumnsType<ICategory> = [
     {
       key: "name_category",
@@ -130,17 +124,92 @@ const List_Category: React.FC = () => {
     },
   ];
 
+  // Tạo hàm để xác định trang cần hiển thị và dấu ba chấm
+  const getPaginationItems = (
+    current: number,
+    total: number,
+    pageSize: number
+  ) => {
+    const totalPages = Math.ceil(total / pageSize);
+    const delta = 3; // Số trang giữa dấu ba chấm
+    const pages = [];
+    let start = Math.max(1, current - delta);
+    let end = Math.min(totalPages, current + delta);
+
+    if (current > delta + 1) {
+      pages.push(1);
+      if (current > delta + 2) {
+        pages.push("...");
+      }
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (current < totalPages - delta) {
+      if (current < totalPages - delta - 1) {
+        pages.push("...");
+      }
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
+  const onChangePage = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const paginationProps = {
+    current: currentPage,
+    pageSize,
+    total: dataSource.length,
+    showSizeChanger: false,
+    pageSizeOptions: [],
+    showQuickJumper: true,
+    itemRender: (
+      page: number,
+      type: string,
+      originalElement: React.ReactNode
+    ) => {
+      if (type === "page") {
+        return <a>{page}</a>;
+      }
+      if (type === "prev") {
+        return <a>Trước</a>;
+      }
+      if (type === "next") {
+        return <a>Kế tiếp</a>;
+      }
+      return originalElement;
+    },
+    onChange: onChangePage,
+    showTotal: (total: number) => `Tổng ${total} mục`,
+  };
+
   return (
     <>
       {isLoading ? (
         <Loading />
       ) : (
         <>
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-10 mt-10">
             <h1 className="text-2xl font-semibold">Quản lý sản phẩm</h1>
             <UpdateComponent />
           </div>
-          <Table dataSource={dataSource} columns={columns} />
+          <Table
+            dataSource={dataSource.slice(
+              (currentPage - 1) * pageSize,
+              currentPage * pageSize
+            )}
+            columns={columns}
+            pagination={false}
+          />
+          <div className="flex justify-between items-center mt-4">
+            <div className="max-w-full overflow-hidden"></div>
+            <Pagination {...paginationProps} />
+          </div>
         </>
       )}
     </>
