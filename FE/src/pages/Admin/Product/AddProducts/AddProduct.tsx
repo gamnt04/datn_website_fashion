@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Message from "../../../../components/base/Message/Message";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
-import { IProduct } from "../../../../common/interfaces/Product";
+import { IAttribute, IProduct } from "../../../../common/interfaces/Product";
 import { add_items_client } from "../../../../_lib/Items/Products";
 import {
   uploadImage,
@@ -14,11 +14,16 @@ import {
   handleGalleryChange,
   removeImagePreview,
   removeGalleryImage,
+  handleAttributeChange,
+  handleSizeChange,
+  handleAddAttribute,
+  handleAddSize,
+  handleRemoveAttribute,
+  handleRemoveSize,
 } from "../../../../systems/utils/eventAddPro";
 
 const AddProduct = () => {
   const { data } = useCategoryQuery();
-
   const {
     register,
     handleSubmit,
@@ -33,9 +38,11 @@ const AddProduct = () => {
   const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
   const [imageSelected, setImageSelected] = useState(false);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const [attributes, setAttributes] = useState<IAttribute[]>([
+    { color: "", size: [{ name_size: "", stock_attribute: 0 }] },
+  ]);
   imageSelected;
   const onSubmit: SubmitHandler<IProduct> = async (data) => {
-    console.log(data);
     try {
       const { gallery_product, image_product, ...formData }: any = data;
       const uploadedImageUrls = image_product
@@ -47,10 +54,11 @@ const AddProduct = () => {
 
       const newData: IProduct = {
         ...formData,
-        image_product: uploadedImageUrls[0], // Assuming only one main image is uploaded
+        image_product: uploadedImageUrls[0],
         gallery_product: uploadedGalleryUrls,
+        attributes: attributes,
       };
-
+      console.log(`data`, newData);
       await add_items_client(newData);
       setSuccessMessage("Thêm Sản Phẩm thành công !");
       setShowMessage(true);
@@ -71,7 +79,6 @@ const AddProduct = () => {
       return () => clearTimeout(timer);
     }
   }, [showMessage]);
-
   return (
     <div className="container mx-auto">
       {successMessage && (
@@ -175,26 +182,6 @@ const AddProduct = () => {
             </div>
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="quantity_product"
-              className="block mb-2 text-sm font-bold text-gray-700"
-            >
-              Số lượng
-            </label>
-            <input
-              type="number"
-              placeholder="Số lượng "
-              {...register("quantity_product", {
-                required: "Không bỏ trống",
-              })}
-              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            />
-            <div className="text-xs italic text-red-500">
-              {errors.quantity_product?.message}
-            </div>
-          </div>
-
-          <div className="mb-4">
             <div className="mb-4">
               <label
                 htmlFor="image_product"
@@ -285,6 +272,132 @@ const AddProduct = () => {
               <div className="text-xs italic text-red-500">
                 {errors.gallery_product?.message}
               </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-4">
+              <label
+                htmlFor="attributes"
+                className="block mb-2 text-sm font-bold text-gray-700"
+              >
+                Thuộc Tính
+              </label>
+              {attributes.map((attribute, index) => (
+                <div key={index} className="p-4 mb-4 border rounded">
+                  <div className="mb-4">
+                    <label
+                      htmlFor={`color-${index}`}
+                      className="block mb-2 text-sm font-bold text-gray-700"
+                    >
+                      Màu Sắc
+                    </label>
+                    <input
+                      type="text"
+                      id={`color-${index}`}
+                      value={attribute.color}
+                      onChange={(e) =>
+                        handleAttributeChange(
+                          index,
+                          e,
+                          attributes,
+                          setAttributes
+                        )
+                      }
+                      name="color"
+                      className="w-full px-3 py-2 border rounded"
+                    />
+                  </div>
+
+                  {attribute.size.map((size, sizeIndex) => (
+                    <div key={sizeIndex} className="mb-4">
+                      <label
+                        htmlFor={`size-${index}-${sizeIndex}`}
+                        className="block mb-2 text-sm font-bold text-gray-700"
+                      >
+                        Kích Thước
+                      </label>
+                      <input
+                        type="text"
+                        id={`size-${index}-${sizeIndex}`}
+                        value={size.name_size}
+                        onChange={(e) =>
+                          handleSizeChange(
+                            index,
+                            sizeIndex,
+                            e,
+                            attributes,
+                            setAttributes
+                          )
+                        }
+                        name="name_size"
+                        className="w-full px-3 py-2 border rounded"
+                      />
+                      <label
+                        htmlFor={`stock-${index}-${sizeIndex}`}
+                        className="block mb-2 text-sm font-bold text-gray-700"
+                      >
+                        Số lượng
+                      </label>
+                      <input
+                        type="number"
+                        id={`stock-${index}-${sizeIndex}`}
+                        value={size.stock_attribute}
+                        onChange={(e) =>
+                          handleSizeChange(
+                            index,
+                            sizeIndex,
+                            e,
+                            attributes,
+                            setAttributes
+                          )
+                        }
+                        name="stock_attribute"
+                        className="w-full px-3 py-2 border rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleRemoveSize(
+                            index,
+                            sizeIndex,
+                            attributes,
+                            setAttributes
+                          )
+                        }
+                        className="mt-2 text-red-500"
+                      >
+                        Xóa Kích Thước
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleAddSize(index, attributes, setAttributes)
+                    }
+                    className="px-4 py-2 mb-2 text-white bg-blue-500 rounded"
+                  >
+                    Thêm Kích Thước
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleRemoveAttribute(index, attributes, setAttributes)
+                    }
+                    className="text-red-500"
+                  >
+                    Xóa Thuộc Tính
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => handleAddAttribute(attributes, setAttributes)}
+                className="px-4 py-2 text-white bg-green-500 rounded"
+              >
+                Thêm Thuộc Tính
+              </button>
             </div>
           </div>
 
