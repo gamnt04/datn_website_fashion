@@ -160,7 +160,10 @@ const Header = () => {
               )} */}
 
             <Link className="group *:duration-300 relative py-1" onClick={ScrollTop} to={account ? '/cart' : '/login'}>
-              <span className="absolute bg-red-500 px-1 text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
+              {
+
+                data?.products && <span className="absolute bg-red-500 px-1 text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
+              }
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
                 <CartIcon />
               </div>
