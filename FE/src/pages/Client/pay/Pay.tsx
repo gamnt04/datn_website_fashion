@@ -13,11 +13,14 @@ const Pay = () => {
     const [address, setAddress] = useState(false)
     const userId = user?.user?._id;
     const { data: auth, isLoading } = List_Auth(userId)
-    console.log(auth?.address);
 
     const { register, handleSubmit, setValue } = useForm()
-    const { onSubmit, data } = Pay_Mutation();
-    const { calculateTotalProduct, calculateTotal } = List_Cart(userId);
+    const { onSubmit, data : data_cart  } = Pay_Mutation();
+    const { calculateTotalProduct, calculateTotal, data : list_item_cart } = List_Cart(userId);
+    const data = [];
+    data_cart?.products?.filter((item : any) => {
+        item?.status_checked && data.push(item);
+    })
     if (auth && auth.address) {
         const defaultAddress = auth.address.find((item: any) => item.fullName === "admin");
         if (defaultAddress) {
@@ -85,24 +88,24 @@ const Pay = () => {
                                     <th>Thành tiền</th>
                                 </thead>
                                 <tbody>
-                                    {data?.products.map((item: any) => (
+                                    {data.map((item: any) => (
                                         <tr className="*:text-center">
                                             <td className="flex items-center justify-between *:py-3 *:px-6">
                                                 <div className="flex items-center gap-5">
-                                                    <img src={item.image} className="w-[100px] h-[100px]" alt="" />
+                                                    <img src={item?.productId?.image_product} className="w-[100px] h-[100px]" alt="" />
                                                     <div className="flex flex-col">
-                                                        <p className="mb-3 font-bold text-left">{item.name}</p>
+                                                        <p className="mb-3 font-bold text-left">{item?.productId?.name_product}</p>
                                                         <p className="border border-stone-200 rounded-sm py-2 w-[220px]">Đổi trả miễn phí 15 ngày</p>
                                                     </div>
                                                 </div>
                                                 <div className="mr-12">
-                                                    <p className="font-bold w-28 p-0"> Loại: {item.color} - {item.size}</p>
+                                                    <p className="font-bold w-28 p-0"> Loại: {item?.color_item} - {item?.name_size}</p>
                                                 </div>
                                             </td>
-                                            <td>{item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                            <td>{item?.productId?.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
                                             <td>{item.quantity}</td>
                                             <td>
-                                                <p className="font-bold">{(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                                <p className="font-bold">{(item?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                             </td>
                                         </tr>
                                     ))}
@@ -136,7 +139,7 @@ const Pay = () => {
                             </div>
                             <div className="flex items-center justify-end gap-8 p-6">
                                 <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p>
-                                <p className="text-xl font-bold text-black">{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                <p className="text-xl font-bold text-black">{list_item_cart?.total_price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                             </div>
                         </div>
                         <div className="border mt-4 mb-8 rounded shadow-sm">
