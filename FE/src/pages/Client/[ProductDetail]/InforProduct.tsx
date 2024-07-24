@@ -20,7 +20,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-
   const addCart = (id?: string | number) => {
     const item = {
       userId: account,
@@ -41,22 +40,20 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
       case "Color":
-        setColor(item);
-        for (let i of dataProps?.product?.attributes[0]?.values) {
-          for (let k of i.size) {
-            if (!k?.name_size || k?.name_size == "") {
-              i?.color == item && setQuantity_attr(k?.stock_attribute);
-            } else {
-              setArr_Size(i?.size);
-            }
+        dataItem?.attributes?.values?.filter((i: any) => {
+          if (i?.color == item) {
+            i?.size?.filter((j: any) => {
+              (j.name_size) ? setArr_Size(i?.size) : setQuantity_attr(j?.stock_attribute)
+            })
           }
-        }
-        return;
+        })
+        return setColor(item);
       case "Size":
-        setSize(item);
-        for (let i of dataProps?.product?.attributes[0]?.values) {
-          for (let k of i.size) {
-            k?.name_size == item && setQuantity_attr(k?.stock_attribute);
+        for (let i of dataProps?.product?.attributes?.values) {
+          if (i?.color == color) {
+            for (let k of i.size) {
+              k?.name_size == item && (setQuantity_attr(k?.stock_attribute), setSize(k.name_size));
+            }
           }
         }
         return;
@@ -121,7 +118,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 Color
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataProps?.product?.attributes[0]?.values?.map((item: any) => (
+                {dataProps?.product?.attributes?.values?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
                     className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
