@@ -1,23 +1,34 @@
 import Cart from "../../models/Cart/cart";
 import { StatusCodes } from "http-status-codes";
+import Products from "../../models/Items/Products";
 
 export const addItemToCart = async (req, res) => {
     const { userId, productId, quantity, color, size } = req.body;
     try {
+        const data_product = await Products.findOne({_id : productId}).populate('attributes');
+        console.log(data_product);
+        if(data_product.attributes.length > 0) {
+            for (let i of data_product.attributes) {
+                for (let j of i.values){
+
+                }
+            }
+        }
         let cart = await Cart.findOne({ userId });
-        if (!cart) {
-            cart = new Cart({ userId, products: [] });
-        }
-        const existProductIndex = cart.products.findIndex(
-            (item) => item.productId.toString() == productId
-        );
-        if (existProductIndex !== -1) {
-            cart.products[existProductIndex].quantity += quantity;
-        } else {
-            cart.products.push({ productId, quantity, color, size });
-        }
-        await cart.save();
-        return res.status(StatusCodes.OK).json({ cart });
+        console.log(cart);
+        // if (!cart) {
+        //     cart = new Cart({ userId, products: [] });
+        // };
+        // const existProductIndex = cart.products.findIndex(
+        //     (item) => item.productId.toString() == productId
+        // );
+        // if (existProductIndex !== -1) {
+        //     cart.products[existProductIndex].quantity += quantity;
+        // } else {
+        //     cart.products.push({ productId, quantity, color, size });
+        // }
+        // await cart.save();
+        // return res.status(StatusCodes.OK).json({ cart });
     } catch (error) {
         return res
             .status(StatusCodes.BAD_REQUEST)

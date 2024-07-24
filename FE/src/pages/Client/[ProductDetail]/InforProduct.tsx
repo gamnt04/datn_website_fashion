@@ -16,7 +16,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [quantity_attr, setQuantity_attr] = useState();
   const [quantity_item, setQuantity_item] = useState<number>(1);
   const dataItem = dataProps?.product;
-  const dataAttr = dataProps?.attr;
   const { name_product, price_product, _id, stock } = dataItem;
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
@@ -34,16 +33,16 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     mutate(item);
   };
   useEffect(() => {
-    if (!dataAttr) {
+    if (!dataProps) {
       setQuantity_attr(stock);
     }
-  }, [dataAttr]);
+  }, [dataProps]);
 
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
       case "Color":
         setColor(item);
-        for (let i of dataAttr?.values) {
+        for (let i of dataProps?.product?.attributes[0]?.values) {
           for (let k of i.size) {
             if (!k?.name_size || k?.name_size == "") {
               i?.color == item && setQuantity_attr(k?.stock_attribute);
@@ -55,7 +54,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         return;
       case "Size":
         setSize(item);
-        for (let i of dataAttr?.values) {
+        for (let i of dataProps?.product?.attributes[0]?.values) {
           for (let k of i.size) {
             k?.name_size == item && setQuantity_attr(k?.stock_attribute);
           }
@@ -81,7 +80,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         return;
     }
   }
-
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       <div className="flex flex-col lg:gap-y-2">
@@ -116,14 +114,14 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </div>
         </div>
         {/* row 2 */}
-        {dataAttr && (
+        {dataProps && (
           <>
             <div>
               <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
                 Color
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataAttr?.values?.map((item: any) => (
+                {dataProps?.product?.attributes[0]?.values?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
                     className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
