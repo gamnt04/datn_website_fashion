@@ -60,7 +60,7 @@ export async function get_items_client(req, res) {
         item.stock_product = total_stock;
       } else {
         item.stock_product = item.stock;
-      }
+      };
     }
     // console.log(data);
     if (!data || data.length < 1) {
@@ -81,33 +81,19 @@ export async function get_items_client(req, res) {
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Products.findById(req.params.id);
-    const attr = await Attribute.findOne({ id_item: product._id.toString() });
+    const product = await Products.findById(req.params.id).populate('attributes');
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
     return res.status(StatusCodes.OK).json({
-      product,
-      attr
+      product
     });
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message || "Lỗi server !"
     });
-  }
-};
-
-export const getTrash = async (req, res) => {
-  try {
-    const trashProducts = await Products.findWithDeleted({ deleted: true });
-    console.log(dataTrash);
-    res.status(StatusCodes.OK).json(trashProducts);
-  } catch (error) {
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: error.message });
   }
 };

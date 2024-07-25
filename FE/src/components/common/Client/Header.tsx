@@ -2,90 +2,79 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
-// import { useDispatch } from "react-redux";
-// import { useCart } from "../../../common/hooks/Cart/useCart";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
-// import { SearchData } from "../../Services/Search";
 
 const Header = () => {
   const navigate = useNavigate();
+  const ref_user = useRef<HTMLAnchorElement>(null);
+  const ref_login = useRef<HTMLAnchorElement>(null);
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
-  // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
-  const [user] = useLocalStorage("user", {});
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const account = user?.user?._id;
   const { data } = List_Cart(account);
 
   useEffect(() => {
-    typeof window !== "undefined" &&
-      window.addEventListener("scroll", () => {
-        if (toggleFixedHeader.current && toggleForm.current) {
-          window.scrollY > 100
-            ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
-              toggleForm.current.classList.add("scale-0"))
-            : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
-              toggleForm.current.classList.remove("scale-0"));
+    const handleScroll = () => {
+      if (toggleFixedHeader.current && toggleForm.current) {
+        if (window.scrollY > 100) {
+          toggleFixedHeader.current.classList.add(
+            "animate-[animationScrollYHeader_1s]",
+            "lg:-translate-y-3"
+          );
+          toggleForm.current.classList.add("scale-0");
+        } else {
+          toggleFixedHeader.current.classList.remove(
+            "animate-[animationScrollYHeader_1s]",
+            "lg:-translate-y-3"
+          );
+          toggleForm.current.classList.remove("scale-0");
         }
-      });
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
-  // change title by redux
-  // const dispatch = useDispatch();
-  // // const ChangeTitle_1 = () => {
-  // //   dispatch({ type: "Title_change_1" });
-  // // }
-  // // Fn scroll top and change title
-  // const ScrollTop_and_Change = async () => {
-  //   await ScrollTop();
-  //   await ChangeTitle_2();
-  // };
 
-  // const ChangeTitle_2 = () => {
-  //   dispatch({ type: "Title_change_2" });
-  // };
+  useEffect(() => {
+    const change_local = () => {
+      if (account) {
+        ref_login.current?.classList.add("hidden");
+        ref_login.current?.classList.remove("block");
+        ref_user.current?.classList.add("block");
+        ref_user.current?.classList.remove("hidden");
+      } else {
+        ref_login.current?.classList.add("block");
+        ref_login.current?.classList.remove("hidden");
+        ref_user.current?.classList.add("hidden");
+        ref_user.current?.classList.remove("block");
+      }
+    };
 
-  // toogle menu mobile
+    change_local();
+    window.addEventListener("storage", change_local);
+    return () => {
+      window.removeEventListener("storage", change_local);
+    };
+  }, [account]);
+
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
   };
-  // search
-  // const [keyUrl, setKeyUrl] = useState<string>();
-  // const [itemsSearch, setItemsSearch] = useState();
-  // const handleSearchData = (e: any) => {
-  //   setTimeout(() => {
-  //     setKeyUrl(e.target.value);
-  //   }, 2000)
-  // }
-  // useEffect(() => {
-  //   handleSearchData;
-  //    (keyUrl !== '') ?
-  //     (async () => {
-  //     try {
-  //       const data = await SearchData(keyUrl);
-  //       console.log(data);
 
-  //       setItemsSearch(data);
-
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   })() : '';
-  // }, [keyUrl]);
-  // console.log(itemsSearch);
   const onlogin = () => {
-    const comfirm = window.confirm("Do you want to go to the login page?");
-    if (comfirm) {
+    if (window.confirm("Do you want to go to the login page?")) {
       navigate("/login");
     }
   };
+
   return (
     <>
       <div
@@ -93,7 +82,6 @@ const Header = () => {
         className="w-full fixed top-0 bg-white z-[6] shadow-[50px_15px_60px_-15px_rgba(0,0,0,0.3)]"
       >
         <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
-          {/* menu mobile */}
           <button
             onClick={toggleMenuMobile}
             className="*:w-[30px] *:h-[30px] cursor-pointer mb:block lg:hidden"
@@ -114,7 +102,6 @@ const Header = () => {
             </svg>
           </button>
 
-          {/* toggle menu mobile */}
           <div
             style={{
               transform: toggle_Menu_Mobile
@@ -127,7 +114,6 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-x-20">
-            {/* logo */}
             <Link
               onClick={ScrollTop}
               to="/"
@@ -139,15 +125,10 @@ const Header = () => {
                 alt="Logo"
               />
             </Link>
-
-            {/* menu desktop  ahihi test commit*/}
-            {/* map() => render routing*/}
             <Nav_Desktop />
           </div>
 
-          {/* options */}
           <nav className="flex items-center justify-between *:mx-3 *:duration-300">
-            {/* search */}
             <form
               className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2 shadow-2xl duration-300`}
             >
@@ -173,45 +154,40 @@ const Header = () => {
                 </svg>
               </button>
             </form>
-            {/* cart */}
-            <div className="group *:duration-300 relative py-1">
-              <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">
-                {data?.products?.length}
-              </span>
-              {/* {account ? '/cart' : (
-                <div onClick={() => onlogin()} className="relative">
-                  <CartIcon />
-                  <MiniCart />
-                </div>
-              )} */}
 
-              <Link to={account ? "/cart" : "/login"}>
-                <CartIcon />
+            <div className="group *:duration-300 relative py-1">
+              {data?.products?.length > 0 && (
+                <span className="absolute bg-red-500 px-2 text-white text-xs py-0.5 rounded-xl -top-1/4 -right-1/2">
+                  {data.products.length}
+                </span>
+              )}
+              <Link
+                to={account ? "/cart" : "/login"}
+                className="group *:duration-300 relative py-1"
+                onClick={ScrollTop}
+              >
+                <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
+                  <CartIcon />
+                </div>
               </Link>
             </div>
 
-            {/* heart */}
             {account ? (
-              <>
-                <Link
-                  to={"/favourite"}
-                  className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
-                >
-                  <HeartIcon />
-                </Link>
-              </>
+              <Link
+                to={"/favourite"}
+                className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
+              >
+                <HeartIcon />
+              </Link>
             ) : (
-              <>
-                <div
-                  onClick={() => onlogin()}
-                  className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
-                >
-                  <HeartIcon />
-                </div>
-              </>
+              <div
+                onClick={onlogin}
+                className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
+              >
+                <HeartIcon />
+              </div>
             )}
 
-            {/* option / menu */}
             <div className="cursor-pointer hover:scale-105 duration-300">
               {account && (
                 <Link to={"/allorder"}>
@@ -233,9 +209,7 @@ const Header = () => {
                   </svg>
                 </Link>
               )}
-              {account ? (
-                ""
-              ) : (
+              {!account && (
                 <Link
                   to={"/login"}
                   className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
@@ -243,11 +217,36 @@ const Header = () => {
                   Login
                 </Link>
               )}
+              <Link ref={ref_user} to={"/allorder"}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-user-round-check"
+                >
+                  <path d="M2 21a8 8 0 0 1 13.292-6" />
+                  <circle cx="10" cy="8" r="5" />
+                  <path d="m16 19 2 2 4-4" />
+                </svg>
+              </Link>
+              <Link
+                ref={ref_login}
+                to={"/login"}
+                className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
+              >
+                Login
+              </Link>
             </div>
           </nav>
         </header>
       </div>
-      {/* form search mobile */}
+
       <form
         ref={toggleForm}
         className={`relative w-[298px] *:h-[36px] lg:invisible gap-x-2 shadow-2xl mt-6 duration-300 mx-auto top-[50px]`}
@@ -275,7 +274,6 @@ const Header = () => {
         </button>
       </form>
 
-      {/* lớp phủ */}
       <div
         onClick={toggleMenuMobile}
         style={{ display: toggle_Menu_Mobile ? "block" : "none" }}
@@ -286,21 +284,3 @@ const Header = () => {
 };
 
 export default Header;
-
-// (
-//   <Link to="/cart" onClick={ScrollTop} className="relative">
-//     <CartIcon />
-//     {calculateTotalProduct() > 0 ? (
-//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-//         {calculateTotalProduct() > 99
-//           ? "99+"
-//           : calculateTotalProduct()}
-//       </span>
-//     ) : (
-//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-//         0
-//       </span>
-//     )}
-//     {/* <MiniCart /> */}
-//   </Link>
-// )

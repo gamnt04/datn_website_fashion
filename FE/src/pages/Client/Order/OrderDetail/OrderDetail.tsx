@@ -1,6 +1,5 @@
 import { Link, useParams } from "react-router-dom";
 import { Query_Orders } from "../../../../common/hooks/Order/querry_Order";
-
 const OrderDetail = () => {
   const { id } = useParams();
   const { data } = Query_Orders(id)
@@ -8,6 +7,9 @@ const OrderDetail = () => {
     if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
     const date = new Date(datetime);
     return date.toLocaleDateString(); // Lấy ngày tháng năm
+  };
+  const getStatusClass = (status: any) => {
+    return data?.status >= status ? "font-bold  text-blue-500" : "";
   };
   return (
     <>
@@ -28,6 +30,25 @@ const OrderDetail = () => {
                 data?.status == 2 ? "Đang chuẩn bị hàng" :
                   data?.status == 3 ? "Đang vận chuyển" :
                     data?.status == 4 ? "Đã giao hàng" : "Đã hủy"}</p>
+            </div>
+          </div>
+        </div>
+        <div className="border-b px-5 py-5">
+          <div className="flex">
+            <div className="flex items-center justify-center">
+              <div className={getStatusClass(1)}>Chờ xác nhận</div>
+              <span className={`mx-4 ${getStatusClass(1)}`}>-------</span>
+            </div>
+            <div className="flex items-center *:whitespace-nowrap">
+              <div className={getStatusClass(2)}>Đang chuẩn bị hàng</div>
+              <span className={`mx-4 ${getStatusClass(2)}`}>-------</span>
+            </div>
+            <div className="flex items-center *:whitespace-nowrap">
+              <div className={getStatusClass(3)}>Đang vận chuyển</div>
+              <span className={`mx-4 ${getStatusClass(3)}`}>-------</span>
+            </div>
+            <div className="flex items-center *:whitespace-nowrap">
+              <div className={getStatusClass(4)}>Đang giao hàng</div>
             </div>
           </div>
         </div>

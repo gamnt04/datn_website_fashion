@@ -9,15 +9,15 @@ import { Convert_Color } from "../../../_lib/Config/Config_Color";
 interface InforProductProp {
   product: IProduct;
 }
+
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
-  const [color, setColor] = useState();
-  const [size, setSize] = useState();
-  const [arr_size, setArr_Size] = useState();
-  const [quantity_attr, setQuantity_attr] = useState();
+  const [color, setColor] = useState<string | undefined>();
+  const [size, setSize] = useState<string | undefined>();
+  const [arr_size, setArr_Size] = useState<any[]>([]);
+  const [quantity_attr, setQuantity_attr] = useState<number>(0);
   const [quantity_item, setQuantity_item] = useState<number>(1);
   const dataItem = dataProps?.product;
-  const dataAttr = dataProps?.attr;
-  const { name_product, price_product, _id, stock } = dataItem;
+  const { name_product, price_product, _id, stock } = dataItem || {};
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
@@ -26,58 +26,63 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     const item = {
       userId: account,
       productId: id,
-      quantity: 1
+      quantity: quantity_item,
+      color: color,
+      size: size
     };
+    console.log(item);
     mutate(item);
   };
+
   useEffect(() => {
-    if (!dataAttr) {
+    if (dataItem) {
       setQuantity_attr(stock);
     }
-  }, [dataAttr]);
+  }, [dataItem]);
 
-  function handle_atrtribute(item?: any, action?: any) {
+  const handle_atrtribute = (item?: any, action?: string) => {
     switch (action) {
       case "Color":
         setColor(item);
-        for (let i of dataAttr?.values) {
+        for (let i of dataProps?.product?.attributes[0]?.values) {
           for (let k of i.size) {
-            if (!k?.name_size || k?.name_size == "") {
-              i?.color == item && setQuantity_attr(k?.stock_attribute);
+            if (!k?.name_size || k?.name_size === "") {
+              i?.color === item && setQuantity_attr(k?.stock_attribute);
             } else {
               setArr_Size(i?.size);
             }
           }
         }
-        return;
+        break;
       case "Size":
         setSize(item);
-        for (let i of dataAttr?.values) {
+        for (let i of dataProps?.product?.attributes[0]?.values) {
           for (let k of i.size) {
-            k?.name_size == item && setQuantity_attr(k?.stock_attribute);
+            k?.name_size === item && setQuantity_attr(k?.stock_attribute);
           }
         }
-        return;
+        break;
       default:
-        return;
+        break;
     }
-  }
-  function handle_quantity_item(action: any) {
+  };
+
+  const handle_quantity_item = (action: string) => {
     switch (action) {
       case "dow":
         if (quantity_item > 1) {
           setQuantity_item(quantity_item - 1);
         }
-        return;
+        break;
       case "up":
         if (quantity_item < quantity_attr) {
           setQuantity_item(quantity_item + 1);
         } else {
           alert("Vượt quá số lượng sản phẩm!");
         }
-        return;
+        break;
     }
-  }
+  };
 
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
@@ -87,16 +92,11 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           <span className="text-gray-700 font-bold lg:text-base mb:text-sm">
             {name_product}
           </span>
-          <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
+          <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
+            {price_product}
+          </strong>
           <div className="flex flex-col gap-y-2 justify-between">
             <section className="lg:w-[163px] mb:w-[157px] mb:mt-[8px] lg:mt-0 h-[21px] *:lg:text-sm *:mb:text-xs flex justify-between items-start">
-              {/* neu co danh gia bang sao thi bo vao */}
-              {/* <div className="flex items-start lg:gap-x-0 mb:gap-x-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                </svg>
-                                <strong>4.6/5</strong>
-                            </div> */}
               <div className="flex gap-x-2">
                 <strong>135</strong>
                 <span className="text-[#C8C9CB]">Reviews</span>
@@ -113,25 +113,26 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </div>
         </div>
         {/* row 2 */}
-        {dataAttr && (
+        {dataProps && (
           <>
             <div>
               <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
                 Color
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataAttr?.values?.map((item: any) => (
+                {dataProps?.product?.attributes[0]?.values?.map((item: any) => (
                   <button
+                    key={item.color}
                     onClick={() => handle_atrtribute(item?.color, "Color")}
                     className={`${Convert_Color(item?.color)} ${
-                      color == item?.color ? "after:block" : "after:hidden"
+                      color === item?.color ? "after:block" : "after:hidden"
                     } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
                   ></button>
                 ))}
               </div>
             </div>
-            {/* row 4   */}
-            {arr_size && (
+            {/* row 4 */}
+            {arr_size.length > 0 && (
               <div>
                 <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
                   Size
@@ -139,9 +140,10 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-3 *:py-1 *:rounded *:border *:border-black *:duration-200">
                   {arr_size?.map((item: any) => (
                     <button
+                      key={item.name_size}
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
                       className={`${
-                        size == item?.name_size && "bg-black text-white"
+                        size === item?.name_size && "bg-black text-white"
                       } hover:bg-black hover:text-white grid place-items-center`}
                     >
                       {item?.name_size}
@@ -165,6 +167,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <input
                   className="bg-[#F4F4F4] text-center rounded"
                   value={quantity_item}
+                  readOnly
                 />
                 <button onClick={() => handle_quantity_item("up")}>
                   <Up />
@@ -179,7 +182,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             <span>Tạm tính :</span>
             <span className="text-[#EB2606]">242.00 đ</span>
           </div>
-
           <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300">
             {/* add cart */}
             <Button

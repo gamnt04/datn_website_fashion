@@ -41,7 +41,6 @@ export async function get_detail_items(id: number | string) {
     if (!data) {
       throw new Error("Không có dữ liệu sản phẩm");
     }
-
     return data;
   } catch (error) {
     console.error("Lỗi khi lấy sản phẩm:", error);
