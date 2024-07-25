@@ -49,11 +49,11 @@ const Register = () => {
   if (isError) return <div>{error.message}</div>;
 
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
+    <div className="container flex flex-col mx-auto mt-5 bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <div className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+            <div className="flex flex-col w-full h-full p-6 text-center bg-white border shadow-lg rounded-3xl">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Đăng ký
               </h3>
@@ -160,5 +160,4 @@ const Register = () => {
     </div>
   );
 };
-
 export default Register;
