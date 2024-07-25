@@ -9,6 +9,8 @@ export function Pay_Mutation() {
     const [user] = useLocalStorage("user", {})
     const userId = user?.user?._id
     const { data } = List_Cart(userId);
+    console.log(data);
+
     const navigate = useNavigate()
     const { mutate } = useMutation({
         mutationFn: async (order: {
@@ -31,20 +33,23 @@ export function Pay_Mutation() {
 
 
     })
+    console.log(data);
+
     // console.log(order);
-    const calcuateTotal = () => {
-        if (!data || !data.products) return 0
-        return reduce(data.products, (total: any, product: any) => total + product.price * product.quantity, 0)
-    }
+    // const calcuateTotal = () => {
+    //     if (!data || !data.products) return 0
+    //     return reduce(data.products, (total: any, product: any) => total + product.price * product.quantity, 0)
+    // }
     const onSubmit = (formData: object) => {
         mutate({
             userId,
-            items: data?.products,
-            totalPrice: calcuateTotal(),
+            items: data,
+            totalPrice: data?.total_price,
             customerInfo: formData,
 
         });
-    };
 
-    return { mutate, onSubmit, calcuateTotal, data }
+
+    };
+    return { mutate, onSubmit, data }
 }

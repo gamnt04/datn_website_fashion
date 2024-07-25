@@ -156,7 +156,7 @@ const UpdateProduct = () => {
             <option value="">-- Chọn danh mục --</option>
             {categories?.map((category: ICategory) => (
               <option key={category._id} value={category._id}>
-                {category.name}
+                {category.name_category}
               </option>
             ))}
           </select>

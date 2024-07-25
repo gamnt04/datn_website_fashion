@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
-import { set } from "lodash";
 import { Carousel } from "antd";
 
 interface ImageProductProp {
