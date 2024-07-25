@@ -15,10 +15,10 @@ const Pay = () => {
     const { data: auth, isLoading } = List_Auth(userId)
 
     const { register, handleSubmit, setValue } = useForm()
-    const { onSubmit, data : data_cart  } = Pay_Mutation();
-    const { calculateTotalProduct, calculateTotal, data : list_item_cart } = List_Cart(userId);
-    const data = [];
-    data_cart?.products?.filter((item : any) => {
+    const { onSubmit, data: data_cart } = Pay_Mutation();
+    const { calculateTotalProduct, calculateTotal, data: list_item_cart } = List_Cart(userId);
+    const data: any = [];
+    data_cart?.products?.filter((item: any) => {
         item?.status_checked && data.push(item);
     })
     if (auth && auth.address) {
@@ -88,7 +88,7 @@ const Pay = () => {
                                     <th>Thành tiền</th>
                                 </thead>
                                 <tbody>
-                                    {data.map((item: any) => (
+                                    {data?.map((item: any) => (
                                         <tr className="*:text-center">
                                             <td className="flex items-center justify-between *:py-3 *:px-6">
                                                 <div className="flex items-center gap-5">
@@ -161,7 +161,7 @@ const Pay = () => {
                                 <div>
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng tiền hàng</p>
-                                        <p>{calculateTotal().toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                        <p>{list_item_cart?.total_price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                     </div>
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Phí vận chuyển</p>
@@ -173,7 +173,7 @@ const Pay = () => {
                                     </div> */}
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng thanh toán</p>
-                                        <p className="text-xl font-bold text-black">{(calculateTotal() + 32800).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                        <p className="text-xl font-bold text-black">{(list_item_cart?.total_price + 32800).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                     </div>
                                 </div>
                             </div>

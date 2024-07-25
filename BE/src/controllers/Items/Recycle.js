@@ -4,7 +4,7 @@ import MongooseDelete from "mongoose-delete";
 
 export async function restore_item(req, res) {
   try {
-    const product = await Products.restore({_id : req.params.id});
+    const product = await Products.restore({ _id: req.params.id });
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -22,9 +22,9 @@ export async function restore_item(req, res) {
 
 
 export const getTrash = async (req, res) => {
-  
+
   try {
-    const trashProducts = await Products.find({deleted : true});
+    const trashProducts = await Products.find({ deleted: true });
     res.status(StatusCodes.OK).json(trashProducts);
   } catch (error) {
     res
