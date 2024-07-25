@@ -12,7 +12,7 @@ export const create = async (req, res) => {
         message: errors,
       });
     }
-    const data = await Category(req.body).save();
+    const data = await Category.create(req.body);
     if (!data) {
       throw new Error(`Error creating`);
     }
@@ -29,7 +29,6 @@ export const create = async (req, res) => {
 };
 export async function get_items_client(req, res) {
   const { _page = 1, _sort = "", _limit = 12, _search = "" } = req.query;
-
   const options = {
     page: _page,
     limit: _limit,

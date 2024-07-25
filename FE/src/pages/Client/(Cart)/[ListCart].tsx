@@ -36,6 +36,7 @@ const ListCart = () => {
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
   const { calcuateTotal: calcTotal } = Pay_Mutation();
+
   const remove_item = (id: any) => {
     const data_item = {
       userId: userId,
@@ -103,7 +104,15 @@ const ListCart = () => {
     {
       title: "Sản phẩm",
       dataIndex: "name",
-      key: "name"
+      key: "name",
+      render: (_: any, product: any) => (
+        <>
+          <h1 className="font-bold py-2">{product.name}</h1>
+          <p className="font-medium">
+            {product.color} - {product.size}
+          </p>
+        </>
+      )
     },
     {
       title: "Đơn giá",
