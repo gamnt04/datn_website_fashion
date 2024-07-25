@@ -15,6 +15,7 @@ export async function get_items_client(page?: number) {
       console.warn("Kiem tra lai server hoac internet !");
     }
     const { data } = await res.json();
+
     const activeProducts = data.docs.filter(
       (product: any) => !product.deletedAt
     );
