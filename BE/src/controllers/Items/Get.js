@@ -88,8 +88,7 @@ export const getProductById = async (req, res) => {
         .json({ message: "Không tìm thấy sản phẩm" });
     }
     return res.status(StatusCodes.OK).json({
-      product,
-      attr
+      product
     });
   } catch (error) {
     console.error("Error getting product by ID:", error);
