@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./dow";
@@ -35,6 +35,7 @@ const ListCart = () => {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
+  const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
   const { calcuateTotal: calcTotal } = Pay_Mutation();
 
   const remove_item = (id: any) => {
@@ -52,7 +53,10 @@ const ListCart = () => {
   const handleRemoveMultiple = () => {
     const product_item = {
       userId: userId,
+<<<<<<< HEAD
       productIds: selectedProductIds
+=======
+>>>>>>> 658f37972d92d845d7394be134fc2588c32f638c
     };
     removeMultiple(product_item);
     messageApi.open({
@@ -61,6 +65,7 @@ const ListCart = () => {
     });
   };
 
+<<<<<<< HEAD
   const handleCheckboxChange = (productId: string) => {
     if (selectedProductIds.includes(productId)) {
       setSelectedProductIds(
@@ -68,12 +73,27 @@ const ListCart = () => {
       );
     } else {
       setSelectedProductIds([...selectedProductIds, productId]);
+=======
+  const handleCheckboxChange = (productId: string, color : any, size: any) => {
+  
+    const item_client = {
+      userId : userId,
+      productId : productId,
+      color : color,
+      size : size,
+>>>>>>> 658f37972d92d845d7394be134fc2588c32f638c
     }
+    handle_status_checked(item_client)
   };
 
   const dataSort = data?.products?.map((product: any) => ({
+<<<<<<< HEAD
     key: product?.productId,
     ...product
+=======
+    key: product?.productId?._id,
+    ...product,
+>>>>>>> 658f37972d92d845d7394be134fc2588c32f638c
   }));
 
   const columns: TableProps<DataType>["columns"] = [
@@ -82,9 +102,13 @@ const ListCart = () => {
       dataIndex: "checkbox",
       render: (_: any, product: any) => {
         return (
+<<<<<<< HEAD
           <Checkbox
             onChange={() => handleCheckboxChange(product?.productId)}
           ></Checkbox>
+=======
+          <Checkbox checked={product?.status_checked} onChange={() => handleCheckboxChange(product?.productId, product?.color_item, product?.name_size)}></Checkbox>
+>>>>>>> 658f37972d92d845d7394be134fc2588c32f638c
         );
       }
     },
@@ -92,6 +116,7 @@ const ListCart = () => {
       key: "image",
       dataIndex: "image",
       render: (_: any, product: any) => {
+<<<<<<< HEAD
         return (
           <img
             src={product?.image}
@@ -100,6 +125,10 @@ const ListCart = () => {
           />
         );
       }
+=======
+        return <img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" />;
+      },
+>>>>>>> 658f37972d92d845d7394be134fc2588c32f638c
     },
     {
       title: "Sản phẩm",
@@ -111,6 +140,8 @@ const ListCart = () => {
           <p className="font-medium">
             {product.color} - {product.size}
           </p>
+          <h1 className="font-bold py-2">{product?.productId?.name_product}</h1>
+          <p className="font-medium">{product?.color_item} - {product?.name_size}</p>
         </>
       )
     },
@@ -128,6 +159,8 @@ const ListCart = () => {
           </div>
         );
       }
+        return <div className="font-medium">{product?.price_item.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+      },
     },
     {
       key: "quantity",
@@ -162,6 +195,8 @@ const ListCart = () => {
           </div>
         );
       }
+       return <div className="font-medium">{(product?.price_item * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+      },
     },
     {
       key: "action",
@@ -218,6 +253,58 @@ const ListCart = () => {
                 src="../../src/assets/Images/Products/no-data.png"
                 alt="Không có sản phẩm"
               />
+        <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
+          <div className="md:w-[70%] mb:w-full w-full">
+            <Popconfirm
+              title="Xóa sản phẩm khỏi giỏ hàng?"
+              description="Bạn có chắc chắn muốn xóa không?"
+              onConfirm={() => handleRemoveMultiple()}
+              okText="Có"
+              cancelText="Không"
+            >
+              <DeleteOutlined style={{ fontSize: '24px' }} />
+            </Popconfirm>
+            <Table columns={columns} dataSource={dataSort} />
+          </div>
+
+          <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
+            <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
+              <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                <strong>Tổng giá trị đơn hàng</strong>
+                <p className="font-bold text-xl text-yellow-500">
+                  {data?.total_price?.toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND"
+                  })}
+                </p>
+              </div>
+              <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
+                <strong>Số lượng đơn hàng :</strong>
+                <strong>{calculateTotalProduct()}</strong>
+              </div>
+              <div className="flex flex-col border-y py-5 my-5">
+                <span className="text-xs mb-2">Nhập mã giảm giá</span>
+                <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
+                  <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
+                  <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
+                    Apply
+                  </button>
+                </form>
+              </div>
+              <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                <strong>Cần thanh toán :</strong>
+                <strong>
+                  {data?.total_price?.toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND"
+                  })}
+                </strong>
+              </div>
+              <Link onClick={ScrollTop} to="pay">
+                <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                  Tiến hành thanh toán
+                </button>
+              </Link>
             </div>
           </div>
         ) : (

@@ -48,3 +48,10 @@ export const remove_multiple_products = async (data: any) => {
     console.log(error || "Server error!");
   }
 };
+export const handle_checked_products = async (data: any) => {
+  try {
+    await instance.post("/cart/handle_status_cart", data);
+  } catch (error) {
+    console.log(error || "Server error!");
+  }
+};

@@ -40,12 +40,11 @@ const productSchema = new mongoose.Schema(
       default: 1,
     },
     stock: Number,
-    attributes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Attributes'
-      }
-    ],
+    attributes:
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Attributes'
+    },
     featured_product: {
       type: Boolean,
       default: false,
