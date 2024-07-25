@@ -9,8 +9,7 @@ interface ImageProductProp {
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   const { image_product, gallery_product } = product;
   const [currentImage, setCurrentImage] = useState(image_product);
-
-  const chunkArray = (array: any, size: number) => {
+  const chunkArray = (array: any, size: any) => {
     const result = [];
     for (let i = 0; i < array.length; i += size) {
       result.push(array.slice(i, i + size));
@@ -19,7 +18,6 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   };
 
   const chunks = chunkArray(gallery_product, 3);
-
   return (
     <div className="w-full h-full lg:mt-0 mt-4">
       <div className="w-full flex flex-col lg:items-center lg:gap-y-6 gap-y-3.5">
@@ -46,45 +44,33 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
             </svg>
           </div>
         </div>
-        <div className="flex gap-4 mt-4">
-          <button
-            className="hover:scale-110"
-            onClick={() => setCurrentImage(image_product)}
-          >
-            <img
-              src={image_product}
-              className="w-16 h-16 bg-gray-100 p-2 rounded-lg"
-              alt="Main Product"
-            />
-          </button>
+        <div className=" w-[45%]">
+          {gallery_product && gallery_product.length > 0 ? (
+            <Carousel arrows draggable className="flex justify-center">
+              {chunks.map((chunk, index) => (
+                <div key={index} className="flex justify-center">
+                  {chunk.map((item: any, subIndex: any) => (
+                    <button
+                      key={subIndex}
+                      className="hover:scale-110"
+                      onClick={() => setCurrentImage(item)}
+                    >
+                      <img
+                        src={item}
+                        alt={`Gallery ${subIndex}`}
+                        className="w-[70px] h-[70px]object-cover mx-2"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </Carousel>
+          ) : (
+            <div>
+              <h3>No images to display</h3>
+            </div>
+          )}
 
-          <div className="w-[45%]">
-            {gallery_product && gallery_product.length > 0 ? (
-              <Carousel arrows draggable className="flex justify-center">
-                {chunks.map((chunk, index) => (
-                  <div key={index} className="flex justify-center">
-                    {chunk.map((item: any, subIndex: any) => (
-                      <button
-                        key={subIndex}
-                        className="hover:scale-110"
-                        onClick={() => setCurrentImage(item)}
-                      >
-                        <img
-                          src={item}
-                          alt={`Gallery ${subIndex}`}
-                          className="w-[70px] h-[70px] object-cover mx-2"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </Carousel>
-            ) : (
-              <div>
-                <h3>No images to display</h3>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
