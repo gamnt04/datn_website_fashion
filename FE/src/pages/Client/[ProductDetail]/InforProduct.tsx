@@ -20,7 +20,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-
   const addCart = (id?: string | number) => {
     const item = {
       userId: account,
@@ -41,22 +40,20 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
       case "Color":
-        setColor(item);
-        for (let i of dataProps?.product?.attributes[0]?.values) {
-          for (let k of i.size) {
-            if (!k?.name_size || k?.name_size == "") {
-              i?.color == item && setQuantity_attr(k?.stock_attribute);
-            } else {
-              setArr_Size(i?.size);
-            }
+        dataItem?.attributes?.values?.filter((i: any) => {
+          if (i?.color == item) {
+            i?.size?.filter((j: any) => {
+              (j.name_size) ? setArr_Size(i?.size) : setQuantity_attr(j?.stock_attribute)
+            })
           }
-        }
-        return;
+        })
+        return setColor(item);
       case "Size":
-        setSize(item);
-        for (let i of dataProps?.product?.attributes[0]?.values) {
-          for (let k of i.size) {
-            k?.name_size == item && setQuantity_attr(k?.stock_attribute);
+        for (let i of dataProps?.product?.attributes?.values) {
+          if (i?.color == color) {
+            for (let k of i.size) {
+              k?.name_size == item && (setQuantity_attr(k?.stock_attribute), setSize(k.name_size));
+            }
           }
         }
         return;
@@ -103,7 +100,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <span className="text-[#C8C9CB]">Reviews</span>
               </div>
             </section>
-            <div className="flex items-center gap-x-2 items-end">
+            <div className="flex gap-x-2 items-end">
               <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
                 <del className="font-light lg:text-sm mb:text-sm text-[#9D9EA2]">
                   200.00 đ
@@ -121,7 +118,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 Color
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataProps?.product?.attributes[0]?.values?.map((item: any) => (
+                {dataProps?.product?.attributes?.values?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
                     className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
@@ -156,7 +153,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           {/* quantity */}
           <div className="py-5 flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
             {/* up , dow quantity */}
-            <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex flex items-center gap-x-3 rounded-xl">
+            <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
                 <button onClick={() => handle_quantity_item("dow")}>
                   <Dow />

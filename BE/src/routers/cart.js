@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getCartByUserId,
+  handle_status_checked,
   removeMultipleProductsFormCart,
   removeProductToCart,
 } from "../controllers/Cart/cart";
@@ -24,4 +25,5 @@ Routes_Carts.post("/cart/remove", removeProductToCart);
 Routes_Carts.post("/cart/up", increaseProductQuantity);
 //giảm số lượng sản phẩm trong giỏ hàng
 Routes_Carts.post("/cart/dow", decreaseProductQuantity);
+Routes_Carts.post("/cart/handle_status_cart", handle_status_checked);
 export default Routes_Carts;
