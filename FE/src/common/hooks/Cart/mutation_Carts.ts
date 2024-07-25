@@ -28,7 +28,6 @@ export function Mutation_Cart(action: Actions) {
           return await remove_multiple_products(data);
         case "HANLDE_STATUS_CHECKED":
           return await handle_checked_products(data);
-          
         default:
           return;
       }
