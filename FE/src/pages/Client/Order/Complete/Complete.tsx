@@ -49,14 +49,14 @@ const Complete = ({ dataProps }: any) => {
               </div>
 
               <div className="">
-                {item.items.map((product) => (
-                  <div className="flex flex-row gap-4 py-[12px] w-full">
+                {item.items.map((product) => {
+                  return (<div className="flex flex-row gap-4 py-[12px] w-full">
                     <div className="basis-24">
-                      <img src={product.image} className="w-full h-[80px]" alt="" />
+                      <img src={product?.productId?.image_product} className="w-full h-[80px]" alt="" />
                     </div>
                     <div className="pr-2 basis-full">
                       <h2 className="w-full text-sm lg:text-[16px]">
-                        {product.name}
+                        {product?.productId?.name_product}
                       </h2>
                       <div className="flex justify-between gap-2 py-2">
                         <p className="text-sm text-[#0000008A]">
@@ -71,13 +71,13 @@ const Complete = ({ dataProps }: any) => {
                           Trả hàng miễn phí 15 ngày
                         </span>
                         <div className="flex justify-center items-center gap-2">
-                          <p className="flex gap-2 text-sm text-orange-400"><s className="text-black">₫{product.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</s>₫45.000</p>
+                          <p className="flex gap-2 text-sm text-orange-400"><s className="text-black">₫45.000 </s>{product?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                         </div>
                       </div>
                     </div>
-
-                  </div>
-                ))}
+                  </div>)
+                }
+                )}
                 <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
                   <div className="flex items-center gap-1">
                     <svg
