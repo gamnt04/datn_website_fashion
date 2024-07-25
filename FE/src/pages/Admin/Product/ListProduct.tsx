@@ -17,6 +17,7 @@ const ListProduct = () => {
     index: index + 1,
     ...product,
   }));
+  console.log(dataSource);
 
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -57,7 +58,7 @@ const ListProduct = () => {
       title: "Ảnh sản phẩm",
       dataIndex: "image",
       key: "image",
-      render: (_: any, product: IProduct) => (
+      render: (_: any, product: any) => (
         <img
           src={product.image_product}
           alt={product.name_product}
@@ -89,7 +90,7 @@ const ListProduct = () => {
     },
     {
       key: "actions",
-      render: (_: any, product: IProduct) => {
+      render: (_: any, product: any) => {
         return (
           <Space>
             <Button type="primary">
