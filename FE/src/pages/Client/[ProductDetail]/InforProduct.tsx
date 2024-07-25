@@ -21,7 +21,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-
   const addCart = (id?: string | number) => {
     const item = {
       userId: account,
@@ -59,6 +58,20 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         for (let i of dataProps?.product?.attributes[0]?.values) {
           for (let k of i.size) {
             k?.name_size === item && setQuantity_attr(k?.stock_attribute);
+        dataItem?.attributes?.values?.filter((i: any) => {
+          if (i?.color == item) {
+            i?.size?.filter((j: any) => {
+              (j.name_size) ? setArr_Size(i?.size) : setQuantity_attr(j?.stock_attribute)
+            })
+          }
+        })
+        return setColor(item);
+      case "Size":
+        for (let i of dataProps?.product?.attributes?.values) {
+          if (i?.color == color) {
+            for (let k of i.size) {
+              k?.name_size == item && (setQuantity_attr(k?.stock_attribute), setSize(k.name_size));
+            }
           }
         }
         break;
@@ -120,7 +133,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 Color
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataProps?.product?.attributes[0]?.values?.map((item: any) => (
+                {dataProps?.product?.attributes?.values?.map((item: any) => (
                   <button
                     key={item.color}
                     onClick={() => handle_atrtribute(item?.color, "Color")}
