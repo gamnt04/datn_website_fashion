@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { list_cart } from "../../../_lib/Cart/Cart";
 import { reduce } from "lodash";
+import { IProduct } from "../../interfaces/Product";
 
 export const List_Cart = (userId: string) => {
   const { data, ...rest } = useQuery({
@@ -12,8 +13,12 @@ export const List_Cart = (userId: string) => {
 
   const calculateTotal = () => {
     if (!data || !data.products) return 0;
-    return reduce(data.products, (total: any, product: any) => total + product.price * product.quantity, 0)
-
+    return reduce(
+      data.products,
+      (total: any, product: IProduct) =>
+        total + product.price_product * product.quantity_product,
+      0
+    );
   };
 
   const calculateTotalProduct = () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect, useState, useRef } from "react";
 import Message from "../../../../components/base/Message/Message";
@@ -97,7 +98,7 @@ const AddProduct = () => {
           type={"warning"}
         />
       )}
-      <div className="flex justify-center">
+      <div>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
@@ -152,7 +153,7 @@ const AddProduct = () => {
               <option value="">-- Chọn danh mục --</option>
               {data?.map((category: ICategory) => (
                 <option key={category._id} value={category._id}>
-                  {category.name}
+                  {category.name_category}
                 </option>
               ))}
             </select>
@@ -277,14 +278,8 @@ const AddProduct = () => {
 
           <div>
             <div className="mb-4">
-              <label
-                htmlFor="attributes"
-                className="block mb-2 text-sm font-bold text-gray-700"
-              >
-                Thuộc Tính
-              </label>
               {attributes.map((attribute, index) => (
-                <div key={index} className="p-4 mb-4 border rounded">
+                <div key={index} className="mb-4 ">
                   <div className="mb-4">
                     <label
                       htmlFor={`color-${index}`}
@@ -310,65 +305,69 @@ const AddProduct = () => {
                   </div>
 
                   {attribute.size.map((size, sizeIndex) => (
-                    <div key={sizeIndex} className="mb-4">
-                      <label
-                        htmlFor={`size-${index}-${sizeIndex}`}
-                        className="block mb-2 text-sm font-bold text-gray-700"
-                      >
-                        Kích Thước
-                      </label>
-                      <input
-                        type="text"
-                        id={`size-${index}-${sizeIndex}`}
-                        value={size.name_size}
-                        onChange={(e) =>
-                          handleSizeChange(
-                            index,
-                            sizeIndex,
-                            e,
-                            attributes,
-                            setAttributes
-                          )
-                        }
-                        name="name_size"
-                        className="w-full px-3 py-2 border rounded"
-                      />
-                      <label
-                        htmlFor={`stock-${index}-${sizeIndex}`}
-                        className="block mb-2 text-sm font-bold text-gray-700"
-                      >
-                        Số lượng
-                      </label>
-                      <input
-                        type="number"
-                        id={`stock-${index}-${sizeIndex}`}
-                        value={size.stock_attribute}
-                        onChange={(e) =>
-                          handleSizeChange(
-                            index,
-                            sizeIndex,
-                            e,
-                            attributes,
-                            setAttributes
-                          )
-                        }
-                        name="stock_attribute"
-                        className="w-full px-3 py-2 border rounded"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemoveSize(
-                            index,
-                            sizeIndex,
-                            attributes,
-                            setAttributes
-                          )
-                        }
-                        className="mt-2 text-red-500"
-                      >
-                        Xóa Kích Thước
-                      </button>
+                    <div key={sizeIndex} className="flex mb-4">
+                      <div>
+                        <label
+                          htmlFor={`size-${index}-${sizeIndex}`}
+                          className="block mb-2 text-sm font-bold text-gray-700"
+                        >
+                          Kích Thước
+                        </label>
+                        <input
+                          type="text"
+                          id={`size-${index}-${sizeIndex}`}
+                          value={size.name_size}
+                          onChange={(e) =>
+                            handleSizeChange(
+                              index,
+                              sizeIndex,
+                              e,
+                              attributes,
+                              setAttributes
+                            )
+                          }
+                          name="name_size"
+                          className="w-[485px] px-3 py-2 border rounded"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={`stock-${index}-${sizeIndex}`}
+                          className="block mb-2 ml-3 text-sm font-bold text-gray-700"
+                        >
+                          Số lượng
+                        </label>
+                        <input
+                          type="number"
+                          id={`stock-${index}-${sizeIndex}`}
+                          value={size.stock_attribute}
+                          onChange={(e) =>
+                            handleSizeChange(
+                              index,
+                              sizeIndex,
+                              e,
+                              attributes,
+                              setAttributes
+                            )
+                          }
+                          name="stock_attribute"
+                          className="w-[485px] px-3 py-2 mx-3 border rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleRemoveSize(
+                              index,
+                              sizeIndex,
+                              attributes,
+                              setAttributes
+                            )
+                          }
+                          className="px-3 py-2 text-white bg-red-500 rounded "
+                        >
+                          Xóa Kích Thước
+                        </button>
+                      </div>
                     </div>
                   ))}
                   <button
@@ -385,7 +384,7 @@ const AddProduct = () => {
                     onClick={() =>
                       handleRemoveAttribute(index, attributes, setAttributes)
                     }
-                    className="text-red-500"
+                    className="px-3 py-2 text-white bg-red-500 rounded "
                   >
                     Xóa Thuộc Tính
                   </button>
