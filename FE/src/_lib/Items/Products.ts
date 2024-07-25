@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IProduct } from "../../common/interfaces/Product";
+import instance from "../../configs/axios";
 
 const baseUri = "http://localhost:2004/api/v1/products";
 
@@ -41,7 +42,6 @@ export async function get_detail_items(id: number | string) {
     if (!data) {
       throw new Error("Không có dữ liệu sản phẩm");
     }
-
     return data;
   } catch (error) {
     console.error("Lỗi khi lấy sản phẩm:", error);
@@ -54,9 +54,9 @@ export async function add_items_client(items: any) {
     const res = await fetch(`${baseUri}`, {
       method: "post",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(items),
+      body: JSON.stringify(items)
     });
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
@@ -73,9 +73,9 @@ export async function edit_items_client(id: string, product: IProduct) {
     const res = await fetch(`${baseUri}/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(product),
+      body: JSON.stringify(product)
     });
 
     if (!res.ok) {
@@ -94,7 +94,7 @@ export async function edit_items_client(id: string, product: IProduct) {
 export async function remove_items_client(id: string) {
   try {
     const res = await fetch(`${baseUri}/${id}`, {
-      method: "DELETE",
+      method: "DELETE"
     });
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
@@ -105,12 +105,21 @@ export async function remove_items_client(id: string) {
     console.log(error || "Loi server!");
   }
 }
-
+export const remove_multiple_products = async (data: {
+  productIds: string[];
+}) => {
+  try {
+    const response = await instance.post("/products/remove", data);
+    return response.data;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+};
 export const deleteProduct = async (id: string) => {
   const response = await fetch(
     `http://localhost:2004/api/v1/products/permanent/${id}`,
     {
-      method: "DELETE",
+      method: "DELETE"
     }
   );
   return response.json();
@@ -118,7 +127,7 @@ export const deleteProduct = async (id: string) => {
 
 export const restoreProduct = async (id: string) => {
   const response = await fetch(`http://localhost:2004/api/v1/products/${id}`, {
-    method: "PATCH",
+    method: "PATCH"
   });
   return response.json();
 };

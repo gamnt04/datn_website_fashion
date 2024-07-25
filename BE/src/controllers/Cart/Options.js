@@ -1,20 +1,76 @@
 import Cart from "../../models/Cart/cart";
 import { StatusCodes } from "http-status-codes";
+import Products from "../../models/Items/Products";
 
 export const addItemToCart = async (req, res) => {
     const { userId, productId, quantity, color, size } = req.body;
     try {
+        const data_product = await Products.findOne({ _id: productId }).populate('attributes');
+        let price_item = data_product.price_product;
+        let color_item;
+        let name_size;
+        let quantity_attr = 0;
+        if (data_product.attributes) {
+            for (let i of data_product.attributes.values) {
+                if (i.color == color) {
+                    for (let k of i.size) {
+                        if (k.name_size == size) {
+                            quantity_attr = k.stock_attribute;
+                            color_item = i.color;
+                            name_size = k.name_size
+                        }
+                        else {
+                            quantity_attr = k.stock_attribute;
+                            color_item = i.color
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            quantity_attr = quantity;
+        }
         let cart = await Cart.findOne({ userId });
         if (!cart) {
-            cart = new Cart({ userId, products: [] });
-        }
-        const existProductIndex = cart.products.findIndex(
-            (item) => item.productId.toString() == productId
-        );
-        if (existProductIndex !== -1) {
-            cart.products[existProductIndex].quantity += quantity;
+            cart = new Cart({
+                userId,
+                products: []
+            });
+        };
+        if (cart.products.length < 1) {
+            cart.products.push({
+                productId,
+                quantity,
+                price_item,
+                color_item,
+                name_size,
+                quantity_attr,
+                total_price_item: price_item * quantity
+            })
         } else {
-            cart.products.push({ productId, quantity, color, size });
+            let check_item = false
+            for (let i = 0; i < cart.products.length; i++) {
+                if (cart.products[i].productId == productId) {
+                    if (cart.products[i].color_item == color) {
+                        if (cart.products[i].name_size == size) {
+                            cart.products[i].quantity = cart.products[i].quantity + quantity;
+                            cart.products[i].total_price_item = price_item * cart.products[i].quantity;
+                            check_item = true
+                        }
+                    }
+                }
+            }
+            if (!check_item) {
+                cart.products.push({
+                    productId,
+                    quantity,
+                    price_item,
+                    color_item,
+                    name_size,
+                    quantity_attr,
+                    total_price_item: price_item * quantity
+                });
+            }
         }
         await cart.save();
         return res.status(StatusCodes.OK).json({ cart });
