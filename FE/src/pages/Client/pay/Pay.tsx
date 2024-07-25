@@ -13,14 +13,18 @@ const Pay = () => {
     const [address, setAddress] = useState(false)
     const userId = user?.user?._id;
     const { data: auth, isLoading } = List_Auth(userId)
-
     const { register, handleSubmit, setValue } = useForm()
-    const { onSubmit, data: data_cart } = Pay_Mutation();
-    const { calculateTotalProduct, calculateTotal, data: list_item_cart } = List_Cart(userId);
+    const { onSubmit } = Pay_Mutation();
+    const { calculateTotalProduct, data: list_item_cart } = List_Cart(userId);
     const data: any = [];
-    data_cart?.products?.filter((item: any) => {
-        item?.status_checked && data.push(item);
-    })
+    if (list_item_cart?.products.length > 0) {
+        list_item_cart?.products.filter((item: any) => {
+            if (item?.status_checked) {
+                data.push(item);
+            }
+        })
+    }
+
     if (auth && auth.address) {
         const defaultAddress = auth.address.find((item: any) => item.fullName === "admin");
         if (defaultAddress) {
@@ -39,6 +43,16 @@ const Pay = () => {
         setIsOpen(!isOpen);
         if (address) setAddress(false); // Tắt modal "Địa chỉ mới" nếu đang bật
     };
+
+    function onAddOder(data_form: any) {
+        const data_form_order = {
+            userId,
+            items: data,
+            totalPrice: list_item_cart?.total_price,
+            customerInfo: data_form,
+        };
+        onSubmit(data_form_order)
+    }
     return (
         <>
             {isLoading ? (
@@ -54,7 +68,7 @@ const Pay = () => {
                             <h1 className="text-2xl font-bold">Thanh Toán</h1>
                         </div>
                     </div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onAddOder)}>
                         <div className="py-6 px-6 border rounded shadow-sm">
                             <div className="flex gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
@@ -105,7 +119,7 @@ const Pay = () => {
                                             <td>{item?.productId?.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
                                             <td>{item.quantity}</td>
                                             <td>
-                                                <p className="font-bold">{(item?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                                <p className="font-bold">{(item?.total_price_item)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                             </td>
                                         </tr>
                                     ))}
@@ -139,7 +153,7 @@ const Pay = () => {
                             </div>
                             <div className="flex items-center justify-end gap-8 p-6">
                                 <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p>
-                                <p className="text-xl font-bold text-black">{list_item_cart?.total_price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                <p className="text-xl font-bold text-black">{list_item_cart?.total_price?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                             </div>
                         </div>
                         <div className="border mt-4 mb-8 rounded shadow-sm">
@@ -165,7 +179,7 @@ const Pay = () => {
                                     </div>
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Phí vận chuyển</p>
-                                        <p>₫32.800</p>
+                                        <p>Free</p>
                                     </div>
                                     {/* <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng cộng Voucher giảm giá:</p>
@@ -173,14 +187,13 @@ const Pay = () => {
                                     </div> */}
                                     <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng thanh toán</p>
-                                        <p className="text-xl font-bold text-black">{(list_item_cart?.total_price + 32800).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                                        <p className="text-xl font-bold text-black">{(list_item_cart?.total_price)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center py-6 px-6">
                                 <p>Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo <span className="text-blue-400">Điều khoản</span></p>
                                 <button className="w-[200px] py-3 bg-black text-white font-bold rounded" type="submit">Đặt hàng</button>
-
                             </div>
                         </div>
                     </form>
