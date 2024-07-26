@@ -40,135 +40,149 @@ export const GetAuthById = async (req, res) => {
   }
 };
 
-
 const generateRefreshToken = (userId) => {
-    return jwt.sign({ userId }, "123456", { expiresIn: "7d" });
+  return jwt.sign({ userId }, "123456", { expiresIn: "7d" });
 };
 const generateAccessToken = (userId) => {
-    return jwt.sign({ userId }, "123456", { expiresIn: "15m" });
+  return jwt.sign({ userId }, "123456", { expiresIn: "15m" });
 };
 export const signup = async (req, res) => {
-    const { email, password } = req.body;
-    const { error } = signupSchema.validate(req.body, { abortEarly: false });
-    if (error) {
-        const messages = error.details.map((item) => item.message);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            messages,
-        });
-    }
-
-    const existUser = await User.findOne({ email });
-    if (existUser) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-            messages: ["Email đã tồn tại"],
-        });
-    }
-    // Mã hóa mật khẩu
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    // Nếu không có user nào trong hệ thống thì tạo user đầu tiên là admin
-    const role = (await User.countDocuments({})) === 0 ? "admin" : "user";
-
-    const user = await User.create({
-        ...req.body,
-        password: hashedPassword,
-        role,
-    });
-    return res.status(StatusCodes.CREATED).json({message: "Đăng ký tài khoản thành công",
-        user,
-    });
-};
-export const signin = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        // user = { _id: , name: , xxx}
-        if (!user) {
-            return res.status(StatusCodes.NOT_FOUND).json({
-                messages: ["Email không tồn tại"],
-            });
-        }  
-        const isMatch = await bcryptjs.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      messages: ["Mật khẩu không chính xác"],
+  const { email, password } = req.body;
+  const { error } = signupSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    const messages = error.details.map((item) => item.message);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      messages,
     });
   }
-    const token = jwt.sign({ userId: user._id }, "123456", {
-    expiresIn: "7d",
-  });
-            // const accessToken = generateAccessToken(user._id);
-            // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
 
-            return res.status(StatusCodes.OK).json({message: "Đăng nhập thành công",
-                user,
-    token,
-            });
-        } catch (error) {
-        console.error(`Error finding user with email ${email}:`, error);
+  const existUser = await User.findOne({ email });
+  if (existUser) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      messages: ["Email đã tồn tại"],
+    });
+  }
+  // Mã hóa mật khẩu
+  const hashedPassword = await bcryptjs.hash(password, 10);
+  // Nếu không có user nào trong hệ thống thì tạo user đầu tiên là admin
+  const role = (await User.countDocuments({})) === 0 ? "admin" : "user";
+
+  const user = await User.create({
+    ...req.body,
+    password: hashedPassword,
+    role,
+  });
+  return res
+    .status(StatusCodes.CREATED)
+    .json({ message: "Đăng ký tài khoản thành công", user });
+};
+export const signin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    // user = { _id: , name: , xxx}
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        messages: ["Email không tồn tại"],
+      });
     }
+    const isMatch = await bcryptjs.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        messages: ["Mật khẩu không chính xác"],
+      });
+    }
+    const token = jwt.sign({ userId: user._id }, "123456", {
+      expiresIn: "7d",
+    });
+    // const accessToken = generateAccessToken(user._id);
+    // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
+
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Đăng nhập thành công", user, token });
+  } catch (error) {
+    console.error(`Error finding user with email ${email}:`, error);
+  }
 };
 export const logout = async (req, res) => {
-    try {
-        const token = req.headers.authorization;
-        if (!token) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ error: "No token provided" });
-        }
-        // Lưu token vào danh sách đen (blacklist) để ngăn không cho token đó được sử dụng nữa
-        const blacklistedToken = new BlacklistedToken({ token });
-        await blacklistedToken.save();
-
-        // Gửi phản hồi thành công
-        res.status(StatusCodes.OK).json({ message: "Đăng xuất thành công" });
-    } catch (error) {
-        console.error(`Error during logout:`, error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
+  try {
+    const token = req.headers.authorization;
+    if (!token) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "No token provided" });
     }
+    // Lưu token vào danh sách đen (blacklist) để ngăn không cho token đó được sử dụng nữa
+    const blacklistedToken = new BlacklistedToken({ token });
+    await blacklistedToken.save();
+
+    // Gửi phản hồi thành công
+    res.status(StatusCodes.OK).json({ message: "Đăng xuất thành công" });
+  } catch (error) {
+    console.error(`Error during logout:`, error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal Server Error" });
+  }
 };
 
 // be/src/controllers/auth.js
 export const refreshToken = async (req, res) => {
-    try {
-        const oldToken = req.headers.authorization;
-        if (!oldToken) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ error: "No token provided" });
-        }
-
-        // Kiểm tra token có trong blacklist
-        const isBlacklisted = await isTokenBlacklisted(oldToken);
-        if (isBlacklisted) {
-            return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Token is blacklisted" });
-        }
-
-        // Giải mã oldToken để lấy userId
-        let decoded;
-        try {
-            decoded = jwt.verify(oldToken, "123456"); // Sử dụng cùng secret key như khi tạo token
-        } catch (error) {
-            if (error.name === "TokenExpiredError") {
-                return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Token expired" });
-            } else {
-                return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Invalid token" });
-            }
-        }
-
-        const userId = decoded.userId;
-        if (!userId) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid token payload" });
-        }
-
-        // Tạo refreshToken mới
-        const newToken = generateRefreshToken(userId);
-
-        // Trả về refreshToken mới cho client
-        res.status(StatusCodes.OK).json({ newToken });
-    } catch (error) {
-        console.error(`Error during token refresh:`, error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
+  try {
+    const oldToken = req.headers.authorization;
+    if (!oldToken) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "No token provided" });
     }
+
+    // Kiểm tra token có trong blacklist
+    const isBlacklisted = await isTokenBlacklisted(oldToken);
+    if (isBlacklisted) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: "Token is blacklisted" });
+    }
+
+    // Giải mã oldToken để lấy userId
+    let decoded;
+    try {
+      decoded = jwt.verify(oldToken, "123456"); // Sử dụng cùng secret key như khi tạo token
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        return res
+          .status(StatusCodes.UNAUTHORIZED)
+          .json({ error: "Token expired" });
+      } else {
+        return res
+          .status(StatusCodes.UNAUTHORIZED)
+          .json({ error: "Invalid token" });
+      }
+    }
+
+    const userId = decoded.userId;
+    if (!userId) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Invalid token payload" });
+    }
+
+    // Tạo refreshToken mới
+    const newToken = generateRefreshToken(userId);
+
+    // Trả về refreshToken mới cho client
+    res.status(StatusCodes.OK).json({ newToken });
+  } catch (error) {
+    console.error(`Error during token refresh:`, error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal Server Error" });
+  }
 };
 export const isTokenBlacklisted = async (token) => {
-    const tokenInBlacklist = await BlacklistedToken.findOne({ token });
-    return !!tokenInBlacklist;
+  const tokenInBlacklist = await BlacklistedToken.findOne({ token });
+  return !!tokenInBlacklist;
 };
 
 export const add_address = async (req, res) => {
@@ -228,13 +242,12 @@ export const updateUserAddress = async (req, res) => {
   const userId = req.params.userId;
   const addressId = req.params.addressId;
 
-  const updatedAddress = req.body; 
-
+  const updatedAddress = req.body;
 
   try {
     // Tìm người dùng trong CSDL bằng userId
     const user = await User.findById(userId);
-    
+
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -249,23 +262,18 @@ export const updateUserAddress = async (req, res) => {
         message: "Không tìm thấy địa chỉ",
       });
     }
-    
+
     // Cập nhật thông tin địa chỉ mới
     addressToUpdate.set(updatedAddress);
     console.log();
 
     await user.save(updatedAddress);
-    
+
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
 
-
-      address: addressToUpdate
+      address: addressToUpdate,
     });
-
-
-
-
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -310,18 +318,26 @@ export const updateUser = async (req, res) => {
 
   try {
     // Tìm người dùng trong CSDL bằng userId và cập nhật dữ liệu mới
-    const user = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+    const user = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    });
 
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
-      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy người dùng để cập nhật" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng để cập nhật" });
     }
 
     // Trả về thông báo thành công và thông tin người dùng đã cập nhật
-    return res.status(StatusCodes.OK).json({ message: "Cập nhật người dùng thành công", user });
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Cập nhật người dùng thành công", user });
   } catch (error) {
     // Bắt lỗi nếu có và trả về thông báo lỗi
     console.error("Lỗi khi cập nhật người dùng:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
