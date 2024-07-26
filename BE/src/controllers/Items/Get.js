@@ -48,7 +48,7 @@ export async function get_items_client(req, res) {
     const data = await Products.paginate(querry, options);
     for (let item of data.docs) {
       let total_stock = 0;
-      if (item.attributes || item.attributes.length > 1) {
+      if (item.attributes) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
         if (attr) {
           attr.values.map((item) => {
