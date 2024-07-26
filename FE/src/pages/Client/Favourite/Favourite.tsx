@@ -2,7 +2,7 @@
 //   CartIcon,
 //   HeartIcon,
 //   HeartIconRed,
-//   TrashIcon
+//   TrashIcon,
 // } from "../../../resources/svg/Icon/Icon";
 // import { useFavoriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 // import { IProduct } from "../../../common/interfaces/Product";
@@ -57,7 +57,7 @@
 //                           onClick={() =>
 //                             addToCart.mutate({
 //                               productId: item._id,
-//                               quantity: 1
+//                               quantity: 1,
 //                             })
 //                           }
 //                         >

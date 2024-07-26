@@ -30,6 +30,7 @@ import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import List_Category from "../pages/Admin/Category/List_Category";
+// import Favourite from "../pages/Client/Favourite/Favourite";
 const RouterComponent = () => {
   return (
     <>
