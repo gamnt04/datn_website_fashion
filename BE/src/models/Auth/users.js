@@ -1,4 +1,3 @@
-
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema(
@@ -29,7 +28,6 @@ const userSchema = new Schema(
         phoneNumber: { type: String },
         addressDetails: { type: String },
         addressType: { type: String },
-
       },
     ],
     phone: {
@@ -47,14 +45,13 @@ const userSchema = new Schema(
     },
 
     birthDate: {
-      type: Date,
-      get: function (value) {
-        return value ? value.toISOString().split('T')[0] : undefined;
-      },
+      type: String,
+      // get: function (value) {
+      //   return value ? value.toISOString().split('T')[0] : undefined;
+      // },
     },
   },
   { timestamps: true, versionKey: false }
 );
 
 export default mongoose.model("User", userSchema);
-
