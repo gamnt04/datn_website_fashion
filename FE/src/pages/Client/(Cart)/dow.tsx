@@ -11,14 +11,18 @@ const Dow_btn = ({ dataProps }: any) => {
             if (window.confirm('Xac nhan xoa san pham ?')) {
                 const data = {
                     userId: account,
-                    productId: dataProps.id_item
+                    productId: dataProps?.id_item,
+                    color: dataProps?.color,
+                    size: dataProps?.size
                 }
                 mutate(data)
             }
         } if (dataProps.quantity_item > 1) {
             const data = {
                 userId: account,
-                productId: dataProps.id_item
+                productId: dataProps?.id_item,
+                color: dataProps?.color,
+                size: dataProps?.size
             }
             mutate(data)
         }

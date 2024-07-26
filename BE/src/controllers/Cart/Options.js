@@ -105,20 +105,26 @@ export const updateQuantityProductsInCart = async (req, res) => {
     } catch (error) { }
 };
 export const increaseProductQuantity = async (req, res) => {
-    const { userId, productId } = req.body;
+    const { userId, productId, color, size } = req.body;
     try {
         let cart = await Cart.findOne({ userId });
-
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-        const product = cart.products.find(
-            (item) => item.productId.toString() === productId
+        const product = cart.products.map(
+            (item) => (item.productId.toString() == productId._id) && item
         );
+        for (let i of cart.products) {
+            if (i.productId.toString() == productId._id) {
+                if (i.color_item == color && i.name_size == size) {
+                    i.quantity++
+                    i.total_price_item = i.quantity * i.price_item
+                }
+            }
+        }
         if (!product) {
             return res.status(404).json({ message: "Product not found in cart" });
         }
-        product.quantity++;
         await cart.save();
         res.status(200).json(cart);
     } catch (error) {
@@ -126,34 +132,23 @@ export const increaseProductQuantity = async (req, res) => {
     }
 };
 export const decreaseProductQuantity = async (req, res) => {
-    const { userId, productId } = req.body;
+    const { userId, productId, color, size } = req.body;
     try {
         let cart = await Cart.findOne({ userId });
-
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-
-        const product = cart.products.find(
-            (item) => item.productId.toString() === productId
-        );
-        if (!product) {
-            return res.status(404).json({ message: "Product not found in cart" });
-        }
-
         for (let i = 0; i < cart.products.length; i++) {
-            if (cart.products[i].productId == productId) {
-                cart.products[i].quantity--;
-                if (cart.products[i].quantity === 0) {
-                    cart.products.splice(i, 1);
+            if (cart.products[i].productId == productId._id) {
+                if (cart.products[i].color_item == color && cart.products[i].name_size == size) {
+                    cart.products[i].quantity--;
+                    cart.products[i].total_price_item =  cart.products[i].price_item *  cart.products[i].quantity;
+                    if (cart.products[i].quantity === 0) {
+                        cart.products.splice(i, 1);
+                    }
                 }
             }
         }
-
-        // if (product.quantity > 1) {
-        //   product.quantity--;
-        // }
-
         await cart.save();
         res.status(200).json(cart);
     } catch (error) {
