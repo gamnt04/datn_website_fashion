@@ -8,7 +8,6 @@ import instance from "../../../configs/axios";
 import { Link } from "react-router-dom";
 import { FaDeleteLeft, FaPlus } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
-import { IpOptions } from "joi";
 import { Mutation_items_client } from "../../../common/hooks/Products/mutation_item";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -22,7 +21,7 @@ const ListProduct = () => {
   const dataSource = data?.map((product: IProduct, index: number) => ({
     key: product._id,
     index: index + 1,
-    ...product,
+    ...product
   }));
   const handleRemoveMultiple = () => {
     const products = { productIds: selectedProductIds };
@@ -30,16 +29,15 @@ const ListProduct = () => {
       onSuccess: () => {
         messageApi.open({
           type: "success",
-          content: "Xóa thành công",
+          content: "Xóa thành công"
         });
-        queryClient.invalidateQueries("Product_Key");
       },
       onError: (error) => {
         messageApi.open({
           type: "error",
-          content: error.message,
+          content: error.message
         });
-      },
+      }
     });
   };
 
@@ -50,6 +48,15 @@ const ListProduct = () => {
       );
     } else {
       setSelectedProductIds([...selectedProductIds, productId]);
+    }
+  };
+  const handleCheckboxAll = () => {
+    if (selectedProductIds.length === dataSource.length) {
+      setSelectedProductIds([]);
+    } else {
+      setSelectedProductIds(
+        dataSource.map((product: IProduct) => product?._id as string)
+      );
     }
   };
 
@@ -69,34 +76,42 @@ const ListProduct = () => {
     onSuccess: () => {
       messageApi.open({
         type: "success",
-        content: "Xóa sản phẩm thành công",
+        content: "Xóa sản phẩm thành công"
       });
       queryClient.invalidateQueries({
-        queryKey: ["Product_Key"],
+        queryKey: ["Product_Key"]
       });
     },
     onError: (error) => {
       messageApi.open({
         type: "error",
-        content: error.message,
+        content: error.message
       });
-    },
+    }
   });
   const columns = [
     {
-      title: "",
+      title: (
+        <Checkbox
+          onChange={handleCheckboxAll}
+          checked={selectedProductIds.length === dataSource.length}
+        >
+          Check all
+        </Checkbox>
+      ),
       dataIndex: "checkbox",
       key: "checkbox",
       render: (_: any, product: IProduct) => (
         <Checkbox
-          onChange={() => handleCheckboxChange(product?._id)}
-        ></Checkbox>
-      ),
+          checked={selectedProductIds.includes(product._id as string)}
+          onChange={() => handleCheckboxChange(product._id as string)}
+        />
+      )
     },
     {
       title: "STT",
       dataIndex: "index",
-      key: "index",
+      key: "index"
     },
     {
       title: "Ảnh sản phẩm",
@@ -108,29 +123,29 @@ const ListProduct = () => {
           alt={product.name_product}
           className="w-[80px] h-[80px]"
         />
-      ),
+      )
     },
     {
       title: "Tên sản phẩm",
       dataIndex: "name_product",
-      key: "name_product",
+      key: "name_product"
     },
     {
       title: "Giá sản phẩm",
       dataIndex: "price_product",
-      key: "price_product",
+      key: "price_product"
     },
     {
       title: "Thời gian tạo",
       dataIndex: "created_at",
       key: "createdAt",
-      render: (_: any, product: IProduct) => formatDate(product.createdAt),
+      render: (_: any, product: IProduct) => formatDate(product.createdAt)
     },
     {
       title: "Thời gian cập nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (_: any, product: IProduct) => formatDate(product.updatedAt),
+      render: (_: any, product: IProduct) => formatDate(product.updatedAt)
     },
     {
       key: "actions",
@@ -156,8 +171,8 @@ const ListProduct = () => {
             </Popconfirm>
           </Space>
         );
-      },
-    },
+      }
+    }
   ];
 
   if (isLoading) return <div>Loading...</div>;
