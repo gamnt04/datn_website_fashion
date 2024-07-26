@@ -10,7 +10,9 @@ const Up_btn = ({ dataProps }: any) => {
     function up() {
         const data = {
             userId: account,
-            productId: dataProps
+            productId: dataProps?.id_item,
+            color : dataProps?.color,
+            size : dataProps?.size
         }
         mutate(data)
     }

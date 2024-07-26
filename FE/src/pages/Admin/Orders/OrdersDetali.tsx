@@ -9,6 +9,8 @@ const OrdersDetali = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const { id } = useParams();
     const { data, refetch } = Query_Orders(id);
+    console.log(data);
+
     const { mutate } = useMutation({
         mutationFn: async (comfirm: any) => {
             const { data } = await confirmCancelOrder(comfirm);
@@ -110,16 +112,17 @@ const OrdersDetali = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {data.items.map((item: any) => {
+                            console.log(data.items);
 
                             return (
                                 <tr key={item._id}>
                                     <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
-                                        <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
+                                        <img src={item?.productId?.image_product} alt="" className="w-[70px] h-[70px] object-cover " />
                                     </td>
-                                    <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item.name}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.quantity}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                    <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item?.productId?.name_product}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item?.quantity}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
                                 </tr>
                             )
                         })}
@@ -148,7 +151,7 @@ const OrdersDetali = () => {
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
                     <p>Phương thức thanh toán</p>
-                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data.customerInfo.payment}</p>
+                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data?.customerInfo?.payment}</p>
                 </div>
                 <div className="flex items-center gap-4 border-b py-3">
                     <p>Trạng thái đơn hàng</p>
@@ -166,10 +169,10 @@ const OrdersDetali = () => {
                             <p>Địa chỉ khách hàng:</p>
                         </div>
                         <div>
-                            <p>{data.customerInfo.userName}</p>
-                            <p>{data.customerInfo.phone}</p>
-                            <p>{data.customerInfo.email}</p>
-                            <p>{data.customerInfo.address}</p>
+                            <p>{data?.customerInfo?.userName}</p>
+                            <p>{data?.customerInfo?.phone}</p>
+                            <p>{data?.customerInfo?.email}</p>
+                            <p>{data?.customerInfo?.address}</p>
                         </div>
                     </div>
                     <div className="flex gap-6">
@@ -180,10 +183,10 @@ const OrdersDetali = () => {
                             <p>Tổng thanh toán:</p>
                         </div>
                         <div>
-                            <p>{data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                            <p>{data?.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                             <p>10000</p>
                             <p>20000 đ</p>
-                            <p className="font-bold">{(data.totalPrice - 10000 + 20000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                            <p className="font-bold">{(data.totalPrice - 10000 + 20000)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                         </div>
                     </div>
                 </div>
