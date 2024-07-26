@@ -12,7 +12,7 @@ const Login = () => {
     validateForm,
     isPending,
     isError,
-    error,
+    error
   } = useSignIn();
   type FieldType = {
     email?: string;
@@ -26,7 +26,7 @@ const Login = () => {
     const email: string = values.email || ""; // Sử dụng giá trị mặc định nếu không có giá trị
     const password: string = values.password || "";
     const { error } = signInSchema.validate(values, {
-      abortEarly: false,
+      abortEarly: false
     });
     if (error) {
       const errors = error.details.reduce(
