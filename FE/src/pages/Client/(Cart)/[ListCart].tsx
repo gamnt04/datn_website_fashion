@@ -81,7 +81,7 @@ const ListCart = () => {
       key: "image",
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" />;
+        return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link> ;
       },
     },
     {
@@ -90,7 +90,7 @@ const ListCart = () => {
       key: 'name',
       render: (_: any, product: any) => (
         <>
-          <h1 className="font-bold py-2">{product?.productId?.name_product}</h1>
+          <Link to={`/shops/detail_product/${product?.productId?._id}`} className="text-gray-900 hover:text-gray-900 font-bold py-2">{product?.productId?.name_product}</Link>
           <p className="font-medium">{product?.color_item} - {product?.name_size}</p>
         </>
       )
@@ -110,9 +110,9 @@ const ListCart = () => {
       render: (_: any, product: any) => {
         return (
           <div className="flex space-x-2">
-            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity }} />
+            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color : product?.color_item, size : product?.name_size}} />
             <Input value={product?.quantity} className="w-[40px] text-center" />
-            <Up_btn dataProps={product?.productId} />
+            <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color : product?.color_item, size : product?.name_size}} />
           </div>
         );
       },
@@ -122,7 +122,7 @@ const ListCart = () => {
       dataIndex: 'totalPrice',
       key: 'totalPrice',
       render: (_: any, product: any) => {
-        return <div className="font-medium">{(product?.price_item * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+        return <div className="font-medium">{(product?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
       },
     },
     {
@@ -186,7 +186,7 @@ const ListCart = () => {
             >
               <DeleteOutlined style={{ fontSize: '24px' }} />
             </Popconfirm>
-            <Table columns={columns} dataSource={dataSort} />
+            <Table columns={columns} dataSource={dataSort} pagination={false} />
           </div>
 
           <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">

@@ -312,6 +312,7 @@ export const delete_address = async (req, res) => {
   }
 };
 
+// src/controllers/auth.js (updateUser function)
 export const updateUser = async (req, res) => {
   const userId = req.params.userId; // Lấy userId từ params
   const updatedData = req.body; // Dữ liệu cập nhật từ request body
