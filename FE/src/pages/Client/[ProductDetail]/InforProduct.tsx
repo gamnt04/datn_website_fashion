@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IProduct } from "../../../common/interfaces/Product";
 import { Button } from "../../../components/ui/button";
 import { Dow, Up } from "../../../resources/svg/Icon/Icon";
 import { Convert_Color } from "../../../_lib/Config/Config_Color";
+import { useNavigate } from "react-router-dom";
 
 interface InforProductProp {
   product: IProduct;
 }
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
+  const navi = useNavigate();
+  const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
   const [size, setSize] = useState();
   const [arr_size, setArr_Size] = useState();
@@ -21,16 +24,54 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
   const addCart = (id?: string | number) => {
-    const item = {
-      userId: account,
-      productId: id,
-      quantity: quantity_item,
-      color: color,
-      size: size,
-    };
-    console.log(item);
-    mutate(item);
+    if(account) {
+      if (dataProps?.product?.attributes) {
+        const item = {
+          userId: account,
+          productId: id,
+          quantity: quantity_item,
+          color: color,
+          size: size,
+        };
+        const dataAttr = dataProps?.product?.attributes?.values.find((item: any) => item);
+        const sizeDataAttr = dataAttr?.size.find((a: any) => a);
+        if (dataAttr?.color && sizeDataAttr?.name_size) {
+          if (color && size) {
+            mutate(item);
+          }
+          else {
+            text_validate()
+          }
+        }
+        else if (dataAttr?.color) {
+          if (color) {
+            mutate(item);
+          }
+          else {
+            text_validate()
+          }
+        }
+        else if (sizeDataAttr?.name_size) {
+          if (size) {
+            mutate(item);
+          }
+          else {
+            text_validate()
+          }
+        }
+        else {
+            mutate(item);
+        }
+      }
+    }
+    else {
+      navi('/login')
+    }
   };
+  function text_validate () {
+    ref_validate_attr?.current?.classList.add('block')
+    ref_validate_attr?.current?.classList.remove('hidden')
+  }
   useEffect(() => {
     if (!dataProps) {
       setQuantity_attr(stock);
@@ -40,6 +81,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
       case "Color":
+        ref_validate_attr?.current?.classList.add('hidden')
+        ref_validate_attr?.current?.classList.remove('block')
         dataItem?.attributes?.values?.filter((i: any) => {
           if (i?.color == item) {
             i?.size?.filter((j: any) => {
@@ -49,6 +92,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         })
         return setColor(item);
       case "Size":
+        ref_validate_attr?.current?.classList.add('hidden')
+        ref_validate_attr?.current?.classList.remove('block')
         for (let i of dataProps?.product?.attributes?.values) {
           if (i?.color == color) {
             for (let k of i.size) {
@@ -150,6 +195,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         )}
         {/* row 5 */}
         <div className="py-5 *:w-full rounded-xl lg:-mt-5 -mt-1">
+          <span ref={ref_validate_attr} className="hidden text-red-500 text-sm">Vui lòng chọn!</span>
           {/* quantity */}
           <div className="py-5 flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
             {/* up , dow quantity */}
