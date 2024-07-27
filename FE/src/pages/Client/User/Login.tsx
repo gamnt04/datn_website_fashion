@@ -13,6 +13,7 @@ const Login = () => {
     isPending,
     isError,
     error,
+    status_api
   } = useSignIn();
   type FieldType = {
     email?: string;
@@ -23,7 +24,7 @@ const Login = () => {
   if (isError) return <div>{error.message}</div>;
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    const email: string = values.email || ""; // Sử dụng giá trị mặc định nếu không có giá trị
+    const email: string = values.email || ""; 
     const password: string = values.password || "";
     const { error } = signInSchema.validate(values, {
       abortEarly: false,
@@ -43,12 +44,6 @@ const Login = () => {
       onSubmit({ email, password });
     }
   };
-
-  // const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-  //   errorInfo
-  // ) => {
-  //   alert("Đăng nhập thất bại");
-  // };
 
   return (
     <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
@@ -124,7 +119,9 @@ const Login = () => {
                     </a>
                   </div>
                 </Form.Item> */}
-
+                {
+                  status_api && <span className="text-red-500">Sai thông tin tài khoản!</span> 
+                }
                 <Form.Item>
                   <Button
                     type="primary"
