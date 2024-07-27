@@ -45,22 +45,113 @@ export const removeProductToCart = async (req, res) => {
       .json({ error: "Internal Server Error" });
   }
 };
-export const removeMultipleProductsFormCart = async (req, res) => {
+export const removeMultipleProductsFromCart = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, productIds } = req.body;
+
+    if (!userId || !Array.isArray(productIds) || productIds.length === 0) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Invalid input" });
+    }
+
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Cart Not Found" });
     }
-    cart.products = cart.products.filter((product) => !product.status_checked);
+
+    const initialProductCount = cart.products.length;
+    cart.products = cart.products.filter(
+      (product) => !productIds.includes(product._id.toString())
+    );
+    const finalProductCount = cart.products.length;
+
     await cart.save();
-    return res.status(StatusCodes.OK).json({ cart });
+
+    if (initialProductCount === finalProductCount) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "No products found to delete" });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      message: "Products successfully removed from cart",
+      deletedCount: initialProductCount - finalProductCount
+    });
   } catch (error) {
+    console.error("Error removing multiple products from cart:", error);
     return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: "Internal Server Error" });
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message || "Internal Server Error" });
+  }
+};
+
+export const buyMultipleProductsFromCart = async (req, res) => {
+  try {
+    const { userId, productsId } = req.body;
+
+    if (!userId || !Array.isArray(productsId) || productsId.length === 0) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Invalid input" });
+    }
+
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart Not Found" });
+    }
+
+    // Lọc các sản phẩm trong giỏ hàng để lấy các sản phẩm có ID nằm trong productsId
+    const productsToBuy = cart.products.filter((product) =>
+      productsId.includes(product.productId.toString())
+    );
+
+    if (productsToBuy.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "No products found to buy" });
+    }
+
+    // Tính tổng giá trị đơn hàng
+    const totalPrice = productsToBuy.reduce((total, product) => {
+      return total + product.price_item * product.quantity;
+    }, 0);
+
+    // Tạo đơn hàng mới
+    const newOrder = new Order({
+      userId,
+      products: productsToBuy.map((product) => ({
+        productId: product.productId,
+        quantity: product.quantity,
+        price_item: product.price_item,
+        color_item: product.color_item,
+        name_size: product.name_size,
+        total_price_item: product.total_price_item
+      })),
+      total_price: totalPrice
+    });
+
+    await newOrder.save();
+
+    // Cập nhật giỏ hàng
+    cart.products = cart.products.filter(
+      (product) => !productsId.includes(product.productId.toString())
+    );
+    await cart.save();
+
+    return res.status(StatusCodes.OK).json({
+      message: "Products successfully purchased",
+      order: newOrder
+    });
+  } catch (error) {
+    console.error("Error buying multiple products from cart:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message || "Internal Server Error" });
   }
 };
 
