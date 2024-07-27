@@ -28,7 +28,9 @@ export function Mutation_items_client(action: Action) {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("Product_Key");
+      queryClient.invalidateQueries({
+        queryKey: ["Product_Key"]
+      });
     },
     onError: (error) => {
       console.error("Error:", error);

@@ -20,9 +20,7 @@ const Order_All = () => {
         refetch()
     }, [userId])
     const fiterOrrder = (status: string) => {
-
         return data?.filter((orders: any) => orders.status === status);
-
     }
     const orderCounts: Record<string, number> = {
         'Chờ Xác Nhận': fiterOrrder('1')?.length,
