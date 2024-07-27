@@ -39,7 +39,7 @@ const AddProduct = () => {
   const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
   const [imageSelected, setImageSelected] = useState(false);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const [attributes, setAttributes] = useState<IAttribute[]>([
+  const [attributesData, setAttributes] = useState<IAttribute[]>([
     { color: "", size: [{ name_size: "", stock_attribute: 0 }] },
   ]);
   imageSelected;
@@ -52,14 +52,13 @@ const AddProduct = () => {
       const uploadedGalleryUrls = gallery_product
         ? await uploadGallery(gallery_product)
         : [];
-
+        const dataArrt  = JSON.stringify(attributesData)
       const newData: IProduct = {
         ...formData,
         image_product: uploadedImageUrls[0],
         gallery_product: uploadedGalleryUrls,
-        attributes: attributes,
+        attributes: dataArrt,
       };
-      console.log(`data`, newData);
       await add_items_client(newData);
       setSuccessMessage("Thêm Sản Phẩm thành công !");
       setShowMessage(true);
@@ -278,7 +277,7 @@ const AddProduct = () => {
 
           <div>
             <div className="mb-4">
-              {attributes.map((attribute, index) => (
+              {attributesData.map((attribute, index) => (
                 <div key={index} className="mb-4 ">
                   <div className="mb-4">
                     <label
@@ -295,7 +294,7 @@ const AddProduct = () => {
                         handleAttributeChange(
                           index,
                           e,
-                          attributes,
+                          attributesData,
                           setAttributes
                         )
                       }
@@ -322,7 +321,7 @@ const AddProduct = () => {
                               index,
                               sizeIndex,
                               e,
-                              attributes,
+                              attributesData,
                               setAttributes
                             )
                           }
@@ -346,7 +345,7 @@ const AddProduct = () => {
                               index,
                               sizeIndex,
                               e,
-                              attributes,
+                              attributesData,
                               setAttributes
                             )
                           }
@@ -359,7 +358,7 @@ const AddProduct = () => {
                             handleRemoveSize(
                               index,
                               sizeIndex,
-                              attributes,
+                              attributesData,
                               setAttributes
                             )
                           }
@@ -373,7 +372,7 @@ const AddProduct = () => {
                   <button
                     type="button"
                     onClick={() =>
-                      handleAddSize(index, attributes, setAttributes)
+                      handleAddSize(index, attributesData, setAttributes)
                     }
                     className="px-4 py-2 mb-2 text-white bg-blue-500 rounded"
                   >
@@ -382,7 +381,7 @@ const AddProduct = () => {
                   <button
                     type="button"
                     onClick={() =>
-                      handleRemoveAttribute(index, attributes, setAttributes)
+                      handleRemoveAttribute(index, attributesData, setAttributes)
                     }
                     className="px-3 py-2 text-white bg-red-500 rounded "
                   >
@@ -392,7 +391,7 @@ const AddProduct = () => {
               ))}
               <button
                 type="button"
-                onClick={() => handleAddAttribute(attributes, setAttributes)}
+                onClick={() => handleAddAttribute(attributesData, setAttributes)}
                 className="px-4 py-2 text-white bg-green-500 rounded"
               >
                 Thêm Thuộc Tính

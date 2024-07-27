@@ -45,10 +45,9 @@ export const createProduct = async (req, res) => {
     }
     const newProductData = {
       ...dataClient,
-      attributes: [],
+      attributes: null,
       category_id: category_id ? category_id : check_name_category._id,
     };
-    console.log(category_id);
     const { error } = validate_items.validate(dataClient, {
       abortEarly: false,
     });
@@ -80,7 +79,7 @@ export const createProduct = async (req, res) => {
       // console.log(data_attr);
       const new_attr = await Attributes.create(data_attr);
       await Products.findByIdAndUpdate(data._id, {
-        $push: { attributes: new_attr._id }
+        $set: { attributes: new_attr._id }
       })
       return res.status(StatusCodes.CREATED).json({
         message: 'OK',
