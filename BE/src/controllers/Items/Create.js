@@ -80,7 +80,7 @@ export const createProduct = async (req, res) => {
       // console.log(data_attr);
       const new_attr = await Attributes.create(data_attr);
       await Products.findByIdAndUpdate(data._id, {
-        $push: { attributes: new_attr._id }
+        $set: { attributes: new_attr._id }
       })
       return res.status(StatusCodes.CREATED).json({
         message: 'OK',
