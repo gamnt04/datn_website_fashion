@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./dow";
@@ -26,6 +26,7 @@ const ListCart = () => {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
+  const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
   const { calcuateTotal: calcTotal } = Pay_Mutation();
   const remove_item = (id: any) => {
     const data_item = {
@@ -42,7 +43,6 @@ const ListCart = () => {
   const handleRemoveMultiple = () => {
     const product_item = {
       userId: userId,
-      productIds: selectedProductIds,
     };
     removeMultiple(product_item);
     messageApi.open({
@@ -51,16 +51,19 @@ const ListCart = () => {
     });
   };
 
-  const handleCheckboxChange = (productId: string) => {
-    if (selectedProductIds.includes(productId)) {
-      setSelectedProductIds(selectedProductIds.filter((id) => id !== productId));
-    } else {
-      setSelectedProductIds([...selectedProductIds, productId]);
+  const handleCheckboxChange = (productId: string, color: any, size: any) => {
+
+    const item_client = {
+      userId: userId,
+      productId: productId,
+      color: color,
+      size: size,
     }
+    handle_status_checked(item_client)
   };
 
   const dataSort = data?.products?.map((product: any) => ({
-    key: product?.productId,
+    key: product?.productId?._id,
     ...product,
   }));
 
@@ -70,7 +73,7 @@ const ListCart = () => {
       dataIndex: "checkbox",
       render: (_: any, product: any) => {
         return (
-          <Checkbox onChange={() => handleCheckboxChange(product?.productId)}></Checkbox>
+          <Checkbox checked={product?.status_checked} onChange={() => handleCheckboxChange(product?.productId, product?.color_item, product?.name_size)}></Checkbox>
         );
       },
     },
@@ -78,7 +81,7 @@ const ListCart = () => {
       key: "image",
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <img src={product?.image} className="w-[100px] h-[80px] object-cover" alt="" />;
+        return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link> ;
       },
     },
     {
@@ -87,8 +90,8 @@ const ListCart = () => {
       key: 'name',
       render: (_: any, product: any) => (
         <>
-          <h1 className="font-bold py-2">{product.name}</h1>
-          <p className="font-medium">{product.color} - {product.size}</p>
+          <Link to={`/shops/detail_product/${product?.productId?._id}`} className="text-gray-900 hover:text-gray-900 font-bold py-2">{product?.productId?.name_product}</Link>
+          <p className="font-medium">{product?.color_item} - {product?.name_size}</p>
         </>
       )
     },
@@ -97,7 +100,7 @@ const ListCart = () => {
       dataIndex: 'price',
       key: 'price',
       render: (_: any, product: any) => {
-        return <div>{product?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+        return <div className="font-medium">{product?.price_item.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
       },
     },
     {
@@ -107,9 +110,9 @@ const ListCart = () => {
       render: (_: any, product: any) => {
         return (
           <div className="flex space-x-2">
-            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity }} />
+            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color : product?.color_item, size : product?.name_size}} />
             <Input value={product?.quantity} className="w-[40px] text-center" />
-            <Up_btn dataProps={product?.productId} />
+            <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color : product?.color_item, size : product?.name_size}} />
           </div>
         );
       },
@@ -119,7 +122,7 @@ const ListCart = () => {
       dataIndex: 'totalPrice',
       key: 'totalPrice',
       render: (_: any, product: any) => {
-        return <div>{(product?.price * product?.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+        return <div className="font-medium">{(product?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
       },
     },
     {
@@ -183,7 +186,7 @@ const ListCart = () => {
             >
               <DeleteOutlined style={{ fontSize: '24px' }} />
             </Popconfirm>
-            <Table columns={columns} dataSource={dataSort} />
+            <Table columns={columns} dataSource={dataSort} pagination={false} />
           </div>
 
           <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
@@ -191,7 +194,7 @@ const ListCart = () => {
               <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                 <strong>Tổng giá trị đơn hàng</strong>
                 <p className="font-bold text-xl text-yellow-500">
-                  {calcTotal().toLocaleString("vi", {
+                  {data?.total_price?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND"
                   })}
@@ -213,7 +216,7 @@ const ListCart = () => {
               <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                 <strong>Cần thanh toán :</strong>
                 <strong>
-                  {calculateTotal().toLocaleString("vi", {
+                  {data?.total_price?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND"
                   })}

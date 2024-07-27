@@ -5,30 +5,75 @@ import Products from "../../models/Items/Products";
 export const addItemToCart = async (req, res) => {
     const { userId, productId, quantity, color, size } = req.body;
     try {
-        const data_product = await Products.findOne({_id : productId}).populate('attributes');
-        console.log(data_product);
-        if(data_product.attributes.length > 0) {
-            for (let i of data_product.attributes) {
-                for (let j of i.values){
-
+        const data_product = await Products.findOne({ _id: productId }).populate('attributes');
+        let price_item = data_product.price_product;
+        let color_item;
+        let name_size;
+        let quantity_attr = 0;
+        if (data_product.attributes) {
+            for (let i of data_product.attributes.values) {
+                if (i.color == color) {
+                    for (let k of i.size) {
+                        if (k.name_size == size) {
+                            quantity_attr = k.stock_attribute;
+                            color_item = i.color;
+                            name_size = k.name_size
+                        }
+                        else {
+                            quantity_attr = k.stock_attribute;
+                            color_item = i.color
+                        }
+                    }
                 }
             }
         }
+        else {
+            quantity_attr = quantity;
+        }
         let cart = await Cart.findOne({ userId });
-        console.log(cart);
-        // if (!cart) {
-        //     cart = new Cart({ userId, products: [] });
-        // };
-        // const existProductIndex = cart.products.findIndex(
-        //     (item) => item.productId.toString() == productId
-        // );
-        // if (existProductIndex !== -1) {
-        //     cart.products[existProductIndex].quantity += quantity;
-        // } else {
-        //     cart.products.push({ productId, quantity, color, size });
-        // }
-        // await cart.save();
-        // return res.status(StatusCodes.OK).json({ cart });
+        if (!cart) {
+            cart = new Cart({
+                userId,
+                products: []
+            });
+        };
+        if (cart.products.length < 1) {
+            cart.products.push({
+                productId,
+                quantity,
+                price_item,
+                color_item,
+                name_size,
+                quantity_attr,
+                total_price_item: price_item * quantity
+            })
+        } else {
+            let check_item = false
+            for (let i = 0; i < cart.products.length; i++) {
+                if (cart.products[i].productId == productId) {
+                    if (cart.products[i].color_item == color) {
+                        if (cart.products[i].name_size == size) {
+                            cart.products[i].quantity = cart.products[i].quantity + quantity;
+                            cart.products[i].total_price_item = price_item * cart.products[i].quantity;
+                            check_item = true
+                        }
+                    }
+                }
+            }
+            if (!check_item) {
+                cart.products.push({
+                    productId,
+                    quantity,
+                    price_item,
+                    color_item,
+                    name_size,
+                    quantity_attr,
+                    total_price_item: price_item * quantity
+                });
+            }
+        }
+        await cart.save();
+        return res.status(StatusCodes.OK).json({ cart });
     } catch (error) {
         return res
             .status(StatusCodes.BAD_REQUEST)
@@ -60,20 +105,26 @@ export const updateQuantityProductsInCart = async (req, res) => {
     } catch (error) { }
 };
 export const increaseProductQuantity = async (req, res) => {
-    const { userId, productId } = req.body;
+    const { userId, productId, color, size } = req.body;
     try {
         let cart = await Cart.findOne({ userId });
-
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-        const product = cart.products.find(
-            (item) => item.productId.toString() === productId
+        const product = cart.products.map(
+            (item) => (item.productId.toString() == productId._id) && item
         );
+        for (let i of cart.products) {
+            if (i.productId.toString() == productId._id) {
+                if (i.color_item == color && i.name_size == size) {
+                    i.quantity++
+                    i.total_price_item = i.quantity * i.price_item
+                }
+            }
+        }
         if (!product) {
             return res.status(404).json({ message: "Product not found in cart" });
         }
-        product.quantity++;
         await cart.save();
         res.status(200).json(cart);
     } catch (error) {
@@ -81,34 +132,23 @@ export const increaseProductQuantity = async (req, res) => {
     }
 };
 export const decreaseProductQuantity = async (req, res) => {
-    const { userId, productId } = req.body;
+    const { userId, productId, color, size } = req.body;
     try {
         let cart = await Cart.findOne({ userId });
-
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-
-        const product = cart.products.find(
-            (item) => item.productId.toString() === productId
-        );
-        if (!product) {
-            return res.status(404).json({ message: "Product not found in cart" });
-        }
-
         for (let i = 0; i < cart.products.length; i++) {
-            if (cart.products[i].productId == productId) {
-                cart.products[i].quantity--;
-                if (cart.products[i].quantity === 0) {
-                    cart.products.splice(i, 1);
+            if (cart.products[i].productId == productId._id) {
+                if (cart.products[i].color_item == color && cart.products[i].name_size == size) {
+                    cart.products[i].quantity--;
+                    cart.products[i].total_price_item =  cart.products[i].price_item *  cart.products[i].quantity;
+                    if (cart.products[i].quantity === 0) {
+                        cart.products.splice(i, 1);
+                    }
                 }
             }
         }
-
-        // if (product.quantity > 1) {
-        //   product.quantity--;
-        // }
-
         await cart.save();
         res.status(200).json(cart);
     } catch (error) {

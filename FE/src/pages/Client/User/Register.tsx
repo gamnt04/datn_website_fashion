@@ -49,16 +49,17 @@ const Register = () => {
   if (isError) return <div>{error.message}</div>;
 
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
+    <div className="container flex flex-col mx-auto mt-5 bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <div className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+            <div className="flex flex-col w-full h-full p-6 text-center bg-white border shadow-lg rounded-3xl">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Đăng ký
               </h3>
               <p className="mb-4 text-gray-600">Nhập thông tin của bạn</p>
-              <a className="flex items-center justify-center w-full py-4 mb-6 text-sm font-medium text-gray-900 transition duration-300 border border-gray-200 bg-gray-50 rounded-2xl hover:bg-gray-100 focus:ring-4 focus:ring-gray-300">
+              <div className="flex items-center mb-3">
+                {/* <a className="flex items-center justify-center w-full py-4 mb-6 text-sm font-medium text-gray-900 transition duration-300 border border-gray-200 bg-gray-50 rounded-2xl hover:bg-gray-100 focus:ring-4 focus:ring-gray-300">
                 <img
                   className="h-5 mr-2"
                   src="https://raw.githubusercontent.com/Loopple/loopple-public-assets/main/motion-tailwind/img/logos/logo-google.png"
@@ -68,7 +69,7 @@ const Register = () => {
               </a>
               <div className="flex items-center mb-3">
                 <hr className="flex-grow border-gray-300" />
-                <p className="mx-4 text-gray-600">Hoặc</p>
+                <p className="mx-4 text-gray-600">Hoặc</p> */}
                 <hr className="flex-grow border-gray-300" />
               </div>
               <Form
@@ -160,5 +161,4 @@ const Register = () => {
     </div>
   );
 };
-
 export default Register;

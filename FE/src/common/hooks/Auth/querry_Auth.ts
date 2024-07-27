@@ -6,7 +6,8 @@ export const List_Auth = (userId: string) => {
     queryKey: userId ? ["AUTH_KEY", userId] : ["AUTH_KEY"],
     queryFn: async () => {
       return userId ? await list_Auth_By_Id(userId) : await list_Auth();
-    }
+    },
   });
+
   return { data, ...rest };
 };

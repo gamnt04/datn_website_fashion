@@ -1,155 +1,155 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
-import {
-  getDeletedProducts,
-  deleteProduct,
-  restoreProduct,
-} from "../../../_lib/Items/Products";
 import { IProduct } from "../../../common/interfaces/Product";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../configs/axios";
+import { Button, message, Popconfirm, Space, Table } from "antd";
+import { TiDelete } from "react-icons/ti";
+import { FaRecycle } from "react-icons/fa";
 
 const TrashProduct = () => {
-  const [deletedProducts, setDeletedProducts] = useState([]);
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [messageApi, contextHolder] = message.useMessage();
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-  useEffect(() => {
-    fetchDeletedProducts();
-  }, []);
-
-  const fetchDeletedProducts = async () => {
-    try {
-      const products = await getDeletedProducts();
-      setDeletedProducts(products);
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách sản phẩm đã xóa mềm:", error);
-    }
-  };
-
-  const handleDeletePermanently = async (id: any) => {
-    if (window.confirm("Bạn chắc chắn muốn xóa vĩnh viễn sản phẩm này")) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["trash"],
+    queryFn: () => instance.get(`/product/trash`),
+  });
+  const dataSource = data?.data.map((product: IProduct, index: number) => ({
+    key: product._id,
+    index: index + 1,
+    ...product,
+  }));
+  const { mutate } = useMutation({
+    mutationFn: async (id) => {
       try {
-        await deleteProduct(id);
-        alert("Xóa thành công");
-        fetchDeletedProducts();
+        return await instance.delete(`/products/destroy/${id}`);
       } catch (error) {
-        alert("Xóa thất bại");
-        console.error("Lỗi khi xóa sản phẩm vĩnh viễn:", error);
+        throw new Error((error as any).message);
       }
-    }
-  };
-
-  const handleRestore = async (id: any) => {
-    try {
-      await restoreProduct(id);
-      fetchDeletedProducts();
-    } catch (error) {
-      console.error("Lỗi khi khôi phục sản phẩm:", error);
-    }
-  };
-  const handleAdPro = () => {
-    navigate("/admin/products");
-  };
-
+    },
+    onSuccess: () => {
+      messageApi.open({
+        type: "success",
+        content: "Xóa vĩnh viễn sản phẩm thành công",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["trash"],
+      });
+    },
+    onError: (error) => {
+      messageApi.open({
+        type: "error",
+        content: error.message,
+      });
+    },
+  });
+  const { mutate: recycle } = useMutation({
+    mutationFn: async (id) => {
+      try {
+        return await instance.patch(`/products/recycle/${id}`);
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    },
+    onSuccess: () => {
+      messageApi.open({
+        type: "success",
+        content: "Khôi phục sản phẩm thành công",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["trash"],
+      });
+    },
+    onError: (error) => {
+      messageApi.open({
+        type: "error",
+        content: error.message,
+      });
+    },
+  });
+  const columns = [
+    {
+      title: "",
+      dataIndex: "index",
+      key: "index",
+    },
+    {
+      title: "Ảnh sản phẩm",
+      dataIndex: "image",
+      key: "image",
+      render: (_: any, product: any) => (
+        <img
+          src={product.image_product}
+          alt={product.name_product}
+          className="w-[80px] h-[80px]"
+        />
+      ),
+    },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "name_product",
+      key: "name_product",
+    },
+    {
+      title: "Giá sản phẩm",
+      dataIndex: "price_product",
+      key: "price_product",
+    },
+    {
+      title: "Thời gian tạo",
+      dataIndex: "created_at",
+      key: "createdAt",
+      render: (_: any, product: IProduct) => formatDate(product.createdAt),
+    },
+    {
+      title: "Thời gian xóa",
+      dataIndex: "deletedAt",
+      key: "deletedAt",
+      render: (_: any, product: IProduct) => formatDate(product.updatedAt),
+    },
+    {
+      key: "actions",
+      render: (_: any, product: any) => {
+        return (
+          <Space>
+            <Popconfirm
+              title="Khôi phục sản phẩm"
+              description="Bạn chắc chắn muốn khôi phục lại sản phẩm này chứ?"
+              onConfirm={() => recycle(product._id!)}
+              // onCancel={cancel}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary">
+                <FaRecycle />
+              </Button>
+            </Popconfirm>
+            <Popconfirm
+              title="Xóa vĩnh viễn sản phẩm"
+              description="Bạn chắc chắn muốn xóa vĩnh viễn sản phẩm này chứ?"
+              onConfirm={() => mutate(product._id!)}
+              // onCancel={cancel}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button danger>
+                <TiDelete />
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
+    },
+  ];
+  if (isLoading) return <div>Loading...</div>;
   return (
     <div>
-      <div className="flex flex-col mt-5">
-        <div className="relative flex items-center justify-between mb-3">
-          <h1 className="text-2xl font-medium">Thùng rác</h1>
-          <button
-            onClick={handleAdPro}
-            className="px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-400 focus:outline-none"
-          >
-            Quản lý sản phẩm
-          </button>
-        </div>
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden border border-gray-200 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      STT
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Ảnh sản phẩm
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Tên sản phẩm
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Giá sản phẩm
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Số lượng trong kho
-                    </th>
-
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Ngày tạo
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Ngày chỉnh sửa
-                    </th>
-                    <th className="px-4 py-3 text-sm font-semibold text-black">
-                      Thao tác
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {deletedProducts?.map((product: IProduct, index: number) => (
-                    <tr key={index}>
-                      <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                        {index + 1}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">
-                        <img
-                          src={product.image_product}
-                          alt={product.name_product}
-                          className="object-cover w-20 h-20 border rounded-md"
-                        />
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">
-                        {product.name_product}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">
-                        {product.price_product}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">
-                        {product.description_product}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">
-                        {formatDate(product.createdAt)}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-500">
-                        {formatDate(product.deletedAt)}
-                      </td>
-                      <td className="px-4 py-4 text-sm">
-                        <button
-                          onClick={() => handleRestore(product._id)}
-                          className="p-3 mr-2 text-white bg-blue-500 border rounded-lg hover:bg-blue-400 focus:outline-none"
-                        >
-                          Khôi phục
-                        </button>
-                        <button
-                          onClick={() => handleDeletePermanently(product._id)}
-                          className="p-3 text-white border rounded-lg bg-rose-500 hover:bg-rose-400"
-                          focus:outline-none
-                        >
-                          Xóa vĩnh viễn
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      {contextHolder}
+      <Table columns={columns} dataSource={dataSource} />
     </div>
   );
 };
