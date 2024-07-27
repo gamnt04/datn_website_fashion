@@ -22,7 +22,7 @@ const AllOrder = () => {
     <div className="mt-28 mb-4">
       <div className="container mx-auto max-w-[1200px]">
         <div className="flex flex-row space-x-5 relative">
-          <div className="basis-28 lg:basis-3/12 border rounded-lg">
+          <div className="basis-28 lg:basis-3/12">
             <div className="lg:flex gap-4 pt-[15px] px-3 pb-[15px] border-b-2 ">
               <div className="flex justify-center">
                 <img
