@@ -37,6 +37,8 @@ export const dow_quantity = async (data: any) => {
 export const remove_quantity = async (data: any) => {
   try {
     await instance.post("/cart/remove", data);
+    console.log(data);
+
   } catch (error) {
     console.log(error || "Loi server !");
   }
@@ -44,6 +46,13 @@ export const remove_quantity = async (data: any) => {
 export const remove_multiple_products = async (data: any) => {
   try {
     await instance.post("/cart/remove-multiple", data);
+  } catch (error) {
+    console.log(error || "Server error!");
+  }
+};
+export const handle_checked_products = async (data: any) => {
+  try {
+    await instance.post("/cart/handle_status_cart", data);
   } catch (error) {
     console.log(error || "Server error!");
   }

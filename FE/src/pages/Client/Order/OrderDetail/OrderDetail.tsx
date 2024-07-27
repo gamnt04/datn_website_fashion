@@ -8,8 +8,8 @@ const OrderDetail = () => {
     const date = new Date(datetime);
     return date.toLocaleDateString(); // Lấy ngày tháng năm
   };
-  const getStatusClass = (status: any) => {
-    return data?.status >= status ? "font-bold  text-blue-500" : "";
+  const getStatusClass = (status: number) => {
+    return data?.status >= status ? "font-bold text-blue-500" : "";
   };
   return (
     <>
@@ -34,23 +34,27 @@ const OrderDetail = () => {
           </div>
         </div>
         <div className="border-b px-5 py-5">
-          <div className="flex">
-            <div className="flex items-center justify-center">
-              <div className={getStatusClass(1)}>Chờ xác nhận</div>
-              <span className={`mx-4 ${getStatusClass(1)}`}>-------</span>
+          {getStatusClass(5) ? (
+            <div className="text-center font-bold text-red-500">Đã hủy</div>
+          ) : (
+            <div className="flex">
+              <div className="flex items-center justify-center">
+                <div className={getStatusClass(1)}>Chờ xác nhận</div>
+                <span className={`mx-4 ${getStatusClass(1)}`}>-------</span>
+              </div>
+              <div className="flex items-center whitespace-nowrap">
+                <div className={getStatusClass(2)}>Đang chuẩn bị hàng</div>
+                <span className={`mx-4 ${getStatusClass(2)}`}>-------</span>
+              </div>
+              <div className="flex items-center whitespace-nowrap">
+                <div className={getStatusClass(3)}>Đang vận chuyển</div>
+                <span className={`mx-4 ${getStatusClass(3)}`}>-------</span>
+              </div>
+              <div className="flex items-center whitespace-nowrap">
+                <div className={getStatusClass(4)}>Đang giao hàng</div>
+              </div>
             </div>
-            <div className="flex items-center *:whitespace-nowrap">
-              <div className={getStatusClass(2)}>Đang chuẩn bị hàng</div>
-              <span className={`mx-4 ${getStatusClass(2)}`}>-------</span>
-            </div>
-            <div className="flex items-center *:whitespace-nowrap">
-              <div className={getStatusClass(3)}>Đang vận chuyển</div>
-              <span className={`mx-4 ${getStatusClass(3)}`}>-------</span>
-            </div>
-            <div className="flex items-center *:whitespace-nowrap">
-              <div className={getStatusClass(4)}>Đang giao hàng</div>
-            </div>
-          </div>
+          )}
         </div>
         <div className="border-b">
           <div className="px-5 py-4">
@@ -58,12 +62,12 @@ const OrderDetail = () => {
               <h1 className="text-xl font-medium">Địa chỉ nhận hàng</h1>
             </div>
             <div className="flex gap-10 pt-6">
-              <div className="w-[35%]">
+              <div className="w-[45%]">
                 <p>{data?.customerInfo?.userName}</p>
                 <p className="py-2">{data?.customerInfo?.phone}</p>
                 <p>{data?.customerInfo?.address}</p>
               </div>
-              <div className="flex gap-8 border-l pl-8">
+              <div className="flex gap-8 border-l pl-3">
                 <div className="flex gap-4">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
@@ -83,16 +87,16 @@ const OrderDetail = () => {
           <div className="px-5 py-4">
             {data?.items.map((order: any, index: number) => (
               <div className="flex justify-between items-center gap-4 py-4" key={index}>
-                <div className="flex gap-5">
-                  <img src={order?.image} alt="Sản phẩm" className="w-24 h-24" />
+                <div className="flex gap-5 w-[80%]">
+                  <img src={order?.productId?.image_product} alt="Sản phẩm" className="w-24 h-24" />
                   <div>
-                    <p className="font-semibold">{order?.name}</p>
-                    <p>Phân loại Đen XL</p>
+                    <p className="font-semibold">{order?.productId?.name_product}</p>
+                    <p>Phân loại: <span className="font-bold">{order?.color_item} - {order?.name_size}</span> </p>
                     <p>Số lượng: {order?.quantity}</p>
                   </div>
 
                 </div>
-                <p>Giá: <span className="font-bold">{order.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
+                <p>Giá: <span className="font-bold">{order?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
               </div>
             ))}
           </div>
@@ -101,28 +105,38 @@ const OrderDetail = () => {
           <div className="px-5 py-4">
             <div className="flex justify-between py-2">
               <p>Tổng tiền sản phẩm</p>
-              <p>{data?.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+              <p>{data?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
             </div>
             <div className="flex justify-between py-2">
               <p>Phí vận chuyển</p>
-              <p>10.000 VND</p>
+              <p>0đ</p>
             </div>
             <div className="flex justify-between py-2 font-semibold">
               <p>Tổng thanh toán</p>
-              <p>{(data?.totalPrice + 10000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+              <p>{data?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
             </div>
           </div>
         </div>
-        <div className="border-b">
-          <div className="px-5 py-4">
-            <p>Vui lòng thành toán <span className="font-bold">{(data?.totalPrice + 10000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> khi nhận hàng</p>
+
+        {data?.status == 5 ? (
+          ''
+        ) : (
+          <div className="border-b">
+            <div className="px-5 py-4">
+              <p>Vui lòng thành toán <span className="font-bold">{data?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> khi nhận hàng</p>
+            </div>
           </div>
-        </div>
+        )}
         <div className="border-b">
-          <div className="px-5 py-4 flex gap-10 justify-end">
-            <h1 className="font-bold">Phương thức thanh toán</h1>
-            <p>{data?.customerInfo?.payment}</p>
-          </div>
+          {data?.status == 5 ? (
+            <div className="px-5 py-4 text-center font-bold text-red-500">Đơn hàng đã bị hủy</div>
+          ) : (
+            <div className="px-5 py-4 flex gap-10 justify-end">
+              <h1 className="font-bold">Phương thức thanh toán</h1>
+              <p>{data?.customerInfo?.payment}</p>
+            </div>
+          )}
+
         </div>
       </div>
     </>

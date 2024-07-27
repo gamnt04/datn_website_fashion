@@ -1,13 +1,15 @@
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 import { useMutation } from "@tanstack/react-query";
 import { confirmCancelOrder } from "../../../services/orderProduct";
+import { message, Popconfirm } from "antd";
 
 const OrdersDetali = () => {
-    const { id } = useParams<{ id: string }>();
+    const [messageApi, contextHolder] = message.useMessage();
+    const { id } = useParams();
     const { data, refetch } = Query_Orders(id);
+    console.log(data);
 
     const { mutate } = useMutation({
         mutationFn: async (comfirm: any) => {
@@ -16,27 +18,36 @@ const OrdersDetali = () => {
         },
         onSuccess: (comfirm) => {
             if (comfirm === true) {
-                toast.success("Bạn đã xác nhận hủy đơn hàng!");
+                messageApi.open({
+                    type: "success",
+                    content: "Bạn đã xác nhận hủy đơn hàng!",
+                });
                 refetch();
-            }
-            else {
-                toast.success("Bạn đang từ chối hủy đơn hàng!");
+            } else {
+                messageApi.open({
+                    type: "success",
+                    content: "Bạn đã từ chối hủy đơn hàng!",
+                });
                 refetch();
             }
         },
         onError: () => {
-            toast.error("Thất bại");
+            messageApi.open({
+                type: "error",
+                content: "Thất bại",
+            });
         }
     })
     const handleStatusUpdate = async () => {
         if (!data) return;
         if (data.status === "5") {
-            toast.error("Đơn hàng đã bị hủy, không thể cập nhật trạng thái!");
+            messageApi.open({
+                type: "error",
+                content: "Đơn hàng đã bị hủy, không thể cập nhật trạng thái!",
+            })
             return;
         }
-        if (!window.confirm("Bạn có chắc chắn muốn xác nhận đơn hàng này không?")) {
-            return;
-        }
+
         const statusOrder: Record<string, string> = {
             "1": "2",
             "2": "3",
@@ -46,35 +57,47 @@ const OrdersDetali = () => {
         try {
             const response = await instance.patch(`/orders/${id}`, { status: nextStatus });
             console.log(response.data);
-            toast.success(response.data.status === "4" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!", { autoClose: 800 });
+            messageApi.open({
+                type: "success",
+                content: response.data.status === "4" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!",
+            })
             refetch();
+
+
         } catch (error) {
-            console.log(error);
-            toast.error("Cập nhật trạng thái đơn hàng thất bại!");
+            messageApi.open({
+                type: "error",
+                content: "Cập nhật trạng thái đơn hàng thất bại!",
+            })
         }
     };
 
     const handleCancelOrder = async () => {
         if (!data) return;
-        if (!window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
-            return;
-        }
         try {
             const response = await instance.patch(`/orders/${id}`, { status: "5" });
             console.log(response.data);
-            toast.success("Đơn hàng đã bị hủy thành công!");
+            messageApi.open({
+                type: "success",
+                content: "Đã hủy đơn hàng!",
+            })
             refetch();
         } catch (error) {
             console.log(error);
-            toast.error("Hủy đơn hàng thất bại!");
+            messageApi.open({
+                type: "error",
+                content: "Hủy đơn hàng thất bại!",
+            })
         }
     };
     const cancellationRequested = data?.cancellationRequested;
+
     const isPreparing = data?.status === 2
     if (!data) return <p>Loading...</p>;
 
     return (
         <>
+            {contextHolder}
             <h1 className="font-bold text-3xl text-black mt-16 text-center">Chi tiết đơn hàng</h1>
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <table className="min-w-full bg-white border border-gray-200 h-auto">
@@ -89,16 +112,17 @@ const OrdersDetali = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {data.items.map((item: any) => {
+                            console.log(data.items);
 
                             return (
                                 <tr key={item._id}>
                                     <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
-                                        <img src={item.image} alt="" className="w-[50px] h-[50px] object-cover " />
+                                        <img src={item?.productId?.image_product} alt="" className="w-[70px] h-[70px] object-cover " />
                                     </td>
-                                    <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item.name}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item.quantity}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item.price * item.quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                    <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item?.productId?.name_product}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item?.quantity}</td>
+                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
                                 </tr>
                             )
                         })}
@@ -127,7 +151,7 @@ const OrdersDetali = () => {
             <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
                     <p>Phương thức thanh toán</p>
-                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data.customerInfo.payment}</p>
+                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data?.customerInfo?.payment}</p>
                 </div>
                 <div className="flex items-center gap-4 border-b py-3">
                     <p>Trạng thái đơn hàng</p>
@@ -145,10 +169,10 @@ const OrdersDetali = () => {
                             <p>Địa chỉ khách hàng:</p>
                         </div>
                         <div>
-                            <p>{data.customerInfo.userName}</p>
-                            <p>{data.customerInfo.phone}</p>
-                            <p>{data.customerInfo.email}</p>
-                            <p>{data.customerInfo.address}</p>
+                            <p>{data?.customerInfo?.userName}</p>
+                            <p>{data?.customerInfo?.phone}</p>
+                            <p>{data?.customerInfo?.email}</p>
+                            <p>{data?.customerInfo?.address}</p>
                         </div>
                     </div>
                     <div className="flex gap-6">
@@ -159,10 +183,10 @@ const OrdersDetali = () => {
                             <p>Tổng thanh toán:</p>
                         </div>
                         <div>
-                            <p>{data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                            <p>{data?.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                             <p>10000</p>
                             <p>20000 đ</p>
-                            <p className="font-bold">{(data.totalPrice - 10000 + 20000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                            <p className="font-bold">{(data.totalPrice - 10000 + 20000)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                         </div>
                     </div>
                 </div>
@@ -173,25 +197,37 @@ const OrdersDetali = () => {
                         <>
                             {!isPreparing ? (
                                 <>
-                                    <button
-                                        className="w-auto p-3 bg-green-500 rounded-lg text-white"
-                                        onClick={() => mutate({ id: data?._id, confirm: true })}
+                                    <Popconfirm
+                                        title="Xác nhận hủy đơn hàng?"
+                                        description="Bạn có chắc chắn muốn hủy đơn hàng này?"
+                                        onConfirm={() => mutate({ id: data?._id, confirm: true })}
+                                        // onCancel={cancel}
+                                        okText="Xác nhận"
+                                        cancelText="Không"
                                     >
-                                        Xác nhận hủy
-                                    </button>
-                                    <button
-                                        className="w-auto p-3 bg-red-500 rounded-lg text-white"
-                                        onClick={() => mutate({ id: data?._id, confirm: false })}
+                                        <button className="w-auto p-3 bg-green-500 rounded text-white">
+                                            Xác nhận
+                                        </button>
+                                    </Popconfirm>
+                                    <Popconfirm
+                                        title="Từ chối hủy đơn hàng?"
+                                        description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
+                                        onConfirm={() => mutate({ id: data?._id, confirm: false })}
+                                        // onCancel={cancel}
+                                        okText="Từ chối"
+                                        cancelText="Không"
                                     >
-                                        Từ chối
-                                    </button>
+                                        <button className="w-auto p-3 bg-red-500 rounded text-white">
+                                            Từ chối
+                                        </button>
+                                    </Popconfirm>
                                 </>
                             ) : (<>
-                                <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
-                                    {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
+                                <button className="w-auto p-3 bg-orange-300 rounded text-white" onClick={handleStatusUpdate}>
+                                    {data.status !== "5" ? (data.status === "4" ? "Hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
                                 </button>
                                 {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
-                                    <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
+                                    <button className="w-auto p-3 bg-rose-500 rounded text-white" onClick={handleCancelOrder}>
                                         Từ chối xác nhận
                                     </button>
                                 )}
@@ -199,13 +235,31 @@ const OrdersDetali = () => {
                         </>
                     ) : (
                         <>
-                            <button className="w-auto p-3 bg-orange-300 rounded-lg text-white" onClick={handleStatusUpdate}>
-                                {data.status !== "5" ? (data.status === "4" ? "Đơn hàng đã hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
-                            </button>
-                            {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
-                                <button className="w-auto p-3 bg-rose-500 rounded-lg text-white" onClick={handleCancelOrder}>
-                                    Từ chối xác nhận
+                            <Popconfirm
+                                title="Xác nhận đơn hàng?"
+                                description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
+                                onConfirm={handleStatusUpdate}
+                                // onCancel={cancel}
+                                okText="Xác nhận"
+                                cancelText="Không"
+                            >
+                                <button className="w-auto p-3 bg-orange-300 rounded text-white">
+                                    {data.status !== "5" ? (data.status === "4" ? "Hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
                                 </button>
+                            </Popconfirm>
+                            {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
+                                <Popconfirm
+                                    title="Từ chối xác nhận?"
+                                    description="Bạn có chắc chắn muốn từ chối xác nhận đơn hàng này?"
+                                    onConfirm={handleCancelOrder}
+                                    // onCancel={cancel}
+                                    okText="Từ chối"
+                                    cancelText="Không"
+                                >
+                                    <button className="w-auto p-3 bg-rose-500 rounded text-white">
+                                        Từ chối xác nhận
+                                    </button>
+                                </Popconfirm>
                             )}
                         </>
                     )}

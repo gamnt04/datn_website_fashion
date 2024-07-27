@@ -37,14 +37,13 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  items: [orderItemSchema],
+  items: [],
   orderNumber: {
     type: String,
     auto: true,
     unique: true,
   },
   customerInfo: {
-    type: {
       userName: {
         type: String,
         required: true,
@@ -57,20 +56,10 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      payment: {
-        type: String,
-      },
-      city: {
-        type: String,
-      },
-      address: {
-        type: String
-      },
-      code: {
-        type: String
-      }
-    },
-    required: true,
+      payment: String,
+      city: String,
+      address: String,
+      code : String,
   },
   totalPrice: {
     type: Number,

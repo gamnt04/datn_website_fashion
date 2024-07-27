@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { signUpSchema } from "../../validations/auth/SignUp";
 import Joi from "joi";
 import { useState } from "react";
+import { AxiosError } from "axios";
 
 interface SignUpFormData {
   email: string;
@@ -43,9 +44,16 @@ const useSignUp = () => {
       toast.success("Đăng ký thành công!");
       navigate("/login");
     },
-    onError: (error) => {
-      toast.error("Đăng ký thất bại!");
-      return error;
+    onError: (error: AxiosError) => {
+      if (error.response) {
+        if (error.response.status === 400) {
+          toast.error("Email đã tồn tại. Vui lòng nhập lại thông tin!");
+        } else {
+          toast.error("Đăng nhập thất bại.Vui lòng nhập lại thông tin");
+        }
+      } else {
+        toast.error("Đã xảy ra lỗi kết nối.");
+      }
     },
   });
 

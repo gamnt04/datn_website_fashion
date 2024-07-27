@@ -59,9 +59,9 @@ export const createProduct = async (req, res) => {
       });
     }
     if (dataClient.attributes) {
-      // const convertAttribute = JSON.parse(dataClient.attributes)
+      const convertAttribute = JSON.parse(dataClient.attributes)
       const data = await Products.create(newProductData);
-      const varriant = dataClient.attributes.map(item => (
+      const varriant = convertAttribute.map(item => (
         {
           color: item.color ? item.color : '',
           size: item.size.map(data_size => (
