@@ -23,6 +23,7 @@ export async function get_items_client(page?: number) {
     return activeProducts;
   } catch (error) {
     console.log(error || "Loi server!");
+    return error
   }
 }
 
@@ -51,40 +52,18 @@ export async function get_detail_items(id: number | string) {
 
 export async function add_items_client(items: any) {
   try {
-    const res = await fetch(`${baseUri}`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(items)
-    });
-    if (!res.ok) {
-      console.warn("Kiem tra lai server hoac internet !");
-    }
-    const { data } = await res.json();
-    return data.docs;
+    const res = await instance.post("/products", items);
+    return res
   } catch (error) {
     console.log(error || "Loi server!");
+    return error
   }
 }
 
-export async function edit_items_client(id: string, product: IProduct) {
+export async function edit_items_client(product: IProduct) {
   try {
-    const res = await fetch(`${baseUri}/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(product)
-    });
-
-    if (!res.ok) {
-      console.warn("Kiem tra lai server hoac internet !");
-      throw new Error("Request failed with status " + res.status);
-    }
-
-    const data = await res.json();
-    return data;
+    const res = await instance.put(`/products/${product._id}`, product);
+    return res;
   } catch (error) {
     console.log(error || "Loi server!");
     throw error;
@@ -93,16 +72,11 @@ export async function edit_items_client(id: string, product: IProduct) {
 
 export async function remove_items_client(id: string) {
   try {
-    const res = await fetch(`${baseUri}/${id}`, {
-      method: "DELETE"
-    });
-    if (!res.ok) {
-      console.warn("Kiem tra lai server hoac internet !");
-    }
-    const { data } = await res.json();
-    return data.docs;
+    const res = await instance.delete(`/products/${id}`);
+    return res;
   } catch (error) {
     console.log(error || "Loi server!");
+    return error
   }
 }
 export const remove_multiple_products = async (data: {
@@ -113,23 +87,28 @@ export const remove_multiple_products = async (data: {
     return response.data;
   } catch (error) {
     console.log(error || "Loi server!");
+    return error
   }
 };
 export const deleteProduct = async (id: string) => {
-  const response = await fetch(
-    `http://localhost:2004/api/v1/products/permanent/${id}`,
-    {
-      method: "DELETE"
-    }
-  );
-  return response.json();
+  try {
+    const res = await instance.delete(`/products/${id}`);
+    return res
+
+  } catch (error) {
+    console.log("Lỗi rồi đại vương ơi", error);
+    return error
+  }
 };
 
 export const restoreProduct = async (id: string) => {
-  const response = await fetch(`http://localhost:2004/api/v1/products/${id}`, {
-    method: "PATCH"
-  });
-  return response.json();
+  try {
+    const res = await instance.patch(`/products/${id}`);
+    return res;
+  } catch (error) {
+    console.log("Lỗi rồi đại vương ơi", error);
+    return error
+  }
 };
 
 export async function getDeletedProducts() {
