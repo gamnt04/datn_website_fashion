@@ -46,9 +46,12 @@ export const getOrderById = async (id: string) => {
   }
 };
 export const getOneOrderUser = async (userId: string) => {
+  console.log(userId);
+
   try {
-    const { data } = await instance.post(`/orders/get_order_user`, { userId });
-    return data;
+    const { data } = await instance.get(`/orders/get_order_user/${userId}`);
+
+    return data?.docs;
   } catch (error) {
     console.log(error);
   }
