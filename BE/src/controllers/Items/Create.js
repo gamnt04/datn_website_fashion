@@ -45,10 +45,9 @@ export const createProduct = async (req, res) => {
     }
     const newProductData = {
       ...dataClient,
-      attributes: [],
+      attributes: null,
       category_id: category_id ? category_id : check_name_category._id,
     };
-    console.log(category_id);
     const { error } = validate_items.validate(dataClient, {
       abortEarly: false,
     });
