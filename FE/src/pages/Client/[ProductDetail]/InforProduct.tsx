@@ -24,7 +24,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
   const addCart = (id?: string | number) => {
-    if(account) {
+    if (account) {
       if (dataProps?.product?.attributes) {
         const item = {
           userId: account,
@@ -60,7 +60,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           }
         }
         else {
-            mutate(item);
+          mutate(item);
         }
       }
     }
@@ -68,7 +68,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       navi('/login')
     }
   };
-  function text_validate () {
+  function text_validate() {
     ref_validate_attr?.current?.classList.add('block')
     ref_validate_attr?.current?.classList.remove('hidden')
   }
