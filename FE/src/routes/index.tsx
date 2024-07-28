@@ -31,6 +31,7 @@ import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
+import BlogDetail from "../pages/Client/Blogs/BlogDetail";
 const RouterComponent = () => {
   return (
     <>
@@ -47,6 +48,7 @@ const RouterComponent = () => {
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
+            <Route path="/blogs/:id" element={<BlogDetail />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
             <Route
