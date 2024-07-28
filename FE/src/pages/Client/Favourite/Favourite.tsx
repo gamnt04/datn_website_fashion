@@ -1,7 +1,7 @@
 import {
   CartIcon,
   HeartIcon,
-  HeartIconRed
+  HeartIconRed,
 } from "../../../resources/svg/Icon/Icon";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { IProduct } from "../../../common/interfaces/Product";
