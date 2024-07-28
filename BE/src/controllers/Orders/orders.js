@@ -1,43 +1,58 @@
 import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
-
+import Cart from "../../models/Cart/cart";
 export const createOrder = async (req, res) => {
+  const { userId } = req.body;
   try {
     const order = await Order.create(req.body);
+    const dataCart = await Cart.findOne({ userId }).populate("products");
+    if (!dataCart) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
+    }
+    dataCart.products = dataCart.products.filter((i) => {
+      return !req.body.items.some((j) => {
+        if (i.productId._id.toString() === j.productId._id.toString()) {
+          if (i.status_checked) {
+            return true;
+          }
+        }
+        return false;
+      });
+    });
+    await dataCart.save()
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
+    console.error("Error:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi rồi đại ơi" });
   }
 };
-export const getOrders = async (req, res) => {
-  try {
-    const { page = 1, status } = req.query;
-    const limit = 7;
-    const skip = (page - 1) * limit;
-    const query = status ? { status } : {};
-    const orders = await Order.find(query).skip(skip).limit(limit);
-    const totalOrders = await Order.countDocuments(query);
+// export const getOrders = async (req, res) => {
+//   try {
+//     const { page = 1, status } = req.query;
+//     const limit = 7;
+//     const skip = (page - 1) * limit;
+//     const query = status ? { status } : {};
+//     const orders = await Order.find(query).skip(skip).limit(limit);
+//     const totalOrders = await Order.countDocuments(query);
 
-    if (orders.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "No orders found" });
-    }
+//     if (orders.length === 0) {
+//       return res
+//         .status(StatusCodes.NOT_FOUND)
+//         .json({ error: "No orders found" });
+//     }
 
-    return res.status(StatusCodes.OK).json({
-      totalOrders,
-      currentPage: page,
-      totalPages: Math.ceil(totalOrders / limit),
-      orders,
-    });
-  } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
-  }
-};
+//     return res.status(StatusCodes.OK).json({
+//       totalOrders,
+//       currentPage: page,
+//       totalPages: Math.ceil(totalOrders / limit),
+//       orders,
+//     });
+//   } catch (error) {
+//     return res
+//       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+//       .json({ error: error.message });
+//   }
+// };
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -55,9 +70,27 @@ export const getOrderById = async (req, res) => {
   }
 };
 export const getOneOrderUser = async (req, res) => {
-  const { userId } = req.body;
+  const {
+    _page = 1,
+    _limit = 20,
+    _sort = '',
+    _search = '',
+    _status = ''
+  } = req.query;
+  const options = {
+    page: _page,
+    limit: _limit,
+  };
+  const query = { userId: req.params.userId };
+  // if (_search) {
+  //   query._id = { $regex: _search, $options: 'i' };  // Tìm kiếm theo tên khách hàng
+  // }
+
+  // if (_status) {
+  //   query.status = _status;  // Lọc theo trạng thái đơn hàng
+  // }
   try {
-    const order = await Order.find({ userId });
+    const order = await Order.paginate(query, options);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
