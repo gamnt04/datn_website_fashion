@@ -28,6 +28,7 @@ const ProfileHook = () => {
       return data;
     },
   });
+  console.log(data?.address);
 
   useEffect(() => {
     if (data) {
@@ -86,6 +87,7 @@ const ProfileHook = () => {
     handleFileChange,
     mutate,
     data,
+    userId,
   };
 };
 
