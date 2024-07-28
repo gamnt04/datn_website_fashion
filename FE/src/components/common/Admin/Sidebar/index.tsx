@@ -78,6 +78,14 @@ const SidebarComponent = () => {
             onClick={() => handleItemClick("contact")}
           />
         </Link>
+        <Link to="/admin/blogs">
+          <SidebarItem
+            icon={<Package size={20} />}
+            text="Tin tức"
+            active={selectedItem === "blogs"}
+            onClick={() => handleItemClick("blogs")}
+          />
+        </Link>
         <Link to="/admin/products/trash">
           <SidebarItem
             icon={<Trash size={20} />}
