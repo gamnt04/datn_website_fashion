@@ -187,6 +187,7 @@ export const isTokenBlacklisted = async (token) => {
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
+  console.log(newAddress);
   if (
     !newAddress ||
     !newAddress.fullName ||
