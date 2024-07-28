@@ -3,15 +3,11 @@ import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Button, Checkbox, Input, Spin } from "antd";
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { useState } from "react";
+import { Spin } from "antd";
+import { LoadingOutlined, } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Add_Address, List_Address } from "../../../components/common/Client/_component/Address";
+import { Address } from "../../../components/common/Client/_component/Icons";
 
 const Pay = () => {
   const [user] = useLocalStorage("user", {});
@@ -19,43 +15,56 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-
+  const [selectedAddress, setSelectedAddress]: any = useState(null)
   const { register, handleSubmit, setValue } = useForm();
-  const { onSubmit, data: data_cart } = Pay_Mutation();
-  const {
-    calculateTotalProduct,
-    calculateTotal,
-    data: list_item_cart,
-  } = List_Cart(userId);
+  const { onSubmit, contextHolder } = Pay_Mutation();
+  const { calculateTotalProduct, data: list_item_cart } = List_Cart(userId);
   const data: any = [];
-  data_cart?.products?.filter((item: any) => {
-    item?.status_checked && data.push(item);
-  });
-  if (auth && auth.address) {
-    const defaultAddress = auth.address.find(
-      (item: any) => item.fullName === "admin"
-    );
-    if (defaultAddress) {
-      setValue("userName", defaultAddress.fullName);
-      setValue("phone", defaultAddress.phoneNumber);
-      setValue("email", auth.email);
-      setValue(
-        "address",
-        `${defaultAddress.addressType} - ${defaultAddress.addressDetails}`
-      );
-    }
+  if (list_item_cart?.products.length > 0) {
+    list_item_cart?.products.filter((item: any) => {
+      if (item?.status_checked) {
+        data.push(item);
+      }
+    })
   }
+  function onAddOder(data_form: any) {
+    const data_form_order = {
+      userId,
+      items: data,
+      totalPrice: list_item_cart?.total_price,
+      customerInfo: data_form,
+    };
+    onSubmit(data_form_order)
+  }
+  useEffect(() => {
+    if (auth && auth.address) {
+      const defaultAddress = auth.address.find((item: any) => item.fullName === "admin");
+      const address = selectedAddress || defaultAddress;
+      if (address) {
+        setSelectedAddress(address);
+        setValue("userName", address.fullName);
+        setValue("phone", address.phoneNumber);
+        setValue("email", auth.email);
+        setValue("address", `${address.addressType} - ${address.addressDetails}`);
+      }
+    }
+  }, [auth, selectedAddress, setValue]);
   const handleTAdd = () => {
     setAddress(!address);
-    if (isOpen) setIsOpen(false); // Tắt modal "Địa chỉ của tôi" nếu đang bật
+    if (isOpen) setIsOpen(false);
   };
 
   const handleAddress = () => {
     setIsOpen(!isOpen);
-    if (address) setAddress(false); // Tắt modal "Địa chỉ mới" nếu đang bật
+    if (address) setAddress(false);
+  };
+  const handleAddressSelect = (address: any) => {
+    setSelectedAddress(address);
+    setIsOpen(false);
   };
   return (
     <>
+      {contextHolder}
       {isLoading ? (
         <div className="flex justify-center items-center h-screen">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -73,49 +82,41 @@ const Pay = () => {
               <h1 className="text-2xl font-bold">Thanh Toán</h1>
             </div>
           </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onAddOder)}>
             <div className="py-6 px-6 border rounded shadow-sm">
               <div className="flex gap-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                  />
-                </svg>
+                <Address />
                 <p>Địa chỉ nhận hàng</p>
               </div>
               <div className="flex gap-12">
-                {auth?.address?.map(
-                  (item: any, index: number) =>
-                    item.fullName === "admin" && (
-                      <div key={index} className="flex items-center gap-4">
-                        <h1 className="font-bold">{item?.fullName}</h1>
-                        <p className="font-bold">{item?.phoneNumber}</p>
-                        <p>
-                          {item?.addressType + " - " + item?.addressDetails}
-                        </p>
-                      </div>
-                    )
+                {selectedAddress ? (
+                  <div className="flex items-center gap-4">
+                    <h1 className="font-bold">{selectedAddress.fullName}</h1>
+                    <p className="font-bold">{selectedAddress.phoneNumber}</p>
+                    <p>
+                      {selectedAddress.addressType + " - " + selectedAddress.addressDetails}
+                    </p>
+                  </div>
+                ) : (
+                  auth?.address?.map(
+                    (item: any, index: any) =>
+                      item.fullName === "admin" && (
+                        <div key={index} className="flex items-center gap-4">
+                          <h1 className="font-bold">{item?.fullName}</h1>
+                          <p className="font-bold">{item?.phoneNumber}</p>
+                          <p>
+                            {item?.addressType + " - " + item?.addressDetails}
+                          </p>
+                        </div>
+                      )
+                  )
                 )}
                 <div className="flex items-center gap-8">
                   <div className="border py-2 px-4 rounded border-black">
                     Mặc định
                   </div>
                   <div
-                    className="text-blue-400 underline"
+                    className="text-blue-400 underline cursor-pointer"
                     onClick={handleAddress}
                   >
                     Thay đổi
@@ -145,14 +146,13 @@ const Pay = () => {
                             <p className="mb-3 font-bold text-left">
                               {item?.productId?.name_product}
                             </p>
-                            <p className="border border-stone-200 rounded-sm py-2 w-[220px]">
+                            <p className="border border-stone-200 rounded py-2 w-[220px]">
                               Đổi trả miễn phí 15 ngày
                             </p>
                           </div>
                         </div>
                         <div className="mr-12">
                           <p className="font-bold w-28 p-0">
-                            {" "}
                             Loại: {item?.color_item} - {item?.name_size}
                           </p>
                         </div>
@@ -163,10 +163,10 @@ const Pay = () => {
                           currency: "VND",
                         })}
                       </td>
-                      <td>{item.quantity}</td>
+                      <td>{item?.quantity}</td>
                       <td>
                         <p className="font-bold">
-                          {(item?.total_price_item).toLocaleString("vi", {
+                          {(item?.total_price_item)?.toLocaleString("vi", {
                             style: "currency",
                             currency: "VND",
                           })}
@@ -176,7 +176,7 @@ const Pay = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="p-6 flex justify-end gap-6 border-t">
+              {/* <div className="p-6 flex justify-end gap-6 border-t">
                 <div className="mr-10">
                   <p>Voucher:</p>
                 </div>
@@ -211,11 +211,11 @@ const Pay = () => {
                   </div>
                   <p>₫32.800</p>
                 </div>
-              </div>
+              </div> */}
               <div className="flex items-center justify-end gap-8 p-6">
                 <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p>
                 <p className="text-xl font-bold text-black">
-                  {list_item_cart?.total_price.toLocaleString("vi", {
+                  {list_item_cart?.total_price?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
                   })}
@@ -243,7 +243,7 @@ const Pay = () => {
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng tiền hàng</p>
                     <p>
-                      {list_item_cart?.total_price.toLocaleString("vi", {
+                      {list_item_cart?.total_price?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}
@@ -251,7 +251,7 @@ const Pay = () => {
                   </div>
                   <div className="flex justify-between py-3 gap-16">
                     <p>Phí vận chuyển</p>
-                    <p>₫32.800</p>
+                    <p>0đ</p>
                   </div>
                   {/* <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng cộng Voucher giảm giá:</p>
@@ -259,12 +259,7 @@ const Pay = () => {
                                     </div> */}
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng thanh toán</p>
-                    <p className="text-xl font-bold text-black">
-                      {(list_item_cart?.total_price + 32800).toLocaleString(
-                        "vi",
-                        { style: "currency", currency: "VND" }
-                      )}
-                    </p>
+                    <p className="text-xl font-bold text-black">{(list_item_cart?.total_price)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                   </div>
                 </div>
               </div>
@@ -283,137 +278,14 @@ const Pay = () => {
             </div>
           </form>
           {address && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-              <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
-                <h1 className="py-3 text-center font-medium">Địa chỉ mới</h1>
-                <form>
-                  <div className="w-full border px-2 py-2 rounded flex gap-3 my-3">
-                    <Input
-                      className="w-full border-none focus:ring-0"
-                      placeholder="Họ và tên"
-                    ></Input>
-                    <Input
-                      className="w-full border-none focus:ring-0"
-                      placeholder="Số điện thoại"
-                    ></Input>
-                  </div>
-                  <div className="my-3 px-2 py-2 border rounded">
-                    <Input
-                      className="w-full border-none focus:ring-0"
-                      placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
-                    ></Input>
-                  </div>
-                  <div className="my-3 px-2 py-2 border rounded">
-                    <Input
-                      className="w-full border-none focus:ring-0"
-                      placeholder="Địa chỉ cụ thể"
-                    ></Input>
-                  </div>
-                  <div className="my-3 ">
-                    <p>Loại địa chỉ:</p>
-                    <div className="flex justify-between gap-4 border rounded px-3 py-2 my-2  *:w-full">
-                      <button type="button" className="border-r-2">
-                        Nhà riêng
-                      </button>
-                      <button type="button">Văn phòng</button>
-                    </div>
-                  </div>
-                  <div className="my-3 flex items-center gap-3">
-                    <Checkbox>Đặt làm mặc định</Checkbox>
-                  </div>
-                  <div className="flex justify-center pt-5 w-full rounded">
-                    <button
-                      type="submit"
-                      className="bg-black text-white px-4 py-3 rounded"
-                    >
-                      Hoàn Thành
-                    </button>
-                  </div>
-                </form>
-                <Button
-                  onClick={handleAddress}
-                  className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
-                >
-                  <CloseOutlined />
-                </Button>
-              </div>
-            </div>
+            <Add_Address handleAddress={handleAddress}></Add_Address>
           )}
           {isOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-              <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[600px] max-h-[600px] overflow-auto hidden_scroll_x">
-                <h1 className="py-3 text-center text-xl font-medium">
-                  Địa chỉ của tôi
-                </h1>
-                <div>
-                  <div className="px-5 py-4">
-                    <div className="flex justify-between">
-                      <h2 className="py-2">Địa chỉ</h2>
-                      <Button className="w-9 h-9" onClick={handleTAdd}>
-                        <PlusOutlined />
-                      </Button>
-                    </div>
-                    {auth?.address?.map((item: any, index: number) => (
-                      <div
-                        className="flex justify-between items-center my-5 border-b pb-6"
-                        key={index}
-                      >
-                        <div className="py-1">
-                          <h1>
-                            <span className="font-bold">{item.fullName}</span>
-                            <span className="px-2 text-gray-400">|</span>
-                            <span className="text-gray-400">
-                              {item.phoneNumber}
-                            </span>
-                          </h1>
-                          <p className="text-gray-400 py-2">
-                            {item.addressType}
-                          </p>
-                          <p className="text-gray-400">{item.addressDetails}</p>
-                          <div className="flex gap-3 mt-3">
-                            <Button className="py-5">Mặc định</Button>
-                          </div>
-                        </div>
-                        <div className="">
-                          <div className="hidden lg:block">
-                            <div className="flex flex-col gap-2 text-blue-400 py-2">
-                              <Button className="w-9 h-9">
-                                <EditOutlined />
-                              </Button>
-                              <Button className="w-9 h-9">
-                                <DeleteOutlined />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="block lg:hidden">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="w-6 h-6"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <Button
-                  onClick={handleAddress}
-                  className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
-                >
-                  <CloseOutlined />
-                </Button>
-              </div>
-            </div>
+            <List_Address auth={auth}
+              handleTAdd={handleTAdd}
+              handleAddressSelect={handleAddressSelect}
+              handleAddress={handleAddress}
+            ></List_Address>
           )}
         </div>
       )}
