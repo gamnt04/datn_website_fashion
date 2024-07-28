@@ -1,153 +1,25 @@
-import { NavLink } from "react-router-dom"
+// src/components/MenuShop.tsx
+import React from "react";
+import CategoryFilter from "./Filter/CategoryFilter";
+import ColorFilter from "./Filter/ColorFilter";
+import PriceFilter from "./Filter/PriceFilter";
+import SizeFilter from "./Filter/SizeFilter";
 
-const MenuShop = () => {
+interface MenuShopProps {
+  onCategoryChange: (categoryId: string | null) => void;
+}
 
-
+const MenuShop: React.FC<MenuShopProps> = ({ onCategoryChange }) => {
   return (
     <div>
       <div className="hidden lg:block w-full h-auto flex flex-col my-10 shadow-xl rounded overflow-hidden">
-      {/* categories */}
-      <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4" open>
-        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
-          <strong className="mb:text-sm lg:text-lg font-semibold">Product Categories</strong>
-          <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </span>
-        </summary>
-        <ul className="space-y-1 py-4 *:w-full *:px-6 *:py-2 *:rounded *:my-2 mb:text-sm lg:text-md font-medium flex flex-col">
-          <NavLink to={'/shops'} className={({ isActive }) => isActive ? 'bg-gray-100 duration-300 opacity-100 font-semibold' : 'bg-none hover:bg-gray-100 duration-300 opacity-75 hover:opacity-100 hover:font-semibold'}>All</NavLink>
-          <NavLink to={'/shops/ao'} className={({ isActive }) => isActive ? 'bg-gray-100 duration-300 opacity-100 font-semibold' : 'bg-none hover:bg-gray-100 duration-300 opacity-75 hover:opacity-100 hover:font-semibold'}>Ao</NavLink>
-          <NavLink to={'/shops/quan'} className={({ isActive }) => isActive ? 'bg-gray-100 duration-300 opacity-100 font-semibold' : 'bg-none hover:bg-gray-100 duration-300 opacity-75 hover:opacity-100 hover:font-semibold'}>Quan</NavLink>
-          <NavLink to={'/shops/mu'} className={({ isActive }) => isActive ? 'bg-gray-100 duration-300 opacity-100 font-semibold' : 'bg-none hover:bg-gray-100 duration-300 opacity-75 hover:opacity-100 hover:font-semibold'}>Mu</NavLink>
-        </ul>
-      </details>
-      {/* filter price */}
-      <div className="border-b py-2">
-        <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4" open>
-          <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
-            <strong>Price</strong>
-            <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </span>
-          </summary>
-          <div className="flex flex-col py-4">
-            <span className="mb-4">Price : 0$ - 10000$</span>
-            <input className="h-1" type="range" />
-          </div>
-        </details>
-      </div>
-
-      {/*filter color */}
-      <div className="border-b py-2">
-        <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4">
-          <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
-            <strong>Color</strong>
-            <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </span>
-          </summary>
-          <ul className="space-y-1 py-4">
-            <li className="py-2 flex justify-between items-center">
-              <div className="flex items-center *:w-[25px] *:h-[25px]">
-                <span className="px-3">Red</span>
-              </div>
-              <span>(10)</span>
-            </li>
-            <li className="py-2 flex justify-between items-center">
-              <div className="flex items-center *:w-[25px] *:h-[25px]">
-                <span className="px-3">Red</span>
-              </div>
-              <span>(10)</span>
-            </li>
-            <li className="py-2 flex justify-between items-center">
-              <div className="flex items-center *:w-[25px] *:h-[25px]">
-                <span className="px-3">Red</span>
-              </div>
-              <span>(10)</span>
-            </li>
-            <li className="py-2 flex justify-between items-center">
-              <div className="flex items-center *:w-[25px] *:h-[25px]">
-                <span className="px-3">Red</span>
-              </div>
-              <span>(10)</span>
-            </li>
-            <li className="py-2 flex justify-between items-center">
-              <div className="flex items-center *:w-[25px] *:h-[25px]">
-                <span className="px-3">Red</span>
-              </div>
-              <span>(10)</span>
-            </li>
-            <li className="py-2 flex justify-between items-center">
-              <div className="flex items-center *:w-[25px] *:h-[25px]">
-                <span className="px-3">Red</span>
-              </div>
-              <span>(10)</span>
-            </li>
-          </ul>
-        </details>
-      </div>
-
-      {/* filter by size */}
-      <div className="py-2">
-            <details className="group [&_summary::-webkit-details-marker]:block *:px-4">
-              <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
-                <strong>Size</strong>
-                <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </span>
-              </summary>
-              <ul className="space-y-1 py-4">
-                <li className="py-2 flex justify-between items-center">
-                  <div className="flex items-center *:w-[25px] *:h-[25px]">
-                    <span className="px-3">Size</span>
-                  </div>
-                  <span>(10)</span>
-                </li>
-                <li className="py-2 flex justify-between items-center">
-                  <div className="flex items-center *:w-[25px] *:h-[25px]">
-                    <span className="px-3">Size</span>
-                  </div>
-                  <span>(10)</span>
-                </li>
-                <li className="py-2 flex justify-between items-center">
-                  <div className="flex items-center *:w-[25px] *:h-[25px]">
-                    <span className="px-3">Size</span>
-                  </div>
-                  <span>(10)</span>
-                </li>
-                <li className="py-2 flex justify-between items-center">
-                  <div className="flex items-center *:w-[25px] *:h-[25px]">
-                    <span className="px-3">Size</span>
-                  </div>
-                  <span>(10)</span>
-                </li>
-                <li className="py-2 flex justify-between items-center">
-                  <div className="flex items-center *:w-[25px] *:h-[25px]">
-                    <span className="px-3">Size</span>
-                  </div>
-                  <span>(10)</span>
-                </li>
-                <li className="py-2 flex justify-between items-center">
-                  <div className="flex items-center *:w-[25px] *:h-[25px]">
-                    <span className="px-3">Size</span>
-                  </div>
-                  <span>(10)</span>
-                </li>
-              </ul>
-            </details>
+        <CategoryFilter onCategoryChange={onCategoryChange} />
+        <PriceFilter />
+        <ColorFilter />
+        <SizeFilter />
       </div>
     </div>
-    </div>
+  );
+};
 
-  )
-}
-
-export default MenuShop
+export default MenuShop;
