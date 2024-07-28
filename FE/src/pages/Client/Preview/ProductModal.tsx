@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
 
 interface ProductModalProps {
-  product: IProduct;
+  product: string | IProduct | null;
   onClose: () => void;
 }
 
@@ -10,17 +10,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
+  const [sizeStock, setSizeStock] = useState<number>(0);
 
   useEffect(() => {
-    console.log(product);
+    // console.log("product", product);
   }, [product]);
 
   if (!product) return null;
 
-  const colors = product.attr?.values?.map((attr: any) => attr.color).filter((color: any) => color);
+  const colors = Array.from(product?.product?.attributes.values || [])
+    .map((attributes: any) => attributes.color)
+    .filter((color: any) => color);
+
   const sizes = selectedColor
-    ? product.attr?.values
-        ?.filter((attr: any) => attr.color === selectedColor)
+    ? Array.from(product?.product?.attributes?.values || [])
+        .filter((attributes: any) => attributes.color === selectedColor)
         .map((attr: any) => attr.size)
         .flat()
         .filter((size: any) => size)
@@ -28,19 +32,27 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
 
   const handleColorClick = (color: string) => {
     setSelectedColor(color === selectedColor ? null : color);
-    setSelectedSize(null); // Reset size selection when changing color
+    setSelectedSize(null);
+    setQuantity(1);
+    setSizeStock(0);
   };
 
-  const handleSizeClick = (size: string) => {
-    setSelectedSize(size === selectedSize ? null : size);
+  const handleSizeClick = (size: any) => {
+    setSelectedSize(size.name_size === selectedSize ? null : size.name_size);
+    setQuantity(1);
+    setSizeStock(size.stock_attribute);
   };
 
   const incrementQuantity = () => {
-    setQuantity(prevQuantity => prevQuantity + 1);
+    if (quantity < sizeStock) {
+      setQuantity((prevQuantity) => prevQuantity + 1);
+    } else {
+      alert("Vượt quá số lượng sản phẩm!");
+    }
   };
 
   const decrementQuantity = () => {
-    setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
   return (
@@ -82,7 +94,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                         {colors.map((color: any, index: number) => (
                           <div
                             key={index}
-                            className={`h-8 w-8 rounded-full border-2 ${selectedColor === color ? 'border-blue-500' : 'border-gray-300'} cursor-pointer`}
+                            className={`h-8 w-8 rounded-full border-2 ${
+                              selectedColor === color
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                            } cursor-pointer`}
                             style={{ backgroundColor: color }}
                             onClick={() => handleColorClick(color)}
                           >
@@ -110,16 +126,22 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                   {selectedColor && sizes && sizes.length > 0 && (
                     <div className="text-sm text-gray-700 mt-4">
                       <b>Kích cỡ:</b>
-                      <div className="grid grid-cols-3 gap-2 mt-2">
+                      <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-3 *:py-1 *:rounded *:border *:border-black *:duration-200">
                         {sizes.map((size: any, index: number) => (
                           <button
                             key={index}
-                            className={`px-2 py-1 border rounded-md text-gray-700 hover:bg-gray-100 transition ${selectedSize === size.name_size ? 'bg-blue-500 text-white border-blue-500' : 'border-gray-300'}`}
-                            onClick={() => handleSizeClick(size.name_size)}
+                            className={`px-2 py-1 border rounded-md text-black-700 hover:bg-black-300 transition ${
+                              selectedSize === size.name_size
+                                ? "bg-black text-white grid place-items-center"
+                                : "border-black-300"
+                            }`}
+                            onClick={() => handleSizeClick(size)}
                           >
                             <div className="flex justify-between items-center">
                               <span>{size.name_size}</span>
-                              <span className="ml-2 text-xs text-gray-500">Kho: {size.stock_attribute}</span>
+                              {/* <span className="ml-2 text-xs text-gray-500">
+                                Kho: {size.stock_attribute}
+                              </span> */}
                             </div>
                           </button>
                         ))}
@@ -143,8 +165,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                         onClick={incrementQuantity}
                       >
                         +
-                      </button>
+                      </button>{selectedSize && (
+                      <span className="text-gray-700 ml-2">
+                        Còn lại: <b>{sizeStock}</b>
+                      </span>
+                    )}
                     </div>
+                    
                   </div>
                 </div>
               </div>
@@ -168,4 +195,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   );
 };
 
-export default React.memo(ProductModal);
+export default ProductModal;
+
+
