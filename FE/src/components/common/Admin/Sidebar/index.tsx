@@ -11,6 +11,7 @@ import {
   Truck,
   Trash,
   Bell,
+  Newspaper,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -80,7 +81,7 @@ const SidebarComponent = () => {
         </Link>
         <Link to="/admin/blogs">
           <SidebarItem
-            icon={<Package size={20} />}
+            icon={<Newspaper size={20} />}
             text="Tin tức"
             active={selectedItem === "blogs"}
             onClick={() => handleItemClick("blogs")}
