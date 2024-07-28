@@ -7,7 +7,8 @@ const blogSchema = new Schema({
     author: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     tags: [{ type: String }],
-    published: { type: Boolean, default: false }
+    published: { type: Boolean, default: false },
+    imageUrl: { type: String, required: true }
 });
 
 

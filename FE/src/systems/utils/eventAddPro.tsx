@@ -25,7 +25,7 @@ export const handleImageChange = (
 
 export const handleGalleryChange = (
   e: React.ChangeEvent<HTMLInputElement>,
-  setGalleryPreview: Dispatch<SetStateAction<string[]>>,
+  setGalleryPreview: React.Dispatch<React.SetStateAction<string[]>>,
   setValue: UseFormSetValue<IProduct>
 ) => {
   const files = e.target.files;
@@ -40,9 +40,12 @@ export const handleGalleryChange = (
       });
     });
 
-    Promise.all(previews).then((images) => {
-      setGalleryPreview(images);
-      setValue("gallery_product", images);
+    Promise.all(previews).then((newImages) => {
+      setGalleryPreview((prevGallery) => {
+        const updatedGallery = [...prevGallery, ...newImages];
+        setValue("gallery_product", updatedGallery);
+        return updatedGallery;
+      });
     });
   }
 };

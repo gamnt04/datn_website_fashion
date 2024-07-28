@@ -6,7 +6,6 @@ const Canceled = ({ dataProps }: any) => {
   return (
     <>
       {!dataProps || dataProps.length === 0 ? (
-
         <div className="flex justify-center items-center">
           <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
         </div>
@@ -14,7 +13,6 @@ const Canceled = ({ dataProps }: any) => {
         <div>
           {dataProps.map((item: IOrder) => (
             <div className="bg-white shadow-xl my-4 px-2">
-
               <div className="flex gap-2 py-5 border-b-2 justify-between">
                 <Link to={`/allorder/order/${item._id}/detail`} className="px-[10px] py-[5px] bg-[#222222] text-white text-[12px] lg:text-sm rounded">
                   Xem ngay

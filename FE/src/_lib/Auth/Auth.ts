@@ -33,3 +33,13 @@ export const SignOut = async () => {
   }
 };
 
+export const SignIn = async (user: any) => {
+  try {
+    const data = await instance.post(`auth/signin`, user);
+    localStorage.setItem("user", JSON.stringify(data?.data));
+    return data;
+  } catch (error) {
+    return error
+  }
+};
+

@@ -19,9 +19,8 @@ const CreateComponent = () => {
 
   const handleSubmitForm = async (data: ICategory | any) => {
     try {
-      if (data.image_category && data.image_category[0]) {
-        const imageFile = data.image_category[0];
-        const imageUrls = await uploadImage(imageFile);
+      if (data.image_category) {
+        const imageUrls = await uploadImage(data.image_category);
 
         // Prepare form data
         const formData = {
