@@ -4,16 +4,26 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
-
+import { IProduct } from "../../../common/interfaces/Product";
+import useSearch from "../../../systems/utils/Search";
 const Header = () => {
   const navigate = useNavigate();
+  const {
+    searchTerm,
+    handleBlur,
+    handleChange,
+    handleFocus,
+    results,
+    showResults,
+    handleResultClick,
+  } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
   // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const account = user?.user?._id;
   const { data } = List_Cart(account);
   useEffect(() => {
@@ -22,14 +32,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -37,23 +47,23 @@ const Header = () => {
   useEffect(() => {
     function change_local() {
       if (account) {
-        ref_login.current?.classList.add('hidden');
-        ref_login.current?.classList.remove('block');
-        ref_user.current?.classList.add('block');
-        ref_user.current?.classList.remove('hidden');
+        ref_login.current?.classList.add("hidden");
+        ref_login.current?.classList.remove("block");
+        ref_user.current?.classList.add("block");
+        ref_user.current?.classList.remove("hidden");
       } else {
-        ref_login.current?.classList.add('block');
-        ref_login.current?.classList.remove('hidden');
-        ref_user.current?.classList.add('hidden');
-        ref_user.current?.classList.remove('block');
+        ref_login.current?.classList.add("block");
+        ref_login.current?.classList.remove("hidden");
+        ref_user.current?.classList.add("hidden");
+        ref_user.current?.classList.remove("block");
       }
     }
     change_local();
-    window.addEventListener('storage', change_local);
+    window.addEventListener("storage", change_local);
     return () => {
-      window.removeEventListener('storage', change_local);
-    }
-  }, [account])
+      window.removeEventListener("storage", change_local);
+    };
+  }, [account]);
   // toogle menu mobile
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
@@ -97,7 +107,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)"
+                : "translateX(-200%)",
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -126,31 +136,70 @@ const Header = () => {
           {/* options */}
           <nav className="flex items-center justify-between *:mx-3 *:duration-300">
             {/* search */}
-            <form
-              className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2 shadow-2xl duration-300`}
-            >
-              <input
-                type="text"
-                className="border rounded-full w-full pl-5 pr-14 text-sm outline-none font-normal text-gray-700"
-                placeholder="Search"
-              />
-              <button className="absolute top-0 right-[2%] rounded-[50%] w-[36px] duration-300 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-6 mx-auto"
+            <div>
+              <form
+                className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2  duration-300`}
+              >
+                <input
+                  type="text"
+                  className="w-full pl-5 text-sm font-normal text-gray-700 border rounded-full outline-none pr-14"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onFocus={handleFocus}
+                />
+                <button
+                  type="submit"
+                  className="absolute top-0 right-[2%] rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                  />
-                </svg>
-              </button>
-            </form>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="mx-auto size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                  </svg>
+                </button>
+              </form>
+              {showResults && (
+                <div className="absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
+                  {results.length > 0 ? (
+                    <ul>
+                      {results.map((product: IProduct) => (
+                        <Link
+                          to={`/shops/detail_product/${product._id}`}
+                          key={product._id}
+                          className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                          onClick={handleResultClick}
+                        >
+                          <img
+                            src={product.image_product}
+                            alt={product.name_product}
+                            className="w-8 h-8 mr-2"
+                          />
+                          <p className="hover:underline">
+                            {product.name_product}
+                          </p>
+                        </Link>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="px-4 py-2 text-gray-700">
+                      No results found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* cart */}
             {/* {account ? '/cart' : (
                 <div onClick={() => onlogin()} className="relative">
@@ -159,11 +208,16 @@ const Header = () => {
                 </div>
               )} */}
 
-            <Link className="group *:duration-300 relative py-1" onClick={ScrollTop} to={account ? '/cart' : '/login'}>
-              {
-
-                data?.products && <span className="absolute bg-red-500 px-1 text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/2">{data?.products?.length}</span>
-              }
+            <Link
+              className="group *:duration-300 relative py-1"
+              onClick={ScrollTop}
+              to={account ? "/cart" : "/login"}
+            >
+              {data?.products && (
+                <span className="absolute bg-red-500 px-1 text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/2">
+                  {data?.products?.length}
+                </span>
+              )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
                 <CartIcon />
               </div>
@@ -191,11 +245,27 @@ const Header = () => {
             )}
 
             {/* option / menu */}
-            <div className="cursor-pointer hover:scale-105 duration-300">
-              <Link ref={ref_user} to={'/allorder'}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-check"><path d="M2 21a8 8 0 0 1 13.292-6" /><circle cx="10" cy="8" r="5" /><path d="m16 19 2 2 4-4" /></svg>
+            <div className="duration-300 cursor-pointer hover:scale-105">
+              <Link ref={ref_user} to={"/allorder"}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-user-round-check"
+                >
+                  <path d="M2 21a8 8 0 0 1 13.292-6" />
+                  <circle cx="10" cy="8" r="5" />
+                  <path d="m16 19 2 2 4-4" />
+                </svg>
               </Link>
-              <Link ref={ref_login}
+              <Link
+                ref={ref_login}
                 to={"/login"}
                 className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
               >
@@ -212,7 +282,7 @@ const Header = () => {
       >
         <input
           type="text"
-          className="border rounded-full w-full pl-5 pr-14 text-sm outline-none font-normal text-gray-700"
+          className="w-full pl-5 text-sm font-normal text-gray-700 border rounded-full outline-none pr-14"
           placeholder="Search"
         />
         <button className="absolute top-0 right-[2%] rounded-[50%] w-[36px] duration-300 cursor-pointer">
@@ -222,7 +292,7 @@ const Header = () => {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="size-6 mx-auto"
+            className="mx-auto size-6"
           >
             <path
               strokeLinecap="round"
@@ -244,8 +314,6 @@ const Header = () => {
 };
 
 export default Header;
-
-
 
 // (
 //   <Link to="/cart" onClick={ScrollTop} className="relative">
