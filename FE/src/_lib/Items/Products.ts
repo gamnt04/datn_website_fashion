@@ -68,7 +68,7 @@ export async function add_items_client(items: any) {
   }
 }
 
-export async function edit_items_client(id: string, product: IProduct) {
+export async function edit_items_client(product: IProduct) {
   try {
     const res = await fetch(`${baseUri}/${id}`, {
       method: "PUT",
