@@ -1,266 +1,119 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Blog } from "../../../common/interfaces/Blog";
 import instance from "../../../configs/axios";
+import { Button, Table, Popconfirm, message, Switch } from "antd";
+import AddBlogForm from "./BlogAdd";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 const BlogList: React.FC = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-    const [showForm, setShowForm] = useState(false); // State để điều khiển hiển thị form
-      const [newBlog, setNewBlog] = useState<Partial<Blog>>({
-    title: "",
-    content: "",
-    author: "",
-    tags: [],
-    published: false,
+  const [showForm, setShowForm] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const { data: blogs = [], refetch } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const response = await instance.get("/blogs");
+      return response.data;
+    }
   });
-   const [editingBlogId, setEditingBlogId] = useState<string | null>(null); 
 
-
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await instance.get("/blogs");
-        setBlogs(response.data);
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-      }
-    };
-    fetchBlogs();
-  }, []);
-
- const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string) => {
     try {
-      const confirm = window.confirm("Are you sure you want to delete this blog?");
-      if (confirm) {
-        const response = await instance.delete(`/blog/${id}`);
-        if (response.status === 200) {
-          alert("Blog deleted successfully!");
-          window.location.reload()
-        } else {
-          throw new Error("Failed to delete blog");
-        }
+      const response = await instance.delete(`/blogs/${id}`);
+      if (response.status === 200) {
+        messageApi.success("Xóa thành công");
+        refetch();
+      } else {
+        throw new Error("Xóa blog không thành công");
       }
     } catch (error) {
-      console.error("Error deleting blog:", error);
-      alert("Failed to delete blog. Please try again later.");
+      console.error("Lỗi khi xóa blog:", error);
+      messageApi.error(`Xóa blog không thành công. ${error.response?.data?.message || "Vui lòng thử lại sau."}`);
     }
+  };
+
+  const mutation = useMutation({
+    mutationFn: async (updatedBlog: Blog) => {
+      const response = await instance.put(`/blogs/${updatedBlog._id}`, updatedBlog);
+      return response.data;
+    },
+    onSuccess: () => {
+      messageApi.success("Cập nhật blog thành công");
+      refetch();
+    },
+    onError: (error: any) => {
+      console.error("Lỗi khi cập nhật blog:", error);
+      messageApi.error(`Cập nhật blog không thành công. ${error.response?.data?.message || "Vui lòng thử lại sau."}`);
+    }
+  });
+
+  const handleTogglePublished = (blog: Blog) => {
+    mutation.mutate({ ...blog, published: !blog.published });
   };
 
   const toggleForm = () => {
-    setShowForm(!showForm); // Toggle giá trị của showForm
-    setEditingBlogId(null); // Đặt editingBlogId về null khi ẩn form
-    setNewBlog({ // Reset form
-      title: "",
-      content: "",
-      author: "",
-      tags: [],
-      published: false,
-    });
+    setShowForm(!showForm);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setNewBlog((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-
-  const handleAddSubmit  = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await instance.post("/blog/add_blog", newBlog);
-      if (response.status === 201) {
-        alert("Blog created successfully!");
-        setShowForm(false); // Ẩn form sau khi đăng bài thành công
-        setNewBlog({ title: "", content: "", author: "", tags: [], published: false }); // Reset form
-        // fetchBlogs(); // Lấy lại danh sách blogs mới sau khi thêm mới
-         window.location.reload()
-      } else {
-        throw new Error("Failed to create blog");
-      }
-    } catch (error) {
-      console.error("Error creating blog:", error);
-      alert("Failed to create blog. Please try again later.");
-    }
-  };
-
-   const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      if (editingBlogId) {
-        const response = await instance.put(`/blog/${editingBlogId}`, newBlog);
-        if (response.status === 200) {
-          alert("Blog updated successfully!");
-          setShowForm(false); // Ẩn form sau khi cập nhật thành công
-          setEditingBlogId(null); // Đặt editingBlogId về null sau khi cập nhật
-          setNewBlog({ // Reset form
-            title: "",
-            content: "",
-            author: "",
-            tags: [],
-            published: false,
-          });
-          window.location.reload(); // Làm mới trang để hiển thị danh sách mới
-        } else {
-          throw new Error("Failed to update blog");
-        }
-      }
-    } catch (error) {
-      console.error("Error updating blog:", error);
-      alert("Failed to update blog. Please try again later.");
-    }
-  };
-
-  const handleEdit = (blog: Blog) => {
-    setEditingBlogId(blog._id); // Lưu ID của blog đang chỉnh sửa
-    setNewBlog({ // Đặt thông tin của blog vào form
-      title: blog.title,
-      content: blog.content,
-      author: blog.author,
-      tags: blog.tags || [],
-      published: blog.published || false,
-    });
-    setShowForm(true); // Hiển thị form khi bắt đầu chỉnh sửa
-  };
+  const columns = [
+    {
+      key: "title",
+      title: "Tiêu đề",
+      dataIndex: "title",
+    },
+    {
+      key: "createdAt",
+      title: "Thời gian",
+      dataIndex: "createdAt",
+      render: (text: string) => new Date(text).toLocaleDateString(),
+    },
+    {
+      key: "author",
+      title: "Tác giả",
+      dataIndex: "author",
+    },
+    {
+      key: "published",
+      title: "Đã xuất bản",
+      dataIndex: "published",
+      render: (published: boolean, record: Blog) => (
+        <Switch checked={published} onChange={() => handleTogglePublished(record)} />
+      ),
+    },
+    {
+      key: "actions",
+      title: "Hành động",
+      render: (_: any, record: Blog) => (
+        <Popconfirm
+          title="Xóa Blog"
+          description="Bạn có chắc chắn muốn xóa blog này không?"
+          onConfirm={() => handleDelete(record._id!)}
+          okText="Có"
+          cancelText="Không"
+        >
+          <Button danger type="primary">
+            Xóa
+          </Button>
+        </Popconfirm>
+      ),
+    },
+  ];
 
   return (
     <div className="container mx-auto mt-8">
-   <button onClick={toggleForm} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4">
-        {showForm ? "Hide Form" : "Add Blog"} {/* Hiển thị nút "Hide Form" khi showForm true */}
-      </button>
-      {showForm ? ( // Hiển thị form khi showForm true
-         <div className="max-w-lg mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <h2 className="text-2xl font-bold mb-4">{editingBlogId ? "Edit Blog" : "Add New Blog"}</h2>
-          <form onSubmit={editingBlogId ? handleEditSubmit : handleAddSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                Title
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="title"
-                type="text"
-                placeholder="Enter title"
-                name="title"
-                 value={newBlog.title}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
-                Content
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="content"
-                placeholder="Enter content"
-                name="content"
-                 value={newBlog.content}
-                onChange={handleChange}
-                rows={5}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="author">
-                Author
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="author"
-                type="text"
-                placeholder="Enter author"
-                name="author"
-                value={newBlog.author}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="tags">
-                Tags
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="tags"
-                type="text"
-                placeholder="Enter tags (comma separated)"
-                name="tags"
-                   value={newBlog.tags?.join(", ") || ""}
-                onChange={(e) => setNewBlog((prev) => ({ ...prev, tags: e.target.value.split(", ") }))}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="published">
-                Published
-              </label>
-              <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="published"
-                name="published"
-                 value={newBlog.published ? "true" : "false"}
-                onChange={(e) => setNewBlog((prev) => ({ ...prev, published: e.target.value === "true" }))}
-                required
-              >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-            <div className="flex items-center justify-between">
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit"
-              >
-                  {editingBlogId ? "Update Blog" : "Create Blog"}
-              </button>
-              <button
-                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="button"
-               onClick={toggleForm}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      ) : ( 
-        <div>
-           <h2 className="text-2xl font-bold mb-4">Blog List</h2>
-      {blogs.length === 0 ? (
-        <p>No blogs found.</p>
-      ) : (
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Times</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Published</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {blogs.map((blog) => (
-              <tr key={blog._id}>
-                <td className=" font-bold uppercase px-6 py-4 whitespace-nowrap">{blog.title}</td>
-                 <td className="px-6 py-4 whitespace-nowrap">{blog.createdAt}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{blog.author}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{blog.published ? "Yes" : "No"}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button onClick={() => {handleEdit(blog)}}>Edit</button>
-                  <button onClick={() => handleDelete(blog._id!)}>Remove</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-        </div>
-     )}
+      {contextHolder}
+      <Button type="primary" onClick={toggleForm} className="mb-4">
+        {showForm ? "Ẩn Form" : "Thêm Blog"}
+      </Button>
 
+      <AddBlogForm visible={showForm} onClose={toggleForm} />
+
+      <h2 className="text-2xl font-bold mb-4">Danh sách Blog</h2>
+      {blogs.length === 0 ? (
+        <p>Không có blog nào.</p>
+      ) : (
+        <Table dataSource={blogs} rowKey="_id" columns={columns} />
+      )}
     </div>
   );
 };
