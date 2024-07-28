@@ -27,7 +27,7 @@ const userSchema = new Schema(
         fullName: { type: String },
         phoneNumber: { type: String },
         addressDetails: { type: String },
-        addressType: { type: String },
+        default: { type: Boolean },
       },
     ],
     phone: {
