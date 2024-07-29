@@ -52,8 +52,8 @@ export const removeMultipleProductsFormCart = async (req, res) => {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ error: "Cart Not Found" });
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart Not Found" });
     }
     cart.products = cart.products.filter(
       (product) => !product.status_checked);
@@ -73,17 +73,17 @@ export async function handle_status_checked(req, res) {
     for (let i of data_cart.products) {
       if (i.productId.toString() == productId._id.toString()) {
         if (color && size) {
-          if (i.color_item == color && i.name_size == size){
+          if (i.color_item == color && i.name_size == size) {
             i.status_checked = !i.status_checked;
           }
         }
         else if (color) {
-          if (i.color_item == color){
+          if (i.color_item == color) {
             i.status_checked = !i.status_checked;
           }
         }
         else if (size) {
-          if (i.name_size == size){
+          if (i.name_size == size) {
             i.status_checked = !i.status_checked;
           }
         }
