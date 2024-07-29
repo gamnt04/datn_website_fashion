@@ -1,13 +1,31 @@
 import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
+import Products from "../../models/Items/Products";
 export const createOrder = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, items } = req.body;
   try {
     const order = await Order.create(req.body);
     const dataCart = await Cart.findOne({ userId }).populate("products");
     if (!dataCart) {
       return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      const element = items[i];
+      const product = await Products.findById(element.productId._id).populate('attributes')
+      for (let j = 0; j < product.attributes.values.length; j++) {
+        let ok = product.attributes.values[j]
+        for (let k = 0; k < ok.size.length; k++) {
+          let ko = ok.size[k]
+          if (ko.stock_attribute) {
+            ko.stock_attribute = ko.stock_attribute - element.quantity
+            console.log(ko.stock_attribute);
+            ko.stock_attribute = ko.stock_attribute
+            await product.save()
+          }
+        }
+      }
     }
     dataCart.products = dataCart.products.filter((i) => {
       return !req.body.items.some((j) => {
