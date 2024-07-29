@@ -28,6 +28,7 @@ const AddProduct = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
     setValue,
   } = useForm<IProduct>();
@@ -52,15 +53,24 @@ const AddProduct = () => {
       const uploadedGalleryUrls = gallery_product
         ? await uploadGallery(gallery_product)
         : [];
-        const dataArrt  = JSON.stringify(attributesData)
+      const dataArrt = JSON.stringify(attributesData);
       const newData: IProduct = {
         ...formData,
         image_product: uploadedImageUrls[0],
         gallery_product: uploadedGalleryUrls,
         attributes: dataArrt,
       };
-      await add_items_client(newData);
-      setSuccessMessage("Thêm Sản Phẩm thành công !");
+      const response = await add_items_client(newData);
+      if (response.message === "OK") {
+        console.log(newData);
+        setSuccessMessage("Thêm Sản Phẩm thành công !");
+        setImagePreview(null);
+        setGalleryPreview([]);
+        setAttributes([]);
+        reset();
+      } else {
+        setErrorMessage("Thêm mới thất bại!");
+      }
       setShowMessage(true);
     } catch (error) {
       console.error("Thêm mới thất bại:", error);
@@ -146,7 +156,7 @@ const AddProduct = () => {
               Danh mục
             </label>
             <select
-              {...register("category_id")}
+              {...register("category_id", { required: "Không bỏ trống" })}
               className="w-full px-3 py-2 leading-tight border rounded shadow appearance-none text focus:outline-none focus:shadow-outline"
             >
               <option value="">-- Chọn danh mục --</option>
@@ -156,11 +166,9 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-            {/* <div className="text-xs italic text-red-500">
-
             <div className="text-xs italic text-red-500">
               {errors.category_id?.message}
-            </div> */}
+            </div>
           </div>
 
           <div className="mb-4">
@@ -326,7 +334,7 @@ const AddProduct = () => {
                             )
                           }
                           name="name_size"
-                          className="w-[485px] px-3 py-2 border rounded"
+                          className="w-[410px] px-3 py-2 border rounded"
                         />
                       </div>
                       <div>
@@ -350,7 +358,7 @@ const AddProduct = () => {
                             )
                           }
                           name="stock_attribute"
-                          className="w-[485px] px-3 py-2 mx-3 border rounded"
+                          className="w-[410px] px-3 py-2 mx-3 border rounded"
                         />
                         <button
                           type="button"
@@ -381,7 +389,11 @@ const AddProduct = () => {
                   <button
                     type="button"
                     onClick={() =>
-                      handleRemoveAttribute(index, attributesData, setAttributes)
+                      handleRemoveAttribute(
+                        index,
+                        attributesData,
+                        setAttributes
+                      )
                     }
                     className="px-3 py-2 text-white bg-red-500 rounded "
                   >
@@ -391,7 +403,9 @@ const AddProduct = () => {
               ))}
               <button
                 type="button"
-                onClick={() => handleAddAttribute(attributesData, setAttributes)}
+                onClick={() =>
+                  handleAddAttribute(attributesData, setAttributes)
+                }
                 className="px-4 py-2 text-white bg-green-500 rounded"
               >
                 Thêm Thuộc Tính
