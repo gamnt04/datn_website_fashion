@@ -8,7 +8,6 @@ import instance from "../../../configs/axios";
 import { Link } from "react-router-dom";
 import { FaDeleteLeft, FaPlus } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
-import { IpOptions } from "joi";
 import { Mutation_items_client } from "../../../common/hooks/Products/mutation_item";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";

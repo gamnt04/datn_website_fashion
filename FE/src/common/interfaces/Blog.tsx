@@ -6,4 +6,5 @@ export interface Blog {
   createdAt: string;
   tags: string[];
   published: boolean;
+  imageUrl: string
 }
