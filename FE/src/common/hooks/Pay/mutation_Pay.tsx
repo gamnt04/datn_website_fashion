@@ -25,7 +25,7 @@ export function Pay_Mutation() {
                 type: 'success',
                 content: 'Bạn đã đặt hành thành công',
             })
-            navigate("/allorder/order")
+            // navigate("/allorder/order")
             // alert("Đặt hàng thành công")
         },
         onError: () => {
