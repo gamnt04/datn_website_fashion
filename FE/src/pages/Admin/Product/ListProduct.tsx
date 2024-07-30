@@ -1,23 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from "date-fns";
-import { Query_Products } from "../../../common/hooks/Products/Products";
+import { Query_Products_Dashboard } from "../../../common/hooks/Products/Products";
 import { IProduct } from "../../../common/interfaces/Product";
 import { Button, Checkbox, message, Popconfirm, Space, Table } from "antd";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { FaDeleteLeft, FaPlus } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
-import { Mutation_items_client } from "../../../common/hooks/Products/mutation_item";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
+import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
 const ListProduct = () => {
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const { mutate: removeMultiple } = Mutation_items_client("REMOVE_MULTIPLE");
+  const { mutate } = Mutation_items("REMOVE_and_REMOVE_MULTIPLE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
 
-  const { data, isLoading, isError, error } = Query_Products();
+  const { data, isLoading, isError, error } = Query_Products_Dashboard();
   const dataSource = data?.map((product: IProduct, index: number) => ({
     key: product._id,
     index: index + 1,
@@ -25,13 +24,15 @@ const ListProduct = () => {
   }));
   const handleRemoveMultiple = () => {
     const products = { productIds: selectedProductIds };
-    removeMultiple(products, {
+    mutate(products, {
       onSuccess: () => {
         messageApi.open({
           type: "success",
           content: "Xóa thành công",
         });
-        queryClient.invalidateQueries("Product_Key");
+        queryClient.invalidateQueries({
+          queryKey :["Product_Dashboard"]
+        });
       },
       onError: (error) => {
         messageApi.open({
@@ -56,31 +57,6 @@ const ListProduct = () => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-
-  const { mutate } = useMutation({
-    mutationFn: async (id) => {
-      try {
-        return await instance.delete(`/products/${id}`);
-      } catch (error) {
-        throw new Error((error as any).message);
-      }
-    },
-    onSuccess: () => {
-      messageApi.open({
-        type: "success",
-        content: "Xóa sản phẩm thành công",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["Product_Key"],
-      });
-    },
-    onError: (error) => {
-      messageApi.open({
-        type: "error",
-        content: error.message,
-      });
-    },
-  });
   const columns = [
     {
       title: "",
@@ -148,7 +124,10 @@ const ListProduct = () => {
             <Popconfirm
               title="Xóa sản phẩm"
               description="Bạn chắc chắn muốn xóa sản phẩm này chứ?"
-              onConfirm={() => mutate(product._id!)}
+              onConfirm={() => mutate({
+                id_item :product._id,
+                action : 'remove' 
+              })}
               // onCancel={cancel}
               okText="Yes"
               cancelText="No"

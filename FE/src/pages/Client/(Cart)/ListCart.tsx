@@ -4,7 +4,7 @@ import Dow_btn from "./dow";
 import Up_btn from "./up";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Checkbox, Input, message, Popconfirm, Table, TableProps, Spin } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 
@@ -17,6 +17,7 @@ interface DataType {
 }
 
 const ListCart = () => {
+  const routing = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -58,10 +59,16 @@ const ListCart = () => {
     handle_status_checked(item_client)
   };
 
-  const dataSort = data?.products?.map((product: any) => ({
-    key: product?.productId?._id,
-    ...product,
-  }));
+  // const dataSort = data?.products?.map((product: any) => ({
+  //   key: product?.productId?._id,
+  //   ...product,
+  // }));
+  const dataSort = data?.products?.filter((product: any) => (
+    product?.productId?._id && ({
+      key: product?.productId?._id,
+      ...product,
+    })
+  ));
 
   const columns: TableProps<DataType>['columns'] = [
     {
@@ -144,6 +151,10 @@ const ListCart = () => {
   ];
 
 
+  // next order
+  function next_order () {
+    routing('/cart/pay')
+  }
 
   if (isPending) {
     return (
@@ -208,7 +219,7 @@ const ListCart = () => {
                 </strong>
               </div>
               <Link onClick={ScrollTop} to="pay">
-                <button className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                <button onClick={next_order} className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                   Tiến hành thanh toán
                 </button>
               </Link>
