@@ -29,6 +29,7 @@ import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
 import { BarChart3, Folder, LayoutDashboard, Newspaper, Package, Shirt, Trash, Truck, UserCircle } from "lucide-react";
 
+
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -70,7 +71,7 @@ const AdminLayout: React.FC = () => {
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
         <div className="flex justify-center items-center w-full">
-        <NavLink className={'text-2xl font-bold text-center py-4'} to="/admin/products">Logo</NavLink>
+          <NavLink className={'text-2xl font-bold text-center py-4'} to="/admin/products">Logo</NavLink>
         </div>
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items} />
       </Sider>
@@ -92,7 +93,7 @@ const AdminLayout: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Copyright by ©{new Date().getFullYear()} Created by Datlt34
+          Copyright by ©{new Date().getFullYear()} Created by DNTN
         </Footer>
       </Layout>
     </Layout>

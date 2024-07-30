@@ -8,8 +8,8 @@ import { Query_Limit_Items } from '../../../common/hooks/Products/Products';
 const List_Products = () => {
   const { data, isLoading } = Query_Limit_Items(12);
   const propsData = {
-    data : data,
-    style : 'lg:grid-cols-6 md:grid-cols-3'
+    data: data,
+    style: 'lg:grid-cols-5 md:grid-cols-3'
   }
 
   return (
@@ -38,7 +38,7 @@ const List_Products = () => {
             </div>
           ) : (
             <div className="my-10 w-auto">
-                <List_item dataProps={propsData}/>
+              <List_item dataProps={propsData} />
             </div>
           )}
           {/* view all */}
