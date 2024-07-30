@@ -52,7 +52,7 @@ const Trending_Products = () => {
             </div>
           ) : (
             <div className="mb-[50px] w-auto">
-              <div ref={sizeListItems} className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[2%] gap-x-[2.66%] mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[15%]">
+              <div ref={sizeListItems} className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[2%] gap-x-[2.66%] mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[19%]">
                 {
                   data?.map((item: IProduct) => {
                     return (<Products key={item._id} items={item} />)
@@ -66,8 +66,8 @@ const Trending_Products = () => {
               </div>
             </div>
           )}
-      {/* view all */}
-        <Link onClick={ScrollTop} className='border hover:bg-gray-100 duration-200 hover:text-black border border-black rounded px-4 py-2 bg-black cursor-pointer text-white' to={'/shops'}>Xem thêm</Link>
+          {/* view all */}
+          <Link onClick={ScrollTop} className=' hover:bg-gray-100 duration-200 hover:text-black border border-black rounded px-4 py-2 bg-black cursor-pointer text-white' to={'/shops'}>Xem thêm</Link>
         </>
       )}
 
