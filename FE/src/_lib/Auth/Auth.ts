@@ -43,3 +43,12 @@ export const SignIn = async (user: any) => {
   }
 };
 
+
+export async function set_default_address (item: any) {
+  try {
+    const data = await instance.post(`/auths/${item.id_user}`, item.id_item);
+    return data
+  } catch (error) {
+    return error
+  }
+}

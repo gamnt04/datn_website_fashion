@@ -45,7 +45,7 @@ const Products = ({ items }: any) => {
       className="w-full text-start flex flex-col justify-between rounded gap-y-4 border hover:border-black duration-200"
       key={items._id}
     >
-      <div className="relative group rounded w-full h-[160px] md:h-[200px] overflow-hidden bg-[#F6F6F6]">
+      <div className="relative group rounded w-full h-[160px] md:h-[200px] lg:h-[220px] overflow-hidden bg-[#F6F6F6]">
         <Link
           onClick={ScrollTop}
           to={`/shops/detail_product/${items._id}`}
@@ -72,15 +72,15 @@ const Products = ({ items }: any) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-4 pb-6 px-4">
+      <div className="flex flex-col justify-between pb-6 px-4 h-[110px]">
         <Link
           onClick={ScrollTop}
           to={`/shops/detail_product/${items._id}`}
-          className="text-base lg:text-lg font-medium text-gray-700 hover:text-black line-clamp-2"
+          className="text-base font-medium text-gray-700 hover:text-black line-clamp-2"
         >
           {items.name_product}
         </Link>
-        <p className="text-md font-semibold text-red-500">
+        <p className="text-md font-medium text-red-500">
           {items.price_product.toLocaleString("vi", {
             style: "currency",
             currency: "VND",

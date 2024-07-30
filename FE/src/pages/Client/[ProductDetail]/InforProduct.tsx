@@ -43,16 +43,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             text_validate()
           }
         }
-        else if (dataAttr?.color) {
-          if (color) {
-            mutate(item);
-          }
-          else {
-            text_validate()
-          }
-        }
-        else if (sizeDataAttr?.name_size) {
-          if (size) {
+        else if (dataAttr?.color || sizeDataAttr?.name_size) {
+          if (color || size) {
             mutate(item);
           }
           else {
@@ -133,13 +125,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
           <div className="flex flex-col gap-y-2 justify-between">
             <section className="lg:w-[163px] mb:w-[157px] mb:mt-[8px] lg:mt-0 h-[21px] *:lg:text-sm *:mb:text-xs flex justify-between items-start">
-              {/* neu co danh gia bang sao thi bo vao */}
-              {/* <div className="flex items-start lg:gap-x-0 mb:gap-x-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                </svg>
-                                <strong>4.6/5</strong>
-                            </div> */}
               <div className="flex gap-x-2">
                 <strong>135</strong>
                 <span className="text-[#C8C9CB]">Reviews</span>
