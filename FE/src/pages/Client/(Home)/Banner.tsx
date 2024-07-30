@@ -12,16 +12,16 @@ const Banner = () => {
     <>
       <Carousel autoplay arrows draggable>
         <div>
-          <h3 style={contentStyle}>1</h3>
+          <img src="../../src/assets/Images/Products/banner-1.jpg" className="w-full h-full" alt="" style={contentStyle} />
         </div>
         <div>
-          <h3 style={contentStyle}>2</h3>
+          <img src="../../src/assets/Images/Products/banner-2.jpg" className="w-full h-full" alt="" style={contentStyle} />
         </div>
         <div>
-          <h3 style={contentStyle}>3</h3>
+          <img src="../../src/assets/Images/Products/banner-3.jpg" className="w-full h-full" alt="" style={contentStyle} />
         </div>
         <div>
-          <h3 style={contentStyle}>4</h3>
+          <img src="../../src/assets/Images/Products/banner-4.png" className="w-full h-full" alt="" style={contentStyle} />
         </div>
       </Carousel>
 

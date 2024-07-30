@@ -32,6 +32,7 @@ import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
+import Test from "../pages/Client/TEST/Test";
 const RouterComponent = () => {
   return (
     <>
@@ -40,6 +41,7 @@ const RouterComponent = () => {
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
             <Route path="/shops" element={<IndexShops />} />
+            <Route path="/test" element={<Test />} />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/cart" element={<ListCart />} />
             <Route path="contact" element={<Contact />} />
