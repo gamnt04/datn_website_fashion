@@ -35,14 +35,8 @@ const Trending_Products = () => {
     <div className="py-16 text-center border-b overflow-hidden">
       {/* title */}
       <div className="text-center flex flex-col items-center">
-        <span className="text-4xl font-medium tracking-wide">Trending Products</span>
-        <p className="opacity-80 text-sm my-10">Find a bright ideal to suit your taste width our great selection of suspension.</p>
-        <nav className="flex *:relative *:mx-6 justify-between *:after:content-[''] *:after:absolute *:after:h-[2px] *:after:bg-orange-500 *:after:bottom-[-20%] *:after:duration-500 *:font-medium *:after:rounded-lg">
-          <button className="opacity-100 after:w-full after:left-0">Living</button>
-          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">Furniture</button>
-          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">Accessories</button>
-          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">Tech</button>
-        </nav>
+        <span className="text-2xl font-semibold tracking-wide">Sản phẩm nổi bật</span>
+        <p className="opacity-80 text-sm my-4">Find a bright ideal to suit your taste width our great selection of suspension.</p>
       </div>
 
       {isLoading ? (
@@ -58,7 +52,7 @@ const Trending_Products = () => {
             </div>
           ) : (
             <div className="mb-[50px] w-auto">
-              <div ref={sizeListItems} className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid mt-10 grid-flow-col lg:gap-x-[2%] gap-x-[2.66%] mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[15%]">
+              <div ref={sizeListItems} className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[2%] gap-x-[2.66%] mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[15%]">
                 {
                   data?.map((item: IProduct) => {
                     return (<Products key={item._id} items={item} />)
@@ -66,21 +60,19 @@ const Trending_Products = () => {
                 }
               </div>
               {/* back, next page */}
-              <div className='flex items-center *:mx-8 justify-center mt-[20px] *:duration-300 *:text-lg'>
-                <button ref={backItems} onClick={handlePrevious} className='opacity-50 cursor-drop'>&#10094;</button>
+              <div className='flex items-center *:mx-8 justify-center *:duration-300 *:text-lg'>
+                <button ref={backItems} onClick={handlePrevious} className='opacity-50 cursor-drop hover:scale-[1.3]'>&#10094;</button>
                 <button ref={nextItems} onClick={handleNext} className='hover:scale-[1.3]'>&#10095;</button>
               </div>
             </div>
           )}
+          {/* view all */}
+          <Link onClick={ScrollTop} className='border hover:bg-gray-100 duration-200 hover:text-black border border-black rounded px-4 py-2 bg-black cursor-pointer text-white' to={'/shops'}>Xem thêm</Link>
         </>
       )}
 
 
 
-      {/* view all */}
-      <div className='hover:scale-105 duration-300'>
-        <Link onClick={ScrollTop} className='border px-10 py-2 bg-black rounded-md border-none cursor-pointer text-white' to={'/shops'}>View All</Link>
-      </div>
     </div>
   )
 }

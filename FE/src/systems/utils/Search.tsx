@@ -18,7 +18,7 @@ const useSearch = (initialTerm = "", debounceDelay = 300) => {
   }, [searchTerm]);
 
   const fetchResults = debounce(async (term) => {
-    if (!term.trim()) {
+    if (!term.trim()) {g
       setResults([]);
       setShowResults(false);
       return;
