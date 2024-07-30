@@ -1,5 +1,5 @@
 // src/components/IndexShops.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 
@@ -13,11 +13,11 @@ const IndexShops = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="w-1/4">
+    <div className="flex gap-6 flex-wrap">
+      <div className="lg:w-[19%] lg:block order-1">
         <MenuShop onCategoryChange={handleCategoryChange} />
       </div>
-      <div className="w-3/4">
+      <div className="lg:w-[79%] order-2">
         <Products_Shop categoryId={selectedCategoryId} />
       </div>
     </div>

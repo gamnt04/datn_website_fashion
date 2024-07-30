@@ -19,10 +19,10 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   return (
     <details
-      className="group [&_summary::-webkit-details-marker]:hidden *:px-4"
+      className="group [&_summary::-webkit-details-marker]:hidden *:px-4 "
       open
     >
-      <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
+      <summary className=" flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
         <strong className="mb:text-sm lg:text-lg font-semibold">
           Product Categories
         </strong>

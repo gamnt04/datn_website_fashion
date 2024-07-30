@@ -32,14 +32,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -78,7 +78,7 @@ const Header = () => {
     <>
       <div
         ref={toggleFixedHeader}
-        className="w-full fixed top-0 bg-white z-[6] shadow-[50px_15px_60px_-15px_rgba(0,0,0,0.3)]"
+        className="w-full fixed top-0 bg-white z-[6] shadow-[0px_15px_15px_-15px_rgba(0,0,0,0.3)]"
       >
         <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
           {/* menu mobile */}
