@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import ImageProducts from "./ImageProducts";
 import InforProduct from "./InforProduct";
 import ProductRelated from "./RelatedProducts";

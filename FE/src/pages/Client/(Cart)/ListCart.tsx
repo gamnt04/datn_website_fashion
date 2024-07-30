@@ -153,7 +153,24 @@ const ListCart = () => {
 
   // next order
   function next_order () {
+    ScrollTop();
+    const data_cart = dataSort?.filter((item : any) =>(
+      item?.status_checked && item
+    ))
+    if (userId) {
+    sessionStorage.removeItem('item_order');
+    const data_order = {
+      id_user : userId,
+      data_order : data_cart,
+      totalPrice : data?.total_price,
+      action : 'data_cart'
+    }
+    sessionStorage.setItem('item_order', JSON.stringify(data_order))
     routing('/cart/pay')
+  }
+  else {
+    routing('/login')
+  }
   }
 
   if (isPending) {
@@ -218,11 +235,9 @@ const ListCart = () => {
                   })}
                 </strong>
               </div>
-              <Link onClick={ScrollTop} to="pay">
                 <button onClick={next_order} className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                   Tiến hành thanh toán
                 </button>
-              </Link>
             </div>
           </div>
         </div>
