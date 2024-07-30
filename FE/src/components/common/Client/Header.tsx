@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { HeartIcon } from "../../../resources/svg/Icon/Icon";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
@@ -33,14 +32,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
