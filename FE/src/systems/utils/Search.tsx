@@ -25,6 +25,8 @@ const useSearch = (initialTerm = "", debounceDelay = 300) => {
     }
 
     try {
+      const response = await instance.get("/products_all", {
+        params: { _search: term }, // Gửi từ khóa tìm kiếm
       const response = await instance.get("/products", {
         params: { _search: term },
       });
