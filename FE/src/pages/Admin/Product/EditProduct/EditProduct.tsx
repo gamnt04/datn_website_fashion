@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Loading from "../../../../components/base/Loading/Loading";
-import { IProduct } from "../../../../common/interfaces/Product";
+import { IAttribute, IProduct } from "../../../../common/interfaces/Product";
 import {
   get_detail_items,
   edit_items_client,
@@ -18,7 +18,15 @@ import {
   handleGalleryChange,
   removeImagePreview,
   removeGalleryImage,
+  handleAddAttribute,
+  handleAddSize,
+  handleAttributeChange,
+  handleRemoveAttribute,
+  handleRemoveSize,
+  handleSizeChange,
 } from "../../../../systems/utils/eventAddPro";
+import { useQuery } from "@tanstack/react-query";
+import instance from "../../../../configs/axios";
 
 const UpdateProduct = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,11 +39,19 @@ const UpdateProduct = () => {
     formState: { errors },
   } = useForm<IProduct>();
   const { data: categories } = useCategoryQuery();
+  const { data: attr } = useQuery({
+    queryKey: ["products", id],
+    queryFn: () => instance.get(`products/${id}`),
+  });
+  console.log(`att`, attr?.data.product.attributes);
+
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [galleryPreview, setGalleryPreview] = useState<string[]>([]);
   const [imageSelected, setImageSelected] = useState(false);
-
+  const [attributesData, setAttributes] = useState<IAttribute[]>([
+    { color: "", size: [{ name_size: "", stock_attribute: 0 }] },
+  ]);
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) {
@@ -78,11 +94,12 @@ const UpdateProduct = () => {
         const uploadedGalleryUrls = gallery_product
           ? await uploadGallery(gallery_product)
           : [];
-
+        const dataArrt = JSON.stringify(attributesData);
         const newData: IProduct = {
           ...formData,
           image_product: uploadedImageUrls[0], // Assuming only one main image is uploaded
           gallery_product: uploadedGalleryUrls,
+          attributes: dataArrt,
         };
         await edit_items_client(id, newData);
         alert("Cập nhật thành công");
@@ -292,6 +309,130 @@ const UpdateProduct = () => {
             <div className="text-xs italic text-red-500">
               {errors.gallery_product?.message}
             </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-4">
+            {attr?.data.product.attributes.values.map((attribute, index) => (
+              <div key={index} className="mb-4 ">
+                <div className="mb-4">
+                  <label
+                    htmlFor={`color-${index}`}
+                    className="block mb-2 text-sm font-bold text-gray-700"
+                  >
+                    Màu Sắc
+                  </label>
+                  <input
+                    type="text"
+                    id={`color-${index}`}
+                    value={attribute.color}
+                    onChange={(e) =>
+                      handleAttributeChange(
+                        index,
+                        e,
+                        attributesData,
+                        setAttributes
+                      )
+                    }
+                    name="color"
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+
+                {attribute.size.map((size, sizeIndex) => (
+                  <div key={sizeIndex} className="flex mb-4">
+                    <div>
+                      <label
+                        htmlFor={`size-${index}-${sizeIndex}`}
+                        className="block mb-2 text-sm font-bold text-gray-700"
+                      >
+                        Kích Thước
+                      </label>
+                      <input
+                        type="text"
+                        id={`size-${index}-${sizeIndex}`}
+                        value={size.name_size}
+                        onChange={(e) =>
+                          handleSizeChange(
+                            index,
+                            sizeIndex,
+                            e,
+                            attributesData,
+                            setAttributes
+                          )
+                        }
+                        name="name_size"
+                        className="w-[410px] px-3 py-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor={`stock-${index}-${sizeIndex}`}
+                        className="block mb-2 ml-3 text-sm font-bold text-gray-700"
+                      >
+                        Số lượng
+                      </label>
+                      <input
+                        type="number"
+                        id={`stock-${index}-${sizeIndex}`}
+                        value={size.stock_attribute}
+                        onChange={(e) =>
+                          handleSizeChange(
+                            index,
+                            sizeIndex,
+                            e,
+                            attributesData,
+                            setAttributes
+                          )
+                        }
+                        name="stock_attribute"
+                        className="w-[410px] px-3 py-2 mx-3 border rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleRemoveSize(
+                            index,
+                            sizeIndex,
+                            attributesData,
+                            setAttributes
+                          )
+                        }
+                        className="px-3 py-2 text-white bg-red-500 rounded "
+                      >
+                        Xóa Kích Thước
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleAddSize(index, attributesData, setAttributes)
+                  }
+                  className="px-4 py-2 mb-2 text-white bg-blue-500 rounded"
+                >
+                  Thêm Kích Thước
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleRemoveAttribute(index, attributesData, setAttributes)
+                  }
+                  className="px-3 py-2 text-white bg-red-500 rounded "
+                >
+                  Xóa Thuộc Tính
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => handleAddAttribute(attributesData, setAttributes)}
+              className="px-4 py-2 text-white bg-green-500 rounded"
+            >
+              Thêm Thuộc Tính
+            </button>
           </div>
         </div>
 

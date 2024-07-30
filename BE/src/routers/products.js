@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
+  filter_item_category,
   get_items_client,
+  getAllProducts,
   getProductById,
 
 } from "../controllers/Items/Get";
@@ -14,8 +16,10 @@ import { createProduct } from "../controllers/Items/Create";
 import { getTrash, restore_item } from "../controllers/Items/Recycle";
 
 const Routes_Products = Router();
+Routes_Products.get("/products_all", getAllProducts);
 Routes_Products.get("/products", get_items_client);
 Routes_Products.get("/products/:id", getProductById);
+Routes_Products.get("/products/category/:cate_id", filter_item_category);
 Routes_Products.post("/products", createProduct);
 Routes_Products.put("/products/:id", updateProductById);
 //Xóa nhiều sản phẩm 1 lúc bằng cách chọn id
