@@ -112,7 +112,9 @@ const ListProduct = () => {
     {
       title: "Tên sản phẩm",
       dataIndex: "name_product",
-      key: "name_product",
+      render : (_:any, product : any) => (
+        <span className="line-clamp-2 max-w-[200px]">{product?.name_product}</span>
+      )
     },
     {
       title: "Giá sản phẩm",
@@ -164,7 +166,7 @@ const ListProduct = () => {
   return (
     <>
       {contextHolder}
-      <div className="mt-10 ">
+      <div>
         <div className="flex justify-between">
           {" "}
           <Popconfirm
