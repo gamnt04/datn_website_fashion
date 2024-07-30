@@ -29,7 +29,7 @@ const Nav_Mobile = () => {
     ]
 
     return (
-        <nav className="flex flex-col justify-between *:my-1 *:px-8 *:py-2 *:font-medium *:capitalize *:relative *:duration-300">
+        <nav className="flex flex-col justify-between text-gray-900 *:my-1 *:px-8 *:py-2 *:font-medium *:capitalize *:relative *:duration-300">
             {
                 arr?.map((item: { path: string, name: string }) => (
                     <NavLink key={item.path}

@@ -22,9 +22,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       className="group [&_summary::-webkit-details-marker]:hidden *:px-4 "
       open
     >
-      <summary className=" flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
+      <summary className=" flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
         <strong className="mb:text-sm lg:text-lg font-semibold">
-          Product Categories
+          Danh mục sản phẩm
         </strong>
         <span className="shrink-0 transition duration-300 group-open:-rotate-180">
           <svg

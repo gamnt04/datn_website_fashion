@@ -65,7 +65,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     ref_validate_attr?.current?.classList.remove('hidden')
   }
   useEffect(() => {
-    if (!dataProps) {
+    if (!dataProps?.product?.attributes) {
       setQuantity_attr(stock);
     }
   }, [dataProps]);
@@ -73,6 +73,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
       case "Color":
+        setQuantity_item(1)
         ref_validate_attr?.current?.classList.add('hidden')
         ref_validate_attr?.current?.classList.remove('block')
         dataItem?.attributes?.values?.filter((i: any) => {
@@ -84,6 +85,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         })
         return setColor(item);
       case "Size":
+        setQuantity_item(1)
         ref_validate_attr?.current?.classList.add('hidden')
         ref_validate_attr?.current?.classList.remove('block')
         for (let i of dataProps?.product?.attributes?.values) {

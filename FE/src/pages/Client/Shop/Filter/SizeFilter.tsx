@@ -2,7 +2,7 @@ const SizeFilter = () => {
   return (
     <div className="py-2">
       <details className="group [&_summary::-webkit-details-marker]:block *:px-4">
-        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
+        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
           <strong>Size</strong>
           <span className="shrink-0 transition duration-300 group-open:-rotate-180">
             <svg
