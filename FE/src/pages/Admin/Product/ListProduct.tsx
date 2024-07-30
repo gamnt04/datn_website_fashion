@@ -112,9 +112,11 @@ const ListProduct = () => {
     {
       title: "Tên sản phẩm",
       dataIndex: "name_product",
-      render : (_:any, product : any) => (
-        <span className="line-clamp-2 max-w-[200px]">{product?.name_product}</span>
-      )
+      render: (_: any, product: any) => (
+        <span className="line-clamp-2 max-w-[200px]">
+          {product?.name_product}
+        </span>
+      ),
     },
     {
       title: "Giá sản phẩm",
