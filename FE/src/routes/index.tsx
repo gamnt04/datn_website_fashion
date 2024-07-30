@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import ListCart from "../pages/Client/(Cart)/[ListCart]";
+import ListCart from "../pages/Client/(Cart)/ListCart";
 // import Favourite from "../pages/Client/Favourite/Favourite";
 import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
