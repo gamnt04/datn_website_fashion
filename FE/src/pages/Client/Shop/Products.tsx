@@ -37,7 +37,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({ categoryId }) => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="grid gap-y-6 mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%]">
+              <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
                 {data.map((item: any) => (
                   <Products key={item._id} items={item} />
                 ))}
