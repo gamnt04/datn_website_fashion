@@ -200,7 +200,7 @@ const Header = () => {
               onClick={ScrollTop}
               to={account ? "/cart" : "/login"}
             >
-              {data?.products.length > 0 && (
+              {data?.products && data?.products.length > 0 && (
                 <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/3">
                   {data?.products?.length}
                 </span>

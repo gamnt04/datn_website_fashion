@@ -2,8 +2,8 @@ const ColorFilter = () => {
   return (
     <div className="border-b py-2">
       <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4">
-        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-[#EDEDED]">
-          <strong>Color</strong>
+        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
+          <strong>Màu sắc</strong>
           <span className="shrink-0 transition duration-300 group-open:-rotate-180">
             <svg
               xmlns="http://www.w3.org/2000/svg"
