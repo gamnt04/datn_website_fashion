@@ -429,8 +429,16 @@
 
 // export default AddProduct;
 
-
-import { Button, Checkbox, Flex, FormProps, Input, InputNumber, message, Upload } from "antd";
+import {
+  Button,
+  Checkbox,
+  Flex,
+  FormProps,
+  Input,
+  InputNumber,
+  message,
+  Upload,
+} from "antd";
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { Form } from "antd";
@@ -451,32 +459,32 @@ import {
   handleRemoveSize,
 } from "../../../../systems/utils/eventAddPro";
 
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import type { GetProp, UploadProps } from 'antd';
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import type { GetProp, UploadProps } from "antd";
 
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const getBase64 = (img: FileType, callback: (url: string) => void) => {
   const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result as string));
+  reader.addEventListener("load", () => callback(reader.result as string));
   reader.readAsDataURL(img);
 };
 
 const beforeUpload = (file: FileType) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
+    message.error("You can only upload JPG/PNG file!");
   }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
+    message.error("Image must smaller than 2MB!");
   }
   return isJpgOrPng && isLt2M;
 };
 type FieldType = {
   name_product: string;
   price: number;
-  image_product: string,
+  image_product: string;
   description_product: string;
   featured: boolean;
   countInStock: number;
@@ -489,12 +497,12 @@ const AddProduct = () => {
   const [attributesData, setAttributes] = useState<IAttribute[]>([
     { color: "", size: [{ name_size: "", stock_attribute: 0 }] },
   ]);
-  const handleChange: UploadProps['onChange'] = (info) => {
-    if (info.file.status === 'uploading') {
+  const handleChange: UploadProps["onChange"] = (info) => {
+    if (info.file.status === "uploading") {
       setLoading(true);
       return;
     }
-    if (info.file.status === 'done') {
+    if (info.file.status === "done") {
       // Get this url from response in real world.
       getBase64(info.file.originFileObj as FileType, (url) => {
         setLoading(false);
@@ -503,7 +511,7 @@ const AddProduct = () => {
     }
   };
   const uploadButton = (
-    <button style={{ border: 0, background: 'none' }} type="button">
+    <button style={{ border: 0, background: "none" }} type="button">
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
@@ -529,18 +537,21 @@ const AddProduct = () => {
           <div>
             <Form.Item<FieldType>
               label="Tên sản phẩm"
-              name='name_product'
-              rules={[{ required: true, message: "Tên sản phẩm bắt buộc nhập!" }]}
+              name="name_product"
+              rules={[
+                { required: true, message: "Tên sản phẩm bắt buộc nhập!" },
+              ]}
             >
               <Input />
             </Form.Item>
 
-
-            <div className="flex w-1/2 justify-between items-start">
+            <div className="flex items-start justify-between w-1/2">
               <Form.Item<FieldType>
                 label="Ảnh sản phẩm"
-                name='image_product'
-                rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
+                name="image_product"
+                rules={[
+                  { required: true, message: "Ảnh sản phẩm là bắt buộc!" },
+                ]}
               >
                 <Flex gap="middle" className="mb-4" wrap>
                   <Upload
@@ -552,16 +563,26 @@ const AddProduct = () => {
                     beforeUpload={beforeUpload}
                     onChange={handleChange}
                   >
-                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        style={{ width: "100%" }}
+                      />
+                    ) : (
+                      uploadButton
+                    )}
                   </Upload>
                 </Flex>
               </Form.Item>
 
               <Form.Item<FieldType>
                 label="Bộ sưu tập"
-                name='image_product'
+                name="image_product"
                 className="flex items-center"
-                rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
+                rules={[
+                  { required: true, message: "Ảnh sản phẩm là bắt buộc!" },
+                ]}
               >
                 <Flex gap="middle" className="mb-4" wrap>
                   <Upload
@@ -573,7 +594,15 @@ const AddProduct = () => {
                     beforeUpload={beforeUpload}
                     onChange={handleChange}
                   >
-                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        style={{ width: "100%" }}
+                      />
+                    ) : (
+                      uploadButton
+                    )}
                   </Upload>
                 </Flex>
               </Form.Item>
@@ -592,7 +621,10 @@ const AddProduct = () => {
             >
               <InputNumber />
             </Form.Item> */}
-            <Form.Item<FieldType> label="Mô tả sản phẩm" name="description_product">
+            <Form.Item<FieldType>
+              label="Mô tả sản phẩm"
+              name="description_product"
+            >
               <TextArea rows={4} />
             </Form.Item>
             <Form.Item<FieldType> name="featured" valuePropName="checked">
@@ -663,11 +695,14 @@ const AddProduct = () => {
                             name="name_size"
                             className="w-[410px] px-3 py-2 border rounded"
                           /> */}
-                           <Form.Item<FieldType>
+                          <Form.Item<FieldType>
                             label=" Kích Thước"
                             className="name_size"
                             rules={[
-                              { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
+                              {
+                                required: true,
+                                message: "Giá sản phẩm bắt buộc nhập!",
+                              },
                               {
                                 type: "number",
                                 min: 0,
@@ -701,11 +736,14 @@ const AddProduct = () => {
                             name="stock_attribute"
                             className="w-[410px] px-3 py-2 mx-3 border rounded"
                           /> */}
-                           <Form.Item<FieldType>
+                          <Form.Item<FieldType>
                             label="Số lượng"
                             name="stock_attribute"
                             rules={[
-                              { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
+                              {
+                                required: true,
+                                message: "Giá sản phẩm bắt buộc nhập!",
+                              },
                               {
                                 type: "number",
                                 min: 0,
@@ -715,11 +753,14 @@ const AddProduct = () => {
                           >
                             <InputNumber />
                           </Form.Item>
-                           <Form.Item<FieldType>
+                          <Form.Item<FieldType>
                             label="Giá sản phẩm"
                             name="price"
                             rules={[
-                              { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
+                              {
+                                required: true,
+                                message: "Giá sản phẩm bắt buộc nhập!",
+                              },
                               {
                                 type: "number",
                                 min: 0,
