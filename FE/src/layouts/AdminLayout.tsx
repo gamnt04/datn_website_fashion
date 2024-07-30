@@ -27,7 +27,8 @@ import {
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Boxes, Folder, LayoutDashboard, Newspaper, Package, Trash, Truck, UserCircle } from "lucide-react";
+import { BarChart3, Folder, LayoutDashboard, Newspaper, Package, Shirt, Trash, Truck, UserCircle } from "lucide-react";
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -51,7 +52,7 @@ const items: MenuItem[] = [
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin"><LayoutDashboard />Dashboard</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><BarChart3 /> Thống kê</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><UserCircle /> tài khoản</NavLink>, "2-1"),
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><Boxes /> Sản phẩm</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><Shirt /> Sản phẩm</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/category"><Folder /> Danh mục</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/contact"><Package /> Contact</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/blogs"><Newspaper /> Blog</NavLink>, "2-1"),
