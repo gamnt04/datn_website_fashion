@@ -65,10 +65,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({ categoryId }) => {
             </>
           ) : (
             <div className="flex justify-center items-center h-screen">
-              <img
-                src="../../../assets/Images/Products/no-data.png"
-                alt="Không có sản phẩm"
-              />
+              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
             </div>
           )}
         </>
