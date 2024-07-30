@@ -62,7 +62,6 @@ const AddProduct = () => {
       };
       const response = await add_items_client(newData);
       if (response.message === "OK") {
-        console.log(newData);
         setSuccessMessage("Thêm Sản Phẩm thành công !");
         setImagePreview(null);
         setGalleryPreview([]);
