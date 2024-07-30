@@ -11,16 +11,21 @@ export async function get_items_client(page?: number) {
       uri += `?_page=${page}`;
     }
     const res = await fetch(`${uri}`);
-
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
     }
     const { data } = await res.json();
+    return data.docs;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+}
 
-    const activeProducts = data.docs.filter(
-      (product: any) => !product.deletedAt
-    );
-    return activeProducts;
+export async function get_limit_items(limit: number) {
+  try {
+    const uri = `/products?&_limit=${limit}`;
+    const { data } = await instance.get(uri);
+    return data?.data?.docs;
   } catch (error) {
     console.log(error || "Loi server!");
   }
