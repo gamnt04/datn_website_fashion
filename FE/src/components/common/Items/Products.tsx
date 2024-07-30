@@ -44,7 +44,7 @@ const Products = ({ items }: any) => {
       className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:border-black"
       key={items._id}
     >
-      <div className="relative group rounded w-full h-[160px] md:h-[200px] lg:h-[250px] overflow-hidden bg-[#F6F6F6]">
+      <div className="relative group rounded w-full h-[160px] md:h-[200px] lg:h-[220px] overflow-hidden bg-[#F6F6F6]">
         <Link
           onClick={ScrollTop}
           to={`/shops/detail_product/${items._id}`}
