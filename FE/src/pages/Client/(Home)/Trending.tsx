@@ -66,8 +66,8 @@ const Trending_Products = () => {
               </div>
             </div>
           )}
-          {/* view all */}
-          <Link onClick={ScrollTop} className='border hover:bg-gray-100 duration-200 hover:text-black border border-black rounded px-4 py-2 bg-black cursor-pointer text-white' to={'/shops'}>Xem thêm</Link>
+      {/* view all */}
+        <Link onClick={ScrollTop} className='border hover:bg-gray-100 duration-200 hover:text-black border border-black rounded px-4 py-2 bg-black cursor-pointer text-white' to={'/shops'}>Xem thêm</Link>
         </>
       )}
 
