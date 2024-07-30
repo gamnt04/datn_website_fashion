@@ -1,123 +1,123 @@
 import { useState } from "react";
-import { Blog } from "../../../common/interfaces/Blog";
-import { Button, Modal, Form, Input, Upload, Switch, message } from "antd";
+import { Button, Form, Input, Upload, Switch, message, FormProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { uploadImage } from "../../../systems/utils/uploadImage";
+import { uploadFileCloudinary } from "../../../systems/utils/uploadImage";
 import instance from "../../../configs/axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
-interface AddBlogFormProps {
-  visible: boolean;
-  onClose: () => void;
-}
+type FieldType = {
+  title?: string;
+  content?: string;
+  author?: string;
+  tags?: string[];
+  image?: string;
+  published?: boolean;
+};
 
-const AddBlogForm: React.FC<AddBlogFormProps> = ({ visible, onClose }) => {
-  const [newBlog, setNewBlog] = useState<Partial<Blog>>({
-    title: "",
-    content: "",
-    author: "",
-    tags: [],
-    published: false,
-    imageUrl: "",
-  });
+const AddBlogForm = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [fileList, setFileList] = useState<File[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
-  const queryClient = useQueryClient();
+  const [form] = Form.useForm();
 
-  const mutation = useMutation({
-    mutationFn: (blog: Partial<Blog>) => instance.post("/blogs/add_blog", blog),
+  const { mutate } = useMutation({
+    mutationFn: async (blogs: FieldType) => {
+      try {
+        return await instance.post("/blogs/add_blog", blogs);
+      } catch (error: any) {
+        throw new Error(error.response.data.message);
+      }
+    },
     onSuccess: () => {
       messageApi.success("Tạo blog thành công!");
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      onClose();
+      form.resetFields();
+      setImagePreview(null);
+      setFileList([]);
     },
     onError: (error: any) => {
       messageApi.error(`Lỗi: ${error.response?.data?.message || "Vui lòng thử lại sau."}`);
-    }
+    },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setNewBlog((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = async (e: any) => {
-    if (e.file) {
-      const file = e.file;
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    if (fileList.length > 0) {
       try {
-        const uploadedImage: string[] = await uploadImage(file);
-        setNewBlog((prev) => ({
-          ...prev,
-          image: uploadedImage[0],
-        }));
+        // Check if fileList contains valid file objects with URLs
+        const validFiles = fileList.every((file: any) => file.originFileObj && file.url);
+        if (!validFiles) {
+          messageApi.error("Lỗi: Tệp không hợp lệ. Vui lòng chọn lại tệp.");
+          return;
+        }
+  
+        const imageUrls = await uploadFileCloudinary(fileList[0]);
+        values.image = imageUrls[0]; // Gán URL của ảnh từ Cloudinary vào form values
       } catch (error) {
-        console.error("Lỗi khi tải ảnh:", error);
-        messageApi.error("Tải ảnh không thành công. Vui lòng thử lại sau.");
+        console.log(error);
+        messageApi.error("Lỗi tải lên ảnh. Vui lòng thử lại.");
+        return;
       }
     }
+    mutate(values);
   };
-
-  const handleSubmit = () => {
-    const { title, content, author } = newBlog;
-    if (!title || !content || !author) {
-      messageApi.warning("Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
-    mutation.mutate(newBlog);
+  
+  const handleImageChange = (info: any) => {
+    const newFileList = info.fileList.slice(-1).map((file: any) => {
+      if (file.originFileObj) {
+        return {
+          ...file,
+          url: URL.createObjectURL(file.originFileObj),
+        };
+      }
+      return file;
+    });
+    setFileList(newFileList);
   };
 
   return (
-    <Modal
-      title="Thêm Blog mới"
-      visible={visible}
-      onCancel={onClose}
-      footer={null}
-    >
+    <>
       {contextHolder}
-      <Form onFinish={handleSubmit} layout="vertical">
+      <Form
+        form={form}
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        style={{ maxWidth: 600 }}
+        onFinish={onFinish}
+        autoComplete="off"
+      >
         <Form.Item
           label="Tiêu đề"
           name="title"
           rules={[{ required: true, message: "Vui lòng nhập tiêu đề!" }]}
         >
-          <Input name="title" value={newBlog.title} onChange={handleChange} />
+          <Input />
         </Form.Item>
+
         <Form.Item
           label="Nội dung"
           name="content"
           rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
         >
-          <Input.TextArea name="content" value={newBlog.content} onChange={handleChange} rows={5} />
+          <Input.TextArea rows={5} />
         </Form.Item>
+
         <Form.Item
           label="Tác giả"
           name="author"
           rules={[{ required: true, message: "Vui lòng nhập tác giả!" }]}
         >
-          <Input name="author" value={newBlog.author} onChange={handleChange} />
+          <Input />
         </Form.Item>
+
         <Form.Item label="Thẻ" name="tags">
-          <Input
-            name="tags"
-            value={newBlog.tags?.join(", ") || ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewBlog((prev) => ({
-                ...prev,
-                tags: e.target.value.split(", "),
-              }))
-            }
-          />
+          <Input />
         </Form.Item>
+
         <Form.Item label="Ảnh" name="image">
           <Upload
             listType="picture-card"
-            showUploadList={false}
-            beforeUpload={() => false}
+            fileList={fileList.map((file, index) => ({ ...file, uid: index.toString() }))}
+            beforeUpload={() => false} // Prevent automatic upload
             onChange={handleImageChange}
           >
             {imagePreview ? (
@@ -130,32 +130,30 @@ const AddBlogForm: React.FC<AddBlogFormProps> = ({ visible, onClose }) => {
             )}
           </Upload>
           {imagePreview && (
-            <Button type="link" onClick={() => setImagePreview(null)}>
+            <Button type="link" onClick={() => {
+              setImagePreview(null);
+              setFileList([]);
+              form.setFieldsValue({ image: null });
+            }}>
               Xóa ảnh
             </Button>
           )}
         </Form.Item>
-        <Form.Item name="published" valuePropName="checked">
-          <Switch
-            checked={newBlog.published}
-            onChange={(checked) =>
-              setNewBlog((prev) => ({
-                ...prev,
-                published: checked,
-              }))
-            }
-          />
+
+        <Form.Item name="published" label="Xuất bản" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+          <Switch />
         </Form.Item>
-        <Form.Item>
+
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit">
             Tạo Blog
           </Button>
-          <Button type="default" onClick={onClose} style={{ marginLeft: 8 }}>
+          <Button type="default" style={{ marginLeft: 8 }} onClick={() => form.resetFields()}>
             Hủy bỏ
           </Button>
         </Form.Item>
       </Form>
-    </Modal>
+    </>
   );
 };
 
