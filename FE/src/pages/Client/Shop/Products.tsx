@@ -4,6 +4,7 @@ import { Query_Products } from "../../../common/hooks/Products/Products";
 import Products from "../../../components/common/Items/Products";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import List_item from "../../../components/common/Client/_component/List_item";
 
 interface Products_ShopProps {
   categoryId?: string; // Thay đổi từ `string | null` thành `string | undefined`
@@ -23,6 +24,12 @@ const Products_Shop: React.FC<Products_ShopProps> = ({ categoryId }) => {
     setPage((prevPage) => prevPage + 1);
   };
 
+
+  const propData = {
+    data: data,
+    style: 'lg:grid-cols-4 md:grid-cols-3'
+  }
+
   return (
     <div className="py-10">
       {isLoading ? (
@@ -37,11 +44,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({ categoryId }) => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-5">
-                {data.map((item: any) => (
-                  <Products key={item._id} items={item} />
-                ))}
-              </div>
+              <List_item dataProps={propData} />
               <div className="flex justify-center mt-16">
                 <div className="flex items-center space-x-3">
                   <button

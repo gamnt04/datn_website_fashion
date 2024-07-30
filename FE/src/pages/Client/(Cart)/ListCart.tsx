@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./dow";
@@ -6,7 +5,6 @@ import Up_btn from "./up";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
-import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import { Checkbox, Input, message, Popconfirm, Table, TableProps, Spin } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 
@@ -22,12 +20,10 @@ const ListCart = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError, calculateTotal, calculateTotalProduct } = List_Cart(userId);
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const { data, isPending, isError } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
   const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
-  const { calcuateTotal: calcTotal } = Pay_Mutation();
   const remove_item = (id: any) => {
     const data_item = {
       userId: userId,
@@ -79,6 +75,7 @@ const ListCart = () => {
     },
     {
       key: "image",
+      title: 'Ảnh',
       dataIndex: "image",
       render: (_: any, product: any) => {
         return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link> ;
@@ -118,7 +115,7 @@ const ListCart = () => {
       },
     },
     {
-      title: 'Tổng tiền',
+      title: <span className="whitespace-nowrap">Tổng tiền</span>,
       dataIndex: 'totalPrice',
       key: 'totalPrice',
       render: (_: any, product: any) => {
@@ -130,7 +127,7 @@ const ListCart = () => {
       dataIndex: "action",
       render: (_: any, product: any) => {
         return (
-          <div className="flex justify-center space-x-2">
+          <div className="flex justify-center space-x-2 text-red-500">
             <Popconfirm
               title="Xóa sản phẩm khỏi giỏ hàng?"
               description="Bạn có chắc chắn muốn xóa không?"
@@ -163,21 +160,13 @@ const ListCart = () => {
   return (
     <div className="w-[95%] mx-[2.5%] mt-[70px]">
       {contextHolder}
-      <div className="flex items-center border bg-gray-100 h-20 p-4">
-        <ul className="flex gap-2">
-          <li className="text-red-500">
-            <a href="#">Home</a>
-          </li>
-          <li> / </li>
-          <li>
-            <a href="#">Cart</a>
-          </li>
-        </ul>
+      <div className="text-sm py-6 bg-gray-100 font-medium px-[2.5%] rounded">
+        Home &#10148; Cart
       </div>
       <>
         <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
           <div className="md:w-[70%] mb:w-full w-full">
-            <Popconfirm
+            <Popconfirm className="text-red-500"
               title="Xóa sản phẩm khỏi giỏ hàng?"
               description="Bạn có chắc chắn muốn xóa không?"
               onConfirm={() => handleRemoveMultiple()}
@@ -199,10 +188,6 @@ const ListCart = () => {
                     currency: "VND"
                   })}
                 </p>
-              </div>
-              <div className="flex justify-between mt-4 *:md:text-base *:mb:text-sm *:font-medium">
-                <strong>Số lượng đơn hàng :</strong>
-                <strong>{calculateTotalProduct()}</strong>
               </div>
               <div className="flex flex-col border-y py-5 my-5">
                 <span className="text-xs mb-2">Nhập mã giảm giá</span>
