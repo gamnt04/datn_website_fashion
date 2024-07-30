@@ -19,6 +19,8 @@ const Blogs = () => {
     fetchBlogs();
   }, []);
 
+  const publishedBlogs = blogs.filter(blog => blog.published);
+
   return (
     <div className="lg:mt-[40px] mt-[60px]">
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
@@ -28,7 +30,7 @@ const Blogs = () => {
         <h1 className="text-[30px] font-bold">Tin tức nổi bật</h1>
       </div>
       <div className="container mx-auto grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
-        {blogs.map(blog => (
+        {publishedBlogs.map(blog => (
           <div key={blog._id} className="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
             <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden">
               <img
