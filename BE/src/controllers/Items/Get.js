@@ -13,12 +13,12 @@ export const getAllProducts = async (req, res) => {
     }
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      products
+      products,
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !"
+      message: error.message || "Loi server !",
     });
   }
 };
@@ -30,19 +30,19 @@ export async function get_items_client(req, res) {
     _sort = "",
     _limit = 20,
     _search = "",
-    _category_id = ""
+    _category_id = "",
   } = req.query;
   const options = {
     page: _page,
-    limit: _limit
+    limit: _limit,
   };
   try {
     const querry = {};
     if (_search) {
       querry.$and = [
         {
-          name_product: { $regex: new RegExp(_search, "i") }
-        }
+          name_product: { $regex: new RegExp(_search, "i") },
+        },
       ];
     }
     const data = await Products.paginate(querry, options);
@@ -60,97 +60,99 @@ export async function get_items_client(req, res) {
         item.stock_product = total_stock;
       } else {
         item.stock_product = item.stock;
-      };
+      }
     }
     // console.log(data);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Khong co data!"
+        message: "Khong co data!",
       });
     }
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      data
+      data,
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !"
+      message: error.message || "Loi server !",
     });
   }
 }
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Products.findById(req.params.id).populate('attributes');
+    const product = await Products.findById(req.params.id).populate(
+      "attributes"
+    );
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
     return res.status(StatusCodes.OK).json({
-      product
+      product,
     });
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server !"
+      message: error.message || "Lỗi server !",
     });
   }
 };
 
-
 export async function filter_item_category(req, res) {
-  const {
-    _page = 1,
-    _sort = "",
-    _limit = 20,
-    _search = "",
-  } = req.query;
+  const { _page = 1, _sort = "", _limit = 20, _search = "" } = req.query;
   const options = {
-    page: _page,
-    limit: _limit
+    page: parseInt(_page, 10),
+    limit: parseInt(_limit, 10),
+    sort: _sort
+      ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
+      : {},
   };
   try {
-    const querry = {
-      category_id: req.params.cate_id
+    const query = {
+      category_id: req.params.cate_id,
     };
+
     if (_search) {
-      querry.$and = [
+      query.$and = [
         {
-          name_product: { $regex: new RegExp(_search, "i") }
-        }
+          name_product: { $regex: new RegExp(_search, "i") },
+        },
       ];
     }
-    const data = await Products.paginate(querry, options);
+
+    const data = await Products.paginate(query, options);
     for (let item of data.docs) {
       let total_stock = 0;
       if (item.attributes) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
         if (attr) {
-          attr.values.map((item) => {
-            item.size.map((a) => {
-              total_stock += a.stock_attribute;
+          attr.values.forEach((value) => {
+            value.size.forEach((size) => {
+              total_stock += size.stock_attribute;
             });
           });
         }
         item.stock_product = total_stock;
       } else {
         item.stock_product = item.stock;
-      };
+      }
     }
-    // console.log(data);
-    if (!data || data.length < 1) {
+
+    if (!data || data.docs.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Khong co data!"
+        message: "No data found!",
       });
     }
+
     return res.status(StatusCodes.OK).json({
-      message: "Done !",
-      data
+      message: "Success!",
+      data,
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !"
+      message: error.message || "Server error!",
     });
   }
 }
