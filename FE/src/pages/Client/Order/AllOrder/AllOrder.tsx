@@ -32,12 +32,12 @@ const AllOrder = () => {
                 />
               </div>
               <div className="">
-                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">
+                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold  py-1">
                   {data?.userName}
                 </h3>
                 <a
                   href="/allorder"
-                  className="text-[#9B9B9B] text-center text-[12px] lg:text-sm flex items-center justify-center font-normal"
+                  className="text-[#9B9B9B]  text-[12px] lg:text-sm flex  font-normal"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

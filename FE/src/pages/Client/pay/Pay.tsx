@@ -4,9 +4,12 @@ import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin } from "antd";
-import { LoadingOutlined, } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { Add_Address, List_Address } from "../../../components/common/Client/_component/Address";
+import {
+  Add_Address,
+  List_Address,
+} from "../../../components/common/Client/_component/Address";
 import { Address } from "../../../components/common/Client/_component/Icons";
 
 const Pay = () => {
@@ -15,7 +18,7 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-  const [selectedAddress, setSelectedAddress]: any = useState(null)
+  const [selectedAddress, setSelectedAddress]: any = useState(null);
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder } = Pay_Mutation();
   const { calculateTotalProduct, data: list_item_cart } = List_Cart(userId);
@@ -25,7 +28,7 @@ const Pay = () => {
       if (item?.status_checked) {
         data.push(item);
       }
-    })
+    });
   }
   function onAddOder(data_form: any) {
     const data_form_order = {
@@ -34,18 +37,20 @@ const Pay = () => {
       totalPrice: list_item_cart?.total_price,
       customerInfo: data_form,
     };
-    onSubmit(data_form_order)
+    onSubmit(data_form_order);
   }
   useEffect(() => {
     if (auth && auth.address) {
-      const defaultAddress = auth.address.find((item: any) => item.fullName === "admin");
+      const defaultAddress = auth.address.find(
+        (item: any) => item.checked === true
+      );
       const address = selectedAddress || defaultAddress;
       if (address) {
         setSelectedAddress(address);
         setValue("userName", address.fullName);
         setValue("phone", address.phoneNumber);
         setValue("email", auth.email);
-        setValue("address", `${address.addressType} - ${address.addressDetails}`);
+        setValue("address", `${address.addressDetails} - ${address.address}`);
       }
     }
   }, [auth, selectedAddress, setValue]);
@@ -62,6 +67,7 @@ const Pay = () => {
     setSelectedAddress(address);
     setIsOpen(false);
   };
+
   return (
     <>
       {contextHolder}
@@ -84,37 +90,34 @@ const Pay = () => {
           </div>
           <form onSubmit={handleSubmit(onAddOder)}>
             <div className="py-6 px-6 border rounded shadow-sm">
-              <div className="flex gap-3">
+              <div className="flex gap-3 py-4">
                 <Address />
                 <p>Địa chỉ nhận hàng</p>
               </div>
-              <div className="flex gap-12">
+              <div className="flex gap-5">
                 {selectedAddress ? (
                   <div className="flex items-center gap-4">
                     <h1 className="font-bold">{selectedAddress.fullName}</h1>
                     <p className="font-bold">{selectedAddress.phoneNumber}</p>
                     <p>
-                      {selectedAddress.addressType + " - " + selectedAddress.addressDetails}
+                      {selectedAddress.addressDetails +
+                        " - " +
+                        selectedAddress.address}
                     </p>
                   </div>
                 ) : (
                   auth?.address?.map(
                     (item: any, index: any) =>
-                      item.fullName === "admin" && (
+                      item.checked === true && (
                         <div key={index} className="flex items-center gap-4">
                           <h1 className="font-bold">{item?.fullName}</h1>
                           <p className="font-bold">{item?.phoneNumber}</p>
-                          <p>
-                            {item?.addressType + " - " + item?.addressDetails}
-                          </p>
+                          <p>{item?.addressDetails + " - " + item?.address}</p>
                         </div>
                       )
                   )
                 )}
                 <div className="flex items-center gap-8">
-                  <div className="border py-2 px-4 rounded border-black">
-                    Mặc định
-                  </div>
                   <div
                     className="text-blue-400 underline cursor-pointer"
                     onClick={handleAddress}
@@ -166,7 +169,7 @@ const Pay = () => {
                       <td>{item?.quantity}</td>
                       <td>
                         <p className="font-bold">
-                          {(item?.total_price_item)?.toLocaleString("vi", {
+                          {item?.total_price_item?.toLocaleString("vi", {
                             style: "currency",
                             currency: "VND",
                           })}
@@ -259,7 +262,12 @@ const Pay = () => {
                                     </div> */}
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng thanh toán</p>
-                    <p className="text-xl font-bold text-black">{(list_item_cart?.total_price)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                    <p className="text-xl font-bold text-black">
+                      {list_item_cart?.total_price?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -277,11 +285,10 @@ const Pay = () => {
               </div>
             </div>
           </form>
-          {address && (
-            <Add_Address handleAddress={handleAddress}></Add_Address>
-          )}
+          {address && <Add_Address handleAddress={handleAddress}></Add_Address>}
           {isOpen && (
-            <List_Address auth={auth}
+            <List_Address
+              auth={auth}
               handleTAdd={handleTAdd}
               handleAddressSelect={handleAddressSelect}
               handleAddress={handleAddress}

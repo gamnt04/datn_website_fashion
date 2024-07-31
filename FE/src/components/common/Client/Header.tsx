@@ -6,6 +6,8 @@ import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/Search";
+import { useQuery } from "@tanstack/react-query";
+import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 const Header = () => {
   const navigate = useNavigate();
   const {
@@ -65,6 +67,10 @@ const Header = () => {
     };
   }, [account]);
   // toogle menu mobile
+
+  const { data: getUser } = List_Auth(account);
+  console.log(getUser);
+
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
   };
@@ -247,22 +253,12 @@ const Header = () => {
             {/* option / menu */}
             <div className="duration-300 cursor-pointer hover:scale-105">
               <Link ref={ref_user} to={"/allorder"}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-user-round-check"
-                >
-                  <path d="M2 21a8 8 0 0 1 13.292-6" />
-                  <circle cx="10" cy="8" r="5" />
-                  <path d="m16 19 2 2 4-4" />
-                </svg>
+                <img
+                  src={getUser?.avatar ? getUser?.avatar : ""}
+                  alt=""
+                  width={40}
+                  className="rounded-full w-[28px] h-[28px]"
+                />
               </Link>
               <Link
                 ref={ref_login}
