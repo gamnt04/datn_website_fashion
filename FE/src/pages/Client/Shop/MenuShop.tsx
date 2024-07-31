@@ -1,23 +1,24 @@
-// src/components/MenuShop.tsx
+// MenuShop.tsx
 import React from "react";
 import CategoryFilter from "./Filter/CategoryFilter";
-import ColorFilter from "./Filter/ColorFilter";
+import { ICategory } from "../../../common/interfaces/Category";
 import PriceFilter from "./Filter/PriceFilter";
+import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
 
-interface MenuShopProps {
-  onCategoryChange: (categoryId: string | null) => void;
-}
-
-const MenuShop: React.FC<MenuShopProps> = ({ onCategoryChange }) => {
+const MenuShop: React.FC<{
+  categories?: ICategory[];
+  onCategorySelect: (id: string | null) => void;
+}> = ({ categories = [], onCategorySelect }) => {
   return (
-    <div>
-      <div className="hidden lg:block w-full h-auto flex flex-col my-10 shadow-xl rounded overflow-hidden">
-        <CategoryFilter onCategoryChange={onCategoryChange} />
-        <PriceFilter />
-        <ColorFilter />
-        <SizeFilter />
-      </div>
+    <div className="hidden lg:block w-full h-auto flex flex-col my-10 shadow-xl rounded overflow-hidden">
+      <CategoryFilter
+        categories={categories}
+        onCategorySelect={onCategorySelect}
+      />
+      <PriceFilter />
+      <ColorFilter />
+      <SizeFilter />
     </div>
   );
 };

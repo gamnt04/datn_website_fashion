@@ -124,39 +124,6 @@ const List_Category: React.FC = () => {
     },
   ];
 
-  // Tạo hàm để xác định trang cần hiển thị và dấu ba chấm
-  const getPaginationItems = (
-    current: number,
-    total: number,
-    pageSize: number
-  ) => {
-    const totalPages = Math.ceil(total / pageSize);
-    const delta = 3; // Số trang giữa dấu ba chấm
-    const pages = [];
-    let start = Math.max(1, current - delta);
-    let end = Math.min(totalPages, current + delta);
-
-    if (current > delta + 1) {
-      pages.push(1);
-      if (current > delta + 2) {
-        pages.push("...");
-      }
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    if (current < totalPages - delta) {
-      if (current < totalPages - delta - 1) {
-        pages.push("...");
-      }
-      pages.push(totalPages);
-    }
-
-    return pages;
-  };
-
   const onChangePage = (page: number) => {
     setCurrentPage(page);
   };
