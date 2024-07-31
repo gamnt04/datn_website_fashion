@@ -19,11 +19,9 @@ export async function restore_item(req, res) {
   }
 }
 
-
 export const getTrash = async (req, res) => {
   try {
     const data = await Products.findWithDeleted({deleted: true });
-    console.log(data);
     if(!data) {
       return res.status(StatusCodes.OK).json({
         message : "No data!",
