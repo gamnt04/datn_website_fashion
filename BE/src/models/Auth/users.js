@@ -26,8 +26,9 @@ const userSchema = new Schema(
       {
         fullName: { type: String },
         phoneNumber: { type: String },
+        address: { type: String },
         addressDetails: { type: String },
-        default: { type: Boolean },
+        checked: { type: Boolean, default: false },
       },
     ],
     phone: {
@@ -42,7 +43,7 @@ const userSchema = new Schema(
     avatar: {
       type: String,
       // default: "https://vectorified.com/images/default-avatar-icon-12.png",
-      default: "../upload/default-avatar.jpeg",
+      // default: "../upload/default-avatar.jpeg",
     },
 
     birthDate: {
