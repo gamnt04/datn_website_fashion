@@ -11,7 +11,6 @@ export interface IProduct {
   image_product?: FileList | string;
   gallery_product?: string[];
   tag_product?: string[];
-  //quantity_product?: number;
   createdAt?: ReactNode;
   updatedAt?: ReactNode;
   deletedAt?: ReactNode;
@@ -21,6 +20,7 @@ export interface IProduct {
 export interface ISize {
   name_size: string;
   stock_attribute: number;
+  price_attribute: number;
 }
 export interface IAttribute {
   color: string;

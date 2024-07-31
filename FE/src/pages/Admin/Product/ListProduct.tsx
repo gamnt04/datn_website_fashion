@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { format } from "date-fns";
-import { Query_Products } from "../../../common/hooks/Products/Products";
+import {
+  formatDate,
+  Query_Products,
+} from "../../../common/hooks/Products/Products";
 import { IProduct } from "../../../common/interfaces/Product";
 import { Button, Checkbox, message, Popconfirm, Space, Table } from "antd";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
 import { Link } from "react-router-dom";
 import { FaDeleteLeft, FaPlus } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
@@ -12,11 +12,10 @@ import { Mutation_items_client } from "../../../common/hooks/Products/mutation_i
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 const ListProduct = () => {
-  const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate: removeMultiple } = Mutation_items_client("REMOVE_MULTIPLE");
+  const { mutate: softDelete } = Mutation_items_client("SOFT_DELETE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
   const { data, isLoading, isError, error } = Query_Products();
   const dataSource = data?.map((product: IProduct, index: number) => ({
     key: product._id,
@@ -31,7 +30,6 @@ const ListProduct = () => {
           type: "success",
           content: "Xóa thành công",
         });
-        queryClient.invalidateQueries("Product_Key");
       },
       onError: (error) => {
         messageApi.open({
@@ -41,6 +39,10 @@ const ListProduct = () => {
       },
     });
   };
+
+  // const softDeleteProduct = () => {
+  //   softDelete({});
+  // };
 
   const handleCheckboxChange = (productId: string) => {
     if (selectedProductIds.includes(productId)) {
@@ -52,35 +54,6 @@ const ListProduct = () => {
     }
   };
 
-  const formatDate = (dateString: any) => {
-    const date = new Date(dateString);
-    return format(date, "HH:mm dd/MM/yyyy");
-  };
-
-  const { mutate } = useMutation({
-    mutationFn: async (id) => {
-      try {
-        return await instance.delete(`/products/${id}`);
-      } catch (error) {
-        throw new Error((error as any).message);
-      }
-    },
-    onSuccess: () => {
-      messageApi.open({
-        type: "success",
-        content: "Xóa sản phẩm thành công",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["Product_Key"],
-      });
-    },
-    onError: (error) => {
-      messageApi.open({
-        type: "error",
-        content: error.message,
-      });
-    },
-  });
   const columns = [
     {
       title: "",
@@ -148,7 +121,7 @@ const ListProduct = () => {
             <Popconfirm
               title="Xóa sản phẩm"
               description="Bạn chắc chắn muốn xóa sản phẩm này chứ?"
-              onConfirm={() => mutate(product._id!)}
+              onConfirm={() => softDelete(product._id!)}
               // onCancel={cancel}
               okText="Yes"
               cancelText="No"

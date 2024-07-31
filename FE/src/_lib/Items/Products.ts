@@ -70,7 +70,7 @@ export async function add_items_client(items: any) {
 
 export async function edit_items_client(product: IProduct) {
   try {
-    const res = await fetch(`${baseUri}/${id}`, {
+    const res = await fetch(`${baseUri}/${product._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -90,8 +90,8 @@ export async function edit_items_client(product: IProduct) {
     throw error;
   }
 }
-
-export async function remove_items_client(id: string) {
+//Xoa mem
+export async function remove_items_client(id: IProduct) {
   try {
     const res = await fetch(`${baseUri}/${id}`, {
       method: "DELETE",
@@ -100,7 +100,7 @@ export async function remove_items_client(id: string) {
       console.warn("Kiem tra lai server hoac internet !");
     }
     const { data } = await res.json();
-    return data.docs;
+    return data;
   } catch (error) {
     console.log(error || "Loi server!");
   }
@@ -115,13 +115,11 @@ export const remove_multiple_products = async (data: {
     console.log(error || "Loi server!");
   }
 };
+//xoa cung
 export const deleteProduct = async (id: string) => {
-  const response = await fetch(
-    `http://localhost:2004/api/v1/products/permanent/${id}`,
-    {
-      method: "DELETE",
-    }
-  );
+  const response = await fetch(`${baseUri}/destroy/${id}`, {
+    method: "DELETE",
+  });
   return response.json();
 };
 
