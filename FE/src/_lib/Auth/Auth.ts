@@ -8,6 +8,16 @@ export const list_Auth = async () => {
     console.log(error);
   }
 };
+export const Search_Auth = async (searchQuery: any) => {
+  try {
+    const { data } = await instance.get(`/auths/search`, {
+      params: { _search: searchQuery }
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const list_Auth_By_Id = async (userId: string) => {
   try {
     const { data } = await instance.get(`auth/${userId}`);
@@ -43,3 +53,12 @@ export const SignIn = async (user: any) => {
   }
 };
 
+
+export async function set_default_address(item: any) {
+  try {
+    const data = await instance.post(`/auths/${item.id_user}`, item.id_item);
+    return data
+  } catch (error) {
+    return error
+  }
+}

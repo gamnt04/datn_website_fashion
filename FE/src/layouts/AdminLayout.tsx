@@ -27,7 +27,8 @@ import {
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink, Outlet } from "react-router-dom";
-import { BarChart3, Boxes, LayoutDashboard, UserCircle } from "lucide-react";
+import { BarChart3, Folder, LayoutDashboard, Newspaper, Package, Shirt, Trash, Truck, UserCircle } from "lucide-react";
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -48,12 +49,15 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><LayoutDashboard /> Danh sách</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin"><LayoutDashboard />Dashboard</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><BarChart3 /> Thống kê</NavLink>, "2-1"),
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><Boxes /> Sản phẩm</NavLink>, "2-1"),
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><UserCircle /> Tài  khoản</NavLink>, "2-1"),
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><LayoutDashboard /> Danh mục</NavLink>, "2-1"),
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><LayoutDashboard /> Liên hệ</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/auth"><UserCircle /> tài khoản</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><Shirt /> Sản phẩm</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/category"><Folder /> Danh mục</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/contact"><Package /> Contact</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/blogs"><Newspaper /> Blog</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products/trash"><Trash /> Thùng rác</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/orders"><Truck /> Đơn hàng</NavLink>, "2-1"),
 ];
 
 const AdminLayout: React.FC = () => {
@@ -67,7 +71,7 @@ const AdminLayout: React.FC = () => {
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
         <div className="flex justify-center items-center w-full">
-        <NavLink className={'text-2xl font-bold text-center py-4'} to="/admin/products">Logo</NavLink>
+          <NavLink className={'text-2xl font-bold text-center py-4'} to="/admin/products">Logo</NavLink>
         </div>
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items} />
       </Sider>
@@ -89,7 +93,7 @@ const AdminLayout: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Copyright by ©{new Date().getFullYear()} Created by Datlt34
+          Copyright by ©{new Date().getFullYear()} Created by DNTN
         </Footer>
       </Layout>
     </Layout>
