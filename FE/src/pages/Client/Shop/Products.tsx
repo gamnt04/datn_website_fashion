@@ -1,27 +1,43 @@
-// src/components/Products_Shop.tsx
-import React, { useState } from "react";
-import { Query_Products } from "../../../common/hooks/Products/Products";
+import React, { useState, useEffect } from "react";
+import { useFilteredProducts } from "../../../common/hooks/Products/useFilteredProducts";
 import Products from "../../../components/common/Items/Products";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import List_item from "../../../components/common/Client/_component/List_item";
 
-interface Products_ShopProps {
-  categoryId?: string; // Thay đổi từ `string | null` thành `string | undefined`
-}
-
-const Products_Shop: React.FC<Products_ShopProps> = ({ categoryId }) => {
+const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
+  selectedCategoryId,
+}) => {
   const [page, setPage] = useState<number>(1);
-  const { data, isLoading, isError } = Query_Products(categoryId, page);
+  const [loadCount, setLoadCount] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+  } = useFilteredProducts(selectedCategoryId || "", page);
+
+  useEffect(() => {
+    if (productsData) {
+      const docs = productsData.data?.docs || [];
+      if (docs.length < 20) {
+        setHasMore(false);
+      }
+      setLoadCount((prevCount) => prevCount + 1);
+    }
+  }, [productsData]);
 
   const handlePrevPage = () => {
     if (page > 1) {
-      setPage((prevPage) => prevPage - 1);
+      setPage(page - 1);
     }
   };
 
   const handleNextPage = () => {
-    setPage((prevPage) => prevPage + 1);
+    if (hasMore) {
+      setPage(page + 1);
+    }
   };
 
 
@@ -38,34 +54,50 @@ const Products_Shop: React.FC<Products_ShopProps> = ({ categoryId }) => {
         </div>
       ) : isError ? (
         <div className="flex justify-center items-center h-screen">
-          <p>Đã xảy ra lỗi khi tải sản phẩm</p>
+          <img
+            src="../../src/assets/Images/Products/no-data.png"
+            alt="Không có sản phẩm"
+          />
         </div>
       ) : (
         <>
-          {data?.length > 0 ? (
+          {productsData?.data?.docs?.length ? (
             <>
-              <List_item dataProps={propData} />
+              <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] justify-between gap-y-6">
+                {productsData.data.docs.map((item: any) => (
+                  <Products key={item._id} items={item} />
+                ))}
+              </div>
               <div className="flex justify-center mt-16">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center mx-3 border border-gray-600 w-[40px] h-[40px] grid place-items-center duration-300 cursor-pointer">
                   <button
                     onClick={handlePrevPage}
+                    className="opacity-50 hover:opacity-100"
                     disabled={page === 1}
-                    className="opacity-50 hover:opacity-100 disabled:opacity-25"
                   >
                     &#10094;
                   </button>
                   <button
                     onClick={handleNextPage}
                     className="opacity-50 hover:opacity-100"
+                    disabled={!hasMore}
                   >
                     &#10095;
                   </button>
                 </div>
               </div>
+              {!hasMore && loadCount >= 2 && (
+                <div className="flex justify-center items-center h-screen">
+                  <p>Không còn sản phẩm để hiển thị.</p>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex justify-center items-center h-screen">
-              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
+              <img
+                src="../../src/assets/Images/Products/no-data.png"
+                alt="Không có sản phẩm"
+              />
             </div>
           )}
         </>
