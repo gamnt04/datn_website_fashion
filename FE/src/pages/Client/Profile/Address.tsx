@@ -2,22 +2,81 @@ import { Auth } from "../../../common/interfaces/Auth";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
-import { Button } from "antd";
+import { Add_Address } from "../../../components/common/Client/_component/Address";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../configs/axios";
+import { Button, message, Popconfirm } from "antd";
 
 const Address = () => {
   const { isLoading, isPending, isError, error } = ProfileHook();
+  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data } = List_Auth(userId);
+
+  const { data, refetch } = List_Auth(userId);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [address, setAddress] = useState(false);
+
+  const { mutate: setDefaultAddress } = useMutation({
+    mutationFn: async (id) => {
+      const { data } = await instance.put(`/auth/${userId}/${id}`, {
+        checked: true,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["AUTH_KEY"],
+      });
+      window.location.reload();
+    },
+  });
+
+  const handleChecked = (id) => {
+    setDefaultAddress(id); // Cập nhật địa chỉ mặc định thông qua API
+
+    // Cập nhật state của địa chỉ cục bộ
+    setAddress((prevAddressList) =>
+      prevAddressList?.map((addr) =>
+        addr._id === id
+          ? { ...addr, checked: true }
+          : { ...addr, checked: false }
+      )
+    );
+  };
+
+  const handleAddress = () => {
+    setIsOpen(!isOpen);
+    if (address) setAddress(false);
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: async (id) => {
+      const { data } = await instance.delete(`/auth/${userId}/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["AUTH_KEY"],
+      });
+      message.open({
+        type: "success",
+        content: "Xóa địa chỉ thành công",
+      });
+    },
+  });
+
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
 
-  function handle_add_default_address (id_address : string){
-    console.log(id_address)
+  function handle_add_default_address(id_address: string) {
+    console.log(id_address);
   }
   return (
-    <>  
+    <>
       <div>
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h1>Địa chỉ của tôi</h1>
@@ -36,7 +95,9 @@ const Address = () => {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            <span className="hidden lg:block">Thêm địa chỉ mới</span>
+            <span className="hidden lg:block" onClick={handleAddress}>
+              Thêm địa chỉ mới
+            </span>
           </button>
         </div>
         <div className="px-5 py-4">
@@ -52,20 +113,40 @@ const Address = () => {
                   <span className="px-2 text-gray-400">|</span>{" "}
                   <span className="text-gray-400">{address?.phoneNumber}</span>
                 </h1>
-                <span className="text-gray-400">{address?.addressDetails}</span>
-                <div className="flex gap-3 mt-3">
-                  <button className="border border-stone-300 text-gray-400 px-4 py-2 rounded-md text-sm">
-                    Mặc định
-                  </button>
+                <div className=" flex  text-gray-400">
+                  <span>{address.addressDetails}</span>
+                  <span>-</span>
+                  <span>{address.address}</span>
                 </div>
+                {address && address?.checked ? (
+                  <div className="flex gap-3 mt-3">
+                    <button className="border border-stone-300 bg-[#000000] text-white px-4 py-2 rounded-md text-sm">
+                      Mặc định
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="">
                 <div className="hidden lg:block">
                   <div className="flex gap-2 justify-end text-blue-400 py-2">
                     <a href="#">Cập nhật</a>
-                    <button>Xóa</button>
+                    <Popconfirm
+                      title="Xóa địa chỉ"
+                      description="Bạn có chắc chắn muốn xóa địa chỉ này không?"
+                      onConfirm={() => mutate(address._id!)}
+                      okText="Xóa"
+                      cancelText="Hủy"
+                    >
+                      <button>Xóa</button>
+                    </Popconfirm>
                   </div>
-                 <Button onClick={() => handle_add_default_address(address?._id)}>Thiết lập mặc định</Button>
+                  <Button
+                    onClick={() => handle_add_default_address(address?._id)}
+                  >
+                    Thiết lập mặc định
+                  </Button>
                 </div>
                 <div className="block lg:hidden">
                   <svg

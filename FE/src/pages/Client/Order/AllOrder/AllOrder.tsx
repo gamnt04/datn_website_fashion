@@ -25,18 +25,18 @@ const AllOrder = () => {
           <div className="lg:flex gap-4 pt-[15px] px-3 pb-[15px] border-b-2 ">
             <div className="flex justify-center">
               <img
-                className="w-[46px] h-[46px] rounded-full"
+                className="w-[50px] h-[50px] rounded-full"
                 src={data?.avatar}
                 alt=""
               />
             </div>
             <div className="">
-              <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">
+              <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold py-1">
                 {data?.userName}
               </h3>
               <a
                 href="/allorder"
-                className="text-[#9B9B9B] text-center text-[12px] lg:text-sm flex items-center justify-center font-normal"
+                className="text-[#9B9B9B]  text-[12px] lg:text-sm flex font-normal"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
