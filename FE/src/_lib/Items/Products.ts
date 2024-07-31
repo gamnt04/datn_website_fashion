@@ -23,7 +23,7 @@ export async function get_items_client(page?: number) {
 }
 
 
-export async function get_items_dashboard (page?:number) {
+export async function get_items_dashboard(page?: number) {
   try {
     let uri = `${baseUri}/dashboard`;
     if (page) {
@@ -115,17 +115,17 @@ export async function edit_items_client(product: IProduct) {
   }
 }
 
-export async function remove_items(dataBody :  any) {
+export async function remove_items(dataBody: any) {
   try {
     const res = await fetch(`${baseUri}/${dataBody.id_item}`, {
       method: "DELETE",
     });
-    if(!res.ok) {
-      toast.error(`Không thể xóa sản phẩm ${dataBody.id_item}`, { autoClose : 500});
+    if (!res.ok) {
+      toast.error(`Không thể xóa sản phẩm ${dataBody.id_item}`, { autoClose: 500 });
       return res
     }
     else {
-      toast.success(`Xóa sản phẩm ${dataBody.id_item}  thành công`, {autoClose : 500});
+      toast.success(`Xóa sản phẩm ${dataBody.id_item}  thành công`, { autoClose: 500 });
     }
     return res;
   } catch (error) {
@@ -150,12 +150,12 @@ export const destroy_delete_Product = async (id: string) => {
         method: "DELETE",
       }
     );
-    if(!response.ok) {
-      toast.error(`Không thể xóa sản phẩm ${id}`, { autoClose : 500});
+    if (!response.ok) {
+      toast.error(`Không thể xóa sản phẩm ${id}`, { autoClose: 500 });
       return response
     }
     else {
-      toast.success(`Xóa sản phẩm ${id}  thành công`, {autoClose : 500});
+      toast.success(`Xóa sản phẩm ${id}  thành công`, { autoClose: 500 });
     }
     await response.json()
     return response;
@@ -169,12 +169,12 @@ export const restoreProduct = async (item: any) => {
     const response = await fetch(`${baseUri}/recycle/${item.id_item}`, {
       method: "PATCH",
     });
-    if(!response.ok) {
-      toast.error(`Không thể khôi phục sản phẩm ${item.id_item}`, { autoClose : 500});
+    if (!response.ok) {
+      toast.error(`Không thể khôi phục sản phẩm ${item.id_item}`, { autoClose: 500 });
       return response
     }
     else {
-      toast.success(`Khôi phục sản phẩm ${item.id_item}  thành công`, {autoClose : 500});
+      toast.success(`Khôi phục sản phẩm ${item.id_item}  thành công`, { autoClose: 500 });
     }
     await response.json()
     return response;
@@ -189,7 +189,7 @@ export async function getDeletedProducts() {
     if (!response.ok) {
       throw new Error("Không thể lấy danh sách sản phẩm đã xóa");
     }
-    const {data} = await response.json();
+    const { data } = await response.json();
     return data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách sản phẩm đã xóa mềm:", error);

@@ -51,7 +51,7 @@ function getItem(
 const items: MenuItem[] = [
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin"><LayoutDashboard />Dashboard</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><BarChart3 /> Thống kê</NavLink>, "2-1"),
-  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><UserCircle /> tài khoản</NavLink>, "2-1"),
+  getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/auth"><UserCircle /> tài khoản</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/products"><Shirt /> Sản phẩm</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/category"><Folder /> Danh mục</NavLink>, "2-1"),
   getItem(<NavLink className={'flex items-center gap-x-4'} to="/admin/contact"><Package /> Contact</NavLink>, "2-1"),
