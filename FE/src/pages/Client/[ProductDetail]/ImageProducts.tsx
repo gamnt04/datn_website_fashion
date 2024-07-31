@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
-import { Carousel } from "antd";
+import { Carousel, Image } from "antd";
 
 interface ImageProductProp {
   product: IProduct;
@@ -22,7 +22,7 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
     <div className="w-full h-full lg:mt-0 mt-4">
       <div className="w-full flex flex-col lg:items-center lg:gap-y-6 gap-y-3.5">
         <div className="relative cursor-pointer w-full lg:h-[520px] mb:h-[342px] bg-white overflow-hidden grid place-items-center rounded-xl">
-          <img
+          <Image
             src={currentImage}
             alt="Product"
             className="w-full h-full rounded"
