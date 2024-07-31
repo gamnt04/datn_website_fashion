@@ -7,7 +7,7 @@ const App = () => {
   return (
     <>
       <RouterComponent />
-      <ToastContainer />
+      <ToastContainer position="bottom-right"/>
     </>
   );
 };

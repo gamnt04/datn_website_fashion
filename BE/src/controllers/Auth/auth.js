@@ -16,7 +16,32 @@ export const GetAllUser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
+export const Get_All_User_Search = async (req, res) => {
+  const {
+    _search = ''
+  } = req.query
+  try {
+    const querry = {};
+    if (_search) {
+      querry.$and = [
+        {
+          userName: { $regex: new RegExp(_search, 'i') }
+        }
+      ]
+    }
+    const user = await User.find(querry);
+    console.log(user);
+    return res.status(StatusCodes.OK).json({
+      message: "Done !",
+      user
+    });
+  } catch (error) {
+    console.error("Error getting all products:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Loi server !"
+    });
+  }
+};
 export const GetAuthById = async (req, res) => {
   try {
     const id = req.params.userId;

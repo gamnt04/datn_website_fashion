@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Get_in_touch from '../(Home)/Get_in_touch';
 import { Blog } from '../../../common/interfaces/Blog';
 
 const Blogs = () => {
@@ -72,7 +71,6 @@ const Blogs = () => {
           </div>
         ))}
       </div>
-      <Get_in_touch />
     </div>
   );
 };

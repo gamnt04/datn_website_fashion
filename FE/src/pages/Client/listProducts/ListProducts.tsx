@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
+import { HeartIcon } from "../../../resources/svg/Icon/Icon";
 import { useNavigate } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
 
 const ListProducts = () => {
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
@@ -264,7 +265,7 @@ const ListProducts = () => {
                   </svg>
                 </div>
                 <div className="cart-button bg-white/80 ml-[4px] w-[50px] h-[50px] rounded-full pl-[2px] flex justify-center items-center  cursor-pointer hover:bg-[#F3F3F3]">
-                  <CartIcon />
+                  <ShoppingCart />
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@ import { useFilteredProducts } from "../../../common/hooks/Products/useFilteredP
 import Products from "../../../components/common/Items/Products";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import List_item from "../../../components/common/Client/_component/List_item";
 
 const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
   selectedCategoryId,
@@ -38,6 +39,12 @@ const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
       setPage(page + 1);
     }
   };
+
+
+  const propData = {
+    data: data,
+    style: 'lg:grid-cols-4 md:grid-cols-3'
+  }
 
   return (
     <div className="py-10">

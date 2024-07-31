@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-import mongooseDelete from "mongoose-delete";
+import mongooseDelete from 'mongoose-delete';
 
 const productSchema = new mongoose.Schema(
   {
@@ -57,9 +57,9 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.plugin(mongoosePaginate);
-productSchema.plugin(mongooseDelete,
-  { deletedAt: true },
-  { overrideMethods: "all" }
-);
+productSchema.plugin(mongooseDelete, {
+  deletedAt : true,
+  overrideMethods  : 'all'
+})
 
 export default mongoose.model("Products", productSchema);
