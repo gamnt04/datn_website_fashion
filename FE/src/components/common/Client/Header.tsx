@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { CartIcon, HeartIcon } from "../../../resources/svg/Icon/Icon";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/Search";
 import { useQuery } from "@tanstack/react-query";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
+import { Heart, Search, ShoppingCart } from "lucide-react";
 const Header = () => {
   const navigate = useNavigate();
   const {
@@ -34,14 +34,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -84,7 +84,7 @@ const Header = () => {
     <>
       <div
         ref={toggleFixedHeader}
-        className="w-full fixed top-0 bg-white z-[6] shadow-[50px_15px_60px_-15px_rgba(0,0,0,0.3)]"
+        className="w-full fixed top-0 bg-white z-[6] !bg-[#001529] text-white"
       >
         <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
           {/* menu mobile */}
@@ -148,7 +148,7 @@ const Header = () => {
               >
                 <input
                   type="text"
-                  className="w-full pl-5 text-sm font-normal text-gray-700 border rounded-full outline-none pr-14"
+                  className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 focus:border-black rounded outline-none pr-14"
                   placeholder="Search"
                   value={searchTerm}
                   onChange={handleChange}
@@ -157,22 +157,9 @@ const Header = () => {
                 />
                 <button
                   type="submit"
-                  className="absolute top-0 right-[2%] rounded-[50%] w-[36px] duration-300 cursor-pointer"
+                  className="absolute grid place-items-center top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="mx-auto size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                    />
-                  </svg>
+                  <Search/>
                 </button>
               </form>
               {showResults && (
@@ -219,13 +206,13 @@ const Header = () => {
               onClick={ScrollTop}
               to={account ? "/cart" : "/login"}
             >
-              {data?.products && (
-                <span className="absolute bg-red-500 px-1 text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/2">
+              {data?.products && data?.products.length > 0 && (
+                <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/3">
                   {data?.products?.length}
                 </span>
               )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
-                <CartIcon />
+                <ShoppingCart />
               </div>
             </Link>
 
@@ -236,7 +223,7 @@ const Header = () => {
                   to={"/favourite"}
                   className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
                 >
-                  <HeartIcon />
+                  <Heart />
                 </Link>
               </>
             ) : (
@@ -245,7 +232,7 @@ const Header = () => {
                   onClick={() => onlogin()}
                   className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
                 >
-                  <HeartIcon />
+                  <Heart />
                 </div>
               </>
             )}

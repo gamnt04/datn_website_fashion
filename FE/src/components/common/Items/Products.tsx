@@ -22,7 +22,6 @@ const Products = ({ items }: any) => {
       // Gọi API để lấy thông tin sản phẩm
       const response = await fetch(
         `http://localhost:2004/api/v1/products/${id}`
-        
       ); // Thay thế với URL thực tế
       const product = await response.json();
       // Thay đổi trạng thái modal và sản phẩm được chọn
@@ -42,17 +41,17 @@ const Products = ({ items }: any) => {
 
   return (
     <div
-      className="w-full text-start flex flex-col justify-between rounded gap-y-4 border hover:border-black duration-200"
+      className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:border-black"
       key={items._id}
     >
-      <div className="relative group rounded w-full h-[160px] md:h-[200px] overflow-hidden bg-[#F6F6F6]">
+      <div className="relative group rounded w-full h-[160px] md:h-[200px] lg:h-[220px] overflow-hidden bg-[#F6F6F6]">
         <Link
           onClick={ScrollTop}
           to={`/shops/detail_product/${items._id}`}
           className="h-full cursor-pointer"
         >
           <img
-            className="group-hover:scale-105 duration-500 w-full h-full"
+            className="w-full h-full duration-500 group-hover:scale-105"
             loading="lazy"
             src={items.image_product}
             alt={items.name_product}
@@ -60,11 +59,11 @@ const Products = ({ items }: any) => {
         </Link>
         {/* hover show icon cart */}
         <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-          <button className="p-2 rounded border-none hover:scale-110">
+          <button className="p-2 border-none rounded hover:scale-110">
             <HeartIcon />
           </button>
           <button
-            className="p-2 rounded border-none hover:scale-110"
+            className="p-2 border-none rounded hover:scale-110"
             onClick={() => handlePreview(items._id)}
           >
             <EyeIcon />
@@ -72,15 +71,15 @@ const Products = ({ items }: any) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-4 pb-6 px-4">
+      <div className="flex flex-col px-4 pb-6 gap-y-4">
         <Link
           onClick={ScrollTop}
           to={`/shops/detail_product/${items._id}`}
-          className="text-base lg:text-lg font-medium text-gray-700 hover:text-black line-clamp-2"
+          className="text-base font-medium text-gray-700 lg:text-lg hover:text-black line-clamp-2"
         >
           {items.name_product}
         </Link>
-        <p className="text-md font-semibold text-red-500">
+        <p className="font-semibold text-red-500 text-md">
           {items.price_product.toLocaleString("vi", {
             style: "currency",
             currency: "VND",

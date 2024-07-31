@@ -1,5 +1,4 @@
 import {
-  CartIcon,
   HeartIcon,
   HeartIconRed,
 } from "../../../resources/svg/Icon/Icon";
@@ -8,6 +7,7 @@ import { IProduct } from "../../../common/interfaces/Product";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
 
 const Favourite = () => {
   const [user] = useLocalStorage("user", {});
@@ -60,7 +60,7 @@ const Favourite = () => {
                         //   })
                         // }
                       >
-                        <CartIcon />
+                        <ShoppingCart />
                       </button>
                       <button
                         className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
@@ -77,7 +77,7 @@ const Favourite = () => {
                         className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
                         onClick={onLoginWarning}
                       >
-                        <CartIcon />
+                        <ShoppingCart />
                       </button>
                       <button
                         className="p-2 rounded *:cursor-pointer border-none hover:scale-110"

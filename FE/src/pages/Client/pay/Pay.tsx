@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
-import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin } from "antd";
@@ -11,8 +10,10 @@ import {
   List_Address,
 } from "../../../components/common/Client/_component/Address";
 import { Address } from "../../../components/common/Client/_component/Icons";
+import { useNavigate } from "react-router-dom";
 
 const Pay = () => {
+  const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
@@ -21,28 +22,17 @@ const Pay = () => {
   const [selectedAddress, setSelectedAddress]: any = useState(null);
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder } = Pay_Mutation();
-  const { calculateTotalProduct, data: list_item_cart } = List_Cart(userId);
-  const data: any = [];
-  if (list_item_cart?.products.length > 0) {
-    list_item_cart?.products.filter((item: any) => {
-      if (item?.status_checked) {
-        data.push(item);
-      }
-    });
-  }
-  function onAddOder(data_form: any) {
-    const data_form_order = {
-      userId,
-      items: data,
-      totalPrice: list_item_cart?.total_price,
-      customerInfo: data_form,
-    };
-    onSubmit(data_form_order);
+  const data_sessionStorage = sessionStorage.getItem("item_order");
+  let data: any;
+  if (data_sessionStorage) {
+    data = JSON.parse(data_sessionStorage);
+  } else {
+    routing("/");
   }
   useEffect(() => {
     if (auth && auth.address) {
       const defaultAddress = auth.address.find(
-        (item: any) => item.checked === true
+        (item: any) => item.fullName === "admin"
       );
       const address = selectedAddress || defaultAddress;
       if (address) {
@@ -50,7 +40,10 @@ const Pay = () => {
         setValue("userName", address.fullName);
         setValue("phone", address.phoneNumber);
         setValue("email", auth.email);
-        setValue("address", `${address.addressDetails} - ${address.address}`);
+        setValue(
+          "address",
+          `${address.addressType} - ${address.addressDetails}`
+        );
       }
     }
   }, [auth, selectedAddress, setValue]);
@@ -67,6 +60,17 @@ const Pay = () => {
     setSelectedAddress(address);
     setIsOpen(false);
   };
+
+  // add order
+  function onAddOrder(data_form: any) {
+    const item_order = {
+      userId: userId,
+      items: data?.data_order,
+      customerInfo: data_form,
+      totalPrice: data?.totalPrice,
+    };
+    onSubmit(item_order);
+  }
 
   return (
     <>
@@ -88,36 +92,41 @@ const Pay = () => {
               <h1 className="text-2xl font-bold">Thanh Toán</h1>
             </div>
           </div>
-          <form onSubmit={handleSubmit(onAddOder)}>
+          <form onSubmit={handleSubmit(onAddOrder)}>
             <div className="py-6 px-6 border rounded shadow-sm">
-              <div className="flex gap-3 py-4">
+              <div className="flex gap-3">
                 <Address />
                 <p>Địa chỉ nhận hàng</p>
               </div>
-              <div className="flex gap-5">
+              <div className="flex gap-12">
                 {selectedAddress ? (
                   <div className="flex items-center gap-4">
                     <h1 className="font-bold">{selectedAddress.fullName}</h1>
                     <p className="font-bold">{selectedAddress.phoneNumber}</p>
                     <p>
-                      {selectedAddress.addressDetails +
+                      {selectedAddress.addressType +
                         " - " +
-                        selectedAddress.address}
+                        selectedAddress.addressDetails}
                     </p>
                   </div>
                 ) : (
                   auth?.address?.map(
                     (item: any, index: any) =>
-                      item.checked === true && (
+                      item.fullName === "admin" && (
                         <div key={index} className="flex items-center gap-4">
                           <h1 className="font-bold">{item?.fullName}</h1>
                           <p className="font-bold">{item?.phoneNumber}</p>
-                          <p>{item?.addressDetails + " - " + item?.address}</p>
+                          <p>
+                            {item?.addressType + " - " + item?.addressDetails}
+                          </p>
                         </div>
                       )
                   )
                 )}
                 <div className="flex items-center gap-8">
+                  <div className="border py-2 px-4 rounded border-black">
+                    Mặc định
+                  </div>
                   <div
                     className="text-blue-400 underline cursor-pointer"
                     onClick={handleAddress}
@@ -136,7 +145,7 @@ const Pay = () => {
                   <th>Thành tiền</th>
                 </thead>
                 <tbody>
-                  {data?.map((item: any) => (
+                  {data?.data_order?.map((item: any) => (
                     <tr className="*:text-center">
                       <td className="flex items-center justify-between *:py-3 *:px-6">
                         <div className="flex items-center gap-5">
@@ -216,9 +225,9 @@ const Pay = () => {
                 </div>
               </div> */}
               <div className="flex items-center justify-end gap-8 p-6">
-                <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p>
+                {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                 <p className="text-xl font-bold text-black">
-                  {list_item_cart?.total_price?.toLocaleString("vi", {
+                  {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
                   })}
@@ -246,7 +255,7 @@ const Pay = () => {
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng tiền hàng</p>
                     <p>
-                      {list_item_cart?.total_price?.toLocaleString("vi", {
+                      {data?.totalPrice?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}
@@ -263,7 +272,7 @@ const Pay = () => {
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng thanh toán</p>
                     <p className="text-xl font-bold text-black">
-                      {list_item_cart?.total_price?.toLocaleString("vi", {
+                      {data?.totalPrice?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}
