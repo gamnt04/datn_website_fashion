@@ -31,8 +31,10 @@ import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
+
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
 import Test from "../pages/Client/TEST/Test";
+import List_Auth from "../pages/Admin/Auth/List_Auth";
 const RouterComponent = () => {
   return (
     <>
@@ -78,6 +80,7 @@ const RouterComponent = () => {
             <Route path="products/edit/:id" element={<UpdateProduct />} />
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
+            <Route path="auth" element={<List_Auth />} />
             <Route
               path="/admin/orders/:id/orderDetali"
               element={<OrdersDetali />}
