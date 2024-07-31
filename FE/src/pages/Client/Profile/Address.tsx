@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { Button, message, Popconfirm } from "antd";
+
 const Address = () => {
   const { isLoading, isPending, isError, error } = ProfileHook();
   const queryClient = useQueryClient();
@@ -70,6 +71,10 @@ const Address = () => {
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
+
+  function handle_add_default_address(id_address: string) {
+    console.log(id_address);
+  }
   return (
     <>
       <div>
@@ -99,14 +104,14 @@ const Address = () => {
           <h2 className="py-2">Địa chỉ</h2>
           {data?.address?.map((address: Auth) => (
             <div
-              key={address._id}
+              key={address?._id}
               className="flex justify-between items-center my-5 border-b pb-6"
             >
               <div className="py-1">
                 <h1>
                   {address.fullName}{" "}
                   <span className="px-2 text-gray-400">|</span>{" "}
-                  <span className="text-gray-400">{address.phoneNumber}</span>
+                  <span className="text-gray-400">{address?.phoneNumber}</span>
                 </h1>
                 <div className=" flex  text-gray-400">
                   <span>{address.addressDetails}</span>
@@ -137,18 +142,11 @@ const Address = () => {
                       <button>Xóa</button>
                     </Popconfirm>
                   </div>
-                  {address && address?.checked ? (
-                    ""
-                  ) : (
-                    <div>
-                      <button
-                        className="border px-4 py-2 rounded-md text-sm text-gray-400"
-                        onClick={() => handleChecked(address._id)}
-                      >
-                        Thiết lập mặc định
-                      </button>
-                    </div>
-                  )}
+                  <Button
+                    onClick={() => handle_add_default_address(address?._id)}
+                  >
+                    Thiết lập mặc định
+                  </Button>
                 </div>
                 <div className="block lg:hidden">
                   <svg
@@ -171,8 +169,6 @@ const Address = () => {
           ))}
         </div>
       </div>
-
-      {isOpen && <Add_Address handleAddress={handleAddress}></Add_Address>}
     </>
   );
 };

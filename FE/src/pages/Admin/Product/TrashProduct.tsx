@@ -1,76 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { format } from "date-fns";
 import { IProduct } from "../../../common/interfaces/Product";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
-import { Button, message, Popconfirm, Space, Table } from "antd";
+import { Button, Popconfirm, Space, Table } from "antd";
 import { TiDelete } from "react-icons/ti";
 import { FaRecycle } from "react-icons/fa";
+import { Query_Trash_Item } from "../../../common/hooks/Products/Products";
+import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
 
 const TrashProduct = () => {
-  const queryClient = useQueryClient();
-  const [messageApi, contextHolder] = message.useMessage();
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-  const { data, isLoading } = useQuery({
-    queryKey: ["trash"],
-    queryFn: () => instance.get(`/product/trash`),
-  });
-  const dataSource = data?.data.map((product: IProduct, index: number) => ({
+  const { mutate } = Mutation_items('RESTORE_ITEM_and_DESTROY_ITEM');
+  const { data, isLoading } = Query_Trash_Item()
+  const dataSource = data?.map((product: IProduct, index: number) => ({
     key: product._id,
     index: index + 1,
     ...product,
   }));
-  const { mutate } = useMutation({
-    mutationFn: async (id) => {
-      try {
-        return await instance.delete(`/products/destroy/${id}`);
-      } catch (error) {
-        throw new Error((error as any).message);
-      }
-    },
-    onSuccess: () => {
-      messageApi.open({
-        type: "success",
-        content: "Xóa vĩnh viễn sản phẩm thành công",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["trash"],
-      });
-    },
-    onError: (error) => {
-      messageApi.open({
-        type: "error",
-        content: error.message,
-      });
-    },
-  });
-  const { mutate: recycle } = useMutation({
-    mutationFn: async (id) => {
-      try {
-        return await instance.patch(`/products/recycle/${id}`);
-      } catch (error) {
-        throw new Error((error as any).message);
-      }
-    },
-    onSuccess: () => {
-      messageApi.open({
-        type: "success",
-        content: "Khôi phục sản phẩm thành công",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["trash"],
-      });
-    },
-    onError: (error) => {
-      messageApi.open({
-        type: "error",
-        content: error.message,
-      });
-    },
-  });
+  // const { mutate } = useMutation({
+  //   mutationFn: async (id) => {
+  // restore
+  //     try {
+  //       return await instance.delete(`/products/destroy/${id}`);
+  //     } catch (error) {
+  //       throw new Error((error as any).message);
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     messageApi.open({
+  //       type: "success",
+  //       content: "Xóa vĩnh viễn sản phẩm thành công",
+  //     });
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["Product_Trash"],
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     messageApi.open({
+  //       type: "error",
+  //       content: error.message,
+  //     });
+  //   },
+  // });
   const columns = [
     {
       title: "",
@@ -116,18 +89,12 @@ const TrashProduct = () => {
       render: (_: any, product: any) => {
         return (
           <Space>
-            <Popconfirm
-              title="Khôi phục sản phẩm"
-              description="Bạn chắc chắn muốn khôi phục lại sản phẩm này chứ?"
-              onConfirm={() => recycle(product._id!)}
-              // onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button type="primary">
-                <FaRecycle />
-              </Button>
-            </Popconfirm>
+            <Button type="primary" onClick={() => mutate({
+              action: 'restore',
+              id_item: product._id
+            })}>
+              <FaRecycle />
+            </Button>
             <Popconfirm
               title="Xóa vĩnh viễn sản phẩm"
               description="Bạn chắc chắn muốn xóa vĩnh viễn sản phẩm này chứ?"
@@ -148,7 +115,6 @@ const TrashProduct = () => {
   if (isLoading) return <div>Loading...</div>;
   return (
     <div>
-      {contextHolder}
       <Table columns={columns} dataSource={dataSource} />
     </div>
   );

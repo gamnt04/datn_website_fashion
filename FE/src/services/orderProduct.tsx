@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import instance from "../configs/axios";
 
 const baseUri = 'http://localhost:2004/api/v1/orders';
@@ -59,9 +60,15 @@ export const getOneOrderUser = async (userId: string) => {
 
 export const Add_Order = async (order: any) => {
   try {
-    const { data } = await instance.post(`/orders`, order);
-    // console.log(data);
-    return data;
+    const data = await instance.post(`/orders`, order);
+    if(data?.status === 201) {
+      sessionStorage.removeItem('item_order');
+      toast.success('Đặt hàng thành công', {autoClose : 500})
+    }
+    else {
+      toast.error('Đặt hàng không thành công', {autoClose : 500})
+    }
+    return data?.data;
   } catch (error) {
     console.log(error);
   }

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { list_Auth, list_Auth_By_Id } from "../../../_lib/Auth/Auth";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { list_Auth, list_Auth_By_Id, set_default_address } from "../../../_lib/Auth/Auth";
 
 export const List_Auth = (userId: string) => {
   const { data, ...rest } = useQuery({
@@ -11,3 +11,27 @@ export const List_Auth = (userId: string) => {
 
   return { data, ...rest };
 };
+
+
+type Action = 'EDIT_DEFAULT_ADDRESS'; 
+export function Mutation_address (action : Action) {
+  const queryClient = useQueryClient();
+  const {mutate, ... rest} = useMutation({
+    mutationFn : async (dataClient) => {
+      switch (action) {
+        case 'EDIT_DEFAULT_ADDRESS' : 
+        return  await set_default_address(dataClient);
+        default : return;
+      }
+    },
+    onSuccess : () => {
+      queryClient.invalidateQueries({
+        queryKey : ["AUTH_KEY"]
+      })
+    },
+    onError : (error) => {
+      return error
+    }
+  })
+  return {mutate, ...rest}
+}
