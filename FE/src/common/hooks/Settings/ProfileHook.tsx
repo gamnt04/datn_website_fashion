@@ -19,7 +19,7 @@ const ProfileHook = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading, isPending, isError, error } = useQuery({
-    queryKey: ["user", userId],
+    queryKey: ["AUTH_KEY", userId],
     queryFn: async () => {
       const { data } = await instance.get(`/auth/${userId}`);
       if (data.birthDate) {
@@ -44,7 +44,7 @@ const ProfileHook = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["user"],
+        queryKey: ["AUTH_KEY"],
       });
       messageApi.open({
         type: "success",

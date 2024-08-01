@@ -3,9 +3,12 @@ import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin } from "antd";
-import { LoadingOutlined, } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { Add_Address, List_Address } from "../../../components/common/Client/_component/Address";
+import {
+  Add_Address,
+  List_Address,
+} from "../../../components/common/Client/_component/Address";
 import { Address } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
 
@@ -16,27 +19,31 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-  const [selectedAddress, setSelectedAddress]: any = useState(null)
+  const [selectedAddress, setSelectedAddress]: any = useState(null);
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder } = Pay_Mutation();
-  const data_sessionStorage = sessionStorage.getItem('item_order');
+  const data_sessionStorage = sessionStorage.getItem("item_order");
   let data: any;
-    if (data_sessionStorage) {
-      data = JSON.parse(data_sessionStorage);
-    }
-    else {
-      routing('/')
-    }
+  if (data_sessionStorage) {
+    data = JSON.parse(data_sessionStorage);
+  } else {
+    routing("/");
+  }
   useEffect(() => {
     if (auth && auth.address) {
-      const defaultAddress = auth.address.find((item: any) => item.fullName === "admin");
+      const defaultAddress = auth.address.find(
+        (item: any) => item.fullName === "admin"
+      );
       const address = selectedAddress || defaultAddress;
       if (address) {
         setSelectedAddress(address);
         setValue("userName", address.fullName);
         setValue("phone", address.phoneNumber);
         setValue("email", auth.email);
-        setValue("address", `${address.addressType} - ${address.addressDetails}`);
+        setValue(
+          "address",
+          `${address.addressType} - ${address.addressDetails}`
+        );
       }
     }
   }, [auth, selectedAddress, setValue]);
@@ -54,14 +61,14 @@ const Pay = () => {
     setIsOpen(false);
   };
 
-  // add order 
+  // add order
   function onAddOrder(data_form: any) {
     const item_order = {
       userId: userId,
       items: data?.data_order,
       customerInfo: data_form,
-      totalPrice: data?.totalPrice
-    }
+      totalPrice: data?.totalPrice,
+    };
     onSubmit(item_order);
   }
 
@@ -97,7 +104,9 @@ const Pay = () => {
                     <h1 className="font-bold">{selectedAddress.fullName}</h1>
                     <p className="font-bold">{selectedAddress.phoneNumber}</p>
                     <p>
-                      {selectedAddress.addressType + " - " + selectedAddress.addressDetails}
+                      {selectedAddress.addressDetails +
+                        " - " +
+                        selectedAddress.address}
                     </p>
                   </div>
                 ) : (
@@ -108,7 +117,7 @@ const Pay = () => {
                           <h1 className="font-bold">{item?.fullName}</h1>
                           <p className="font-bold">{item?.phoneNumber}</p>
                           <p>
-                            {item?.addressType + " - " + item?.addressDetails}
+                            {item?.addressDetails + " - " + item?.address}
                           </p>
                         </div>
                       )
@@ -169,7 +178,7 @@ const Pay = () => {
                       <td>{item?.quantity}</td>
                       <td>
                         <p className="font-bold">
-                          {(item?.total_price_item)?.toLocaleString("vi", {
+                          {item?.total_price_item?.toLocaleString("vi", {
                             style: "currency",
                             currency: "VND",
                           })}
@@ -262,7 +271,12 @@ const Pay = () => {
                                     </div> */}
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng thanh toán</p>
-                    <p className="text-xl font-bold text-black">{(data?.totalPrice)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                    <p className="text-xl font-bold text-black">
+                      {data?.totalPrice?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -280,11 +294,10 @@ const Pay = () => {
               </div>
             </div>
           </form>
-          {address && (
-            <Add_Address handleAddress={handleAddress}></Add_Address>
-          )}
+          {address && <Add_Address handleAddress={handleAddress}></Add_Address>}
           {isOpen && (
-            <List_Address auth={auth}
+            <List_Address
+              auth={auth}
               handleTAdd={handleTAdd}
               handleAddressSelect={handleAddressSelect}
               handleAddress={handleAddress}
