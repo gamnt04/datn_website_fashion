@@ -212,28 +212,23 @@ export const isTokenBlacklisted = async (token) => {
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
-  console.log(newAddress);
   if (
     !newAddress ||
     !newAddress.fullName ||
     !newAddress.phoneNumber ||
     !newAddress.addressDetails ||
-    !newAddress.addressType
+    !newAddress.address
   ) {
     return res
       .status(400)
       .json({ error: "Thông tin địa chỉ không được để trống" });
   }
-  // Tìm người dùng theo userId
   const user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ error: "Người dùng không tồn tại" });
   }
-  // Thêm địa chỉ vào mảng addresses của người dùng
   user.address.push(newAddress);
-  // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
   await user.save();
-
   return res.status(200).json({ message: "Đã thêm địa chỉ thành công", user });
 };
 
@@ -266,13 +261,12 @@ export const get_address = async (req, res) => {
 
 export const updateUserAddress = async (req, res) => {
   const userId = req.params.userId;
-  const addressId = req.params.addressId;
-
-  const updatedAddress = req.body;
+  const { addressId, updatedAddress } = req.body;
 
   try {
     // Tìm người dùng trong CSDL bằng userId
     const user = await User.findById(userId);
+    console.log(user);
 
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
@@ -281,7 +275,10 @@ export const updateUserAddress = async (req, res) => {
       });
     }
 
-    let addressToUpdate = user.address.id(addressId);
+    // Tìm địa chỉ cần cập nhật
+    let addressToUpdate = user.address.find(
+      (address) => address._id.toString() === addressId
+    );
 
     if (!addressToUpdate) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -290,14 +287,27 @@ export const updateUserAddress = async (req, res) => {
     }
 
     // Cập nhật thông tin địa chỉ mới
-    addressToUpdate.set(updatedAddress);
-    console.log();
+    Object.assign(addressToUpdate, updatedAddress);
 
-    await user.save(updatedAddress);
+    // Kiểm tra nếu chỉ còn một địa chỉ duy nhất
+    if (user.address.length === 1 && !addressToUpdate.checked) {
+      addressToUpdate.checked = true;
+    }
+
+    // Nếu địa chỉ được đánh dấu là mặc định, đặt tất cả các địa chỉ khác thành không mặc định
+    if (updatedAddress.checked) {
+      user.address.forEach((address) => {
+        if (address._id.toString() !== addressId) {
+          address.checked = false;
+        }
+      });
+    }
+
+    // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
+    await user.save();
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-
       address: addressToUpdate,
     });
   } catch (error) {
@@ -307,7 +317,6 @@ export const updateUserAddress = async (req, res) => {
     });
   }
 };
-
 export const delete_address = async (req, res) => {
   const { userId, addressId } = req.params; // Lấy userId và addressId từ params
 
