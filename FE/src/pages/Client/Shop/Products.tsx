@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilteredProducts";
 import Products from "../../../components/common/Items/Products";
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import List_item from "../../../components/common/Client/_component/List_item";
+// import List_item from "../../../components/common/Client/_component/List_item";
 
 const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
   selectedCategoryId,
@@ -41,10 +41,10 @@ const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
   };
 
 
-  const propData = {
-    data: data,
-    style: 'lg:grid-cols-4 md:grid-cols-3'
-  }
+  // const propData = {
+  //   data: data,
+  //   style: 'lg:grid-cols-4 md:grid-cols-3'
+  // }
 
   return (
     <div className="py-10">
@@ -69,21 +69,21 @@ const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
                 ))}
               </div>
               <div className="flex justify-center mt-16">
-                <div className="flex items-center mx-3 border border-gray-600 w-[40px] h-[40px] grid place-items-center duration-300 cursor-pointer">
-                  <button
+                <div className="flex gap-3 items-center mx-3 place-items-center duration-300 cursor-pointer">
+                  <Button
                     onClick={handlePrevPage}
-                    className="opacity-50 hover:opacity-100"
+                    className="opacity-50 hover:opacity-100 w-12 h-12 border"
                     disabled={page === 1}
                   >
                     &#10094;
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleNextPage}
-                    className="opacity-50 hover:opacity-100"
+                    className="opacity-50 hover:opacity-100 w-12 h-12 border"
                     disabled={!hasMore}
                   >
                     &#10095;
-                  </button>
+                  </Button>
                 </div>
               </div>
               {!hasMore && loadCount >= 2 && (

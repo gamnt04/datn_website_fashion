@@ -34,7 +34,7 @@ const Address = () => {
     },
   });
 
-  const handleChecked = (id) => {
+  const handleChecked = (id: any) => {
     setDefaultAddress(id); // Cập nhật địa chỉ mặc định thông qua API
 
     // Cập nhật state của địa chỉ cục bộ
@@ -48,7 +48,7 @@ const Address = () => {
   };
 
   const handleAddress = () => {
-    setIsOpen(!isOpen);
+    setAddress(!address);
     if (address) setAddress(false);
   };
 
@@ -67,20 +67,20 @@ const Address = () => {
       });
     },
   });
-
+  function handle_add_default_address(id_address: string) {
+    console.log(id_address);
+  }
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
 
-  function handle_add_default_address(id_address: string) {
-    console.log(id_address);
-  }
+
   return (
     <>
       <div>
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h1>Địa chỉ của tôi</h1>
-          <button className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm">
+          <button onClick={handleAddress} className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -95,7 +95,7 @@ const Address = () => {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            <span className="hidden lg:block" onClick={handleAddress}>
+            <span className="hidden lg:block">
               Thêm địa chỉ mới
             </span>
           </button>
@@ -114,9 +114,9 @@ const Address = () => {
                   <span className="text-gray-400">{address?.phoneNumber}</span>
                 </h1>
                 <div className=" flex  text-gray-400">
-                  <span>{address.addressDetails}</span>
+                  <span>{address?.addressDetails}</span>
                   <span>-</span>
-                  <span>{address.address}</span>
+                  <span>{address?.address}</span>
                 </div>
                 {address && address?.checked ? (
                   <div className="flex gap-3 mt-3">
@@ -147,7 +147,7 @@ const Address = () => {
                   >
                     Thiết lập mặc định
                   </Button>
-                </div>
+                </div >
                 <div className="block lg:hidden">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -164,11 +164,14 @@ const Address = () => {
                     />
                   </svg>
                 </div>
-              </div>
-            </div>
+              </div >
+            </div >
           ))}
-        </div>
-      </div>
+        </div >
+        {address && (
+          <Add_Address handleAddress={handleAddress}></Add_Address>
+        )}
+      </div >
     </>
   );
 };

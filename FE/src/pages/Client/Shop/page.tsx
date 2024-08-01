@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import useCategories from "../../../common/hooks/Category/useCategoryQuery";
-import Get_in_touch from "../(Home)/Get_in_touch";
+// import Get_in_touch from "../(Home)/Get_in_touch";
 
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
@@ -26,13 +26,11 @@ const IndexShops = () => {
           categories={categories}
           onCategorySelect={handleCategorySelect}
         />
-
         <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
           <Products_Shop selectedCategoryId={selectedCategoryId} />
-
         </div>
       </div>
-      <Get_in_touch />
+      {/* <Get_in_touch /> */}
     </div>
   );
 };

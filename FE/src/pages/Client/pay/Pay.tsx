@@ -104,9 +104,9 @@ const Pay = () => {
                     <h1 className="font-bold">{selectedAddress.fullName}</h1>
                     <p className="font-bold">{selectedAddress.phoneNumber}</p>
                     <p>
-                      {selectedAddress.addressType +
+                      {selectedAddress.addressDetails +
                         " - " +
-                        selectedAddress.addressDetails}
+                        selectedAddress.address}
                     </p>
                   </div>
                 ) : (
@@ -117,7 +117,7 @@ const Pay = () => {
                           <h1 className="font-bold">{item?.fullName}</h1>
                           <p className="font-bold">{item?.phoneNumber}</p>
                           <p>
-                            {item?.addressType + " - " + item?.addressDetails}
+                            {item?.addressDetails + " - " + item?.address}
                           </p>
                         </div>
                       )

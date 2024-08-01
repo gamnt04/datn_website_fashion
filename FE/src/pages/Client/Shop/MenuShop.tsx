@@ -11,7 +11,7 @@ const MenuShop: React.FC<{
   onCategorySelect: (id: string | null) => void;
 }> = ({ categories = [], onCategorySelect }) => {
   return (
-    <div className="hidden lg:block w-full h-auto flex flex-col my-10 shadow-xl rounded overflow-hidden">
+    <div className="hidden lg:block w-full h-auto flex flex-col my-10  rounded overflow-hidden">
       <CategoryFilter
         categories={categories}
         onCategorySelect={onCategorySelect}
