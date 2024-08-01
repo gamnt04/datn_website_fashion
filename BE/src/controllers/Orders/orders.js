@@ -1,13 +1,44 @@
 import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
+import Attributes from '../../models/attribute/attribute'
+import Products from "../../models/Items/Products";
 export const createOrder = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, items, customerInfo } = req.body;
   try {
-    const order = await Order.create(req.body);
     const dataCart = await Cart.findOne({ userId }).populate("products");
     if (!dataCart) {
       return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
+    }
+
+    for (let i of items) {
+      if (i.productId.attributes) {
+        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        for (let j of data_attr) {
+          for (let k of j.values) {
+            if (k.color == i.color_item) {
+              for (let x of k.size) {
+                if (x.name_size) {
+                  if (x.name_size == i.name_size) {
+                    x.stock_attribute = x.stock_attribute - i.quantity;
+                  }
+                }
+                else {
+                  x.stock_attribute = x.stock_attribute - i.quantity;
+                }
+              }
+            }
+          }
+          await j.save();
+        }
+      }
+      else {
+        const data_items = await Products.find({ _id: i.productId._id });
+        for (let a of data_items) {
+          a.stock_product = a.stock_product - i.quantity;
+          await a.save();
+        }
+      }
     }
     dataCart.products = dataCart.products.filter((i) => {
       return !req.body.items.some((j) => {
@@ -20,6 +51,7 @@ export const createOrder = async (req, res) => {
       });
     });
     await dataCart.save()
+    const order = await Order.create(req.body);
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
     console.error("Error:", error);

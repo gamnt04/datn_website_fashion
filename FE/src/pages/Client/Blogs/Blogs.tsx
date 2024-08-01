@@ -1,26 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Get_in_touch from '../(Home)/Get_in_touch';
-import { Blog } from '../../../common/interfaces/Blog';
+import { useQuery } from '@tanstack/react-query';
+import instance from '../../../configs/axios';
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await axios.get('http://localhost:2004/api/v1/blogs'); // Thay thế bằng endpoint API thực của bạn
-        setBlogs(response.data);
-      } catch (error) {
-        console.error('Error fetching blogs:', error);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
-
-  const publishedBlogs = blogs.filter(blog => blog.published);
-
+  const { data } = useQuery({
+    queryKey: ['BLOGS'],
+    queryFn: async () => {
+      const { data } = await instance.get('/blogs');
+      return data
+    }
+  }
+  )
   return (
     <div className="lg:mt-[40px] mt-[60px]">
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
@@ -30,7 +20,7 @@ const Blogs = () => {
         <h1 className="text-[30px] font-bold">Tin tức nổi bật</h1>
       </div>
       <div className="container mx-auto grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
-        {publishedBlogs.map(blog => (
+        {data?.map((blog: any) => (
           <div key={blog._id} className="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
             <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden">
               <img
@@ -61,7 +51,7 @@ const Blogs = () => {
                 {blog.content.substring(0, 100)}... {/* Hiển thị 100 ký tự đầu tiên */}
               </p>
               <div className="text-center mt-4">
-                <a 
+                <a
                   href={`/blogs/${blog._id}`}
                   className="text-blue-500 hover:text-blue-700 font-semibold"
                 >
@@ -72,7 +62,6 @@ const Blogs = () => {
           </div>
         ))}
       </div>
-      <Get_in_touch />
     </div>
   );
 };
