@@ -3,11 +3,19 @@ import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
 import Attributes from '../../models/attribute/attribute'
 import Products from "../../models/Items/Products";
+import SendMail from "../SendMail/SendMail";
 export const createOrder = async (req, res) => {
-  const { userId, items, customerInfo } = req.body;
+  const { userId, items, customerInfo, email, totalPrice } = req.body;
+
+  // Kiểm tra các giá trị của customerInfo
+  if (!customerInfo.email || !customerInfo.phone || !customerInfo.userName) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: "Thông tin khách hàng không đầy đủ." });
+  }
+
   try {
     const dataCart = await Cart.findOne({ userId }).populate("products");
     if (!dataCart) {
+      console.error("Cart not found for userId:", userId);
       return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
     }
 
@@ -22,8 +30,7 @@ export const createOrder = async (req, res) => {
                   if (x.name_size == i.name_size) {
                     x.stock_attribute = x.stock_attribute - i.quantity;
                   }
-                }
-                else {
+                } else {
                   x.stock_attribute = x.stock_attribute - i.quantity;
                 }
               }
@@ -31,8 +38,7 @@ export const createOrder = async (req, res) => {
           }
           await j.save();
         }
-      }
-      else {
+      } else {
         const data_items = await Products.find({ _id: i.productId._id });
         for (let a of data_items) {
           a.stock_product = a.stock_product - i.quantity;
@@ -40,6 +46,7 @@ export const createOrder = async (req, res) => {
         }
       }
     }
+
     dataCart.products = dataCart.products.filter((i) => {
       return !req.body.items.some((j) => {
         if (i.productId._id.toString() === j.productId._id.toString()) {
@@ -50,8 +57,23 @@ export const createOrder = async (req, res) => {
         return false;
       });
     });
-    await dataCart.save()
-    const order = await Order.create(req.body);
+    await dataCart.save();
+
+    const order = new Order({
+      userId,
+      items,
+      customerInfo: {
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        userName: customerInfo.userName,
+        address: `${customerInfo.address || ''} - ${customerInfo.addressDetail || ''}`, // Concatenate address and addressDetail
+      },
+      totalPrice,
+    });
+
+    await order.save();
+    await SendMail(email, order);
+
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
     console.error("Error:", error);
