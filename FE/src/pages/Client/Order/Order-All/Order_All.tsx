@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import Canceled from '../Canceled/Canceled';
 import Complete from '../Complete/Complete';
-import RefundRetunr from '../RefundRetunr/RefundRetunr';
 import WaitingForDelivery from '../WaitingForDelivery/WaitingForDelivery';
 import Waitforconfirmation from '../Waitforconfirmation/Waitforconfirmation';
 import WaitingForGoods from '../WaitingForGoods/WaitingForGoods';
@@ -28,13 +27,12 @@ const Order_All = () => {
         'Đang Vận Chuyển': fiterOrrder('3')?.length,
         'Hoàn Thành': fiterOrrder('4')?.length,
         'Đã Hủy': fiterOrrder('5')?.length,
-        'Trả Hàng / Hoàn Tiền': 0,
     };
 
     return (
         <>
             <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs ">
-                {['Chờ Xác Nhận', 'Đang Chuẩn Bị Hàng', 'Đang Vận Chuyển', 'Hoàn Thành', 'Đã Hủy', 'Trả Hàng / Hoàn Tiền'].map((menu) => (
+                {['Chờ Xác Nhận', 'Đang Chuẩn Bị Hàng', 'Đang Vận Chuyển', 'Hoàn Thành', 'Đã Hủy'].map((menu) => (
                     <li key={menu} className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400
                         ${activeMenu === menu ? 'border-b-2 border-yellow-400' : ''}`}
                         onClick={() => handleMenuClick(menu)}
@@ -70,7 +68,7 @@ const Order_All = () => {
                 {activeMenu === 'Đang Vận Chuyển' && <WaitingForDelivery dataProps={fiterOrrder('3')} />}
                 {activeMenu === 'Đã Hủy' && <Canceled dataProps={fiterOrrder('5')} />}
                 {activeMenu === 'Hoàn Thành' && <Complete dataProps={fiterOrrder('4')} />}
-                {activeMenu === 'Trả Hàng / Hoàn Tiền' && <RefundRetunr />}
+                {/* {activeMenu === 'Trả Hàng / Hoàn Tiền' && <RefundRetunr />} */}
             </div>
         </>
     )

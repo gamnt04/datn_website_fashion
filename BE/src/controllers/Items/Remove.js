@@ -4,12 +4,7 @@ import { StatusCodes } from "http-status-codes";
 
 export const deleteProductById = async (req, res) => {
   try {
-    const product = await Products.delete({ _id: req.params.id });
-    if (!product) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy sản phẩm để xóa" });
-    }
+    await Products.delete({ _id: req.params.id });
     return res
       .status(StatusCodes.OK)
       .json({ message: "Đã xóa sản phẩm thành công" });

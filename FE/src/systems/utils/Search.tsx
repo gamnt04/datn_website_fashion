@@ -25,8 +25,10 @@ const useSearch = (initialTerm = "", debounceDelay = 300) => {
     }
 
     try {
-      const response = await instance.get("/products", {
+
+      const response = await instance.get("/products_all", {
         params: { _search: term }, // Gửi từ khóa tìm kiếm
+
       });
       setResults(response.data.data.docs);
       setShowResults(response.data.data.docs.length > 0);
