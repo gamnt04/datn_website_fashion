@@ -350,16 +350,13 @@ export const delete_address = async (req, res) => {
   }
 };
 
-// src/controllers/auth.js (updateUser function)
 export const updateUser = async (req, res) => {
-  const userId = req.params.userId; // Lấy userId từ params
-  const updatedData = req.body; // Dữ liệu cập nhật từ request body
+  const userId = req.params.userId;
+  const updatedData = req.body;
 
   try {
-    // Tìm người dùng trong CSDL bằng userId và cập nhật dữ liệu mới
-    const user = await User.findByIdAndUpdate(userId, updatedData, {
-      new: true,
-    });
+    // Tìm người dùng hiện tại
+    const user = await User.findById(userId);
 
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
@@ -368,12 +365,31 @@ export const updateUser = async (req, res) => {
         .json({ message: "Không tìm thấy người dùng để cập nhật" });
     }
 
+    const updatedFields = [];
+    for (const key in updatedData) {
+      if (user[key] !== updatedData[key]) {
+        updatedFields.push({
+          field: key,
+          value: updatedData[key], // Thêm trường value để lưu giá trị cập nhật
+          time: new Date(),
+        });
+        user[key] = updatedData[key];
+      }
+    }
+
+    // Thêm thông tin cập nhật vào mảng updatedFields
+    user.updatedFields.push(...updatedFields);
+
+    // Lưu người dùng đã cập nhật
+    await user.save();
+
     // Trả về thông báo thành công và thông tin người dùng đã cập nhật
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Cập nhật người dùng thành công", user });
+    return res.status(StatusCodes.OK).json({
+      message: "Cập nhật người dùng thành công",
+      updatedFields,
+      user,
+    });
   } catch (error) {
-    // Bắt lỗi nếu có và trả về thông báo lỗi
     console.error("Lỗi khi cập nhật người dùng:", error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
