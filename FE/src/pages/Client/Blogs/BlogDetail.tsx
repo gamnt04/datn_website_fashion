@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -36,17 +36,17 @@ const BlogDetail = () => {
       <p className="text-sm text-gray-600 mb-6 text-center">
         {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
       </p>
-      
+
       <div className="prose max-w-none mx-auto text-justify">
         {contentParts.map((part, index) => (
           <div key={index}>
             <p className="mb-4">{part}</p>
             {index % 6 === 1 && (
               <div className="flex justify-center mb-6">
-                <img 
-                  src={blog.imageUrl} 
-                  alt={blog.title} 
-                  className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain" 
+                <img
+                  src={blog.imageUrl}
+                  alt={blog.title}
+                  className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain"
                 />
               </div>
             )}
