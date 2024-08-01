@@ -35,6 +35,7 @@ export const signupSchema = Joi.object({
     "string.uri": "Trường Avatar phải là đường dẫn hợp lệ",
   }),
 });
+
 export const signInpSchema = Joi.object({
   email: Joi.string().email().required().messages({
     "any.required": "Trường email bắt buộc phải nhập",
