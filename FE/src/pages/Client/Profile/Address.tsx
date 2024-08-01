@@ -3,25 +3,33 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
 import { Button } from "antd";
+import { useState } from "react";
+import { Add_Address } from "../../../components/common/Client/_component/Address";
 
 const Address = () => {
   const { isLoading, isPending, isError, error } = ProfileHook();
+  const [address, setAddress] = useState(false);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const { data } = List_Auth(userId);
+
+
+  function handle_add_default_address(id_address: string) {
+    console.log(id_address)
+  }
+  const handleAddress = () => {
+    setAddress(!address);
+    if (address) setAddress(false);
+  };
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
-
-  function handle_add_default_address (id_address : string){
-    console.log(id_address)
-  }
   return (
-    <>  
+    <>
       <div>
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h1>Địa chỉ của tôi</h1>
-          <button className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm">
+          <button onClick={handleAddress} className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -65,7 +73,7 @@ const Address = () => {
                     <a href="#">Cập nhật</a>
                     <button>Xóa</button>
                   </div>
-                 <Button onClick={() => handle_add_default_address(address?._id)}>Thiết lập mặc định</Button>
+                  <Button onClick={() => handle_add_default_address(address?._id)}>Thiết lập mặc định</Button>
                 </div>
                 <div className="block lg:hidden">
                   <svg
@@ -87,6 +95,9 @@ const Address = () => {
             </div>
           ))}
         </div>
+        {address && (
+          <Add_Address handleAddress={handleAddress}></Add_Address>
+        )}
       </div>
     </>
   );

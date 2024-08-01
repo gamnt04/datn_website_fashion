@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton, Spin, Table } from "antd";
+import { Image, Skeleton, Spin, Table } from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import SearchComponent from './Search';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -29,7 +29,7 @@ const List_Auth = () => {
             dataIndex: 'avatar',
             key: 'avatar',
             render: (_: any, auth: any) => (
-                isLoading ? <Skeleton.Avatar active size="large" shape="square" /> : <img src={auth.avatar} alt="" className="w-16 h-16" />
+                isLoading ? <Skeleton.Avatar active size="large" shape="square" /> : <Image src={auth.avatar} alt="" width={70} />
             ),
         },
         {
