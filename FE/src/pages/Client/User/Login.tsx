@@ -13,7 +13,7 @@ const Login = () => {
     isPending,
     isError,
     error,
-    status_api
+    status_api,
   } = useSignIn();
   type FieldType = {
     email?: string;
@@ -24,7 +24,7 @@ const Login = () => {
   if (isError) return <div>{error.message}</div>;
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    const email: string = values.email || ""; 
+    const email: string = values.email || "";
     const password: string = values.password || "";
     const { error } = signInSchema.validate(values, {
       abortEarly: false,
@@ -93,7 +93,7 @@ const Login = () => {
                 </Form.Item>
 
                 <Form.Item<FieldType>
-                  label="Password"
+                  label="Mật khẩu"
                   name="password"
                   validateStatus={formErrors.password ? "error" : ""}
                   help={formErrors.password}
@@ -119,9 +119,9 @@ const Login = () => {
                     </a>
                   </div>
                 </Form.Item> */}
-                {
-                  status_api && <span className="text-red-500">Sai thông tin tài khoản!</span> 
-                }
+                {status_api && (
+                  <span className="text-red-500">Sai thông tin tài khoản!</span>
+                )}
                 <Form.Item>
                   <Button
                     type="primary"
