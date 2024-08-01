@@ -49,7 +49,7 @@ const useSignUp = () => {
         if (error.response.status === 400) {
           toast.error("Email đã tồn tại. Vui lòng nhập lại thông tin!");
         } else {
-          toast.error("Đăng nhập thất bại.Vui lòng nhập lại thông tin");
+          toast.error("Đăng ký thất bại.Vui lòng nhập lại thông tin");
         }
       } else {
         toast.error("Đã xảy ra lỗi kết nối.");
@@ -69,6 +69,7 @@ const useSignUp = () => {
     isPending,
     isError,
     error,
+    mutate,
   };
 };
 
