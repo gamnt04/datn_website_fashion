@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-
+const updatedFieldSchema = new mongoose.Schema({
+  field: { type: String },
+  time: { type: Date, default: Date.now },
+  value: { type: String },
+});
 const userSchema = new Schema(
   {
     email: {
@@ -49,10 +53,8 @@ const userSchema = new Schema(
 
     birthDate: {
       type: String,
-      // get: function (value) {
-      //   return value ? value.toISOString().split('T')[0] : undefined;
-      // },
     },
+    updatedFields: { type: [updatedFieldSchema], default: [] },
   },
   { timestamps: true, versionKey: false }
 );

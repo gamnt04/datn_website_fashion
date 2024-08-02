@@ -17,6 +17,7 @@ const categorySchema = mongoose.Schema(
       slug: "name_category",
       unique: true,
     },
+    published: { type: Boolean, default: false },
   },
 
   {

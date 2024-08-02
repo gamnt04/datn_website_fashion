@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, Form, Input, Upload, Switch, message } from "antd";
 import { BackwardFilled, UploadOutlined } from "@ant-design/icons";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { uploadFileCloudinary } from "../../../systems/utils/uploadImage";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 type FieldType = {
   title?: string;
@@ -15,26 +15,41 @@ type FieldType = {
   published?: boolean;
 };
 
-const BlogAdd = () => {
+const EditBlog = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [fileList, setFileList] = useState<File[]>([]);
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const { id } = useParams();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['blogs', id],
+    queryFn: async () => {
+      try {
+        return await instance.get(`/blogs/${id}`);
+      } catch (error) {
+        throw new Error("Gọi sản phẩm lỗi");
+      }
+    }
+  });
+
   const { mutate } = useMutation({
     mutationFn: async (blogs: FieldType) => {
       try {
-        return await instance.post(`/blogs/add_blog`, blogs);
+        return await instance.put(`/blogs/${id}`, blogs);
       } catch (error: any) {
         throw new Error(error.response.data.message);
       }
     },
     onSuccess: () => {
-      messageApi.success("Thêm blog thành công!");
+      messageApi.success("Chỉnh sửa blog thành công!");
       setImagePreview(null);
       setFileList([]);
-      form.resetFields();
-      navigate("/admin/blogs");
+      setIsFormVisible(false);
+      queryClient.invalidateQueries({ queryKey: ['blogs', id] });
     },
     onError: (error: any) => {
       messageApi.error(`Lỗi: ${error.response?.data?.message || "Vui lòng thử lại sau."}`);
@@ -44,8 +59,8 @@ const BlogAdd = () => {
   const onFinish = async (values: FieldType) => {
     if (fileList.length > 0) {
       try {
-        const imageUrl = await uploadFileCloudinary(fileList[0].originFileObj);
-        values.image = imageUrl;
+        const imageUrls = await uploadFileCloudinary(fileList[0]);
+        values.image = imageUrls[0];
       } catch (error) {
         messageApi.error("Lỗi tải lên ảnh. Vui lòng thử lại.");
         return;
@@ -65,30 +80,29 @@ const BlogAdd = () => {
       return file;
     });
     setFileList(newFileList);
-    if (newFileList.length > 0) {
-      setImagePreview(newFileList[0].url);
-    } else {
-      setImagePreview(null);
-    }
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error</p>;
 
   return (
     <div className="mt-10">
       {contextHolder}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">Thêm bài viết</h1>
-        <Button type="primary">
-          <Link to="/admin/blogs">
-            <BackwardFilled /> Quay lại
-          </Link>
-        </Button>
-      </div>
+      <div className="flex item-center justify-between">
+            <h1 className="text-3xl font-semibold">Chỉnh sửa bài viết</h1>
+          <Button type="primary">
+            <Link to="/admin/blogs">
+            <BackwardFilled />Quay lại
+            </Link>
+          </Button>
+        </div>
       <div className="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-md mt-10">
         <Form
           form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
+          initialValues={{ ...data?.data }}
           onFinish={onFinish}
           autoComplete="off"
           className="mt-4"
@@ -146,7 +160,6 @@ const BlogAdd = () => {
               </Button>
             )}
           </Form.Item>
-          
 
           <Form.Item name="published" label="Xuất bản" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
             <Switch />
@@ -154,7 +167,7 @@ const BlogAdd = () => {
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
-              Thêm Blog
+              Cập nhật Blog
             </Button>
             <Button type="default" style={{ marginLeft: 8 }} onClick={() => navigate(-1)}>
               Hủy bỏ
@@ -166,4 +179,4 @@ const BlogAdd = () => {
   );
 };
 
-export default BlogAdd;
+export default EditBlog;

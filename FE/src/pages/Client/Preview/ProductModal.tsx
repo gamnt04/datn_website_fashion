@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
+import { useNavigate } from "react-router-dom";
 
 interface ProductModalProps {
   product: string | IProduct | null;
@@ -11,9 +12,14 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [sizeStock, setSizeStock] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // console.log("product", product);
+    // Reset states when product changes
+    setSelectedColor(null);
+    setSelectedSize(null);
+    setQuantity(1);
+    setSizeStock(0);
   }, [product]);
 
   if (!product) return null;
@@ -53,6 +59,39 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
 
   const decrementQuantity = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+  };
+
+  const nextOrder = () => {
+    if (!selectedColor || !selectedSize) {
+      alert("Vui lòng chọn màu sắc và kích cỡ!");
+      return;
+    }
+
+    const price = product.product.price_product || 0;
+    const items_order = [
+      {
+        productId: product.product.id,
+        quantity: quantity,
+        price_item: price,
+        color_item: selectedColor,
+        name_size: selectedSize,
+        total_price_item: price * quantity,
+      },
+    ];
+
+    const account = JSON.parse(sessionStorage.getItem('account') || '{}');
+
+    const data_order = {
+      id_user: account?.id,
+      data_order: items_order,
+      totalPrice: price * quantity,
+      action: 'data_detail',
+    };
+
+    console.log('Order Data:', data_order); // Debugging log
+
+    sessionStorage.setItem('item_order', JSON.stringify(data_order));
+    navigate('/cart/pay');
   };
 
   return (
@@ -139,9 +178,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                           >
                             <div className="flex justify-between items-center">
                               <span>{size.name_size}</span>
-                              {/* <span className="ml-2 text-xs text-gray-500">
-                                Kho: {size.stock_attribute}
-                              </span> */}
                             </div>
                           </button>
                         ))}
@@ -165,13 +201,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                         onClick={incrementQuantity}
                       >
                         +
-                      </button>{selectedSize && (
-                      <span className="text-gray-700 ml-2">
-                        Còn lại: <b>{sizeStock}</b>
-                      </span>
-                    )}
+                      </button>
+                      {selectedSize && (
+                        <span className="text-gray-700 ml-2">
+                          Còn lại: <b>{sizeStock}</b>
+                        </span>
+                      )}
                     </div>
-                    
                   </div>
                 </div>
               </div>
@@ -185,7 +221,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
             >
               Đóng
             </button>
-            <button className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all">
+            <button
+              onClick={nextOrder}
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all"
+            >
               Mua ngay
             </button>
           </div>
@@ -196,5 +235,3 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
 };
 
 export default ProductModal;
-
-

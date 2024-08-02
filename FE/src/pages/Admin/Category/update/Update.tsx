@@ -7,6 +7,7 @@ import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { update } from "../../../../services/category";
 import { uploadImage } from "../../../../systems/utils/uploadImage";
+import { Form, Switch } from "antd";
 
 interface UpdateComponentProps {
   id?: string;
@@ -131,6 +132,9 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
                       <span>Vui lòng không được để trống</span>
                     )}
                   </p>
+                  <Form.Item name="published" label="Xuất bản" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+            <Switch />
+          </Form.Item>
                 </div>
               </div>
             </div>

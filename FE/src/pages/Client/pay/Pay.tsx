@@ -70,8 +70,10 @@ const Pay = () => {
       items: data?.data_order,
       customerInfo: data_form,
       totalPrice: data?.totalPrice,
+      email: user?.user?.email,
     };
     onSubmit(item_order);
+    
   }
   const dataSo = data?.data_order.map((order: any) => {
     return {
