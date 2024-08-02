@@ -27,15 +27,13 @@ const userSchema = new Schema(
       minlength: 3,
       maxlength: 30,
     },
-    address: [
-      {
-        fullName: { type: String },
-        phoneNumber: { type: String },
-        address: { type: String },
-        addressDetails: { type: String },
-        checked: { type: Boolean, default: false },
-      },
-    ],
+    address: {
+      fullName: { type: String },
+      phoneNumber: { type: String },
+      address: { type: String },
+      addressDetails: { type: String },
+      checked: { type: Boolean, default: false },
+    },
     phone: {
       type: String,
     },

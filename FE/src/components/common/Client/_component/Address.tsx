@@ -4,7 +4,7 @@ import {
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Checkbox,
@@ -16,6 +16,7 @@ import {
 } from "antd";
 import instance from "../../../../configs/axios";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
+import { useNavigate } from "react-router-dom";
 type FieldType = {
   userId: string;
   fullName: string;
@@ -69,9 +70,6 @@ export const Add_Address = ({ handleAddress }: any) => {
         <Form
           form={form}
           name="basic"
-          // labelCol={{ span: 8 }}
-          // wrapperCol={{ span: 16 }}
-          // style={{ maxWidth: 600 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           autoComplete="off"
@@ -156,135 +154,135 @@ export const Add_Address = ({ handleAddress }: any) => {
   );
 };
 
-// export const Update_Address = ({ handleAddress }: any) => {
-//   const [user] = useLocalStorage("user", {});
-//   const userId = user?.user?._id;
-//   const querryClient = useQueryClient();
-//   const [form] = Form.useForm();
-//   const [messageApi, contextHolder] = message.useMessage();
-//   const { mutate } = useMutation({
-//     mutationFn: async (formData) => {
-//       const { data } = await instance.post(`/auth/add_address`, formData);
-//       form.resetFields();
-//       return data;
-//     },
-//     onSuccess: () => {
-//       querryClient.invalidateQueries({
-//         queryKey: ["AUTH_KEY"],
-//       });
-//       messageApi.open({
-//         type: "success",
-//         content: "Thêm địa chỉ thành công",
-//       });
-//     },
-//     onError: () => {
-//       messageApi.open({
-//         type: "error",
-//         content: "Thêm địa chỉ thất bại!",
-//       });
-//     },
-//   });
-//   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-//     const data_form: any = {
-//       userId: userId,
-//       newAddress: values,
-//     };
-//     mutate(data_form);
-//   };
-//   return (
-//     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-//       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
-//         <h1 className="py-3 text-center font-medium">Địa chỉ mới</h1>
-//         {contextHolder}
-//         <Form
-//           form={form}
-//           name="basic"
-//           // labelCol={{ span: 8 }}
-//           // wrapperCol={{ span: 16 }}
-//           // style={{ maxWidth: 600 }}
-//           initialValues={{ remember: true }}
-//           onFinish={onFinish}
-//           autoComplete="off"
-//         >
-//           <Form.Item
-//             name="fullName"
-//             className="w-full my-3"
-//             rules={[
-//               { required: true, message: "Please input your full name!" },
-//             ]}
-//           >
-//             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
-//               placeholder="Họ và tên"
-//             />
-//           </Form.Item>
+export const Update_Address = ({ handleUpdateAddress }: any) => {
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const queryClient = useQueryClient();
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
 
-//           <Form.Item
-//             name="phoneNumber"
-//             className="w-full my-3"
-//             rules={[
-//               { required: true, message: "Please input your phone number!" },
-//             ]}
-//           >
-//             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
-//               placeholder="Số điện thoại"
-//             />
-//           </Form.Item>
+  // Lấy thông tin địa chỉ người dùng
+  const { data } = useQuery({
+    queryKey: ["AUTH_KEY", userId],
+    queryFn: async () => {
+      const { data } = await instance.get(`/auth/address/${userId}`);
+      return data;
+    },
+  });
 
-//           <Form.Item
-//             name="address"
-//             className="w-full my-3"
-//             rules={[
-//               { required: true, message: "Please input your address details!" },
-//             ]}
-//           >
-//             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
-//               placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
-//             />
-//           </Form.Item>
+  // Mutation để cập nhật địa chỉ
+  const { mutate } = useMutation({
+    mutationFn: async (formData) => {
+      const { data } = await instance.put(`/auth/address/${userId}`, {
+        updatedAddress: formData,
+      });
+      form.resetFields();
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["AUTH_KEY", userId],
+      });
+      messageApi.open({
+        type: "success",
+        content: "Chỉnh sửa địa chỉ thành công",
+      });
+    },
+    onError: () => {
+      messageApi.open({
+        type: "error",
+        content: "Chỉnh sửa địa chỉ thất bại!",
+      });
+    },
+  });
 
-//           <Form.Item
-//             name="addressDetails"
-//             className="w-full my-3"
-//             rules={[
-//               {
-//                 required: true,
-//                 message: "Please input your specific address!",
-//               },
-//             ]}
-//           >
-//             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
-//               placeholder="Địa chỉ cụ thể"
-//             />
-//           </Form.Item>
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    mutate(values);
+  };
 
-//           <Form.Item
-//             className="w-full my-3 flex items-center gap-3"
-//             name="checked"
-//             valuePropName="checked"
-//           >
-//             <Checkbox>Đặt làm mặc định</Checkbox>
-//           </Form.Item>
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+      <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
+        <h1 className="py-3 text-center font-medium">Địa chỉ mới</h1>
+        {contextHolder}
+        <Form
+          form={form}
+          name="basic"
+          initialValues={{ ...data?.address }}
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="fullName"
+            className="w-full my-3"
+            rules={[
+              { required: true, message: "Please input your full name!" },
+            ]}
+          >
+            <Input
+              className="w-full border px-2 py-2 rounded focus:ring-0"
+              placeholder="Họ và tên"
+            />
+          </Form.Item>
 
-//           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-//             <Button htmlType="submit" className="h-10 bg-black text-white">
-//               Hoàn Thành
-//             </Button>
-//           </Form.Item>
-//         </Form>
-//         <Button
-//           onClick={handleAddress}
-//           className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
-//         >
-//           <CloseOutlined />
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// };
+          <Form.Item
+            name="phoneNumber"
+            className="w-full my-3"
+            rules={[
+              { required: true, message: "Please input your phone number!" },
+            ]}
+          >
+            <Input
+              className="w-full border px-2 py-2 rounded focus:ring-0"
+              placeholder="Số điện thoại"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="address"
+            className="w-full my-3"
+            rules={[
+              { required: true, message: "Please input your address details!" },
+            ]}
+          >
+            <Input
+              className="w-full border px-2 py-2 rounded focus:ring-0"
+              placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="addressDetails"
+            className="w-full my-3"
+            rules={[
+              {
+                required: true,
+                message: "Please input your specific address!",
+              },
+            ]}
+          >
+            <Input
+              className="w-full border px-2 py-2 rounded focus:ring-0"
+              placeholder="Địa chỉ cụ thể"
+            />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button htmlType="submit" className="h-10 bg-black text-white">
+              Hoàn Thành
+            </Button>
+          </Form.Item>
+        </Form>
+        <Button
+          onClick={handleUpdateAddress}
+          className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
+        >
+          <CloseOutlined />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export const List_Address = ({
   auth,
@@ -320,7 +318,9 @@ export const List_Address = ({
                     </h1>
                     <p className="text-gray-400 py-2">{item.addressDetails}</p>
                     <p className="text-gray-400">{item.address}</p>
-                    {!item.checked === true ? ("") : (
+                    {!item.checked === true ? (
+                      ""
+                    ) : (
                       <div className="flex gap-3 mt-3">
                         <Button className="py-5">Mặc định</Button>
                       </div>
