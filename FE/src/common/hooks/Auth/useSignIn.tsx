@@ -32,18 +32,17 @@ const useSignIn = (userId?: string) => {
     mutationFn: async (formData: { email: string; password: string }) => {
       return await SignIn(formData);
     },
-    onSuccess: (res : any) => {
+    onSuccess: (res: any) => {
       console.log(res?.status);
       queryClient.invalidateQueries({
         queryKey: ["AUTH_KEY", userId],
       });
       if (res.status === 200) {
         toast.success("Đăng nhập thành công!", { autoClose: 500 });
-        setStatus_api(false)
+        setStatus_api(false);
         navigate("/");
-      }
-      else {
-        setStatus_api(true)
+      } else {
+        setStatus_api(true);
       }
     },
     onError: (res: AxiosError) => {
@@ -51,10 +50,10 @@ const useSignIn = (userId?: string) => {
         console.log(error);
         if (res.status === 404) {
           toast.error("Sai thông tin đăng nhập. Vui lòng đăng nhập lại!");
-          setStatus_api(true)
+          setStatus_api(true);
         } else {
           toast.error("Đăng nhập thất bại!");
-          setStatus_api(true)
+          setStatus_api(true);
         }
       } else {
         toast.error("Đã xảy ra lỗi kết nối.");
@@ -73,7 +72,7 @@ const useSignIn = (userId?: string) => {
     isPending,
     isError,
     error,
-    status_api
+    status_api,
   };
 };
 

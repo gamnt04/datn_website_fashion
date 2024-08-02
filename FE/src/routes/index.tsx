@@ -31,8 +31,9 @@ import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
 import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
-
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
+import EditBlog from "../pages/Admin/Blogs/BlogEdit";
+import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
 const RouterComponent = () => {
@@ -87,6 +88,8 @@ const RouterComponent = () => {
             />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="blogs" element={<BlogList />} />
+            <Route path="blogs/add_blog" element={<BlogAdd />} />
+            <Route path="blogs/:id" element={<EditBlog />} />
           </Route>
         </Routes>
         {/* <ToastContainer /> */}

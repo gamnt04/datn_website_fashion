@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, message, Popconfirm, Table, Pagination, Input } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, message, Popconfirm, Table, Pagination, Switch } from "antd";
 import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
@@ -13,8 +13,8 @@ const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
   const { data, isLoading } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [searchText, setSearchText] = React.useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dataSource, setDataSource] = useState<ICategory[]>([]);
   const pageSize = 4;
 
   const dataSource = Array.isArray(data)
@@ -24,7 +24,7 @@ const List_Category: React.FC = () => {
     }))
     : [];
 
-  const { mutate } = useMutation({
+  const { mutate: deleteCategory } = useMutation({
     mutationFn: async (id: ICategory) => {
       try {
         return await instance.delete(`/category/${id}`);
@@ -37,9 +37,7 @@ const List_Category: React.FC = () => {
         type: "success",
         content: "Xóa Danh mục thành công",
       });
-      queryClient.invalidateQueries({
-        queryKey: ["CATEGORY_KEY"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error) => {
       messageApi.open({
@@ -50,9 +48,28 @@ const List_Category: React.FC = () => {
     },
   });
 
-  const createFilters = (products: ICategory[]) => {
-    return products
-      .map((product: ICategory) => product.name_category)
+
+  const mutation = useMutation({
+    mutationFn: async (category: ICategory) => {
+      const response = await instance.put(`/category/${category._id}`, category);
+      return response.data;
+    },
+    onSuccess: () => {
+      messageApi.success("Cập nhật blog thành công");
+      queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
+    },
+    onError: (error: unknown) => {
+      console.error("Lỗi khi cập nhật blog:", error);
+      messageApi.error(`Cập nhật blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."}`);
+    }
+  });
+
+  const handleTogglePublished = (category: ICategory) => {
+    mutation.mutate({ ...category, published: !category.published });
+  };
+  const createFilters = (categories: ICategory[]) => {
+    return categories
+      .map((category: ICategory) => category.name_category)
       .filter(
         (value: string, index: number, self: string[]) =>
           self.indexOf(value) === index
@@ -91,6 +108,17 @@ const List_Category: React.FC = () => {
       ),
     },
     {
+      key: "published",
+      title: "Hiển thị",
+      dataIndex: "published",
+      render: (published: boolean, record: ICategory) => (
+        <Switch
+          checked={published}
+          onChange={() => handleTogglePublished(record)}
+        />
+      ),
+    },
+    {
       key: "createdAt",
       title: "Ngày Tạo",
       dataIndex: "createdAt",
@@ -109,7 +137,7 @@ const List_Category: React.FC = () => {
             <Popconfirm
               title="Xóa danh mục"
               description="Bạn có muốn xóa danh mục này không?"
-              onConfirm={() => mutate(category._id!)} // Use handleDelete to log the ID
+              onConfirm={() => deleteCategory(category._id!)}
               okText="Đồng ý"
               cancelText="Hủy bỏ"
             >
