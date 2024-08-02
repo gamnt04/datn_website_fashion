@@ -19,9 +19,9 @@ const List_Category: React.FC = () => {
 
   const dataSource = Array.isArray(data)
     ? data.map((category: ICategory) => ({
-        key: category._id,
-        ...category,
-      }))
+      key: category._id,
+      ...category,
+    }))
     : [];
 
   const { mutate } = useMutation({
@@ -78,7 +78,7 @@ const List_Category: React.FC = () => {
     {
       key: "image_category",
       title: "Ảnh Danh mục",
-      render: (text: any, record: ICategory) => (
+      render: (_: any, record: ICategory) => (
         <img
           src={
             typeof record.image_category === "string"

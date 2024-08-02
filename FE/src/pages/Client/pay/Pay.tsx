@@ -2,15 +2,16 @@ import { useForm } from "react-hook-form";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Spin } from "antd";
+import { Spin, Table } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import {
   Add_Address,
   List_Address,
 } from "../../../components/common/Client/_component/Address";
-import { Address } from "../../../components/common/Client/_component/Icons";
+import { Address, Chevron_right } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
+import { render } from "react-dom";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -32,7 +33,7 @@ const Pay = () => {
   useEffect(() => {
     if (auth && auth.address) {
       const defaultAddress = auth.address.find(
-        (item: any) => item.fullName === "admin"
+        (item: any) => item.checked === true
       );
       const address = selectedAddress || defaultAddress;
       if (address) {
@@ -42,11 +43,12 @@ const Pay = () => {
         setValue("email", auth.email);
         setValue(
           "address",
-          `${address.addressType} - ${address.addressDetails}`
+          ` ${address.addressDetails} - ${address.address}`
         );
       }
     }
   }, [auth, selectedAddress, setValue]);
+
   const handleTAdd = () => {
     setAddress(!address);
     if (isOpen) setIsOpen(false);
@@ -71,6 +73,75 @@ const Pay = () => {
     };
     onSubmit(item_order);
   }
+  const dataSo = data?.data_order.map((order: any) => {
+    return {
+      key: order.productId._id,
+      ...order
+    }
+  })
+  const columns = [
+    {
+      title: 'Sản phẩm',
+      dataIndex: 'image_product',
+      key: 'image_product',
+      render: (_: any, order: any) => (
+        <img src={order.productId.image_product} className="w-[70px] lg:w-[100px] lg:h-[100px]" alt="" />
+      ),
+    },
+    {
+      dataIndex: 'name_product',
+      key: 'name_product',
+      render: (_: any, order: any) => (
+        <div className="lg:flex lg:items-center gap-32">
+          <div>
+            <h1 className="font-bold text-sm lg:text-base">{order.productId.name_product}</h1>
+            <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
+              Đổi trả miễn phí 15 ngày
+            </p>
+            <div className="flex justify-between md:hidden mt-2">
+              <p className="text-sm lg:text-base">{order.productId.price_product.toLocaleString("vi", {
+                style: "currency",
+                currency: "VND",
+              })}</p>
+              <p className="text-sm lg:text-base">x {order?.quantity}</p>
+            </div>
+          </div>
+          <p className="font-bold w-28 p-0 text-xs lg:text-sm mt-2 lg:mt-0">
+            Loại: {order?.color_item} - {order?.name_size}
+          </p>
+        </div>
+      ),
+    },
+    {
+      dataIndex: 'price_product',
+      key: 'price_product',
+      render: (_: any, order: any) => (
+        <p className="hidden lg:block text-sm lg:text-base">{order.productId.price_product.toLocaleString("vi", {
+          style: "currency",
+          currency: "VND",
+        })}</p>
+      ),
+    },
+    {
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (_: any, order: any) => (
+        <p className="hidden lg:block text-sm lg:text-base"> x {order?.quantity}</p>
+      ),
+    },
+    {
+      dataIndex: 'total_price_item',
+      key: 'total_price_item',
+      render: (_: any, order: any) => (
+        <p className="font-bold hidden lg:block text-sm lg:text-base">
+          {order?.total_price_item?.toLocaleString("vi", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </p>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -93,17 +164,19 @@ const Pay = () => {
             </div>
           </div>
           <form onSubmit={handleSubmit(onAddOrder)}>
-            <div className="py-6 px-6 border rounded shadow-sm">
+            <div className="p-2 lg:py-6 lg:px-6 border rounded shadow-sm">
               <div className="flex gap-3">
                 <Address />
                 <p>Địa chỉ nhận hàng</p>
               </div>
-              <div className="flex gap-12">
+              <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
                 {selectedAddress ? (
-                  <div className="flex items-center gap-4">
-                    <h1 className="font-bold">{selectedAddress.fullName}</h1>
-                    <p className="font-bold">{selectedAddress.phoneNumber}</p>
-                    <p>
+                  <div className="lg:flex items-center gap-4 ">
+                    <div className="order-1 flex gap-6 py-2">
+                      <h1 className="font-bold">{selectedAddress.fullName}</h1>
+                      <p className="font-bold">{selectedAddress.phoneNumber}</p>
+                    </div>
+                    <p className="order-2">
                       {selectedAddress.addressDetails +
                         " - " +
                         selectedAddress.address}
@@ -112,7 +185,7 @@ const Pay = () => {
                 ) : (
                   auth?.address?.map(
                     (item: any, index: any) =>
-                      item.fullName === "admin" && (
+                      item.checked === true && (
                         <div key={index} className="flex items-center gap-4">
                           <h1 className="font-bold">{item?.fullName}</h1>
                           <p className="font-bold">{item?.phoneNumber}</p>
@@ -124,21 +197,27 @@ const Pay = () => {
                   )
                 )}
                 <div className="flex items-center gap-8">
-                  <div className="border py-2 px-4 rounded border-black">
-                    Mặc định
-                  </div>
+                  {!selectedAddress?.checked === true ? ('') : (
+                    <div className="border py-2 px-4 rounded border-black hidden lg:block">
+                      Mặc định
+                    </div>
+                  )}
                   <div
                     className="text-blue-400 underline cursor-pointer"
                     onClick={handleAddress}
                   >
-                    Thay đổi
+                    <span className="hidden lg:block">Thay đổi</span>
+                    <span className="md:hidden block">
+                      <Chevron_right />
+                    </span>
                   </div>
+
                 </div>
               </div>
             </div>
             <div className="border my-4 rounded shadow-sm">
-              <table className="w-full">
-                <thead className=" *:py-3 *:px-6 *:font-normal">
+              {/* <table className="w-full">
+                <thead className=" *:py-3 *:px-6 *:font-normal hidden lg:block ">
                   <th className="w-[800px] text-left">Sản phẩm</th>
                   <th>Đơn giá</th>
                   <th>Số lượng</th>
@@ -187,43 +266,8 @@ const Pay = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-              {/* <div className="p-6 flex justify-end gap-6 border-t">
-                <div className="mr-10">
-                  <p>Voucher:</p>
-                </div>
-                <div className="flex items-center gap-5">
-                  <p className="py-1 px-3 border-stone-200 border rounded-sm">
-                    -50K
-                  </p>
-                  <div className="text-blue-400 underline">
-                    Chọn Voucher Khác
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-between gap-16 border-t-2 border-b">
-                <div className="p-6">
-                  <label className="mr-2">Lời nhắn:</label>
-                  <input
-                    type="text"
-                    placeholder="Lưu ý cho người bán"
-                    className="border w-[300px] p-2 outline-none border-stone-200 rounded"
-                  />
-                </div>
-                <div className="flex gap-16 border-l-2 py-6 pl-24 pr-6">
-                  <p>Đơn vị vận chuyển:</p>
-                  <div>
-                    <div className="flex justify-between">
-                      <p>Nhanh</p>
-                      <div className="text-blue-400 underline">Thay đổi</div>
-                    </div>
-                    <span className="text-sm">
-                      Nhận hàng vào 9 Tháng 7 - 10 Tháng 7
-                    </span>
-                  </div>
-                  <p>₫32.800</p>
-                </div>
-              </div> */}
+              </table> */}
+              <Table columns={columns} dataSource={dataSo} pagination={false} />
               <div className="flex items-center justify-end gap-8 p-6">
                 {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                 <p className="text-xl font-bold text-black">
@@ -293,17 +337,20 @@ const Pay = () => {
                 </button>
               </div>
             </div>
-          </form>
-          {address && <Add_Address handleAddress={handleAddress}></Add_Address>}
-          {isOpen && (
-            <List_Address
-              auth={auth}
-              handleTAdd={handleTAdd}
-              handleAddressSelect={handleAddressSelect}
-              handleAddress={handleAddress}
-            ></List_Address>
-          )}
-        </div>
+          </form >
+          {address && <Add_Address handleAddress={handleAddress}></Add_Address>
+          }
+          {
+            isOpen && (
+              <List_Address
+                auth={auth}
+                handleTAdd={handleTAdd}
+                handleAddressSelect={handleAddressSelect}
+                handleAddress={handleAddress}
+              ></List_Address>
+            )
+          }
+        </div >
       )}
     </>
   );

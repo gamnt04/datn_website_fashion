@@ -320,9 +320,11 @@ export const List_Address = ({
                     </h1>
                     <p className="text-gray-400 py-2">{item.addressDetails}</p>
                     <p className="text-gray-400">{item.address}</p>
-                    <div className="flex gap-3 mt-3">
-                      <Button className="py-5">Mặc định</Button>
-                    </div>
+                    {!item.checked === true ? ("") : (
+                      <div className="flex gap-3 mt-3">
+                        <Button className="py-5">Mặc định</Button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="">
