@@ -1,6 +1,5 @@
 import { EyeOutlined, HeartOutlined } from '@ant-design/icons'
 import { Button, Card, Col, Image, Row, Tooltip } from 'antd'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 const Test = () => {

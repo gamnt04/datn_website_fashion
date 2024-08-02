@@ -23,7 +23,7 @@ const List_Auth = () => {
         };
     });
 
-    const columns = [
+    const columns: any = [
         {
             title: 'Ảnh người dùng',
             dataIndex: 'avatar',
@@ -49,12 +49,16 @@ const List_Auth = () => {
             ),
         },
         {
-            title: 'Quyền',
-            dataIndex: 'role',
-            key: 'role',
-            render: (_: any, auth: any) => (
-                isLoading ? <Skeleton.Input style={{ width: 100 }} active size="small" /> : auth.role
-            ),
+            key: "role",
+            title: "Quyền",
+            dataIndex: "role",
+            onFilter: (value: string | any, record: any) => {
+                const filterValue = value as string;
+                return record.role.includes(filterValue);
+            },
+            sorter: (a: any, b: any) =>
+                a.role.localeCompare(b.role),
+            sortDirections: ["ascend", "descend"],
         },
     ];
 
@@ -62,7 +66,9 @@ const List_Auth = () => {
         <>
             <div className="flex justify-between my-5">
                 <h1 className="text-xl font-bold">Danh sách tài khoản</h1>
-                <SearchComponent setData={setData} />
+                {initialData && (
+                    <SearchComponent initialData={initialData} setData={setData} />
+                )}
             </div>
             <Spin spinning={isLoading} indicator={<LoadingOutlined spin />} size="large">
                 <Table columns={columns} dataSource={dataSource} />
