@@ -215,6 +215,8 @@ export const isTokenBlacklisted = async (token) => {
 
 export const add_address = async (req, res) => {
   const { userId, newAddress } = req.body;
+
+  // Kiểm tra thông tin địa chỉ
   if (
     !newAddress ||
     !newAddress.fullName ||
@@ -223,53 +225,65 @@ export const add_address = async (req, res) => {
     !newAddress.address
   ) {
     return res
-      .status(400)
+      .status(StatusCodes.BAD_REQUEST)
       .json({ error: "Thông tin địa chỉ không được để trống" });
   }
-  const user = await User.findById(userId);
-  if (!user) {
-    return res.status(404).json({ error: "Người dùng không tồn tại" });
+
+  try {
+    // Tìm người dùng
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Người dùng không tồn tại" });
+    }
+
+    // Cập nhật địa chỉ
+    user.address = newAddress;
+
+    // Lưu thay đổi
+    await user.save();
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Đã thêm địa chỉ thành công", address: user.address });
+  } catch (error) {
+    console.error("Lỗi khi thêm địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi thêm địa chỉ" });
   }
-  user.address.push(newAddress);
-  await user.save();
-  return res.status(200).json({ message: "Đã thêm địa chỉ thành công", user });
 };
 
 export const get_address = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    // Tìm người dùng dựa vào userId
+    // Tìm người dùng
     const user = await User.findById(userId);
-
     if (!user) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
-      });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
     }
 
-    // Lấy danh sách địa chỉ từ đối tượng người dùng
-    const addresses = user.address;
-
-    return res.status(StatusCodes.OK).json({
-      addresses,
-    });
+    // Trả về địa chỉ
+    const address = user.address;
+    return res.status(StatusCodes.OK).json({ address });
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách địa chỉ:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi lấy danh sách địa chỉ",
-    });
+    console.error("Lỗi khi lấy địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi lấy địa chỉ" });
   }
 };
 
 export const updateUserAddress = async (req, res) => {
   const userId = req.params.userId;
-  const { addressId, updatedAddress } = req.body;
+  const { updatedAddress } = req.body;
 
   try {
     // Tìm người dùng trong CSDL bằng userId
     const user = await User.findById(userId);
-    console.log(user);
 
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
@@ -278,40 +292,25 @@ export const updateUserAddress = async (req, res) => {
       });
     }
 
-    // Tìm địa chỉ cần cập nhật
-    let addressToUpdate = user.address.find(
-      (address) => address._id.toString() === addressId
-    );
+    // Ghi log để kiểm tra dữ liệu đầu vào
+    console.log("Dữ liệu địa chỉ cập nhật:", updatedAddress);
 
-    if (!addressToUpdate) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
-      });
-    }
+    // Cập nhật địa chỉ
+    // Để cập nhật, ta cần đảm bảo rằng các thuộc tính của `updatedAddress` thay thế các thuộc tính cũ
+    user.address = { ...user.address, ...updatedAddress };
 
-    // Cập nhật thông tin địa chỉ mới
-    Object.assign(addressToUpdate, updatedAddress);
-
-    // Kiểm tra nếu chỉ còn một địa chỉ duy nhất
-    if (user.address.length === 1 && !addressToUpdate.checked) {
-      addressToUpdate.checked = true;
-    }
-
-    // Nếu địa chỉ được đánh dấu là mặc định, đặt tất cả các địa chỉ khác thành không mặc định
-    if (updatedAddress.checked) {
-      user.address.forEach((address) => {
-        if (address._id.toString() !== addressId) {
-          address.checked = false;
-        }
-      });
-    }
+    // Ghi log để kiểm tra dữ liệu sau khi cập nhật
+    console.log("Địa chỉ sau khi cập nhật:", user.address);
 
     // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
-    await user.save();
+    const updatedUser = await user.save();
+
+    // Ghi log để kiểm tra dữ liệu sau khi lưu
+    console.log("Dữ liệu người dùng sau khi lưu:", updatedUser.address);
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: addressToUpdate,
+      address: updatedUser.address,
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
@@ -320,36 +319,34 @@ export const updateUserAddress = async (req, res) => {
     });
   }
 };
+
 export const delete_address = async (req, res) => {
-  const { userId, addressId } = req.params; // Lấy userId và addressId từ params
+  const userId = req.params.userId;
 
   try {
-    // Tìm người dùng dựa vào userId
+    // Tìm người dùng
     const user = await User.findById(userId);
-
     if (!user) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
-      });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
     }
 
-    // Xóa địa chỉ khỏi mảng addresses của người dùng
-    user.address.pull(addressId);
+    // Xóa địa chỉ
+    user.address = {};
 
-    // Lưu lại người dùng đã được cập nhật vào cơ sở dữ liệu
+    // Lưu thay đổi
     await user.save();
-
-    return res.status(StatusCodes.OK).json({
-      message: "Đã xóa địa chỉ thành công",
-    });
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Đã xóa địa chỉ thành công" });
   } catch (error) {
     console.error("Lỗi khi xóa địa chỉ:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi xóa địa chỉ",
-    });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi xóa địa chỉ" });
   }
 };
-
 export const updateUser = async (req, res) => {
   const userId = req.params.userId;
   const updatedData = req.body;
