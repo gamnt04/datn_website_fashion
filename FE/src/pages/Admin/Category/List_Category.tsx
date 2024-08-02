@@ -17,14 +17,12 @@ const List_Category: React.FC = () => {
   const [dataSource, setDataSource] = useState<ICategory[]>([]);
   const pageSize = 4;
 
-  useEffect(() => {
-    if (Array.isArray(data)) {
-      setDataSource(data.map((category: ICategory) => ({
-        key: category._id,
-        ...category,
-      })));
-    }
-  }, [data]);
+  const dataSource = Array.isArray(data)
+    ? data.map((category: ICategory) => ({
+      key: category._id,
+      ...category,
+    }))
+    : [];
 
   const { mutate: deleteCategory } = useMutation({
     mutationFn: async (id: ICategory) => {
@@ -39,7 +37,7 @@ const List_Category: React.FC = () => {
         type: "success",
         content: "Xóa Danh mục thành công",
       });
-      queryClient.invalidateQueries({queryKey: ["CATEGORY_KEY"]});
+      queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error) => {
       messageApi.open({
@@ -50,7 +48,7 @@ const List_Category: React.FC = () => {
     },
   });
 
-  
+
   const mutation = useMutation({
     mutationFn: async (category: ICategory) => {
       const response = await instance.put(`/category/${category._id}`, category);
@@ -58,7 +56,7 @@ const List_Category: React.FC = () => {
     },
     onSuccess: () => {
       messageApi.success("Cập nhật blog thành công");
-      queryClient.invalidateQueries({queryKey: ["CATEGORY_KEY"]});
+      queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error: unknown) => {
       console.error("Lỗi khi cập nhật blog:", error);
@@ -97,7 +95,7 @@ const List_Category: React.FC = () => {
     {
       key: "image_category",
       title: "Ảnh Danh mục",
-      render: (text: any, record: ICategory) => (
+      render: (_: any, record: ICategory) => (
         <img
           src={
             typeof record.image_category === "string"
