@@ -41,17 +41,17 @@ const Products = ({ items }: any) => {
 
   return (
     <div
-      className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:border-black"
+      className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:shadow-lg overflow-hidden"
       key={items._id}
     >
-      <div className="relative group rounded w-full h-[160px] md:h-[200px] lg:h-[220px] overflow-hidden bg-[#F6F6F6]">
+      <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[220px]  bg-[#F6F6F6]">
         <Link
           onClick={ScrollTop}
           to={`/shops/detail_product/${items._id}`}
           className="h-full cursor-pointer"
         >
           <img
-            className="w-full h-full duration-500 group-hover:scale-105"
+            className="w-full h-full"
             loading="lazy"
             src={items.image_product}
             alt={items.name_product}

@@ -47,6 +47,8 @@ const userSchema = new Schema(
 
     avatar: {
       type: String,
+      default: "https://vectorified.com/images/default-avatar-icon-12.png",
+      // default: "../upload/default-avatar.jpeg",
     },
 
     birthDate: {
