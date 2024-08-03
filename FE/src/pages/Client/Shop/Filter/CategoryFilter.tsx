@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ICategory } from "../../../../common/interfaces/Category";
 

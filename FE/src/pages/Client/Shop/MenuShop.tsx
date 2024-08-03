@@ -1,22 +1,30 @@
-// MenuShop.tsx
 import React from "react";
 import CategoryFilter from "./Filter/CategoryFilter";
-import { ICategory } from "../../../common/interfaces/Category";
 import PriceFilter from "./Filter/PriceFilter";
 import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
+import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 
-const MenuShop: React.FC<{
-  categories?: ICategory[];
+interface MenuShopProps {
   onCategorySelect: (id: string | null) => void;
-}> = ({ categories = [], onCategorySelect }) => {
+  onPriceChange: (min: number | null, max: number | null) => void;
+  setSearch: (search: string) => void;
+  setSort: (sort: string) => void;
+}
+
+const MenuShop: React.FC<MenuShopProps> = ({
+  onCategorySelect,
+  onPriceChange,
+  setSearch,
+  setSort,
+}) => {
+  const { data } = useCategoryQuery(); 
+
   return (
-    <div className="hidden lg:block w-full h-auto flex flex-col my-10 shadow-xl rounded overflow-hidden">
-      <CategoryFilter
-        categories={categories}
-        onCategorySelect={onCategorySelect}
-      />
-      <PriceFilter />
+    <div className="hidden lg:block w-full h-auto flex flex-col my-10 rounded overflow-hidden">
+      <CategoryFilter categories={data} onCategorySelect={onCategorySelect} />
+      <PriceFilter onPriceChange={onPriceChange} />
+
       <ColorFilter />
       <SizeFilter />
     </div>

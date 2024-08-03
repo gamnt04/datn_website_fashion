@@ -40,10 +40,9 @@ const productSchema = new mongoose.Schema(
       default: 1,
     },
     stock: Number,
-    attributes:
-    {
+    attributes: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Attributes'
+      ref: "Attributes",
     },
     featured_product: {
       type: Boolean,
@@ -57,9 +56,16 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.plugin(mongoosePaginate);
-productSchema.plugin(mongooseDelete,
+productSchema.plugin(
+  mongooseDelete,
   { deletedAt: true },
   { overrideMethods: "all" }
 );
+productSchema.statics.filterByPrice = function (minPrice, maxPrice, options) {
+  const query = {
+    price_product: { $gte: minPrice, $lte: maxPrice },
+  };
 
+  return this.paginate(query, options);
+};
 export default mongoose.model("Products", productSchema);
