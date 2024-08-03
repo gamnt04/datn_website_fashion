@@ -7,7 +7,8 @@ import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/Search";
 import { useQuery } from "@tanstack/react-query";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Heart, Search, ShoppingCart } from "lucide-react";
+import { CarrotIcon, Heart, Search, ShoppingCart } from "lucide-react";
+import MiniCart from "../../../pages/Client/(Cart)/MiniCart";
 const Header = () => {
   const navigate = useNavigate();
   const {
@@ -159,7 +160,7 @@ const Header = () => {
                   type="submit"
                   className="absolute grid place-items-center top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
-                  <Search/>
+                  <Search />
                 </button>
               </form>
               {showResults && (
@@ -195,11 +196,11 @@ const Header = () => {
 
             {/* cart */}
             {/* {account ? '/cart' : (
-                <div onClick={() => onlogin()} className="relative">
-                  <CartIcon />
-                  <MiniCart />
-                </div>
-              )} */}
+              <div onClick={() => onlogin()} className="relative">
+                <CarrotIcon />
+                <MiniCart />
+              </div>
+            )} */}
 
             <Link
               className="group *:duration-300 relative py-1"
@@ -213,6 +214,7 @@ const Header = () => {
               )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
                 <ShoppingCart />
+                {/* <MiniCart /> */}
               </div>
             </Link>
 

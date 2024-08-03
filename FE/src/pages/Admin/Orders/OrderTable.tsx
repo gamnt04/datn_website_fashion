@@ -1,5 +1,6 @@
 import { Pagination, Table } from "antd";
 import { Link } from "react-router-dom";
+import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     const formatDate = (datetime: any) => {
@@ -70,26 +71,13 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
             )
         },
         {
-            title: 'Thao tác',
+
             dataIndex: 'action',
             key: 'action',
             render: (_: any, orders: any) => (
                 <>
                     <Link to={`/admin/orders/${orders._id}/orderDetali`}>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="size-6 cursor-pointer"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                            />
-                        </svg>
+                        <span className="flex justify-center"><Ellipsis_horizontal /></span>
                     </Link>
                 </>
             )
@@ -109,7 +97,6 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                     onChange={goToPage}
                 />
             </div>
-
         </div >
     );
 };

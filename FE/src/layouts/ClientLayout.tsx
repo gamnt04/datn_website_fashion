@@ -6,8 +6,7 @@ const ClientLayout = () => {
   return (
     <>
       <Header />
-
-      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div>
         <Outlet />
       </div>
 
