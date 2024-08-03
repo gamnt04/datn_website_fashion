@@ -36,6 +36,7 @@ import EditBlog from "../pages/Admin/Blogs/BlogEdit";
 import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
+import Layout_Profile from "../pages/Client/Layout_Profiles/layout";
 const RouterComponent = () => {
   return (
     <>
@@ -60,6 +61,14 @@ const RouterComponent = () => {
               path="shops/detail_product/:id"
               element={<ProductDetail />}
             />
+
+            
+            <Route path="profile" element={<AllOrder />}>
+              <Route index element={<Layout_Profile />} />
+            </Route>
+
+
+
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_All />} />
