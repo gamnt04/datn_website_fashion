@@ -14,7 +14,8 @@ const List_Category: React.FC = () => {
   const { data, isLoading } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState(1);
-  const [dataSource, setDataSource] = useState<ICategory[]>([]);
+  // const [dataSource, setDataSource] = useState<ICategory[]>([]);
+  const [searchText, setSearchText] = React.useState("");
   const pageSize = 4;
 
   const dataSource = Array.isArray(data)

@@ -8,7 +8,7 @@ export function Pay_Mutation() {
     const userId = user?.user?._id
     const [messageApi, contextHolder] = message.useMessage();
     const { mutate } = useMutation({
-        mutationFn: (order) =>  Add_Order(order),
+        mutationFn: (order) => Add_Order(order),
         onSuccess: async () => {
             messageApi.open({
                 type: 'success',
@@ -21,8 +21,8 @@ export function Pay_Mutation() {
         }
     })
 
-    const onSubmit =  async (formData: any) => {
+    const onSubmit = async (formData: any) => {
         mutate(formData);
     };
-    return { mutate, onSubmit, userId, contextHolder }
+    return { mutate, onSubmit, userId, contextHolder, messageApi }
 }
