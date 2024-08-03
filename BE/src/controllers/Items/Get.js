@@ -100,29 +100,74 @@ export const getProductById = async (req, res) => {
   }
 };
 
-export async function filter_item_category(req, res) {
-  const { _page = 1, _sort = "", _limit = 20, _search = "" } = req.query;
+export async function filterItems(req, res) {
+  const { cate_id } = req.query;
+  const {
+    _page = 1,
+    _limit = 20,
+    min_price = null,
+    max_price = null,
+    _sort = "",
+  } = req.query;
+
+  const page = parseInt(_page, 10) || 1;
+  const limit = parseInt(_limit, 10) || 20;
+
   const options = {
-    page: parseInt(_page, 10),
-    limit: parseInt(_limit, 10),
+    page,
+    limit,
     sort: _sort
       ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
-      : {},
+      : { price_product: 1 },
   };
-  try {
-    const query = {
-      category_id: req.params.cate_id,
-    };
 
-    if (_search) {
-      query.$and = [
-        {
-          name_product: { $regex: new RegExp(_search, "i") },
-        },
-      ];
+  try {
+    const query = {};
+
+    if (cate_id) {
+      query.category_id = cate_id;
+    }
+
+    if (min_price !== null && max_price !== null) {
+      const minPrice = parseFloat(min_price);
+      const maxPrice = parseFloat(max_price);
+
+      if (isNaN(minPrice) || isNaN(maxPrice)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Giá không hợp lệ!",
+        });
+      }
+      query.price_product = { $gte: minPrice, $lte: maxPrice };
+    } else if (min_price !== null) {
+      const minPrice = parseFloat(min_price);
+
+      if (isNaN(minPrice)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Giá không hợp lệ!",
+        });
+      }
+      query.price_product = { $gte: minPrice };
+    } else if (max_price !== null) {
+      const maxPrice = parseFloat(max_price);
+
+      if (isNaN(maxPrice)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Giá không hợp lệ!",
+        });
+      }
+      query.price_product = { $lte: maxPrice };
     }
 
     const data = await Products.paginate(query, options);
+
+    if (!data || data.docs.length < 1) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy dữ liệu!",
+        query,
+        data,
+      });
+    }
+
     for (let item of data.docs) {
       let total_stock = 0;
       if (item.attributes) {
@@ -140,19 +185,14 @@ export async function filter_item_category(req, res) {
       }
     }
 
-    if (!data || data.docs.length < 1) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "No data found!",
-      });
-    }
-
     return res.status(StatusCodes.OK).json({
-      message: "Success!",
+      message: "Thành công!",
       data,
     });
   } catch (error) {
+    console.error("Server Error:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Server error!",
+      message: error.message || "Lỗi máy chủ!",
     });
   }
 }
