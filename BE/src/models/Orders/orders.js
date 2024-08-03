@@ -44,27 +44,28 @@ const orderSchema = new mongoose.Schema({
     unique: true,
   },
   customerInfo: {
-      userName: {
-        type: String,
-        required: true,
-      },
-      phone: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      },
-      payment: String,
-      city: String,
-      address: String,
-      code : String,
+    userName: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    payment: String,
+    city: String,
+    address: String,
+    code: String,
   },
   totalPrice: {
     type: Number,
     required: true
   },
+
   status: {
     type: String,
     enum: ["1", "2", "3", "4", "5"],
