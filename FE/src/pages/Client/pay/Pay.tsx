@@ -19,7 +19,10 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-  const [selectedAddress, setSelectedAddress]: any = useState(null);
+  console.log(auth);
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
@@ -30,23 +33,14 @@ const Pay = () => {
     routing("/");
   }
   useEffect(() => {
-    if (auth && auth.address) {
-      const defaultAddress = auth.address.find(
-        (item: any) => item.checked === true
-      );
-      const address = selectedAddress || defaultAddress;
-      if (address) {
-        setSelectedAddress(address);
-        setValue("userName", address.fullName);
-        setValue("phone", address.phoneNumber);
-        setValue("email", auth.email);
-        setValue(
-          "address",
-          ` ${address.addressDetails} - ${address.address}`
-        );
-      }
+    if (auth && auth?.address) {
+      setSelectedAddress(auth?.address);
+      setValue("userName", auth?.address?.fullName);
+      setValue("phone", auth?.address?.phoneNumber);
+      setValue("email", auth?.email);
+      setValue("address", `${auth?.address?.addressDetails} - ${auth?.address?.address}`);
     }
-  }, [auth, selectedAddress, setValue]);
+  }, [auth, setValue]);
 
   const handleTAdd = () => {
     setAddress(!address);
@@ -60,6 +54,10 @@ const Pay = () => {
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsOpen(false);
+    setValue("userName", address?.fullName);
+    setValue("phone", address?.phoneNumber);
+    setValue("email", address?.email)
+    setValue("address", `${address?.addressDetails} - ${address?.address}`);
   };
 
   // add order
@@ -74,7 +72,9 @@ const Pay = () => {
     const item_order = {
       userId: userId,
       items: data?.data_order,
-      customerInfo: data_form,
+      customerInfo: {
+        ...data_form
+      },
       totalPrice: data?.totalPrice,
       email: user?.user?.email,
     };
@@ -179,38 +179,17 @@ const Pay = () => {
                   <p>Địa chỉ nhận hàng</p>
                 </div>
                 <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
-                  {selectedAddress ? (
-                    <div className="lg:flex items-center gap-4 ">
-                      <div className="order-1 flex gap-6 py-2">
-                        <h1 className="font-bold">{selectedAddress.fullName}</h1>
-                        <p className="font-bold">{selectedAddress.phoneNumber}</p>
-                      </div>
-                      <p className="order-2">
-                        {selectedAddress.addressDetails +
-                          " - " +
-                          selectedAddress.address}
-                      </p>
-                    </div>
-                  ) : (
-                    auth?.address?.map(
-                      (item: any, index: any) =>
-                        item.checked === true && (
-                          <div key={index} className="flex items-center gap-4">
-                            <h1 className="font-bold">{item?.fullName}</h1>
-                            <p className="font-bold">{item?.phoneNumber}</p>
-                            <p>
-                              {item?.addressDetails + " - " + item?.address}
-                            </p>
-                          </div>
-                        )
-                    )
-                  )}
+                  <div className="flex items-center gap-4">
+                    <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                    <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                    <p>{selectedAddress?.addressDetails + " - " + selectedAddress?.address}</p>
+                  </div>
                   <div className="flex items-center gap-8">
-                    {!selectedAddress?.checked === true ? ('') : (
+                    {/* {!selectedAddress?.checked === true ? ('') : (
                       <div className="border py-2 px-4 rounded border-black hidden lg:block">
                         Mặc định
                       </div>
-                    )}
+                    )} */}
                     <div
                       className="text-blue-400 underline cursor-pointer"
                       onClick={handleAddress}
@@ -352,7 +331,7 @@ const Pay = () => {
             {
               isOpen && (
                 <List_Address
-                  auth={auth}
+                  auth={auth.address}
                   handleTAdd={handleTAdd}
                   handleAddressSelect={handleAddressSelect}
                   handleAddress={handleAddress}
