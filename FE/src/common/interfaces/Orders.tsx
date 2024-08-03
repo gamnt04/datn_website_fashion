@@ -8,7 +8,7 @@ export interface IOrder {
     image?: string;
     quantity: number;
   }[];
-  orderNumber?: string;
+  orderNumber?: string | any;
   customerInfo: {
     userName: string;
     phone: string;
@@ -20,6 +20,11 @@ export interface IOrder {
   };
   discount: number;
   totalPrice: number;
-  status?: "Chờ xác nhận" | "Đang chuẩn bị hàng" | "Đang vận chuyển" | "Đã giao hàng" | "Đã hủy";
+  status?:
+    | "Chờ xác nhận"
+    | "Đang chuẩn bị hàng"
+    | "Đang vận chuyển"
+    | "Đã giao hàng"
+    | "Đã hủy";
   datetime?: Date;
 }
