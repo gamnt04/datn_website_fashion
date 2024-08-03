@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 export interface IProduct {
-  id: any;
   _id?: string;
   name_product?: string;
   price_product?: number;
@@ -9,7 +8,7 @@ export interface IProduct {
   stock_product: number;
   attributes?: IAttribute[];
   featured_product?: boolean;
-  image_product?: FileList | string;
+  image_product?: string;
   gallery_product?: string[];
   tag_product?: string[];
   //quantity_product?: number;
@@ -22,6 +21,7 @@ export interface IProduct {
 export interface ISize {
   name_size: string;
   stock_attribute: number;
+  price_attribute: number;
 }
 export interface IAttribute {
   color: string;
