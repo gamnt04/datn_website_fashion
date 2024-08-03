@@ -6,18 +6,25 @@ import List_Products from "./List_Products";
 
 
 const IndexHome = () => {
-    return (<div className="lg:mt-[40px] mt-[60px]">
+    return (<div className="lg:mt-[20px] mt-[60px]">
         <Banner />
-        <div className="w-full">
-        <Trending_Products />
+
+        <div className="xl:w-[1440px] w-[95vw] mx-auto">
+            <div className="w-full">
+                <Trending_Products />
+            </div>
         </div>
         <Fres />
-        <div className="w-full">
-            <List_Products/>
-            <Ourblog />
+        <div className="xl:w-[1440px] w-[95vw] mx-auto">
+            <div className="w-full">
+                <List_Products />
+                <Ourblog />
+            </div>
         </div>
 
-
+        {/* <div className="xl:w-[1440px] w-[95vw] mx-auto">
+            
+        </div> */}
     </div>)
 }
 

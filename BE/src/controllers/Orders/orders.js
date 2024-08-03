@@ -65,8 +65,9 @@ export const createOrder = async (req, res) => {
       customerInfo: {
         email: customerInfo.email,
         phone: customerInfo.phone,
+        payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ''} - ${customerInfo.addressDetail || ''}`, // Concatenate address and addressDetail
+        address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
       },
       totalPrice,
     });
@@ -77,7 +78,7 @@ export const createOrder = async (req, res) => {
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
     console.error("Error:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi rồi đại ơi" });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
 // export const getOrders = async (req, res) => {
