@@ -32,7 +32,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   useEffect(() => {
     if (productsData) {
       const docs = productsData.data?.docs || [];
-      setHasMore(docs.length === 20); 
+      setHasMore(docs.length === 20);
     }
   }, [productsData]);
 
@@ -47,7 +47,6 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
       setPage(page + 1);
     }
   };
-
 
   // const propData = {
   //   data: data,
@@ -103,11 +102,6 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                   </button>
                 </div>
               </div>
-              {!hasMore && (
-                <div className="flex justify-center items-center h-screen">
-                  <p>Không còn sản phẩm để hiển thị.</p>
-                </div>
-              )}
             </>
           ) : (
             <div className="flex justify-center items-center h-screen">
