@@ -1,95 +1,77 @@
 import {
   Button,
   Checkbox,
-  Flex,
   FormProps,
   Input,
   InputNumber,
   message,
+  Select,
   Upload,
 } from "antd";
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { Form } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { SubmitHandler, useForm } from "react-hook-form";
-import instance from "@/configs/axios";
 import { useState } from "react";
+import { IAttribute } from "../../../../common/interfaces/Product";
+import { PlusOutlined } from "@ant-design/icons";
+import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
+import { ICategory } from "../../../../common/interfaces/Category";
 import {
-  handleImageChange,
-  handleGalleryChange,
-  removeImagePreview,
-  removeGalleryImage,
-  handleAttributeChange,
-  handleSizeChange,
-  handleAddAttribute,
-  handleAddSize,
-  handleRemoveAttribute,
-  handleRemoveSize,
-} from "../../../../systems/utils/eventAddPro";
+  uploadGallery,
+  uploadImage,
+} from "../../../../systems/utils/uploadImage";
+import { Mutation_items } from "../../../../common/hooks/Products/mutation_item";
 
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import type { GetProp, UploadProps } from "antd";
-
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
-
-const getBase64 = (img: FileType, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-};
-
-const beforeUpload = (file: FileType) => {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
-  }
-  return isJpgOrPng && isLt2M;
-};
 type FieldType = {
   name_product: string;
-  price: number;
-  image_product: string;
+  price_product: number;
   description_product: string;
-  featured: boolean;
-  countInStock: number;
-  discount: number;
-  category: string[];
+  category_id: string[];
+  image_product: string;
+  gallery_product: string[];
+  stock_product: number;
+  attributes: IAttribute[];
+  featured_product: boolean;
+  tag_product: string[];
 };
+
 const AddProduct = () => {
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
-  const [attributesData, setAttributes] = useState<IAttribute[]>([
-    { color: "", size: [{ name_size: "", stock_attribute: 0 }] },
-  ]);
-  const handleChange: UploadProps["onChange"] = (info) => {
-    if (info.file.status === "uploading") {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj as FileType, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
-    }
-  };
-  const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
+  const { data } = useCategoryQuery();
+  const { mutate: addItem } = Mutation_items("CREATE");
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    try {
+      const imageUrl = imageFile ? await uploadImage(imageFile) : "";
+      const galleryUrls = await uploadGallery(galleryFiles);
+      const attributesJson = JSON.stringify(values.attributes);
+      const finalValues = {
+        ...values,
+        image_product: imageUrl,
+        gallery_product: galleryUrls,
+        attributes: attributesJson,
+      };
+      console.log(`finalValues`, finalValues);
+      addItem(finalValues);
+      messageApi.success("Sản phẩm đã được thêm thành công!");
+    } catch (error) {
+      messageApi.error("Thêm sản phẩm thất bại");
+      console.error("Lỗi:", error);
+    }
   };
+
+  const handleImageChange = (info: any) => {
+    setImageFile(info.fileList.map((file: any) => file.originFileObj));
+  };
+
+  const handleGalleryChange = ({ fileList }: any) => {
+    setGalleryFiles(fileList.map((file: any) => file.originFileObj));
+  };
+
   return (
     <div className="container mx-auto">
       {contextHolder}
@@ -114,71 +96,59 @@ const AddProduct = () => {
               <Input />
             </Form.Item>
 
-            <div className="flex items-start justify-between w-1/2">
+            <div className="flex items-start justify-between w-2/3">
               <Form.Item<FieldType>
                 label="Ảnh sản phẩm"
                 name="image_product"
                 rules={[
-                  { required: true, message: "Ảnh sản phẩm là bắt buộc!" },
+                  {
+                    required: true,
+                    message: "Ảnh sản phẩm là bắt buộc!",
+                  },
                 ]}
               >
-                <Flex gap="middle" className="mb-4" wrap>
-                  <Upload
-                    name="image_product"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
+                <Upload
+                  listType="picture-card"
+                  beforeUpload={() => false}
+                  onChange={handleImageChange}
+                >
+                  <button
+                    style={{ border: 0, background: "none" }}
+                    type="button"
                   >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{ width: "100%" }}
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                </Flex>
+                    <PlusOutlined />
+                  </button>
+                </Upload>
               </Form.Item>
 
               <Form.Item<FieldType>
                 label="Bộ sưu tập"
-                name="image_product"
-                className="flex items-center"
+                name="gallery_product"
                 rules={[
-                  { required: true, message: "Ảnh sản phẩm là bắt buộc!" },
+                  {
+                    required: true,
+                    message: "Bộ sưu tập sản phẩm là bắt buộc!",
+                  },
                 ]}
               >
-                <Flex gap="middle" className="mb-4" wrap>
-                  <Upload
-                    name="image_product"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
+                <Upload
+                  listType="picture-card"
+                  beforeUpload={() => false}
+                  onChange={handleGalleryChange}
+                >
+                  <button
+                    style={{ border: 0, background: "none" }}
+                    type="button"
                   >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{ width: "100%" }}
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                </Flex>
+                    <PlusOutlined />
+                  </button>
+                </Upload>
               </Form.Item>
             </div>
-            {/* <Form.Item<FieldType>
+
+            <Form.Item<FieldType>
               label="Giá sản phẩm"
-              name="price"
+              name="price_product"
               rules={[
                 { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
                 {
@@ -189,226 +159,170 @@ const AddProduct = () => {
               ]}
             >
               <InputNumber />
-            </Form.Item> */}
+            </Form.Item>
+
             <Form.Item<FieldType>
               label="Mô tả sản phẩm"
               name="description_product"
             >
               <TextArea rows={4} />
             </Form.Item>
-            <Form.Item<FieldType> name="featured" valuePropName="checked">
-              <Checkbox>Sản phẩm nổi bật</Checkbox>
-            </Form.Item>
-            <Form.Item<FieldType>
-              label="Sản phẩm trong kho"
-              name="countInStock"
-              rules={[
-                {
-                  type: "number",
-                  min: 0,
-                  message: "Số lượng sản phẩm phải lớn hơn 0",
-                },
-              ]}
-            >
-              <InputNumber defaultValue={0} />
-            </Form.Item>
-            <div>
-              <div className="mb-4">
-                {attributesData.map((attribute, index) => (
-                  <div key={index} className="mb-4 ">
-                    <div className="mb-4">
-                      <label
-                        htmlFor={`color-${index}`}
-                        className="block mb-2 text-sm font-bold text-gray-700"
+
+            <Form.List name="attributes">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <div key={key}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "color"]}
+                        label="Màu sắc"
+                        rules={[
+                          { required: true, message: "Vui lòng nhập màu sắc!" },
+                        ]}
                       >
-                        Màu Sắc
-                      </label>
-                      <input
-                        type="text"
-                        id={`color-${index}`}
-                        value={attribute.color}
-                        onChange={(e) =>
-                          handleAttributeChange(
-                            index,
-                            e,
-                            attributesData,
-                            setAttributes
-                          )
-                        }
-                        name="color"
-                        className="w-full px-3 py-2 border rounded"
-                      />
+                        <Input />
+                      </Form.Item>
+
+                      <Form.List name={[name, "size"]}>
+                        {(sizeFields, { add: addSize, remove: removeSize }) => (
+                          <>
+                            {sizeFields.map(
+                              ({
+                                key: sizeKey,
+                                name: sizeName,
+                                ...restSizeField
+                              }) => (
+                                <div
+                                  key={sizeKey}
+                                  className="flex items-center gap-[13px] mb-2"
+                                >
+                                  <Form.Item
+                                    {...restSizeField}
+                                    name={[sizeName, "name_size"]}
+                                    label="Kích cỡ"
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Vui lòng nhập kích cỡ!",
+                                      },
+                                    ]}
+                                  >
+                                    <Input placeholder="Kích cỡ" />
+                                  </Form.Item>
+
+                                  <Form.Item
+                                    {...restSizeField}
+                                    name={[sizeName, "stock_attribute"]}
+                                    label="Tồn kho"
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Vui lòng nhập số lượng!",
+                                      },
+                                    ]}
+                                  >
+                                    <InputNumber
+                                      placeholder="Số lượng"
+                                      className="w-[183px]"
+                                    />
+                                  </Form.Item>
+
+                                  <Form.Item
+                                    {...restSizeField}
+                                    name={[sizeName, "price_attribute"]}
+                                    label="Giá"
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Vui lòng nhập giá!",
+                                      },
+                                    ]}
+                                  >
+                                    <InputNumber
+                                      placeholder="Giá"
+                                      className="w-[183px]"
+                                    />
+                                  </Form.Item>
+
+                                  <Button
+                                    onClick={() => removeSize(sizeName)}
+                                    className="mt-1"
+                                  >
+                                    Xóa kích cỡ
+                                  </Button>
+                                </div>
+                              )
+                            )}
+                            <div className="flex gap-3">
+                              <Form.Item>
+                                <Button
+                                  type="primary"
+                                  onClick={() => addSize()}
+                                  block
+                                >
+                                  Thêm kích cỡ
+                                </Button>
+                              </Form.Item>
+                              <Button onClick={() => remove(name)} className="">
+                                Xóa thuộc tính
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </Form.List>
                     </div>
-                    {attribute.size.map((size, sizeIndex) => (
-                      <div key={sizeIndex} className="flex mb-4 gap-x-4">
-                        <div>
-                          {/* <label
-                            htmlFor={`size-${index}-${sizeIndex}`}
-                            className="block mb-2 text-sm font-bold text-gray-700"
-                          >
-                            Kích Thước
-                          </label>
-                          <input
-                            type="text"
-                            id={`size-${index}-${sizeIndex}`}
-                            value={size.name_size}
-                            onChange={(e) =>
-                              handleSizeChange(
-                                index,
-                                sizeIndex,
-                                e,
-                                attributesData,
-                                setAttributes
-                              )
-                            }
-                            name="name_size"
-                            className="w-[410px] px-3 py-2 border rounded"
-                          /> */}
-                          <Form.Item<FieldType>
-                            label=" Kích Thước"
-                            className="name_size"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Giá sản phẩm bắt buộc nhập!",
-                              },
-                              {
-                                type: "number",
-                                min: 0,
-                                message: "Giá sản phẩm phải lớn hơn 0",
-                              },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </div>
-                        <div className="flex items-center gap-x-4">
-                          {/* <label
-                            htmlFor={`stock-${index}-${sizeIndex}`}
-                            className="block mb-2 ml-3 text-sm font-bold text-gray-700"
-                          >
-                            Số lượng
-                          </label>
-                          <input
-                            type="number"
-                            id={`stock-${index}-${sizeIndex}`}
-                            value={size.stock_attribute}
-                            onChange={(e) =>
-                              handleSizeChange(
-                                index,
-                                sizeIndex,
-                                e,
-                                attributesData,
-                                setAttributes
-                              )
-                            }
-                            name="stock_attribute"
-                            className="w-[410px] px-3 py-2 mx-3 border rounded"
-                          /> */}
-                          <Form.Item<FieldType>
-                            label="Số lượng"
-                            name="stock_attribute"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Giá sản phẩm bắt buộc nhập!",
-                              },
-                              {
-                                type: "number",
-                                min: 0,
-                                message: "Giá sản phẩm phải lớn hơn 0",
-                              },
-                            ]}
-                          >
-                            <InputNumber />
-                          </Form.Item>
-                          <Form.Item<FieldType>
-                            label="Giá sản phẩm"
-                            name="price"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Giá sản phẩm bắt buộc nhập!",
-                              },
-                              {
-                                type: "number",
-                                min: 0,
-                                message: "Giá sản phẩm phải lớn hơn 0",
-                              },
-                            ]}
-                          >
-                            <InputNumber />
-                          </Form.Item>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleRemoveSize(
-                                index,
-                                sizeIndex,
-                                attributesData,
-                                setAttributes
-                              )
-                            }
-                            className="px-3 py-2 text-white bg-red-500 rounded "
-                          >
-                            Xóa Kích Thước
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleAddSize(index, attributesData, setAttributes)
-                      }
-                      className="px-4 py-2 mb-2 text-white bg-blue-500 rounded"
-                    >
-                      Thêm Kích Thước
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleRemoveAttribute(
-                          index,
-                          attributesData,
-                          setAttributes
-                        )
-                      }
-                      className="px-3 py-2 text-white bg-red-500 rounded "
-                    >
-                      Xóa Thuộc Tính
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleAddAttribute(attributesData, setAttributes)
-                  }
-                  className="px-4 py-2 text-white bg-green-500 rounded"
-                >
-                  Thêm Thuộc Tính
-                </button>
-              </div>
-            </div>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
+                  ))}
+                  <Form.Item>
+                    <Button type="dashed" onClick={() => add()} block>
+                      Thêm thuộc tính
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
           </div>
           <div>
-            <Form.Item label="Danh mục sản phẩm" name="category">
-              <Checkbox.Group>
-                {/* {categories?.data.map((category: any) => (
-                  <Checkbox key={category._id} value={category._id}>
-                    {category.name}
-                  </Checkbox>
-                ))} */}
-              </Checkbox.Group>
+            <Form.Item
+              label="Danh mục sản phẩm"
+              name="category_id"
+              rules={[
+                { required: true, message: "Danh mục sản phẩm bắt buộc chọn!" },
+              ]}
+            >
+              <Select
+                placeholder="Chọn danh mục sản phẩm"
+                allowClear
+                options={data?.map((category: ICategory) => ({
+                  value: category._id,
+                  label: category.name_category,
+                }))}
+              ></Select>
+            </Form.Item>
+
+            <Form.Item<FieldType> label="Tags sản phẩm" name="tag_product">
+              <Select
+                mode="tags"
+                placeholder="Nhập tags cho sản phẩm"
+                notFoundContent="Không tìm thấy tags"
+                allowClear
+              />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              name="featured_product"
+              valuePropName="checked"
+            >
+              <Checkbox>Sản phẩm nổi bật</Checkbox>
             </Form.Item>
           </div>
         </div>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Thêm sản phẩm
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );
