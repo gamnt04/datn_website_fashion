@@ -9,10 +9,10 @@ export const getAllProducts = async (req, res) => {
   } = req.query
   try {
     const querry = {};
-    if(_search) {
+    if (_search) {
       querry.$and = [
         {
-          name_product : {$regex : new RegExp (_search, 'i')}
+          name_product: { $regex: new RegExp(_search, 'i') }
         }
       ]
     }
@@ -86,7 +86,7 @@ export async function get_items_client(req, res) {
 }
 
 
-export async function get_item_dashboard (req, res) {
+export async function get_item_dashboard(req, res) {
   const {
     _page = 1,
     _limit = 30,
@@ -94,12 +94,12 @@ export async function get_item_dashboard (req, res) {
   } = req.query;
   try {
     const options = {
-      page : _page,
-      limit : _limit
+      page: _page,
+      limit: _limit
     }
     const data = await Products.paginate({}, options);
     return res.status(StatusCodes.OK).json({
-      message : 'OK',
+      message: 'OK',
       data
     })
   } catch (error) {
@@ -120,6 +120,16 @@ export const getProductById = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
+    if (product.attributes.values) {
+      product.attributes.values = product.attributes.values.filter(item => {
+        const new_data = item.size.filter(attr => attr.stock_attribute > 0);
+        return {
+          ...item,
+          size: new_data
+        }
+      })
+    }
+    await product.save();
     return res.status(StatusCodes.OK).json({
       product,
     });
