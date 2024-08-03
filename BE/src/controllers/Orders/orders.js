@@ -6,11 +6,13 @@ import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
+  console.log(email);
 
   // Kiểm tra các giá trị của customerInfo
-  if (!customerInfo.email || !customerInfo.phone || !customerInfo.userName) {
+  if (!customerInfo.email || !customerInfo.phone || !customerInfo.userName || !customerInfo.payment || !customerInfo.address) {
     return res.status(StatusCodes.BAD_REQUEST).json({ message: "Thông tin khách hàng không đầy đủ." });
   }
+
 
   try {
     const dataCart = await Cart.findOne({ userId }).populate("products");
@@ -70,11 +72,13 @@ export const createOrder = async (req, res) => {
         address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
       },
       totalPrice,
+
     });
+
 
     await order.save();
     await SendMail(email, order);
-
+    console.log(order);
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
     console.error("Error:", error);
