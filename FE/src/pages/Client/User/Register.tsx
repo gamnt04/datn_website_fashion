@@ -120,7 +120,7 @@ const Register: React.FC = () => {
                         message: "Mật khẩu không được để trống!!",
                       },
                       { min: 6, message: "Mật khẩuphải có ít nhất 6 ký tự" },
-                      ({ getFieldValue }) => ({
+                      () => ({
                         validator(_, value) {
                           if (!value || !/\s/.test(value)) {
                             return Promise.resolve();

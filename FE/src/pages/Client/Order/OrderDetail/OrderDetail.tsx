@@ -33,7 +33,7 @@ const OrderDetail = () => {
             </div>
           </div>
         </div>
-        <div className="border-b px-5 py-5">
+        <div className="border-b px-5 py-5 flex justify-center">
           {getStatusClass(5) ? (
             <div className="text-center font-bold text-red-500">Đã hủy</div>
           ) : (
@@ -51,7 +51,7 @@ const OrderDetail = () => {
                 <span className={`mx-4 ${getStatusClass(3)}`}>-------</span>
               </div>
               <div className="flex items-center whitespace-nowrap">
-                <div className={getStatusClass(4)}>Đang giao hàng</div>
+                <div className={getStatusClass(4)}>Đã giao hàng</div>
               </div>
             </div>
           )}
