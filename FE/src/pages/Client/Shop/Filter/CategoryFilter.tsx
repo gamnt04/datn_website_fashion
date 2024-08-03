@@ -9,6 +9,9 @@ const CategoryFilter: React.FC<{
     onCategorySelect(id);
   };
 
+  // Lọc các danh mục công khai
+  const visibleCategories = categories.filter(category => category.published);
+
   return (
     <div>
       <details
@@ -43,8 +46,8 @@ const CategoryFilter: React.FC<{
               All
             </button>
           </li>
-          {categories.length > 0 ? (
-            categories.map((category) => (
+          {visibleCategories.length > 0 ? (
+            visibleCategories.map((category) => (
               <li key={category._id}>
                 <button
                   className="w-full text-left py-2 px-4 bg-none hover:bg-gray-100 duration-300 opacity-75 hover:opacity-100 hover:font-semibold"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -31,29 +31,32 @@ const BlogDetail = () => {
   const contentParts = blog.content.split(/(?<=\.)\s+/); //Chia nội dung thành các phần nhỏ
 
   return (
-    <div className="container mx-auto py-10 px-4 lg:px-20">
-      <h1 className="text-4xl font-bold mb-4 text-center">{blog.title}</h1>
-      <p className="text-sm text-gray-600 mb-6 text-center">
-        {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
-      </p>
-      
-      <div className="prose max-w-none mx-auto text-justify">
-        {contentParts.map((part, index) => (
-          <div key={index}>
-            <p className="mb-4">{part}</p>
-            {index % 6 === 1 && (
-              <div className="flex justify-center mb-6">
-                <img 
-                  src={blog.imageUrl} 
-                  alt={blog.title} 
-                  className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain" 
-                />
-              </div>
-            )}
-          </div>
-        ))}
+    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="container mx-auto py-10 px-4 lg:px-20">
+        <h1 className="text-4xl font-bold mb-4 text-center">{blog.title}</h1>
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
+        </p>
+
+        <div className="prose max-w-none mx-auto text-justify">
+          {contentParts.map((part, index) => (
+            <div key={index}>
+              <p className="mb-4">{part}</p>
+              {index % 6 === 1 && (
+                <div className="flex justify-center mb-6">
+                  <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                    className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain"
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
+
   );
 };
 

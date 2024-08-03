@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import type { FormProps } from "antd";
-import { Button, DatePicker, Form, Input, message } from "antd";
+import { Button, DatePicker, Form, Input } from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
+
 export type FieldType = {
   userName?: string;
   fullName?: string;
@@ -38,6 +39,12 @@ const Profile = () => {
     }
     mutate(values);
   };
+
+  const handleChooseFile = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    fileInputRef.current.click();
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
@@ -47,7 +54,7 @@ const Profile = () => {
       {contextHolder}
 
       <div>
-        <div className="border-b-2">
+        <div className="border-b-2 mt-[18px]">
           <h2 className="text-xl">Hồ Sơ Của Tôi</h2>
           <p className="py-2 text-sm">
             Quản lý thông tin hồ sơ để bảo mật tài khoản
@@ -123,14 +130,22 @@ const Profile = () => {
                         alt="Avatar"
                       />
                     </div>
-                    <div>
-                      <input
-                        type="file"
-                        className="hidden pl-[20px]"
-                        id="fileInput"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                      />
+                    <div className="relative">
+                      <div className="flex items-center justify-center">
+                        <button
+                          className=" bg-black text-white w-[100px] h-[40px]"
+                          onClick={handleChooseFile}
+                        >
+                          Chọn ảnh
+                        </button>
+                        <input
+                          type="file"
+                          className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                          id="fileInput"
+                          ref={fileInputRef}
+                          onChange={handleFileChange}
+                        />
+                      </div>
                     </div>
                   </div>
                 </Form.Item>

@@ -3,14 +3,12 @@ import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 import { useMutation } from "@tanstack/react-query";
 import { confirmCancelOrder } from "../../../services/orderProduct";
-import { message, Popconfirm } from "antd";
+import { message, Popconfirm, Table } from "antd";
 
 const OrdersDetali = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const { id } = useParams();
     const { data, refetch } = Query_Orders(id);
-    console.log(data);
-
     const { mutate } = useMutation({
         mutationFn: async (comfirm: any) => {
             const { data } = await confirmCancelOrder(comfirm);
@@ -62,8 +60,6 @@ const OrdersDetali = () => {
                 content: response.data.status === "4" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!",
             })
             refetch();
-
-
         } catch (error) {
             messageApi.open({
                 type: "error",
@@ -91,7 +87,58 @@ const OrdersDetali = () => {
         }
     };
     const cancellationRequested = data?.cancellationRequested;
+    const dataSort = data?.items?.map((item: any) => ({
+        key: item._id,
+        ...item
+    }))
+    const columns = [
+        {
+            title: 'Ảnh sản phẩm',
+            dataIndex: 'image_product',
+            key: 'image_product',
+            render: (_: any, item: any) => (
+                <img src={item?.productId?.image_product} alt="" className="w-[70px] h-[70px] object-cover " />
+            )
+        },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'name_product',
+            key: 'name_product',
+            render: (_: any, item: any) => (
+                <div>
+                    <p className="text-lg font-medium w-[80%]">{item?.productId?.name_product}</p>
+                    <p className=" mt-1 font-medium">Loại: {item?.color_item} - {item?.name_size}</p>
+                </div>
+            )
+        },
+        {
+            title: 'Giá sản phẩm',
+            dataIndex: 'price_product',
+            key: 'price_product',
+            render: (_: any, item: any) => (
+                <p>{item?.productId?.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+            )
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            render: (_: any, item: any) => (
+                <p className="text-center">{item?.quantity}</p>
+            )
+        },
+        {
+            title: 'Tông tiền',
+            dataIndex: 'price_product',
+            key: 'price_product',
+            render: (_: any, item: any) => (
+                <p>
+                    {(item?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                </p>
+            )
+        },
 
+    ];
     const isPreparing = data?.status === 2
     if (!data) return <p>Loading...</p>;
 
@@ -99,41 +146,14 @@ const OrdersDetali = () => {
         <>
             {contextHolder}
             <h1 className="font-bold text-3xl text-black mt-16 text-center">Chi tiết đơn hàng</h1>
-            <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
-                <table className="min-w-full bg-white border border-gray-200 h-auto">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ảnh sản phẩm</th>
-                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tên sản phẩm</th>
-                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
-                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
-                            <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {data.items.map((item: any) => {
-                            console.log(data.items);
-
-                            return (
-                                <tr key={item._id}>
-                                    <td className="py-4 px-6 text-sm font-medium text-gray-900 flex justify-center">
-                                        <img src={item?.productId?.image_product} alt="" className="w-[70px] h-[70px] object-cover " />
-                                    </td>
-                                    <td className="py-4 px-6 text-sm  text-gray-500 text-left">{item?.productId?.name_product}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{item?.quantity}</td>
-                                    <td className="py-4 px-6 text-sm text-gray-500 text-center">{(item?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
+            <div className="overflow-x-auto my-6 shadow p-[20px] rounded">
+                <Table columns={columns} dataSource={dataSort} pagination={false} />
                 <div className="bg-white divide-y divide-gray-200">
-                    <div className="flex justify-between py-4">
+                    {/* <div className="flex justify-between py-4">
                         <p>Đơn vị vận chuyển</p>
                         <p>Giao hàng tiết kiệm: 20000 đ</p>
-                    </div>
-                    <div className="flex gap-8 py-4">
+                    </div> */}
+                    {/* <div className="flex gap-8 py-4">
                         <span className="flex gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -144,31 +164,31 @@ const OrdersDetali = () => {
                             <p>Voucher</p>
                         </span>
                         <p>Mã voucher:</p>
-                    </div>
-                    <p className="flex justify-end items-end py-4 font-bold">Tổng tiền:<span className="text-black pl-2 text-xl"> {data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })} </span></p>
+                    </div> */}
+                    <p className="flex justify-end items-end pt-4 font-bold">Tổng tiền:<span className="text-black pl-2 text-xl"> {data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })} </span></p>
                 </div>
             </div>
-            <div className="overflow-x-auto my-6 shadow-lg p-[20px] rounded-lg">
+            <div className="overflow-x-auto my-6 shadow p-[20px] rounded">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
                     <p>Phương thức thanh toán</p>
-                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data?.customerInfo?.payment}</p>
+                    <p className="w-auto p-3 border-2 border-black text-black rounded">{data?.customerInfo?.payment}</p>
                 </div>
                 <div className="flex items-center gap-4 border-b py-3">
                     <p>Trạng thái đơn hàng</p>
-                    <p className="w-auto p-3 border-2 border-black text-black rounded-sm">{data?.status == 1 ? "Chờ xác nhận" :
+                    <p className="w-auto p-3 border-2 border-black text-black rounded">{data?.status == 1 ? "Chờ xác nhận" :
                         data?.status == 2 ? "Đang chuẩn bị hàng" :
                             data?.status == 3 ? "Đang vận chuyển" :
                                 data?.status == 4 ? "Đã giao hàng" : "Đã hủy"}</p>
                 </div>
                 <div className="flex justify-between my-4">
                     <div className="flex gap-6">
-                        <div>
+                        <div className="*:py-1">
                             <p>Tên khách hàng:</p>
                             <p>Số điện thoại:</p>
                             <p>Địa chỉ Email:</p>
                             <p>Địa chỉ khách hàng:</p>
                         </div>
-                        <div>
+                        <div className="*:py-1">
                             <p>{data?.customerInfo?.userName}</p>
                             <p>{data?.customerInfo?.phone}</p>
                             <p>{data?.customerInfo?.email}</p>
@@ -176,23 +196,21 @@ const OrdersDetali = () => {
                         </div>
                     </div>
                     <div className="flex gap-6">
-                        <div>
+                        <div className="*:py-1">
                             <p>Tổng tiền hàng:</p>
-                            <p>Tổng giảm giá:</p>
+                            {/* <p>Tổng giảm giá:</p> */}
                             <p>Phí vận chuyển:</p>
                             <p>Tổng thanh toán:</p>
                         </div>
-                        <div>
+                        <div className="*:py-1">
                             <p>{data?.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
-                            <p>10000</p>
-                            <p>20000 đ</p>
-                            <p className="font-bold">{(data.totalPrice - 10000 + 20000)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                            {/* <p>10000</p> */}
+                            <p>0 đ</p>
+                            <p className="font-bold">{(data?.totalPrice)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                         </div>
                     </div>
                 </div>
-
                 <div className="flex gap-5 justify-center mt-[60px]">
-
                     {cancellationRequested ? (
                         <>
                             {!isPreparing ? (
@@ -264,7 +282,6 @@ const OrdersDetali = () => {
                         </>
                     )}
                 </div>
-
             </div>
         </>
     );

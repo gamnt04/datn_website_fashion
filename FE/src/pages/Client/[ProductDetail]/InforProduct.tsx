@@ -6,6 +6,7 @@ import { Button } from "../../../components/ui/button";
 import { Dow, Up } from "../../../resources/svg/Icon/Icon";
 import { Convert_Color } from "../../../_lib/Config/Config_Color";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 interface InforProductProp {
   product: IProduct;
@@ -43,16 +44,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             text_validate()
           }
         }
-        else if (dataAttr?.color) {
-          if (color) {
-            mutate(item);
-          }
-          else {
-            text_validate()
-          }
-        }
-        else if (sizeDataAttr?.name_size) {
-          if (size) {
+        else if (dataAttr?.color || sizeDataAttr?.name_size) {
+          if (color || size) {
             mutate(item);
           }
           else {
@@ -67,13 +60,13 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     else {
       navi('/login')
     }
-  };
+  }
   function text_validate() {
     ref_validate_attr?.current?.classList.add('block')
     ref_validate_attr?.current?.classList.remove('hidden')
   }
   useEffect(() => {
-    if (!dataProps) {
+    if (!dataProps?.product?.attributes) {
       setQuantity_attr(stock);
     }
   }, [dataProps]);
@@ -81,6 +74,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
       case "Color":
+        setQuantity_item(1);
+        setSize(undefined);
         ref_validate_attr?.current?.classList.add('hidden')
         ref_validate_attr?.current?.classList.remove('block')
         dataItem?.attributes?.values?.filter((i: any) => {
@@ -92,6 +87,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         })
         return setColor(item);
       case "Size":
+        setQuantity_item(1)
         ref_validate_attr?.current?.classList.add('hidden')
         ref_validate_attr?.current?.classList.remove('block')
         for (let i of dataProps?.product?.attributes?.values) {
@@ -109,48 +105,99 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_quantity_item(action: any) {
     switch (action) {
       case "dow":
-        if (quantity_item > 1) {
-          setQuantity_item(quantity_item - 1);
+        if (color && size) {
+          if (quantity_item > 1) {
+            setQuantity_item(quantity_item - 1);
+          }
+        }
+        else if (color || size) {
+          if (quantity_item > 1) {
+            setQuantity_item(quantity_item - 1);
+          }
+        }
+        else {
+          text_validate()
         }
         return;
       case "up":
-        if (quantity_item < quantity_attr) {
-          setQuantity_item(quantity_item + 1);
-        } else {
-          alert("Vượt quá số lượng sản phẩm!");
+        if (color && size) {
+          if (quantity_item < quantity_attr) {
+            setQuantity_item(quantity_item + 1);
+          } else {
+            Swal.fire("Vượt quá số lượng sản phẩm!");
+          }
+        }
+        else if (color || size) {
+          if (quantity_item < quantity_attr) {
+            setQuantity_item(quantity_item + 1);
+          } else {
+            Swal.fire("Vượt quá số lượng sản phẩm!");
+          }
+        }
+        else {
+          text_validate();
         }
         return;
+      default: return;
     }
   }
+
+  const price = price_product * quantity_item
+  // next order
+  function next_order() {
+    if (account) {
+      sessionStorage.removeItem('item_order');
+      if (!color || !size) {
+        text_validate()
+        return;
+      }
+      const items_order = [
+        {
+          productId: dataProps?.product,
+          quantity: quantity_item,
+          price_item: price_product,
+          color_item: color,
+          name_size: size,
+          total_price_item: price
+        }
+      ]
+      const data_order = {
+        id_user: account?.id,
+        data_order: items_order,
+        totalPrice: price,
+        action: 'data_detail'
+      }
+      sessionStorage.setItem('item_order', JSON.stringify(data_order))
+      navi('/cart/pay')
+    } else {
+      navi('/login')
+    }
+
+
+  }
+
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       <div className="flex flex-col lg:gap-y-2">
         {/* row 1 */}
-        <div className="lg:pb-5 flex flex-col lg:gap-y-2">
-          <span className="text-gray-700 font-bold lg:text-base mb:text-sm">
+        <div className="flex flex-col lg:gap-y-2">
+          <span className="text-gray-700 font-bold lg:text-3xl mb:text-xl">
             {name_product}
           </span>
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
           <div className="flex flex-col gap-y-2 justify-between">
             <section className="lg:w-[163px] mb:w-[157px] mb:mt-[8px] lg:mt-0 h-[21px] *:lg:text-sm *:mb:text-xs flex justify-between items-start">
-              {/* neu co danh gia bang sao thi bo vao */}
-              {/* <div className="flex items-start lg:gap-x-0 mb:gap-x-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                </svg>
-                                <strong>4.6/5</strong>
-                            </div> */}
               <div className="flex gap-x-2">
                 <strong>135</strong>
                 <span className="text-[#C8C9CB]">Reviews</span>
               </div>
             </section>
             <div className="flex gap-x-2 items-end">
-              <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
-                <del className="font-light lg:text-sm mb:text-sm text-[#9D9EA2]">
-                  200.00 đ
-                </del>
-                {price_product}
+              <span className="font-medium text-[#EB2606] lg:text-2xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
+                {price_product?.toLocaleString("vi", {
+                  style: "currency",
+                  currency: "VND"
+                })}
               </span>
             </div>
           </div>
@@ -194,10 +241,10 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </>
         )}
         {/* row 5 */}
-        <div className="py-5 *:w-full rounded-xl lg:-mt-5 -mt-1">
+        <div className=" mt-2 *:w-full rounded-xl">
           <span ref={ref_validate_attr} className="hidden text-red-500 text-sm">Vui lòng chọn!</span>
           {/* quantity */}
-          <div className="py-5 flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
+          <div className=" flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
             {/* up , dow quantity */}
             <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
@@ -217,21 +264,24 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </span>
             </div>
           </div>
-          <div className="flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
+          <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
-            <span className="text-[#EB2606]">242.00 đ</span>
+            <span className="text-[#EB2606]">{(price ? price : 0)?.toLocaleString("vi", {
+              style: "currency",
+              currency: "VND"
+            })}</span>
           </div>
 
-          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300">
+          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             {/* add cart */}
             <Button
-              className="hover:bg-black hover:text-white"
+              className="hover:bg-black hover:text-white w-full lg:w-[20%]"
               onClick={() => addCart(_id)}
             >
               Thêm vào giỏ
             </Button>
             {/* add cart */}
-            <Button className="hover:bg-black hover:text-white">
+            <Button onClick={next_order} className="hover:bg-black hover:text-white w-full lg:w-[20%]">
               Thanh toán
             </Button>
           </div>

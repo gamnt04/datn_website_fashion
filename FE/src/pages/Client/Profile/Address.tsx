@@ -1,69 +1,137 @@
-import { Auth } from "../../../common/interfaces/Auth";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../configs/axios";
+import { Button, message, Popconfirm } from "antd";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
+import {
+  Add_Address,
+  Update_Address,
+} from "../../../components/common/Client/_component/Address";
 
 const Address = () => {
-  const { isLoading, isPending, isError, error } = ProfileHook();
+  const { isLoading, isError, error } = ProfileHook();
+  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data } = List_Auth(userId);
+
+  const { data } = useQuery({
+    queryKey: ["AUTH_KEY", userId],
+    queryFn: async () => {
+      const { data } = await instance.get(`/auth/address/${userId}`);
+      return data;
+    },
+  });
+  console.log(data?.address?.fullName);
+
+  const { mutate: deleteAddress } = useMutation({
+    mutationFn: async () => {
+      await instance.delete(`/auth/address/${userId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["AUTH_KEY", userId],
+      });
+      message.open({
+        type: "success",
+        content: "Xóa địa chỉ thành công",
+      });
+    },
+    onError: () => {
+      message.open({
+        type: "error",
+        content: "Xóa địa chỉ thất bại!",
+      });
+    },
+  });
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
+
+  const handleAddress = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleUpdateAddress = () => {
+    setIsOpenUpdate(!isOpenUpdate);
+  };
 
   if (isLoading) return <div>Loading...</div>;
-  if (isPending) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
+
   return (
     <>
       <div>
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h1>Địa chỉ của tôi</h1>
-          <button className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            <span className="hidden lg:block">Thêm địa chỉ mới</span>
-          </button>
+          {data?.address ? (
+            ""
+          ) : (
+            <div>
+              <button
+                onClick={handleAddress}
+                className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+                <span className="hidden lg:block">Thêm địa chỉ mới</span>
+              </button>
+            </div>
+          )}
         </div>
+
         <div className="px-5 py-4">
-          <h2 className="py-2">Địa chỉ</h2>
-          {data?.address?.map((address: Auth) => (
-            <div
-              key={address._id}
-              className="flex justify-between items-center my-5 border-b pb-6"
-            >
+          {data?.address ? (
+            <div className="flex justify-between items-center my-5 border-b pb-6">
               <div className="py-1">
                 <h1>
-                  {address.fullName}{" "}
+                  {data?.address?.fullName}{" "}
                   <span className="px-2 text-gray-400">|</span>{" "}
-                  <span className="text-gray-400">{address.phoneNumber}</span>
+                  <span className="text-gray-400">
+                    {data?.address?.phoneNumber}
+                  </span>
                 </h1>
-                <span className="text-gray-400">{address.addressDetails}</span>
-                <div className="flex gap-3 mt-3">
-                  <button className="border border-stone-300 text-gray-400 px-4 py-2 rounded-md text-sm">
-                    Mặc định
-                  </button>
+                <div className="flex text-gray-400">
+                  <span>{data?.address?.addressDetails}</span>
+                  <span>-</span>
+                  <span>{data?.address?.address}</span>
                 </div>
+                {/* {address.checked && (
+                  <div className="flex gap-3 mt-3">
+                    <button className="border border-stone-300 bg-[#000000] text-white px-4 py-2 rounded-md text-sm">
+                      Mặc định
+                    </button>
+                  </div>
+                )} */}
               </div>
-              <div className="">
+              <div>
                 <div className="hidden lg:block">
                   <div className="flex gap-2 justify-end text-blue-400 py-2">
-                    <a href="#">Cập nhật</a>
-                    <button>Xóa</button>
+                    <a onClick={handleUpdateAddress} href="#">
+                      Cập nhật
+                    </a>
+                    <Popconfirm
+                      title="Xóa địa chỉ"
+                      description="Bạn có chắc chắn muốn xóa địa chỉ này không?"
+                      onConfirm={() => deleteAddress(userId)}
+                      okText="Xóa"
+                      cancelText="Hủy"
+                    >
+                      <button>Xóa</button>
+                    </Popconfirm>
                   </div>
-                  <button className="border px-4 py-2 rounded-md text-sm text-gray-400">
-                    Thiết lập mặc định
-                  </button>
                 </div>
                 <div className="block lg:hidden">
                   <svg
@@ -83,149 +151,16 @@ const Address = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ) : (
+            "Chưa cập nhật địa chỉ"
+          )}
         </div>
+
+        {isOpen && <Add_Address handleAddress={handleAddress} />}
+        {isOpenUpdate && (
+          <Update_Address handleUpdateAddress={handleUpdateAddress} />
+        )}
       </div>
-
-      {/* Modal for add new address */}
-      {/*{isOpen && (
-        // <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-        //   <div className="bg-white p-5 border rounded-lg relative w-[400px] lg:w-[500px]">
-        //     <h1 className="py-3 text-center font-medium">Địa chỉ mới</h1>
-        //     <form onSubmit={handleAddAddress}>
-        //       <div className="w-full border px-2 py-2 outline-none flex gap-3 my-3">
-        //         <input
-        //           type="text"
-        //           name="fullName"
-        //           value={addressInfo.fullName}
-        //           onChange={handleInputChange}
-        //           placeholder="Họ và tên"
-        //           required
-        //         />
-        //         <input
-        //           type="text"
-        //           name="phoneNumber"
-        //           value={addressInfo.phoneNumber}
-        //           onChange={handleInputChange}
-        //           placeholder="Số điện thoại"
-        //           required
-        //         />
-        //       </div>
-        //       <div className="my-3 px-2 py-2 border outline-none">
-        //         <input
-        //           type="text"
-        //           className="w-full"
-        //           name="addressDetails"
-        //           value={addressInfo.addressDetails}
-        //           onChange={handleInputChange}
-        //           placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
-        //           required
-        //         />
-        //       </div>
-        //       <div className="my-3 px-2 py-2 border outline-none">
-        //         <input
-        //           type="text"
-        //           className="w-full"
-        //           name="addressType"
-        //           value={addressInfo.addressType}
-        //           onChange={handleInputChange}
-        //           placeholder="Địa chỉ cụ thể"
-        //           required
-        //         />
-        //       </div>
-        //       <div className="my-3">
-        //         <p>Loại địa chỉ:</p>
-        //         <div className="flex gap-4 border px-3 py-2 my-2">
-        //           <button type="button">Nhà riêng</button>
-        //           <button type="button">Văn phòng</button>
-        //         </div>
-        //       </div>
-        //       <div className="my-3 flex items-center gap-3">
-        //         <input type="radio" /> <span>Đặt làm mặc định</span>
-        //       </div>
-        //       <div className="flex justify-center pt-5 w-full">
-        //         <button
-        //           type="submit"
-        //           className="bg-black text-white px-4 py-3 rounded-md"
-        //         >
-        //           Hoàn Thành
-        //         </button>
-        //       </div>
-        //     </form>
-        //     <button
-        //       onClick={handleToggle}
-        //       className="bg-red-500 text-white absolute top-5 right-5 rounded-md px-2 py-2"
-        //     >
-        //       Đóng
-        //     </button>
-        //   </div>
-        // </div>
-      )}*/}
-
-      {/* Modal for update address */}
-      {/*{isOpenUpdate && (
-        // <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-        //   <div className="bg-white p-5 border rounded-lg relative w-[400px] lg:w-[500px]">
-        //     <h1 className="py-3 text-center font-medium">Cập nhật địa chỉ</h1>
-        //     <form onSubmit={handleUpdateAddress}>
-        //       <div className="w-full border px-2 py-2 outline-none flex gap-3 my-3">
-        //         <input
-        //           type="text"
-        //           name="fullName"
-        //           value={addressInfo.fullName}
-        //           onChange={handleInputChange}
-        //           placeholder="Họ và tên"
-        //           required
-        //         />
-        //         <input
-        //           type="text"
-        //           name="phoneNumber"
-        //           value={addressInfo.phoneNumber}
-        //           onChange={handleInputChange}
-        //           placeholder="Số điện thoại"
-        //           required
-        //         />
-        //       </div>
-        //       <div className="my-3 px-2 py-2 border outline-none">
-        //         <input
-        //           type="text"
-        //           className="w-full"
-        //           name="addressDetails"
-        //           value={addressInfo.addressDetails}
-        //           onChange={handleInputChange}
-        //           placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
-        //           required
-        //         />
-        //       </div>
-        //       <div className="my-3 px-2 py-2 border outline-none">
-        //         <input
-        //           type="text"
-        //           className="w-full"
-        //           name="addressType"
-        //           value={addressInfo.addressType}
-        //           onChange={handleInputChange}
-        //           placeholder="Địa chỉ cụ thể"
-        //           required
-        //         />
-        //       </div>
-        //       <div className="my-3 flex justify-center pt-5 w-full">
-        //         <button
-        //           type="submit"
-        //           className="bg-black text-white px-4 py-3 rounded-md"
-        //         >
-        //           Cập nhật
-        //         </button>
-        //       </div>
-        //     </form>
-        //     <button
-        //       onClick={() => setIsOpenUpdate(false)}
-        //       className="bg-red-500 text-white absolute top-5 right-5 rounded-md px-2 py-2"
-        //     >
-        //       Đóng
-        //     </button>
-        //   </div>
-        // </div>
-      )} */}
     </>
   );
 };

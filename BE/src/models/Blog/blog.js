@@ -8,7 +8,7 @@ const blogSchema = new Schema({
     createdAt: { type: Date, default: Date.now },
     tags: [{ type: String }],
     published: { type: Boolean, default: false },
-    imageUrl: { type: String, required: true }
+    imageUrl: { type: String}
 });
 
 
