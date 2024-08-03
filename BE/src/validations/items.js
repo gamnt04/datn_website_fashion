@@ -28,7 +28,7 @@ export const validate_items = Joi.object({
   }),
   category_id: Joi.string().optional(),
   attributes: Joi.optional(),
-  stock : Joi.optional(),
+  stock: Joi.optional(),
   featured_product: Joi.boolean(),
   tag_product: Joi.string(),
 });
