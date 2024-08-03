@@ -29,7 +29,7 @@ const Nav_Mobile = () => {
     ]
 
     return (
-        <nav className="flex flex-col justify-between *:my-1 *:px-8 *:py-2 *:font-medium *:capitalize *:relative *:duration-300">
+        <nav className="flex flex-col justify-between text-gray-900 *:my-1 *:px-8 *:py-2 *:font-medium *:capitalize *:relative *:duration-300">
             {
                 arr?.map((item: { path: string, name: string }) => (
                     <NavLink key={item.path}
@@ -78,9 +78,9 @@ export function Nav_Desktop() {
     ]
 
     return (
-        <nav className="mb:hidden lg:block lg:flex justify-between items-center *:xl:mx-5 *:lg:mx-4 *:font-semibold
-         *:capitalize *:relative *:duration-300 *:after:content-[''] *:after:duration-300 *:after:absolute *:after:w-0 *:after:right-1/2 *:after:bottom-[-30%] *:after:h-[2px] *:after:bg-orange-600
-          *:after:rounded-lg *:before:content-[''] *:before:absolute *:before:h-[2px] *:before:right-0 *:before:bg-orange-600  *:before:bottom-[-30%]  *:before:rounded-lg"
+        <nav className="mb:hidden lg:block lg:flex justify-between items-center *:xl:mx-5 *:lg:mx-4 *:font-medium
+         *:capitalize *:relative *:duration-300 *:after:content-[''] *:after:duration-300 *:after:absolute *:after:w-0 *:after:right-1/2 *:after:bottom-[-30%] *:after:h-[2px] *:after:bg-gray-100
+          *:after:rounded-lg *:before:content-[''] *:before:absolute *:before:h-[2px] *:before:right-0 *:before:bg-gray-100  *:before:bottom-[-30%]  *:before:rounded-lg"
         >
             {
                 arr?.map((item: { path: string, name: string }) => (

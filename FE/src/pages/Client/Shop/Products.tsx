@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useProducts } from "../../../common/hooks/Products/useFilterProducts";
 import Products from "../../../components/common/Items/Products";
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+// import List_item from "../../../components/common/Client/_component/List_item";
 
 interface Products_ShopProps {
   selectedCategoryId: string | null;
@@ -46,6 +47,12 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
       setPage(page + 1);
     }
   };
+
+
+  // const propData = {
+  //   data: data,
+  //   style: 'lg:grid-cols-4 md:grid-cols-3'
+  // }
 
   return (
     <div className="py-10">

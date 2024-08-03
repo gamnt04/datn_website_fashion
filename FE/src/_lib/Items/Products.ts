@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { toast } from "react-toastify";
 import { IProduct } from "../../common/interfaces/Product";
 import instance from "../../configs/axios";
 
@@ -11,16 +12,39 @@ export async function get_items_client(page?: number) {
       uri += `?_page=${page}`;
     }
     const res = await fetch(`${uri}`);
-
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
     }
     const { data } = await res.json();
+    return data.docs;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+}
 
-    const activeProducts = data.docs.filter(
-      (product: any) => !product.deletedAt
-    );
-    return activeProducts;
+
+export async function get_items_dashboard(page?: number) {
+  try {
+    let uri = `${baseUri}/dashboard`;
+    if (page) {
+      uri += `?_page=${page}`;
+    }
+    const res = await fetch(`${uri}`);
+    if (!res.ok) {
+      console.warn("Kiem tra lai server hoac internet !");
+    }
+    const { data } = await res.json();
+    return data.docs;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+}
+
+export async function get_limit_items(limit: number) {
+  try {
+    const uri = `/products?&_limit=${limit}`;
+    const { data } = await instance.get(uri);
+    return data?.data?.docs;
   } catch (error) {
     console.log(error || "Loi server!");
   }
@@ -91,16 +115,19 @@ export async function edit_items_client(product: IProduct) {
   }
 }
 
-export async function remove_items_client(id: string) {
+export async function remove_items(dataBody: any) {
   try {
-    const res = await fetch(`${baseUri}/${id}`, {
+    const res = await fetch(`${baseUri}/${dataBody.id_item}`, {
       method: "DELETE",
     });
     if (!res.ok) {
-      console.warn("Kiem tra lai server hoac internet !");
+      toast.error(`Không thể xóa sản phẩm ${dataBody.id_item}`, { autoClose: 500 });
+      return res
     }
-    const { data } = await res.json();
-    return data.docs;
+    else {
+      toast.success(`Xóa sản phẩm ${dataBody.id_item}  thành công`, { autoClose: 500 });
+    }
+    return res;
   } catch (error) {
     console.log(error || "Loi server!");
   }
@@ -115,30 +142,54 @@ export const remove_multiple_products = async (data: {
     console.log(error || "Loi server!");
   }
 };
-export const deleteProduct = async (id: string) => {
-  const response = await fetch(
-    `http://localhost:2004/api/v1/products/permanent/${id}`,
-    {
-      method: "DELETE",
+export const destroy_delete_Product = async (id: string) => {
+  try {
+    const response = await fetch(
+      `http://localhost:2004/api/v1/products/permanent/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!response.ok) {
+      toast.error(`Không thể xóa sản phẩm ${id}`, { autoClose: 500 });
+      return response
     }
-  );
-  return response.json();
+    else {
+      toast.success(`Xóa sản phẩm ${id}  thành công`, { autoClose: 500 });
+    }
+    await response.json()
+    return response;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
 };
 
-export const restoreProduct = async (id: string) => {
-  const response = await fetch(`http://localhost:2004/api/v1/products/${id}`, {
-    method: "PATCH",
-  });
-  return response.json();
+export const restoreProduct = async (item: any) => {
+  try {
+    const response = await fetch(`${baseUri}/recycle/${item.id_item}`, {
+      method: "PATCH",
+    });
+    if (!response.ok) {
+      toast.error(`Không thể khôi phục sản phẩm ${item.id_item}`, { autoClose: 500 });
+      return response
+    }
+    else {
+      toast.success(`Khôi phục sản phẩm ${item.id_item}  thành công`, { autoClose: 500 });
+    }
+    await response.json()
+    return response;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
 };
 
 export async function getDeletedProducts() {
   try {
-    const response = await fetch(`${baseUri}/trash`);
+    const response = await fetch(`${baseUri}/dashboard/trash`);
     if (!response.ok) {
-      throw new Error("Không thể lấy danh sách sản phẩm đã xóa mềm");
+      throw new Error("Không thể lấy danh sách sản phẩm đã xóa");
     }
-    const data = await response.json();
+    const { data } = await response.json();
     return data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách sản phẩm đã xóa mềm:", error);

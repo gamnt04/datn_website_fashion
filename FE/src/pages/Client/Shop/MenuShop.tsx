@@ -18,7 +18,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
   setSearch,
   setSort,
 }) => {
-  const { data } = useCategoryQuery(); 
+  const { data } = useCategoryQuery();
 
   return (
     <div className="hidden lg:block w-full h-auto flex flex-col my-10 rounded overflow-hidden">

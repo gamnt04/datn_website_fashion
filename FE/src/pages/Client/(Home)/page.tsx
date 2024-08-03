@@ -1,29 +1,31 @@
 import Banner from "./Banner";
 import Trending_Products from "./Trending";
 import Fres from "./Fres";
-// import Outstanding from "./Outstanding";
 import Ourblog from "./Ourblog";
-import AllProducts from "./AllProducts";
-// import Brand from "./Brand";
-// import Get_in_touch from "./Get_in_touch";
+import List_Products from "./List_Products";
+
 
 const IndexHome = () => {
-  return (
-    <div className="lg:mt-[40px] mt-[60px]">
-      <Banner />
-      {/* <div className="w-full">
-        <Outstanding />
-      </div> */}
-      <Trending_Products />
-      <Fres />
-      <div className="w-full">
-        <AllProducts />
-        <Ourblog />
-        {/* <Brand />
-            <Get_in_touch/> */}
-      </div>
-    </div>
-  );
-};
+    return (<div className="lg:mt-[20px] mt-[60px]">
+        <Banner />
 
-export default IndexHome;
+        <div className="xl:w-[1440px] w-[95vw] mx-auto">
+            <div className="w-full">
+                <Trending_Products />
+            </div>
+        </div>
+        <Fres />
+        <div className="xl:w-[1440px] w-[95vw] mx-auto">
+            <div className="w-full">
+                <List_Products />
+                <Ourblog />
+            </div>
+        </div>
+
+        {/* <div className="xl:w-[1440px] w-[95vw] mx-auto">
+            
+        </div> */}
+    </div>)
+}
+
+export default IndexHome

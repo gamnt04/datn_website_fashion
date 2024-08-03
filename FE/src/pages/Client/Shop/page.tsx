@@ -39,6 +39,7 @@ const IndexShops: React.FC = () => {
             sort={sort}
           />
         </div>
+        {/* <Get_in_touch /> */}
       </div>
     </div>
   );

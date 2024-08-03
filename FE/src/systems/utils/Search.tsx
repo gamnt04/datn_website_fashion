@@ -25,11 +25,10 @@ const useSearch = (initialTerm = "", debounceDelay = 300) => {
     }
 
     try {
-      // const response = await instance.get("/products_all", {
-      //   params: { _search: term },
-      // }); // Gửi từ khóa tìm kiếm
-      const response = await instance.get("/products", {
-        params: { _search: term },
+
+      const response = await instance.get("/products_all", {
+        params: { _search: term }, // Gửi từ khóa tìm kiếm
+
       });
       setResults(response.data.data.docs);
       setShowResults(response.data.data.docs.length > 0);
@@ -43,8 +42,8 @@ const useSearch = (initialTerm = "", debounceDelay = 300) => {
 
   const handleChange = (e: any) => {
     const value = e.target.value;
-    setSearchTerm(value);
-    fetchResults(value);
+    setSearchTerm(value); // Cập nhật searchTerm
+    fetchResults(value); // Gọi hàm tìm kiếm ngay lập tức
   };
 
   const handleBlur = () => {

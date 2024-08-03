@@ -19,25 +19,25 @@ const AllOrder = () => {
   }, [userId]);
   const { data } = List_Auth(userId);
   return (
-    <div className="mt-28 mb-4">
-      <div className="container mx-auto max-w-[1200px]">
+    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="mt-20 mb-4">
         <div className="flex flex-row space-x-5 relative">
           <div className="basis-28 lg:basis-3/12">
             <div className="lg:flex gap-4 pt-[15px] px-3 pb-[15px] border-b-2 ">
               <div className="flex justify-center">
                 <img
-                  className="w-[46px] h-[46px] rounded-full"
+                  className="w-[50px] h-[50px] rounded-full"
                   src={data?.avatar}
                   alt=""
                 />
               </div>
               <div className="">
-                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold text-center py-1">
+                <h3 className="text-[#333] text-[12px] lg:text-[16px] font-semibold py-1">
                   {data?.userName}
                 </h3>
                 <a
                   href="/allorder"
-                  className="text-[#9B9B9B] text-center text-[12px] lg:text-sm flex items-center justify-center font-normal"
+                  className="text-[#9B9B9B]  text-[12px] lg:text-sm flex font-normal"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -175,6 +175,7 @@ const AllOrder = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

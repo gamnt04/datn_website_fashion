@@ -1,5 +1,10 @@
 import mongoose, { Schema } from "mongoose";
-
+import mongoosePaginate from "mongoose-paginate-v2";
+const updatedFieldSchema = new mongoose.Schema({
+  field: { type: String },
+  time: { type: Date, default: Date.now },
+  value: { type: String },
+});
 const userSchema = new Schema(
   {
     email: {
@@ -22,14 +27,13 @@ const userSchema = new Schema(
       minlength: 3,
       maxlength: 30,
     },
-    address: [
-      {
-        fullName: { type: String },
-        phoneNumber: { type: String },
-        addressDetails: { type: String },
-        default: { type: Boolean },
-      },
-    ],
+    address: {
+      fullName: { type: String },
+      phoneNumber: { type: String },
+      address: { type: String },
+      addressDetails: { type: String },
+      checked: { type: Boolean, default: false },
+    },
     phone: {
       type: String,
     },
@@ -41,18 +45,16 @@ const userSchema = new Schema(
 
     avatar: {
       type: String,
-      // default: "https://vectorified.com/images/default-avatar-icon-12.png",
-      default: "../upload/default-avatar.jpeg",
+      default: "https://vectorified.com/images/default-avatar-icon-12.png",
+      // default: "../upload/default-avatar.jpeg",
     },
 
     birthDate: {
       type: String,
-      // get: function (value) {
-      //   return value ? value.toISOString().split('T')[0] : undefined;
-      // },
     },
+    updatedFields: { type: [updatedFieldSchema], default: [] },
   },
   { timestamps: true, versionKey: false }
 );
-
+userSchema.plugin(mongoosePaginate);
 export default mongoose.model("User", userSchema);
