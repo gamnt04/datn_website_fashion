@@ -15,14 +15,14 @@ const List_Category: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState(1);
   // const [dataSource, setDataSource] = useState<ICategory[]>([]);
-  const [searchText, setSearchText] = React.useState("");
+
   const pageSize = 4;
 
   const dataSource = Array.isArray(data)
     ? data.map((category: ICategory) => ({
-      key: category._id,
-      ...category,
-    }))
+        key: category._id,
+        ...category,
+      }))
     : [];
 
   const { mutate: deleteCategory } = useMutation({
@@ -49,10 +49,12 @@ const List_Category: React.FC = () => {
     },
   });
 
-
   const mutation = useMutation({
     mutationFn: async (category: ICategory) => {
-      const response = await instance.put(`/category/${category._id}`, category);
+      const response = await instance.put(
+        `/category/${category._id}`,
+        category
+      );
       return response.data;
     },
     onSuccess: () => {
@@ -61,8 +63,12 @@ const List_Category: React.FC = () => {
     },
     onError: (error: unknown) => {
       console.error("Lỗi khi cập nhật blog:", error);
-      messageApi.error(`Cập nhật blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."}`);
-    }
+      messageApi.error(
+        `Cập nhật blog không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
+    },
   });
 
   const handleTogglePublished = (category: ICategory) => {
