@@ -5,11 +5,7 @@ export const validate_items = Joi.object({
     "any.required": "Tên là bắt buộc!",
     "string.empty": "Tên không được để khoảng trống!",
   }),
-  price_product: Joi.number().min(1).required().messages({
-    "any.required": "Giá là bắt buộc!",
-    "number.min": "Giá tối thiểu là 1!",
-    "number.empty": "Giá không được để khoảng trắng!",
-  }),
+  price_product: Joi.number().min(1).optional(),
   image_product: Joi.string().required().messages({
     "any.required": "Ảnh là bắt buộc!",
     "string.empty": "Ảnh không được để khoảng trắng!",
@@ -30,5 +26,5 @@ export const validate_items = Joi.object({
   attributes: Joi.optional(),
   stock: Joi.optional(),
   featured_product: Joi.boolean(),
-  tag_product: Joi.string(),
+  tag_product: Joi.optional(),
 });

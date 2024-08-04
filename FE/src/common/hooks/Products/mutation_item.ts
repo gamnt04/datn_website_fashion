@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
 import {
   add_items_client,
   destroy_delete_Product,
@@ -8,11 +7,12 @@ import {
   remove_multiple_products,
   restoreProduct
 } from "../../../_lib/Items/Products";
+import { useState } from "react";
 
 type Action = "CREATE" | "EDIT" | "REMOVE_and_REMOVE_MULTIPLE" | 'RESTORE_ITEM_and_DESTROY_ITEM';
 
 export function Mutation_items(action: Action) {
-  const my_form = useForm();
+  const [status_api, setStatusApi] = useState('no_call');
   const queryClient = useQueryClient();
   const { mutate, ...rest } = useMutation({
     mutationFn: async (data_body_client: any) => {
@@ -38,19 +38,21 @@ export function Mutation_items(action: Action) {
           throw new Error("Invalid action type");
       }
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({
         queryKey: ["Product_Key"]
       });
+      if(res?.status === 400) {
+        setStatusApi('call_error')
+      }
+      else {
+        setStatusApi('call_ok')
+      }
     },
     onError: (error) => {
       console.error("Error:", error);
     }
   });
 
-  const on_Submit = my_form.handleSubmit((data) => {
-    mutate(data);
-  });
-
-  return { mutate, my_form, on_Submit, ...rest };
+  return { mutate, status_api, ...rest };
 }
