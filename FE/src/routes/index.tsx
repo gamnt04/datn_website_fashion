@@ -27,8 +27,6 @@ import TrashProduct from "../pages/Admin/Product/TrashProduct";
 import BlogList from "../pages/Admin/Blogs/BlogList";
 import ListContact from "../pages/Admin/contact/ListContact";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
-import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
-import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
@@ -37,6 +35,8 @@ import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
 import Layout_Profile from "../pages/Client/Layout_Profiles/layout";
+import Add_Item from "../pages/Admin/Product/Add_Item";
+import Edit_Item from "../pages/Admin/Product/Edit_Item";
 const RouterComponent = () => {
   return (
     <>
@@ -62,7 +62,7 @@ const RouterComponent = () => {
               element={<ProductDetail />}
             />
 
-            
+
             <Route path="profile" element={<AllOrder />}>
               <Route index element={<Layout_Profile />} />
             </Route>
@@ -85,9 +85,13 @@ const RouterComponent = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="category" element={<List_Category />} />
+            {/* <Route path="test1" element={<Add_Item />} />
+            <Route path="test2/:id" element={<Edit_Item />} /> */}
+            <Route path="products/add" element={<Add_Item />} />
+            <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
-            <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/edit/:id" element={<UpdateProduct />} />
+            {/* <Route path="products/add" element={<AddProduct />} />
+            <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="auth" element={<List_Auth />} />
