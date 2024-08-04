@@ -32,7 +32,7 @@ export const updateProductById = async (req, res) => {
       }
       const varriant = convertAttribute.map(item => ({
         color: convertAttribute ? item.color : '',
-        size: convertAttribute.map(s => ({
+        size: item.size.map(s => ({
           name_size: s.name_size ? s.name_size.toString() : '',
           stock_attribute: s.stock_attribute ? s.stock_attribute : 0,
           price_attribute: s.price_attribute ? s.price_attribute : 1

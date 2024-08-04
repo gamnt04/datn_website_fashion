@@ -170,7 +170,7 @@ const ListProduct = () => {
           </Link>
         </div>
 
-        <Table columns={columns} dataSource={dataSource} />
+        <Table columns={columns} dataSource={dataSource} className="custom-table" />
       </div>
     </>
   );

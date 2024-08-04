@@ -3,7 +3,7 @@ import useCategoryMutation from "../../../../common/hooks/Category/useCategoryMu
 import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
-import { uploadImage } from "../../../../systems/utils/uploadImage"; // Đường dẫn đến uploadImage.ts
+import { UploadImage } from "../../../../systems/utils/uploadImage"; // Đường dẫn đến uploadImage.ts
 import { useForm } from "react-hook-form";
 import { Form, Switch } from "antd";
 
@@ -21,7 +21,7 @@ const CreateComponent = () => {
   const handleSubmitForm = async (data: ICategory | any) => {
     try {
       if (data.image_category) {
-        const imageUrls = await uploadImage(data.image_category);
+        const imageUrls = await UploadImage(data.image_category);
 
         // Prepare form data
         const formData = {
