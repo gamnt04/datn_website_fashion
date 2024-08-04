@@ -112,6 +112,18 @@ export const getProductById = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
+    if (product.attributes.values) {
+      product.attributes.values = product.attributes.values.map((item) => {
+        const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
+        console.log(item);
+
+        return {
+          ...item,
+          size: new_data,
+        };
+      });
+    }
+    await product.save();
     return res.status(StatusCodes.OK).json({
       product,
     });

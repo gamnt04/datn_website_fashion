@@ -18,7 +18,7 @@ const AttributeSchema = new Schema(
                         stock_attribute: {
                             type: Number,
                             required: true,
-                            min: 1,
+                            min: 0,
                         },
                         price_attribute : Number
                        

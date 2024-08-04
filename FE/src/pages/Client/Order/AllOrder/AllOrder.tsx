@@ -22,7 +22,7 @@ const AllOrder = () => {
     <div className="xl:w-[1440px] w-[95vw] mx-auto">
       <div className="mt-20 mb-4">
         <div className="flex flex-row space-x-5 relative">
-          <div className="basis-28 lg:basis-3/12">
+          {/* <div className="basis-28 lg:basis-3/12">
             <div className="lg:flex gap-4 pt-[15px] px-3 pb-[15px] border-b-2 ">
               <div className="flex justify-center">
                 <img
@@ -168,7 +168,7 @@ const AllOrder = () => {
                 </li>
               </ul>
             </div>
-          </div>
+          </div> */}
           <div className="basis-full overflow-hidden">
             <Outlet />
           </div>
