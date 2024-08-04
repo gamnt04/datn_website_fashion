@@ -35,14 +35,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -149,7 +149,7 @@ const Header = () => {
               >
                 <input
                   type="text"
-                  className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 focus:border-black rounded outline-none pr-14"
+                  className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
                   placeholder="Search"
                   value={searchTerm}
                   onChange={handleChange}
@@ -241,7 +241,7 @@ const Header = () => {
 
             {/* option / menu */}
             <div className="duration-300 cursor-pointer hover:scale-105">
-              <Link ref={ref_user} to={"/allorder"}>
+              <Link ref={ref_user} to={"/profile"}>
                 <img
                   src={getUser?.avatar ? getUser?.avatar : ""}
                   alt=""
