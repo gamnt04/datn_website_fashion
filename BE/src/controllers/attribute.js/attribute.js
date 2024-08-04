@@ -144,7 +144,6 @@
 //     }
 // };
 
-
 // // import attribute from "../../models/attribute.js/attribute";
 
 // // //Controller để tạo mới 1 thuộc tính

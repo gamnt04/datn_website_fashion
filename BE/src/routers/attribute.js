@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { createAttribute, getAttributes, updateAttribute, deleteAttribute } from "../controllers/attribute";
+import {
+  createAttribute,
+  getAttributes,
+  updateAttribute,
+  deleteAttribute,
+} from "../controllers/attribute";
 
 const router = Router();
 //Route tạo mới 1 thuộc tính

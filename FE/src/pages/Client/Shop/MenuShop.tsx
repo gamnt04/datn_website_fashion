@@ -10,6 +10,14 @@ interface MenuShopProps {
   onPriceChange: (min: number | null, max: number | null) => void;
   setSearch: (search: string) => void;
   setSort: (sort: string) => void;
+  selectedColors: string[];
+  toggleColor: (color: string) => void;
+  resetColorFilter: () => void;
+  onColorChange: (colors: string[]) => void;
+  selectedSizes: string[];
+  toggleSize: (size: string) => void;
+  resetSizeFilter: () => void;
+  onSizeChange: (sizes: string[]) => void;
 }
 
 const MenuShop: React.FC<MenuShopProps> = ({
@@ -17,6 +25,14 @@ const MenuShop: React.FC<MenuShopProps> = ({
   onPriceChange,
   setSearch,
   setSort,
+  selectedColors,
+  toggleColor,
+  resetColorFilter,
+  onColorChange,
+  selectedSizes,
+  toggleSize,
+  resetSizeFilter,
+  onSizeChange,
 }) => {
   const { data } = useCategoryQuery();
 
@@ -24,9 +40,18 @@ const MenuShop: React.FC<MenuShopProps> = ({
     <div className="hidden lg:block w-full h-auto flex flex-col my-10 rounded overflow-hidden">
       <CategoryFilter categories={data} onCategorySelect={onCategorySelect} />
       <PriceFilter onPriceChange={onPriceChange} />
-
-      <ColorFilter />
-      <SizeFilter />
+      <ColorFilter
+        selectedColors={selectedColors}
+        toggleColor={toggleColor}
+        resetColorFilter={resetColorFilter}
+        onColorChange={onColorChange}
+      />
+      <SizeFilter
+        selectedSizes={selectedSizes}
+        toggleSize={toggleSize}
+        resetSizeFilter={resetSizeFilter}
+        onSizeChange={onSizeChange}
+      />
     </div>
   );
 };

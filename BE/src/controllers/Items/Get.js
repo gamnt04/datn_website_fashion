@@ -4,17 +4,15 @@ import Attribute from "../../models/attribute/attribute";
 
 // list all
 export const getAllProducts = async (req, res) => {
-  const {
-    _search = ''
-  } = req.query
+  const { _search = "" } = req.query;
   try {
     const querry = {};
-    if(_search) {
+    if (_search) {
       querry.$and = [
         {
-          name_product : {$regex : new RegExp (_search, 'i')}
-        }
-      ]
+          name_product: { $regex: new RegExp(_search, "i") },
+        },
+      ];
     }
     const products = await Products.find(querry);
     return res.status(StatusCodes.OK).json({
@@ -85,30 +83,24 @@ export async function get_items_client(req, res) {
   }
 }
 
-
-export async function get_item_dashboard (req, res) {
-  const {
-    _page = 1,
-    _limit = 30,
-    _sort = '',
-  } = req.query;
+export async function get_item_dashboard(req, res) {
+  const { _page = 1, _limit = 30, _sort = "" } = req.query;
   try {
     const options = {
-      page : _page,
-      limit : _limit
-    }
+      page: _page,
+      limit: _limit,
+    };
     const data = await Products.paginate({}, options);
     return res.status(StatusCodes.OK).json({
-      message : 'OK',
-      data
-    })
+      message: "OK",
+      data,
+    });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !"
+      message: error.message || "Loi server !",
     });
   }
 }
-
 
 export const getProductById = async (req, res) => {
   try {
@@ -132,7 +124,7 @@ export const getProductById = async (req, res) => {
 };
 
 export async function filterItems(req, res) {
-  const { cate_id } = req.query;
+  const { cate_id, color, size } = req.query;
   const {
     _page = 1,
     _limit = 20,
@@ -189,6 +181,7 @@ export async function filterItems(req, res) {
       query.price_product = { $lte: maxPrice };
     }
 
+    // Get products matching the base query
     const data = await Products.paginate(query, options);
 
     if (!data || data.docs.length < 1) {
@@ -199,15 +192,21 @@ export async function filterItems(req, res) {
       });
     }
 
+    // Filter and calculate stock based on attributes
     for (let item of data.docs) {
       let total_stock = 0;
       if (item.attributes) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
         if (attr) {
           attr.values.forEach((value) => {
-            value.size.forEach((size) => {
-              total_stock += size.stock_attribute;
-            });
+            // Check if the color and size match
+            if ((color && color === value.color) || !color) {
+              value.size.forEach((sizeObj) => {
+                if ((size && size === sizeObj.name_size) || !size) {
+                  total_stock += sizeObj.stock_attribute;
+                }
+              });
+            }
           });
         }
         item.stock_product = total_stock;
