@@ -4,10 +4,10 @@ import { AxiosError } from "axios";
 
 interface Product {
   _id: string;
-  name: string;
+  name_product: string;
   price_product: number;
+  // Thêm các thuộc tính khác nếu cần
 }
-
 
 interface ProductResponse {
   message: string;
@@ -16,30 +16,22 @@ interface ProductResponse {
   };
 }
 
-
-const fetchProducts = async (
+const fetchFilteredProducts = async (
   cate_id: string | null,
   minPrice: number | null,
   maxPrice: number | null,
-  search: string,
-  sort: string,
-  page: number = 1,
-  limit: number = 20
+  colors: string[],
+  sizes: string[]
 ) => {
   const endpoint = "/products/filter/product";
 
   const params: { [key: string]: any } = {
-    _page: page.toString(),
-    _limit: limit.toString(), 
+    cate_id: cate_id || undefined,
     min_price: minPrice !== null ? minPrice.toString() : undefined,
     max_price: maxPrice !== null ? maxPrice.toString() : undefined,
-    _sort: sort || undefined,
-    search: search || undefined,
+    colors: colors.length > 0 ? colors.join(",") : undefined,
+    sizes: sizes.length > 0 ? sizes.join(",") : undefined,
   };
-
-  if (cate_id) {
-    params.cate_id = cate_id;
-  }
 
   try {
     const response = await instance.get<ProductResponse>(endpoint, { params });
@@ -55,25 +47,15 @@ const fetchProducts = async (
   }
 };
 
-export const useProducts = (
+// Export named
+export const useFilteredProducts = (
   cate_id: string | null,
   minPrice: number | null,
   maxPrice: number | null,
-  search: string,
-  sort: string,
-  page: number = 1,
-  limit: number = 20
+  colors: string[],
+  sizes: string[]
 ) => {
-  const queryKey = [
-    "products",
-    cate_id,
-    minPrice,
-    maxPrice,
-    search,
-    sort,
-    page,
-    limit,
-  ];
+  const queryKey = ["products", cate_id, minPrice, maxPrice, colors, sizes];
 
   const { data, error, isLoading, isError } = useQuery<
     ProductResponse,
@@ -81,7 +63,7 @@ export const useProducts = (
   >({
     queryKey,
     queryFn: () =>
-      fetchProducts(cate_id, minPrice, maxPrice, search, sort, page, limit),
+      fetchFilteredProducts(cate_id, minPrice, maxPrice, colors, sizes),
   });
 
   return { data, error, isLoading, isError };

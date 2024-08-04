@@ -1,9 +1,11 @@
 import React from "react";
 import usePriceFilter from "../../../../common/hooks/Products/Filter/usePriceFilter";
 
-const PriceFilter: React.FC<{
+interface PriceFilterProps {
   onPriceChange: (min: number | null, max: number | null) => void;
-}> = ({ onPriceChange }) => {
+}
+
+const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
   const { selectedPriceRange, handlePriceChange, resetPriceFilter } =
     usePriceFilter();
 
@@ -17,35 +19,17 @@ const PriceFilter: React.FC<{
   };
 
   const handleCheckboxChange = (min: number, max: number) => {
-    if (isPriceRangeSelected(min, max)) {
-      return;
+    if (!isPriceRangeSelected(min, max)) {
+      handlePriceChange(min, max);
+      onPriceChange(min, max);
     }
-    handlePriceChange(min, max);
-    onPriceChange(min, max);
   };
 
   return (
     <div className="border-b py-2">
-      <details
-        className="group [&_summary::-webkit-details-marker]:hidden *:px-4"
-        open
-      >
+      <details open>
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
           <strong>Giá</strong>
-          <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </span>
         </summary>
         <div className="flex flex-col py-4">
           <div>
