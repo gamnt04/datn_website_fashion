@@ -1,33 +1,66 @@
-const SizeFilter = () => {
+// SizeFilter.tsx
+import React from "react";
+
+interface SizeFilterProps {
+  selectedSizes: string[];
+  toggleSize: (size: string) => void;
+  resetSizeFilter: () => void;
+  onSizeChange: (sizes: string[]) => void; // Update to accept an array of sizes
+}
+
+const SizeFilter: React.FC<SizeFilterProps> = ({
+  selectedSizes,
+  toggleSize,
+  resetSizeFilter,
+  onSizeChange,
+}) => {
+  const handleSizeChange = (size: string) => {
+    toggleSize(size);
+    // Update the size list and call onSizeChange with the new list
+    const updatedSizes = selectedSizes.includes(size)
+      ? selectedSizes.filter((s) => s !== size)
+      : [...selectedSizes, size];
+    onSizeChange(updatedSizes);
+  };
+
   return (
     <div className="py-2">
-      <details className="group [&_summary::-webkit-details-marker]:block *:px-4">
+      <details open>
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
-          <strong>Size</strong>
-          <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </span>
+          <strong>Sizes</strong>
         </summary>
         <ul className="space-y-1 py-4">
-          {/* Replace with your size options */}
-          <li className="py-2 flex justify-between items-center">
-            <div className="flex items-center *:w-[25px] *:h-[25px]">
-              <span className="px-3">Size</span>
-            </div>
-            <span>(10)</span>
+          {/* Example size options */}
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedSizes.includes("S")}
+                onChange={() => handleSizeChange("S")}
+              />
+              Size S
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedSizes.includes("M")}
+                onChange={() => handleSizeChange("M")}
+              />
+              Size M
+            </label>
           </li>
           {/* Add more sizes as needed */}
+          <button
+            className="mt-4 text-blue-500"
+            onClick={() => {
+              resetSizeFilter();
+              onSizeChange([]); // Reset the filter
+            }}
+          >
+            Reset Size Filter
+          </button>
         </ul>
       </details>
     </div>
