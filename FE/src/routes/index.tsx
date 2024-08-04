@@ -34,7 +34,7 @@ import EditBlog from "../pages/Admin/Blogs/BlogEdit";
 import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
-import Layout_Profile from "../pages/Client/Layout_Profiles/layout";
+import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
 const RouterComponent = () => {
@@ -62,12 +62,12 @@ const RouterComponent = () => {
               element={<ProductDetail />}
             />
 
-
-            <Route path="profile" element={<AllOrder />}>
-              <Route index element={<Layout_Profile />} />
+            <Route path="profile" element={<Layout_Profile />}>
+              <Route index element={<Profile />} />
+              <Route path="/profile/address" element={<Address />} />
+              <Route path="/profile/favourite" element={<Favourite />} />
+              <Route path="/profile/allorder" element={<Order_All />} />
             </Route>
-
-
 
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
