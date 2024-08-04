@@ -30,9 +30,8 @@ export { uploadFileCloudinary };
 // utils/uploadImage.ts
 
 
-export const uploadImage = async (file: FileList | null): Promise<string[]> => {
+export const UploadImage = async (file: FileList | null): Promise<string[]> => {
   if (!file) return [];
-
 
   const CLOUD_NAME = "dwya9mxip";
   const PRESET_NAME = "upImgProduct";
@@ -63,7 +62,7 @@ export const uploadImage = async (file: FileList | null): Promise<string[]> => {
 ///uploadGallery.ts
 
 
-export const uploadGallery = async (
+export const UploadGallery = async (
   files: FileList | null
 ): Promise<string[]> => {
   if (!files) return [];
