@@ -63,13 +63,14 @@ export const createProduct = async (req, res) => {
       const varriant = convertAttribute.map(item => (
         {
           color: item.color ? item.color : '',
-          size: item.size.map(data_size => (
-            {
-              name_size: data_size.name_size ? data_size.name_size.toString() : '',
-              stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
-              price_attribute: data_size.price_attribute ? data_size.price_attribute : 1
-            }
-          ))
+          size: item.size.map(data_size =>(
+              {
+                name_size: data_size.name_size ? data_size.name_size.toString() : '',
+                stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
+                price_attribute: data_size.price_attribute ? +data_size.price_attribute : 1
+              }
+            )
+          )
         }
       ));
       const data_attr = {

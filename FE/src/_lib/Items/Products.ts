@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from "react-toastify";
-import { IProduct } from "../../common/interfaces/Product";
 import instance from "../../configs/axios";
 
 const baseUri = "http://localhost:2004/api/v1/products";
@@ -80,10 +79,14 @@ export async function add_items_client(items: any) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(items),
+      body: JSON.stringify(items.dataBody),
     });
     if (!res.ok) {
-      console.warn("Kiem tra lai server hoac internet !");
+      toast.error('Tạo sản phẩm thất bại!! vui lòng kiểm tra lại', {autoClose : 500})
+      return res
+    }
+    else {
+      toast.success('Tạo sản phẩm thành công.', {autoClose : 500})
     }
     const data = await res.json();
     return data;
@@ -92,21 +95,24 @@ export async function add_items_client(items: any) {
   }
 }
 
-export async function edit_items_client(product: IProduct) {
+export async function edit_items_client(product: any) {
   try {
-    const res = await fetch(`${baseUri}/${id}`, {
+    const res = await fetch(`${baseUri}/${product.id_item}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(product),
+      body: JSON.stringify(product.dataBody),
     });
 
     if (!res.ok) {
+      toast.error(`Cập nhật sản phẩm mã ${product.id_item} thất bại!! vui lòng kiểm tra lại`, {autoClose : 500})
       console.warn("Kiem tra lai server hoac internet !");
       throw new Error("Request failed with status " + res.status);
     }
-
+    else {
+      toast.success(`Cập nhật sản phẩm mã ${product.id_item} thành công.`, {autoClose : 500})
+    }
     const data = await res.json();
     return data;
   } catch (error) {
