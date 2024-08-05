@@ -37,6 +37,7 @@ import List_Auth from "../pages/Admin/Auth/List_Auth";
 import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
+import Logout from "../common/hooks/Auth/Logout";
 const RouterComponent = () => {
   return (
     <>
@@ -64,6 +65,7 @@ const RouterComponent = () => {
 
             <Route path="profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
+
               <Route path="/profile/address" element={<Address />} />
               <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/allorder" element={<Order_All />} />
