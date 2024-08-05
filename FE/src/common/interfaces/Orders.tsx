@@ -1,7 +1,12 @@
+import { ReactNode } from "react";
+
 export interface IOrder {
   _id?: string;
   userId: string;
   items: {
+    name_size: ReactNode;
+    color_item: ReactNode;
+    productId: any;
     _id?: string;
     name: string;
     price: number;
