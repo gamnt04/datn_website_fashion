@@ -35,20 +35,40 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
             <label>
               <input
                 type="checkbox"
-                checked={selectedColors.includes("Red")}
-                onChange={() => handleColorChange("Red")}
+                checked={selectedColors.includes("Đỏ")}
+                onChange={() => handleColorChange("Đỏ")}
               />
-              Red
+              Đỏ
             </label>
           </li>
           <li>
             <label>
               <input
                 type="checkbox"
-                checked={selectedColors.includes("Blue")}
-                onChange={() => handleColorChange("Blue")}
+                checked={selectedColors.includes("Xanh")}
+                onChange={() => handleColorChange("Xanh")}
               />
-              Blue
+              Xanh
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedColors.includes("Đen")}
+                onChange={() => handleColorChange("Đen")}
+              />
+              Đen
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedColors.includes("Vàng")}
+                onChange={() => handleColorChange("Vàng")}
+              />
+              Vàng
             </label>
           </li>
           {/* Add more colors as needed */}

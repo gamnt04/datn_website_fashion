@@ -19,7 +19,12 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
   };
 
   const handleCheckboxChange = (min: number, max: number) => {
-    if (!isPriceRangeSelected(min, max)) {
+    if (isPriceRangeSelected(min, max)) {
+      // Nếu khoảng giá đã được chọn, bỏ chọn khoảng giá
+      handlePriceChange(null, null);
+      onPriceChange(null, null);
+    } else {
+      // Nếu khoảng giá chưa được chọn, chọn khoảng giá mới
       handlePriceChange(min, max);
       onPriceChange(min, max);
     }
