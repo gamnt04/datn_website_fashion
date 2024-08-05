@@ -22,7 +22,7 @@ const Address = () => {
       return data;
     },
   });
-  console.log(data?.address?.fullName);
+  console.log(data?.address);
 
   const { mutate: deleteAddress } = useMutation({
     mutationFn: async () => {
@@ -30,7 +30,7 @@ const Address = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["AUTH_KEY", userId],
+        queryKey: ["AUTH_KEY"],
       });
       message.open({
         type: "success",
