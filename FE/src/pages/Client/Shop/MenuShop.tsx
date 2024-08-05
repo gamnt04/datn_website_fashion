@@ -23,8 +23,6 @@ interface MenuShopProps {
 const MenuShop: React.FC<MenuShopProps> = ({
   onCategorySelect,
   onPriceChange,
-  setSearch,
-  setSort,
   selectedColors,
   toggleColor,
   resetColorFilter,
