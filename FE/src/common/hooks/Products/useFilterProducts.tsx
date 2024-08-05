@@ -11,26 +11,25 @@ interface Product {
 
 interface ProductResponse {
   message: string;
-  data: {
-    docs: Product[];
-  };
+  data: Product[];
 }
 
 const fetchFilteredProducts = async (
-  cate_id: string | null,
+  category_id: string | null,
   minPrice: number | null,
   maxPrice: number | null,
-  colors: string[],
-  sizes: string[]
+  color: string[],
+  name_size: string[]
 ) => {
   const endpoint = "/products/filter/product";
 
+  // Chuyển mảng màu sắc và kích thước thành chuỗi
   const params: { [key: string]: any } = {
-    cate_id: cate_id || undefined,
+    category_id: category_id || undefined,
     min_price: minPrice !== null ? minPrice.toString() : undefined,
     max_price: maxPrice !== null ? maxPrice.toString() : undefined,
-    colors: colors.length > 0 ? colors.join(",") : undefined,
-    sizes: sizes.length > 0 ? sizes.join(",") : undefined,
+    color: color.length > 0 ? color.join(",") : undefined,
+    name_size: name_size.length > 0 ? name_size.join(",") : undefined,
   };
 
   try {
@@ -49,13 +48,20 @@ const fetchFilteredProducts = async (
 
 // Export named
 export const useFilteredProducts = (
-  cate_id: string | null,
+  category_id: string | null,
   minPrice: number | null,
   maxPrice: number | null,
-  colors: string[],
-  sizes: string[]
+  color: string[],
+  name_size: string[]
 ) => {
-  const queryKey = ["products", cate_id, minPrice, maxPrice, colors, sizes];
+  const queryKey = [
+    "products",
+    category_id,
+    minPrice,
+    maxPrice,
+    color,
+    name_size,
+  ];
 
   const { data, error, isLoading, isError } = useQuery<
     ProductResponse,
@@ -63,7 +69,7 @@ export const useFilteredProducts = (
   >({
     queryKey,
     queryFn: () =>
-      fetchFilteredProducts(cate_id, minPrice, maxPrice, colors, sizes),
+      fetchFilteredProducts(category_id, minPrice, maxPrice, color, name_size),
   });
 
   return { data, error, isLoading, isError };
