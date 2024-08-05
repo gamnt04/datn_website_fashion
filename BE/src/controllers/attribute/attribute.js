@@ -158,15 +158,15 @@
 // //     }
 // // }
 
-// // // Controller để lấy tất cả các thuộc tính
-// // export const getAllAttributes = async (req, res) => {
-// //     try {
-// //         const attributes = await attribute.find().populate("values");
-// //         res.json(attributes);
-// //     } catch (error) {
-// //         res.status(500).json({ message: error.message });
-// //     }
-// // };
+// Controller để lấy tất cả các thuộc tính
+// export const getAllAttributes = async (req, res) => {
+//     try {
+//         const attributes = await attribute.find().populate("values");
+//         res.json(attributes);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 // // // Controller để lấy một thuộc tính theo ID
 // // export const getAttributeById = async (req, res) => {

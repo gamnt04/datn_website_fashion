@@ -5,7 +5,7 @@ interface SizeFilterProps {
   selectedSizes: string[];
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
-  onSizeChange: (sizes: string[]) => void; // Update to accept an array of sizes
+  onSizeChange: (name_size: string[]) => void; // Update to accept an array of sizes
 }
 
 const SizeFilter: React.FC<SizeFilterProps> = ({
@@ -35,10 +35,10 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
             <label>
               <input
                 type="checkbox"
-                checked={selectedSizes.includes("S")}
-                onChange={() => handleSizeChange("S")}
+                checked={selectedSizes.includes("XL")}
+                onChange={() => handleSizeChange("XL")}
               />
-              Size S
+              Size XL
             </label>
           </li>
           <li>

@@ -136,7 +136,7 @@ export const getProductById = async (req, res) => {
 };
 
 export async function filterItems(req, res) {
-  const { cate_id, color, size } = req.query;
+  const { cate_id, color, name_size } = req.query;
   const {
     _page = 1,
     _limit = 20,
@@ -193,7 +193,14 @@ export async function filterItems(req, res) {
       query.price_product = { $lte: maxPrice };
     }
 
-    // Get products matching the base query
+    const colorArray = color
+      ? color.split(",").map((c) => c.trim().toLowerCase())
+      : [];
+    const sizeArray = name_size
+      ? name_size.split(",").map((s) => s.trim().toLowerCase())
+      : [];
+
+    const filteredProducts = [];
     const data = await Products.paginate(query, options);
 
     if (!data || data.docs.length < 1) {
@@ -204,32 +211,60 @@ export async function filterItems(req, res) {
       });
     }
 
-    // Filter and calculate stock based on attributes
     for (let item of data.docs) {
       let total_stock = 0;
+      let matched = false;
+
       if (item.attributes) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
-        if (attr) {
+
+        if (attr && Array.isArray(attr.values)) {
           attr.values.forEach((value) => {
-            // Check if the color and size match
-            if ((color && color === value.color) || !color) {
-              value.size.forEach((sizeObj) => {
-                if ((size && size === sizeObj.name_size) || !size) {
-                  total_stock += sizeObj.stock_attribute;
-                }
-              });
+            const colorMatch =
+              colorArray.length === 0 ||
+              colorArray.includes(value.color.toLowerCase());
+            const sizeMatch =
+              sizeArray.length === 0 ||
+              (Array.isArray(value.size) &&
+                value.size.some((sizeObj) =>
+                  sizeArray.includes(sizeObj.name_size.toLowerCase())
+                ));
+
+            if (colorMatch && sizeMatch) {
+              matched = true;
+              if (Array.isArray(value.size)) {
+                value.size.forEach((sizeObj) => {
+                  if (
+                    sizeArray.length === 0 ||
+                    sizeArray.includes(sizeObj.name_size.toLowerCase())
+                  ) {
+                    total_stock += sizeObj.stock_attribute;
+                  }
+                });
+              }
             }
           });
         }
-        item.stock_product = total_stock;
+
+        if (matched) {
+          item.stock_product = total_stock;
+          filteredProducts.push(item);
+        }
       } else {
         item.stock_product = item.stock;
+        filteredProducts.push(item);
       }
+    }
+
+    if (filteredProducts.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy sản phẩm phù hợp với các tiêu chí!",
+      });
     }
 
     return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data,
+      data: filteredProducts,
     });
   } catch (error) {
     console.error("Server Error:", error);
