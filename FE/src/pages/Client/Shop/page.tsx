@@ -3,7 +3,7 @@ import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 
 const IndexShops = () => {
-  const [category_id, setCategoryId] = useState<string | null>(null);
+  const [cate_id, setCategoryId] = useState<string | null>(null);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -55,7 +55,7 @@ const IndexShops = () => {
         />
         <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
           <Products_Shop
-            category_id={category_id}
+            cate_id={cate_id}
             minPrice={minPrice}
             maxPrice={maxPrice}
             selectedColors={selectedColors}

@@ -159,10 +159,12 @@ export async function filterItems(req, res) {
   try {
     const query = {};
 
+    // Lọc theo danh mục
     if (cate_id) {
       query.category_id = cate_id;
     }
 
+    // Lọc theo giá
     if (min_price !== null && max_price !== null) {
       const minPrice = parseFloat(min_price);
       const maxPrice = parseFloat(max_price);
@@ -193,6 +195,7 @@ export async function filterItems(req, res) {
       query.price_product = { $lte: maxPrice };
     }
 
+    // Lọc theo màu sắc và kích cỡ
     const colorArray = color
       ? color.split(",").map((c) => c.trim().toLowerCase())
       : [];
@@ -200,8 +203,12 @@ export async function filterItems(req, res) {
       ? name_size.split(",").map((s) => s.trim().toLowerCase())
       : [];
 
-    const filteredProducts = [];
+    console.log("Query:", query);
+    console.log("Color Array:", colorArray);
+    console.log("Size Array:", sizeArray);
+
     const data = await Products.paginate(query, options);
+    const filteredProducts = [];
 
     if (!data || data.docs.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
