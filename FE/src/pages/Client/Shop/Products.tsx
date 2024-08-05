@@ -5,7 +5,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import Products from "../../../components/common/Items/Products";
 
 interface Products_ShopProps {
-  category_id: string | null;
+  cate_id: string | null;
   minPrice: number | null;
   maxPrice: number | null;
   selectedColors: string[];
@@ -13,7 +13,7 @@ interface Products_ShopProps {
 }
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
-  category_id,
+  cate_id,
   minPrice,
   maxPrice,
   selectedColors,
@@ -25,7 +25,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     isError,
     error,
   } = useFilteredProducts(
-    category_id,
+    cate_id,
     minPrice,
     maxPrice,
     selectedColors,
