@@ -30,12 +30,12 @@ export const getBlogsById = async (req, res) => {
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, author, tags, published, imageUrl } = req.body;
-    if (!title || !content || !author) {
+    const { content } = req.body;
+    if (!content) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: "Missing required fields: title, content, and author" });
     }
 
-    const newBlog = new Blog({ title, content, author, tags, published, imageUrl });
+    const newBlog = new Blog({content });
     const savedBlog = await newBlog.save();
     res.status(StatusCodes.CREATED).json({ message: "Thêm blog thành công", savedBlog });
   } catch (error) {

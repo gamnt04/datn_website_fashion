@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-
+import parse from 'html-react-parser';
 const BlogDetail = () => {
   const { id } = useParams();
-  const [blog, setBlog] = useState<{ content: string; imageUrl: string; author: string; title: string; createdAt: string } | null>(null);
+  const [blog, setBlog] = useState<any>(null);
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const response = await axios.get(`http://localhost:2004/api/v1/blogs/${id}`);
-        setBlog(response.data);
+        // console.log(response.data);
+        
+        setBlog(response.data.content);
       } catch (error) {
         console.error('Error fetching blog:', error);
       }
@@ -28,34 +30,37 @@ const BlogDetail = () => {
     );
   }
 
-  const contentParts = blog.content.split(/(?<=\.)\s+/); //Chia nội dung thành các phần nhỏ
+  // const contentParts = blog.content.split(/(?<=\.)\s+/); //Chia nội dung thành các phần nhỏ
 
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
-      <div className="container mx-auto py-10 px-4 lg:px-20">
-        <h1 className="text-4xl font-bold mb-4 text-center">{blog.title}</h1>
-        <p className="text-sm text-gray-600 mb-6 text-center">
-          {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
-        </p>
+    <>
+<div>{parse(blog)}</div>
+    </>
+    // <div className="xl:w-[1440px] w-[95vw] mx-auto">
+    //   <div className="container mx-auto py-10 px-4 lg:px-20">
+    //     <h1 className="text-4xl font-bold mb-4 text-center">{blog.title}</h1>
+    //     <p className="text-sm text-gray-600 mb-6 text-center">
+    //       {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
+    //     </p>
 
-        <div className="prose max-w-none mx-auto text-justify">
-          {contentParts.map((part, index) => (
-            <div key={index}>
-              <p className="mb-4">{part}</p>
-              {index % 6 === 1 && (
-                <div className="flex justify-center mb-6">
-                  <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    //     <div className="prose max-w-none mx-auto text-justify">
+    //       {contentParts.map((part, index) => (
+    //         <div key={index}>
+    //           <p className="mb-4">{part}</p>
+    //           {index % 6 === 1 && (
+    //             <div className="flex justify-center mb-6">
+    //               <img
+    //                 src={blog.imageUrl}
+    //                 alt={blog.title}
+    //                 className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain"
+    //               />
+    //             </div>
+    //           )}
+    //         </div>
+    //       ))}
+    //     </div>
+    //   </div>
+    // </div>
 
   );
 };
