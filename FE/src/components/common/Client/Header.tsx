@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/Search";
-import { useQuery } from "@tanstack/react-query";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { message } from "antd";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
-  const navigate = useNavigate();
   const {
     searchTerm,
-    handleBlur,
+    searchRef,
     handleChange,
     handleFocus,
     results,
     showResults,
-    handleResultClick
+    handleResultClick,
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -82,7 +80,7 @@ const Header = () => {
     if (!account) {
       message.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!"
+        content: "Hãy đăng nhập tài khoản của bạn !!",
       });
     }
   };
@@ -120,7 +118,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)"
+                : "translateX(-200%)",
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -149,7 +147,7 @@ const Header = () => {
           {/* options */}
           <nav className="flex items-center justify-between *:mx-3 *:duration-300">
             {/* search */}
-            <div>
+            <div ref={searchRef} className="search-container">
               <form
                 className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2  duration-300`}
               >
@@ -159,18 +157,17 @@ const Header = () => {
                   placeholder="Search"
                   value={searchTerm}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   onFocus={handleFocus}
                 />
                 <button
                   type="submit"
-                  className="absolute grid place-items-center top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
+                  className="absolute grid place-items-center text-black top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
                   <Search />
                 </button>
               </form>
-              {showResults && (
-                <div className="absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
+              {showResults && searchTerm.trim() && (
+                <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
                   {results.length > 0 ? (
                     <ul>
                       {results.map((product: IProduct) => (
@@ -185,7 +182,7 @@ const Header = () => {
                             alt={product.name_product}
                             className="w-8 h-8 mr-2"
                           />
-                          <p className="hover:underline">
+                          <p className="text-black hover:underline">
                             {product.name_product}
                           </p>
                         </Link>
