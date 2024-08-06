@@ -14,6 +14,7 @@ export const useListFavouriteProducts = (userId: string) => {
     },
     enabled: !!userId
   });
+
   return { data, ...reset };
 };
 // export const useFavoriteProducts = () => {
