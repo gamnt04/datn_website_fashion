@@ -14,9 +14,8 @@ const ProfileHook = () => {
   const userId = user?.user?._id;
   const [initialValues, setInitialValues] = useState<FieldType>({});
   const [isChanged, setIsChanged] = useState<boolean>(false);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+
   const [isSaving, setIsSaving] = useState<boolean>(false); // Trạng thái lưu
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading, isPending, isError, error } = useQuery({
     queryKey: ["AUTH_KEY", userId],
@@ -29,12 +28,6 @@ const ProfileHook = () => {
     },
   });
   console.log(data?.address);
-
-  useEffect(() => {
-    if (data) {
-      setAvatarUrl(data.avatar || ""); // Cập nhật avatarUrl khi dữ liệu được tải về
-    }
-  }, [data]);
 
   const { mutate } = useMutation({
     mutationFn: async (newUser) => {
@@ -64,27 +57,20 @@ const ProfileHook = () => {
     );
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarUrl(url);
-    }
-  };
-
   return {
     contextHolder,
+    setIsChanged,
     setInitialValues,
     isChanged,
     isSaving,
-    fileInputRef,
+
     isLoading,
     isPending,
     isError,
     error,
-    avatarUrl,
+
     handleValuesChange,
-    handleFileChange,
+
     mutate,
     data,
     userId,
