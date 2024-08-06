@@ -8,13 +8,18 @@ type Actions = "ADD" | "REMOVE";
 export const Mutation_FavouriteProduct = (actions: Actions) => {
   const queryClient = useQueryClient();
   const { mutate, ...reset } = useMutation({
-    mutationFn: async (product: IProduct) => {
+    mutationFn: async ({
+      userId,
+      productId
+    }: {
+      userId: string;
+      productId: string;
+    }) => {
       switch (actions) {
         case "ADD":
-          return await AddFavouriteProducts(product);
+          return await AddFavouriteProducts(userId, productId);
         case "REMOVE":
-          return await RemoveFavouriteProducts(product);
-
+          return await RemoveFavouriteProducts(userId, productId);
         default:
           return;
       }
