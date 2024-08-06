@@ -8,7 +8,10 @@ import useSearch from "../../../systems/utils/Search";
 import { useQuery } from "@tanstack/react-query";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Heart, Search, ShoppingCart } from "lucide-react";
+import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
+import { message } from "antd";
 const Header = () => {
+  const [messageAPI, contentHolder] = message.useMessage();
   const navigate = useNavigate();
   const {
     searchTerm,
@@ -17,16 +20,19 @@ const Header = () => {
     handleFocus,
     results,
     showResults,
-    handleResultClick,
+    handleResultClick
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
+
   // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const account = user?.user?._id;
+  const { data: Favouritedata } = useListFavouriteProducts(account);
+
   const { data } = List_Cart(account);
   useEffect(() => {
     typeof window !== "undefined" &&
@@ -34,14 +40,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -69,15 +75,15 @@ const Header = () => {
   // toogle menu mobile
 
   const { data: getUser } = List_Auth(account);
-  console.log(getUser);
-
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
   };
   const onlogin = () => {
-    const comfirm = window.confirm("Do you want to go to the login page?");
-    if (comfirm) {
-      navigate("/login");
+    if (!account) {
+      message.open({
+        type: "warning",
+        content: "Hãy đăng nhập tài khoản của bạn !!"
+      });
     }
   };
   return (
@@ -86,6 +92,7 @@ const Header = () => {
         ref={toggleFixedHeader}
         className="w-full fixed top-0 bg-white z-[6] !bg-[#001529] text-white"
       >
+        {contentHolder}
         <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
           {/* menu mobile */}
           <button
@@ -113,7 +120,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)",
+                : "translateX(-200%)"
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -159,7 +166,7 @@ const Header = () => {
                   type="submit"
                   className="absolute grid place-items-center top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
-                  <Search/>
+                  <Search />
                 </button>
               </form>
               {showResults && (
@@ -207,11 +214,11 @@ const Header = () => {
               to={account ? "/cart" : "/login"}
             >
               {data?.products && data?.products.length > 0 && (
-                <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] rounded-xl -top-1/4 -right-1/3">
+                <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
                   {data?.products?.length}
                 </span>
               )}
-              <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5">
+              <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
                 <ShoppingCart />
               </div>
             </Link>
@@ -221,9 +228,19 @@ const Header = () => {
               <>
                 <Link
                   to={"/favourite"}
-                  className="opacity-75 hover:opacity-100 hover:scale-[1.1]"
+                  className="group *:duration-300 relative py-1"
                 >
-                  <Heart />
+                  {Favouritedata?.products?.length > 0 ? (
+                    <span className="absolute bg-red-500 w-5 h-5 grid place-items-center text-white text-xs py-[1px] px-[1px] rounded-xl -top-1 -right-3 z-10">
+                      {Favouritedata?.products?.length}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+
+                  <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
+                    <Heart />
+                  </div>
                 </Link>
               </>
             ) : (
@@ -250,7 +267,7 @@ const Header = () => {
               <Link
                 ref={ref_login}
                 to={"/login"}
-                className="bg-black px-4 py-1.5 text-white rounded font-medium text-sm border-none"
+                className="bg-white px-4 py-1.5 text-black rounded font-medium text-sm border-none"
               >
                 Login
               </Link>
