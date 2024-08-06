@@ -10,17 +10,6 @@ import { updateOrderStatus } from "../controllers/Orders/orders";
 
 // router.post('/vnpay', createPaymentUrl);
 router.post("/create_payment_url", createPaymentUrl);
-router.get("/vnpay_return", returnUrll);
 router.put("/orders/:id",   updateOrderStatus);
-router.get('/payment/result', async (req, res) => {
-    const { vnp_ResponseCode, vnp_TransactionNo } = req.query;
-  
-    if (vnp_ResponseCode === '00') {
-      
-      res.json({ message: 'Thanh toán thành công' });
-    } else {
-      // Thanh toán thất bại
-      res.json({ message: 'Thanh toán thất bại' });
-    }
-  });
+router.get('/vnpay-return', returnUrll);
 export default router;
