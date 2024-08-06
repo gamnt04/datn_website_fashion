@@ -35,10 +35,12 @@ import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
 import Blog from "../pages/Admin/Blogs/BlogList";
+import LoadingProvider from "../pages/Client/Order/Order-All/LoadingContext";
 const RouterComponent = () => {
   return (
     <>
       <Router>
+      <LoadingProvider>
         <Routes>
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
@@ -106,6 +108,7 @@ const RouterComponent = () => {
             <Route path="blogs/:id" element={<EditBlog />} /> */}
           </Route>
         </Routes>
+        </LoadingProvider>
         {/* <ToastContainer /> */}
       </Router>
     </>
