@@ -89,49 +89,59 @@ const Products = ({ items }: any) => {
         className="flex flex-col justify-center items-center lg:w-[310px] duration-200  rounded text-start gap-y-4"
         key={items._id}
       >
-    <div
-      className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:shadow-lg overflow-hidden"
-      key={items._id}
-    >
-      <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[220px]  bg-[#F6F6F6]">
-        <Link
-          onClick={ScrollTop}
-          to={`/shops/detail_product/${items._id}`}
-          className="h-full cursor-pointer"
+        <div
+          className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:shadow-lg overflow-hidden"
+          key={items._id}
         >
-          <img
-            className="w-full h-full"
-            loading="lazy"
-            src={items.image_product}
-            alt={items.name_product}
-          />
-        </Link>
-        {/* hover show icon cart */}
-        <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-          <button className="p-2 border-none rounded hover:scale-110">
-            <HeartIcon />
-          </button>
-          <button
-            className="p-2 border-none rounded hover:scale-110"
-            onClick={() => handlePreview(items._id)}
-          >
-            <img
-              className="w-full h-full  duration-500 group-hover:scale-105"
-              loading="lazy"
-              src={items.image_product}
-              alt={items.name_product}
-            />
-          </Link>
-          <div className=" absolute flex flex-col rounded top-0 p-1  right-0  ">
-            {account ? (
-              <>
-                {checkFavourite(items._id) ? (
-                  <button
-                    className="p-2 border-none rounded "
-                    onClick={() => handleRemoveToFavorites(items._id)}
-                  >
-                    <HeartIconRed />
-                  </button>
+          <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[220px]  bg-[#F6F6F6]">
+            <Link
+              onClick={ScrollTop}
+              to={`/shops/detail_product/${items._id}`}
+              className="h-full cursor-pointer"
+            >
+              <img
+                className="w-full h-full"
+                loading="lazy"
+                src={items.image_product}
+                alt={items.name_product}
+              />
+            </Link>
+            {/* hover show icon cart */}
+            <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
+              <button className="p-2 border-none rounded hover:scale-110">
+                <HeartIcon />
+              </button>
+              <button
+                className="p-2 border-none rounded hover:scale-110"
+                onClick={() => handlePreview(items._id)}
+              >
+                <img
+                  className="w-full h-full  duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  src={items.image_product}
+                  alt={items.name_product}
+                />
+              </button>
+
+              <div className=" absolute flex flex-col rounded top-0 p-1  right-0  ">
+                {account ? (
+                  <>
+                    {checkFavourite(items._id) ? (
+                      <button
+                        className="p-2 border-none rounded "
+                        onClick={() => handleRemoveToFavorites(items._id)}
+                      >
+                        <HeartIconRed />
+                      </button>
+                    ) : (
+                      <button
+                        className="p-2 border-none rounded "
+                        onClick={() => handleAddToFavorites(items._id)}
+                      >
+                        <HeartIcon />
+                      </button>
+                    )}
+                  </>
                 ) : (
                   <button
                     className="p-2 border-none rounded "
@@ -140,39 +150,33 @@ const Products = ({ items }: any) => {
                     <HeartIcon />
                   </button>
                 )}
-              </>
-            ) : (
-              <button
-                className="p-2 border-none rounded "
-                onClick={() => handleAddToFavorites(items._id)}
+              </div>
+            </div>
+
+            <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2 ">
+              <Link
+                onClick={ScrollTop}
+                to={`/shops/detail_product/${items._id}`}
+                className="text-md text-center  font-normal text-gray-700 lg:text-[16px]  hover:text-black line-clamp-2"
               >
-                <HeartIcon />
-              </button>
+                {items.name_product}
+              </Link>
+              <p className="font-normal text-gray-700 text-[16px]">
+                {items.price_product.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND"
+                })}
+              </p>
+            </div>
+
+            {modalOpen && selectedProduct && (
+              <ProductModal
+                product={selectedProduct}
+                onClose={handleCloseModal}
+              />
             )}
           </div>
         </div>
-
-        <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2 ">
-          <Link
-            onClick={ScrollTop}
-            to={`/shops/detail_product/${items._id}`}
-            className="text-md text-center  font-normal text-gray-700 lg:text-[16px]  hover:text-black line-clamp-2"
-          >
-            {items.name_product}
-          </Link>
-          <p className="font-normal text-gray-700 text-[16px]">
-            {items.price_product.toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND"
-            })}
-          </p>
-        </div>
-
-        {modalOpen && selectedProduct && (
-          <ProductModal product={selectedProduct} onClose={handleCloseModal} />
-        )}
-      </div>
-      </div>
       </div>
     </>
   );
