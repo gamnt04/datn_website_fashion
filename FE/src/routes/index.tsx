@@ -24,19 +24,17 @@ import Order_All from "../pages/Client/Order/Order-All/Order_All";
 import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
-import BlogList from "../pages/Admin/Blogs/BlogList";
 import ListContact from "../pages/Admin/contact/ListContact";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
-import EditBlog from "../pages/Admin/Blogs/BlogEdit";
-import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
 import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
+import Blog from "../pages/Admin/Blogs/BlogList";
 const RouterComponent = () => {
   return (
     <>
@@ -100,9 +98,12 @@ const RouterComponent = () => {
               element={<OrdersDetali />}
             />
             <Route path="/admin/contact" element={<ListContact />} />
-            <Route path="blogs" element={<BlogList />} />
-            <Route path="blogs/add_blog" element={<BlogAdd />} />
-            <Route path="blogs/:id" element={<EditBlog />} />
+            
+              <Route path="blogs" element={<Blog />} />
+            
+            
+            {/* <Route path="blogs/add_blog" element={<BlogAdd />} />
+            <Route path="blogs/:id" element={<EditBlog />} /> */}
           </Route>
         </Routes>
         {/* <ToastContainer /> */}

@@ -183,7 +183,7 @@ export const updateOrder = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, total_price } = req.body;
     console.log(status);
     const validStatuses = ["1", "2", "3", "4", "5"];
     if (!validStatuses.includes(status)) {
@@ -203,6 +203,7 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
+    order.total_price = total_price;
     await order.save();
     return res
       .status(StatusCodes.OK)
