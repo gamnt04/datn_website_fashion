@@ -1,139 +1,108 @@
-import {
-  HeartIcon,
-  HeartIconRed,
-} from "../../../resources/svg/Icon/Icon";
+import { HeartIconRed } from "../../../resources/svg/Icon/Icon";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { IProduct } from "../../../common/interfaces/Product";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { message } from "antd";
+import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 
 const Favourite = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
-  const account = user?.user?._id;
-  console.log(account);
-
-  const { data } = useListFavouriteProducts(account);
-
-  const onLoginWarning = () => {
-    alert("Please log in to your account");
+  const account = user?.user;
+  const userId = account?._id;
+  const { mutate: RemoveFavouriteProduct } =
+    Mutation_FavouriteProduct("REMOVE");
+  const { data, isLoading, isError, error } = useListFavouriteProducts(userId);
+  console.log(data?.products);
+  const handleRemoveFavorites = (productId: string) => {
+    if (!userId) {
+      messageApi.open({
+        type: "warning",
+        content: "Hãy đăng nhập tài khoản của bạn !!!"
+      });
+    } else {
+      RemoveFavouriteProduct(
+        { userId, productId },
+        {
+          onSuccess: () => {
+            messageApi.open({
+              type: "success",
+              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn"
+            });
+          },
+          onError: () => {
+            messageApi.open({
+              type: "error",
+              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau"
+            });
+          }
+        }
+      );
+    }
   };
 
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>{error.message}</div>;
+
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
-      <div className="lg:mt-[40px] mt-[60px]">
-        <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-          Home &#10148; Products &#10148; Favorites
-        </div>
-        <div className="mt-8 grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[19%_19%_19%_19%_19%] xl:auto-rows-[450px] justify-between gap-y-8">
-          {data?.products.length === 0 ? (
-            <div className="">Add product</div>
-          ) : (
-            data?.products?.map((item: IProduct, index: number) => (
-              <div
-                className="w-full text-start flex flex-col gap-y-6"
-                key={index}
-              >
-                <div className="relative group rounded w-full h-[70%] overflow-hidden bg-[#F6F6F6]">
-                  <Link
-                    onClick={ScrollTop}
-                    to={"/shops/detail_product"}
-                    className="h-full cursor-pointer *:drop-shadow"
+    <div className="lg:mt-[40px] mt-[60px] lg:w-[1440px] lg:mx-auto ">
+      {contextHolder}
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+        Home &#10148; Products &#10148; Favorites
+      </div>
+      <div className="mt-8 grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:mx-auto lg:w-[1330px] lg:gap-x-[1.5%] lg:grid-cols-4 xl:auto-rows-[450px] justify-between gap-y-8">
+        {data?.products.length === 0 ? (
+          <div className="">Add product</div>
+        ) : (
+          data?.products?.map((items: IProduct) => (
+            <div
+              className="flex flex-col justify-center items-center lg:w-[310px] duration-200 rounded text-start gap-y-4"
+              key={items._id}
+            >
+              <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[389px] lg:w-[310px] overflow-hidden bg-[#F6F6F6]">
+                <Link
+                  onClick={ScrollTop}
+                  to={`/shops/detail_product/${items._id}`}
+                  className="h-full cursor-pointer"
+                >
+                  <img
+                    className="w-full h-full duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    src={items?.productId?.image_product}
+                    alt={items?.productId?.name_product}
+                  />
+                </Link>
+                <div className="absolute flex flex-col rounded top-0 p-1 right-0">
+                  <button
+                    className="p-2 border-none rounded"
+                    onClick={() => handleRemoveFavorites(items?.productId?._id)}
                   >
-                    <img
-                      className="group-hover:scale-105 duration-500 w-full h-full lg:px-8 mb:px-10 lg:py-6 mb:py-6"
-                      loading="lazy"
-                      src={item.image_product}
-                      alt={item.name_product}
-                    />
-                  </Link>
-                  {/* hover show icon cart */}
-                  <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-                    {account ? (
-                      <>
-                        <button
-                          className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                        // onClick={() =>
-                        //   addToCart.mutate({
-                        //     productId: item._id,
-                        //     quantity: 1
-                        //   })
-                        // }
-                        >
-                          <ShoppingCart />
-                        </button>
-                        <button
-                          className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                          onClick={() =>
-                            removeFavoriteProduct.mutate(item.productId)
-                          }
-                        >
-                          <HeartIconRed />
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                          onClick={onLoginWarning}
-                        >
-                          <ShoppingCart />
-                        </button>
-                        <button
-                          className="p-2 rounded *:cursor-pointer border-none hover:scale-110"
-                          onClick={onLoginWarning}
-                        >
-                          <HeartIcon />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Link
-                    onClick={ScrollTop}
-                    to={"/shops/detail_product"}
-                    className="text-xl font-medium text-gray-700 hover:text-black"
-                  >
-                    Dome Lamp {item.name_product}
-                  </Link>
-                  <p className="text-sm font-normal text-[#999999] my-2">
-                    {item.name_product}
-                  </p>
-                  <p className="text-md font-semibold text-[#222222]">
-                    2.000.000 VND
-                  </p>
-                  <div className="flex justify-center mt-4 items-center gap-x-4">
-                    <Link
-                      className="md:block mb:hidden bg-black text-white py-2 px-4 rounded hover:scale-105 duration-300 cursor-pointer"
-                      to={""}
-                    >
-                      Buy Now
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="flex justify-center gap-2 mt-4">
-                  {item.gallery_product?.map(
-                    (image: File | string, index: number) => (
-                      <img
-                        key={index}
-                        className="w-[40px] h-[40px] p-2 rounded-full border duration-300 hover:border-[#F68E56]"
-                        src={image}
-                        alt={`Gallery image ${index + 1}`}
-                      />
-                    )
-                  )}
+                    <HeartIconRed />
+                  </button>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+              <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2">
+                <Link
+                  onClick={ScrollTop}
+                  to={`/shops/detail_product/${items?.productId?._id}`}
+                  className="text-md text-center font-normal text-gray-700 lg:text-[16px] hover:text-black line-clamp-2"
+                >
+                  {items?.productId?.name_product}
+                </Link>
+                <p className="font-normal text-gray-700 text-[16px]">
+                  {items?.productId?.price_product?.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                  })}
+                </p>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
-
   );
 };
 
