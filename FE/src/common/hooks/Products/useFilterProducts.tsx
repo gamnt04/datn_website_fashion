@@ -15,7 +15,7 @@ interface ProductResponse {
 }
 
 const fetchFilteredProducts = async (
-  category_id: string | null,
+  cate_id: string | null,
   minPrice: number | null,
   maxPrice: number | null,
   color: string[],
@@ -25,7 +25,7 @@ const fetchFilteredProducts = async (
 
   // Chuyển mảng màu sắc và kích thước thành chuỗi
   const params: { [key: string]: any } = {
-    category_id: category_id || undefined,
+    cate_id: cate_id || undefined,
     min_price: minPrice !== null ? minPrice.toString() : undefined,
     max_price: maxPrice !== null ? maxPrice.toString() : undefined,
     color: color.length > 0 ? color.join(",") : undefined,
@@ -48,7 +48,7 @@ const fetchFilteredProducts = async (
 
 // Export named
 export const useFilteredProducts = (
-  category_id: string | null,
+  cate_id: string | null,
   minPrice: number | null,
   maxPrice: number | null,
   color: string[],
@@ -56,7 +56,7 @@ export const useFilteredProducts = (
 ) => {
   const queryKey = [
     "products",
-    category_id,
+    cate_id,
     minPrice,
     maxPrice,
     color,
@@ -69,7 +69,7 @@ export const useFilteredProducts = (
   >({
     queryKey,
     queryFn: () =>
-      fetchFilteredProducts(category_id, minPrice, maxPrice, color, name_size),
+      fetchFilteredProducts(cate_id, minPrice, maxPrice, color, name_size),
   });
 
   return { data, error, isLoading, isError };

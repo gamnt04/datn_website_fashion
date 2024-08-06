@@ -2,13 +2,15 @@
 import React from "react";
 
 interface ColorFilterProps {
+  colorOptions: string[];
   selectedColors: string[];
   toggleColor: (color: string) => void;
   resetColorFilter: () => void;
-  onColorChange: (colors: string[]) => void; // Update to accept an array of colors
+  onColorChange: (colors: string[]) => void;
 }
 
 const ColorFilter: React.FC<ColorFilterProps> = ({
+  colorOptions,
   selectedColors,
   toggleColor,
   resetColorFilter,
@@ -16,7 +18,6 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
 }) => {
   const handleColorChange = (color: string) => {
     toggleColor(color);
-    // Update the color list and call onColorChange with the new list
     const updatedColors = selectedColors.includes(color)
       ? selectedColors.filter((c) => c !== color)
       : [...selectedColors, color];
@@ -30,48 +31,18 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
           <strong>Colors</strong>
         </summary>
         <ul className="space-y-1 py-4">
-          {/* Example color options */}
-          <li>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedColors.includes("Đỏ")}
-                onChange={() => handleColorChange("Đỏ")}
-              />
-              Đỏ
-            </label>
-          </li>
-          <li>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedColors.includes("Xanh")}
-                onChange={() => handleColorChange("Xanh")}
-              />
-              Xanh
-            </label>
-          </li>
-          <li>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedColors.includes("Đen")}
-                onChange={() => handleColorChange("Đen")}
-              />
-              Đen
-            </label>
-          </li>
-          <li>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedColors.includes("Vàng")}
-                onChange={() => handleColorChange("Vàng")}
-              />
-              Vàng
-            </label>
-          </li>
-          {/* Add more colors as needed */}
+          {colorOptions.map((color) => (
+            <li key={color}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedColors.includes(color)}
+                  onChange={() => handleColorChange(color)}
+                />
+                {color}
+              </label>
+            </li>
+          ))}
           <button
             className="mt-4 text-blue-500"
             onClick={() => {
