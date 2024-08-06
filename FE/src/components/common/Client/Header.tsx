@@ -155,7 +155,7 @@ const Header = () => {
               >
                 <input
                   type="text"
-                  className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 focus:border-black rounded outline-none pr-14"
+                  className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
                   placeholder="Search"
                   value={searchTerm}
                   onChange={handleChange}
@@ -202,11 +202,11 @@ const Header = () => {
 
             {/* cart */}
             {/* {account ? '/cart' : (
-                <div onClick={() => onlogin()} className="relative">
-                  <CartIcon />
-                  <MiniCart />
-                </div>
-              )} */}
+              <div onClick={() => onlogin()} className="relative">
+                <CarrotIcon />
+                <MiniCart />
+              </div>
+            )} */}
 
             <Link
               className="group *:duration-300 relative py-1"
@@ -220,6 +220,7 @@ const Header = () => {
               )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
                 <ShoppingCart />
+                {/* <MiniCart /> */}
               </div>
             </Link>
 
@@ -256,7 +257,7 @@ const Header = () => {
 
             {/* option / menu */}
             <div className="duration-300 cursor-pointer hover:scale-105">
-              <Link ref={ref_user} to={"/allorder"}>
+              <Link ref={ref_user} to={"/profile"}>
                 <img
                   src={getUser?.avatar ? getUser?.avatar : ""}
                   alt=""

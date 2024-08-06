@@ -6,10 +6,10 @@ const OrderList = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading, totalPages } = Query_Orders(undefined, currentPage, statusFilter);
-  console.log(data);
 
   const handleStatusChange = (e: any) => {
     setStatusFilter(e.target.value);
+    setCurrentPage(1)
   };
   const goToPage = (page: any) => {
     setCurrentPage(page);

@@ -5,14 +5,15 @@ import {
   get_orders_client,
   getOneOrderUser,
   getOrderById,
-
+  getOrderByNumber,
   updateOrderStatus,
-  userCancelOrder
+  userCancelOrder,
 } from "../controllers/Orders/orders";
 
 const router = Router();
 router.post("/orders", createOrder);
 router.get("/orders", get_orders_client);
+router.get("/orders/FilterNumber/:orderNumber", getOrderByNumber);
 router.get("/orders/get_order_user/:userId", getOneOrderUser);
 router.get("/orders/:id", getOrderById);
 router.patch("/orders/:id", updateOrderStatus);

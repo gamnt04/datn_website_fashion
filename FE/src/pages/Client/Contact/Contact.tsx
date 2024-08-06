@@ -111,7 +111,7 @@ const ContactForm: React.FC = () => {
           <p className="text-[16px] text-[#999999] mt-5 max-w-[683px]">
             Minimalist styling is not about creating a cold, hard, empty white
             box of a home. It is about using simple and natural forms, and
-            taking away layers without losing the aesthetic appeal of the
+            taking away layers without losing the aesthetic appeal of the space.
           </p>
           <form ref={form} onSubmit={sendEmail}>
             <label className="block mt-4">Name</label>
@@ -144,8 +144,7 @@ const ContactForm: React.FC = () => {
             />
           </form>
         </div>
-
-        <div className="">
+        <div>
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d717.0503634761782!2d105.73999147053436!3d21.053666594456768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313454f9ec100009%3A0x784cd6eb9706cb3d!2zTmcuIDYwIFAuIE5ndXnDqm4gWMOhLCBOZ3V5w6puIFjDoSwgTWluaCBLaGFpLCBC4bqvYyBU4burIExpw6ptLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1716068409544!5m2!1svi!2s"
             className="lg:w-[710px] w-full h-[510px]"

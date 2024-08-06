@@ -1,33 +1,57 @@
-const ColorFilter = () => {
+// ColorFilter.tsx
+import React from "react";
+
+interface ColorFilterProps {
+  colorOptions: string[];
+  selectedColors: string[];
+  toggleColor: (color: string) => void;
+  resetColorFilter: () => void;
+  onColorChange: (colors: string[]) => void;
+}
+
+const ColorFilter: React.FC<ColorFilterProps> = ({
+  colorOptions,
+  selectedColors,
+  toggleColor,
+  resetColorFilter,
+  onColorChange,
+}) => {
+  const handleColorChange = (color: string) => {
+    toggleColor(color);
+    const updatedColors = selectedColors.includes(color)
+      ? selectedColors.filter((c) => c !== color)
+      : [...selectedColors, color];
+    onColorChange(updatedColors);
+  };
+
   return (
     <div className="border-b py-2">
-      <details className="group [&_summary::-webkit-details-marker]:hidden *:px-4">
+      <details open>
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
-          <strong>Màu sắc</strong>
-          <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </span>
+          <strong>Colors</strong>
         </summary>
         <ul className="space-y-1 py-4">
-          {/* Replace with your color options */}
-          <li className="py-2 flex justify-between items-center">
-            <div className="flex items-center *:w-[25px] *:h-[25px]">
-              <span className="px-3">Red</span>
-            </div>
-            <span>(10)</span>
-          </li>
-          {/* Add more colors as needed */}
+          {colorOptions.map((color) => (
+            <li key={color}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedColors.includes(color)}
+                  onChange={() => handleColorChange(color)}
+                />
+                {color}
+              </label>
+            </li>
+          ))}
+          <button
+            className="mt-4 text-blue-500"
+            onClick={() => {
+              resetColorFilter();
+              onColorChange([]); // Reset the filter
+            }}
+          >
+            Reset Color Filter
+          </button>
         </ul>
       </details>
     </div>

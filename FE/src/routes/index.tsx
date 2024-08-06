@@ -20,21 +20,24 @@ import IndexHome from "../pages/Client/(Home)/page";
 import IndexShops from "../pages/Client/Shop/page";
 import ProductDetail from "../pages/Client/[ProductDetail]/page";
 import Profile from "../pages/Client/Profile/Profile";
-import Order_All from "../pages/Client/Order/Order-All/Order_All";
+import Order_Menu from "../pages/Client/Order/Order_Menu/Order_Menu";
 import Address from "../pages/Client/Profile/Address";
 import ListProduct from "../pages/Admin/Product/ListProduct";
 import TrashProduct from "../pages/Admin/Product/TrashProduct";
 import BlogList from "../pages/Admin/Blogs/BlogList";
 import ListContact from "../pages/Admin/contact/ListContact";
 import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
-import UpdateProduct from "../pages/Admin/Product/EditProduct/EditProduct";
-import AddProduct from "../pages/Admin/Product/AddProducts/AddProduct";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
-
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
+import EditBlog from "../pages/Admin/Blogs/BlogEdit";
+import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
+import Layout_Profile from "../pages/Client/Profile/layout";
+import Add_Item from "../pages/Admin/Product/Add_Item";
+import Edit_Item from "../pages/Admin/Product/Edit_Item";
+import Logout from "../common/hooks/Auth/Logout";
 const RouterComponent = () => {
   return (
     <>
@@ -59,9 +62,18 @@ const RouterComponent = () => {
               path="shops/detail_product/:id"
               element={<ProductDetail />}
             />
+
+            <Route path="profile" element={<Layout_Profile />}>
+              <Route index element={<Profile />} />
+
+              <Route path="/profile/address" element={<Address />} />
+              <Route path="/profile/favourite" element={<Favourite />} />
+              <Route path="/profile/allorder" element={<Order_Menu />} />
+            </Route>
+
             <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
-              <Route path="/allorder/order" element={<Order_All />} />
+              <Route path="/allorder/order" element={<Order_Menu />} />
               <Route
                 path="/allorder/order/:id/detail"
                 element={<OrderDetail />}
@@ -74,10 +86,14 @@ const RouterComponent = () => {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/admin/category" element={<List_Category />} />
+            <Route path="category" element={<List_Category />} />
+            {/* <Route path="test1" element={<Add_Item />} />
+            <Route path="test2/:id" element={<Edit_Item />} /> */}
+            <Route path="products/add" element={<Add_Item />} />
+            <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
-            <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/edit/:id" element={<UpdateProduct />} />
+            {/* <Route path="products/add" element={<AddProduct />} />
+            <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
             <Route path="products/trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="auth" element={<List_Auth />} />
@@ -87,6 +103,8 @@ const RouterComponent = () => {
             />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="blogs" element={<BlogList />} />
+            <Route path="blogs/add_blog" element={<BlogAdd />} />
+            <Route path="blogs/:id" element={<EditBlog />} />
           </Route>
         </Routes>
         {/* <ToastContainer /> */}

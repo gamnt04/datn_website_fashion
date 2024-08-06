@@ -1,103 +1,126 @@
+import { Pagination, Table } from "antd";
 import { Link } from "react-router-dom";
+import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
+import { IOrder } from "../../../common/interfaces/Orders";
+import { ColumnType, SortOrder } from "antd/es/table/interface";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
-    const formatDate = (datetime: any) => {
-        if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
-        const date = new Date(datetime);
-        return date.toLocaleDateString(); // Lấy ngày tháng năm
-    };
+  const formatDate = (datetime: any) => {
+    if (!datetime) return "";
+    const date = new Date(datetime);
+    return date.toLocaleDateString();
+  };
 
-    // for (let i = 0; i < orders.length; i++) {
-    //     console.log(orders[i]);
-    // }
-    console.log(orders);
+  const dataSort = orders?.map((order: any) => ({
+    key: order._id,
+    ...order,
+  }));
 
+  const createFilters = (order: IOrder[]) => {
+    return order
+      .map((order: IOrder) => order.orderNumber)
+      .filter(
+        (value: string, index: number, self: string[]) =>
+          self.indexOf(value) === index
+      )
+      .map((orderNumber: string) => ({
+        text: orderNumber,
+        value: orderNumber,
+      }));
+  };
 
-    return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 h-auto">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tên người mua</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">SĐT</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày Đặt</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Hình thức</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                        <th className="py-3 px-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {orders?.map((order: any) => (
-                        <tr key={order._id}>
-                            <td className="py-4 px-3 text-sm font-medium text-gray-900">{order.orderNumber}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.userName}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.phone}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.email}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500 text-center">{formatDate(order?.datetime)}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500">{order?.customerInfo?.payment}</td>
-                            <td className="py-4 px-3 text-sm text-gray-500 text-center">
-                                {order?.status == 1 ? "Chờ xác nhận" :
-                                    order?.status == 2 ? "Đang chuẩn bị" :
-                                        order?.status == 3 ? "Đang vận chuyển" :
-                                            order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
-                            </td>
-                            <td className="py-4 px-3 text-sm text-gray-500 flex justify-center items-center gap-5 relative">
-                                <Link to={`/admin/orders/${order._id}/orderDetali`}>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="size-6 cursor-pointer"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                                        />
-                                    </svg>
-                                </Link>
-                            </td>
-                        </tr>
+  const columns: ColumnType<IOrder>[] = [
+    {
+      title: "Mã đơn",
+      dataIndex: "orderNumber",
+      key: "orderNumber",
+      filterSearch: true,
+      filters: orders ? createFilters(orders) : [],
+      onFilter: (value: string | any, record: IOrder) => {
+        const filterValue = value as string;
+        return record.orderNumber.includes(filterValue);
+      },
+      sorter: (a: IOrder, b: IOrder) =>
+        a.orderNumber.localeCompare(b.orderNumber),
+      sortDirections: ["ascend", "descend"] as SortOrder[],
+    },
+    {
+      title: "Người mua",
+      dataIndex: "userName",
+      key: "userName",
+      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>,
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
+      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (_: any, order: any) => <p>{order?.customerInfo?.email}</p>,
+    },
+    {
+      title: "Ngày đặt",
+      dataIndex: "datetime",
+      key: "datetime",
+      render: (_: any, order: any) => <p>{formatDate(order?.datetime)}</p>,
+    },
+    {
+      title: "Hình thức",
+      dataIndex: "payment",
+      key: "payment",
+      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (_: any, order: any) => (
+        <p>
+          {order?.status === 1
+            ? "Chờ xác nhận"
+            : order?.status === 2
+            ? "Đang chuẩn bị"
+            : order?.status === 3
+            ? "Đang vận chuyển"
+            : order?.status === 4
+            ? "Đã giao hàng"
+            : "Đã hủy"}
+        </p>
+      ),
+    },
+    {
+      dataIndex: "action",
+      key: "action",
+      render: (_: any, orders: any) => (
+        <>
+          <Link to={`/admin/orders/${orders._id}/orderDetali`}>
+            <span className="flex justify-center">
+              <Ellipsis_horizontal />
+            </span>
+          </Link>
+        </>
+      ),
+    },
+  ];
 
-                    ))}
-                </tbody>
-            </table>
-            <div className="flex justify-center gap-4 my-6">
-                <button
-                    className="hover:bg-slate-300 border-2 w-12 h-12"
-                    onClick={() => goToPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                    </svg>
-                </button>
-                {/* Render nút phân trang một cách động */}
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index + 1}
-                        className={`hover:bg-slate-300 border-2 w-12 h-12 ${currentPage === index + 1 ? 'bg-slate-300' : ''}`}
-                        onClick={() => goToPage(index + 1)}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
-                <button
-                    className="hover:bg-slate-300 border-2 w-12 h-12"
-                    onClick={() => goToPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 ml-3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    );
+  return (
+    <div className="overflow-x-auto">
+      <Table columns={columns} dataSource={dataSort} pagination={false} />
+      <div className="flex justify-between items-center mt-4">
+        <div className="max-w-full overflow-hidden"></div>
+        <Pagination
+          current={currentPage}
+          pageSize={10}
+          total={totalPages * 10}
+          onChange={goToPage}
+        />
+      </div>
+    </div>
+  );
 };
 
 export default OrderTable;

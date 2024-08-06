@@ -27,15 +27,13 @@ const userSchema = new Schema(
       minlength: 3,
       maxlength: 30,
     },
-    address: [
-      {
-        fullName: { type: String },
-        phoneNumber: { type: String },
-        address: { type: String },
-        addressDetails: { type: String },
-        checked: { type: Boolean, default: false },
-      },
-    ],
+    address: {
+      fullName: { type: String },
+      phoneNumber: { type: String },
+      address: { type: String },
+      addressDetails: { type: String },
+      // checked: { type: Boolean, default: false },
+    },
     phone: {
       type: String,
     },
@@ -47,6 +45,8 @@ const userSchema = new Schema(
 
     avatar: {
       type: String,
+      default: "https://vectorified.com/images/default-avatar-icon-12.png",
+      // default: "../upload/default-avatar.jpeg",
     },
 
     birthDate: {

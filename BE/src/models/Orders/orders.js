@@ -13,29 +13,29 @@ const generateOrderNumber = () => {
 const orderItemSchema = new mongoose.Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
-    auto: true
+    auto: true,
   },
   name: {
     type: String,
-    required: true
+    required: true,
   },
   price: {
     type: Number,
-    required: true
+    required: true,
   },
   image: {
     type: String,
   },
   quantity: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
+    required: true,
   },
   items: [],
   orderNumber: {
@@ -44,44 +44,45 @@ const orderSchema = new mongoose.Schema({
     unique: true,
   },
   customerInfo: {
-      userName: {
-        type: String,
-        required: true,
-      },
-      phone: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      },
-      payment: String,
-      city: String,
-      address: String,
-      code : String,
+    userName: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    payment: String,
+    city: String,
+    address: String,
+    code: String,
   },
   totalPrice: {
     type: Number,
-    required: true
+    required: true,
   },
+
   status: {
     type: String,
     enum: ["1", "2", "3", "4", "5"],
-    default: "1"
+    default: "1",
   },
   cancellationRequested: {
     type: Boolean,
-    default: false
+    default: false,
   },
   cancelledByAdmin: {
     type: Boolean,
-    default: false
+    default: false,
   },
   datetime: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 // Tạo pre-save hook để sinh orderNumber trước khi lưu vào cơ sở dữ liệu
 orderSchema.pre("save", function (next) {
@@ -90,6 +91,10 @@ orderSchema.pre("save", function (next) {
   }
   next();
 });
+orderSchema.statics.findByOrderNumber = function (orderNumber) {
+  return this.findOne({ orderNumber }).exec();
+};
+
 orderSchema.plugin(mongoosePaginate);
 
 export default mongoose.model("Order", orderSchema);

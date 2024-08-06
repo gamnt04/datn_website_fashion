@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
+import { useNavigate } from "react-router-dom";
 
 interface ProductModalProps {
   product: string | IProduct | null;
@@ -11,7 +12,8 @@ const PreviewM: React.FC<ProductModalProps> = ({ product, onClose }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [sizeStock, setSizeStock] = useState<number>(0);
-
+  const navi = useNavigate();
+  
   useEffect(() => {
     // console.log("product", product);
   }, [product]);

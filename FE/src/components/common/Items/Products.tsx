@@ -89,11 +89,31 @@ const Products = ({ items }: any) => {
         className="flex flex-col justify-center items-center lg:w-[310px] duration-200  rounded text-start gap-y-4"
         key={items._id}
       >
-        <div className=" relative group  w-full h-[160px] md:h-[200px] lg:h-[389px] lg:w-[310px] overflow-hidden bg-[#F6F6F6]">
-          <Link
-            onClick={ScrollTop}
-            to={`/shops/detail_product/${items._id}`}
-            className="h-full cursor-pointer"
+    <div
+      className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:shadow-lg overflow-hidden"
+      key={items._id}
+    >
+      <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[220px]  bg-[#F6F6F6]">
+        <Link
+          onClick={ScrollTop}
+          to={`/shops/detail_product/${items._id}`}
+          className="h-full cursor-pointer"
+        >
+          <img
+            className="w-full h-full"
+            loading="lazy"
+            src={items.image_product}
+            alt={items.name_product}
+          />
+        </Link>
+        {/* hover show icon cart */}
+        <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
+          <button className="p-2 border-none rounded hover:scale-110">
+            <HeartIcon />
+          </button>
+          <button
+            className="p-2 border-none rounded hover:scale-110"
+            onClick={() => handlePreview(items._id)}
           >
             <img
               className="w-full h-full  duration-500 group-hover:scale-105"
@@ -151,6 +171,8 @@ const Products = ({ items }: any) => {
         {modalOpen && selectedProduct && (
           <ProductModal product={selectedProduct} onClose={handleCloseModal} />
         )}
+      </div>
+      </div>
       </div>
     </>
   );

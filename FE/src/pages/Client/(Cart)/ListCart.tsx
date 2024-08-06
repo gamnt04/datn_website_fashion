@@ -41,6 +41,16 @@ const ListCart = () => {
     const product_item = {
       userId: userId,
     };
+    const data_cart = dataSort?.filter((item: any) => (
+      item?.status_checked && item
+    ))
+    if (data_cart.length === 0) {
+      messageApi.open({
+        type: "warning",
+        content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
+      });
+      return
+    }
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
@@ -85,7 +95,7 @@ const ListCart = () => {
       title: 'Ảnh',
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link> ;
+        return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link>;
       },
     },
     {
@@ -114,9 +124,9 @@ const ListCart = () => {
       render: (_: any, product: any) => {
         return (
           <div className="flex space-x-2">
-            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color : product?.color_item, size : product?.name_size}} />
+            <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color: product?.color_item, size: product?.name_size }} />
             <Input value={product?.quantity} className="w-[40px] text-center" />
-            <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color : product?.color_item, size : product?.name_size}} />
+            <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color: product?.color_item, size: product?.name_size }} />
           </div>
         );
       },
@@ -152,25 +162,32 @@ const ListCart = () => {
 
 
   // next order
-  function next_order () {
+  function next_order() {
     ScrollTop();
-    const data_cart = dataSort?.filter((item : any) =>(
+    const data_cart = dataSort?.filter((item: any) => (
       item?.status_checked && item
     ))
     if (userId) {
-    sessionStorage.removeItem('item_order');
-    const data_order = {
-      id_user : userId,
-      data_order : data_cart,
-      totalPrice : data?.total_price,
-      action : 'data_cart'
+      if (data_cart.length === 0) {
+        messageApi.open({
+          type: "warning",
+          content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
+        });
+        return
+      }
+      sessionStorage.removeItem('item_order');
+      const data_order = {
+        id_user: userId,
+        data_order: data_cart,
+        totalPrice: data?.total_price,
+        action: 'data_cart'
+      }
+      sessionStorage.setItem('item_order', JSON.stringify(data_order))
+      routing('/cart/pay')
     }
-    sessionStorage.setItem('item_order', JSON.stringify(data_order))
-    routing('/cart/pay')
-  }
-  else {
-    routing('/login')
-  }
+    else {
+      routing('/login')
+    }
   }
 
   if (isPending) {
@@ -186,64 +203,67 @@ const ListCart = () => {
   }
 
   return (
-    <div className="w-[95%] mx-[2.5%] mt-[70px]">
-      {contextHolder}
-      <div className="text-sm py-6 bg-gray-100 font-medium px-[2.5%] rounded">
-        Home &#10148; Cart
-      </div>
-      <>
-        <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
-          <div className="md:w-[70%] mb:w-full w-full">
-            <Popconfirm className="text-red-500"
-              title="Xóa sản phẩm khỏi giỏ hàng?"
-              description="Bạn có chắc chắn muốn xóa không?"
-              onConfirm={() => handleRemoveMultiple()}
-              okText="Có"
-              cancelText="Không"
-            >
-              <DeleteOutlined style={{ fontSize: '24px' }} />
-            </Popconfirm>
-            <Table columns={columns} dataSource={dataSort} pagination={false} />
-          </div>
+    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="w-[95%] mx-[2.5%] mt-[70px]">
+        {contextHolder}
+        <div className="text-sm py-6 bg-gray-100 font-medium px-[2.5%] rounded">
+          Home &#10148; Cart
+        </div>
+        <>
+          <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
+            <div className="md:w-[70%] mb:w-full w-full">
+              <Popconfirm className="text-red-500"
+                title="Xóa sản phẩm khỏi giỏ hàng?"
+                description="Bạn có chắc chắn muốn xóa không?"
+                onConfirm={() => handleRemoveMultiple()}
+                okText="Có"
+                cancelText="Không"
+              >
+                <DeleteOutlined style={{ fontSize: '24px' }} />
+              </Popconfirm>
+              <Table columns={columns} dataSource={dataSort} pagination={false} />
+            </div>
 
-          <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-            <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
-              <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                <strong>Tổng giá trị đơn hàng</strong>
-                <p className="font-bold text-xl text-yellow-500">
-                  {data?.total_price?.toLocaleString("vi", {
-                    style: "currency",
-                    currency: "VND"
-                  })}
-                </p>
-              </div>
-              <div className="flex flex-col border-y py-5 my-5">
-                <span className="text-xs mb-2">Nhập mã giảm giá</span>
-                <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                  <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
-                  <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
-                    Apply
-                  </button>
-                </form>
-              </div>
-              <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                <strong>Cần thanh toán :</strong>
-                <strong>
-                  {data?.total_price?.toLocaleString("vi", {
-                    style: "currency",
-                    currency: "VND"
-                  })}
-                </strong>
-              </div>
+            <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
+              <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
+                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                  <strong>Tổng giá trị đơn hàng</strong>
+                  <p className="font-bold text-xl text-yellow-500">
+                    {data?.total_price?.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND"
+                    })}
+                  </p>
+                </div>
+                <div className="flex flex-col border-y py-5 my-5">
+                  <span className="text-xs mb-2">Nhập mã giảm giá</span>
+                  <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
+                    <input className="px-4 outline-none" type="text" placeholder="Enter Code" />
+                    <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
+                      Apply
+                    </button>
+                  </form>
+                </div>
+                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                  <strong>Cần thanh toán :</strong>
+                  <strong>
+                    {data?.total_price?.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND"
+                    })}
+                  </strong>
+                </div>
                 <button onClick={next_order} className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                   Tiến hành thanh toán
                 </button>
+              </div>
             </div>
           </div>
-        </div>
 
-      </>
+        </>
+      </div>
     </div>
+
   );
 };
 
