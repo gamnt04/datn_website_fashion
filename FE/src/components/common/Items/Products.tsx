@@ -15,12 +15,7 @@ const Products = ({ items }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const account = user?.user;
   const userId = account?._id;
-  const {
-    data: FavoriteData,
-    isLoading,
-    isError,
-    error
-  } = useListFavouriteProducts(userId);
+  const { data: FavoriteData } = useListFavouriteProducts(userId);
   const { mutate: AddFavouriteProduct } = Mutation_FavouriteProduct("ADD");
   const { mutate: RemoveFavouriteProduct } =
     Mutation_FavouriteProduct("REMOVE");
@@ -47,15 +42,16 @@ const Products = ({ items }) => {
     setModalOpen(false);
     setSelectedProduct(null);
   };
-  console.log(FavoriteData?.products);
 
   const checkFavourite = (productId: string) => {
-    return FavoriteData?.products?.some(
-      (product) => product?.productId?._id === productId
-    );
+    if (FavoriteData?.products?.length > 0) {
+      return FavoriteData.products.some(
+        (product) => product?.productId?._id === productId
+      );
+    }
   };
 
-  const handleAddToFavorites = (productId: string) => {
+  const handleAddToFavorites = (productId) => {
     if (!userId) {
       message.open({
         type: "warning",
@@ -71,16 +67,13 @@ const Products = ({ items }) => {
     }
   };
 
-  const handleRemoveFromFavorites = (productId: string) => {
+  const handleRemoveFromFavorites = (productId) => {
     message.open({
       type: "success",
       content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn"
     });
     RemoveFavouriteProduct({ userId, productId });
   };
-
-  if (isLoading) return <div className="">loading...</div>;
-  if (isError) return <div className="">{error.message}</div>;
 
   return (
     <>
@@ -89,77 +82,6 @@ const Products = ({ items }) => {
         className="flex flex-col justify-center items-center lg:w-[310px] duration-200 rounded text-start gap-y-4"
         key={items._id}
       >
-<<<<<<< HEAD
-        <div
-          className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:shadow-lg overflow-hidden"
-          key={items._id}
-        >
-          <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[220px]  bg-[#F6F6F6]">
-            <Link
-              onClick={ScrollTop}
-              to={`/shops/detail_product/${items._id}`}
-              className="h-full cursor-pointer"
-            >
-              <img
-                className="w-full h-full"
-                loading="lazy"
-                src={items.image_product}
-                alt={items.name_product}
-              />
-            </Link>
-            {/* hover show icon cart */}
-            <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-              <button className="p-2 border-none rounded hover:scale-110">
-                <HeartIcon />
-              </button>
-              <button
-                className="p-2 border-none rounded hover:scale-110"
-                onClick={() => handlePreview(items._id)}
-              >
-                <img
-                  className="w-full h-full  duration-500 group-hover:scale-105"
-                  loading="lazy"
-                  src={items.image_product}
-                  alt={items.name_product}
-                />
-              </button>
-
-              <div className=" absolute flex flex-col rounded top-0 p-1  right-0  ">
-                {account ? (
-                  <>
-                    {checkFavourite(items._id) ? (
-                      <button
-                        className="p-2 border-none rounded "
-                        onClick={() => handleRemoveToFavorites(items._id)}
-                      >
-                        <HeartIconRed />
-                      </button>
-                    ) : (
-                      <button
-                        className="p-2 border-none rounded "
-                        onClick={() => handleAddToFavorites(items._id)}
-                      >
-                        <HeartIcon />
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <button
-                    className="p-2 border-none rounded "
-                    onClick={() => handleAddToFavorites(items._id)}
-                  >
-                    <HeartIcon />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2 ">
-              <Link
-                onClick={ScrollTop}
-                to={`/shops/detail_product/${items._id}`}
-                className="text-md text-center  font-normal text-gray-700 lg:text-[16px]  hover:text-black line-clamp-2"
-=======
         <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[389px] lg:w-[310px] overflow-hidden bg-[#F6F6F6]">
           <Link
             onClick={ScrollTop}
@@ -194,28 +116,12 @@ const Products = ({ items }) => {
               <button
                 className="p-2 border-none rounded"
                 onClick={() => handleAddToFavorites(items?._id)}
->>>>>>> 09de8eb4e1c76c54fd9c92d0174dbd5e957d64fc
               >
-                {items.name_product}
-              </Link>
-              <p className="font-normal text-gray-700 text-[16px]">
-                {items.price_product.toLocaleString("vi-VN", {
-                  style: "currency",
-                  currency: "VND"
-                })}
-              </p>
-            </div>
-
-            {modalOpen && selectedProduct && (
-              <ProductModal
-                product={selectedProduct}
-                onClose={handleCloseModal}
-              />
+                <HeartIcon />
+              </button>
             )}
           </div>
         </div>
-<<<<<<< HEAD
-=======
         <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2">
           <Link
             onClick={ScrollTop}
@@ -235,7 +141,6 @@ const Products = ({ items }) => {
         {modalOpen && selectedProduct && (
           <ProductModal product={selectedProduct} onClose={handleCloseModal} />
         )}
->>>>>>> 09de8eb4e1c76c54fd9c92d0174dbd5e957d64fc
       </div>
     </>
   );
