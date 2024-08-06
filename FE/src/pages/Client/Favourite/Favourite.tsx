@@ -15,7 +15,6 @@ const Favourite = () => {
   const { mutate: RemoveFavouriteProduct } =
     Mutation_FavouriteProduct("REMOVE");
   const { data, isLoading, isError, error } = useListFavouriteProducts(userId);
-  console.log(data?.products);
   const handleRemoveFavorites = (productId: string) => {
     if (!userId) {
       messageApi.open({

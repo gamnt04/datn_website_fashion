@@ -15,6 +15,12 @@ const Products = ({ items }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const account = user?.user;
   const userId = account?._id;
+<<<<<<< HEAD
+  const { data: FavoriteData } = useListFavouriteProducts(userId);
+  const { mutate: AddFavouriteProduct } = Mutation_FavouriteProduct("ADD");
+  const { mutate: RemoveFavouriteProduct } =
+    Mutation_FavouriteProduct("REMOVE");
+=======
   const {
     data: FavoriteData,
     isLoading,
@@ -31,6 +37,7 @@ const Products = ({ items }) => {
       onSuccess: () => refetch()
     }
   );
+>>>>>>> main
 
   if (!items || !items._id) {
     console.error("Items is undefined or missing _id:", items);
@@ -55,10 +62,19 @@ const Products = ({ items }) => {
     setSelectedProduct(null);
   };
 
+<<<<<<< HEAD
+  const checkFavourite = (productId: string) => {
+    if (FavoriteData?.products?.length > 0) {
+      return FavoriteData.products.some(
+        (product) => product?.productId?._id === productId
+      );
+    }
+=======
   const checkFavourite = (productId) => {
     return FavoriteData?.products?.some(
       (product) => product.productId._id === productId
     );
+>>>>>>> main
   };
 
   const handleAddToFavorites = (productId) => {
@@ -85,9 +101,12 @@ const Products = ({ items }) => {
     RemoveFavouriteProduct({ userId, productId });
   };
 
+<<<<<<< HEAD
+=======
   if (isLoading) return <div>loading...</div>;
   if (isError) return <div>{error.message}</div>;
 
+>>>>>>> main
   return (
     <>
       {contentHolder}
