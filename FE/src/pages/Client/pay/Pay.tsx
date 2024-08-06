@@ -14,7 +14,6 @@ import {
 import { Address, Chevron_right } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { stat } from "jodit/esm/plugins/stat/stat";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -23,7 +22,7 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-  console.log(auth);
+  // console.log(auth);
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
@@ -85,78 +84,39 @@ const Pay = () => {
     };
 
     try { 
-      if (data_form.payment === "VNPAY") { 
-        const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string); 
-        const orderId = JSON.parse(sessionStorage.getItem('item_order') as string); 
-        console.log(vnPayment); 
-        console.log(orderId._id); 
-     
-        // Tạo URL thanh toán VNPAY 
-        const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, { 
-          orderId: orderId._id, 
-          totalPrice: vnPayment, 
-          orderDescription: `Order ${orderId._id}`, 
-          language: 'vn' 
-        }); 
-     
-        // Lưu URL thanh toán 
-        const paymentUrl = UrlPayment.data.paymentUrl;
-      sessionStorage.setItem("paymentUrl", paymentUrl);
-        window.location.href = paymentUrl; 
-     
-        // Chờ người dùng thanh toán thành công và quay về trang web 
-        // if (window.location.search) { 
+        if (data_form.payment === "VNPAY") { 
+            const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string); 
+            const orderId = JSON.parse(sessionStorage.getItem('item_order') as string); 
+            sessionStorage.setItem('customerInfo', JSON.stringify({...data_form}));
 
-        //   const parsed = queryString.parseUrl(window.location.search); 
-        //   if (parsed.query.vnp_TransactionStatus == "00") { 
-        //     try { 
-        //       // Gửi yêu cầu tạo đơn hàng sau khi thanh toán thành công 
-        //       const { data } = await axios.post(`http://localhost:2004/api/v1/orders`, item_order); 
-        //       console.log(data); 
-        //       messageApi.open({ 
-        //         type: "success", 
-        //         content: "Thanh toán thành công!", 
-        //       }); 
-        //     } catch (error) { 
-        //       console.error("Order Creation Error: ", error); 
-        //       messageApi.open({ 
-        //         type: "error", 
-        //         content: "Lỗi tạo đơn hàng!", 
-        //       }); 
-        //     } 
-        //   } 
-        // } 
-        const {data} = await axios.get(`http://localhost:2004/api/v1/payment/result`);
-        console.log(data);
-      } else { 
-        // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
-        onSubmit(item_order); 
-      } 
-    } catch (error) { 
-      console.error("Order Creation Error: ", error); 
-      messageApi.open({ 
-        type: "error", 
-        content: "Lỗi tạo đơn hàng!", 
-      }); 
-    }
-    useEffect(() => { 
-      const paymentUrl = sessionStorage.getItem("paymentUrl"); 
-      if (paymentUrl) { 
-        const parsed = queryString.parseUrl(paymentUrl); 
-        if (parsed.query.vnp_TransactionStatus === "00") { 
-          // Gửi yêu cầu tạo đơn hàng 
-          axios.post(`http://localhost:2004/api/v1/orders`, item_order) 
-            .then((response) => { 
-              console.log("Đơn hàng đã được tạo thành công:", response.data); 
-            }) 
-            .catch((error) => { 
-              console.error("Lỗi tạo đơn hàng:", error); 
+            // Tạo URL thanh toán VNPAY 
+            const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, { 
+                orderId: orderId._id, 
+                totalPrice: vnPayment, 
+                orderDescription: `Order ${orderId._id}`, 
+                language: 'vn' 
             }); 
-          sessionStorage.removeItem("paymentUrl"); 
+            
+            // Lưu thông tin thanh toán trước khi chuyển hướng
+            sessionStorage.setItem('item_order', JSON.stringify(item_order));
+
+            // Redirect người dùng đến trang thanh toán
+            window.location.href = UrlPayment.data.paymentUrl;
+        } else { 
+            // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
+            onSubmit(item_order); 
         } 
-      } 
-    }, []);
+    } catch (error) { 
+        console.error("Order Creation Error: ", error); 
+        messageApi.open({ 
+            type: "error", 
+            content: "Lỗi tạo đơn hàng!", 
+        }); 
+    }
 };
+
+
+
    
   const dataSo = data?.data_order.map((order: any) => {
     return {

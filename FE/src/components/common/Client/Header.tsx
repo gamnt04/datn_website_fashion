@@ -5,10 +5,9 @@ import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/Search";
-import { useQuery } from "@tanstack/react-query";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { CarrotIcon, Heart, Search, ShoppingCart } from "lucide-react";
-import MiniCart from "../../../pages/Client/(Cart)/MiniCart";
+import { Heart, Search, ShoppingCart } from "lucide-react";
+
 const Header = () => {
   const navigate = useNavigate();
   const {
@@ -70,7 +69,7 @@ const Header = () => {
   // toogle menu mobile
 
   const { data: getUser } = List_Auth(account);
-  console.log(getUser);
+  // console.log(getUser);
 
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
