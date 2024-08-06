@@ -4,7 +4,6 @@ import instance from "../../configs/axios";
 export const GetAllFavouriteProducts = async (userId: string) => {
   try {
     const { data } = await instance.get(`/favorite/products/${userId}`);
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error || "Loi server !");
