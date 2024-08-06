@@ -1,106 +1,98 @@
-import React, { useState, useEffect } from "react";
-import { useFilteredProducts } from "../../../common/hooks/Products/useFilteredProducts";
-import Products from "../../../components/common/Items/Products";
-import { Button, Spin } from "antd";
+import React from "react";
+import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
+import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-// import List_item from "../../../components/common/Client/_component/List_item";
+import Products from "../../../components/common/Items/Products";
 
-const Products_Shop: React.FC<{ selectedCategoryId: string | null }> = ({
-  selectedCategoryId,
+interface Products_ShopProps {
+  cate_id: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  selectedColors: string[];
+  selectedSizes: string[];
+}
+
+const Products_Shop: React.FC<Products_ShopProps> = ({
+  cate_id,
+  minPrice,
+  maxPrice,
+  selectedColors,
+  selectedSizes,
 }) => {
-  const [page, setPage] = useState<number>(1);
-  const [loadCount, setLoadCount] = useState<number>(0);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-
   const {
-    data: productsData,
+    data: products,
     isLoading,
     isError,
-  } = useFilteredProducts(selectedCategoryId || "", page);
+    error,
+  } = useFilteredProducts(
+    cate_id,
+    minPrice,
+    maxPrice,
+    selectedColors,
+    selectedSizes
+  );
 
-  useEffect(() => {
-    if (productsData) {
-      const docs = productsData.data?.docs || [];
-      if (docs.length < 20) {
-        setHasMore(false);
-      }
-      setLoadCount((prevCount) => prevCount + 1);
-    }
-  }, [productsData]);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
-  const handlePrevPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (hasMore) {
-      setPage(page + 1);
-    }
-  };
-
-
-  // const propData = {
-  //   data: data,
-  //   style: 'lg:grid-cols-4 md:grid-cols-3'
-  // }
+  if (isError && error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div>Lỗi: {error.message}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-10">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-screen">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      ) : isError ? (
+      {products?.data?.length ? (
+        <>
+          <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] justify-between gap-y-6">
+            {products.data.map((item: any) => (
+              <Products key={item._id} items={item} />
+            ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            {/* Phân trang đã bị tắt */}
+            {/* <div className="flex items-center space-x-4">
+              <button
+                // Xử lý phân trang
+                className={`px-4 py-2 border rounded-md ${
+                  page === 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+                disabled={page === 1}
+              >
+                &#10094; Trước
+              </button>
+              <span className="text-lg font-semibold">Trang {page}</span>
+              <button
+                // Xử lý phân trang
+                className={`px-4 py-2 border rounded-md ${
+                  !hasMore
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+                disabled={!hasMore}
+              >
+                Kế tiếp &#10095;
+              </button>
+            </div> */}
+          </div>
+        </>
+      ) : (
         <div className="flex justify-center items-center h-screen">
           <img
-            src="../../src/assets/Images/Products/no-data.png"
+            src="/assets/Images/Products/no-data.png" // Sửa đường dẫn hình ảnh
             alt="Không có sản phẩm"
           />
         </div>
-      ) : (
-        <>
-          {productsData?.data?.docs?.length ? (
-            <>
-              <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] justify-between gap-y-6">
-                {productsData.data.docs.map((item: any) => (
-                  <Products key={item._id} items={item} />
-                ))}
-              </div>
-              <div className="flex justify-center mt-16">
-                <div className="flex gap-3 items-center mx-3 place-items-center duration-300 cursor-pointer">
-                  <Button
-                    onClick={handlePrevPage}
-                    className="opacity-50 hover:opacity-100 w-12 h-12 border"
-                    disabled={page === 1}
-                  >
-                    &#10094;
-                  </Button>
-                  <Button
-                    onClick={handleNextPage}
-                    className="opacity-50 hover:opacity-100 w-12 h-12 border"
-                    disabled={!hasMore}
-                  >
-                    &#10095;
-                  </Button>
-                </div>
-              </div>
-              {!hasMore && loadCount >= 2 && (
-                <div className="flex justify-center items-center h-screen">
-                  <p>Không còn sản phẩm để hiển thị.</p>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="flex justify-center items-center h-screen">
-              <img
-                src="../../src/assets/Images/Products/no-data.png"
-                alt="Không có sản phẩm"
-              />
-            </div>
-          )}
-        </>
       )}
     </div>
   );

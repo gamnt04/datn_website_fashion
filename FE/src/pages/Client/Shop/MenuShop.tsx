@@ -1,24 +1,72 @@
-// MenuShop.tsx
 import React from "react";
 import CategoryFilter from "./Filter/CategoryFilter";
-import { ICategory } from "../../../common/interfaces/Category";
 import PriceFilter from "./Filter/PriceFilter";
 import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
+import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
+import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
 
-const MenuShop: React.FC<{
-  categories?: ICategory[];
+interface MenuShopProps {
   onCategorySelect: (id: string | null) => void;
-}> = ({ categories = [], onCategorySelect }) => {
+  onPriceChange: (min: number | null, max: number | null) => void;
+  setSearch: (search: string) => void;
+  setSort: (sort: string) => void;
+  selectedColors: string[];
+  toggleColor: (color: string) => void;
+  resetColorFilter: () => void;
+  onColorChange: (colors: string[]) => void;
+  selectedSizes: string[];
+  toggleSize: (size: string) => void;
+  resetSizeFilter: () => void;
+  onSizeChange: (sizes: string[]) => void;
+}
+
+const MenuShop: React.FC<MenuShopProps> = ({
+  onCategorySelect,
+  onPriceChange,
+  setSearch,
+  setSort,
+  selectedColors,
+  toggleColor,
+  resetColorFilter,
+  onColorChange,
+  selectedSizes,
+  toggleSize,
+  resetSizeFilter,
+  onSizeChange,
+}) => {
+  const { data: categoryData } = useCategoryQuery();
+  const {
+    colors: colorOptions,
+    sizes: sizeOptions,
+    loading,
+    error,
+  } = useAttributes();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <div className="hidden lg:block w-full h-auto flex flex-col my-10  rounded overflow-hidden">
+    <div className="hidden lg:block w-full h-auto flex flex-col my-10 rounded overflow-hidden">
       <CategoryFilter
-        categories={categories}
+        categories={categoryData || []}
         onCategorySelect={onCategorySelect}
       />
-      <PriceFilter />
-      <ColorFilter />
-      <SizeFilter />
+      <PriceFilter onPriceChange={onPriceChange} />
+      <ColorFilter
+        selectedColors={selectedColors}
+        toggleColor={toggleColor}
+        resetColorFilter={resetColorFilter}
+        onColorChange={onColorChange}
+        colorOptions={colorOptions}
+      />
+      <SizeFilter
+        selectedSizes={selectedSizes}
+        toggleSize={toggleSize}
+        resetSizeFilter={resetSizeFilter}
+        onSizeChange={onSizeChange}
+        sizeOptions={sizeOptions}
+      />
     </div>
   );
 };

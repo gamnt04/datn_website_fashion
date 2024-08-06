@@ -145,25 +145,35 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const price = price_product * quantity_item
   // next order
   function next_order() {
-    sessionStorage.removeItem('item_order');
-    const items_order = [
-      {
-        productId: dataProps?.product,
-        quantity: quantity_item,
-        price_item: price_product,
-        color_item: color,
-        name_size: size,
-        total_price_item : price
+    if (account) {
+      sessionStorage.removeItem('item_order');
+      if (!color || !size) {
+        text_validate()
+        return;
       }
-    ]
-    const data_order = {
-      id_user: account?.id,
-      data_order: items_order,
-      totalPrice: price,
-      action: 'data_detail'
+      const items_order = [
+        {
+          productId: dataProps?.product,
+          quantity: quantity_item,
+          price_item: price_product,
+          color_item: color,
+          name_size: size,
+          total_price_item: price
+        }
+      ]
+      const data_order = {
+        id_user: account?.id,
+        data_order: items_order,
+        totalPrice: price,
+        action: 'data_detail'
+      }
+      sessionStorage.setItem('item_order', JSON.stringify(data_order))
+      navi('/cart/pay')
+    } else {
+      navi('/login')
     }
-    sessionStorage.setItem('item_order', JSON.stringify(data_order))
-    navi('/cart/pay')
+
+
   }
 
   return (
@@ -171,7 +181,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       <div className="flex flex-col lg:gap-y-2">
         {/* row 1 */}
         <div className="flex flex-col lg:gap-y-2">
-          <span className="text-gray-700 font-bold lg:text-base mb:text-sm">
+          <span className="text-gray-700 font-bold lg:text-3xl mb:text-xl">
             {name_product}
           </span>
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
@@ -183,7 +193,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </div>
             </section>
             <div className="flex gap-x-2 items-end">
-              <span className="font-medium text-[#EB2606] lg:text-xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
+              <span className="font-medium text-[#EB2606] lg:text-2xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
                 {price_product?.toLocaleString("vi", {
                   style: "currency",
                   currency: "VND"
@@ -231,10 +241,10 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </>
         )}
         {/* row 5 */}
-        <div className="py-5 *:w-full rounded-xl lg:-mt-5 -mt-1">
+        <div className=" mt-2 *:w-full rounded-xl">
           <span ref={ref_validate_attr} className="hidden text-red-500 text-sm">Vui lòng chọn!</span>
           {/* quantity */}
-          <div className="py-5 flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
+          <div className=" flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
             {/* up , dow quantity */}
             <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
@@ -254,24 +264,24 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </span>
             </div>
           </div>
-          <div className="flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
+          <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
-            <span className="text-[#EB2606]">{price ? price : 0?.toLocaleString("vi", {
+            <span className="text-[#EB2606]">{(price ? price : 0)?.toLocaleString("vi", {
               style: "currency",
               currency: "VND"
             })}</span>
           </div>
 
-          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300">
+          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             {/* add cart */}
             <Button
-              className="hover:bg-black hover:text-white"
+              className="hover:bg-black hover:text-white w-full lg:w-[20%]"
               onClick={() => addCart(_id)}
             >
               Thêm vào giỏ
             </Button>
             {/* add cart */}
-            <Button onClick={next_order} className="hover:bg-black hover:text-white">
+            <Button onClick={next_order} className="hover:bg-black hover:text-white w-full lg:w-[20%]">
               Thanh toán
             </Button>
           </div>

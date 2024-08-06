@@ -1,5 +1,7 @@
 // import attribute from "../../models/attribute.js/attribute";
 
+import attribute from "../../models/attribute/attribute";
+
 // //Controller để tạo mới 1 thuộc tính
 // export const createAttribute = async (req, res) => {
 //     try {
@@ -13,15 +15,44 @@
 // }
 
 // // Controller để lấy tất cả các thuộc tính
-// export const getAllAttributes = async (req, res) => {
-//     try {
-//         const attributes = await attribute.find().populate("values");
-//         res.json(attributes);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+export const getAllAttributes = async (req, res) => {
+  try {
+    // Fetch attributes and populate related fields
+    const attributes = await attribute.find().populate("values");
 
+    // Initialize sets to collect unique colors and sizes
+    const colorsSet = new Set();
+    const sizesSet = new Set();
+
+    // Iterate over attributes and collect unique colors and sizes
+    attributes.forEach((attr) => {
+      attr.values.forEach((value) => {
+        if (value.color) {
+          colorsSet.add(value.color.trim().toLowerCase()); // Normalize and add color
+        }
+        if (value.size) {
+          value.size.forEach((size) => {
+            if (size.name_size) {
+              sizesSet.add(size.name_size.trim().toLowerCase()); // Normalize and add size
+            }
+          });
+        }
+      });
+    });
+
+    // Convert sets to arrays
+    const colors = Array.from(colorsSet);
+    const sizes = Array.from(sizesSet);
+
+    // Respond with the unique colors and sizes
+    res.json({
+      colors,
+      sizes,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // // Controller để lấy một thuộc tính theo ID
 // export const getAttributeById = async (req, res) => {
 //     try {
@@ -144,7 +175,6 @@
 //     }
 // };
 
-
 // // import attribute from "../../models/attribute.js/attribute";
 
 // // //Controller để tạo mới 1 thuộc tính
@@ -159,15 +189,15 @@
 // //     }
 // // }
 
-// // // Controller để lấy tất cả các thuộc tính
-// // export const getAllAttributes = async (req, res) => {
-// //     try {
-// //         const attributes = await attribute.find().populate("values");
-// //         res.json(attributes);
-// //     } catch (error) {
-// //         res.status(500).json({ message: error.message });
-// //     }
-// // };
+// Controller để lấy tất cả các thuộc tính
+// export const getAllAttributes = async (req, res) => {
+//     try {
+//         const attributes = await attribute.find().populate("values");
+//         res.json(attributes);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 // // // Controller để lấy một thuộc tính theo ID
 // // export const getAttributeById = async (req, res) => {

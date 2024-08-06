@@ -43,3 +43,45 @@ body {
   margin-bottom: 0;
   /* Điều chỉnh vị trí của đầu mục */
 }
+
+/* Đổi màu nền của bảng */
+.custom-table .ant-table {
+  background-color: #21222d; /* Màu nền bảng */
+}
+
+/* Đổi màu nền của hàng trong bảng */
+.custom-table .ant-table-tbody > tr > td {
+  background-color: #21222d; /* Màu nền hàng */
+  color: rgb(236, 236, 236); /* Màu văn bản trong hàng */
+  border-color: rgb(67, 67, 67);
+}
+
+/* Bỏ hiệu ứng hover */
+.custom-table .ant-table-tbody > tr:hover > td {
+  background-color: #21222d !important; /* Giữ màu nền hàng khi hover */
+}
+
+/* Đổi màu nền của tiêu đề cột */
+.custom-table .ant-table-thead > tr > th {
+  background-color: #21222d; /* Màu nền tiêu đề cột */
+  color: #ffffff; /* Màu văn bản tiêu đề cột */
+  border-color: rgb(67, 67, 67);
+}
+
+/* Đổi màu của phân trang nếu có */
+.custom-table .ant-pagination {
+  background-color: #21222d; /* Màu nền phân trang */
+}
+
+.custom-table .ant-pagination-item {
+  border-color: #21222d; /* Màu viền các mục phân trang */
+}
+
+.custom-table .ant-pagination-item-link,
+.custom-table .ant-pagination-item {
+  color: #ffffff; /* Màu văn bản các mục phân trang */
+}
+
+.custom-table .ant-pagination-item-active {
+  background-color: #21222d; /* Màu nền mục phân trang đang chọn */
+}

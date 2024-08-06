@@ -6,7 +6,8 @@ import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { update } from "../../../../services/category";
-import { uploadImage } from "../../../../systems/utils/uploadImage";
+import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { Form, Switch } from "antd";
 
 interface UpdateComponentProps {
   id?: string;
@@ -61,7 +62,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
         formData.image_category[0] instanceof File
       ) {
         const file = formData.image_category[0];
-        const uploadedUrls = await uploadImage(file); // tải lên ảnh mới
+        const uploadedUrls = await UploadImage(file); // tải lên ảnh mới
         imageUrl = uploadedUrls[0]; // lấy URL của ảnh mới
       }
 
@@ -131,6 +132,9 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
                       <span>Vui lòng không được để trống</span>
                     )}
                   </p>
+                  <Form.Item name="published" label="Xuất bản" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+            <Switch />
+          </Form.Item>
                 </div>
               </div>
             </div>

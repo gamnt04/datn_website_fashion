@@ -11,7 +11,7 @@ const Ourblog = () => {
     queryFn: () => instance.get(`/blogs`),
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   return (
     (isLoading ? (
       <div className="flex justify-center items-center h-screen">
