@@ -47,12 +47,12 @@ const Favourite = () => {
   if (isError) return <div>{error.message}</div>;
 
   return (
-    <div className="lg:mt-[40px] mt-[60px]">
+    <div className="lg:mt-[40px] mt-[60px] lg:w-[1440px] lg:mx-auto ">
       {contextHolder}
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
         Home &#10148; Products &#10148; Favorites
       </div>
-      <div className="mt-8 grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-4 xl:auto-rows-[450px] justify-between gap-y-8">
+      <div className="mt-8 grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:mx-auto lg:w-[1330px] lg:gap-x-[1.5%] lg:grid-cols-4 xl:auto-rows-[450px] justify-between gap-y-8">
         {data?.products.length === 0 ? (
           <div className="">Add product</div>
         ) : (
