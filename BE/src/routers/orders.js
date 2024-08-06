@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   adminCancelOrder,
   createOrder,
+  createOrderPayment,
   get_orders_client,
   getOneOrderUser,
   getOrderById,
@@ -18,4 +19,5 @@ router.get("/orders/:id", getOrderById);
 router.patch("/orders/:id", updateOrderStatus);
 router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
+router.post("/orderspayment", createOrderPayment)
 export default router;

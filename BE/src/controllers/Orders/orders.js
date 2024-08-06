@@ -4,11 +4,10 @@ import Cart from "../../models/Cart/cart";
 import Attributes from '../../models/attribute/attribute'
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
+import orders from "../../models/Orders/orders";
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
-  console.log(email);
-
-  // Kiểm tra các giá trị của customerInfo
+  // Kiểm tra các giá trị của
   if (!customerInfo.email || !customerInfo.phone || !customerInfo.userName || !customerInfo.payment || !customerInfo.address) {
     return res.status(StatusCodes.BAD_REQUEST).json({ message: "Thông tin khách hàng không đầy đủ." });
   }
@@ -83,6 +82,40 @@ export const createOrder = async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi rồi đại ca ơi" });
+  }
+};
+export const createOrderPayment = async (req, res) => {
+  try {
+    // Chuyển req.body sang đối tượng JSON
+    const requestBody = JSON.parse(JSON.stringify(req.body));
+    const { userId, items, customerInfo, totalPrice } = requestBody;
+    console.log(requestBody);
+
+    const data = await orders.create(requestBody);
+    console.log(data);
+    if (data) {
+      const order = new Order({
+        userId,
+        items,
+        customerInfo: {
+          email: customerInfo.email,
+          phone: customerInfo.phone,
+          payment: customerInfo.payment,
+          userName: customerInfo.userName,
+          address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
+        },
+        totalPrice,
+  
+      });
+      await SendMail(customerInfo.email, order);
+      await Cart.findOneAndDelete({ userId: userId });
+      return res.status(201).json({ data, message: "Tạo đơn hàng thanh toán online thành công" });
+    } else {
+      return res.status(400).json({ message: "Lỗi rồi fix lại thanh toán online" });
+    }
+  } catch (error) {
+    console.error("Error creating order payment:", error);
+    return res.status(500).json({ message: "Lỗi rồi fix lại thanh toán online" });
   }
 };
 // export const getOrders = async (req, res) => {
