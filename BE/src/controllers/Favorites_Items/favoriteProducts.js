@@ -8,24 +8,13 @@ export const GetFavoriteProductByUserId = async (req, res) => {
     const favoriteProducts = await FavoriteProducts.findOne({
       userId
     }).populate("products.productId");
-    console.log(favoriteProducts);
 
     if (!favoriteProducts) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "List of Favorite Products not found" });
     }
-
-    const dataProductFavorite = {
-      products: favoriteProducts.products.map((item) => ({
-        productId: item.productId._id,
-        name: item.productId.name,
-        category_id: item.productId.category_id,
-        price: item.productId.price
-      }))
-    };
-
-    return res.status(StatusCodes.OK).json(dataProductFavorite);
+    return res.status(StatusCodes.OK).json(favoriteProducts);
   } catch (error) {
     console.error("Error fetching favorite products by userId:", error);
     return res
