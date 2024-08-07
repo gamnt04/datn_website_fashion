@@ -31,7 +31,7 @@ const ListProduct = () => {
           content: "Xóa thành công",
         });
         queryClient.invalidateQueries({
-          queryKey :["Product_Dashboard"]
+          queryKey: ["Product_Dashboard"]
         });
       },
       onError: (error) => {
@@ -125,8 +125,8 @@ const ListProduct = () => {
               title="Xóa sản phẩm"
               description="Bạn chắc chắn muốn xóa sản phẩm này chứ?"
               onConfirm={() => mutate({
-                id_item :product._id,
-                action : 'remove' 
+                id_item: product._id,
+                action: 'remove'
               })}
               // onCancel={cancel}
               okText="Yes"
@@ -170,7 +170,7 @@ const ListProduct = () => {
           </Link>
         </div>
 
-        <Table columns={columns} dataSource={dataSource} className="custom-table" />
+        <Table columns={columns} dataSource={dataSource} />
       </div>
     </>
   );
