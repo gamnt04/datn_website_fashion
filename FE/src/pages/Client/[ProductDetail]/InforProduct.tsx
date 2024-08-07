@@ -16,7 +16,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
   const [size, setSize] = useState();
-  const [arr_size, setArr_Size] = useState();
+  const [arr_size, setArr_Size] = useState<any>();
+  const [price_attr, set_price_attr] = useState(0);
   const [quantity_attr, setQuantity_attr] = useState();
   const [quantity_item, setQuantity_item] = useState<number>(1);
   const dataItem = dataProps?.product;
@@ -26,35 +27,19 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const { mutate } = Mutation_Cart("ADD");
   const addCart = (id?: string | number) => {
     if (account) {
-      if (dataProps?.product?.attributes) {
+      if (quantity_attr) {
         const item = {
           userId: account,
           productId: id,
+          price_item_attr: price_attr,
           quantity: quantity_item,
           color: color,
           size: size,
         };
-        const dataAttr = dataProps?.product?.attributes?.values.find((item: any) => item);
-        const sizeDataAttr = dataAttr?.size.find((a: any) => a);
-        if (dataAttr?.color && sizeDataAttr?.name_size) {
-          if (color && size) {
-            mutate(item);
-          }
-          else {
-            text_validate()
-          }
-        }
-        else if (dataAttr?.color || sizeDataAttr?.name_size) {
-          if (color || size) {
-            mutate(item);
-          }
-          else {
-            text_validate()
-          }
-        }
-        else {
-          mutate(item);
-        }
+        mutate(item);
+      }
+      else {
+        text_validate()
       }
     }
     else {
@@ -81,7 +66,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         dataItem?.attributes?.values?.filter((i: any) => {
           if (i?.color == item) {
             i?.size?.filter((j: any) => {
-              (j.name_size) ? setArr_Size(i?.size) : setQuantity_attr(j?.stock_attribute)
+              (j.name_size) ? setArr_Size(i?.size) : (setQuantity_attr(j?.stock_attribute), set_price_attr(j?.price_attribute), setArr_Size(''))
             })
           }
         })
@@ -93,7 +78,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         for (let i of dataProps?.product?.attributes?.values) {
           if (i?.color == color) {
             for (let k of i.size) {
-              k?.name_size == item && (setQuantity_attr(k?.stock_attribute), setSize(k.name_size));
+              k?.name_size == item && (setQuantity_attr(k?.stock_attribute), setSize(k.name_size), set_price_attr(k?.price_attribute));
             }
           }
         }
@@ -141,13 +126,40 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       default: return;
     }
   }
+  let min = dataProps?.product?.attributes?.values[0]?.size[0]?.price_attribute ?? undefined;
+  let max = dataProps?.product?.attributes?.values[0]?.size[0]?.price_attribute ?? undefined;
+  if (dataProps?.product?.attributes) {
+    const check_attr = new Set();
+    const values_attriutes = dataProps?.product?.attributes?.values?.filter((item: any) => {
+      if (check_attr.has(item?.color)) {
+        return false
+      } else {
+        check_attr.add(item?.color);
+        return true
+      }
+    });
+    for (const i of values_attriutes) {
+      for (const j of i.size) {
+        if (j.price_attribute < min) {
+          min = j.price_attribute
+        }
+        if (j.price_attribute > max) {
+          max = j.price_attribute
+        }
+      }
+    }
+  }
+
+  console.log(dataProps?.product?.attributes?.values);
+
 
   const price = price_product * quantity_item
+  const price_item_attr = price_attr * quantity_item;
   // next order
   function next_order() {
     if (account) {
       sessionStorage.removeItem('item_order');
-      if (!color || !size) {
+      if (!quantity_attr) {
         text_validate()
         return;
       }
@@ -172,8 +184,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     } else {
       navi('/login')
     }
-
-
   }
 
   return (
@@ -193,12 +203,21 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </div>
             </section>
             <div className="flex gap-x-2 items-end">
-              <span className="font-medium text-[#EB2606] lg:text-2xl lg:tracking-[0.7px] mb:text-base flex items-center lg:gap-x-3 lg:mt-0.5 mb:gap-x-2">
-                {price_product?.toLocaleString("vi", {
-                  style: "currency",
-                  currency: "VND"
-                })}
-              </span>
+              {
+                (min && max) ? (
+                  price_attr ? (<>
+                    <span className="text-[#EB2606]">{(price_attr)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+                  </>) : (
+                    (min === max) ? (<>
+                      <span className="text-[#EB2606]">{(max)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+                    </>) : (<>
+                      <span className="text-[#EB2606]">{(min)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>-
+                      <span className="text-[#EB2606]">{(max)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+                    </>)
+                  )
+                ) :
+                  <span className="text-[#EB2606]">{(price_product)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+              }
             </div>
           </div>
         </div>
@@ -266,12 +285,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </div>
           <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
-            <span className="text-[#EB2606]">{(price ? price : 0)?.toLocaleString("vi", {
-              style: "currency",
-              currency: "VND"
-            })}</span>
+            <span className="text-[#EB2606]">{(price > 1 ? price : price_item_attr)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
           </div>
-
           <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             {/* add cart */}
             <Button
