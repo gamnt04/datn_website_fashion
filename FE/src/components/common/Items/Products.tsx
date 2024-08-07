@@ -41,7 +41,7 @@ const Products = ({ items }: any) => {
 
   return (
     <div
-      className="flex flex-col justify-between w-full duration-200 border rounded text-start gap-y-4 hover:shadow-lg overflow-hidden"
+      className="flex flex-col justify-between w-full mb-4 lg:mb-14  lg:-mt-14 border rounded  gap-y-5 hover:shadow-lg overflow-hidden"
       key={items._id}
     >
       <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[220px]  bg-[#F6F6F6]">
