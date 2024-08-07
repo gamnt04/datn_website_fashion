@@ -26,7 +26,6 @@ const ListCart = () => {
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
   const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
   const remove_item = (item: any) => {
-    console.log(item);
     const data_item = {
       userId: userId,
       productId: item.productId,
