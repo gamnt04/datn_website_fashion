@@ -92,7 +92,7 @@ const RouterComponent = () => {
             <Route path="products" element={<ListProduct />} />
             {/* <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
-            <Route path="products/trash" element={<TrashProduct />} />
+            <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="auth" element={<List_Auth />} />
             <Route
