@@ -15,7 +15,7 @@ const IndexShops = () => {
     setMaxPrice(max);
   };
   const handleColorChange = (colors: string[]) => setSelectedColors(colors);
-  const handleSizeChange = (sizes: string[]) => setSelectedSizes(sizes);
+  const handleSizeChange = (name_size: string[]) => setSelectedSizes(name_size);
 
   const toggleColor = (color: string) => {
     setSelectedColors((prev) =>

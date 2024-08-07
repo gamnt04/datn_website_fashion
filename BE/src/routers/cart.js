@@ -1,11 +1,17 @@
 import { Router } from "express";
 import {
+  buyMultipleProductsFromCart,
   getCartByUserId,
   handle_status_checked,
   removeMultipleProductsFormCart,
-  removeProductToCart,
+  removeProductToCart
 } from "../controllers/Cart/cart";
-import { addItemToCart, decreaseProductQuantity, increaseProductQuantity, updateQuantityProductsInCart } from "../controllers/Cart/Options";
+import {
+  addItemToCart,
+  decreaseProductQuantity,
+  increaseProductQuantity,
+  updateQuantityProductsInCart
+} from "../controllers/Cart/Options";
 
 const Routes_Carts = Router();
 //Lấy danh sách sản phẩm trong giỏ hàng
@@ -17,6 +23,8 @@ Routes_Carts.post(
   "/cart/update-quantity-products-to-cart",
   updateQuantityProductsInCart
 );
+// Mua 1 hay nhiều sản phẩm bằng cách tích chọn
+Routes_Carts.post("/cart/buy-products-to-cart", buyMultipleProductsFromCart);
 //Xóa nhiều sản phẩm trong giỏ hàng
 Routes_Carts.post("/cart/remove-multiple", removeMultipleProductsFormCart);
 //Xóa sản phẩm trong giỏ hàng

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
-import Attributes from '../../models/attribute/attribute'
+import Attributes from "../../models/attribute/attribute";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 export const createOrder = async (req, res) => {
@@ -9,16 +9,25 @@ export const createOrder = async (req, res) => {
   console.log(email);
 
   // Kiểm tra các giá trị của customerInfo
-  if (!customerInfo.email || !customerInfo.phone || !customerInfo.userName || !customerInfo.payment || !customerInfo.address) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ message: "Thông tin khách hàng không đầy đủ." });
+  if (
+    !customerInfo.email ||
+    !customerInfo.phone ||
+    !customerInfo.userName ||
+    !customerInfo.payment ||
+    !customerInfo.address
+  ) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "Thông tin khách hàng không đầy đủ." });
   }
-
 
   try {
     const dataCart = await Cart.findOne({ userId }).populate("products");
     if (!dataCart) {
       console.error("Cart not found for userId:", userId);
-      return res.status(StatusCodes.NOT_FOUND).json({ message: "Cart not found" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Cart not found" });
     }
 
     for (let i of items) {
@@ -69,12 +78,12 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`,
       },
       totalPrice,
-
     });
-
 
     await order.save();
     await SendMail(email, order);
@@ -82,7 +91,9 @@ export const createOrder = async (req, res) => {
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
     console.error("Error:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Lỗi rồi đại ca ơi" });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
 // export const getOrders = async (req, res) => {
@@ -132,9 +143,9 @@ export const getOneOrderUser = async (req, res) => {
   const {
     _page = 1,
     _limit = 20,
-    _sort = '',
-    _search = '',
-    _status = ''
+    _sort = "",
+    _search = "",
+    _status = "",
   } = req.query;
   const options = {
     page: _page,
@@ -166,7 +177,7 @@ export const updateOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const order = await Order.findOneAndUpdate({ _id: orderId }, req.body, {
-      new: true
+      new: true,
     });
     if (!order) {
       return res
@@ -217,15 +228,15 @@ export async function get_orders_client(req, res) {
   const {
     _page = 1,
     _limit = 7,
-    _sort = '',
-    _search = '',
-    _status = ''
+    _sort = "",
+    _search = "",
+    _status = "",
   } = req.query;
 
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }  // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
   };
 
   const query = {};
@@ -235,7 +246,7 @@ export async function get_orders_client(req, res) {
   // }
 
   if (_status) {
-    query.status = _status;  // Lọc theo trạng thái đơn hàng
+    query.status = _status; // Lọc theo trạng thái đơn hàng
   }
 
   try {
@@ -243,7 +254,7 @@ export async function get_orders_client(req, res) {
 
     if (!data || data.docs.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có dữ liệu!"
+        message: "Không có dữ liệu!",
       });
     }
 
@@ -251,11 +262,11 @@ export async function get_orders_client(req, res) {
       message: "Hoàn thành!",
       data,
       totalDocs: data.totalDocs, // Tổng số đơn hàng
-      totalPages: data.totalPages // Tổng số trang
+      totalPages: data.totalPages, // Tổng số trang
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server!"
+      message: error.message || "Lỗi server!",
     });
   }
 }
@@ -263,21 +274,27 @@ export async function get_orders_client(req, res) {
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   try {
-    const order = await Order.findById(id)
+    const order = await Order.findById(id);
     console.log(order);
     if (!order) {
-      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" })
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy đơn hàng" });
     }
     if (order.cancellationRequested) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Đơn hàng đã bị hủy" })
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Đơn hàng đã bị hủy" });
     }
     order.cancellationRequested = true;
     await order.save();
-    res.status(StatusCodes.OK).json({ message: "Yêu cầu hủy đơn hàng thành công" })
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Yêu cầu hủy đơn hàng thành công" });
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
-}
+};
 
 export const adminCancelOrder = async (req, res) => {
   const { id } = req.params;
@@ -306,7 +323,19 @@ export const adminCancelOrder = async (req, res) => {
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
-}
+};
+export const getOrderByNumber = async (req, res) => {
+  try {
+    const { orderNumber } = req.params;
+    const order = await Order.findByOrderNumber(orderNumber);
 
+    if (!order) {
+      return res.status(404).json({ message: "Đơn hàng không tìm thấy!" });
+    }
 
-
+    return res.status(200).json({ order });
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    return res.status(500).json({ message: "Lỗi máy chủ!" });
+  }
+};

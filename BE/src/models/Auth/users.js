@@ -32,7 +32,7 @@ const userSchema = new Schema(
       phoneNumber: { type: String },
       address: { type: String },
       addressDetails: { type: String },
-      checked: { type: Boolean, default: false },
+      // checked: { type: Boolean, default: false },
     },
     phone: {
       type: String,

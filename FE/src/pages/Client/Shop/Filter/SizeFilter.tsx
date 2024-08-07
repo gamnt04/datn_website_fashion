@@ -2,13 +2,15 @@
 import React from "react";
 
 interface SizeFilterProps {
+  sizeOptions: string[];
   selectedSizes: string[];
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
-  onSizeChange: (sizes: string[]) => void; // Update to accept an array of sizes
+  onSizeChange: (sizes: string[]) => void;
 }
 
 const SizeFilter: React.FC<SizeFilterProps> = ({
+  sizeOptions,
   selectedSizes,
   toggleSize,
   resetSizeFilter,
@@ -16,7 +18,6 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
 }) => {
   const handleSizeChange = (size: string) => {
     toggleSize(size);
-    // Update the size list and call onSizeChange with the new list
     const updatedSizes = selectedSizes.includes(size)
       ? selectedSizes.filter((s) => s !== size)
       : [...selectedSizes, size];
@@ -30,28 +31,18 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
           <strong>Sizes</strong>
         </summary>
         <ul className="space-y-1 py-4">
-          {/* Example size options */}
-          <li>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedSizes.includes("S")}
-                onChange={() => handleSizeChange("S")}
-              />
-              Size S
-            </label>
-          </li>
-          <li>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedSizes.includes("M")}
-                onChange={() => handleSizeChange("M")}
-              />
-              Size M
-            </label>
-          </li>
-          {/* Add more sizes as needed */}
+          {sizeOptions.map((size) => (
+            <li key={size}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedSizes.includes(size)}
+                  onChange={() => handleSizeChange(size)}
+                />
+                Size {size}
+              </label>
+            </li>
+          ))}
           <button
             className="mt-4 text-blue-500"
             onClick={() => {
