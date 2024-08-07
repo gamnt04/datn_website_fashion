@@ -9,17 +9,30 @@ export const GetAllFavouriteProducts = async (userId: string) => {
     console.log(error || "Loi server !");
   }
 };
-export const AddFavouriteProducts = async (product: IProduct) => {
+export const AddFavouriteProducts = async (
+  userId: string,
+  productId: string
+) => {
   try {
-    const { data } = await instance.post(`/favorite/add-products`, product);
+    const { data } = await instance.post(`/favorite/add-products`, {
+      userId,
+      productId
+    });
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error || "Loi server !");
   }
 };
-export const RemoveFavouriteProducts = async (product: IProduct) => {
+export const RemoveFavouriteProducts = async (
+  userId: string,
+  productId: string
+) => {
   try {
-    const { data } = await instance.post(`/favorite/remove-products`, product);
+    const { data } = await instance.post(`/favorite/remove-product`, {
+      userId,
+      productId
+    });
     return data;
   } catch (error) {
     console.log(error || "Loi server !");

@@ -33,8 +33,8 @@ type FieldType = {
 
 const Form_Item = ({ mode }: any) => {
     const [status_attr, setStatus_Attr] = useState(true);
-    let image_item : any ;
-    let gallery_item : any = [];
+    let image_item: any;
+    let gallery_item: any = [];
     const { onSubmit, isPending, isError, handleImageChange, handleGalleryChange, loading, data_one_item } = useHookForm({ mode })
     const { data } = useCategoryQuery();
     const [form] = Form.useForm();
@@ -44,24 +44,24 @@ const Form_Item = ({ mode }: any) => {
     if (data_one_item?.isPending) {
         return <div className="fixed bg-[#17182177] w-screen h-screen top-0 right-0"></div>
     }
-        if (mode && data_one_item?.data?.product?.image_product) {
-            image_item = ([{
-                uid: '-1',
-                name: 'image.png',
-                status: 'done',
-                url: data_one_item?.data?.product?.image_product && data_one_item?.data?.product?.image_product,
-            }]);
-            data_one_item?.data?.product?.gallery_product?.map((uri_gallery : string | undefined, index : number) => {
-                gallery_item.push({
-                    uid: index,
-                    name: 'image.png',
-                    status: 'done',
-                    url: uri_gallery && uri_gallery,
-                  },
-                 )
-            })
-        }
-   
+    // if (mode && data_one_item?.data?.product?.image_product) {
+    //     image_item = ([{
+    //         uid: '-1',
+    //         name: 'image.png',
+    //         status: 'done',
+    //         url: data_one_item?.data?.product?.image_product && data_one_item?.data?.product?.image_product,
+    //     }]);
+    //     data_one_item?.data?.product?.gallery_product?.map((uri_gallery : string | undefined, index : number) => {
+    //         gallery_item.push({
+    //             uid: index,
+    //             name: 'image.png',
+    //             status: 'done',
+    //             url: uri_gallery && uri_gallery,
+    //           },
+    //          )
+    //     })
+    // }
+
     const initialAttributes = data_one_item?.data?.product?.attributes?.values || [];
     const initialValues = {
         ...data_one_item?.data?.product,
@@ -116,7 +116,7 @@ const Form_Item = ({ mode }: any) => {
                                     ]}
                                 >
                                     <Upload
-                                        fileList={image_item}
+                                        // fileList={image_item}
                                         listType="picture-card"
                                         beforeUpload={() => false}
                                         onChange={handleImageChange}
@@ -143,7 +143,7 @@ const Form_Item = ({ mode }: any) => {
                                     ]}
                                 >
                                     <Upload
-                                    fileList={gallery_item}
+                                        // fileList={gallery_item}
                                         listType="picture-card"
                                         beforeUpload={() => false}
                                         onChange={handleGalleryChange}

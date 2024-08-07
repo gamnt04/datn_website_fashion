@@ -1,28 +1,41 @@
-import { Link } from 'react-router-dom';
-import ScrollTop from '../../../common/hooks/Customers/ScrollTop';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
-import List_item from '../../../components/common/Client/_component/List_item';
-import { Query_Limit_Items } from '../../../common/hooks/Products/Products';
+import { Link } from "react-router-dom";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+import List_item from "../../../components/common/Client/_component/List_item";
+import { Query_Limit_Items } from "../../../common/hooks/Products/Products";
 
 const List_Products = () => {
   const { data, isLoading } = Query_Limit_Items(12);
   const propsData = {
     data: data,
-    style: 'lg:grid-cols-5 md:grid-cols-3'
-  }
+    style: "lg:grid-cols-4 md:grid-cols-3"
+  };
 
   return (
     <div className="py-16 text-center border-b overflow-hidden">
       {/* title */}
       <div className="text-center flex flex-col items-center">
-        <span className="text-2xl font-semibold tracking-wide">Danh sách sản phẩm</span>
-        <p className="opacity-80 text-sm my-4">Find a bright ideal to suit your taste width our great selection of suspension.</p>
+        <span className="text-2xl font-semibold tracking-wide">
+          Danh sách sản phẩm
+        </span>
+        <p className="opacity-80 text-sm my-4">
+          Find a bright ideal to suit your taste width our great selection of
+          suspension.
+        </p>
         <nav className="flex *:relative *:mx-6 justify-between *:after:content-[''] *:after:absolute *:after:h-[2px] *:after:bg-gray-800 *:after:bottom-[-20%] *:after:duration-500 *:font-medium *:after:rounded-lg">
-          <button className="opacity-100 after:w-full after:left-0">Tất cả</button>
-          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">Áo</button>
-          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">Quần</button>
-          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">Mũ</button>
+          <button className="opacity-100 after:w-full after:left-0">
+            Tất cả
+          </button>
+          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">
+            Áo
+          </button>
+          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">
+            Quần
+          </button>
+          <button className="opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0">
+            Mũ
+          </button>
         </nav>
       </div>
       {isLoading ? (
@@ -34,7 +47,10 @@ const List_Products = () => {
           {/* products */}
           {data?.length === 0 ? (
             <div className="flex justify-center items-center">
-              <img src="../../src/assets/Images/Products/no-data.png" alt="Không có sản phẩm" />
+              <img
+                src="../../src/assets/Images/Products/no-data.png"
+                alt="Không có sản phẩm"
+              />
             </div>
           ) : (
             <div className="my-10 w-auto">
@@ -42,12 +58,16 @@ const List_Products = () => {
             </div>
           )}
           {/* view all */}
-          <Link onClick={ScrollTop} className='border hover:bg-gray-100 duration-200 hover:text-black border border-black rounded px-4 py-2 bg-black cursor-pointer text-white' to={'/shops'}>Xem tất cả</Link>
+          <div className="flex items-center justify-center mx-auto  mx-auto h-[60px] w-[172.18px] hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
+            {" "}
+            <Link onClick={ScrollTop} className="text-[15px] " to={"/shops"}>
+              Xem tất cả
+            </Link>
+          </div>
         </>
       )}
-
     </div>
-  )
-}
+  );
+};
 
-export default List_Products
+export default List_Products;
