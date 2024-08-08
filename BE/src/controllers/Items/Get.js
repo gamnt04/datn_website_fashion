@@ -115,8 +115,6 @@ export const getProductById = async (req, res) => {
     if (product.attributes.values) {
       product.attributes.values = product.attributes.values.map((item) => {
         const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
-        console.log(item);
-
         return {
           ...item,
           size: new_data,

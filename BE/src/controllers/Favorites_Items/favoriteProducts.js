@@ -2,9 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import FavoriteProducts from "../../models/Favorite/favoriteProducts";
 
 export const GetFavoriteProductByUserId = async (req, res) => {
-  const { userId } = req.params;
-
   try {
+    const { userId } = req.params;
     const favoriteProducts = await FavoriteProducts.findOne({
       userId
     }).populate("products.productId");
@@ -24,9 +23,9 @@ export const GetFavoriteProductByUserId = async (req, res) => {
 };
 
 export const addFavoriteProducts = async (req, res) => {
-  const { userId, productId } = req.body;
 
   try {
+    const { userId, productId } = req.body;
     let favoriteProducts = await FavoriteProducts.findOne({ userId });
 
     if (!favoriteProducts) {
@@ -56,9 +55,9 @@ export const addFavoriteProducts = async (req, res) => {
 };
 
 export const removeFavoriteProduct = async (req, res) => {
-  const { userId, productId } = req.body;
 
   try {
+    const { userId, productId } = req.body;
     let favoriteProducts = await FavoriteProducts.findOne({ userId });
 
     if (!favoriteProducts) {

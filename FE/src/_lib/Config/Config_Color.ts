@@ -4,7 +4,7 @@ export function Convert_Color (item : string) {
         color = 'bg-red-500 border-none'
     }
     else if (item == 'Black' || item == 'Đen') {
-        color = 'bg-black-500 border-none'
+        color = 'bg-black border-none'
     }
     else if (item == 'vàng' || item == 'Yellow') {
         color = 'bg-yellow-500 border-none'
@@ -22,7 +22,7 @@ export function Convert_Color (item : string) {
         color = 'bg-amber-950 border-none'
     }
     else {
-        color = 'bg-white border border-black !after:border-white'
+        color = 'bg-white border !border-black after:!border-black'
     }
     return color;
 }

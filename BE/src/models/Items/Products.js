@@ -55,11 +55,8 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.plugin(mongoosePaginate);
-productSchema.plugin(
-  mongooseDelete,
-  { deletedAt: true },
-  { overrideMethods: "all" }
-);
+productSchema.plugin(mongooseDelete, { deletedAt: true, overrideMethods: 'all' });
+
 productSchema.statics.filterByPrice = function (minPrice, maxPrice, options) {
   const query = {
     price_product: { $gte: minPrice, $lte: maxPrice },
