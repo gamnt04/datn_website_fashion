@@ -96,7 +96,7 @@ const OrderDetail = () => {
                   </div>
 
                 </div>
-                <p>Giá: <span className="font-bold">{order?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
+                <p>Giá: <span className="font-bold">{order?.price_item?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
               </div>
             ))}
           </div>

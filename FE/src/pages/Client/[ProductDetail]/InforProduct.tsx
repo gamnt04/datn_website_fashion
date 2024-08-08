@@ -149,10 +149,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
     }
   }
-
-  console.log(dataProps?.product?.attributes?.values);
-
-
   const price = price_product * quantity_item
   const price_item_attr = price_attr * quantity_item;
   // next order
@@ -167,18 +163,19 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         {
           productId: dataProps?.product,
           quantity: quantity_item,
-          price_item: price_product,
+          price_item: price_attr,
           color_item: color,
           name_size: size,
-          total_price_item: price
+          total_price_item: price_item_attr
         }
       ]
       const data_order = {
-        id_user: account?.id,
+        id_user: account?._id,
         data_order: items_order,
-        totalPrice: price,
+        totalPrice: price_item_attr,
         action: 'data_detail'
       }
+
       sessionStorage.setItem('item_order', JSON.stringify(data_order))
       navi('/cart/pay')
     } else {
