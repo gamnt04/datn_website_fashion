@@ -13,10 +13,10 @@ const OrderDetail = () => {
   };
   return (
     <>
-      <div className="border shadow-2xl">
+      <div className=" shadow-lg">
         <div className="border-b">
           <div className="flex justify-between px-5 py-4">
-            <Link to="/allorder/order">
+            <Link to="/profile/allorder">
               <div className="flex gap-2 items-center *:text-slate-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -96,7 +96,7 @@ const OrderDetail = () => {
                   </div>
 
                 </div>
-                <p>Giá: <span className="font-bold">{order?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
+                <p>Giá: <span className="font-bold">{order?.price_item?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
               </div>
             ))}
           </div>
