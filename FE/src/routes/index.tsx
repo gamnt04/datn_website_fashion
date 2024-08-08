@@ -63,15 +63,15 @@ const RouterComponent = () => {
               element={<ProductDetail />}
             />
 
-            <Route path="profile" element={<Layout_Profile />}>
+            <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
-
               <Route path="/profile/address" element={<Address />} />
               <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/allorder" element={<Order_Menu />} />
+              <Route path="/profile/order/:id" element={<OrderDetail />} />
             </Route>
 
-            <Route path="/allorder" element={<AllOrder />}>
+            {/* <Route path="/allorder" element={<AllOrder />}>
               <Route index element={<Profile />} />
               <Route path="/allorder/order" element={<Order_Menu />} />
               <Route
@@ -79,7 +79,7 @@ const RouterComponent = () => {
                 element={<OrderDetail />}
               />
               <Route path="/allorder/address" element={<Address />} />
-            </Route>
+            </Route> */}
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
           </Route>

@@ -43,7 +43,7 @@ const Waitforconfirmation = ({ dataProps }: any) => {
                     {dataProps.map((item: IOrder) => (
                         <div className=" my-5 px-2">
                             <div className="flex gap-2 py-5 border-b-2 justify-between">
-                                <Link to={`/allorder/order/${item._id}/detail`} className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded">
+                                <Link to={`/profile/order/${item._id}`} className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded">
                                     Xem ngay
                                 </Link>
                                 <div className="flex">
