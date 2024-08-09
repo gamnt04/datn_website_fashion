@@ -21,18 +21,18 @@ export async function restore_item(req, res) {
 
 export const getTrash = async (req, res) => {
   try {
-    const data = await Products.findWithDeleted({deleted: true });
-    if(!data) {
+    const data = await Products.findWithDeleted({ deleted: true });
+    if (!data) {
       return res.status(StatusCodes.OK).json({
-        message : "No data!",
-    })
+        message: "No data!",
+      })
     }
     return res.status(StatusCodes.OK).json({
-        message : "Done!",
-        data
+      message: "Done!",
+      data
     })
   } catch (error) {
-    res
+    return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: error.message });
   }

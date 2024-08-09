@@ -5,10 +5,11 @@ import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
 import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
+import TimeFilter from "./Filter/TimeFilter";
 
 interface MenuShopProps {
-  onCategorySelect: (id: string | null) => void;
-  onPriceChange: (min: number | null, max: number | null) => void;
+  onCategorySelect: (ids: string[]) => void; // Cập nhật kiểu ở đây
+  onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
   setSearch: (search: string) => void;
   setSort: (sort: string) => void;
   selectedColors: string[];
@@ -46,27 +47,47 @@ const MenuShop: React.FC<MenuShopProps> = ({
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  const handleCategoryChange = (selectedCategories: string[]) => {
+    onCategorySelect(selectedCategories); // Gọi hàm với mảng các ID
+  };
+
   return (
-    <div className="hidden lg:block w-full h-auto flex flex-col my-10 rounded overflow-hidden">
-      <CategoryFilter
-        categories={categoryData || []}
-        onCategorySelect={onCategorySelect}
-      />
-      <PriceFilter onPriceChange={onPriceChange} />
-      <ColorFilter
-        selectedColors={selectedColors}
-        toggleColor={toggleColor}
-        resetColorFilter={resetColorFilter}
-        onColorChange={onColorChange}
-        colorOptions={colorOptions}
-      />
-      <SizeFilter
-        selectedSizes={selectedSizes}
-        toggleSize={toggleSize}
-        resetSizeFilter={resetSizeFilter}
-        onSizeChange={onSizeChange}
-        sizeOptions={sizeOptions}
-      />
+    <div className="hidden lg:flex flex-row h-auto justify-start my-10 ml-5 mr-[50%] p-2 space-x-2">
+      <div className="w-52">
+        <TimeFilter
+          onCategorySelect={function (ids: string[]): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
+      </div>
+      <div className="w-52">
+        <CategoryFilter
+          categories={categoryData || []}
+          onCategorySelect={handleCategoryChange} // Truyền vào hàm mới
+        />
+      </div>
+
+      <div className=" w-40">
+        <PriceFilter onPriceChange={onPriceChange} />
+      </div>
+      <div className=" w-40">
+        <ColorFilter
+          selectedColors={selectedColors}
+          toggleColor={toggleColor}
+          resetColorFilter={resetColorFilter}
+          onColorChange={onColorChange}
+          colorOptions={colorOptions}
+        />
+      </div>
+      <div className=" w-28">
+        <SizeFilter
+          selectedSizes={selectedSizes}
+          toggleSize={toggleSize}
+          resetSizeFilter={resetSizeFilter}
+          onSizeChange={onSizeChange}
+          sizeOptions={sizeOptions}
+        />
+      </div>
     </div>
   );
 };
