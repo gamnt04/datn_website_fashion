@@ -38,6 +38,7 @@ import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
 import Logout from "../common/hooks/Auth/Logout";
+import SearchResults from "../components/common/Client/SearchResults";
 const RouterComponent = () => {
   return (
     <>
@@ -45,6 +46,7 @@ const RouterComponent = () => {
         <Routes>
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route path="/shops" element={<IndexShops />} />
             <Route path="/test" element={<Test />} />
             <Route path="/blogs" element={<Blogs />} />
