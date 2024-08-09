@@ -33,8 +33,8 @@ type FieldType = {
 
 const Form_Item = ({ mode }: any) => {
     const [status_attr, setStatus_Attr] = useState(true);
-    let image_item : any ;
-    let gallery_item : any = [];
+    let image_item: any;
+    let gallery_item: any = [];
     const { onSubmit, isPending, isError, handleImageChange, handleGalleryChange, loading, data_one_item } = useHookForm({ mode })
     const { data } = useCategoryQuery();
     const [form] = Form.useForm();
@@ -44,24 +44,24 @@ const Form_Item = ({ mode }: any) => {
     if (data_one_item?.isPending) {
         return <div className="fixed bg-[#17182177] w-screen h-screen top-0 right-0"></div>
     }
-        if (mode && data_one_item?.data?.product?.image_product) {
-            image_item = ([{
-                uid: '-1',
-                name: 'image.png',
-                status: 'done',
-                url: data_one_item?.data?.product?.image_product && data_one_item?.data?.product?.image_product,
-            }]);
-            data_one_item?.data?.product?.gallery_product?.map((uri_gallery : string | undefined, index : number) => {
-                gallery_item.push({
-                    uid: index,
-                    name: 'image.png',
-                    status: 'done',
-                    url: uri_gallery && uri_gallery,
-                  },
-                 )
-            })
-        }
-   
+    // if (mode && data_one_item?.data?.product?.image_product) {
+    //     image_item = ([{
+    //         uid: '-1',
+    //         name: 'image.png',
+    //         status: 'done',
+    //         url: data_one_item?.data?.product?.image_product && data_one_item?.data?.product?.image_product,
+    //     }]);
+    //     data_one_item?.data?.product?.gallery_product?.map((uri_gallery : string | undefined, index : number) => {
+    //         gallery_item.push({
+    //             uid: index,
+    //             name: 'image.png',
+    //             status: 'done',
+    //             url: uri_gallery && uri_gallery,
+    //           },
+    //          )
+    //     })
+    // }
+
     const initialAttributes = data_one_item?.data?.product?.attributes?.values || [];
     const initialValues = {
         ...data_one_item?.data?.product,
@@ -102,7 +102,7 @@ const Form_Item = ({ mode }: any) => {
                             <Input className="!bg-[#171821] mt-2 py-2 text-gray-100 border-gray-600 !outline-none hover:bg-[#171821] focus:bg-[#171821] active:bg-[#171821]" />
                         </Form.Item>
 
-                        <div className="flex items-start justify-between w-2/3">
+                        <div className="flex justify-around gap-10 ">
                             <div>
                                 <label htmlFor="" className=" text-gray-100 font-medium text-sm">Ảnh sản phẩm</label>
                                 <Form.Item<FieldType>
@@ -115,20 +115,23 @@ const Form_Item = ({ mode }: any) => {
                                         },
                                     ]}
                                 >
-                                    <Upload
-                                        fileList={image_item}
-                                        listType="picture-card"
-                                        beforeUpload={() => false}
-                                        onChange={handleImageChange}
-                                        className="mt-2"
-                                    >
-                                        <button
-                                            style={{ border: 0, background: "none" }}
-                                            type="button"
+                                    <div className="flex justify-end">
+                                        <Upload
+                                            // fileList={image_item}
+                                            listType="picture-card"
+                                            beforeUpload={() => false}
+                                            onChange={handleImageChange}
+                                            className="mt-2"
+                                            maxCount={1}
                                         >
-                                            <PlusOutlined />
-                                        </button>
-                                    </Upload>
+                                            <button
+                                                style={{ border: 0, background: "none" }}
+                                                type="button"
+                                            >
+                                                <PlusOutlined />
+                                            </button>
+                                        </Upload>
+                                    </div>
                                 </Form.Item>
                             </div>
                             <div>
@@ -142,20 +145,23 @@ const Form_Item = ({ mode }: any) => {
                                         },
                                     ]}
                                 >
-                                    <Upload
-                                    fileList={gallery_item}
-                                        listType="picture-card"
-                                        beforeUpload={() => false}
-                                        onChange={handleGalleryChange}
-                                        className="mt-2"
-                                    >
-                                        <button
-                                            style={{ border: 0, background: "none" }}
-                                            type="button"
+                                    <div className="flex justify-end">
+                                        <Upload
+                                            // fileList={gallery_item}
+                                            listType="picture-card"
+                                            beforeUpload={() => false}
+                                            onChange={handleGalleryChange}
+                                            multiple={true}  // Allow multiple uploads
+                                            className="mt-2"
                                         >
-                                            <PlusOutlined />
-                                        </button>
-                                    </Upload>
+                                            <button
+                                                style={{ border: 0, background: "none" }}
+                                                type="button"
+                                            >
+                                                <PlusOutlined />
+                                            </button>
+                                        </Upload>
+                                    </div>
                                 </Form.Item>
                             </div>
 

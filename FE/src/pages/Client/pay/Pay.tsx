@@ -107,7 +107,7 @@ const Pay = () => {
               Đổi trả miễn phí 15 ngày
             </p>
             <div className="flex justify-between md:hidden mt-2">
-              <p className="text-sm lg:text-base">{order?.productId?.price_product.toLocaleString("vi", {
+              <p className="text-sm lg:text-base">{order?.price_item?.toLocaleString("vi", {
                 style: "currency",
                 currency: "VND",
               })}</p>
@@ -124,7 +124,7 @@ const Pay = () => {
       dataIndex: 'price_product',
       key: 'price_product',
       render: (_: any, order: any) => (
-        <p className="hidden lg:block text-sm lg:text-base">{order?.productId?.price_product?.toLocaleString("vi", {
+        <p className="hidden lg:block text-sm lg:text-base">{order?.price_item?.toLocaleString("vi", {
           style: "currency",
           currency: "VND",
         })}</p>
