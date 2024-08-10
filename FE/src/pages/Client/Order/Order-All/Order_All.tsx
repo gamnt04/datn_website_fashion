@@ -6,12 +6,11 @@ import Waitforconfirmation from '../Waitforconfirmation/Waitforconfirmation';
 import WaitingForGoods from '../WaitingForGoods/WaitingForGoods';
 import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 import { List_One_Order_User } from '../../../../common/hooks/Order/querry_Order';
-import axios from 'axios';
 import { message } from 'antd';
 import queryString from 'query-string';
 import instance from '../../../../configs/axios';
-import LoadingOverlay from 'react-loading-overlay-ts';
-import { LoadingContext } from './LoadingContext';
+
+// import { LoadingContext } from './LoadingContext';
 
 
 const Order_All = () => {
@@ -20,7 +19,7 @@ const Order_All = () => {
     const userId = user?.user?._id;
     const { data, refetch } = List_One_Order_User(userId);
     const [messageApi, contextHolder] = message.useMessage();
-    const {setActive} = useContext(LoadingContext)
+    // const {setActive} = useContext(LoadingContext)
     
     const handleMenuClick = (menu: any) => {
         setActiveMenu(menu);
@@ -33,10 +32,13 @@ const Order_All = () => {
     }
 
     useEffect(() => {
+        
         const fetchData = async () => {
             try {
+                console.log('location.search:');
                 const parsed = queryString.parseUrl(location.search);
-                // console.log(parsed.query.vnp_TransactionStatus);
+                console.log(parsed)
+                console.log(parsed.query.vnp_TransactionStatus);
 
                 if (parsed.query.vnp_TransactionStatus === '00') {
                     
@@ -46,10 +48,10 @@ const Order_All = () => {
 
                     if (itemOrder && customerInfo) {
                         const getItemOrder = JSON.parse(itemOrder);
-                        // console.log(getItemOrder);
+                        console.log(getItemOrder);
                         
                         const dataForm = JSON.parse(customerInfo);
-                        setActive(true)
+                        // setActive(true)
                         const response = await instance.post('/orderspayment', {
                             userId: getItemOrder.userId,
                             items: getItemOrder?.items,

@@ -11,6 +11,9 @@ import Routes_Favorites from "./routers/favoriteProducts";
 import Routes_Carts from "./routers/cart";
 import Router_Contact from "./routers/contact";
 import Routes_payments from "./routers/OnlineCheckoutRoutes";
+import Routes_Attribute from "./routers/attribute";
+
+
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -19,14 +22,14 @@ app.use(cors());
 connectDB(process.env.DB_URL);
 
 app.use("/api/v1", Routes_Products);
-
+app.use("/api/v1", Routes_Attribute);
 app.use("/api/v1", Routes_categories);
 app.use("/api/v1", Routes_orders);
 app.use("/api/v1", Routes_Carts);
 app.use("/api/v1", Routes_auth);
 app.use("/api/v1", Routes_Favorites);
 
-app.use("/api/v1", Router_Contact)
+app.use("/api/v1", Router_Contact);
 
 app.use("/api/v1", Routes_blog);
 app.use("/api/v1", Routes_payments);

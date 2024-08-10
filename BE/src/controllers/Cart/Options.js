@@ -3,10 +3,10 @@ import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
 
 export const addItemToCart = async (req, res) => {
-    const { userId, productId, quantity, color, size } = req.body;
+    const { userId, productId, quantity, color, size, price_item_attr } = req.body;
     try {
         const data_product = await Products.findOne({ _id: productId }).populate('attributes');
-        let price_item = data_product.price_product;
+        let price_item = (price_item_attr > 0) ? price_item_attr : data_product.price_product;
         let color_item;
         let name_size;
         let quantity_attr = 0;
@@ -135,7 +135,7 @@ export const decreaseProductQuantity = async (req, res) => {
             if (cart.products[i].productId == productId._id) {
                 if (cart.products[i].color_item == color && cart.products[i].name_size == size) {
                     cart.products[i].quantity--;
-                    cart.products[i].total_price_item =  cart.products[i].price_item *  cart.products[i].quantity;
+                    cart.products[i].total_price_item = cart.products[i].price_item * cart.products[i].quantity;
                     if (cart.products[i].quantity === 0) {
                         cart.products.splice(i, 1);
                     }

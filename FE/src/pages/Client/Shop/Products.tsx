@@ -1,24 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Products from "../../../components/common/Items/Products";
 
 interface Products_ShopProps {
-  cate_id: string | null;
-  minPrice: number | null;
-  maxPrice: number | null;
+  cate_id: string[];
+  priceRanges: { min: number; max: number }[];
   selectedColors: string[];
   selectedSizes: string[];
 }
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
   cate_id,
-  minPrice,
-  maxPrice,
+  priceRanges,
   selectedColors,
   selectedSizes,
 }) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 11; // Số lượng sản phẩm mỗi trang
+
   const {
     data: products,
     isLoading,
@@ -26,77 +27,89 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     error,
   } = useFilteredProducts(
     cate_id,
-    minPrice,
-    maxPrice,
+    priceRanges,
     selectedColors,
-    selectedSizes
+    selectedSizes,
+    currentPage,
+    itemsPerPage
   );
 
-  if (isLoading) return <div>Đang tải...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
-  // Kiểm tra xem error có phải là null không trước khi sử dụng
-  if (isError && error) return <div>Lỗi: {error.message}</div>;
+  if (isError && error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div>Error: {error.message}</div>
+      </div>
+    );
+  }
+
+  const totalItems = products?.pagination?.totalItems || 0;
+  const totalPages = products?.pagination?.totalPages || 1;
+  const hasMore = currentPage < totalPages;
 
   return (
-    <div className="py-10">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-screen">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      ) : isError && !error ? (
-        <div className="flex justify-center items-center h-screen">
-          <img
-            src="../../src/assets/Images/Products/no-data.png"
-            alt="Không có sản phẩm"
-          />
-        </div>
-      ) : (
+    <div>
+      {products?.data?.length ? (
         <>
-          {products?.data?.docs?.length ? (
-            <>
-              <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[23%_23%_23%_23%] justify-between gap-y-6">
-                {products.data.docs.map((item: any) => (
-                  <Products key={item._id} items={item} />
-                ))}
-              </div>
-              <div className="flex justify-center mt-8">
-                {/* Phân trang đã bị tắt */}
-                {/* <div className="flex items-center space-x-4">
-                  <button
-                    // Xử lý phân trang
-                    className={`px-4 py-2 border rounded-md ${
-                      page === 1
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                    disabled={page === 1}
-                  >
-                    &#10094; Trước
-                  </button>
-                  <span className="text-lg font-semibold">Trang {page}</span>
-                  <button
-                    // Xử lý phân trang
-                    className={`px-4 py-2 border rounded-md ${
-                      !hasMore
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                    disabled={!hasMore}
-                  >
-                    Kế tiếp &#10095;
-                  </button>
-                </div> */}
-              </div>
-            </>
-          ) : (
-            <div className="flex justify-center items-center h-screen">
-              <img
-                src="../../src/assets/Images/Products/no-data.png"
-                alt="Không có sản phẩm"
-              />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+            {products.data.map((item: any) => (
+              <Products key={item._id} items={item} />
+            ))}
+          </div>
+          <div className="flex flex-col items-center mt-8">
+            <div className="flex items-center space-x-4 mb-4">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className={`px-4 py-2 border rounded-md ${currentPage === 1
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                disabled={currentPage === 1}
+              >
+                &#10094; Trang trước
+              </button>
+              <span className="text-lg font-semibold">Trang {currentPage}</span>
+              <button
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className={`px-4 py-2 border rounded-md ${!hasMore
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                disabled={!hasMore}
+              >
+                Trang tiếp theo &#10095;
+              </button>
             </div>
-          )}
+            <div className="flex flex-wrap items-center space-x-2">
+              {totalPages > 1 &&
+                Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 border rounded-md ${currentPage === page
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-black hover:bg-gray-300"
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+            </div>
+          </div>
         </>
+      ) : (
+        <div className="flex justify-center items-center h-screen">
+          <img src="/assets/Images/Products/no-data.png" alt="No products" />
+        </div>
       )}
     </div>
   );

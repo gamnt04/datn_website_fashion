@@ -9,7 +9,6 @@ const ClientLayout = () => {
       <div>
         <Outlet />
       </div>
-
       <Footer />
 
     </>

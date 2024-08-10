@@ -50,7 +50,7 @@ const Complete = ({ dataProps }: any) => {
             <div className=" my-4 px-2">
 
               <div className="flex gap-2 py-5 border-b-2 justify-between">
-                <Link to={`/allorder/order/${item._id}/detail`} className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded">
+                <Link to={`/profile/order/${item._id}`} className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded">
                   Xem ngay
                 </Link>
                 <div className="flex">
@@ -66,7 +66,7 @@ const Complete = ({ dataProps }: any) => {
               </div>
 
               <div className="">
-                {item.items.map((product) => {
+                {item.items.map((product: any) => {
                   return (<div className="flex flex-row gap-4 py-[12px] w-full">
                     <div className="basis-24">
                       <img src={product?.productId?.image_product} className="w-full h-[80px] " alt="" />
@@ -87,7 +87,7 @@ const Complete = ({ dataProps }: any) => {
                         <span className="border border-[#26aa99] rounded w-full lg:w-[25%] text-center text-xs lg:text-sm p-1 text-[#26aa99] order-2 lg:order-1">
                           Trả hàng miễn phí 15 ngày
                         </span>
-                        <p className="flex gap-2 text-sm lg:text-[18px] text-orange-400 order-1 lg:order-2"><s className="text-black">₫45.000 </s>{product?.productId?.price_product?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                        <p className="flex gap-2 text-sm lg:text-[18px] text-orange-400 order-1 lg:order-2"><s className="text-black">₫45.000 </s>{product?.price_item?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                       </div>
                     </div>
                   </div>)

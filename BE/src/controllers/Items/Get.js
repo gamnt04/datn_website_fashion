@@ -115,8 +115,6 @@ export const getProductById = async (req, res) => {
     if (product.attributes.values) {
       product.attributes.values = product.attributes.values.map((item) => {
         const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
-        console.log(item);
-
         return {
           ...item,
           size: new_data,
@@ -136,14 +134,8 @@ export const getProductById = async (req, res) => {
 };
 
 export async function filterItems(req, res) {
-  const { cate_id, color, size } = req.query;
-  const {
-    _page = 1,
-    _limit = 20,
-    min_price = null,
-    max_price = null,
-    _sort = "",
-  } = req.query;
+  const { cate_id, color, name_size, price_ranges } = req.query;
+  const { _page = 1, _limit = 20, _sort = "" } = req.query;
 
   const page = parseInt(_page, 10) || 1;
   const limit = parseInt(_limit, 10) || 20;
@@ -159,82 +151,111 @@ export async function filterItems(req, res) {
   try {
     const query = {};
 
+    // Lọc theo danh mục
     if (cate_id) {
-      query.category_id = cate_id;
+      const cateArray = cate_id.split(",").map((id) => id.trim());
+      query.category_id = { $in: cateArray };
     }
 
-    if (min_price !== null && max_price !== null) {
-      const minPrice = parseFloat(min_price);
-      const maxPrice = parseFloat(max_price);
-
-      if (isNaN(minPrice) || isNaN(maxPrice)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          message: "Giá không hợp lệ!",
-        });
+    // Lọc theo giá với nhiều khoảng giá
+    if (price_ranges) {
+      try {
+        const priceRangesArray = JSON.parse(price_ranges);
+        query.$or = priceRangesArray.map((range) => ({
+          price_product: {
+            $gte: parseFloat(range.min),
+            $lte: parseFloat(range.max),
+          },
+        }));
+      } catch (e) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ message: "Lỗi trong việc phân tích giá.", error: e.message });
       }
-      query.price_product = { $gte: minPrice, $lte: maxPrice };
-    } else if (min_price !== null) {
-      const minPrice = parseFloat(min_price);
-
-      if (isNaN(minPrice)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          message: "Giá không hợp lệ!",
-        });
-      }
-      query.price_product = { $gte: minPrice };
-    } else if (max_price !== null) {
-      const maxPrice = parseFloat(max_price);
-
-      if (isNaN(maxPrice)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          message: "Giá không hợp lệ!",
-        });
-      }
-      query.price_product = { $lte: maxPrice };
     }
 
-    // Get products matching the base query
+    // Lọc theo màu sắc và kích cỡ
+    const colorArray = color
+      ? color.split(",").map((c) => c.trim().toLowerCase())
+      : [];
+    const sizeArray = name_size
+      ? name_size.split(",").map((s) => s.trim().toLowerCase())
+      : [];
+
     const data = await Products.paginate(query, options);
+    const filteredProducts = [];
 
     if (!data || data.docs.length < 1) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy dữ liệu!",
-        query,
-        data,
-      });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy dữ liệu!", query, data });
     }
 
-    // Filter and calculate stock based on attributes
     for (let item of data.docs) {
       let total_stock = 0;
+      let matched = false;
+
       if (item.attributes) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
-        if (attr) {
+
+        if (attr && Array.isArray(attr.values)) {
           attr.values.forEach((value) => {
-            // Check if the color and size match
-            if ((color && color === value.color) || !color) {
-              value.size.forEach((sizeObj) => {
-                if ((size && size === sizeObj.name_size) || !size) {
-                  total_stock += sizeObj.stock_attribute;
-                }
-              });
+            const colorMatch =
+              colorArray.length === 0 ||
+              colorArray.includes(value.color.toLowerCase());
+            const sizeMatch =
+              sizeArray.length === 0 ||
+              (Array.isArray(value.size) &&
+                value.size.some((sizeObj) =>
+                  sizeArray.includes(sizeObj.name_size.toLowerCase())
+                ));
+
+            if (colorMatch && sizeMatch) {
+              matched = true;
+              if (Array.isArray(value.size)) {
+                value.size.forEach((sizeObj) => {
+                  if (
+                    sizeArray.length === 0 ||
+                    sizeArray.includes(sizeObj.name_size.toLowerCase())
+                  ) {
+                    total_stock += sizeObj.stock_attribute;
+                  }
+                });
+              }
             }
           });
         }
-        item.stock_product = total_stock;
+
+        if (matched) {
+          item.stock_product = total_stock;
+          filteredProducts.push(item);
+        }
       } else {
         item.stock_product = item.stock;
+        filteredProducts.push(item);
       }
+    }
+
+    if (filteredProducts.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy sản phẩm phù hợp với các tiêu chí!" });
     }
 
     return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data,
+      data: filteredProducts,
+      pagination: {
+        totalItems: data.totalDocs,
+        currentPage: data.page,
+        totalPages: data.totalPages,
+        itemsPerPage: data.limit,
+      },
     });
   } catch (error) {
     console.error("Server Error:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi máy chủ!",
-    });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message || "Lỗi máy chủ!" });
   }
 }

@@ -116,7 +116,7 @@ const OrdersDetali = () => {
             dataIndex: 'price_product',
             key: 'price_product',
             render: (_: any, item: any) => (
-                <p>{item?.productId?.price_product.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                <p>{item?.price_item.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
             )
         },
         {
@@ -145,7 +145,7 @@ const OrdersDetali = () => {
     return (
         <>
             {contextHolder}
-            <h1 className="font-bold text-3xl text-black mt-16 text-center">Chi tiết đơn hàng</h1>
+            <h1 className="font-bold text-3xl text-black mt-4 text-center">Chi tiết đơn hàng</h1>
             <div className="overflow-x-auto my-6 shadow p-[20px] rounded">
                 <Table columns={columns} dataSource={dataSort} pagination={false} />
                 <div className="bg-white divide-y divide-gray-200">

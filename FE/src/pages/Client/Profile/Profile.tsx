@@ -1,9 +1,16 @@
-import React from "react";
-import type { FormProps } from "antd";
-import { Button, DatePicker, Form, Input } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  FormProps,
+  GetProp,
+  UploadProps,
+  Upload,
+  Image
+} from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
-
 export type FieldType = {
   userName?: string;
   fullName?: string;
@@ -18,31 +25,37 @@ const Profile = () => {
     contextHolder,
     isChanged,
     isSaving,
-    fileInputRef,
     isLoading,
     isPending,
     isError,
     error,
-    avatarUrl,
     handleValuesChange,
-    handleFileChange,
     mutate,
     data,
+    PRESET_NAME,
+    FOLDER_NAME,
+    api,
+    previewImage,
+    fileList,
+    previewOpen,
+    uploading,
+    handlePreview,
+    handleChange,
+    setPreviewOpen,
+    setPreviewImage
   } = ProfileHook();
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    if (values.birthDate) {
-      values.birthDate = dayjs(values.birthDate).format("YYYY-MM-DD");
-    }
-    if (avatarUrl) {
-      values.avatar = avatarUrl; // Thêm URL của ảnh vào dữ liệu người dùng
-    }
-    mutate(values);
-  };
+    const imageUrls = fileList
+      .filter((file) => file.status === "done")
+      .map((file) => file.response?.secure_url);
+    let avatarUrl = imageUrls[imageUrls.length - 1] || "";
 
-  const handleChooseFile = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    fileInputRef.current.click();
+    if (!avatarUrl && data?.avatar) {
+      avatarUrl = data.avatar;
+    }
+
+    mutate({ ...values, avatar: avatarUrl });
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -68,30 +81,49 @@ const Profile = () => {
               data
                 ? {
                     ...data,
-                    birthDate: data.birthDate ? dayjs(data.birthDate) : null,
+                    birthDate: data.birthDate ? dayjs(data.birthDate) : null
                   }
                 : {}
             }
             onFinish={onFinish}
             autoComplete="off"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 15 }}
           >
             <div className="flex flex-row flex-wrap lg:flex-nowrap text-sm">
               <div className="basis-full order-2 lg:order-1 lg:basis-2/3">
-                <Form.Item name="userName" label="Tên đăng nhập" rules={[]}>
+                <Form.Item
+                  name="userName"
+                  label="Tên đăng nhập"
+                  rules={[]}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Họ và tên" name="fullName">
+                <Form.Item<FieldType>
+                  label="Họ và tên"
+                  name="fullName"
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Email" name="email">
+                <Form.Item<FieldType>
+                  label="Email"
+                  name="email"
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Số điện thoại" name="phone">
+                <Form.Item<FieldType>
+                  label="Số điện thoại"
+                  name="phone"
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
@@ -99,6 +131,8 @@ const Profile = () => {
                   label="Ngày sinh"
                   name="birthDate"
                   rules={[]}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
                 >
                   <DatePicker
                     format="YYYY-MM-DD"
@@ -106,11 +140,11 @@ const Profile = () => {
                   />
                 </Form.Item>
 
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
                   <Button
                     className="bg-[#000000] text-[#ffffff] h-[50px]"
                     htmlType="submit"
-                    disabled={!isChanged || isSaving} // Disable nút khi chưa thay đổi hoặc đang lưu
+                    disabled={!isChanged || isSaving}
                   >
                     {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
                   </Button>
@@ -119,35 +153,67 @@ const Profile = () => {
               <div className="order-1 border-b p-3 my-4 basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
                 <Form.Item<FieldType>
                   name="avatar"
-                  labelCol={{ span: 10 }}
-                  wrapperCol={{ span: 25 }}
+                  className="flex items-center justify-center w-full"
                 >
-                  <div className="space-y-8">
-                    <div className="flex justify-center mb-4">
-                      <img
-                        src={avatarUrl || data?.avatar || ""}
-                        className="w-44 h-44 rounded-full"
-                        alt="Avatar"
-                      />
-                    </div>
-                    <div className="relative">
-                      <div className="flex items-center justify-center">
+                  <div className="flex flex-col items-center mb-4">
+                    {uploading && (
+                      <div className="absolute w-full h-44 inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full">
+                        <Spin />
+                      </div>
+                    )}
+                    <img
+                      src={previewImage || data.avatar || ""}
+                      className="w-44 h-44 rounded-full"
+                      alt="Avatar"
+                    />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <button
+                      className="bg-black text-white w-[100px] h-[40px]"
+                      type="button"
+                      onClick={() =>
+                        document.getElementById("hiddenUploadInput")?.click()
+                      }
+                    >
+                      Chọn ảnh
+                    </button>
+                    <div style={{ display: "none" }}>
+                      <Upload
+                        id="hiddenUploadInput"
+                        action={api}
+                        data={{
+                          upload_preset: PRESET_NAME,
+                          folder: FOLDER_NAME
+                        }}
+                        listType="picture-card"
+                        fileList={fileList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        showUploadList={false}
+                        style={{ display: "none" }}
+                        // multiple
+                      >
                         <button
-                          className=" bg-black text-white w-[100px] h-[40px]"
-                          onClick={handleChooseFile}
+                          className="bg-black text-white w-[100px] h-[40px]"
+                          type="button"
                         >
                           Chọn ảnh
                         </button>
-                        <input
-                          type="file"
-                          className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                          id="fileInput"
-                          ref={fileInputRef}
-                          onChange={handleFileChange}
-                        />
-                      </div>
+                      </Upload>
                     </div>
                   </div>
+                  {previewImage && (
+                    <Image
+                      wrapperStyle={{ display: "none" }}
+                      preview={{
+                        visible: previewOpen,
+                        onVisibleChange: (visible) => setPreviewOpen(visible),
+                        afterOpenChange: (visible) =>
+                          !visible && setPreviewImage("")
+                      }}
+                      src={previewImage}
+                    />
+                  )}
                 </Form.Item>
               </div>
             </div>

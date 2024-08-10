@@ -2,12 +2,16 @@ import React, { useState, useRef, useMemo, useContext } from 'react';
 import JoditEditor from 'jodit-react';
 import axios from 'axios';
 import parse from 'html-react-parser';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const BlogAdd = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 	const editor = useRef(null);
 	const [content, setContent] = useState('');
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, "text/html");
+  const navigate = useNavigate();
   const onSubmit = async () => {
     try {
       const images = doc.querySelectorAll("img");
@@ -37,16 +41,25 @@ const BlogAdd = () => {
   });
 
   try {
+    const h1Element = doc.querySelector("h1");
+    if(h1Element === null || h1Element.textContent === ''){
+      message.error('Tiêu đề không được để trống');
+      return;
+    }
     const uploadedUrls = await Promise.all(uploadPromises);
     let contentNew = content;
     uploadedUrls.forEach((img) => {
         contentNew = contentNew.replace(img.originalSrc, img.newSrc);
       });
       const {data} = await axios.post(`http://localhost:2004/api/v1/blogs/add_blog`,
-        {content: contentNew}, 
+        {content: contentNew,
+        author: user.user.userName,
+        }, 
         {headers: {
         "Content-Type": "application/json",
       },})
+      message.success('Tạo mới bài viết thành công');
+      navigate('/admin/blogs'); 
       console.log(data);
   } catch (error) {
     console.error("Error uploading images:", error);
@@ -66,13 +79,11 @@ const BlogAdd = () => {
     }),
     []
   );
+
 	return (
     <>
-    <div>{parse(content)}</div>
-
-
 		<JoditEditor
-    className='!text-black'
+    className='!text-black mt-20'
 			ref={editor}
 			value={content}
 			config={config}
