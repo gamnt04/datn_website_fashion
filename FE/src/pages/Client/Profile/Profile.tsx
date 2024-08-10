@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Button,
   DatePicker,
@@ -6,15 +5,13 @@ import {
   Input,
   FormProps,
   GetProp,
-  UploadFile,
   UploadProps,
   Upload,
   Image,
+  Spin,
 } from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
-import { PlusOutlined } from "@ant-design/icons";
-
 export type FieldType = {
   userName?: string;
   fullName?: string;
@@ -23,73 +20,44 @@ export type FieldType = {
   birthDate?: string;
   avatar?: string;
 };
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const Profile = () => {
   const {
     contextHolder,
     isChanged,
-    setIsChanged, // Thêm hook để cập nhật trạng thái isChanged
     isSaving,
     isLoading,
     isPending,
     isError,
     error,
-
     handleValuesChange,
-
     mutate,
     data,
+    PRESET_NAME,
+    FOLDER_NAME,
+    api,
+    previewImage,
+    fileList,
+    previewOpen,
+    uploading,
+    handlePreview,
+    handleChange,
+    setPreviewOpen,
+    setPreviewImage,
   } = ProfileHook();
-  const CLOUD_NAME = "dwya9mxip";
-  const PRESET_NAME = "upImgProduct";
-  const FOLDER_NAME = "PRODUCTS";
-  const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-  const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [previewOpen, setPreviewOpen] = useState(false);
-
-  const getBase64 = (file: FileType): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as FileType);
-    }
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-  };
-
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-    // Kiểm tra nếu tất cả các file đều có trạng thái "done"
-    const allUploaded = newFileList.every((file) => file.status === "done");
-    setIsChanged(allUploaded); // Chỉ cho phép lưu khi tất cả các file đã tải lên thành công
-  };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const imageUrls = fileList
-      .filter((file) => file.status === "done") // Lọc chỉ các ảnh đã tải lên thành công
-      .map((file) => file.response?.secure_url); // Lấy URL từ phản hồi
+      .filter((file) => file.status === "done")
+      .map((file) => file.response?.secure_url);
+    let avatarUrl = imageUrls[imageUrls.length - 1] || "";
 
-    // Lấy URL của ảnh đầu tiên trong fileList
-    const avatarUrl = imageUrls[0] || "";
+    if (!avatarUrl && data?.avatar) {
+      avatarUrl = data.avatar;
+    }
 
     mutate({ ...values, avatar: avatarUrl });
   };
-
-  const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
 
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
@@ -120,24 +88,43 @@ const Profile = () => {
             }
             onFinish={onFinish}
             autoComplete="off"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 15 }}
           >
             <div className="flex flex-row flex-wrap lg:flex-nowrap text-sm">
               <div className="basis-full order-2 lg:order-1 lg:basis-2/3">
-                <Form.Item name="userName" label="Tên đăng nhập" rules={[]}>
+                <Form.Item
+                  name="userName"
+                  label="Tên đăng nhập"
+                  rules={[]}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Họ và tên" name="fullName">
+                <Form.Item<FieldType>
+                  label="Họ và tên"
+                  name="fullName"
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Email" name="email">
+                <Form.Item<FieldType>
+                  label="Email"
+                  name="email"
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Số điện thoại" name="phone">
+                <Form.Item<FieldType>
+                  label="Số điện thoại"
+                  name="phone"
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
+                >
                   <Input />
                 </Form.Item>
 
@@ -145,6 +132,8 @@ const Profile = () => {
                   label="Ngày sinh"
                   name="birthDate"
                   rules={[]}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 15 }}
                 >
                   <DatePicker
                     format="YYYY-MM-DD"
@@ -152,29 +141,68 @@ const Profile = () => {
                   />
                 </Form.Item>
 
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
                   <Button
                     className="bg-[#000000] text-[#ffffff] h-[50px]"
                     htmlType="submit"
-                    disabled={!isChanged || isSaving} // Disable nút khi chưa thay đổi hoặc đang lưu
+                    disabled={!isChanged || isSaving}
                   >
                     {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
                   </Button>
                 </Form.Item>
               </div>
               <div className="order-1 border-b p-3 my-4 basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
-                <Form.Item<FieldType> label="Ảnh sản phẩm" name="avatar">
-                  <Upload
-                    action={api}
-                    data={{ upload_preset: PRESET_NAME, folder: FOLDER_NAME }}
-                    listType="picture-card"
-                    fileList={fileList}
-                    onPreview={handlePreview}
-                    onChange={handleChange}
-                    multiple
-                  >
-                    {fileList.length >= 8 ? null : uploadButton}
-                  </Upload>
+                <Form.Item<FieldType>
+                  name="avatar"
+                  className="flex items-center justify-center w-full"
+                >
+                  <div className="flex flex-col items-center mb-4">
+                    {uploading && (
+                      <div className="absolute w-full h-44 inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full">
+                        <Spin />
+                      </div>
+                    )}
+                    <img
+                      src={previewImage || data.avatar || ""}
+                      className="w-44 h-44 rounded-full"
+                      alt="Avatar"
+                    />
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <button
+                      className="bg-black text-white w-[100px] h-[40px]"
+                      type="button"
+                      onClick={() =>
+                        document.getElementById("hiddenUploadInput")?.click()
+                      }
+                    >
+                      Chọn ảnh
+                    </button>
+                    <div style={{ display: "none" }}>
+                      <Upload
+                        id="hiddenUploadInput"
+                        action={api}
+                        data={{
+                          upload_preset: PRESET_NAME,
+                          folder: FOLDER_NAME,
+                        }}
+                        listType="picture-card"
+                        fileList={fileList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        showUploadList={false}
+                        style={{ display: "none" }}
+                        // multiple
+                      >
+                        <button
+                          className="bg-black text-white w-[100px] h-[40px]"
+                          type="button"
+                        >
+                          Chọn ảnh
+                        </button>
+                      </Upload>
+                    </div>
+                  </div>
                   {previewImage && (
                     <Image
                       wrapperStyle={{ display: "none" }}

@@ -4,21 +4,23 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
-import useSearch from "../../../systems/utils/Search";
+import useSearch from "../../../systems/utils/useSearch";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { message } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
-    searchTerm,
+    query,
+    suggestions,
+    showSuggestions,
+    setShowSuggestions,
+    handleSearch,
     searchRef,
-    handleChange,
-    handleFocus,
-    results,
-    showResults,
-    handleResultClick,
+    isLoading,
+    handleInputChange,
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -147,17 +149,18 @@ const Header = () => {
           {/* options */}
           <nav className="flex items-center justify-between *:mx-3 *:duration-300">
             {/* search */}
-            <div ref={searchRef} className="search-container">
+            <div ref={searchRef} className="relative w-full max-w-xl">
               <form
-                className={`relative w-[298px] *:h-[30px] hidden lg:block gap-x-2  duration-300`}
+                onSubmit={handleSearch}
+                className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2  duration-300`}
               >
                 <input
                   type="text"
+                  value={query}
+                  onChange={handleInputChange}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="Search..."
                   className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
                 />
                 <button
                   type="submit"
@@ -166,31 +169,45 @@ const Header = () => {
                   <Search size={20} />
                 </button>
               </form>
-              {showResults && searchTerm.trim() && (
+              {showSuggestions && query.length > 0 && (
                 <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
-                  {results.length > 0 ? (
+                  {isLoading ? (
+                    <div className="flex justify-center px-4 py-2 text-gray-700">
+                      <LoadingOutlined />
+                    </div>
+                  ) : suggestions.length > 0 ? (
                     <ul>
-                      {results.map((product: IProduct) => (
+                      {suggestions.slice(0, 5).map((suggestion: IProduct) => (
                         <Link
-                          to={`/shops/detail_product/${product._id}`}
-                          key={product._id}
+                          onClick={() => setShowSuggestions(false)}
+                          to={`/shops/detail_product/${suggestion._id}`}
+                          key={suggestion._id}
                           className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                          onClick={handleResultClick}
                         >
                           <img
-                            src={product.image_product}
-                            alt={product.name_product}
+                            src={suggestion.image_product}
+                            alt={suggestion.name_product}
                             className="w-8 h-8 mr-2"
                           />
                           <p className="text-black hover:underline">
-                            {product.name_product}
+                            {suggestion.name_product}
                           </p>
                         </Link>
                       ))}
                     </ul>
                   ) : (
                     <div className="px-4 py-2 text-gray-700">
-                      No results found
+                      Tìm kiếm "{query}"
+                    </div>
+                  )}
+                  {suggestions.length > 5 && (
+                    <div className="px-4 py-2 text-center">
+                      <button
+                        onClick={handleSearch}
+                        className="text-blue-500 hover:underline"
+                      >
+                        Xem tất cả
+                      </button>
                     </div>
                   )}
                 </div>
