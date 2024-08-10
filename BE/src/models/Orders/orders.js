@@ -38,6 +38,11 @@ const orderSchema = new mongoose.Schema({
     required: true
   },
   items: [],
+  orderNumber: {
+    type: String,
+    auto: true,
+    unique: true,
+  },
   customerInfo: {
     userName: {
       type: String,
@@ -80,12 +85,12 @@ const orderSchema = new mongoose.Schema({
   }
 });
 // Tạo pre-save hook để sinh orderNumber trước khi lưu vào cơ sở dữ liệu
-// orderSchema.pre("save", function (next) {
-//   if (!this.orderNumber) {
-//     this.orderNumber = generateOrderNumber();
-//   }
-//   next();
-// });
+orderSchema.pre("save", function (next) {
+  if (!this.orderNumber) {
+    this.orderNumber = generateOrderNumber();
+  }
+  next();
+});
 orderSchema.plugin(mongoosePaginate);
 
 
