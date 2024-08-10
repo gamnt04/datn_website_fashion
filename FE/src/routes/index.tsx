@@ -36,6 +36,7 @@ import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
 import Blog from "../pages/Admin/Blogs/BlogList";
 import LoadingProvider from "../pages/Client/Order/Order-All/LoadingContext";
+import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 const RouterComponent = () => {
   return (
     <>
@@ -103,9 +104,9 @@ const RouterComponent = () => {
             
               <Route path="blogs" element={<Blog />} />
             
-            
-            {/* <Route path="blogs/add_blog" element={<BlogAdd />} />
-            <Route path="blogs/:id" element={<EditBlog />} /> */}
+
+            <Route path="blogs/add_blog" element={<BlogAdd />} />
+            {/* <Route path="blogs/:id" element={<EditBlog />} /> */}
           </Route>
         </Routes>
         </LoadingProvider>
