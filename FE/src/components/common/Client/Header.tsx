@@ -40,14 +40,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -90,7 +90,7 @@ const Header = () => {
     <>
       <div
         ref={toggleFixedHeader}
-        className="w-full fixed top-0 bg-white z-[6] !bg-[#001529] text-white"
+        className="w-full fixed top-0 z-[6] !bg-[#001529] text-white"
       >
         {contentHolder}
         <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
@@ -166,7 +166,7 @@ const Header = () => {
                   type="submit"
                   className="absolute grid place-items-center text-black top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
-                  <Search />
+                  <Search size={20} />
                 </button>
               </form>
               {showSuggestions && query.length > 0 && (
@@ -246,7 +246,7 @@ const Header = () => {
                   className="group *:duration-300 relative py-1"
                 >
                   {Favouritedata?.products?.length > 0 ? (
-                    <span className="absolute bg-red-500 w-5 h-5 grid place-items-center text-white text-xs py-[1px] px-[1px] rounded-xl -top-1 -right-3 z-10">
+                    <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] px-[1px] rounded-xl -top-0.5 -right-2 z-10">
                       {Favouritedata?.products?.length}
                     </span>
                   ) : (

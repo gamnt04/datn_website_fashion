@@ -55,10 +55,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   const hasMore = currentPage < totalPages;
 
   return (
-    <div className="py-10">
+    <div>
       {products?.data?.length ? (
         <>
-          <div className="grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:grid-cols-[18%_18%_18%_18%_18%] justify-around gap-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
             {products.data.map((item: any) => (
               <Products key={item._id} items={item} />
             ))}
@@ -67,11 +67,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
             <div className="flex items-center space-x-4 mb-4">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={`px-4 py-2 border rounded-md ${
-                  currentPage === 1
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+                className={`px-4 py-2 border rounded-md ${currentPage === 1
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
                 disabled={currentPage === 1}
               >
                 &#10094; Trang trước
@@ -79,11 +78,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
               <span className="text-lg font-semibold">Trang {currentPage}</span>
               <button
                 onClick={() => setCurrentPage((prev) => prev + 1)}
-                className={`px-4 py-2 border rounded-md ${
-                  !hasMore
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+                className={`px-4 py-2 border rounded-md ${!hasMore
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
                 disabled={!hasMore}
               >
                 Trang tiếp theo &#10095;
@@ -96,11 +94,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 border rounded-md ${
-                        currentPage === page
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-black hover:bg-gray-300"
-                      }`}
+                      className={`px-4 py-2 border rounded-md ${currentPage === page
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-black hover:bg-gray-300"
+                        }`}
                     >
                       {page}
                     </button>

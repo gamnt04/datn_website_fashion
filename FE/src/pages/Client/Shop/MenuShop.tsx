@@ -52,25 +52,25 @@ const MenuShop: React.FC<MenuShopProps> = ({
   };
 
   return (
-    <div className="hidden lg:flex flex-row h-auto justify-start my-10 ml-5 mr-[50%] p-2 space-x-2">
-      <div className="w-52">
+    <div className="hidden lg:flex gap-5 h-auto my-4">
+      <div className="">
         <TimeFilter
           onCategorySelect={function (ids: string[]): void {
             throw new Error("Function not implemented.");
           }}
         />
       </div>
-      <div className="w-52">
+      <div className="">
         <CategoryFilter
           categories={categoryData || []}
           onCategorySelect={handleCategoryChange} // Truyền vào hàm mới
         />
       </div>
 
-      <div className=" w-40">
+      <div className="">
         <PriceFilter onPriceChange={onPriceChange} />
       </div>
-      <div className=" w-40">
+      <div className="">
         <ColorFilter
           selectedColors={selectedColors}
           toggleColor={toggleColor}
@@ -79,7 +79,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
           colorOptions={colorOptions}
         />
       </div>
-      <div className=" w-28">
+      <div className="">
         <SizeFilter
           selectedSizes={selectedSizes}
           toggleSize={toggleSize}
