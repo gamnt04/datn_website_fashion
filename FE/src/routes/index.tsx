@@ -38,6 +38,7 @@ import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
 import Edit_Item from "../pages/Admin/Product/Edit_Item";
 import Logout from "../common/hooks/Auth/Logout";
+import SearchResults from "../components/common/Client/SearchResults";
 const RouterComponent = () => {
   return (
     <>
@@ -45,6 +46,7 @@ const RouterComponent = () => {
         <Routes>
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route path="/shops" element={<IndexShops />} />
             <Route path="/test" element={<Test />} />
             <Route path="/blogs" element={<Blogs />} />
@@ -59,26 +61,16 @@ const RouterComponent = () => {
             {/* <Route path="products" element={<ListProducts />} /> */}
             <Route path="blogs/detailblog" element={<DetailBlogs />} />
             <Route
-              path="shops/detail_product/:id"
+              path="shops/:id"
               element={<ProductDetail />}
             />
 
-            <Route path="profile" element={<Layout_Profile />}>
+            <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
-
               <Route path="/profile/address" element={<Address />} />
               <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/allorder" element={<Order_Menu />} />
-            </Route>
-
-            <Route path="/allorder" element={<AllOrder />}>
-              <Route index element={<Profile />} />
-              <Route path="/allorder/order" element={<Order_Menu />} />
-              <Route
-                path="/allorder/order/:id/detail"
-                element={<OrderDetail />}
-              />
-              <Route path="/allorder/address" element={<Address />} />
+              <Route path="/profile/order/:id" element={<OrderDetail />} />
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
@@ -94,7 +86,7 @@ const RouterComponent = () => {
             <Route path="products" element={<ListProduct />} />
             {/* <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
-            <Route path="products/trash" element={<TrashProduct />} />
+            <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="auth" element={<List_Auth />} />
             <Route

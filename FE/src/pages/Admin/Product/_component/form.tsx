@@ -33,6 +33,7 @@ type FieldType = {
 };
 
 const Form_Item = ({ mode }: any) => {
+<<<<<<< HEAD
   const [status_attr, setStatus_Attr] = useState(true);
   let image_item: any;
   let gallery_item: any = [];
@@ -51,6 +52,46 @@ const Form_Item = ({ mode }: any) => {
     onSubmit(values);
   };
   if (data_one_item?.isPending) {
+=======
+    const [status_attr, setStatus_Attr] = useState(true);
+    let image_item: any;
+    let gallery_item: any = [];
+    const { onSubmit, isPending, isError, handleImageChange, handleGalleryChange, loading, data_one_item } = useHookForm({ mode })
+    const { data } = useCategoryQuery();
+    const [form] = Form.useForm();
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+        onSubmit(values);
+    };
+    if (data_one_item?.isPending) {
+        return <div className="fixed bg-[#17182177] w-screen h-screen top-0 right-0"></div>
+    }
+    // if (mode && data_one_item?.data?.product?.image_product) {
+    //     image_item = ([{
+    //         uid: '-1',
+    //         name: 'image.png',
+    //         status: 'done',
+    //         url: data_one_item?.data?.product?.image_product && data_one_item?.data?.product?.image_product,
+    //     }]);
+    //     data_one_item?.data?.product?.gallery_product?.map((uri_gallery : string | undefined, index : number) => {
+    //         gallery_item.push({
+    //             uid: index,
+    //             name: 'image.png',
+    //             status: 'done',
+    //             url: uri_gallery && uri_gallery,
+    //           },
+    //          )
+    //     })
+    // }
+
+    const initialAttributes = data_one_item?.data?.product?.attributes?.values || [];
+    const initialValues = {
+        ...data_one_item?.data?.product,
+        attributes: initialAttributes.map((attr: IAttribute) => ({
+            ...attr,
+            size: attr.size || [{}]
+        }))
+    };
+>>>>>>> main
     return (
       <div className="fixed bg-[#17182177] w-screen h-screen top-0 right-0"></div>
     );
@@ -259,6 +300,7 @@ const Form_Item = ({ mode }: any) => {
                                       </Form.Item>
                                     </div>
 
+<<<<<<< HEAD
                                     <div>
                                       <label
                                         htmlFor=""
@@ -275,6 +317,81 @@ const Form_Item = ({ mode }: any) => {
                                             message: "Số lượng là bắt buộc!"
                                           },
                                           {
+=======
+                        <div className="flex justify-around gap-10 ">
+                            <div>
+                                <label htmlFor="" className=" text-gray-100 font-medium text-sm">Ảnh sản phẩm</label>
+                                <Form.Item<FieldType>
+                                    name="image_product"
+                                    initialValue={{ ...data_one_item?.data?.product?.image_product }}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Ảnh sản phẩm là bắt buộc!",
+                                        },
+                                    ]}
+                                >
+                                    <div className="flex justify-end">
+                                        <Upload
+                                            // fileList={image_item}
+                                            listType="picture-card"
+                                            beforeUpload={() => false}
+                                            onChange={handleImageChange}
+                                            className="mt-2"
+                                            maxCount={1}
+                                        >
+                                            <button
+                                                style={{ border: 0, background: "none" }}
+                                                type="button"
+                                            >
+                                                <PlusOutlined />
+                                            </button>
+                                        </Upload>
+                                    </div>
+                                </Form.Item>
+                            </div>
+                            <div>
+                                <label htmlFor="" className=" text-gray-100 font-medium text-sm">Bộ sưu tập</label>
+                                <Form.Item<FieldType>
+                                    name="gallery_product"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Bộ sưu tập sản phẩm là bắt buộc!",
+                                        },
+                                    ]}
+                                >
+                                    <div className="flex justify-end">
+                                        <Upload
+                                            // fileList={gallery_item}
+                                            listType="picture-card"
+                                            beforeUpload={() => false}
+                                            onChange={handleGalleryChange}
+                                            multiple={true}  // Allow multiple uploads
+                                            className="mt-2"
+                                        >
+                                            <button
+                                                style={{ border: 0, background: "none" }}
+                                                type="button"
+                                            >
+                                                <PlusOutlined />
+                                            </button>
+                                        </Upload>
+                                    </div>
+                                </Form.Item>
+                            </div>
+
+                        </div>
+
+                        {
+                            status_attr && (<>
+                                <label htmlFor="" className="text-gray-100 font-medium text-sm">Giá sản phẩm</label>
+                                <Form.Item<FieldType>
+                                    name="price_product"
+                                    rules={[
+                                        { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
+                                        {
+>>>>>>> main
                                             type: "number",
                                             min: 0,
                                             message:

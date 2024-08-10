@@ -53,12 +53,12 @@ const List_Products = () => {
               />
             </div>
           ) : (
-            <div className="my-10 w-auto">
+            <div className="w-auto">
               <List_item dataProps={propsData} />
             </div>
           )}
           {/* view all */}
-          <div className="flex items-center justify-center mx-auto  mx-auto h-[60px] w-[172.18px] hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
+          <div className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
             {" "}
             <Link onClick={ScrollTop} className="text-[15px] " to={"/shops"}>
               Xem tất cả

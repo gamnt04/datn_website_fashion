@@ -10,7 +10,7 @@ const Logout = () => {
     },
     onSuccess: () => {
       toast.success("Đăng xuất thành công!", { autoClose: 500 });
-      navigate("/");
+      navigate("/login");
     },
   });
 

@@ -15,61 +15,45 @@ interface SignUpFormData {
 }
 
 const useSignUp = () => {
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
-  const validateForm = (name: string, value: string) => {
-    const fieldSchema = Joi.object({ [name]: signUpSchema.extract(name) });
-    const { error } = fieldSchema.validate({ [name]: value });
-    if (error) {
-      setFormErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: error.details[0].message,
-      }));
-    } else {
-      setFormErrors((prevErrors) => {
-        const newErrors = { ...prevErrors };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  };
+  const [status_api, setStatus_api] = useState(false);
 
   const navigate = useNavigate();
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (formData: SignUpFormData) => {
-      const { data } = await instance.post(`auth/signup`, formData);
-      return data;
+      try {
+        const response = await instance.post(`auth/signup`, formData);
+        return response;
+      } catch (err) {
+        throw err;
+      }
     },
-    onSuccess: () => {
-      toast.success("Đăng ký thành công!");
-      navigate("/login");
+    onSuccess: (res) => {
+      if (res?.status === 201) {
+        toast.success("Đăng ký thành công!");
+        setStatus_api(false);
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      } else {
+        setStatus_api(true);
+      }
     },
     onError: (error: AxiosError) => {
-      if (error.response) {
-        if (error.response.status === 400) {
-          toast.error("Email đã tồn tại. Vui lòng nhập lại thông tin!");
-        } else {
-          toast.error("Đăng ký thất bại.Vui lòng nhập lại thông tin");
-        }
+      if (error.response?.status === 400) {
+        setStatus_api(true);
       } else {
-        toast.error("Đã xảy ra lỗi kết nối.");
+        toast.error("Đăng ký thất bại. Vui lòng thử lại.");
+        setStatus_api(true);
       }
     },
   });
 
-  const onSubmit = (formData: SignUpFormData) => {
-    mutate(formData);
-  };
-
   return {
-    onSubmit,
-    formErrors,
-    setFormErrors,
-    validateForm,
     isPending,
     isError,
     error,
     mutate,
+    status_api,
   };
 };
 

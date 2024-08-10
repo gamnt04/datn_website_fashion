@@ -8,7 +8,7 @@ import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProduct
 import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
-const Products = ({ items }) => {
+const Products = ({ items }: any) => {
   const [messageApi, contentHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -25,7 +25,7 @@ const Products = ({ items }) => {
     return null;
   }
 
-  const handlePreview = async (id) => {
+  const handlePreview = async (id: any) => {
     try {
       const response = await fetch(
         `http://localhost:2004/api/v1/products/${id}`
@@ -46,55 +46,55 @@ const Products = ({ items }) => {
   const checkFavourite = (productId: string) => {
     if (FavoriteData?.products?.length > 0) {
       return FavoriteData.products.some(
-        (product) => product?.productId?._id === productId
+        (product: any) => product?.productId?._id === productId
       );
     }
   };
 
-  const handleAddToFavorites = (productId) => {
+  const handleAddToFavorites = (productId: any) => {
     if (!userId) {
       message.open({
         type: "warning",
         content:
-          "Hãy đăng nhập tài khoản của bạn để có thể thêm được sản phẩm yêu thích !!!"
+          "Hãy đăng nhập tài khoản của bạn để có thể thêm được sản phẩm yêu thích !!!",
       });
     } else {
       message.open({
         type: "success",
-        content: "Đã thêm sản phẩm vào danh mục yêu thích của bạn"
+        content: "Đã thêm sản phẩm vào danh mục yêu thích của bạn",
       });
       AddFavouriteProduct({ userId, productId });
     }
   };
 
-  const handleRemoveFromFavorites = (productId) => {
+  const handleRemoveFromFavorites = (productId: any) => {
     message.open({
       type: "success",
-      content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn"
+      content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn",
     });
     RemoveFavouriteProduct({ userId, productId });
   };
 
   return (
-    <>
-      {contentHolder}
-      <div
-        className="flex flex-col justify-center items-center lg:w-[310px] duration-200 rounded text-start gap-y-4"
-        key={items._id}
-      >
-        <div className="relative group w-full h-[160px] md:h-[200px] lg:h-[389px] lg:w-[310px] overflow-hidden bg-[#F6F6F6]">
-          <Link
-            onClick={ScrollTop}
-            to={`/shops/detail_product/${items._id}`}
-            className="h-full cursor-pointer"
-          >
-            <img
-              className="w-full h-full duration-500 group-hover:scale-105"
-              loading="lazy"
-              src={items?.image_product}
-              alt={items?.name_product}
-            />
-          </Link>
+    <div
+      className="flex flex-col justify-between w-full gap-y-5"
+      key={items._id}
+    >
+      <div className="relative group w-full">
+        <Link
+          onClick={ScrollTop}
+          to={`/shops/${items._id}`}
+          className="h-full cursor-pointer"
+        >
+          <img
+            className="w-full h-[250px] lg:h-[400px] object-cover"
+            loading="lazy"
+            src={items.image_product}
+            alt={items.name_product}
+          />
+        </Link>
+        {/* hover show icon cart */}
+        <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
           <div className="absolute flex flex-col rounded top-0 p-1 right-0">
             {account ? (
               checkFavourite(items?._id) ? (
@@ -122,27 +122,33 @@ const Products = ({ items }) => {
             )}
           </div>
         </div>
-        <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2">
+        <div className="flex justify-center items-center flex-col px-4 py-4 gap-y-2">
           <Link
             onClick={ScrollTop}
             to={`/shops/detail_product/${items?._id}`}
-            className="text-md text-center font-normal text-gray-700 lg:text-[16px] hover:text-black line-clamp-2"
+            className="text-md text-center font-bold lg:text-[16px] hover:text-black line-clamp-2"
           >
-            {items?.name_product}
+            {
+              items?.name_product.length > 15
+                ? items?.name_product.slice(0, 50) + "..."
+                : items?.name_product
+            }
           </Link>
-          <p className="font-normal text-gray-700 text-[16px]">
+          <p className="font-normal text-[16px]">
             {items?.price_product?.toLocaleString("vi-VN", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </p>
         </div>
 
-        {modalOpen && selectedProduct && (
-          <ProductModal product={selectedProduct} onClose={handleCloseModal} />
-        )}
-      </div>
-    </>
+        {
+          modalOpen && selectedProduct && (
+            <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+          )
+        }
+      </div >
+    </div >
   );
 };
 
