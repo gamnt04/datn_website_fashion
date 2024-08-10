@@ -9,7 +9,7 @@ import {
   UploadFile,
   UploadProps,
   Upload,
-  Image,
+  Image
 } from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
@@ -39,7 +39,7 @@ const Profile = () => {
     handleValuesChange,
 
     mutate,
-    data,
+    data
   } = ProfileHook();
   const CLOUD_NAME = "dwya9mxip";
   const PRESET_NAME = "upImgProduct";
@@ -114,7 +114,7 @@ const Profile = () => {
               data
                 ? {
                     ...data,
-                    birthDate: data.birthDate ? dayjs(data.birthDate) : null,
+                    birthDate: data.birthDate ? dayjs(data.birthDate) : null
                   }
                 : {}
             }
@@ -182,7 +182,7 @@ const Profile = () => {
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
                         afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                          !visible && setPreviewImage("")
                       }}
                       src={previewImage}
                     />
