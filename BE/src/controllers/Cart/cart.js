@@ -4,18 +4,17 @@ import { StatusCodes } from "http-status-codes";
 export const getCartByUserId = async (req, res) => {
   const { userId } = req.params;
   try {
-    const dataCart = await Cart.findOne({ userId }).populate("products.productId");
+    const dataCart = await Cart.findOne({ userId }).populate(
+      "products.productId"
+    );
     if (!dataCart) {
-      return res
-        .status(StatusCodes.OK)
-        .json([]);
+      return res.status(StatusCodes.OK).json([]);
     }
     dataCart.total_price = dataCart.products.reduce((a, b) => {
       if (b.status_checked) {
-        return a + b.total_price_item
-      }
-      else {
-        return a
+        return a + b.total_price_item;
+      } else {
+        return a;
       }
     }, 0);
     return res.status(StatusCodes.OK).json(dataCart);
@@ -26,7 +25,7 @@ export const getCartByUserId = async (req, res) => {
   }
 };
 export const removeProductToCart = async (req, res) => {
-  const { userId, productId } = req.body;
+  const { userId, productId, color, size } = req.body;
   try {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -34,10 +33,30 @@ export const removeProductToCart = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Cart Not Found" });
     }
-    cart.products = cart.products.filter(
-      (product) =>
-        product.productId && product.productId.toString() !== productId
-    );
+    // cart.products = cart.products.filter(
+    //   (product) => product.productId && product.productId.toString() !== productId._id
+    // );
+    for (let i = cart.products.length - 1 ; i >= 0; i--) {
+      if (cart.products[i].productId.toString() == productId._id.toString()) {
+        if (cart.products[i].color_item == color && cart.products[i].name_size == size) {
+          cart.products.splice(i, 1);
+          break;
+        }
+        else if (cart.products[i].color_item == color) {
+          console.log(cart.products);
+          cart.products.splice(i, 1);
+          break;
+        }
+        else if (cart.products[i].name_size == size) {
+          console.log(cart.products);
+          break;
+        }
+        else {
+          cart.products.splice(i, 1);
+          break;
+        }
+      }
+    };
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
   } catch (error) {
@@ -55,8 +74,7 @@ export const removeMultipleProductsFormCart = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Cart Not Found" });
     }
-    cart.products = cart.products.filter(
-      (product) => !product.status_checked);
+    cart.products = cart.products.filter((product) => !product.status_checked);
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
   } catch (error) {
@@ -65,7 +83,72 @@ export const removeMultipleProductsFormCart = async (req, res) => {
       .json({ error: "Internal Server Error" });
   }
 };
+export const buyMultipleProductsFromCart = async (req, res) => {
+  try {
+    const { userId, productsId } = req.body;
 
+    if (!userId || !Array.isArray(productsId) || productsId.length === 0) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Invalid input" });
+    }
+
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Cart Not Found" });
+    }
+
+    // Lọc các sản phẩm trong giỏ hàng để lấy các sản phẩm có ID nằm trong productsId
+    const productsToBuy = cart.products.filter((product) =>
+      productsId.includes(product.productId.toString())
+    );
+
+    if (productsToBuy.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "No products found to buy" });
+    }
+
+    // Tính tổng giá trị đơn hàng
+    const totalPrice = productsToBuy.reduce((total, product) => {
+      return total + product.price_item * product.quantity;
+    }, 0);
+
+    // Tạo đơn hàng mới
+    const newOrder = new Order({
+      userId,
+      products: productsToBuy.map((product) => ({
+        productId: product.productId,
+        quantity: product.quantity,
+        price_item: product.price_item,
+        color_item: product.color_item,
+        name_size: product.name_size,
+        total_price_item: product.total_price_item
+      })),
+      total_price: totalPrice
+    });
+
+    await newOrder.save();
+
+    // Cập nhật giỏ hàng
+    cart.products = cart.products.filter(
+      (product) => !productsId.includes(product.productId.toString())
+    );
+    await cart.save();
+
+    return res.status(StatusCodes.OK).json({
+      message: "Products successfully purchased",
+      order: newOrder
+    });
+  } catch (error) {
+    console.error("Error buying multiple products from cart:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message || "Internal Server Error" });
+  }
+};
 export async function handle_status_checked(req, res) {
   const { userId, productId, color, size } = req.body;
   try {
@@ -76,27 +159,25 @@ export async function handle_status_checked(req, res) {
           if (i.color_item == color && i.name_size == size) {
             i.status_checked = !i.status_checked;
           }
-        }
-        else if (color) {
+        } else if (color) {
           if (i.color_item == color) {
             i.status_checked = !i.status_checked;
           }
-        }
-        else if (size) {
+        } else if (size) {
           if (i.name_size == size) {
             i.status_checked = !i.status_checked;
           }
         }
       }
-    };
+    }
     await data_cart.save();
     return res.status(StatusCodes.OK).json({
-      message: 'Done!',
+      message: "Done!",
       data_cart
-    })
+    });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || 'Loi roi dai vuong oi!'
-    })
+      message: error.message || "Loi roi dai vuong oi!"
+    });
   }
 }

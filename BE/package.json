@@ -2,7 +2,8 @@
   "name": "be",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite"
   },

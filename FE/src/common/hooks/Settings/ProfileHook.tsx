@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
-import type { FormProps } from "antd";
-import { message } from "antd";
-import dayjs from "dayjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { FieldType } from "../../../pages/Client/Profile/Profile";
+import { GetProp, UploadFile, UploadProps, message } from "antd";
+import dayjs from "dayjs";
+import { useState } from "react";
+export type FieldType = {
+  userName?: string;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  birthDate?: string;
+  avatar?: string;
+};
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const ProfileHook = () => {
   const queryClient = useQueryClient();
@@ -14,9 +21,16 @@ const ProfileHook = () => {
   const userId = user?.user?._id;
   const [initialValues, setInitialValues] = useState<FieldType>({});
   const [isChanged, setIsChanged] = useState<boolean>(false);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false); // Trạng thái lưu
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const CLOUD_NAME = "dwya9mxip";
+  const PRESET_NAME = "upImgProduct";
+  const FOLDER_NAME = "PRODUCTS";
+  const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const { data, isLoading, isPending, isError, error } = useQuery({
     queryKey: ["AUTH_KEY", userId],
@@ -29,12 +43,6 @@ const ProfileHook = () => {
     },
   });
   console.log(data?.address);
-
-  useEffect(() => {
-    if (data) {
-      setAvatarUrl(data.avatar || ""); // Cập nhật avatarUrl khi dữ liệu được tải về
-    }
-  }, [data]);
 
   const { mutate } = useMutation({
     mutationFn: async (newUser) => {
@@ -64,30 +72,70 @@ const ProfileHook = () => {
     );
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarUrl(url);
+  const getBase64 = (file: FileType): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
     }
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const handleChange: UploadProps["onChange"] = ({
+    fileList: newFileList,
+    file,
+  }) => {
+    const newFile = newFileList[0] || {};
+
+    if (file.status === "done") {
+      const url = file.response?.secure_url;
+      if (url) {
+        setPreviewImage(url);
+      }
+    } else if (file.status === "error") {
+      message.error("Upload ảnh thất bại"); // Hiển thị toast khi upload thất bại
+      console.error("Upload failed:", file.response?.error || file.error);
+    }
+
+    setFileList(newFileList);
+    setIsChanged(newFileList.length > 0);
+    const allUploaded = newFileList.every((file) => file.status === "done");
+    setUploading(newFileList.some((file) => file.status === "uploading"));
+    setIsChanged(allUploaded);
   };
 
   return {
     contextHolder,
+    setIsChanged,
     setInitialValues,
     isChanged,
     isSaving,
-    fileInputRef,
     isLoading,
     isPending,
     isError,
     error,
-    avatarUrl,
     handleValuesChange,
-    handleFileChange,
     mutate,
     data,
     userId,
+    PRESET_NAME,
+    FOLDER_NAME,
+    api,
+    previewImage,
+    fileList,
+    previewOpen,
+    uploading,
+    handlePreview,
+    handleChange,
+    setPreviewOpen,
+    setPreviewImage,
   };
 };
 

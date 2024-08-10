@@ -1,31 +1,26 @@
 import React from "react";
 import Sidebar_Dashboard from "../components/common/Admin/Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
-
-
+import Header from "../components/common/Admin/Header/Header";
 
 const AdminLayout: React.FC = () => {
-
   return (
-    <div className="bg-[#171821] text-gray-100 relative min-h-screen">
-      <div className="sticky w-full py-2 top-0 bg-[#171821] border-b border-gray-600 z-[10]">
-        <div className="flex justify-between px-4">
-          <strong>Logo</strong>
-          <strong>Search (thêm search vào) </strong>
-          <strong>Logo user</strong>
-        </div>
+    <div className="relative min-h-screen flex">
+      {/* Sidebar */}
+      <div className="w-[290px] bg-[#1C2434] pt-4 border-r border-gray-600 fixed top-0 left-0 h-full">
+        <Sidebar_Dashboard />
       </div>
 
-      <div className="grid lg:grid-cols-[180px_auto]">
-        <div className="fixed top-10 pt-4 border-r border-gray-600 max-w-[180px]">
-        <Sidebar_Dashboard />
+      {/* Main content */}
+      <div className="flex-1 ml-[290px] bg-[#F1F5F9] flex flex-col">
+        <div className="fixed top-0 left-[290px] w-[calc(100%-290px)] bg-[#171821] text-gray-100 z-10">
+          <Header />
         </div>
-        <div></div>
-        <div className="min-h-[90vh]">
+        <div className="pt-[20px] flex-1 ">
           <Outlet />
-          <div className="text-center py-4">
+        </div>
+        <div className="text-center py-4">
           Copyright by ©{new Date().getFullYear()} Created by DATN
-          </div>
         </div>
       </div>
     </div>

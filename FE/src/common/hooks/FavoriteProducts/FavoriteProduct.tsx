@@ -11,8 +11,10 @@ export const useListFavouriteProducts = (userId: string) => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
+    enabled: !!userId
   });
+
   return { data, ...reset };
 };
 // export const useFavoriteProducts = () => {

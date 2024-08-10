@@ -31,10 +31,12 @@ const ListCart = () => {
      
   },[data.total_price])
   
-  const remove_item = (id: any) => {
+  const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
-      productId: id,
+      productId: item.productId,
+      color : item?.color_item,
+      size : item?.name_size,
     };
     removeSingle(data_item);
     messageApi.open({
@@ -154,7 +156,7 @@ const ListCart = () => {
             <Popconfirm
               title="Xóa sản phẩm khỏi giỏ hàng?"
               description="Bạn có chắc chắn muốn xóa không?"
-              onConfirm={() => remove_item(product?.productId)}
+              onConfirm={() => remove_item(product)}
               okText="Có"
               cancelText="Không"
             >

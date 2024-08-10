@@ -1,17 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Blog } from "../../../common/interfaces/Blog";
 import instance from "../../../configs/axios";
 import { Button, Table, Popconfirm, message, Switch } from "antd";
-import AddBlogForm from "./BlogAdd";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import EditBlog from "./BlogEdit";
 import { Link } from "react-router-dom";
-import { BackwardFilled, PlusCircleFilled } from "@ant-design/icons";
+import { PlusCircleFilled } from "@ant-design/icons";
+import parse from "html-react-parser";
 
 const BlogList: React.FC = () => {
-  const [showForm, setShowForm] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
   const { data: blogs = [], refetch } = useQuery({
     queryKey: ["blogs"],
     queryFn: async () => {
@@ -31,13 +28,13 @@ const BlogList: React.FC = () => {
       }
     } catch (error) {
       console.error("Lỗi khi xóa blog:", error);
-      messageApi.error(`Xóa blog không thành công. ${(error as any).response?.data?.message|| "Vui lòng thử lại sau."}`);
+      messageApi.error(`Xóa blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."}`);
     }
   };
 
   const mutation = useMutation({
     mutationFn: async (updatedBlog: Blog) => {
-      const response = await instance.put(`/blogs/${updatedBlog._id}`, updatedBlog);
+      const response = await instance.put(`/update_blog/${updatedBlog._id}`, updatedBlog);
       return response.data;
     },
     onSuccess: () => {
@@ -54,15 +51,33 @@ const BlogList: React.FC = () => {
     mutation.mutate({ ...blog, published: !blog.published });
   };
 
-  // const toggleForm = () => {
-  //   setShowForm(!showForm);
-  // };
-  console
+  const renderContentSnippet = (content: string) => {
+    const shortContent = content.length > 100 ? content.substring(0, 100) + "..." : content;
+    return parse(shortContent);
+  };
+
+  const extractFirstImage = (content: string) => {
+    // Tạo một DOM ảo để phân tích HTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    // Tìm thẻ <img> đầu tiên
+    const imgElement = doc.querySelector("img");
+    return imgElement ? imgElement.src : null;
+  };
+  const extractH1Content = (content: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const h1Element = doc.querySelector("h1");
+    return h1Element ? h1Element.textContent : "Không có tiêu đề";
+  };
   const columns = [
     {
       key: "title",
       title: "Tiêu đề",
-      dataIndex: "title",
+      dataIndex: "content",
+      render: (content: string) => {
+        return <div>{extractH1Content(content)}</div>;
+      },
     },
     {
       key: "createdAt",
@@ -76,12 +91,24 @@ const BlogList: React.FC = () => {
       dataIndex: "author",
     },
     {
+      key: "content",
+      title: "Nội dung",
+      dataIndex: "content",
+      render: (content: string) => {
+        return <div>{renderContentSnippet(content)}</div>;
+      },
+    },
+    {
       key: "imageUrl",
       title: "Ảnh",
-      dataIndex: "imageUrl",
-      render: (image: string) => {
-        // console.log("Image URL:", image); // Debugging log
-        return <img src={image} alt="Blog" style={{ width: 100, height: 100, objectFit: 'cover' }} />;
+      dataIndex: "content",
+      render: (content: string) => {
+        const imageUrl = extractFirstImage(content);
+        return imageUrl ? (
+          <img src={imageUrl} alt="Blog" style={{ width: 100, height: 100, objectFit: "cover" }} />
+        ) : (
+          <span>Không có ảnh</span>
+        );
       },
     },
     {
@@ -96,39 +123,37 @@ const BlogList: React.FC = () => {
       key: "actions",
       title: "Hành động",
       render: (_: any, blogs: Blog) => (
-        <><Popconfirm
-          title="Xóa Blog"
-          description="Bạn có chắc chắn muốn xóa blog này không?"
-          onConfirm={() => handleDelete(blogs._id!)}
-          okText="Có"
-          cancelText="Không"
-        >
-          <Button danger type="primary">
-            Xóa
-          </Button>
-        </Popconfirm>
-        
-<Link to={`${blogs._id}`}>
-<Button type="primary">
-           Chỉnh sửa
-          </Button>
+        <>
+          <Popconfirm
+            title="Xóa Blog"
+            description="Bạn có chắc chắn muốn xóa blog này không?"
+            onConfirm={() => handleDelete(blogs._id!)}
+            okText="Có"
+            cancelText="Không"
+          >
+            <Button danger type="primary">
+              Xóa
+            </Button>
+          </Popconfirm>
+          <Link to={`${blogs._id}`}>
+            <Button type="primary">Chỉnh sửa</Button>
           </Link>
-          </>
+        </>
       ),
     },
   ];
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-40">
       {contextHolder}
       <div className="flex item-center justify-between">
-            <h1 className="text-3xl font-semibold">Danh sách bài viết</h1>
-          <Button type="primary">
-            <Link to="add_blog">
-            <PlusCircleFilled/> Thêm bài viết
-            </Link>
-          </Button>
-        </div>
+        <h1 className="text-3xl font-semibold">Danh sách bài viết</h1>
+        <Button type="primary">
+          <Link to="add_blog">
+            <PlusCircleFilled /> Thêm bài viết
+          </Link>
+        </Button>
+      </div>
       {blogs.length === 0 ? (
         <p>Không có blog nào.</p>
       ) : (

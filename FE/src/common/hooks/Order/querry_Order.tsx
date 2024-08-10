@@ -2,7 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import {
   get_order_client,
   getOneOrderUser,
-  getOrderById
+  getOrderByDayOfWeek,
+  getOrderById,
+  getOrderByMonthOfYear,
+  getOrderOfDay,
+  getOrderOfMonth,
+  getOrderOfWeek
 } from "../../../services/orderProduct";
 
 export function List_One_Order_User(userId: string) {
@@ -24,6 +29,70 @@ export const Query_Orders = (id?: string, page?: number, status?: string) => {
     }
   });
 
-
   return { data: data?.data || data, totalPages: data?.totalPages, ...rest };
+};
+export const useOrdersOfDay = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["orderOfDay"],
+    queryFn: async () => {
+      try {
+        return await getOrderOfDay();
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, ...rest };
+};
+export const useOrdersOfWeek = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["orderOfWeek"],
+    queryFn: async () => {
+      try {
+        return await getOrderOfWeek();
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, ...rest };
+};
+export const useOrdersByDayOfWeek = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["orderByDayOfWeek"],
+    queryFn: async () => {
+      try {
+        return await getOrderByDayOfWeek();
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, ...rest };
+};
+export const useOrdersOfMonth = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["orderOfMonth"],
+    queryFn: async () => {
+      try {
+        return await getOrderOfMonth();
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, ...rest };
+};
+export const useOrdersByMonthOfYear = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["orderByMonthOfYear"],
+    queryFn: async () => {
+      try {
+        return await getOrderByMonthOfYear();
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, ...rest };
 };
