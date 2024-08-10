@@ -30,8 +30,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
         (range) => range.min === min && range.max === max
       )
         ? selectedPriceRanges.filter(
-            (range) => !(range.min === min && range.max === max)
-          )
+          (range) => !(range.min === min && range.max === max)
+        )
         : [...selectedPriceRanges, { min, max }];
 
       onPriceChange(newPriceRanges);
@@ -64,69 +64,65 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
     <div className="relative inline-block text-left" ref={ref}>
       <button
         type="button"
-        className="flex items-center justify-between w-40 p-2 text-gray-900 bg-[#EDEDED] rounded-md overflow-hidden"
+        className="flex items-center py-3 px-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <strong className="font-semibold  overflow-hidden whitespace-nowrap flex-grow">
+        <strong className="">
           {getSelectedPriceLabels()}
         </strong>
         <SlArrowDown
-          className={`ml-2 transition-transform ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          size={10}
+          className={`ml-2 transition-transform ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
           style={{ flexShrink: 0 }} // Đảm bảo mũi tên không bị thu nhỏ
         />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-10 p-3 mt-2 w-[900px] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
-          <ul className="flex flex-wrap gap-2 max-h-60 overflow-y-auto">
-            <li className="flex-shrink-0 w-1/5 max-w-[calc(20%-0.8rem)]">
+        <div className="absolute z-10 w-[200px] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
+          <ul className="max-h-60 overflow-y-auto">
+            <li className="">
               <button
-                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${
-                  isPriceRangeSelected(50000, 150000) ? "bg-gray-100" : ""
-                }`}
-                onClick={() => handlePriceClick(50000, 150000)}
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(0, 150000) ? "bg-gray-100" : ""
+                  }`}
+                onClick={() => handlePriceClick(0, 150000)}
               >
-                $50K - $150K
+                $0K - $150K
               </button>
             </li>
-            <li className="flex-shrink-0 w-1/5 max-w-[calc(20%-0.8rem)]">
+            <li className="">
               <button
-                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${
-                  isPriceRangeSelected(150001, 200000) ? "bg-gray-100" : ""
-                }`}
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(150001, 200000) ? "bg-gray-100" : ""
+                  }`}
                 onClick={() => handlePriceClick(150001, 200000)}
               >
                 $150K - $200K
               </button>
             </li>
-            <li className="flex-shrink-0 w-1/5 max-w-[calc(20%-0.8rem)]">
+            <li className="">
               <button
-                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${
-                  isPriceRangeSelected(200001, 300000) ? "bg-gray-100" : ""
-                }`}
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(200001, 300000) ? "bg-gray-100" : ""
+                  }`}
                 onClick={() => handlePriceClick(200001, 300000)}
               >
                 $200K - $300K
               </button>
             </li>
-            <li className="flex-shrink-0 w-1/5 max-w-[calc(20%-0.8rem)]">
+            <li className="">
               <button
-                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${
-                  isPriceRangeSelected(300001, Infinity) ? "bg-gray-100" : ""
-                }`}
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(300001, Infinity) ? "bg-gray-100" : ""
+                  }`}
                 onClick={() => handlePriceClick(300001, Infinity)}
               >
                 Trên $300K
               </button>
             </li>
-            <li className="w-full mt-4">
+            <li className="w-full mt-4 flex justify-center">
               <button
                 className="text-blue-500 underline"
                 onClick={handleResetClick}
               >
-                Đặt lại bộ lọc giá
+                Đặt lại
               </button>
             </li>
           </ul>
