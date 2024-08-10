@@ -1,93 +1,133 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import usePriceFilter from "../../../../common/hooks/Products/Filter/usePriceFilter";
+import { SlArrowDown } from "react-icons/sl";
+import useClickOutside from "../../../../common/hooks/Products/Filter/useClickOutside";
 
 interface PriceFilterProps {
-  onPriceChange: (min: number | null, max: number | null) => void;
+  onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
 }
 
 const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
-  const { selectedPriceRange, handlePriceChange, resetPriceFilter } =
+  const { selectedPriceRanges, handlePriceChange, resetPriceFilter } =
     usePriceFilter();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const isPriceRangeSelected = (min: number, max: number) => {
-    return (
-      (selectedPriceRange.min === min && selectedPriceRange.max === max) ||
-      (selectedPriceRange.min === min &&
-        selectedPriceRange.max === Infinity &&
-        max === Infinity)
-    );
-  };
+  const ref = useClickOutside(() => setIsOpen(false));
 
-  const handleCheckboxChange = (min: number, max: number) => {
-    if (isPriceRangeSelected(min, max)) {
-      // Nếu khoảng giá đã được chọn, bỏ chọn khoảng giá
-      handlePriceChange(null, null);
-      onPriceChange(null, null);
-    } else {
-      // Nếu khoảng giá chưa được chọn, chọn khoảng giá mới
+  const isPriceRangeSelected = useCallback(
+    (min: number, max: number) => {
+      return selectedPriceRanges.some(
+        (range) => range.min === min && range.max === max
+      );
+    },
+    [selectedPriceRanges]
+  );
+
+  const handlePriceClick = useCallback(
+    (min: number, max: number) => {
       handlePriceChange(min, max);
-      onPriceChange(min, max);
+      const newPriceRanges = selectedPriceRanges.some(
+        (range) => range.min === min && range.max === max
+      )
+        ? selectedPriceRanges.filter(
+          (range) => !(range.min === min && range.max === max)
+        )
+        : [...selectedPriceRanges, { min, max }];
+
+      onPriceChange(newPriceRanges);
+    },
+    [handlePriceChange, onPriceChange, selectedPriceRanges]
+  );
+
+  const handleResetClick = useCallback(() => {
+    resetPriceFilter();
+    onPriceChange([]);
+  }, [resetPriceFilter, onPriceChange]);
+
+  const getSelectedPriceLabels = () => {
+    if (selectedPriceRanges.length === 0) {
+      return "Giá";
     }
+    return selectedPriceRanges
+      .map((range) => {
+        if (range.max === Infinity) {
+          return `Trên $${Math.round(range.min / 1000)}K`;
+        }
+        return `$${Math.round(range.min / 1000)}K - $${Math.round(
+          range.max / 1000
+        )}K`;
+      })
+      .join(", ");
   };
 
   return (
-    <div className="border-b py-2">
-      <details open>
-        <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 bg-gray-100">
-          <strong>Giá</strong>
-        </summary>
-        <div className="flex flex-col py-4">
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={isPriceRangeSelected(50000, 150000)}
-                onChange={() => handleCheckboxChange(50000, 150000)}
-              />
-              $50K - $150K
-            </label>
-          </div>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={isPriceRangeSelected(150001, 200000)}
-                onChange={() => handleCheckboxChange(150001, 200000)}
-              />
-              $150K - $200K
-            </label>
-          </div>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={isPriceRangeSelected(200001, 300000)}
-                onChange={() => handleCheckboxChange(200001, 300000)}
-              />
-              $200K - $300K
-            </label>
-          </div>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={isPriceRangeSelected(300001, Infinity)}
-                onChange={() => handleCheckboxChange(300001, Infinity)}
-              />
-              Above $300K
-            </label>
-          </div>
-          <button
-            className="mt-4 text-blue-500"
-            onClick={() => {
-              resetPriceFilter();
-              onPriceChange(null, null);
-            }}
-          >
-            Reset Price Filter
-          </button>
+    <div className="relative inline-block text-left" ref={ref}>
+      <button
+        type="button"
+        className="flex items-center py-3 px-4"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <strong className="">
+          {getSelectedPriceLabels()}
+        </strong>
+        <SlArrowDown
+          size={10}
+          className={`ml-2 transition-transform ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
+          style={{ flexShrink: 0 }} // Đảm bảo mũi tên không bị thu nhỏ
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-10 w-[200px] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
+          <ul className="max-h-60 overflow-y-auto">
+            <li className="">
+              <button
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(0, 150000) ? "bg-gray-100" : ""
+                  }`}
+                onClick={() => handlePriceClick(0, 150000)}
+              >
+                $0K - $150K
+              </button>
+            </li>
+            <li className="">
+              <button
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(150001, 200000) ? "bg-gray-100" : ""
+                  }`}
+                onClick={() => handlePriceClick(150001, 200000)}
+              >
+                $150K - $200K
+              </button>
+            </li>
+            <li className="">
+              <button
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(200001, 300000) ? "bg-gray-100" : ""
+                  }`}
+                onClick={() => handlePriceClick(200001, 300000)}
+              >
+                $200K - $300K
+              </button>
+            </li>
+            <li className="">
+              <button
+                className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${isPriceRangeSelected(300001, Infinity) ? "bg-gray-100" : ""
+                  }`}
+                onClick={() => handlePriceClick(300001, Infinity)}
+              >
+                Trên $300K
+              </button>
+            </li>
+            <li className="w-full mt-4 flex justify-center">
+              <button
+                className="text-blue-500 underline"
+                onClick={handleResetClick}
+              >
+                Đặt lại
+              </button>
+            </li>
+          </ul>
         </div>
-      </details>
+      )}
     </div>
   );
 };

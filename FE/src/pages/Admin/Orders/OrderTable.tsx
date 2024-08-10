@@ -10,12 +10,10 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     const date = new Date(datetime);
     return date.toLocaleDateString();
   };
-
   const dataSort = orders?.map((order: any) => ({
     key: order._id,
     ...order,
   }));
-
   const createFilters = (order: IOrder[]) => {
     return order
       .map((order: IOrder) => order.orderNumber)
@@ -28,7 +26,6 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
         value: orderNumber,
       }));
   };
-
   const columns: ColumnType<IOrder>[] = [
     {
       title: "Mã đơn",
@@ -78,19 +75,13 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (_: any, order: any) => (
-        <p>
-          {order?.status === 1
-            ? "Chờ xác nhận"
-            : order?.status === 2
-            ? "Đang chuẩn bị"
-            : order?.status === 3
-            ? "Đang vận chuyển"
-            : order?.status === 4
-            ? "Đã giao hàng"
-            : "Đã hủy"}
-        </p>
-      ),
+      render: (_: any, order: any) => {
+        return (
+          <p>
+            {order?.status == 1 ? "Chờ xác nhận" : order?.status == 2 ? "Đang chuẩn bị" : order?.status == 3 ? "Đang vận chuyển" : order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
+          </p>
+        );
+      },
     },
     {
       dataIndex: "action",

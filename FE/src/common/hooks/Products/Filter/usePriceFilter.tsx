@@ -1,21 +1,42 @@
 import { useState } from "react";
 
+interface PriceRange {
+  min: number;
+  max: number;
+}
+
 const usePriceFilter = () => {
-  const [selectedPriceRange, setSelectedPriceRange] = useState<{
-    min: number | null;
-    max: number | null;
-  }>({ min: null, max: null });
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState<PriceRange[]>(
+    []
+  );
 
   const handlePriceChange = (min: number | null, max: number | null) => {
-    setSelectedPriceRange({ min, max });
+    if (min === null || max === null) {
+      setSelectedPriceRanges([]);
+    } else {
+      setSelectedPriceRanges((prev) => {
+        const newRange = { min, max };
+        const isRangeSelected = prev.some(
+          (range) => range.min === min && range.max === max
+        );
+
+        if (isRangeSelected) {
+          return prev.filter(
+            (range) => !(range.min === min && range.max === max)
+          );
+        } else {
+          return [...prev, newRange];
+        }
+      });
+    }
   };
 
   const resetPriceFilter = () => {
-    setSelectedPriceRange({ min: null, max: null });
+    setSelectedPriceRanges([]);
   };
 
   return {
-    selectedPriceRange,
+    selectedPriceRanges,
     handlePriceChange,
     resetPriceFilter,
   };

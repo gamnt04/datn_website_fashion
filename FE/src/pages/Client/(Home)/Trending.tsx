@@ -46,7 +46,7 @@ const Trending_Products = () => {
   };
 
   return (
-    <div className="py-16 text-center border-b overflow-hidden ">
+    <div className="py-16 text-center border-b overflow-hidden">
       {/* title */}
       <div className="text-center flex flex-col items-center mb-[50px]">
         <span className="text-[42px] font-medium tracking-wide mb-[20px]">
@@ -73,7 +73,7 @@ const Trending_Products = () => {
               />
             </div>
           ) : (
-            <div className="mb-[20px] w-[1330px] mx-auto">
+            <div className="mb-[20px]">
               <div
                 ref={sizeListItems}
                 className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[1.5%]  mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%]"
@@ -102,9 +102,9 @@ const Trending_Products = () => {
             </div>
           )}
           {/* view all */}
-          <div className="flex items-center justify-center mx-auto  mx-auto h-[60px] w-[172.18px] hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
+          <div className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
             {" "}
-            <Link onClick={ScrollTop} className="text-[15px] " to={"/shops"}>
+            <Link onClick={ScrollTop} className="text-[16px] font-bold " to={"/shops"}>
               Xem thêm
             </Link>
           </div>

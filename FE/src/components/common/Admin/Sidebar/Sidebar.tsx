@@ -6,7 +6,6 @@ import {
   Palette,
   Shirt,
   Trash2,
-  LetterText,
   User2
 } from "lucide-react";
 import { useState } from "react";

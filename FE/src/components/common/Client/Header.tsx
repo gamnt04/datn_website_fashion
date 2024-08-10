@@ -4,21 +4,23 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { IProduct } from "../../../common/interfaces/Product";
-import useSearch from "../../../systems/utils/Search";
+import useSearch from "../../../systems/utils/useSearch";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { message } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
-    searchTerm,
+    query,
+    suggestions,
+    showSuggestions,
+    setShowSuggestions,
+    handleSearch,
     searchRef,
-    handleChange,
-    handleFocus,
-    results,
-    showResults,
-    handleResultClick,
+    isLoading,
+    handleInputChange,
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -38,14 +40,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -88,7 +90,7 @@ const Header = () => {
     <>
       <div
         ref={toggleFixedHeader}
-        className="w-full fixed top-0 bg-white z-[6] !bg-[#001529] text-white"
+        className="w-full fixed top-0 z-[6] !bg-[#001529] text-white"
       >
         {contentHolder}
         <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
@@ -147,50 +149,65 @@ const Header = () => {
           {/* options */}
           <nav className="flex items-center justify-between *:mx-3 *:duration-300">
             {/* search */}
-            <div ref={searchRef} className="search-container">
+            <div ref={searchRef} className="relative w-full max-w-xl">
               <form
+                onSubmit={handleSearch}
                 className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2  duration-300`}
               >
                 <input
                   type="text"
+                  value={query}
+                  onChange={handleInputChange}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="Search..."
                   className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
                 />
                 <button
                   type="submit"
                   className="absolute grid place-items-center text-black top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
                 >
-                  <Search />
+                  <Search size={20} />
                 </button>
               </form>
-              {showResults && searchTerm.trim() && (
+              {showSuggestions && query.length > 0 && (
                 <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
-                  {results.length > 0 ? (
+                  {isLoading ? (
+                    <div className="flex justify-center px-4 py-2 text-gray-700">
+                      <LoadingOutlined />
+                    </div>
+                  ) : suggestions.length > 0 ? (
                     <ul>
-                      {results.map((product: IProduct) => (
+                      {suggestions.slice(0, 5).map((suggestion: IProduct) => (
                         <Link
-                          to={`/shops/detail_product/${product._id}`}
-                          key={product._id}
+                          onClick={() => setShowSuggestions(false)}
+                          to={`/shops/detail_product/${suggestion._id}`}
+                          key={suggestion._id}
                           className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-                          onClick={handleResultClick}
                         >
                           <img
-                            src={product.image_product}
-                            alt={product.name_product}
+                            src={suggestion.image_product}
+                            alt={suggestion.name_product}
                             className="w-8 h-8 mr-2"
                           />
                           <p className="text-black hover:underline">
-                            {product.name_product}
+                            {suggestion.name_product}
                           </p>
                         </Link>
                       ))}
                     </ul>
                   ) : (
                     <div className="px-4 py-2 text-gray-700">
-                      No results found
+                      Tìm kiếm "{query}"
+                    </div>
+                  )}
+                  {suggestions.length > 5 && (
+                    <div className="px-4 py-2 text-center">
+                      <button
+                        onClick={handleSearch}
+                        className="text-blue-500 hover:underline"
+                      >
+                        Xem tất cả
+                      </button>
                     </div>
                   )}
                 </div>
@@ -229,7 +246,7 @@ const Header = () => {
                   className="group *:duration-300 relative py-1"
                 >
                   {Favouritedata?.products?.length > 0 ? (
-                    <span className="absolute bg-red-500 w-5 h-5 grid place-items-center text-white text-xs py-[1px] px-[1px] rounded-xl -top-1 -right-3 z-10">
+                    <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] px-[1px] rounded-xl -top-0.5 -right-2 z-10">
                       {Favouritedata?.products?.length}
                     </span>
                   ) : (

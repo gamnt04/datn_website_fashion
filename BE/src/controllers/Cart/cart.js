@@ -25,7 +25,7 @@ export const getCartByUserId = async (req, res) => {
   }
 };
 export const removeProductToCart = async (req, res) => {
-  const { userId, productId } = req.body;
+  const { userId, productId, color, size } = req.body;
   try {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -33,10 +33,30 @@ export const removeProductToCart = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Cart Not Found" });
     }
-    cart.products = cart.products.filter(
-      (product) =>
-        product.productId && product.productId.toString() !== productId
-    );
+    // cart.products = cart.products.filter(
+    //   (product) => product.productId && product.productId.toString() !== productId._id
+    // );
+    for (let i = cart.products.length - 1 ; i >= 0; i--) {
+      if (cart.products[i].productId.toString() == productId._id.toString()) {
+        if (cart.products[i].color_item == color && cart.products[i].name_size == size) {
+          cart.products.splice(i, 1);
+          break;
+        }
+        else if (cart.products[i].color_item == color) {
+          console.log(cart.products);
+          cart.products.splice(i, 1);
+          break;
+        }
+        else if (cart.products[i].name_size == size) {
+          console.log(cart.products);
+          break;
+        }
+        else {
+          cart.products.splice(i, 1);
+          break;
+        }
+      }
+    };
     await cart.save();
     return res.status(StatusCodes.OK).json({ cart });
   } catch (error) {
