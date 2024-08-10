@@ -1,7 +1,8 @@
-import { Button, Form, FormProps, Input, message } from "antd";
+import { Button, Form, FormProps, Input, message, Spin } from "antd";
 import useSignUp from "../../../common/hooks/Auth/useSignUp";
 import { signUpSchema } from "../../../common/validations/auth/SignUp";
 import { Link } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
 
 type FieldType = {
   email: string;
@@ -16,32 +17,19 @@ const Register: React.FC = () => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     try {
-      const { error } = signUpSchema.validate(values, {
-        abortEarly: false,
-      });
-
-      if (error) {
-        const errors = error.details.reduce(
-          (acc: Record<string, string>, curr) => {
-            acc[curr.path[0]] = curr.message;
-            return acc;
-          },
-          {}
-        );
-        messageApi.error("Vui lòng kiểm tra thông tin bạn đã nhập");
-        return;
-      }
       mutate(values);
     } catch (error) {
       messageApi.error("Đăng ký thất bại. Vui lòng thử lại.");
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -62,7 +50,6 @@ const Register: React.FC = () => {
                   name="basic"
                   initialValues={{ remember: true }}
                   onFinish={onFinish}
-                  onFinishFailed={onFinishFailed}
                   autoComplete="off"
                   layout="vertical"
                   className="space-y-4"
