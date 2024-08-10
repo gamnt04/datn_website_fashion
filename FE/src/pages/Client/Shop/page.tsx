@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 
@@ -40,24 +40,25 @@ const IndexShops = () => {
 
   return (
     <div className="lg:mt-[40px] mt-[60px]">
-      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-        Trang chủ &#10148; Sản phẩm &#10148; Tất cả
-      </div>
-      <MenuShop
-        onCategorySelect={handleCategorySelect}
-        onPriceChange={handlePriceChange}
-        setSearch={() => {}}
-        setSort={() => {}}
-        selectedColors={selectedColors}
-        toggleColor={toggleColor}
-        resetColorFilter={resetColorFilter}
-        onColorChange={handleColorChange}
-        selectedSizes={selectedSizes}
-        toggleSize={toggleSize}
-        resetSizeFilter={resetSizeFilter}
-        onSizeChange={handleSizeChange}
-      />
-      <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
+
+      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+        <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+          Trang chủ &#10148; Sản phẩm &#10148; Tất cả
+        </div>
+        <MenuShop
+          onCategorySelect={handleCategorySelect}
+          onPriceChange={handlePriceChange}
+          setSearch={() => { }}
+          setSort={() => { }}
+          selectedColors={selectedColors}
+          toggleColor={toggleColor}
+          resetColorFilter={resetColorFilter}
+          onColorChange={handleColorChange}
+          selectedSizes={selectedSizes}
+          toggleSize={toggleSize}
+          resetSizeFilter={resetSizeFilter}
+          onSizeChange={handleSizeChange}
+        />
         <Products_Shop
           cate_id={cate_id} // Truyền mảng ID
           priceRanges={priceRanges}
@@ -65,6 +66,8 @@ const IndexShops = () => {
           selectedSizes={selectedSizes}
         />
       </div>
+
+
       {/* <Get_in_touch /> */}
     </div>
   );

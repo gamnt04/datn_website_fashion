@@ -38,37 +38,36 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     <div className="relative inline-block text-left" ref={ref}>
       <button
         type="button"
-        className="flex items-center justify-between w-52 p-2 text-gray-900 bg-[#EDEDED] rounded-md overflow-hidden"
+        className="flex items-center py-3 px-4"
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <span className="flex-grow font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
+        <span className="font-bold">
           {selectedCategoryNames.length > 0
             ? selectedCategoryNames.join(", ")
             : "Danh mục"}
         </span>
         <SlArrowDown
-          className={`ml-2 transition-transform ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          size={10}
+          className={`ml-2 transition-transform ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
           style={{ flexShrink: 0 }} // Đảm bảo mũi tên không bị thu nhỏ
         />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-10 p-3 mt-2 w-[900px] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
-          <ul className="flex flex-wrap gap-4">
+        <div className="absolute left-0 z-10 w-[200px] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
+          <ul className="">
             {visibleCategories.length > 0 ? (
               visibleCategories.map((category) => (
                 <li
                   key={category._id}
-                  className="flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/5"
+                  className=""
                 >
                   <button
-                    className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${
-                      selectedCategories.includes(category._id)
-                        ? "bg-gray-100"
-                        : ""
-                    }`}
+                    className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${selectedCategories.includes(category._id)
+                      ? "bg-gray-100"
+                      : ""
+                      }`}
                     onClick={() => handleCategoryToggle(category._id)}
                   >
                     {category.name_category}

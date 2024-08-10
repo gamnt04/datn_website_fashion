@@ -1,5 +1,5 @@
-export function Convert_Color (item : string) {
-    let color : string;
+export function Convert_Color(item: string) {
+    let color: string;
     if (item == 'Red' || item == 'Đỏ') {
         color = 'bg-red-500 border-none'
     }
@@ -15,7 +15,7 @@ export function Convert_Color (item : string) {
     else if (item == 'tím' || item == 'Violet') {
         color = 'bg-violet-500 border-none'
     }
-    else if (item == 'Blue' || item == 'Xanh trời') {
+    else if (item == 'Blue' || item == 'Xanh') {
         color = 'bg-blue-500 border-none'
     }
     else if (item == 'nâu' || item == 'Brow') {
