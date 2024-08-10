@@ -40,14 +40,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -180,7 +180,7 @@ const Header = () => {
                       {suggestions.slice(0, 5).map((suggestion: IProduct) => (
                         <Link
                           onClick={() => setShowSuggestions(false)}
-                          to={`/shops/detail_product/${suggestion._id}`}
+                          to={`/shops/${suggestion._id}`}
                           key={suggestion._id}
                           className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
                         >
