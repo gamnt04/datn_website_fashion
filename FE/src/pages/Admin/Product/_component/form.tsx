@@ -300,7 +300,6 @@ const Form_Item = ({ mode }: any) => {
                                       </Form.Item>
                                     </div>
 
-<<<<<<< HEAD
                                     <div>
                                       <label
                                         htmlFor=""
@@ -317,81 +316,6 @@ const Form_Item = ({ mode }: any) => {
                                             message: "Số lượng là bắt buộc!"
                                           },
                                           {
-=======
-                        <div className="flex justify-around gap-10 ">
-                            <div>
-                                <label htmlFor="" className=" text-gray-100 font-medium text-sm">Ảnh sản phẩm</label>
-                                <Form.Item<FieldType>
-                                    name="image_product"
-                                    initialValue={{ ...data_one_item?.data?.product?.image_product }}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Ảnh sản phẩm là bắt buộc!",
-                                        },
-                                    ]}
-                                >
-                                    <div className="flex justify-end">
-                                        <Upload
-                                            // fileList={image_item}
-                                            listType="picture-card"
-                                            beforeUpload={() => false}
-                                            onChange={handleImageChange}
-                                            className="mt-2"
-                                            maxCount={1}
-                                        >
-                                            <button
-                                                style={{ border: 0, background: "none" }}
-                                                type="button"
-                                            >
-                                                <PlusOutlined />
-                                            </button>
-                                        </Upload>
-                                    </div>
-                                </Form.Item>
-                            </div>
-                            <div>
-                                <label htmlFor="" className=" text-gray-100 font-medium text-sm">Bộ sưu tập</label>
-                                <Form.Item<FieldType>
-                                    name="gallery_product"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Bộ sưu tập sản phẩm là bắt buộc!",
-                                        },
-                                    ]}
-                                >
-                                    <div className="flex justify-end">
-                                        <Upload
-                                            // fileList={gallery_item}
-                                            listType="picture-card"
-                                            beforeUpload={() => false}
-                                            onChange={handleGalleryChange}
-                                            multiple={true}  // Allow multiple uploads
-                                            className="mt-2"
-                                        >
-                                            <button
-                                                style={{ border: 0, background: "none" }}
-                                                type="button"
-                                            >
-                                                <PlusOutlined />
-                                            </button>
-                                        </Upload>
-                                    </div>
-                                </Form.Item>
-                            </div>
-
-                        </div>
-
-                        {
-                            status_attr && (<>
-                                <label htmlFor="" className="text-gray-100 font-medium text-sm">Giá sản phẩm</label>
-                                <Form.Item<FieldType>
-                                    name="price_product"
-                                    rules={[
-                                        { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
-                                        {
->>>>>>> main
                                             type: "number",
                                             min: 0,
                                             message:
