@@ -45,54 +45,54 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
     <div className="relative inline-block text-left" ref={ref}>
       <button
         type="button"
-        className="flex items-center justify-between w-40 p-2 text-gray-900 bg-[#EDEDED] rounded-md overflow-hidden"
+        className="flex items-center py-3 px-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <strong className="font-semibold text-ellipsis overflow-hidden whitespace-nowrap flex-grow">
+        <strong className="">
           {getSelectedSizeLabel()}
         </strong>
         <SlArrowDown
-          className={`ml-2 transition-transform ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          size={10}
+          className={`ml-2 transition-transform ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
           style={{ flexShrink: 0 }} // Đảm bảo mũi tên không bị thu nhỏ
         />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-10 p-3 mt-2 w-[900px] bg-white border border-gray-200 rounded-md shadow-lg overflow-auto max-h-60">
-          <ul className="flex flex-wrap gap-2">
+        <div className="absolute left-0 z-10  w-[500px] bg-white border border-gray-200 rounded overflow-auto">
+          <ul className="grid grid-cols-4 gap-1 max-h-60 overflow-y-auto">
             {sizeOptions.length > 0 ? (
               sizeOptions.map((size) => (
                 <li
                   key={size}
-                  className="flex-shrink-0 w-1/5 max-w-[calc(20%-0.8rem)]"
+                  className=""
                 >
                   <button
-                    className={`w-full text-left py-2 px-4 rounded-md hover:bg-gray-100 ${
-                      selectedSizes.includes(size) ? "bg-gray-100" : ""
-                    }`}
+                    className={`w-full text-left p-2 rounded hover:bg-gray-100 ${selectedSizes.includes(size) ? "bg-gray-100" : ""
+                      }`}
                     onClick={() => handleSizeChange(size)}
                   >
-                    size {size}
+                    <span className="flex justify-between">size: {size}</span>
                   </button>
                 </li>
               ))
             ) : (
               <p className="px-4 py-2">Không có size</p>
             )}
-            <li className="w-full mt-4">
-              <button
-                className="text-blue-500 underline"
-                onClick={() => {
-                  resetSizeFilter();
-                  onSizeChange([]); // Reset the filter
-                }}
-              >
-                Đặt lại bộ lọc kích thước
-              </button>
-            </li>
+
           </ul>
+          <div className="w-full mt-4 flex justify-center p-1">
+            <button
+              className="text-blue-500 underline "
+              onClick={() => {
+                resetSizeFilter();
+                onSizeChange([]); // Reset the filter
+              }}
+            >
+              Đặt lại
+            </button>
+          </div>
         </div>
       )}
     </div>
