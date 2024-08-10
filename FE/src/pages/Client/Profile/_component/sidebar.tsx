@@ -17,7 +17,7 @@ function getItem(
     key,
     icon,
     children,
-    label,
+    label
   } as MenuItem;
 }
 
@@ -42,26 +42,22 @@ const Sidebar_Profile: React.FC = () => {
     getItem("Thông tin tài khoản", "1", <User className="h-5" />, [
       getItem(<NavLink to="/profile">Hồ sơ</NavLink>, "1-1"),
       getItem(<NavLink to="/profile/address">Địa chỉ</NavLink>, "1-2"),
-      getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3"),
+      getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3")
     ]),
-    getItem(
-      <NavLink to="/profile/favourite">Yêu thích</NavLink>,
-      "2",
-      <Heart className="h-5" />
-    ),
+    getItem(<NavLink to="">Yêu thích</NavLink>, "2", <Heart className="h-5" />),
     getItem(
       <NavLink to="/profile/allorder">Đơn hàng của tôi</NavLink>,
       "3",
       <Box className="h-5" />
     ),
     {
-      type: "divider",
+      type: "divider"
     },
     getItem(
       <p onClick={showModal}>Đăng xuất</p>,
       "4",
       <LogOut className="h-5 " />
-    ),
+    )
   ];
 
   const onClick: MenuProps["onClick"] = (e) => {
