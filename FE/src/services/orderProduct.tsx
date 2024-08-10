@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import instance from "../configs/axios";
 
-const baseUri = 'http://localhost:2004/api/v1/orders';
+const baseUri = "http://localhost:2004/api/v1/orders";
 
 // export const GetAllOrder = async (page: number, status: string = "") => {
 //   try {
@@ -25,7 +25,7 @@ export async function get_order_client(page?: number, status?: string) {
     }
 
     if (params.length > 0) {
-      uri += `?${params.join('&')}`;
+      uri += `?${params.join("&")}`;
     }
     const res = await fetch(uri);
     if (!res.ok) {
@@ -34,7 +34,7 @@ export async function get_order_client(page?: number, status?: string) {
     const { data, totalDocs, totalPages } = await res.json();
     return { data: data.docs, totalDocs, totalPages };
   } catch (error) {
-    console.log(error || "Loi server!")
+    console.log(error || "Loi server!");
   }
 }
 export const getOrderById = async (id: string) => {
@@ -61,12 +61,11 @@ export const getOneOrderUser = async (userId: string) => {
 export const Add_Order = async (order: any) => {
   try {
     const data = await instance.post(`/orders`, order);
-    if(data?.status === 201) {
-      sessionStorage.removeItem('item_order');
-      toast.success('Đặt hàng thành công', {autoClose : 500})
-    }
-    else {
-      toast.error('Đặt hàng không thành công', {autoClose : 500})
+    if (data?.status === 201) {
+      sessionStorage.removeItem("item_order");
+      toast.success("Đặt hàng thành công", { autoClose: 500 });
+    } else {
+      toast.error("Đặt hàng không thành công", { autoClose: 500 });
     }
     return data?.data;
   } catch (error) {
@@ -84,9 +83,50 @@ export const Update_Status = async (items: any) => {
   }
 };
 
-
-
-
+// lấy các đơn hàng trong ngày
+export const getOrderOfDay = async () => {
+  try {
+    const { data } = await instance.get(`/orders/all_order_of_to_day`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+// lấy các đơn hàng trong tuần
+export const getOrderOfWeek = async () => {
+  try {
+    const { data } = await instance.get(`/orders/all_order_week`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+// lấy các đơn hàng theo các thứ trong tuần
+export const getOrderByDayOfWeek = async () => {
+  try {
+    const { data } = await instance.get(`/orders/all_order_by_day_of_week`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+// lấy các đơn hàng trong tháng
+export const getOrderOfMonth = async () => {
+  try {
+    const { data } = await instance.get(`/orders/all_order_month`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getOrderByMonthOfYear = async () => {
+  try {
+    const { data } = await instance.get(`/orders/all_order_by_month_of_year`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // huy don hang có yêu cầu xác nhận
 
@@ -94,9 +134,9 @@ export const Cancel_Order = async (id: any) => {
   try {
     const { data } = await instance.post(`/orders/${id}/cancel`);
     if (data) {
-      console.log('Yêu cầu hủy đơn thành công', data);
+      console.log("Yêu cầu hủy đơn thành công", data);
     } else {
-      console.log('Yêu cầu hủy đơn hàng thất bại', data);
+      console.log("Yêu cầu hủy đơn hàng thất bại", data);
     }
     console.log(data);
     return data;
@@ -105,16 +145,13 @@ export const Cancel_Order = async (id: any) => {
   }
 };
 
-
-
 export const confirmCancelOrder = async ({ id, confirm }: any) => {
   try {
-    const { data } = await instance.post(`/orders/${id}/cancel/confirm`, { confirm });
+    const { data } = await instance.post(`/orders/${id}/cancel/confirm`, {
+      confirm
+    });
     return data;
   } catch (error) {
     console.log(error);
   }
 };
-
-
-
