@@ -137,10 +137,10 @@ const ChartRevenueStatistcs: React.FC = () => {
   useEffect(() => {
     if (orderByMonthOfYearData) {
       const revenueData = orderByMonthOfYearData?.data?.map(
-        (item) => item.totalRevenue
+        (item: any) => item.totalRevenue
       );
       const orderCountData = orderByMonthOfYearData?.data?.map(
-        (item) => item.totalOrders
+        (item: any) => item.totalOrders
       );
 
       setState({
