@@ -13,12 +13,14 @@ import { useQuery } from "@tanstack/react-query";
 import ChartRevenueStatistcs from "./components/ChartRevenueStatistics";
 import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
 import ChartPayment from "./components/ChartPayment";
+import TableTopProducts from "./components/TableTopProducts";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
   const { data: productData } = Query_Products();
   const { data: orderOfDayData } = useOrdersOfDay();
-  const { data: orderOfWeekData } = useOrdersOfWeek();
+  const { data: orderData } = Query_Orders();
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -36,7 +38,7 @@ const MainContent = () => {
     <>
       {" "}
       <div className=" lg:mx-10">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5 lg:mt-20">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-4 2xl:gap-7.5 lg:mt-24">
           <CardDataStats
             title="Doanh Thu Hôm Nay"
             total={formatCurrency(totalPriceOrderDay)}
@@ -149,17 +151,15 @@ const MainContent = () => {
             </div>
           </CardDataStats>
         </div>
-        <div className="mt-4 grid md:mt-6 md:gap-6 ">
+        <div className="mt-6 lg:mt-8 grid md:mt-6 md:gap-6 ">
           <ChartRevenueStatistcs />
-
-          {/* <ChartThree />
-        <MapOne /> */}
-
-          {/* <ChatCard /> */}
         </div>
-        <div className=" mt-6 flex justify-between">
+        <div className=" mt-7 flex justify-between">
           <ChartRevenueWeekly />
           <ChartPayment />
+        </div>
+        <div className="mt-7 flex space-x-7">
+          <TableTopProducts />
         </div>
       </div>
     </>
