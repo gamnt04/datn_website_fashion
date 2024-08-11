@@ -96,6 +96,40 @@ export const createOrder = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
+export const createOrderPayment = async (req, res) => {
+  try {
+    // Chuyển req.body sang đối tượng JSON
+    const requestBody = JSON.parse(JSON.stringify(req.body));
+    const { userId, items, customerInfo, totalPrice } = requestBody;
+    console.log(requestBody);
+
+    const data = await Order.create(requestBody);
+    console.log(data);
+    if (data) {
+      const order = new Order({
+        userId,
+        items,
+        customerInfo: {
+          email: customerInfo.email,
+          phone: customerInfo.phone,
+          payment: customerInfo.payment,
+          userName: customerInfo.userName,
+          address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
+        },
+        totalPrice,
+  
+      });
+      await SendMail(customerInfo.email, order);
+      await Cart.findOneAndDelete({ userId: userId });
+      return res.status(201).json({ data, message: "Tạo đơn hàng thanh toán online thành công" });
+    } else {
+      return res.status(400).json({ message: "Lỗi rồi fix lại thanh toán online" });
+    }
+  } catch (error) {
+    console.error("Error creating order payment:", error);
+    return res.status(500).json({ message: "Lỗi rồi fix lại thanh toán online" });
+  }
+};
 // export const getOrders = async (req, res) => {
 //   try {
 //     const { page = 1, status } = req.query;
@@ -386,7 +420,7 @@ export const updateOrder = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, total_price } = req.body;
     console.log(status);
     const validStatuses = ["1", "2", "3", "4", "5"];
     if (!validStatuses.includes(status)) {
@@ -406,6 +440,7 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
+    order.total_price = total_price;
     await order.save();
     return res
       .status(StatusCodes.OK)

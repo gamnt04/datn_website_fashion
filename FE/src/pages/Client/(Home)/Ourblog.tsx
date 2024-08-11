@@ -1,57 +1,87 @@
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
-import { Link } from "react-router-dom";
-import { Blog } from "../../../common/interfaces/Blog";
-import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
 
 const Ourblog = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["blogs"],
-    queryFn: () => instance.get(`/blogs`),
+  const { data } = useQuery({
+    queryKey: ['BLOGS'],
+    queryFn: async () => {
+      const { data } = await instance.get('/blogs');
+      return data;
+    }
   });
 
-  // if (isLoading) return <div>Loading...</div>;
+  const filterPublishedBlogs = (blogs: any) => {
+    return blogs.filter((blog: any) => blog.published);
+  };
+
+  // Lọc bài viết đã xuất bản
+  const publishedBlogs = filterPublishedBlogs(data || []);
+
+  // Chọn 3 bài viết nổi bật
+  const featuredBlogs = publishedBlogs.slice(0, 3);
+
   return (
-    (isLoading ? (
-      <div className="flex justify-center items-center h-screen">
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
-      </div>
-    ) : (
-      <div className="py-16 border-b">
-        <h2 className="text-[42px] font-medium text-center text-[#222222]">
-          Our Blog
-        </h2 >
-        <p className="font-normal text-center text-[#999999] mt-6">
-          Find a bright ideal to suit your taste with our great selection of
-          suspension.
-        </p>
-        <div className="grid grid-cols-1 gap-9 mt-14 sm:grid-cols-2 md:grid-cols-3 *:rounded">
-          {data?.data.map((blog: Blog) => (
-            <Link to={`/blogs/${blog._id}`}>
-              <div className="pb-10 overflow-hidden duration-500 cursor-pointer hover:shadow-xl group">
-                <img
-                  src={blog.imageUrl}
-                  alt=""
-                  className="w-full rounded group-hover:scale-105 h-[215px] transition-transform duration-300 transform"
-                />
-                <div className="px-8 ">
-                  <h3 className="text-2xl font-normal text-[#222222] mt-6">
-                    {blog.title}
-                  </h3>
-                  <p className="text-[12.5px] font-normal text-[#999999]  mt-6">
-                    {blog.createdAt}
+    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="lg:mt-[40px] mt-[60px]">
+        <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+          Home &#10148; Products &#10148; Blog
+        </div>
+        <div className="container mx-auto pt-[20px] text-center">
+          <h1 className="text-[30px] font-bold">Tin tức nổi bật</h1>
+        </div>
+        <div className="container mx-auto grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
+          {featuredBlogs.map((blog: any) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(blog.content, "text/html");
+            const title = doc.querySelector("h1");
+            const image = doc.querySelector("img");
+            const content = doc.querySelector("p");
+
+            return (
+              <div key={blog._id} className="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover">
+                  <img
+                    src={image?.src}
+                    alt={title?.textContent || "Blog image"}
+                    className="image_blog w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                </div>
+                <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
+                  <a
+                    href={`/blogs/${blog._id}`}
+                    className="text-white text-[20px] font-semibold"
+                  >
+                    View full details
+                  </a>
+                </div>
+                <div className="px-4 py-4">
+                  <h2 className="py-[10px] text-[20px] font-semibold">
+                    <a href={`/blogs/${blog._id}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
+                      {title?.textContent}
+                    </a>
+                  </h2>
+                  <div className="flex text-[#7D7D7D] text-[14px] space-x-4 mb-2">
+                    <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
+                    <p>{blog.author}</p>
+                  </div>
+                  <p className="mt-2 text-gray-700">
+                    {String(content?.innerHTML).substring(0, 100)}...
                   </p>
-                  <p className="text-[16px] font-normal text-[#999999] mt-6 line-clamp-3">
-                    {blog.content}
-                  </p>
+                  <div className="text-center mt-4">
+                    <a
+                      href={`/blogs/${blog._id}`}
+                      className="text-blue-500 hover:text-blue-700 font-semibold"
+                    >
+                      Read More
+                    </a>
+                  </div>
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
-      </div >
-    ))
+      </div>
+    </div>
   );
 };
 

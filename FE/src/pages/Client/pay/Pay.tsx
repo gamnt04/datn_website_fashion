@@ -5,12 +5,15 @@ import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin, Table } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
+import queryString from "query-string";
+
 import {
   Add_Address,
   List_Address,
 } from "../../../components/common/Client/_component/Address";
 import { Address, Chevron_right } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -19,7 +22,7 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-  console.log(auth);
+  // console.log(auth);
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
@@ -61,26 +64,60 @@ const Pay = () => {
   };
 
   // add order
-  function onAddOrder(data_form: any) {
+  const onAddOrder = async (data_form: any) => {
     if (!data_form.address || data_form.address.trim() === "") {
-      messageApi.open({
-        type: "warning",
-        content: "Vui lòng chọn chọn đại chỉ!",
-      });
-      return
+        messageApi.open({
+            type: "warning",
+            content: "Vui lòng chọn địa chỉ!",
+        });
+        return;
     }
-    const item_order = {
-      userId: userId,
-      items: data?.data_order,
-      customerInfo: {
-        ...data_form
-      },
-      totalPrice: data?.totalPrice,
-      email: user?.user?.email,
-    };
-    onSubmit(item_order);
 
-  }
+    const item_order = {
+        userId: userId,
+        items: data?.data_order,
+        customerInfo: {
+            ...data_form
+        },
+        totalPrice: data?.totalPrice,
+        email: user?.user?.email,
+    };
+
+    try { 
+        if (data_form.payment === "VNPAY") { 
+            const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string); 
+            const orderId = JSON.parse(sessionStorage.getItem('item_order') as string); 
+            sessionStorage.setItem('customerInfo', JSON.stringify({...data_form}));
+
+            // Tạo URL thanh toán VNPAY 
+            const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, { 
+                orderId: orderId._id, 
+                totalPrice: vnPayment, 
+                orderDescription: `Order ${orderId._id}`, 
+                language: 'vn' 
+            }); 
+            
+            // Lưu thông tin thanh toán trước khi chuyển hướng
+            sessionStorage.setItem('item_order', JSON.stringify(item_order));
+
+            // Redirect người dùng đến trang thanh toán
+            window.location.href = UrlPayment.data.paymentUrl;
+        } else { 
+            // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
+            onSubmit(item_order); 
+        } 
+    } catch (error) { 
+        console.error("Order Creation Error: ", error); 
+        messageApi.open({ 
+            type: "error", 
+            content: "Lỗi tạo đơn hàng!", 
+        }); 
+    }
+};
+
+
+
+   
   const dataSo = data?.data_order.map((order: any) => {
     return {
       key: order.productId._id,
@@ -204,57 +241,7 @@ const Pay = () => {
                 </div>
               </div>
               <div className="border my-4 rounded shadow-sm">
-                {/* <table className="w-full">
-                <thead className=" *:py-3 *:px-6 *:font-normal hidden lg:block ">
-                  <th className="w-[800px] text-left">Sản phẩm</th>
-                  <th>Đơn giá</th>
-                  <th>Số lượng</th>
-                  <th>Thành tiền</th>
-                </thead>
-                <tbody>
-                  {data?.data_order?.map((item: any) => (
-                    <tr className="*:text-center">
-                      <td className="flex items-center justify-between *:py-3 *:px-6">
-                        <div className="flex items-center gap-5">
-                          <img
-                            src={item?.productId?.image_product}
-                            className="w-[100px] h-[100px]"
-                            alt=""
-                          />
-                          <div className="flex flex-col">
-                            <p className="mb-3 font-bold text-left">
-                              {item?.productId?.name_product}
-                            </p>
-                            <p className="border border-stone-200 rounded py-2 w-[220px]">
-                              Đổi trả miễn phí 15 ngày
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mr-12">
-                          <p className="font-bold w-28 p-0">
-                            Loại: {item?.color_item} - {item?.name_size}
-                          </p>
-                        </div>
-                      </td>
-                      <td>
-                        {item?.productId?.price_product.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
-                      </td>
-                      <td>{item?.quantity}</td>
-                      <td>
-                        <p className="font-bold">
-                          {item?.total_price_item?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}
-                        </p>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table> */}
+                
                 <Table columns={columns} dataSource={dataSo} pagination={false} />
                 <div className="flex items-center justify-end gap-8 p-6">
                   {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
