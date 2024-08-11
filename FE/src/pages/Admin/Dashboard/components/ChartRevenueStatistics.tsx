@@ -148,7 +148,6 @@ const ChartRevenueStatistcs: React.FC = () => {
 
   useEffect(() => {
     if (orderByMonthOfYearData) {
-<<<<<<< HEAD
       const revenueData = Array(12).fill(0);
       const orderCountData = Array(12).fill(0);
       orderByMonthOfYearData?.data?.forEach((item) => {
@@ -156,15 +155,6 @@ const ChartRevenueStatistcs: React.FC = () => {
         revenueData[monthIndex] = item.totalRevenue;
         orderCountData[monthIndex] = item.totalOrders;
       });
-=======
-      const revenueData = orderByMonthOfYearData?.data?.map(
-        (item: any) => item.totalRevenue
-      );
-      const orderCountData = orderByMonthOfYearData?.data?.map(
-        (item: any) => item.totalOrders
-      );
-
->>>>>>> main
       setState({
         series: [
           {
