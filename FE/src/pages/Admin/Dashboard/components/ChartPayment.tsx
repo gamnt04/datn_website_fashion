@@ -55,7 +55,6 @@ const options: ApexOptions = {
 
 const ChartPayment: React.FC = () => {
   const { data: orderOfWeekData } = useOrdersOfMonth();
-  console.log(orderOfWeekData?.items);
 
   const [state, setState] = useState<ChartThreeState>({
     series: [65, 34, 12]

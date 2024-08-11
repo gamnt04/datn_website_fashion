@@ -119,30 +119,42 @@ interface ChartOneState {
 
 const ChartRevenueStatistcs: React.FC = () => {
   const { data: orderByMonthOfYearData } = useOrdersByMonthOfYear();
-  console.log(orderByMonthOfYearData?.data);
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND"
+    }).format(amount);
+  };
+
+  const totalPrice = orderByMonthOfYearData?.data?.reduce(
+    (sum: number, order) => {
+      return sum + order.totalRevenue;
+    },
+    0
+  );
 
   const [state, setState] = useState<ChartOneState>({
     series: [
       {
         name: "Doanh Thu",
-        data: [] // Empty initially, will be filled by fetched data
+        data: []
       },
       {
         name: "Số Lượng Đơn Hàng",
-        data: [] // Empty initially, will be filled by fetched data
+        data: []
       }
     ]
   });
 
   useEffect(() => {
     if (orderByMonthOfYearData) {
-      const revenueData = orderByMonthOfYearData?.data?.map(
-        (item: any) => item.totalRevenue
-      );
-      const orderCountData = orderByMonthOfYearData?.data?.map(
-        (item: any) => item.totalOrders
-      );
-
+      const revenueData = Array(12).fill(0);
+      const orderCountData = Array(12).fill(0);
+      orderByMonthOfYearData?.data?.forEach((item) => {
+        const monthIndex = item.month - 1;
+        revenueData[monthIndex] = item.totalRevenue;
+        orderCountData[monthIndex] = item.totalOrders;
+      });
       setState({
         series: [
           {
@@ -164,14 +176,25 @@ const ChartRevenueStatistcs: React.FC = () => {
         Doanh Thu và Số Lượng Đơn Hàng Các Tháng Trong Năm Nay
       </h4>
       <div className="flex items-start justify-between gap-3 sm:flex-nowrap">
-        <div className="flex w-[500px] flex-wrap gap-3 sm:gap-5">
-          <div className="flex w-full">
+        <div className="flex w-[700px]  gap-3 sm:gap-5">
+          <div className="flex w-full ">
             <span className="mt-1 mr-2 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-[#3C50E0]">
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-[#3C50E0]"></span>
             </span>
-            <div className="w-full flex">
+            <div className="w-full flex space-x-2">
               <p className="font-semibold text-[#3C50E0]">Tổng Doanh Thu: </p>{" "}
-              <span> {/* Add total revenue here if needed */}</span>
+              <span> {formatCurrency(totalPrice)}</span>
+            </div>
+          </div>{" "}
+          <div className="flex w-full ">
+            <span className="mt-1 mr-2 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-[#80CAEE]">
+              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-[#80CAEE]"></span>
+            </span>
+            <div className="w-full flex space-x-2">
+              <p className="font-semibold text-[#80CAEE]">
+                Tổng Số Lượng Đơn Hàng:{" "}
+              </p>{" "}
+              <span> {formatCurrency(totalPrice)}</span>
             </div>
           </div>
         </div>
