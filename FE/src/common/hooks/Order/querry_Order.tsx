@@ -7,7 +7,8 @@ import {
   getOrderByMonthOfYear,
   getOrderOfDay,
   getOrderOfMonth,
-  getOrderOfWeek
+  getOrderOfWeek,
+  getTop10ProductSale
 } from "../../../services/orderProduct";
 
 export function List_One_Order_User(userId: string) {
@@ -89,6 +90,19 @@ export const useOrdersByMonthOfYear = () => {
     queryFn: async () => {
       try {
         return await getOrderByMonthOfYear();
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, ...rest };
+};
+export const useTop10ProductBestSale = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["top10ProductBestSale"],
+    queryFn: async () => {
+      try {
+        return await getTop10ProductSale();
       } catch (error) {
         throw new Error((error as any).message);
       }
