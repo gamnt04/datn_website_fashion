@@ -1,169 +1,102 @@
-import { useState } from "react";
-import { Button, Form, Input, Upload, Switch, message } from "antd";
-import { BackwardFilled, UploadOutlined } from "@ant-design/icons";
-import { useMutation } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
-import { uploadFileCloudinary } from "../../../systems/utils/uploadImage";
-import { Link, useNavigate } from "react-router-dom";
-
-type FieldType = {
-  title?: string;
-  content?: string;
-  author?: string;
-  tags?: string[];
-  image?: string;
-  published?: boolean;
-};
+import React, { useState, useRef, useMemo, useContext } from 'react';
+import JoditEditor from 'jodit-react';
+import axios from 'axios';
+import parse from 'html-react-parser';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const BlogAdd = () => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [fileList, setFileList] = useState<any[]>([]);
-  const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+	const editor = useRef(null);
+	const [content, setContent] = useState('');
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, "text/html");
   const navigate = useNavigate();
-  const { mutate } = useMutation({
-    mutationFn: async (blogs: FieldType) => {
-      try {
-        return await instance.post(`/blogs/add_blog`, blogs);
-      } catch (error: any) {
-        throw new Error(error.response.data.message);
-      }
-    },
-    onSuccess: () => {
-      messageApi.success("Thêm blog thành công!");
-      setImagePreview(null);
-      setFileList([]);
-      form.resetFields();
-      navigate("/admin/blogs");
-    },
-    onError: (error: any) => {
-      messageApi.error(`Lỗi: ${error.response?.data?.message || "Vui lòng thử lại sau."}`);
-    },
+  const onSubmit = async () => {
+    try {
+      const images = doc.querySelectorAll("img");
+      const CLOUD_NAME = "dwya9mxip";
+  const PRESET_NAME = "upImgProduct";
+  const FOLDER_NAME = "PRODUCTS";
+  const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+  const uploadPromises = Array.from(images).map(async (file: any) => {
+
+    const src = file.src;
+    const res = await fetch(src);
+    const fileBlob = await res.blob();
+    const formData = new FormData();
+    formData.append("file", fileBlob);
+    formData.append("upload_preset", PRESET_NAME);
+    formData.append("folder", FOLDER_NAME);
+    
+    const response = await axios.post(api, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    // console.log(response.data.secure_url);
+    return { originalSrc: src, newSrc: response.data.secure_url };
+    
   });
 
-  const onFinish = async (values: FieldType) => {
-    if (fileList.length > 0) {
-      try {
-        const imageUrl = await uploadFileCloudinary(fileList[0].originFileObj);
-        values.image = imageUrl;
-      } catch (error) {
-        messageApi.error("Lỗi tải lên ảnh. Vui lòng thử lại.");
-        return;
-      }
+  try {
+    const h1Element = doc.querySelector("h1");
+    if(h1Element === null || h1Element.textContent === ''){
+      message.error('Tiêu đề không được để trống');
+      return;
     }
-    mutate(values);
-  };
-
-  const handleImageChange = (info: any) => {
-    const newFileList = info.fileList.slice(-1).map((file: any) => {
-      if (file.originFileObj) {
-        return {
-          ...file,
-          url: URL.createObjectURL(file.originFileObj),
-        };
-      }
-      return file;
-    });
-    setFileList(newFileList);
-    if (newFileList.length > 0) {
-      setImagePreview(newFileList[0].url);
-    } else {
-      setImagePreview(null);
+    const uploadedUrls = await Promise.all(uploadPromises);
+    let contentNew = content;
+    uploadedUrls.forEach((img) => {
+        contentNew = contentNew.replace(img.originalSrc, img.newSrc);
+      });
+      const {data} = await axios.post(`http://localhost:2004/api/v1/blogs/add_blog`,
+        {content: contentNew,
+        author: user.user.userName,
+        }, 
+        {headers: {
+        "Content-Type": "application/json",
+      },})
+      message.success('Tạo mới bài viết thành công');
+      navigate('/admin/blogs'); 
+      console.log(data);
+  } catch (error) {
+    console.error("Error uploading images:", error);
+    throw new Error("Failed to upload images");
+  }
+    } catch (error) {
+      
     }
-  };
-
-  return (
-    <div className="mt-10">
-      {contextHolder}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">Thêm bài viết</h1>
-        <Button type="primary">
-          <Link to="/admin/blogs">
-            <BackwardFilled /> Quay lại
-          </Link>
-        </Button>
-      </div>
-      <div className="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-md mt-10">
-        <Form
-          form={form}
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinish}
-          autoComplete="off"
-          className="mt-4"
-        >
-          <Form.Item
-            label="Tiêu đề"
-            name="title"
-            rules={[{ required: true, message: "Vui lòng nhập tiêu đề!" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Nội dung"
-            name="content"
-            rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
-          >
-            <Input.TextArea rows={5} />
-          </Form.Item>
-
-          <Form.Item
-            label="Tác giả"
-            name="author"
-            rules={[{ required: true, message: "Vui lòng nhập tác giả!" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Thẻ" name="tags">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Ảnh" name="image">
-            <Upload
-              listType="picture-card"
-              fileList={fileList.map((file, index) => ({ ...file, uid: index.toString() }))}
-              beforeUpload={() => false} // Prevent automatic upload
-              onChange={handleImageChange}
-            >
-              {imagePreview ? (
-                <img src={imagePreview} alt="Xem trước ảnh" style={{ width: "100%" }} />
-              ) : (
-                <div>
-                  <UploadOutlined />
-                  <div style={{ marginTop: 8 }}>Tải lên</div>
-                </div>
-              )}
-            </Upload>
-            {imagePreview && (
-              <Button type="link" onClick={() => {
-                setImagePreview(null);
-                setFileList([]);
-              }}>
-                Xóa ảnh
-              </Button>
-            )}
-          </Form.Item>
-          
-
-          <Form.Item name="published" label="Xuất bản" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
-            <Switch />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Thêm Blog
-            </Button>
-            <Button type="default" style={{ marginLeft: 8 }} onClick={() => navigate(-1)}>
-              Hủy bỏ
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </div>
+  }
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      placeholder: "Viết Blog ...",
+      uploader: {
+        insertImageAsBase64URI: true,
+      },
+    }),
+    []
   );
-};
 
+	return (
+    <>
+		<JoditEditor
+    className='!text-black mt-20'
+			ref={editor}
+			value={content}
+			config={config}
+			// tabIndex={1} // tabIndex of textarea
+			// onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+			onChange={(newContent) => {
+        setContent(newContent)
+      }}
+		/>
+    <div>
+      <button onClick={() =>{onSubmit()}}>Tạo mới bài viết</button>
+    </div>
+    </>
+	);
+};
 export default BlogAdd;

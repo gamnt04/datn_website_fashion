@@ -7,6 +7,7 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link, useNavigate } from "react-router-dom";
 import { Checkbox, Input, message, Popconfirm, Table, TableProps, Spin } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
 
 interface DataType {
   key: string;
@@ -25,6 +26,11 @@ const ListCart = () => {
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
   const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
+  useEffect(() => {
+      sessionStorage.setItem('totalPriceCart', JSON.stringify(data?.total_price))
+     
+  },[data.total_price])
+  
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
@@ -177,12 +183,13 @@ const ListCart = () => {
         });
         return
       }
-      sessionStorage.removeItem('item_order');
+      // sessionStorage.removeItem('item_order');
       const data_order = {
         id_user: userId,
         data_order: data_cart,
         totalPrice: data?.total_price,
-        action: 'data_cart'
+        action: 'data_cart',
+        _id: data?._id
       }
       sessionStorage.setItem('item_order', JSON.stringify(data_order))
       routing('/cart/pay')

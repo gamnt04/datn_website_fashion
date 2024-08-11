@@ -1,23 +1,43 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import parse from 'html-react-parser';
 
 const BlogDetail = () => {
   const { id } = useParams();
-  const [blog, setBlog] = useState<{ content: string; imageUrl: string; author: string; title: string; createdAt: string } | null>(null);
+  const [blog, setBlog] = useState<any>(null);
+  const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const response = await axios.get(`http://localhost:2004/api/v1/blogs/${id}`);
         setBlog(response.data);
+        console.log('Fetched Blog:', response.data); // Log the fetched blog
       } catch (error) {
         console.error('Error fetching blog:', error);
       }
     };
 
+    const fetchRelatedBlogs = async () => {
+      try {
+        const response = await axios.get('http://localhost:2004/api/v1/relacted');
+        console.log('Related Blogs Response:', response.data); // Log the entire response
+        const filteredBlogs = response.data.filter((b: any) => b._id !== id);
+        console.log('Filtered Related Blogs:', filteredBlogs); // Log the filtered blogs
+        setRelatedBlogs(filteredBlogs); // Exclude the current blog
+      } catch (error) {
+        console.error('Error fetching related blogs:', error);
+      }
+    };
+
     fetchBlog();
+    fetchRelatedBlogs();
   }, [id]);
+
+  useEffect(() => {
+    console.log('Updated Related Blogs State:', relatedBlogs); // Log the updated state
+  }, [relatedBlogs]);
 
   if (!blog) {
     return (
@@ -28,35 +48,53 @@ const BlogDetail = () => {
     );
   }
 
-  const contentParts = blog.content.split(/(?<=\.)\s+/); //Chia nội dung thành các phần nhỏ
-
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
-      <div className="container mx-auto py-10 px-4 lg:px-20">
-        <h1 className="text-4xl font-bold mb-4 text-center">{blog.title}</h1>
-        <p className="text-sm text-gray-600 mb-6 text-center">
+    <div className="container mx-auto py-10 px-4 lg:px-20 flex gap-8">
+      {/* Main content */}
+      <div className="flex-1">
+        <h1 className="text-4xl font-bold mb-4">{blog.title}</h1>
+        <p className="text-sm text-gray-600 mb-6">
           {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
         </p>
-
         <div className="prose max-w-none mx-auto text-justify">
-          {contentParts.map((part, index) => (
-            <div key={index}>
-              <p className="mb-4">{part}</p>
-              {index % 6 === 1 && (
-                <div className="flex justify-center mb-6">
-                  <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    className="w-full max-w-md h-auto rounded-lg shadow-lg object-contain"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+          {parse(blog.content)}
         </div>
       </div>
-    </div>
 
+      {/* Sidebar */}
+      <aside className="w-1/3 bg-gray-100 p-4 rounded-lg shadow-md">
+  <h2 className="text-xl font-semibold mb-4">Bài viết liên quan</h2>
+  <ul>
+    {relatedBlogs.length > 0 ? (
+      relatedBlogs.map((relatedBlog) => {
+        // Phân tích nội dung HTML của bài viết liên quan
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(relatedBlog.content, "text/html");
+        const titleElement = doc.querySelector("h1");
+        const imageElement = doc.querySelector("img");
+
+        // Lấy tiêu đề và hình ảnh từ phần tử HTML
+        const title = titleElement ? titleElement.textContent : "Không có tiêu đề";
+        const image = imageElement ? imageElement.src : ""; // Đảm bảo src có giá trị hợp lệ
+
+        return (
+          <li key={relatedBlog._id} className="mb-2 flex items-center">
+            {image && (
+              <img src={image} alt={title ?? ""} className="w-16 h-16 object-cover mr-4 rounded" />
+            )}
+            <a href={`/blogs/${relatedBlog._id}`} className="text-blue-500 hover:text-blue-700">
+              {title} {/* Hiển thị tiêu đề của bài viết liên quan */}
+            </a>
+          </li>
+        );
+      })
+    ) : (
+      <li>Không có bài viết liên quan</li>
+    )}
+  </ul>
+</aside>
+
+    </div>
   );
 };
 

@@ -10,7 +10,9 @@ import Routes_blog from "./routers/blogs";
 import Routes_Favorites from "./routers/favoriteProducts";
 import Routes_Carts from "./routers/cart";
 import Router_Contact from "./routers/contact";
+import Routes_payments from "./routers/OnlineCheckoutRoutes";
 import Routes_Attribute from "./routers/attribute";
+
 
 dotenv.config();
 const app = express();
@@ -30,5 +32,28 @@ app.use("/api/v1", Routes_Favorites);
 app.use("/api/v1", Router_Contact);
 
 app.use("/api/v1", Routes_blog);
+app.use("/api/v1", Routes_payments);
 
+
+
+app.get('/profile/allorder', (req, res) => {
+    // Lấy các tham số từ query string
+    const amount = req.query.vnp_Amount;
+    const responseCode = req.query.vnp_ResponseCode;
+    const txnRef = req.query.vnp_TxnRef;
+  
+    // In ra các giá trị để kiểm tra
+    console.log('Amount: ', amount);
+    console.log('Response Code: ', responseCode);
+    console.log('Transaction Reference: ', txnRef);
+  
+    // Kiểm tra mã phản hồi (responseCode)
+    if (responseCode === '00') {
+      // Giao dịch thành công
+      res.send('Transaction successful');
+    } else {
+      // Giao dịch thất bại
+      res.send('Transaction failed');
+    }
+  });
 export const viteNodeApp = app;

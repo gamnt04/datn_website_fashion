@@ -7,6 +7,8 @@ import ProductModal from "../../../pages/Client/Preview/ProductModal";
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
+import { EyeDropperIcon } from "@heroicons/react/24/outline";
+import { EyeIcon } from "lucide-react";
 
 const Products = ({ items }: any) => {
   const [messageApi, contentHolder] = message.useMessage();
@@ -119,7 +121,12 @@ const Products = ({ items }: any) => {
               >
                 <HeartIcon />
               </button>
-            )}
+            )} <button
+            className="p-2 border-none rounded"
+            onClick={() => handlePreview(items?._id)}
+          >
+            <EyeIcon />
+          </button>
           </div>
         </div>
         <div className="flex justify-center items-center flex-col px-4 py-4 gap-y-2">

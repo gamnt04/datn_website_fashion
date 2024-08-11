@@ -10,6 +10,7 @@ export const addItemToCart = async (req, res) => {
         let color_item;
         let name_size;
         let quantity_attr = 0;
+
         if (data_product.attributes) {
             for (let i of data_product.attributes.values) {
                 if (i.color == color) {
@@ -17,27 +18,39 @@ export const addItemToCart = async (req, res) => {
                         if (k.name_size == size) {
                             quantity_attr = k.stock_attribute;
                             color_item = i.color;
-                            name_size = k.name_size
-                        }
-                        else {
+                            name_size = k.name_size;
+                        } else {
                             quantity_attr = k.stock_attribute;
-                            color_item = i.color
+                            color_item = i.color;
                         }
                     }
                 }
             }
-        }
-        else {
+        } else {
             quantity_attr = quantity;
         }
+
         let cart = await Cart.findOne({ userId });
         if (!cart) {
             cart = new Cart({
                 userId,
                 products: []
             });
-        };
-        if (cart.products.length < 1) {
+        }
+
+        let check_item = false;
+        for (let i = 0; i < cart.products.length; i++) {
+            if (cart.products[i].productId.toString() === productId) {
+                if (cart.products[i].color_item === color && cart.products[i].name_size === size) {
+                    cart.products[i].quantity += quantity;
+                    cart.products[i].total_price_item = price_item * cart.products[i].quantity;
+                    check_item = true;
+                    break;
+                }
+            }
+        }
+
+        if (!check_item) {
             cart.products.push({
                 productId,
                 quantity,
@@ -46,40 +59,20 @@ export const addItemToCart = async (req, res) => {
                 name_size,
                 quantity_attr,
                 total_price_item: price_item * quantity
-            })
-        } else {
-            let check_item = false
-            for (let i = 0; i < cart.products.length; i++) {
-                if (cart.products[i].productId == productId) {
-                    if (cart.products[i].color_item == color) {
-                        if (cart.products[i].name_size == size) {
-                            cart.products[i].quantity = cart.products[i].quantity + quantity;
-                            cart.products[i].total_price_item = price_item * cart.products[i].quantity;
-                            check_item = true
-                        }
-                    }
-                }
-            }
-            if (!check_item) {
-                cart.products.push({
-                    productId,
-                    quantity,
-                    price_item,
-                    color_item,
-                    name_size,
-                    quantity_attr,
-                    total_price_item: price_item * quantity
-                });
-            }
+            });
         }
+
+        // Tính tổng giá trị của tất cả các mặt hàng trong giỏ
+        cart.total_price = cart.products.reduce((acc, product) => acc + product.total_price_item, 0);
+
         await cart.save();
         return res.status(StatusCodes.OK).json({ cart });
     } catch (error) {
-        return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({ error: "Internal Server Error" });
+        console.error(error);
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Internal Server Error" });
     }
 };
+
 
 export const updateQuantityProductsInCart = async (req, res) => {
     const { userId, productId, quantity } = req.body;
