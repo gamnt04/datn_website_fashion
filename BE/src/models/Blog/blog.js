@@ -9,7 +9,8 @@ const blogSchema = new Schema({
     // createdAt: { type: Date, default: Date.now } uh huhu,
     // createdAt: { type: Date, default: Date.now } uh huhu,
     // createdAt: { type: Date, default: Date.now } uh huhu,
-    published: { type: Boolean, default: false },
+    slug: { type: String, required: true, unique: true },
+    published: { type: Boolean, default: true },
     // imageUrl: { type: String},
 },{timestamps: true, versionKey: false});
 
