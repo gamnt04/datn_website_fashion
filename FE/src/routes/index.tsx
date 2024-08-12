@@ -6,7 +6,6 @@ import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
 import Pay from "../pages/Client/pay/Pay";
 import Blogs from "../pages/Client/Blogs/Blogs";
-import DetailBlogs from "../pages/Client/DetailBlogs/DetailBlogs";
 import AllOrder from "../pages/Client/Order/AllOrder/AllOrder";
 import Contact from "../pages/Client/Contact/Contact";
 import Login from "../pages/Client/User/Login";
@@ -58,9 +57,9 @@ const RouterComponent = () => {
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
-            <Route path="/blogs/:id" element={<BlogDetail />} />
+            <Route path="/blogs/:slug" element={<BlogDetail />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
-            <Route path="blogs/detailblog" element={<DetailBlogs />} />
+            {/* <Route path="blogs/detailblog" element={<DetailBlogs />} /> */}
             <Route
               path="shops/:id"
               element={<ProductDetail />}

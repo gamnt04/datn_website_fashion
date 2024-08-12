@@ -105,6 +105,53 @@ export const createOrderPayment = async (req, res) => {
 
     const data = await Order.create(requestBody);
     console.log(data);
+
+    for (let i of items) {
+      if (i.productId.attributes) {
+        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        for (let j of data_attr) {
+          for (let k of j.values) {
+            if (k.color == i.color_item) {
+              for (let x of k.size) {
+                if (x.name_size) {
+                  if (x.name_size == i.name_size) {
+                    x.stock_attribute = x.stock_attribute - i.quantity;
+                  }
+                } else {
+                  x.stock_attribute = x.stock_attribute - i.quantity;
+                }
+              }
+            }
+          }
+          await j.save();
+        }
+      } else {
+        const data_items = await Products.find({ _id: i.productId._id });
+        for (let a of data_items) {
+          a.stock_product = a.stock_product - i.quantity;
+          await a.save();
+        }
+      }
+    }
+
+    // Giả sử dataCart được lấy từ cơ sở dữ liệu
+    const dataCart = await Cart.findOne({ userId: userId });
+    if (!dataCart) {
+      return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
+    }
+
+    dataCart.products = dataCart.products.filter((i) => {
+      return !req.body.items.some((j) => {
+        if (i.productId._id.toString() === j.productId._id.toString()) {
+          if (i.status_checked) {
+            return true;
+          }
+        }
+        return false;
+      });
+    });
+    await dataCart.save();
+
     if (data) {
       const order = new Order({
         userId,
@@ -117,7 +164,6 @@ export const createOrderPayment = async (req, res) => {
           address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
         },
         totalPrice,
-  
       });
       await SendMail(customerInfo.email, order);
       await Cart.findOneAndDelete({ userId: userId });
