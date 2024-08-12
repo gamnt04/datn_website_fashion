@@ -127,6 +127,14 @@ export const getOrderByMonthOfYear = async () => {
     console.log(error);
   }
 };
+export const getTop10ProductSale = async () => {
+  try {
+    const { data } = await instance.get(`/orders/top_10_products_best_sale`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // huy don hang có yêu cầu xác nhận
 
