@@ -4,7 +4,6 @@ import Cart from "../../models/Cart/cart";
 import Attributes from "../../models/attribute/attribute";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
-import { set } from "mongoose";
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
   console.log(email);
@@ -249,7 +248,9 @@ export const getAllOrderWeek = async (req, res) => {
 export const getOrderByDayOfWeek = async (req, res) => {
   try {
     const now = new Date();
+    const dayOfWeek = now.getDay();
     const startWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+    startWeek.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
     startWeek.setHours(0, 0, 0, 0);
 
     const orderByDay = [];
@@ -300,7 +301,6 @@ export const getOrderByDayOfWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const getAllOrderMonth = async (req, res) => {
   try {
     const now = new Date();
@@ -360,6 +360,38 @@ export const getAllOrderByMonthOfYear = async (req, res) => {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
+  }
+};
+
+export const getTop10ProductBestSale = async (req, res) => {
+  try {
+    const orders = await Order.find({});
+
+    const productSale = {};
+
+    orders.forEach((order) => {
+      if (Array.isArray(order.items)) {
+        order.items.forEach((item) => {
+          const productId = item?.productId?._id?.toString(); // Đảm bảo lấy đúng _id từ productId
+          if (productId) {
+            if (!productSale[productId]) {
+              productSale[productId] = { ...item, quantity: 0 };
+            }
+            productSale[productId].quantity += item.quantity;
+          }
+        });
+      }
+    });
+
+    const top10Products = Object.values(productSale)
+      .sort((a, b) => b.quantity - a.quantity)
+      .slice(0, 10);
+
+    return res.status(StatusCodes.OK).json(top10Products);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
 
