@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
+import { Link } from "react-router-dom";
 
 const Ourblog = () => {
   const { data } = useQuery({
@@ -47,18 +48,18 @@ const Ourblog = () => {
                   />
                 </div>
                 <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
-                  <a
-                    href={`/blogs/${blog._id}`}
+                  <Link
+                    to={`/blogs/${blog._id}`}
                     className="text-white text-[20px] font-semibold"
                   >
                     View full details
-                  </a>
+                  </Link>
                 </div>
                 <div className="px-4 py-4">
                   <h2 className="py-[10px] text-[20px] font-semibold">
-                    <a href={`/blogs/${blog._id}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
+                    <Link to={`/blogs/${blog._id}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
                       {title?.textContent}
-                    </a>
+                    </Link>
                   </h2>
                   <div className="flex text-[#7D7D7D] text-[14px] space-x-4 mb-2">
                     <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
@@ -68,12 +69,12 @@ const Ourblog = () => {
                     {String(content?.innerHTML).substring(0, 100)}...
                   </p>
                   <div className="text-center mt-4">
-                    <a
-                      href={`/blogs/${blog._id}`}
+                    <Link
+                      to={`/blogs/${blog._id}`}
                       className="text-blue-500 hover:text-blue-700 font-semibold"
                     >
                       Read More
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
