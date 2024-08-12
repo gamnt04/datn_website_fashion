@@ -6,5 +6,6 @@ export interface Blog {
   createdAt: string;
   tags: string[];
   published: boolean;
-  imageUrl: FileList | string | any | string[]
+  imageUrl: FileList | string | any | string[],
+  slug: string;
 }

@@ -4,7 +4,7 @@ import axios from 'axios';
 import parse from 'html-react-parser';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
-
+import slugify from 'react-slugify';
 const BlogAdd = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 	const editor = useRef(null);
@@ -53,6 +53,7 @@ const BlogAdd = () => {
       });
       const {data} = await axios.post(`http://localhost:2004/api/v1/blogs/add_blog`,
         {content: contentNew,
+        slug: slugify(h1Element.textContent),
         author: user.user.userName,
         }, 
         {headers: {
@@ -66,7 +67,6 @@ const BlogAdd = () => {
     throw new Error("Failed to upload images");
   }
     } catch (error) {
-      
     }
   }
   const config = useMemo(
