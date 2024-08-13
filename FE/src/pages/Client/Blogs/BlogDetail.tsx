@@ -37,7 +37,7 @@ console.log('Blog:', slug);
       try {
         const response = await axios.get('http://localhost:2004/api/v1/relacted');
         // console.log('Related Blogs Response:', response.data); // Log the entire response
-        const filteredBlogs = response.data.filter((b: any) => b._id !== slug);
+        const filteredBlogs = response.data.filter((b: any) => b.slug !== slug);
         // console.log('Filtered Related Blogs:', filteredBlogs); // Log the filtered blogs
         setRelatedBlogs(filteredBlogs); // Exclude the current blog
       } catch (error) {
@@ -93,11 +93,11 @@ console.log('Blog:', slug);
         const image = imageElement ? imageElement.src : ""; // Đảm bảo src có giá trị hợp lệ
 
         return (
-          <li key={relatedBlog._id} className="mb-2 flex items-center">
+          <li key={relatedBlog.slug} className="mb-2 flex items-center">
             {image && (
               <img src={image} alt={title ?? ""} className="w-16 h-16 object-cover mr-4 rounded" />
             )}
-            <Link to={`/blogs/${relatedBlog._id}`} className="text-blue-500 hover:text-blue-700">
+            <Link to={`/blogs/${relatedBlog.slug}`} className="text-blue-500 hover:text-blue-700">
               {title} {/* Hiển thị tiêu đề của bài viết liên quan */}
             </Link>
           </li>
