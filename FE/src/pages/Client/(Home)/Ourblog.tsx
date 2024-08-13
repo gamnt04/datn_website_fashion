@@ -49,7 +49,7 @@ const Ourblog = () => {
                 </div>
                 <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
                   <Link
-                    to={`/blogs/${blog._id}`}
+                    to={`/blogs/${blog.slug}`}
                     className="text-white text-[20px] font-semibold"
                   >
                     View full details
@@ -57,7 +57,7 @@ const Ourblog = () => {
                 </div>
                 <div className="px-4 py-4">
                   <h2 className="py-[10px] text-[20px] font-semibold">
-                    <Link to={`/blogs/${blog._id}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
+                    <Link to={`/blogs/${blog.slug}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
                       {title?.textContent}
                     </Link>
                   </h2>
@@ -70,7 +70,7 @@ const Ourblog = () => {
                   </p>
                   <div className="text-center mt-4">
                     <Link
-                      to={`/blogs/${blog._id}`}
+                      to={`/blogs/${blog.slug}`}
                       className="text-blue-500 hover:text-blue-700 font-semibold"
                     >
                       Read More
