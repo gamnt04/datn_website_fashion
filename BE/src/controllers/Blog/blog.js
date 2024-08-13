@@ -100,18 +100,18 @@ export const deleteBlogById = async (req, res) => {
 };
 export const relactedBlog = async (req, res) => {
   try {
-    // Get the blog ID to exclude from query parameters
-    const { excludeId } = req.query;
+    // Get the blog slug to exclude from query parameters
+    const { excludeSlug } = req.query;
 
-    // Fetch all blogs except the one with the given ID
-    const blogs = await Blog.find({ _id: { $ne: excludeId } });
+    // Fetch all blogs except the one with the given slug
+    const blogs = await Blog.find({ slug: { $ne: excludeSlug } });
 
     res.status(200).json(blogs);
   } catch (error) {
     console.error('Error fetching related blogs:', error);
     res.status(500).json({ error: 'Error fetching related blogs' });
   }
-}
+};
 export const relactedBlogID = async (req, res) => {
   try {
     // Get the blog ID to exclude from query parameters
