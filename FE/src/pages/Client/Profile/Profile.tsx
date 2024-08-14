@@ -7,7 +7,8 @@ import {
   GetProp,
   UploadProps,
   Upload,
-  Image
+  Image,
+  Spin,
 } from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
@@ -42,7 +43,7 @@ const Profile = () => {
     handlePreview,
     handleChange,
     setPreviewOpen,
-    setPreviewImage
+    setPreviewImage,
   } = ProfileHook();
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
@@ -81,7 +82,7 @@ const Profile = () => {
               data
                 ? {
                     ...data,
-                    birthDate: data.birthDate ? dayjs(data.birthDate) : null
+                    birthDate: data.birthDate ? dayjs(data.birthDate) : null,
                   }
                 : {}
             }
@@ -183,7 +184,7 @@ const Profile = () => {
                         action={api}
                         data={{
                           upload_preset: PRESET_NAME,
-                          folder: FOLDER_NAME
+                          folder: FOLDER_NAME,
                         }}
                         listType="picture-card"
                         fileList={fileList}
@@ -209,7 +210,7 @@ const Profile = () => {
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
                         afterOpenChange: (visible) =>
-                          !visible && setPreviewImage("")
+                          !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />
