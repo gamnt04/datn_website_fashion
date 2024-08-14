@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import instance from '../../../configs/axios';
+import { Link } from 'react-router-dom';
 
 const Blogs = () => {
   const { data } = useQuery({
@@ -42,19 +43,19 @@ const Blogs = () => {
                     className="image_blog w-full h-full object-cover transition-transform duration-300 hover:scale-105 "
                   />
                 </div>
-                {/* <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
-                  <a
-                    href={`/blogs/${blog._id}`}
+                <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
+                  <Link
+                    to={`/blogs/${blog.slug}`}
                     className="text-white text-[20px] font-semibold"
                   >
                     View full details
-                  </a>
-                </div> */}
+                  </Link>
+                </div>
                 <div className="px-4 py-4">
-                  <h2 className="py-[10px] text-lg font-semibold">
-                    <a href={`/blogs/${blog._id}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
+                  <h2 className="py-[10px] text-[20px] font-semibold">
+                    <Link to={`/blogs/${blog.slug}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
                       {title?.innerText}
-                    </a>
+                    </Link>
                   </h2>
                   <div className="flex text-[#7D7D7D] text-sm space-x-4 mb-2">
                     <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
@@ -64,12 +65,12 @@ const Blogs = () => {
                     {String(content?.innerHTML).substring(0, 100)}...
                   </p>
                   <div className="text-center mt-4">
-                    <a
-                      href={`/blogs/${blog._id}`}
+                    <Link
+                      to={`/blogs/${blog.slug}`}
                       className="text-blue-500 hover:text-blue-700 font-semibold"
                     >
-                      Xem thêm
-                    </a>
+                      Read More
+                    </Link>
                   </div>
                 </div>
               </div>
