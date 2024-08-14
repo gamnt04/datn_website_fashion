@@ -5,37 +5,38 @@ import { Mutation_Cart } from "../../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { Button, Popconfirm } from "antd";
 const Canceled = ({ dataProps }: any) => {
-
   const navi = useNavigate();
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-  const addCart = (_id?: string | number) => {
+
+  const addCart = (orderId?: string | number) => {
     if (account) {
-      dataProps.map((i: any) => {
-        if (i?.items) {
-          i?.items.map((j: any) => {
-            if (j.productId) {
-              mutate({
-                userId: account?._id,
-                productId: j.productId?._id,
-                color: j.color_item,
-                size: j.name_size,
-                quantity: j.quantity,
-                price: j.productId?.price_product,
-                image: j.productId?.image_product,
-                name: j.productId?.name_product,
-                _id: _id
-              });
-            }
-          })
-        }
-      })
-    }
-    else {
-      navi('/login')
+      const order = dataProps.find((i: any) => i._id === orderId);
+      if (order?.items) {
+        for (let i = 0; i < order.items.length; i++) {
+          const j = order.items[i];
+          if (j.productId) {
+            console.log(j.price_item);
+            mutate({
+              userId: account?._id,
+              productId: j.productId?._id,
+              color: j.color_item,
+              size: j.name_size,
+              quantity: j.quantity,
+              price: j.price_item,
+              image: j.productId?.image_product,
+              name: j.productId?.name_product,
+              _id: orderId
+            });
+          }
+        };
+      }
+    } else {
+      navi('/login');
     }
   };
+
 
   return (
     <>
@@ -62,7 +63,7 @@ const Canceled = ({ dataProps }: any) => {
                   </a>
                 </div>
               </div>
-              {item.items.map((product: any) => {
+              {item?.items?.map((product: any) => {
                 return (<div className="flex flex-row gap-4 py-[12px] w-full">
                   <div className="basis-24">
                     <img src={product?.productId?.image_product} className="w-full h-[80px] " alt="" />
@@ -76,7 +77,7 @@ const Canceled = ({ dataProps }: any) => {
                         <p>Phân loại: <span className="font-bold">{product?.color_item} - {product?.name_size}</span> </p>
                       </p>
                       <div className="text-sm">
-                        x <span>{product.quantity}</span>
+                        x <span>{product?.quantity}</span>
                       </div>
                     </div>
                     <div className="flex flex-wrap justify-end lg:justify-between gap-2">
@@ -92,7 +93,7 @@ const Canceled = ({ dataProps }: any) => {
               <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
                 <div className="flex items-center gap-1">
                   <TotalPrice />
-                  <p>Thành tiền : <span className="lg:text-lg text-sm text-[#f68e56]">{item.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
+                  <p>Thành tiền : <span className="lg:text-lg text-sm text-[#f68e56]">{item?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span></p>
                 </div>
               </div>
               <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 w-full py-4 px-2">
@@ -104,7 +105,7 @@ const Canceled = ({ dataProps }: any) => {
                 <Popconfirm
                   title="Mua lại đơn hàng?"
                   description="Bạn có chắc chắn muốn mua lại không?"
-                  onConfirm={() => addCart(dataProps?._id)}
+                  onConfirm={() => addCart(item?._id)}
                   // onCancel={cancel}
                   okText="Có "
                   cancelText="Không"

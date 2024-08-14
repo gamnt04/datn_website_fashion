@@ -12,7 +12,7 @@ const Blogs = () => {
   });
 
   // Hàm lọc bài viết đã xuất bản
-  const filterPublishedBlogs = (blogs : any) => {
+  const filterPublishedBlogs = (blogs: any) => {
     return blogs.filter((blog: any) => blog.published);
   };
 
@@ -20,7 +20,7 @@ const Blogs = () => {
 
   return (
     <div className="xl:w-[1440px] w-[95vw] mx-auto">
-      <div className="lg:mt-[40px] mt-[60px]">
+      <div className="lg:mt-[40px] my-[40px]">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           Home &#10148; Products &#10148; Blog
         </div>
@@ -57,7 +57,7 @@ const Blogs = () => {
                       {title?.innerText}
                     </Link>
                   </h2>
-                  <div className="flex text-[#7D7D7D] text-[14px] space-x-4 mb-2">
+                  <div className="flex text-[#7D7D7D] text-sm space-x-4 mb-2">
                     <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
                     <p>{blog.author}</p>
                   </div>
