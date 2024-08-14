@@ -14,6 +14,8 @@ export function Mutation_Cart(action: Actions) {
   const queryClient = useQueryClient();
   const { mutate, ...rest } = useMutation({
     mutationFn: async (data: any) => {
+      console.log(data);
+
       switch (action) {
         case "ADD":
           toast.success("Thêm vào giỏ hàng thành công!", { autoClose: 300 });

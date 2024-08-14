@@ -24,7 +24,8 @@ async function SendMail(email, order) {
 
   const itemList = items.map(item => {
     const {
-      productId: { name_product, price_product, image_product },
+      productId: { name_product, image_product },
+      price_item,
       color_item,
       name_size,
       quantity,
@@ -32,7 +33,7 @@ async function SendMail(email, order) {
     } = item;
 
     // Định dạng giá và tổng tiền cho từng sản phẩm
-    const formattedPrice = Number(price_product).toLocaleString("vi-VN", {
+    const formattedPrice = Number(price_item).toLocaleString("vi-VN", {
       style: "currency",
       currency: "VND",
     });

@@ -24,9 +24,6 @@ const Ourblog = () => {
   return (
     <div className="xl:w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
-        <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-          Home &#10148; Products &#10148; Blog
-        </div>
         <div className="container mx-auto pt-[20px] text-center">
           <h1 className="text-[30px] font-bold">Tin tức nổi bật</h1>
         </div>
@@ -39,7 +36,7 @@ const Ourblog = () => {
             const content = doc.querySelector("p");
 
             return (
-              <div key={blog._id} className="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <div key={blog._id} className=" mb-8 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover">
                   <img
                     src={image?.src}
@@ -65,9 +62,6 @@ const Ourblog = () => {
                     <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
                     <p>{blog.author}</p>
                   </div>
-                  <p className="mt-2 text-gray-700">
-                    {String(content?.innerHTML).substring(0, 100)}...
-                  </p>
                   <div className="text-center mt-4">
                     <Link
                       to={`/blogs/${blog.slug}`}
