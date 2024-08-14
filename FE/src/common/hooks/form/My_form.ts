@@ -15,9 +15,6 @@ const useForm = ({ mode }: any) => {
         data_one_item = Query_Products(id);
     }
     const { mutate, isPending, isError, status_api } = Mutation_items(mode ? 'EDIT' : 'CREATE');
-
-
-    // 
     const handleImageChange = (imageItem: any) => {
         setImageFile(imageItem.fileList.map((file: any) => file.originFileObj));
     };
@@ -45,7 +42,7 @@ const useForm = ({ mode }: any) => {
             const data_edit = {
                 ...finalValues,
                 image_product: data_one_item?.data?.product?.image_product ? data_one_item?.data?.product?.image_product : imageUrl,
-                gallery_product:data_one_item?.data?.product?.gallery_product ? data_one_item?.data?.product?.gallery_product :  galleryUrls,
+                gallery_product: data_one_item?.data?.product?.gallery_product ? data_one_item?.data?.product?.gallery_product : galleryUrls,
             }
             dataClient = {
                 dataBody: data_edit,
