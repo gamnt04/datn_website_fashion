@@ -36,7 +36,7 @@ export const removeProductToCart = async (req, res) => {
     // cart.products = cart.products.filter(
     //   (product) => product.productId && product.productId.toString() !== productId._id
     // );
-    for (let i = cart.products.length - 1 ; i >= 0; i--) {
+    for (let i = cart.products.length - 1; i >= 0; i--) {
       if (cart.products[i].productId.toString() == productId._id.toString()) {
         if (cart.products[i].color_item == color && cart.products[i].name_size == size) {
           cart.products.splice(i, 1);

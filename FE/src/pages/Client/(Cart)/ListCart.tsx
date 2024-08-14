@@ -23,20 +23,21 @@ const ListCart = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const { data, isPending, isError } = List_Cart(userId);
+  console.log(data);
+
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
   const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
   useEffect(() => {
-      sessionStorage.setItem('totalPriceCart', JSON.stringify(data?.total_price))
-     
-  },[data.total_price])
-  
+    sessionStorage.setItem('totalPriceCart', JSON.stringify(data?.total_price))
+  }, [data?.total_price])
+
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
       productId: item.productId,
-      color : item?.color_item,
-      size : item?.name_size,
+      color: item?.color_item,
+      size: item?.name_size,
     };
     removeSingle(data_item);
     messageApi.open({
@@ -82,6 +83,8 @@ const ListCart = () => {
   //   ...product,
   // }));
   const dataSort = data?.products?.filter((product: any) => (
+    console.log(product),
+
     product?.productId?._id && ({
       key: product?.productId?._id,
       ...product,
@@ -103,7 +106,9 @@ const ListCart = () => {
       title: 'Ảnh',
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link>;
+        return <Link to={`/shops/detail_product/${product?.productId?._id}`}>
+          <img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" />
+        </Link>;
       },
     },
     {
@@ -122,7 +127,7 @@ const ListCart = () => {
       dataIndex: 'price',
       key: 'price',
       render: (_: any, product: any) => {
-        return <div className="font-medium">{product?.price_item.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+        return <div className="font-medium">{product?.price_item?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
       },
     },
     {
@@ -144,7 +149,7 @@ const ListCart = () => {
       dataIndex: 'totalPrice',
       key: 'totalPrice',
       render: (_: any, product: any) => {
-        return <div className="font-medium">{(product?.total_price_item).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
+        return <div className="font-medium">{(product?.total_price_item)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</div>;
       },
     },
     {
