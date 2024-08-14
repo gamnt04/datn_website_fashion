@@ -7,7 +7,7 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link, useNavigate } from "react-router-dom";
 import { Checkbox, Input, message, Popconfirm, Table, TableProps, Spin } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface DataType {
   key: string;
@@ -29,14 +29,12 @@ const ListCart = () => {
   useEffect(() => {
       sessionStorage.setItem('totalPriceCart', JSON.stringify(data?.total_price))
      
-  },[data.total_price])
+  },[data?.total_price]);
   
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
-      productId: item.productId,
-      color : item?.color_item,
-      size : item?.name_size,
+      id: item?._id,
     };
     removeSingle(data_item);
     messageApi.open({
@@ -103,7 +101,7 @@ const ListCart = () => {
       title: 'Ảnh',
       dataIndex: "image",
       render: (_: any, product: any) => {
-        return <Link to={`/shops/detail_product/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link>;
+        return <Link to={`/shops/${product?.productId?._id}`}><img src={product?.productId?.image_product} className="w-[100px] h-[80px] object-cover" alt="" /></Link>;
       },
     },
     {
@@ -112,7 +110,7 @@ const ListCart = () => {
       key: 'name',
       render: (_: any, product: any) => (
         <>
-          <Link to={`/shops/detail_product/${product?.productId?._id}`} className="text-gray-900 hover:text-gray-900 font-bold py-2">{product?.productId?.name_product}</Link>
+          <Link to={`/shops/${product?.productId?._id}`} className="text-gray-900 hover:text-gray-900 font-bold py-2">{product?.productId?.name_product}</Link>
           <p className="font-medium">{product?.color_item} - {product?.name_size}</p>
         </>
       )
@@ -134,7 +132,7 @@ const ListCart = () => {
           <div className="flex space-x-2">
             <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color: product?.color_item, size: product?.name_size }} />
             <Input value={product?.quantity} className="w-[40px] text-center" />
-            <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color: product?.color_item, size: product?.name_size }} />
+            <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product, color: product?.color_item, size: product?.name_size }} />
           </div>
         );
       },
@@ -268,7 +266,6 @@ const ListCart = () => {
               </div>
             </div>
           </div>
-
         </>
       </div>
     </div>
