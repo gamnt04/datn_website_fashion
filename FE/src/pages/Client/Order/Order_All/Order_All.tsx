@@ -72,7 +72,9 @@ const Order_All: React.FC<Order_AllProps> = ({ data }) => {
               setActive(false);
             }
           } else {
-            console.error("Item order or customer info is missing in session storage");
+            console.error(
+              "Item order or customer info is missing in session storage"
+            );
           }
         }
       } catch (error) {
@@ -85,11 +87,13 @@ const Order_All: React.FC<Order_AllProps> = ({ data }) => {
     fetchData();
   }, [location.search]);
 
-  const filterOrder = (status: string) => data.filter((order) => order.status === statuses[status]);
+  const filterOrder = (status: string) =>
+    data.filter((order) => order.status === statuses[status]);
 
   const hasData = (status: string) => filterOrder(status).length > 0;
 
-  const { order, error, loading, searchOrderByNumber } = useSearchOrderByNumber();
+  const { order, error, loading, searchOrderByNumber } =
+    useSearchOrderByNumber();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
@@ -105,41 +109,13 @@ const Order_All: React.FC<Order_AllProps> = ({ data }) => {
       styles={{
         overlay: (base) => ({
           ...base,
-          position: 'fixed',
-          width: '100vw',
-          height: '100vh',
+          position: "fixed",
+          width: "100vw",
+          height: "100vh",
           zIndex: 1000,
         }),
       }}
     >
-      <div>
-        <form onSubmit={handleSearch} className="flex items-center gap-3 py-3 px-3 my-4 bg-slate-50">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm kiếm"
-            className="w-full outline-none px-2 bg-slate-50"
-          />
-          <button type="submit">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-              />
-            </svg>
-          </button>
-        </form>
-      </div>
-
       {loading && <p>Đang tải...</p>}
       {error && <p>{error.message}</p>}
 
@@ -153,11 +129,19 @@ const Order_All: React.FC<Order_AllProps> = ({ data }) => {
         </>
       ) : (
         <>
-          {hasData("Chờ Xác Nhận") && <Waitforconfirmation dataProps={filterOrder("Chờ Xác Nhận")} />}
-          {hasData("Đang Chuẩn Bị Hàng") && <WaitingForGoods dataProps={filterOrder("Đang Chuẩn Bị Hàng")} />}
-          {hasData("Đang Vận Chuyển") && <WaitingForDelivery dataProps={filterOrder("Đang Vận Chuyển")} />}
+          {hasData("Chờ Xác Nhận") && (
+            <Waitforconfirmation dataProps={filterOrder("Chờ Xác Nhận")} />
+          )}
+          {hasData("Đang Chuẩn Bị Hàng") && (
+            <WaitingForGoods dataProps={filterOrder("Đang Chuẩn Bị Hàng")} />
+          )}
+          {hasData("Đang Vận Chuyển") && (
+            <WaitingForDelivery dataProps={filterOrder("Đang Vận Chuyển")} />
+          )}
           {hasData("Đã Hủy") && <Canceled dataProps={filterOrder("Đã Hủy")} />}
-          {hasData("Hoàn Thành") && <Complete dataProps={filterOrder("Hoàn Thành")} />}
+          {hasData("Hoàn Thành") && (
+            <Complete dataProps={filterOrder("Hoàn Thành")} />
+          )}
         </>
       )}
     </LoadingOverlay>
