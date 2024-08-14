@@ -14,7 +14,7 @@ import { Link, NavLink } from "react-router-dom";
 export default function Sidebar_Dashboard() {
   const [expandedSection, setExpandedSection] = useState(null);
 
-  const toggleExpand = (section) => {
+  const toggleExpand = (section: any) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
@@ -37,9 +37,8 @@ export default function Sidebar_Dashboard() {
             <LayoutDashboard />
             <span className="text-[16px] text-[#c4cee3]">Bảng điều khiển</span>
             <ChevronDown
-              className={`ml-auto transform ${
-                expandedSection === "dashboard" ? "rotate-180" : ""
-              }`}
+              className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -65,9 +64,8 @@ export default function Sidebar_Dashboard() {
             <Shirt />
             <span className="text-[16px] text-[#c4cee3]">Sản phẩm</span>
             <ChevronDown
-              className={`ml-auto transform ${
-                expandedSection === "products" ? "rotate-180" : ""
-              }`}
+              className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -104,9 +102,8 @@ export default function Sidebar_Dashboard() {
             <Palette />
             <span className="text-[16px] text-[#c4cee3]">Thuộc Tính</span>
             <ChevronDown
-              className={`ml-auto transform ${
-                expandedSection === "attribute" ? "rotate-180" : ""
-              }`}
+              className={`ml-auto transform ${expandedSection === "attribute" ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -185,7 +182,7 @@ export default function Sidebar_Dashboard() {
       </div>
       <div>
         <Link
-          to={`/admin/products/trash`}
+          to={`/admin/trash`}
           className="flex items-center gap-x-4 py-3  w-full text-left"
         >
           <Trash2 />
