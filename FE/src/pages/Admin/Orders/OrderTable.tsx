@@ -99,7 +99,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   ];
 
   return (
-    <div className="overflow-x-auto">
+    <div className="">
       <Table columns={columns} dataSource={dataSort} pagination={false} />
       <div className="flex justify-between items-center mt-4">
         <div className="max-w-full overflow-hidden"></div>

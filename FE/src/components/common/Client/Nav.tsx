@@ -8,19 +8,19 @@ const Nav_Mobile = () => {
     const arr = [
         {
             path: '',
-            name: 'Home'
+            name: 'Trang chủ'
         },
         {
             path: '/shops',
-            name: 'Shops'
+            name: 'Sản phẩm'
         },
         {
             path: '/blogs',
-            name: 'BLog'
+            name: 'Bài viết'
         },
         {
             path: '/contact',
-            name: 'Contact'
+            name: 'Liên hệ'
         },
         {
             path: '/about-us',
@@ -57,19 +57,19 @@ export function Nav_Desktop() {
     const arr = [
         {
             path: '',
-            name: 'Home'
+            name: 'Trang chủ'
         },
         {
             path: '/shops',
-            name: 'Shops'
+            name: 'Sản phẩm'
         },
         {
             path: '/blogs',
-            name: 'BLog'
+            name: 'Bài viết'
         },
         {
             path: '/contact',
-            name: 'Contact'
+            name: 'Liên hệ'
         },
         {
             path: '/about-us',
