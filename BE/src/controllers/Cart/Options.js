@@ -19,6 +19,7 @@ export const addItemToCart = async (req, res) => {
                             quantity_attr = k.stock_attribute;
                             color_item = i.color;
                             name_size = k.name_size;
+                            break;
                         } else {
                             quantity_attr = k.stock_attribute;
                             color_item = i.color;

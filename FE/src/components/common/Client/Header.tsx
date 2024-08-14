@@ -40,14 +40,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -170,7 +170,7 @@ const Header = () => {
                 </button>
               </form>
               {showSuggestions && query.length > 0 && (
-                <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-0 overflow-y-auto">
+                <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
                   {isLoading ? (
                     <div className="flex justify-center px-4 py-2 text-gray-700">
                       <LoadingOutlined />
@@ -214,21 +214,13 @@ const Header = () => {
               )}
             </div>
 
-            {/* cart */}
-            {/* {account ? '/cart' : (
-              <div onClick={() => onlogin()} className="relative">
-                <CarrotIcon />
-                <MiniCart />
-              </div>
-            )} */}
-
             <Link
               className="group *:duration-300 relative py-1"
               onClick={ScrollTop}
               to={account ? "/cart" : "/login"}
             >
               {data?.products && data?.products.length > 0 && (
-                <span className="absolute bg-red-500 w-4 h-4 grid place-items-center text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
+                <span className="absolute bg-red-500 px-1 h-4 flex items-center text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
                   {data?.products?.length}
                 </span>
               )}
@@ -270,13 +262,13 @@ const Header = () => {
             )}
 
             {/* option / menu */}
-            <div className="duration-300 cursor-pointer hover:scale-105">
+            <div className="duration-300 cursor-pointer hover:scale-105 ">
               <Link ref={ref_user} to={"/profile"}>
                 <img
                   src={getUser?.avatar ? getUser?.avatar : ""}
                   alt=""
                   width={40}
-                  className="rounded-full w-[38px] h-[28px]"
+                  className="rounded-full w-12 h-8"
                 />
               </Link>
               <Link
@@ -329,21 +321,3 @@ const Header = () => {
 };
 
 export default Header;
-
-// (
-//   <Link to="/cart" onClick={ScrollTop} className="relative">
-//     <CartIcon />
-//     {calculateTotalProduct() > 0 ? (
-//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-//         {calculateTotalProduct() > 99
-//           ? "99+"
-//           : calculateTotalProduct()}
-//       </span>
-//     ) : (
-//       <span className="absolute -top-3 -right-3 text-xs rounded-[50%] w-[25px] grid place-items-center h-[1.5rem] bg-[#F68E56] text-white">
-//         0
-//       </span>
-//     )}
-//     {/* <MiniCart /> */}
-//   </Link>
-// )
