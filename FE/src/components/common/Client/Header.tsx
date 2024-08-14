@@ -40,14 +40,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -170,7 +170,7 @@ const Header = () => {
                 </button>
               </form>
               {showSuggestions && query.length > 0 && (
-                <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
+                <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-0 overflow-y-auto">
                   {isLoading ? (
                     <div className="flex justify-center px-4 py-2 text-gray-700">
                       <LoadingOutlined />
@@ -276,7 +276,7 @@ const Header = () => {
                   src={getUser?.avatar ? getUser?.avatar : ""}
                   alt=""
                   width={40}
-                  className="rounded-full w-[28px] h-[28px]"
+                  className="rounded-full w-[38px] h-[28px]"
                 />
               </Link>
               <Link

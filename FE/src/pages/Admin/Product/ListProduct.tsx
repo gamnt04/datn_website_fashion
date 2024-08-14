@@ -148,7 +148,7 @@ const ListProduct = () => {
     <>
       {contextHolder}
       <div>
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-36">
           {" "}
           <Popconfirm
             title="Xóa sản phẩm khỏi giỏ hàng?"
