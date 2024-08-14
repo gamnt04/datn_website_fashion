@@ -77,6 +77,24 @@ const Products = ({ items }: any) => {
     RemoveFavouriteProduct({ userId, productId });
   };
 
+
+  let min;
+  let max;
+  if (items?.attributes?.values) {
+    min = items?.attributes?.values[0]?.size[0].price_attribute;
+    max = items?.attributes?.values[0]?.size[0].price_attribute;
+    for (let i of items?.attributes?.values) {
+      for (let j of i.size) {
+        if (j.price_attribute < min) {
+          min = j.price_attribute;
+        }
+        if (j.price_attribute > max) {
+          max = j.price_attribute;
+        }
+      }
+    }
+  }
+
   return (
     <div
       className="flex flex-col justify-between w-full gap-y-5"
@@ -122,11 +140,11 @@ const Products = ({ items }: any) => {
                 <HeartIcon />
               </button>
             )} <button
-            className="p-2 border-none rounded"
-            onClick={() => handlePreview(items?._id)}
-          >
-            <EyeIcon />
-          </button>
+              className="p-2 border-none rounded"
+              onClick={() => handlePreview(items?._id)}
+            >
+              <EyeIcon />
+            </button>
           </div>
         </div>
         <div className="flex justify-center items-center flex-col px-4 py-4 gap-y-2">
@@ -141,12 +159,29 @@ const Products = ({ items }: any) => {
                 : items?.name_product
             }
           </Link>
-          <p className="font-normal text-[16px]">
+          {/* <p className="font-normal text-[16px]">
             {items?.price_product?.toLocaleString("vi-VN", {
               style: "currency",
               currency: "VND",
             })}
-          </p>
+          </p> */}
+
+
+          {
+            items?.attributes?.values ?
+              <div className="flex items-center gap-x-1 line-clamp-2">
+                {
+                  (min === max) ?
+                    <span className="text-[#EB2606]">{(max)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> :
+                    <>
+                      <span className="text-[#EB2606]">{(min)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> -
+                      <span className="text-[#EB2606]">{(max)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+                    </>
+                }
+              </div> :
+              <span className="text-[#EB2606]">{(items?.price_product)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+          }
+
         </div>
 
         {
