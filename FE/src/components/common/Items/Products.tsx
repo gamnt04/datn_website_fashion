@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { HeartIcon, HeartIconRed } from "../../../resources/svg/Icon/Icon";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import ProductModal from "../../../pages/Client/Preview/ProductModal";
+// import ProductModal from "../../../pages/Client/Preview/ProductModal";
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
@@ -77,7 +77,6 @@ const Products = ({ items }: any) => {
     RemoveFavouriteProduct({ userId, productId });
   };
 
-
   let min;
   let max;
   if (items?.attributes?.values) {
@@ -139,12 +138,13 @@ const Products = ({ items }: any) => {
               >
                 <HeartIcon />
               </button>
-            )} <button
+            )}{" "}
+            {/* <button
               className="p-2 border-none rounded"
               onClick={() => handlePreview(items?._id)}
             >
               <EyeIcon />
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="flex justify-center items-center flex-col px-4 py-4 gap-y-2">
@@ -153,11 +153,9 @@ const Products = ({ items }: any) => {
             to={`/shops/detail_product/${items?._id}`}
             className="text-md text-center font-bold lg:text-[16px] hover:text-black line-clamp-2"
           >
-            {
-              items?.name_product.length > 15
-                ? items?.name_product.slice(0, 50) + "..."
-                : items?.name_product
-            }
+            {items?.name_product.length > 15
+              ? items?.name_product.slice(0, 50) + "..."
+              : items?.name_product}
           </Link>
           {/* <p className="font-normal text-[16px]">
             {items?.price_product?.toLocaleString("vi-VN", {
@@ -166,31 +164,50 @@ const Products = ({ items }: any) => {
             })}
           </p> */}
 
-
-          {
-            items?.attributes?.values ?
-              <div className="flex items-center gap-x-1 line-clamp-2">
-                {
-                  (min === max) ?
-                    <span className="text-[#EB2606]">{(max)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> :
-                    <>
-                      <span className="text-[#EB2606]">{(min)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> -
-                      <span className="text-[#EB2606]">{(max)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
-                    </>
-                }
-              </div> :
-              <span className="text-[#EB2606]">{(items?.price_product)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
-          }
-
+          {items?.attributes?.values ? (
+            <div className="flex items-center gap-x-1 line-clamp-2">
+              {min === max ? (
+                <span className="text-[#EB2606]">
+                  {max?.toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </span>
+              ) : (
+                <>
+                  <span className="text-[#EB2606]">
+                    {min?.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>{" "}
+                  -
+                  <span className="text-[#EB2606]">
+                    {max?.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>
+                </>
+              )}
+            </div>
+          ) : (
+            <span className="text-[#EB2606]">
+              {items?.price_product?.toLocaleString("vi", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </span>
+          )}
         </div>
 
-        {
+        {/* {
           modalOpen && selectedProduct && (
             <ProductModal product={selectedProduct} onClose={handleCloseModal} />
           )
-        }
-      </div >
-    </div >
+        } */}
+      </div>
+    </div>
   );
 };
 
