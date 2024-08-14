@@ -50,23 +50,22 @@ export async function get_items_client(req, res) {
       ];
     }
     const data = await Products.paginate(querry, options);
-    for (let item of data.docs) {
-      let total_stock = 0;
-      if (item.attributes) {
-        const attr = await Attribute.findOne({ id_item: item._id.toString() });
-        if (attr) {
-          attr.values.map((item) => {
-            item.size.map((a) => {
-              total_stock += a.stock_attribute;
-            });
-          });
-        }
-        item.stock_product = total_stock;
-      } else {
-        item.stock_product = item.stock;
+    await Products.populate(data.docs, { path: 'attributes' });
+    for (const id_data of data.docs) {
+      if (id_data.attributes) {
+        let total_stock = 1;
+        id_data.attributes.values.map((i) => {
+          i.size.map(l => {
+            total_stock += l.stock_attribute
+          })
+        })
+        id_data.stock_product = total_stock;
       }
-    }
-    // console.log(data);
+      else {
+        id_data.stock_product = id_data.stock
+      }
+    };
+    data.docs = data.docs.filter((item) => item.stock_product > 0);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Khong co data!",
