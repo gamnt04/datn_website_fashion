@@ -55,7 +55,10 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.plugin(mongoosePaginate);
-productSchema.plugin(mongooseDelete, { deletedAt: true, overrideMethods: 'all' });
+productSchema.plugin(mongooseDelete, {
+  deletedAt: true,
+  overrideMethods: "all",
+});
 
 productSchema.statics.filterByPrice = function (minPrice, maxPrice, options) {
   const query = {
@@ -64,4 +67,44 @@ productSchema.statics.filterByPrice = function (minPrice, maxPrice, options) {
 
   return this.paginate(query, options);
 };
+
+productSchema.statics.sortByAttributePrice = function (
+  sortOrder = 1,
+  options = {}
+) {
+  return this.aggregate([
+    {
+      $lookup: {
+        from: "attributes", // Tên collection của Attributes
+        localField: "attributes",
+        foreignField: "_id",
+        as: "attributes_details",
+      },
+    },
+    {
+      $unwind: "$attributes_details",
+    },
+    {
+      $unwind: "$attributes_details.values",
+    },
+    {
+      $unwind: "$attributes_details.values.size",
+    },
+    {
+      $sort: {
+        "attributes_details.values.size.price_attribute": sortOrder,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        product: { $first: "$$ROOT" }, // Giữ lại thông tin sản phẩm đầu tiên trong nhóm sau khi sắp xếp
+      },
+    },
+    {
+      $replaceRoot: { newRoot: "$product" },
+    },
+  ]).exec();
+};
+
 export default mongoose.model("Products", productSchema);
