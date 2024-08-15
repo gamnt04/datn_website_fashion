@@ -2,13 +2,16 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import JoditEditor from 'jodit-react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { message } from 'antd';
+import { Button, message } from 'antd';
+import LoadingOverlay from 'react-loading-overlay-ts';
 
 const BlogEdit = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const editor = useRef(null);
   const [content, setContent] = useState('');
   const { id } = useParams(); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [initialContentState, setInitialContentState] = useState('');
   const navigate = useNavigate(); 
 
   useEffect(() => {
@@ -17,6 +20,7 @@ const BlogEdit = () => {
       try {
         const { data } = await axios.get(`http://localhost:2004/api/v1/blogs/${id}`);
         setContent(data.content);
+        setInitialContentState(data.content); // Set initial content state
       } catch (error) {
         console.error("Failed to fetch blog content:", error);
         message.error("Không thể tải nội dung bài viết");
@@ -26,6 +30,7 @@ const BlogEdit = () => {
   }, [id]);
 
   const onSubmit = async () => {
+    setIsLoading(true);
     try {
       const parser = new DOMParser();
       const doc = parser.parseFromString(content, "text/html");
@@ -55,6 +60,7 @@ const BlogEdit = () => {
       const h1Element = doc.querySelector("h1");
       if (h1Element === null || h1Element.textContent === '') {
         message.error('Tiêu đề không được để trống');
+        setIsLoading(false);
         return;
       }
 
@@ -75,19 +81,28 @@ const BlogEdit = () => {
           },
         }
       );
-
       message.success("Cập nhật blog thành công");
       navigate('/admin/blogs'); 
     } catch (error) {
       console.error("Error updating blog:", error);
       message.error("Có lỗi xảy ra khi cập nhật bài viết");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const config = useMemo(
     () => ({
       readonly: false,
-      placeholder: "Chỉnh sửa Blog ...",
+      toolbarAdaptive: false,
+      toolbarSticky: false,
+      showCharsCounter: false,
+      showWordsCounter: false,
+      showXPathInStatusbar: false,
+      askBeforePasteHTML: false,
+      askBeforePasteFromWord: false,
+      defaultActionOnPaste: 'insert_only_text',
+      buttons: ['bold', 'italic', 'underline', 'strikethrough', 'eraser', 'ul', 'ol', 'outdent', 'indent', 'font', 'fontsize', 'brush', 'paragraph', 'image', 'link', 'align', 'undo', 'redo'],
       uploader: {
         insertImageAsBase64URI: true,
       },
@@ -96,7 +111,20 @@ const BlogEdit = () => {
   );
 
   return (
-    <>
+    <LoadingOverlay
+      active={isLoading}
+      spinner
+      text="Loading"
+      styles={{
+        overlay: (base) => ({
+          ...base,
+          position: "fixed",
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1000,
+        }),
+      }}
+    >
       <JoditEditor
         className='!text-black mt-20'
         ref={editor}
@@ -107,9 +135,9 @@ const BlogEdit = () => {
         }}
       />
       <div>
-        <button onClick={onSubmit}>Cập nhật bài viết</button>
+        <Button type='primary mt-10' onClick={onSubmit} disabled={content === initialContentState}>Cập nhật bài viết</Button>
       </div>
-    </>
+    </LoadingOverlay>
   );
 };
 

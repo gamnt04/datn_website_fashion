@@ -30,33 +30,33 @@ export const createOrder = async (req, res) => {
         .json({ message: "Cart not found" });
     }
 
-    for (let i of items) {
-      if (i.productId.attributes) {
-        const data_attr = await Attributes.find({ id_item: i.productId._id });
-        for (let j of data_attr) {
-          for (let k of j.values) {
-            if (k.color == i.color_item) {
-              for (let x of k.size) {
-                if (x.name_size) {
-                  if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute - i.quantity;
-                  }
-                } else {
-                  x.stock_attribute = x.stock_attribute - i.quantity;
-                }
-              }
-            }
-          }
-          await j.save();
-        }
-      } else {
-        const data_items = await Products.find({ _id: i.productId._id });
-        for (let a of data_items) {
-          a.stock_product = a.stock_product - i.quantity;
-          await a.save();
-        }
-      }
-    }
+    // for (let i of items) {
+    //   if (i.productId.attributes) {
+    //     const data_attr = await Attributes.find({ id_item: i.productId._id });
+    //     for (let j of data_attr) {
+    //       for (let k of j.values) {
+    //         if (k.color == i.color_item) {
+    //           for (let x of k.size) {
+    //             if (x.name_size) {
+    //               if (x.name_size == i.name_size) {
+    //                 x.stock_attribute = x.stock_attribute - i.quantity;
+    //               }
+    //             } else {
+    //               x.stock_attribute = x.stock_attribute - i.quantity;
+    //             }
+    //           }
+    //         }
+    //       }
+    //       await j.save();
+    //     }
+    //   } else {
+    //     const data_items = await Products.find({ _id: i.productId._id });
+    //     for (let a of data_items) {
+    //       a.stock_product = a.stock_product - i.quantity;
+    //       await a.save();
+    //     }
+    //   }
+    // }
 
     dataCart.products = dataCart.products.filter((i) => {
       return !req.body.items.some((j) => {
@@ -78,9 +78,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`
       },
       totalPrice
     });
@@ -164,6 +163,7 @@ export const createOrderPayment = async (req, res) => {
           address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
         },
         totalPrice,
+
       });
       await SendMail(customerInfo.email, order);
       await Cart.findOneAndDelete({ userId: userId });
@@ -463,30 +463,67 @@ export const updateOrder = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, total_price } = req.body;
-    console.log(status);
+
     const validStatuses = ["1", "2", "3", "4", "5"];
     if (!validStatuses.includes(status)) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Invalid status" });
     }
+
     const order = await Order.findById(id);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
     }
+
     if (order.status === "4" || order.status === "5") {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" });
     }
+
+    // Update order status
     order.status = status;
     order.total_price = total_price;
+
+    // If order is confirmed, update product quantities
+    if (status === "2") {
+      const items = order.items;
+      for (let i of items) {
+        if (i.productId.attributes) {
+          const data_attr = await Attributes.find({ id_item: i.productId._id });
+          for (let j of data_attr) {
+            for (let k of j.values) {
+              if (k.color == i.color_item) {
+                for (let x of k.size) {
+                  if (x.name_size) {
+                    if (x.name_size == i.name_size) {
+                      x.stock_attribute = x.stock_attribute - i.quantity;
+                    }
+                  } else {
+                    x.stock_attribute = x.stock_attribute - i.quantity;
+                  }
+                }
+              }
+            }
+            await j.save();
+          }
+        } else {
+          const data_items = await Products.find({ _id: i.productId._id });
+          for (let a of data_items) {
+            a.stock_product = a.stock_product - i.quantity;
+            await a.save();
+          }
+        }
+      }
+    }
     await order.save();
     return res
       .status(StatusCodes.OK)
@@ -586,6 +623,36 @@ export const adminCancelOrder = async (req, res) => {
     if (confirm) {
       order.status = "5"; // Canceled
       order.cancelledByAdmin = true;
+
+      // Revert product quantities
+      const items = order.items;
+      for (let i of items) {
+        if (i.productId.attributes) {
+          const data_attr = await Attributes.find({ id_item: i.productId._id });
+          for (let j of data_attr) {
+            for (let k of j.values) {
+              if (k.color == i.color_item) {
+                for (let x of k.size) {
+                  if (x.name_size) {
+                    if (x.name_size == i.name_size) {
+                      x.stock_attribute = x.stock_attribute + i.quantity;
+                    }
+                  } else {
+                    x.stock_attribute = x.stock_attribute + i.quantity;
+                  }
+                }
+              }
+            }
+            await j.save();
+          }
+        } else {
+          const data_items = await Products.find({ _id: i.productId._id });
+          for (let a of data_items) {
+            a.stock_product = a.stock_product + i.quantity;
+            await a.save();
+          }
+        }
+      }
     } else {
       order.cancellationRequested = false;
     }

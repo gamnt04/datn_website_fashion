@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useSignIn from "../../../common/hooks/Auth/useSignIn";
 import type { FormProps } from "antd";
 import { Button, Form, Input, Spin } from "antd";
@@ -6,6 +6,7 @@ import { signInSchema } from "../../../common/validations/auth/SignIn";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const Login = () => {
+  const navigate = useNavigate();
   const {
     onSubmit,
     formErrors,
@@ -42,6 +43,10 @@ const Login = () => {
       onSubmit({ email, password });
     }
   };
+  const handleForgotPassword = () => {
+    navigate("/forgot-password");
+  };
+
   if (isPending) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -117,6 +122,14 @@ const Login = () => {
                     Đăng nhập
                   </Button>
                 </Form.Item>
+                <p className="text-sm text-gray-600">
+                  <span
+                    onClick={handleForgotPassword}
+                    className="font-bold text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Quên mật khẩu?
+                  </span>
+                </p>
                 <p className="text-sm text-gray-600">
                   Bạn chưa có tài khoản?{" "}
                   <Link
