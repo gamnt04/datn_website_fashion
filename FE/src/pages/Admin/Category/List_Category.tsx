@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, message, Popconfirm, Table, Pagination, Switch } from "antd";
+import { useNavigate } from "react-router-dom"; 
 import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
@@ -11,10 +12,10 @@ import instance from "../../../configs/axios";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { data, isLoading } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState(1);
-  // const [dataSource, setDataSource] = useState<ICategory[]>([]);
 
   const pageSize = 4;
 
@@ -58,13 +59,13 @@ const List_Category: React.FC = () => {
       return response.data;
     },
     onSuccess: () => {
-      messageApi.success("Cập nhật blog thành công");
+      messageApi.success("Cập nhật danh mục thành công");
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error: unknown) => {
-      console.error("Lỗi khi cập nhật blog:", error);
+      console.error("Lỗi khi cập nhật danh mục:", error);
       messageApi.error(
-        `Cập nhật blog không thành công. ${
+        `Cập nhật danh mục không thành công. ${
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
@@ -74,6 +75,11 @@ const List_Category: React.FC = () => {
   const handleTogglePublished = (category: ICategory) => {
     mutation.mutate({ ...category, published: !category.published });
   };
+
+  const handleViewProducts = (category: ICategory) => {
+    navigate(`/admin/category/products/${category._id}`);
+  };
+
   const createFilters = (categories: ICategory[]) => {
     return categories
       .map((category: ICategory) => category.name_category)
@@ -98,6 +104,9 @@ const List_Category: React.FC = () => {
       sorter: (a: ICategory, b: ICategory) =>
         a.name_category.localeCompare(b.name_category),
       sortDirections: ["ascend", "descend"],
+      render: (text: string, record: ICategory) => (
+        <a onClick={() => handleViewProducts(record)}>{text}</a>
+      ),
     },
     {
       key: "image_category",
@@ -197,7 +206,7 @@ const List_Category: React.FC = () => {
       ) : (
         <>
           <div className="flex items-center justify-between mb-10 mt-10">
-            <h1 className="text-2xl font-semibold">Quản lý sản phẩm</h1>
+            <h1 className="text-2xl font-semibold">Quản lý danh mục</h1>
             <UpdateComponent />
           </div>
           <Table
