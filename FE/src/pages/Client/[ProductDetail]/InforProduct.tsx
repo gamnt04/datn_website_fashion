@@ -178,7 +178,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
 
       sessionStorage.setItem('item_order', JSON.stringify(data_order))
-      navi('/cart/pay')
+      navi('/order/pay')
     } else {
       navi('/login')
     }
