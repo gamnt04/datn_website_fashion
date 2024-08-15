@@ -39,6 +39,7 @@ import BlogAdd from "../pages/Admin/Blogs/BlogAdd";
 import Logout from "../common/hooks/Auth/Logout";
 import SearchResults from "../components/common/Client/SearchResults";
 import BlogEdit from "../pages/Admin/Blogs/BlogEdit";
+import ForgotPassword from "../pages/Client/User/ForgotPass";
 const RouterComponent = () => {
   return (
     <>
@@ -58,6 +59,7 @@ const RouterComponent = () => {
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
             {/* <Route path="blogs/detailblog" element={<DetailBlogs />} /> */}
             <Route

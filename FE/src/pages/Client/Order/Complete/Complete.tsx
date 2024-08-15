@@ -23,7 +23,7 @@ const Complete = ({ dataProps }: any) => {
                 color: j.color_item,
                 size: j.name_size,
                 quantity: j.quantity,
-                price: j.productId?.price_product,
+                price: j.price_item,
                 image: j.productId?.image_product,
                 name: j.productId?.name_product,
                 _id: _id

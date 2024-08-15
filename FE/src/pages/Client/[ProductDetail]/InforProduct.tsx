@@ -282,7 +282,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </div>
           <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
-            <span className="text-[#EB2606]">{(price > 1 ? price : price_item_attr)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
+            <span className="text-[#EB2606]">{((dataProps?.product?.attributes) ? price_item_attr : price)?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span>
           </div>
           <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             {/* add cart */}

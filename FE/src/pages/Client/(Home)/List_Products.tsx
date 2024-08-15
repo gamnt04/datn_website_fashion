@@ -20,8 +20,7 @@ const List_Products = () => {
           Danh sách sản phẩm
         </span>
         <p className="opacity-80 text-sm my-4">
-          Find a bright ideal to suit your taste width our great selection of
-          suspension.
+          Tìm một sản phẩm lý tưởng phù hợp với sở thích của bạn trong danh mục lựa chọn hệ thống treo tuyệt vời của chúng tôi.
         </p>
         <nav className="flex *:relative *:mx-6 justify-between *:after:content-[''] *:after:absolute *:after:h-[2px] *:after:bg-gray-800 *:after:bottom-[-20%] *:after:duration-500 *:font-medium *:after:rounded-lg">
           <button className="opacity-100 after:w-full after:left-0">

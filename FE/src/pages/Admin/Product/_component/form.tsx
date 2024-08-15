@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Form } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { IAttribute } from "../../../../common/interfaces/Product";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
 import useHookForm from "../../../../common/hooks/form/My_form";
@@ -36,6 +36,7 @@ const Form_Item = ({ mode }: any) => {
   const [status_attr, setStatus_Attr] = useState(true);
   let image_item: any;
   let gallery_item: any = [];
+
   const {
     onSubmit,
     isPending,
@@ -43,7 +44,7 @@ const Form_Item = ({ mode }: any) => {
     handleImageChange,
     handleGalleryChange,
     loading,
-    data_one_item
+    data_one_item,
   } = useHookForm({ mode });
   const { data } = useCategoryQuery();
   const [form] = Form.useForm();
@@ -177,7 +178,7 @@ const Form_Item = ({ mode }: any) => {
                     }
                   ]}
                 >
-                  <Input className=" mt-2 py-2 max-w-[200px] !text-gray-100 border-gray-600 !outline-none hover:bg-[#F5F7FD] " />
+                  <InputNumber className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] " />
                 </Form.Item>
               </>
             )}
@@ -187,7 +188,7 @@ const Form_Item = ({ mode }: any) => {
             </label>
             <Form.Item<FieldType> name="description_product">
               <TextArea
-                className=" mt-2 py-2 max-w-[200px] !text-gray-100 border-gray-600 !outline-none hover:bg-[#F5F7FD] "
+                className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] "
                 rows={4}
               />
             </Form.Item>
@@ -206,7 +207,7 @@ const Form_Item = ({ mode }: any) => {
                       htmlFor=""
                       className="text-[#1C2434] font-medium text-sm"
                     >
-                      Options sản phẩm
+                      Thuộc tính sản phẩm
                     </label>
                     {fields.map(({ key, name, ...restField }) => (
                       <div key={key}>
@@ -226,7 +227,7 @@ const Form_Item = ({ mode }: any) => {
                             }
                           ]}
                         >
-                          <Input className="!bg-[#171821] mt-2 py-2 max-w-[200px] !text-gray-100 border-gray-600 !outline-none hover:bg-[#171821] focus:bg-[#171821] active:bg-[#171821]" />
+                          <Input className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none " />
                         </Form.Item>
                         <Form.List name={[name, "size"]} initialValue={[{}]}>
                           {(
@@ -255,7 +256,7 @@ const Form_Item = ({ mode }: any) => {
                                         {...restSizeField}
                                         name={[sizeName, "name_size"]}
                                       >
-                                        <Input className="!bg-[#171821] mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none hover:bg-[#171821] focus:bg-[#171821] active:bg-[#171821]" />
+                                        <Input className=" mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none " />
                                       </Form.Item>
                                     </div>
 
@@ -285,14 +286,14 @@ const Form_Item = ({ mode }: any) => {
                                           }
                                         ]}
                                       >
-                                        <Input className="w-[183px] !bg-[#171821] mt-2 py-2 max-w-[200px] !text-gray-100 border-gray-600 !outline-none hover:bg-[#171821] focus:bg-[#171821] active:bg-[#171821]" />
+                                        <Input className="w-[183px]  mt-2 py-2 max-w-[200px] border-gray-600 !outline-none " />
                                       </Form.Item>
                                     </div>
 
                                     <div>
                                       <label
                                         htmlFor=""
-                                        className="text-gray-100 font-medium text-sm"
+                                        className="font-medium text-sm"
                                       >
                                         Giá :
                                       </label>{" "}
@@ -317,35 +318,30 @@ const Form_Item = ({ mode }: any) => {
                                           }
                                         ]}
                                       >
-                                        <InputNumber className="w-[183px] !bg-[#171821] mt-2 py-2 max-w-[200px] !text-gray-100 border-gray-600 !outline-none hover:bg-[#171821] focus:bg-[#171821] active:bg-[#171821]" />
+                                        <InputNumber className="w-[183px]  mt-2 py-1 max-w-[200px] border-gray-600 !outline-none " />
                                       </Form.Item>
                                     </div>
 
-                                    <Button
-                                      onClick={() => removeSize(sizeName)}
-                                      className="mt-1 bg-red-600 text-gray-100 border-none hover:!bg-red-700 hover:!text-gray-100"
-                                    >
-                                      Xóa
-                                    </Button>
+
+                                    <DeleteOutlined onClick={() => removeSize(sizeName)} style={{ fontSize: '20px' }} />
+
                                   </div>
                                 )
                               )}
-                              <div>
+                              <div className="flex items-center gap-4 mb-4">
                                 <Button
                                   type="primary"
                                   onClick={() => addSize()}
-                                  className="mb-3 -mt-4"
+                                  style={{ padding: '20px 10px' }}
                                 >
                                   Thêm kích cỡ
                                 </Button>
-                              </div>
-
-                              <div className="flex gap-3">
                                 <Button
                                   onClick={() => remove(name)}
-                                  className="mt-1 bg-red-600 my-4 text-gray-100 border-none hover:!bg-red-700 hover:!text-gray-100"
+                                  style={{ padding: '20px 10px' }}
+                                  className=" bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
                                 >
-                                  Xóa options
+                                  Xóa thuộc tính
                                 </Button>
                               </div>
                             </>
@@ -354,13 +350,13 @@ const Form_Item = ({ mode }: any) => {
                       </div>
                     ))}
                     <Form.Item>
-                      <button
-                        type="button"
-                        className="max-w-[200px] py-2 px-3 bg-[#1677FF] hover:bg-[#4096FF] text-[#ffffff] duration-200 rounded"
+                      <Button
+                        style={{ padding: '20px 10px' }}
+                        type="primary"
                         onClick={() => add()}
                       >
-                        Thêm options
-                      </button>
+                        Thêm thuộc tính
+                      </Button>
                     </Form.Item>
                   </>
                 );
@@ -375,7 +371,7 @@ const Form_Item = ({ mode }: any) => {
                   mode="tags"
                   notFoundContent="Không tìm thấy tags"
                   allowClear
-                  className=" mt-2 *:py-2 max-w-[200px] *:!text-gray-100 border-gray-600 !outline-none "
+                  className=" mt-2 *:py-2 max-w-[200px] * border-gray-600 !outline-none "
                 />
               </div>
             </Form.Item>
@@ -387,7 +383,7 @@ const Form_Item = ({ mode }: any) => {
             </Form.Item>
           </div>
           <div>
-            <div className="flex items-start justify-between w-2/3">
+            <div className="flex items-start justify-between gap-4">
               <div>
                 <label
                   htmlFor=""
@@ -413,6 +409,7 @@ const Form_Item = ({ mode }: any) => {
                     beforeUpload={() => false}
                     onChange={handleImageChange}
                     className="mt-2"
+                    maxCount={1}
                   >
                     <button
                       style={{ border: 0, background: "none" }}
@@ -444,6 +441,7 @@ const Form_Item = ({ mode }: any) => {
                     listType="picture-card"
                     beforeUpload={() => false}
                     onChange={handleGalleryChange}
+                    multiple={true}
                     className="mt-2"
                   >
                     <button
@@ -466,13 +464,15 @@ const Form_Item = ({ mode }: any) => {
         <Form.Item>
           {mode ? (
             <Button
-              className="bg-yellow-600 hover:!bg-yellow-700 border-none text-[#1C2434] hover:!text-[#1C2434] mt-2"
+              style={{ padding: '20px 10px' }}
+              type="primary"
               htmlType="submit"
             >
               {isPending || loading ? "Loading" : "Cập nhật sản phẩm"}
             </Button>
           ) : (
-            <Button type="primary" htmlType="submit">
+            <Button style={{ padding: '20px 10px' }}
+              type="primary" htmlType="submit">
               {isPending || loading ? "Loading" : "Tạo sản phẩm"}
             </Button>
           )}
