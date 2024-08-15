@@ -27,10 +27,10 @@ const ListCart = () => {
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
   const { mutate: handle_status_checked } = Mutation_Cart("HANLDE_STATUS_CHECKED");
   useEffect(() => {
-      sessionStorage.setItem('totalPriceCart', JSON.stringify(data?.total_price))
-     
-  },[data?.total_price]);
-  
+    sessionStorage.setItem('totalPriceCart', JSON.stringify(data?.total_price))
+
+  }, [data?.total_price]);
+
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
@@ -131,7 +131,7 @@ const ListCart = () => {
         return (
           <div className="flex space-x-2">
             <Dow_btn dataProps={{ id_item: product?.productId, quantity_item: product?.quantity, color: product?.color_item, size: product?.name_size }} />
-            <Input value={product?.quantity} className="w-[40px] text-center" />
+            <Input value={product?.quantity} className="px-0 text-center" />
             <Up_btn dataProps={{ id_item: product?.productId, quantity_item: product, color: product?.color_item, size: product?.name_size }} />
           </div>
         );

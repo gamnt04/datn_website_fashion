@@ -35,6 +35,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           quantity: quantity_item,
           color: color,
           size: size,
+          stock_item : quantity_attr,
         };
         mutate(item);
       }

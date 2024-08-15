@@ -12,21 +12,20 @@ const Canceled = ({ dataProps }: any) => {
 
   const addCart = (orderId?: string | number) => {
     if (account) {
-      const order = dataProps.find((i: any) => i._id === orderId);
+      const order = dataProps.find((i: any) => i?._id === orderId);
       if (order?.items) {
         for (let i = 0; i < order.items.length; i++) {
           const j = order.items[i];
           if (j.productId) {
-            console.log(j.price_item);
             mutate({
               userId: account?._id,
-              productId: j.productId?._id,
-              color: j.color_item,
-              size: j.name_size,
-              quantity: j.quantity,
-              price: j.price_item,
-              image: j.productId?.image_product,
-              name: j.productId?.name_product,
+              productId: j?.productId?._id,
+              color: j?.color_item,
+              size: j?.name_size,
+              quantity: j?.quantity,
+              price_item_attr: j?.price_item,
+              image: j?.productId?.image_product,
+              name: j?.productId?.name_product,
               _id: orderId
             });
           }
@@ -36,7 +35,6 @@ const Canceled = ({ dataProps }: any) => {
       navi('/login');
     }
   };
-
 
   return (
     <>

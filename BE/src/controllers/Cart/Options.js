@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
 
 export const addItemToCart = async (req, res) => {
-    const { userId, productId, quantity, color, size, price_item_attr } = req.body;
+    const { userId, productId, quantity, color, size, price_item_attr, stock_item } = req.body;
     try {
         const data_product = await Products.findOne({ _id: productId }).populate('attributes');
         let price_item = (price_item_attr > 0) ? price_item_attr : data_product.price_product;
@@ -46,11 +46,13 @@ export const addItemToCart = async (req, res) => {
                     cart.products[i].quantity += quantity;
                     cart.products[i].total_price_item = price_item * cart.products[i].quantity;
                     check_item = true;
-                    break;
+                }
+                if (cart.products[i].quantity >= stock_item) {
+                    cart.products[i].quantity = stock_item;
+                    cart.products[i].total_price_item = price_item * cart.products[i].quantity;
                 }
             }
         }
-
         if (!check_item) {
             cart.products.push({
                 productId,
@@ -62,10 +64,7 @@ export const addItemToCart = async (req, res) => {
                 total_price_item: price_item * quantity
             });
         }
-
-        // Tính tổng giá trị của tất cả các mặt hàng trong giỏ
         cart.total_price = cart.products.reduce((acc, product) => acc + product.total_price_item, 0);
-
         await cart.save();
         return res.status(StatusCodes.OK).json({ cart });
     } catch (error) {
