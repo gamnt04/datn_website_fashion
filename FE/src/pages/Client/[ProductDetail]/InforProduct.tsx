@@ -35,6 +35,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           quantity: quantity_item,
           color: color,
           size: size,
+          stock_item : quantity_attr,
         };
         mutate(item);
       }
@@ -177,7 +178,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
 
       sessionStorage.setItem('item_order', JSON.stringify(data_order))
-      navi('/cart/pay')
+      navi('/order/pay')
     } else {
       navi('/login')
     }
