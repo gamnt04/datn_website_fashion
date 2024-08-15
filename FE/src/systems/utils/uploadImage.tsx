@@ -22,23 +22,18 @@ const uploadFileCloudinary = async (file: File) => {
   }
 };
 
-
 export { uploadFileCloudinary };
-
 
 // utils/uploadImage.ts
 
-
-export const UploadImage = async (file: FileList | null): Promise<string[]> => {
-  if (!file) return [];
-
+export const UploadImage = async (file: File): Promise<string> => {
   const CLOUD_NAME = "dwya9mxip";
   const PRESET_NAME = "upImgProduct";
   const FOLDER_NAME = "PRODUCTS";
   const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
   const formData = new FormData();
-  formData.append("file", file[0]);
+  formData.append("file", file);
   formData.append("upload_preset", PRESET_NAME);
   formData.append("folder", FOLDER_NAME);
 
@@ -50,33 +45,27 @@ export const UploadImage = async (file: FileList | null): Promise<string[]> => {
     });
     return response.data.secure_url;
   } catch (error) {
-    console.error("Error uploading image:", error);
     throw new Error("Failed to upload image");
   }
 };
 
-
 ///uploadGallery.ts
-
 
 export const UploadGallery = async (
   files: FileList | null
 ): Promise<string[]> => {
   if (!files) return [];
 
-
   const CLOUD_NAME = "dwya9mxip";
   const PRESET_NAME = "upImgProduct";
   const FOLDER_NAME = "PRODUCTS";
   const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
 
   const uploadPromises = Array.from(files).map(async (file) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", PRESET_NAME);
     formData.append("folder", FOLDER_NAME);
-
 
     const response = await axios.post(api, formData, {
       headers: {
@@ -95,15 +84,11 @@ export const UploadGallery = async (
   }
 };
 
-
-
-
 // export const UploadGalleryBlog = async (
 //   files: any, content: string
 // )=> {
 //   if (!files) return [];
 
-  
 //   const CLOUD_NAME = "dwya9mxip";
 //   const PRESET_NAME = "upImgProduct";
 //   const FOLDER_NAME = "PRODUCTS";
@@ -118,7 +103,7 @@ export const UploadGallery = async (
 //     formData.append("file", fileBlob);
 //     formData.append("upload_preset", PRESET_NAME);
 //     formData.append("folder", FOLDER_NAME);
-    
+
 //     const response = await axios.post(api, formData, {
 //       headers: {
 //         "Content-Type": "multipart/form-data",
@@ -126,7 +111,7 @@ export const UploadGallery = async (
 //     });
 //     // console.log(response.data.secure_url);
 //     return { originalSrc: src, newSrc: response.data.secure_url };
-    
+
 //   });
 
 //   try {
@@ -137,18 +122,9 @@ export const UploadGallery = async (
 //       });
 //       setContentNew(contentNew);
 //       console.log(contentNew);
-      
+
 //   } catch (error) {
 //     console.error("Error uploading images:", error);
 //     throw new Error("Failed to upload images");
 //   }
 // };
-
-
-
-
-
-
-
-
-
