@@ -9,6 +9,7 @@ interface Products_ShopProps {
   priceRanges: { min: number; max: number }[];
   selectedColors: string[];
   selectedSizes: string[];
+  sortOption: string;
 }
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
@@ -16,6 +17,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   priceRanges,
   selectedColors,
   selectedSizes,
+  sortOption,
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 11; // Số lượng sản phẩm mỗi trang
@@ -31,12 +33,13 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     selectedColors,
     selectedSizes,
     currentPage,
-    itemsPerPage
+    itemsPerPage,
+    sortOption
   );
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex items-center justify-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </div>
     );
@@ -44,7 +47,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
 
   if (isError && error) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex items-center justify-center h-screen">
         <div>Error: {error.message}</div>
       </div>
     );
@@ -58,19 +61,20 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     <div>
       {products?.data?.length ? (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+          <div className="grid grid-cols-2 gap-6 mt-4 lg:grid-cols-4">
             {products.data.map((item: any) => (
               <Products key={item._id} items={item} />
             ))}
           </div>
           <div className="flex flex-col items-center mt-8">
-            <div className="flex items-center space-x-4 mb-4">
+            <div className="flex items-center mb-4 space-x-4">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={`px-4 py-2 border rounded-md ${currentPage === 1
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
+                className={`px-4 py-2 border rounded-md ${
+                  currentPage === 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
                 disabled={currentPage === 1}
               >
                 &#10094; Trang trước
@@ -78,10 +82,11 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
               <span className="text-lg font-semibold">Trang {currentPage}</span>
               <button
                 onClick={() => setCurrentPage((prev) => prev + 1)}
-                className={`px-4 py-2 border rounded-md ${!hasMore
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
+                className={`px-4 py-2 border rounded-md ${
+                  !hasMore
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
                 disabled={!hasMore}
               >
                 Trang tiếp theo &#10095;
@@ -94,10 +99,11 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 border rounded-md ${currentPage === page
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-black hover:bg-gray-300"
-                        }`}
+                      className={`px-4 py-2 border rounded-md ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-black hover:bg-gray-300"
+                      }`}
                     >
                       {page}
                     </button>
@@ -107,7 +113,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
           </div>
         </>
       ) : (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex items-center justify-center h-screen">
           <img src="/assets/Images/Products/no-data.png" alt="No products" />
         </div>
       )}
