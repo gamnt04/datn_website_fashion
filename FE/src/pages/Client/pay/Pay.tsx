@@ -5,8 +5,7 @@ import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin, Table } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import queryString from "query-string";
-
+import { nanoid } from 'nanoid';
 import {
   Add_Address,
   List_Address,
@@ -15,7 +14,7 @@ import { Address, Chevron_right } from "../../../components/common/Client/_compo
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Pay = () => {
+const OrderPay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
   const [isOpen, setIsOpen] = useState(false);
@@ -85,14 +84,14 @@ const Pay = () => {
 
     try { 
         if (data_form.payment === "VNPAY") { 
-            const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string); 
+             
             const orderId = JSON.parse(sessionStorage.getItem('item_order') as string); 
             sessionStorage.setItem('customerInfo', JSON.stringify({...data_form}));
-
+            console.log("ok",orderId.totalPrice)
             // Tạo URL thanh toán VNPAY 
             const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, { 
-                orderId: orderId._id, 
-                totalPrice: vnPayment, 
+                orderId: nanoid(24), 
+                totalPrice: orderId.totalPrice, 
                 orderDescription: `Order ${orderId._id}`, 
                 language: 'vn' 
             }); 
@@ -333,4 +332,4 @@ const Pay = () => {
   );
 };
 
-export default Pay;
+export default OrderPay;

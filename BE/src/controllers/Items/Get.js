@@ -50,21 +50,20 @@ export async function get_items_client(req, res) {
       ];
     }
     const data = await Products.paginate(querry, options);
-    await Products.populate(data.docs, { path: 'attributes' });
+    await Products.populate(data.docs, { path: "attributes" });
     for (const id_data of data.docs) {
       if (id_data.attributes) {
         let total_stock = 1;
         id_data.attributes.values.map((i) => {
-          i.size.map(l => {
-            total_stock += l.stock_attribute
-          })
-        })
+          i.size.map((l) => {
+            total_stock += l.stock_attribute;
+          });
+        });
         id_data.stock_product = total_stock;
+      } else {
+        id_data.stock_product = id_data.stock;
       }
-      else {
-        id_data.stock_product = id_data.stock
-      }
-    };
+    }
     data.docs = data.docs.filter((item) => item.stock_product > 0);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -144,19 +143,17 @@ export async function filterItems(req, res) {
     limit,
     sort: _sort
       ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
-      : { price_product: 1 },
+      : { "attributes.values.size.price_attribute": 1 },
   };
 
   try {
     const query = {};
 
-    // Lọc theo danh mục
     if (cate_id) {
       const cateArray = cate_id.split(",").map((id) => id.trim());
       query.category_id = { $in: cateArray };
     }
 
-    // Lọc theo giá với nhiều khoảng giá
     if (price_ranges) {
       try {
         const priceRangesArray = JSON.parse(price_ranges);
@@ -173,7 +170,6 @@ export async function filterItems(req, res) {
       }
     }
 
-    // Lọc theo màu sắc và kích cỡ
     const colorArray = color
       ? color.split(",").map((c) => c.trim().toLowerCase())
       : [];
@@ -193,6 +189,8 @@ export async function filterItems(req, res) {
     for (let item of data.docs) {
       let total_stock = 0;
       let matched = false;
+      let minPrice = Infinity;
+      let maxPrice = -Infinity;
 
       if (item.attributes) {
         const attr = await Attribute.findOne({ id_item: item._id.toString() });
@@ -218,6 +216,11 @@ export async function filterItems(req, res) {
                     sizeArray.includes(sizeObj.name_size.toLowerCase())
                   ) {
                     total_stock += sizeObj.stock_attribute;
+                    // Cập nhật giá nhỏ nhất và lớn nhất
+                    if (sizeObj.price_attribute < minPrice)
+                      minPrice = sizeObj.price_attribute;
+                    if (sizeObj.price_attribute > maxPrice)
+                      maxPrice = sizeObj.price_attribute;
                   }
                 });
               }
@@ -227,12 +230,21 @@ export async function filterItems(req, res) {
 
         if (matched) {
           item.stock_product = total_stock;
+          item.price_product = minPrice; // Sử dụng giá nhỏ nhất để sắp xếp
           filteredProducts.push(item);
         }
       } else {
         item.stock_product = item.stock;
         filteredProducts.push(item);
       }
+    }
+
+    // Sắp xếp các sản phẩm đã lọc theo giá
+    if (_sort.includes("price_attribute")) {
+      filteredProducts.sort((a, b) => {
+        const sortOrder = _sort.split(":")[1] === "desc" ? -1 : 1;
+        return (a.price_product - b.price_product) * sortOrder;
+      });
     }
 
     if (filteredProducts.length === 0) {

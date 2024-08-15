@@ -20,6 +20,7 @@ interface MenuShopProps {
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
   onSizeChange: (sizes: string[]) => void;
+  sortOption: string;
 }
 
 const MenuShop: React.FC<MenuShopProps> = ({
@@ -35,6 +36,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
   toggleSize,
   resetSizeFilter,
   onSizeChange,
+  sortOption,
 }) => {
   const { data: categoryData } = useCategoryQuery();
   const {
@@ -52,7 +54,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
   };
 
   return (
-    <div className="hidden lg:flex gap-5 h-auto my-4">
+    <div className="hidden h-auto gap-5 my-4 lg:flex">
       <div className="">
         <TimeFilter
           onCategorySelect={function (ids: string[]): void {
@@ -68,8 +70,9 @@ const MenuShop: React.FC<MenuShopProps> = ({
       </div>
 
       <div className="">
-        <PriceFilter onPriceChange={onPriceChange} />
+        <PriceFilter sortOption={sortOption} onSortChange={setSort} />
       </div>
+
       <div className="">
         <ColorFilter
           selectedColors={selectedColors}
