@@ -113,7 +113,7 @@ const BlogList: React.FC = () => {
     },
     {
       key: "published",
-      title: "Đã xuất bản",
+      title: "Ẩn",
       dataIndex: "published",
       render: (published: boolean, record: Blog) => (
         <Switch checked={published} onChange={() => handleTogglePublished(record)} />
