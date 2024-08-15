@@ -6,9 +6,6 @@ import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
-  console.log(email);
-
-  // Kiểm tra các giá trị của customerInfo
   if (
     !customerInfo.email ||
     !customerInfo.phone ||
@@ -20,56 +17,7 @@ export const createOrder = async (req, res) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ message: "Thông tin khách hàng không đầy đủ." });
   }
-
   try {
-    const dataCart = await Cart.findOne({ userId }).populate("products");
-    if (!dataCart) {
-      console.error("Cart not found for userId:", userId);
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Cart not found" });
-    }
-
-    // for (let i of items) {
-    //   if (i.productId.attributes) {
-    //     const data_attr = await Attributes.find({ id_item: i.productId._id });
-    //     for (let j of data_attr) {
-    //       for (let k of j.values) {
-    //         if (k.color == i.color_item) {
-    //           for (let x of k.size) {
-    //             if (x.name_size) {
-    //               if (x.name_size == i.name_size) {
-    //                 x.stock_attribute = x.stock_attribute - i.quantity;
-    //               }
-    //             } else {
-    //               x.stock_attribute = x.stock_attribute - i.quantity;
-    //             }
-    //           }
-    //         }
-    //       }
-    //       await j.save();
-    //     }
-    //   } else {
-    //     const data_items = await Products.find({ _id: i.productId._id });
-    //     for (let a of data_items) {
-    //       a.stock_product = a.stock_product - i.quantity;
-    //       await a.save();
-    //     }
-    //   }
-    // }
-
-    dataCart.products = dataCart.products.filter((i) => {
-      return !req.body.items.some((j) => {
-        if (i.productId._id.toString() === j.productId._id.toString()) {
-          if (i.status_checked) {
-            return true;
-          }
-        }
-        return false;
-      });
-    });
-    await dataCart.save();
-
     const order = new Order({
       userId,
       items,
@@ -83,8 +31,25 @@ export const createOrder = async (req, res) => {
       },
       totalPrice
     });
-
     await order.save();
+    const dataCart = await Cart.findOne({ userId }).populate("products");
+    if (!dataCart) {
+      console.error("Cart not found for userId:", userId);
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Cart not found" });
+    }
+    dataCart.products = dataCart.products.filter((i) => {
+      return !req.body.items.some((j) => {
+        if (i.productId._id.toString() === j.productId._id.toString()) {
+          if (i.status_checked) {
+            return true;
+          }
+        }
+        return false;
+      });
+    });
+    await dataCart.save();
     await SendMail(email, order);
     console.log(order);
     return res.status(StatusCodes.CREATED).json(order);
