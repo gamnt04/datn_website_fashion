@@ -404,7 +404,7 @@ const Form_Item = ({ mode }: any) => {
                   ]}
                 >
                   <Upload
-                    fileList={image_item}
+                    fileList={mode ? image_item : undefined}
                     listType="picture-card"
                     beforeUpload={() => false}
                     onChange={handleImageChange}
@@ -437,7 +437,7 @@ const Form_Item = ({ mode }: any) => {
                   ]}
                 >
                   <Upload
-                    fileList={gallery_item}
+                    fileList={mode ? gallery_item : undefined}
                     listType="picture-card"
                     beforeUpload={() => false}
                     onChange={handleGalleryChange}
@@ -462,7 +462,7 @@ const Form_Item = ({ mode }: any) => {
           </span>
         )}
         <Form.Item>
-          {mode ? (
+          {mode === true ? (
             <Button
               style={{ padding: '20px 10px' }}
               type="primary"

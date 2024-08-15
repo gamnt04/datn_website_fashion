@@ -14,6 +14,7 @@ import {
 import { Address, Chevron_right } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Loader } from "lucide-react";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -21,13 +22,13 @@ const Pay = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
-  const { data: auth, isLoading } = List_Auth(userId);
+  const { data: auth } = List_Auth(userId);
   // console.log(auth);
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
   const { register, handleSubmit, setValue } = useForm();
-  const { onSubmit, contextHolder, messageApi } = Pay_Mutation();
+  const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
   let data: any;
   if (data_sessionStorage) {
@@ -66,58 +67,57 @@ const Pay = () => {
   // add order
   const onAddOrder = async (data_form: any) => {
     if (!data_form.address || data_form.address.trim() === "") {
-        messageApi.open({
-            type: "warning",
-            content: "Vui lòng chọn địa chỉ!",
-        });
-        return;
+      messageApi.open({
+        type: "warning",
+        content: "Vui lòng chọn địa chỉ!",
+      });
+      return;
     }
 
     const item_order = {
-        userId: userId,
-        items: data?.data_order,
-        customerInfo: {
-            ...data_form
-        },
-        totalPrice: data?.totalPrice,
-        email: user?.user?.email,
+      userId: userId,
+      items: data?.data_order,
+      customerInfo: {
+        ...data_form
+      },
+      totalPrice: data?.totalPrice,
+      email: user?.user?.email,
     };
 
-    try { 
-        if (data_form.payment === "VNPAY") { 
-            const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string); 
-            const orderId = JSON.parse(sessionStorage.getItem('item_order') as string); 
-            sessionStorage.setItem('customerInfo', JSON.stringify({...data_form}));
+    try {
+      if (data_form.payment === "VNPAY") {
+        const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string);
+        const orderId = JSON.parse(sessionStorage.getItem('item_order') as string);
+        sessionStorage.setItem('customerInfo', JSON.stringify({ ...data_form }));
 
-            // Tạo URL thanh toán VNPAY 
-            const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, { 
-                orderId: orderId._id, 
-                totalPrice: vnPayment, 
-                orderDescription: `Order ${orderId._id}`, 
-                language: 'vn' 
-            }); 
-            
-            // Lưu thông tin thanh toán trước khi chuyển hướng
-            sessionStorage.setItem('item_order', JSON.stringify(item_order));
-            
-            // Redirect người dùng đến trang thanh toán
-            window.location.href = UrlPayment.data.paymentUrl;
-        } else { 
-            // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
-            onSubmit(item_order); 
-        } 
-    } catch (error) { 
-        console.error("Order Creation Error: ", error); 
-        messageApi.open({ 
-            type: "error", 
-            content: "Lỗi tạo đơn hàng!", 
-        }); 
+        // Tạo URL thanh toán VNPAY 
+        const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
+          orderId: orderId._id,
+          totalPrice: vnPayment,
+          orderDescription: `Order ${orderId._id}`,
+          language: 'vn'
+        });
+        // Lưu thông tin thanh toán trước khi chuyển hướng
+        sessionStorage.setItem('item_order', JSON.stringify(item_order));
+
+        // Redirect người dùng đến trang thanh toán
+        window.location.href = UrlPayment.data.paymentUrl;
+      } else {
+        // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
+        onSubmit(item_order);
+      }
+    } catch (error) {
+      console.error("Order Creation Error: ", error);
+      messageApi.open({
+        type: "error",
+        content: "Lỗi tạo đơn hàng!",
+      });
     }
-};
+  };
 
 
 
-   
+
   const dataSo = data?.data_order.map((order: any) => {
     return {
       key: order.productId._id,
@@ -187,146 +187,148 @@ const Pay = () => {
       ),
     },
   ];
-
+  if (loadingOrder) {
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="animate-spin">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="xl:w-[1440px] w-[95vw] mx-auto">
         {contextHolder}
-        {isLoading ? (
-          <div className="flex justify-center items-center h-screen">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-          </div>
-        ) : (
-          <div className="mt-20">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 bg-[#F5F5F5] py-6">
-                <img
-                  src="../../src/assets/Images/Logo/logo.png"
-                  className="w-[50px] h-[50px]"
-                  alt=""
-                />
-                <span className="h-[50px] border-black border-r-2"></span>
-                <h1 className="text-2xl font-bold">Thanh Toán</h1>
-              </div>
+        <div className="mt-20">
+          <div className="mb-6">
+            <div className="flex items-center gap-3 bg-[#F5F5F5] py-6">
+              <img
+                src="../../src/assets/Images/Logo/logo.png"
+                className="w-[50px] h-[50px]"
+                alt=""
+              />
+              <span className="h-[50px] border-black border-r-2"></span>
+              <h1 className="text-2xl font-bold">Thanh Toán</h1>
             </div>
-            <form onSubmit={handleSubmit(onAddOrder)}>
-              <div className="p-2 lg:py-6 lg:px-6 border rounded shadow-sm">
-                <div className="flex gap-3">
-                  <Address />
-                  <p>Địa chỉ nhận hàng</p>
+          </div>
+          <form onSubmit={handleSubmit(onAddOrder)}>
+            <div className="p-2 lg:py-6 lg:px-6 border rounded shadow-sm">
+              <div className="flex gap-3">
+                <Address />
+                <p>Địa chỉ nhận hàng</p>
+              </div>
+              <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
+                <div className="flex items-center gap-4">
+                  <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                  <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                  <p>{selectedAddress?.addressDetails + " - " + selectedAddress?.address}</p>
                 </div>
-                <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
-                  <div className="flex items-center gap-4">
-                    <h1 className="font-bold">{selectedAddress?.fullName}</h1>
-                    <p className="font-bold">{selectedAddress?.phoneNumber}</p>
-                    <p>{selectedAddress?.addressDetails + " - " + selectedAddress?.address}</p>
-                  </div>
-                  <div className="flex items-center gap-8">
-                    {/* {!selectedAddress?.checked === true ? ('') : (
+                <div className="flex items-center gap-8">
+                  {/* {!selectedAddress?.checked === true ? ('') : (
                       <div className="border py-2 px-4 rounded border-black hidden lg:block">
                         Mặc định
                       </div>
                     )} */}
-                    <div
-                      className="text-blue-400 underline cursor-pointer"
-                      onClick={handleAddress}
-                    >
-                      <span className="hidden lg:block">Thay đổi</span>
-                      <span className="md:hidden block">
-                        <Chevron_right />
-                      </span>
-                    </div>
+                  <div
+                    className="text-blue-400 underline cursor-pointer"
+                    onClick={handleAddress}
+                  >
+                    <span className="hidden lg:block">Thay đổi</span>
+                    <span className="md:hidden block">
+                      <Chevron_right />
+                    </span>
+                  </div>
 
-                  </div>
                 </div>
               </div>
-              <div className="border my-4 rounded shadow-sm">
-                
-                <Table columns={columns} dataSource={dataSo} pagination={false} />
-                <div className="flex items-center justify-end gap-8 p-6">
-                  {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
-                  <p className="text-xl font-bold text-black">
-                    {data?.totalPrice?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </p>
+            </div>
+            <div className="border my-4 rounded shadow-sm">
+              <Table columns={columns} dataSource={dataSo} pagination={false} />
+              <div className="flex items-center justify-end gap-8 p-6">
+                {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
+                <p className="text-xl font-bold text-black">
+                  {data?.totalPrice?.toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="border mt-4 mb-8 rounded shadow-sm">
+              <div className="border-b flex justify-between px-6 py-6">
+                <p className="text-xl">Phương thức thanh toán</p>
+                <div className="flex gap-8 items-center">
+                  <select
+                    className="border rounded p-2"
+                    {...register("payment", { required: true })}
+                  >
+                    <option value="Thanh toán khi nhận hàng">
+                      Thanh toán khi nhận hàng
+                    </option>
+                    <option value="VNPAY">Thanh toán qua VNPAY</option>
+                    <option value="MoMo">Thanh toán bằng MoMo</option>
+                  </select>
                 </div>
               </div>
-              <div className="border mt-4 mb-8 rounded shadow-sm">
-                <div className="border-b flex justify-between px-6 py-6">
-                  <p className="text-xl">Phương thức thanh toán</p>
-                  <div className="flex gap-8 items-center">
-                    <select
-                      className="border rounded p-2"
-                      {...register("payment", { required: true })}
-                    >
-                      <option value="Thanh toán khi nhận hàng">
-                        Thanh toán khi nhận hàng
-                      </option>
-                      <option value="VNPAY">Thanh toán qua VNPAY</option>
-                      <option value="MoMo">Thanh toán bằng MoMo</option>
-                    </select>
+              <div className="flex justify-end py-6 px-6 border-b">
+                <div>
+                  <div className="flex justify-between py-3 gap-16">
+                    <p>Tổng tiền hàng</p>
+                    <p>
+                      {data?.totalPrice?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </p>
                   </div>
-                </div>
-                <div className="flex justify-end py-6 px-6 border-b">
-                  <div>
-                    <div className="flex justify-between py-3 gap-16">
-                      <p>Tổng tiền hàng</p>
-                      <p>
-                        {data?.totalPrice?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
-                      </p>
-                    </div>
-                    <div className="flex justify-between py-3 gap-16">
-                      <p>Phí vận chuyển</p>
-                      <p>0đ</p>
-                    </div>
-                    {/* <div className="flex justify-between py-3 gap-16">
+                  <div className="flex justify-between py-3 gap-16">
+                    <p>Phí vận chuyển</p>
+                    <p>0đ</p>
+                  </div>
+                  {/* <div className="flex justify-between py-3 gap-16">
                                         <p>Tổng cộng Voucher giảm giá:</p>
                                         <p>-₫50.000</p>
                                     </div> */}
-                    <div className="flex justify-between py-3 gap-16">
-                      <p>Tổng thanh toán</p>
-                      <p className="text-xl font-bold text-black">
-                        {data?.totalPrice?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
-                      </p>
-                    </div>
+                  <div className="flex justify-between py-3 gap-16">
+                    <p>Tổng thanh toán</p>
+                    <p className="text-xl font-bold text-black">
+                      {data?.totalPrice?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </p>
                   </div>
                 </div>
-                <div className="flex justify-between items-center py-6 px-6">
-                  <p>
-                    Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo{" "}
-                    <span className="text-blue-400">Điều khoản</span>
-                  </p>
-                  <button
-                    className="w-[200px] py-3 bg-black text-white font-bold rounded"
-                    type="submit"
-                  >
-                    Đặt hàng
-                  </button>
-                </div>
               </div>
-            </form >
-            {address && <Add_Address handleAddress={handleAddress}></Add_Address>
-            }
-            {
-              isOpen && (
-                <List_Address
-                  auth={auth.address}
-                  handleTAdd={handleTAdd}
-                  handleAddressSelect={handleAddressSelect}
-                  handleAddress={handleAddress}
-                ></List_Address>
-              )
-            }
-          </div >
-        )}
+              <div className="flex justify-between items-center py-6 px-6">
+                <p>
+                  Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo{" "}
+                  <span className="text-blue-400">Điều khoản</span>
+                </p>
+                <button
+                  className="w-[200px] py-3 bg-black text-white font-bold rounded"
+                  type="submit"
+                >
+                  Đặt hàng
+                </button>
+              </div>
+            </div>
+          </form >
+          {address && <Add_Address handleAddress={handleAddress}></Add_Address>
+          }
+          {
+            isOpen && (
+              <List_Address
+                auth={auth.address}
+                handleTAdd={handleTAdd}
+                handleAddressSelect={handleAddressSelect}
+                handleAddress={handleAddress}
+              ></List_Address>
+            )
+          }
+        </div >
+
       </div>
 
     </>
