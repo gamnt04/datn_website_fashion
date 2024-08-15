@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { AxiosError } from "axios";
@@ -6,7 +8,6 @@ interface Product {
   _id: string;
   name_product: string;
   price_product: number;
-  // Add other properties if needed
 }
 
 interface ProductResponse {
@@ -26,7 +27,9 @@ const fetchFilteredProducts = async (
   colors: string[],
   sizes: string[],
   page: number = 1,
-  limit: number = 20
+  limit: number = 20,
+  sort: string = "",
+  sortOption: string
 ) => {
   const endpoint = "/products/filter/product";
 
@@ -38,6 +41,8 @@ const fetchFilteredProducts = async (
     name_size: sizes.length > 0 ? sizes.join(",") : undefined,
     _page: page,
     _limit: limit,
+    _sort: sort,
+    sortOption, // Thêm tham số sort vào request
   };
 
   try {
@@ -60,7 +65,8 @@ export const useFilteredProducts = (
   colors: string[],
   sizes: string[],
   page: number = 1,
-  limit: number = 20
+  limit: number = 20,
+  sort: string = "" // Thêm tham số sort
 ) => {
   const queryKey = [
     "products",
@@ -70,6 +76,7 @@ export const useFilteredProducts = (
     sizes,
     page,
     limit,
+    sort, // Thêm sort vào queryKey
   ];
 
   const { data, error, isLoading, isError } = useQuery<
@@ -78,7 +85,15 @@ export const useFilteredProducts = (
   >({
     queryKey,
     queryFn: () =>
-      fetchFilteredProducts(cate_id, priceRanges, colors, sizes, page, limit),
+      fetchFilteredProducts(
+        cate_id,
+        priceRanges,
+        colors,
+        sizes,
+        page,
+        limit,
+        sort
+      ),
   });
 
   return { data, error, isLoading, isError };
