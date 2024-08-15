@@ -47,7 +47,7 @@ const ContactForm: React.FC = () => {
               "service_cwchhdc",
               "template_dxp3ou9",
               form.current,
-              "-8ltdcjwh1bPb37dn"
+              "kGSzc2RJ3qF1lHtBo"
             )
             .then(
               () => {

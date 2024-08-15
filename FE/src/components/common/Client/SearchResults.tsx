@@ -6,7 +6,7 @@ import { IProduct } from "../../../common/interfaces/Product";
 import MenuShop from "../../../pages/Client/Shop/MenuShop";
 import { Empty, message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import ProductModal from "../../../pages/Client/Preview/ProductModal";
+// import ProductModal from "../../../pages/Client/Preview/ProductModal";
 import { HeartIcon } from "lucide-react";
 import { HeartIconRed } from "../../../resources/svg/Icon/Icon";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -14,14 +14,12 @@ import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 
-
 const fetchSearchResults = async (query: IProduct) => {
   const { data } = await instance.get("/products_all", {
     params: { _search: query },
   });
   return data.products;
 };
-
 
 const SearchResults = () => {
   const location = useLocation();
@@ -37,7 +35,6 @@ const SearchResults = () => {
     enabled: !!query,
   });
 
-
   //p tim chung
   const [user] = useLocalStorage("user", {});
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -48,7 +45,6 @@ const SearchResults = () => {
   const { mutate: AddFavouriteProduct } = Mutation_FavouriteProduct("ADD");
   const { mutate: RemoveFavouriteProduct } =
     Mutation_FavouriteProduct("REMOVE");
-
 
   const handlePreview = async (id: any) => {
     try {
@@ -63,12 +59,10 @@ const SearchResults = () => {
     }
   };
 
-
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedProduct(null);
   };
-
 
   const checkFavourite = (productId: string) => {
     if (FavoriteData?.products?.length > 0) {
@@ -77,7 +71,6 @@ const SearchResults = () => {
       );
     }
   };
-
 
   const handleAddToFavorites = (productId: any) => {
     if (!userId) {
@@ -95,7 +88,6 @@ const SearchResults = () => {
     }
   };
 
-
   const handleRemoveFromFavorites = (productId: any) => {
     message.open({
       type: "success",
@@ -104,8 +96,7 @@ const SearchResults = () => {
     RemoveFavouriteProduct({ userId, productId });
   };
 
-
-   //p lọc trung
+  //p lọc trung
   const [cate_id, setCategoryId] = useState<string[]>([]);
   const [priceRanges, setPriceRanges] = useState<
     { min: number; max: number }[]
@@ -113,22 +104,17 @@ const SearchResults = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
 
-
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
   };
-
 
   const handlePriceChange = (priceRanges: { min: number; max: number }[]) => {
     setPriceRanges(priceRanges);
   };
 
-
   const handleColorChange = (colors: string[]) => setSelectedColors(colors);
 
-
   const handleSizeChange = (sizes: string[]) => setSelectedSizes(sizes);
-
 
   const toggleColor = (color: string) => {
     setSelectedColors((prev) =>
@@ -136,9 +122,7 @@ const SearchResults = () => {
     );
   };
 
-
   const resetColorFilter = () => setSelectedColors([]);
-
 
   const toggleSize = (size: string) => {
     setSelectedSizes((prev) =>
@@ -146,14 +130,11 @@ const SearchResults = () => {
     );
   };
 
-
   const resetSizeFilter = () => setSelectedSizes([]);
-
 
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = results ? Math.ceil(results.length / 10) : 1;
   const hasMore = currentPage < totalPages;
-
 
   if (isLoading)
     return (
@@ -162,7 +143,6 @@ const SearchResults = () => {
       </div>
     );
   if (error) return <div>Có lỗi xảy ra: {error.message}</div>;
-
 
   return (
     <div className="lg:mt-[40px] mt-[60px]">
@@ -184,7 +164,6 @@ const SearchResults = () => {
           resetSizeFilter={resetSizeFilter}
           onSizeChange={handleSizeChange}
         />
-
 
         <h1 className="flex justify-center">Kết quả tìm kiếm cho: {query}</h1>
         {results && results.length > 0 ? (
@@ -260,13 +239,12 @@ const SearchResults = () => {
                         </p>
                       </div>
 
-
-                      {modalOpen && selectedProduct && (
+                      {/* {modalOpen && selectedProduct && (
                         <ProductModal
                           product={selectedProduct}
                           onClose={handleCloseModal}
                         />
-                      )}
+                      )} */}
                     </div>
                   </div>
                 ))}
@@ -329,10 +307,4 @@ const SearchResults = () => {
   );
 };
 
-
 export default SearchResults;
-
-
-
-
-
