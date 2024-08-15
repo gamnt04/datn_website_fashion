@@ -20,7 +20,6 @@ const OrdersDetali = () => {
                     type: "success",
                     content: "Bạn đã xác nhận hủy đơn hàng!",
                 });
-                refetch();
             } else {
                 messageApi.open({
                     type: "success",
@@ -139,7 +138,6 @@ const OrdersDetali = () => {
         },
 
     ];
-    const isPreparing = data?.status === 2
     if (!data) return <p>Loading...</p>;
 
     return (
@@ -211,75 +209,96 @@ const OrdersDetali = () => {
                     </div>
                 </div>
                 <div className="flex gap-5 justify-center mt-[60px]">
-                    {cancellationRequested ? (
+                    {data.status === "1" && (
                         <>
-                            {!isPreparing ? (
+                            <Popconfirm
+                                title="Xác nhận đơn hàng?"
+                                description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
+                                onConfirm={handleStatusUpdate}
+                                okText="Xác nhận"
+                                cancelText="Không"
+                            >
+                                <button className="w-auto p-3 bg-orange-300 rounded text-white">
+                                    Xác nhận
+                                </button>
+                            </Popconfirm>
+                            <Popconfirm
+                                title="Từ chối xác nhận?"
+                                description="Bạn có chắc chắn muốn từ chối xác nhận đơn hàng này?"
+                                onConfirm={handleCancelOrder}
+                                okText="Từ chối"
+                                cancelText="Không"
+                            >
+                                <button className="w-auto p-3 bg-rose-500 rounded text-white">
+                                    Từ chối
+                                </button>
+                            </Popconfirm>
+                        </>
+                    )}
+                    {data.status === "2" && (
+                        <>
+                            {cancellationRequested ? (
                                 <>
                                     <Popconfirm
                                         title="Xác nhận hủy đơn hàng?"
                                         description="Bạn có chắc chắn muốn hủy đơn hàng này?"
                                         onConfirm={() => mutate({ id: data?._id, confirm: true })}
-                                        // onCancel={cancel}
                                         okText="Xác nhận"
                                         cancelText="Không"
                                     >
                                         <button className="w-auto p-3 bg-green-500 rounded text-white">
-                                            Xác nhận
+                                            Xác nhận yêu cầu
                                         </button>
                                     </Popconfirm>
                                     <Popconfirm
                                         title="Từ chối hủy đơn hàng?"
                                         description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
                                         onConfirm={() => mutate({ id: data?._id, confirm: false })}
-                                        // onCancel={cancel}
                                         okText="Từ chối"
                                         cancelText="Không"
                                     >
                                         <button className="w-auto p-3 bg-red-500 rounded text-white">
-                                            Từ chối
+                                            Từ chối yêu cầu
                                         </button>
                                     </Popconfirm>
                                 </>
-                            ) : (<>
-                                <button className="w-auto p-3 bg-orange-300 rounded text-white" onClick={handleStatusUpdate}>
-                                    {data.status !== "5" ? (data.status === "4" ? "Hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
-                                </button>
-                                {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
-                                    <button className="w-auto p-3 bg-rose-500 rounded text-white" onClick={handleCancelOrder}>
-                                        Từ chối xác nhận
-                                    </button>
-                                )}
-                            </>)}
-                        </>
-                    ) : (
-                        <>
-                            <Popconfirm
-                                title="Xác nhận đơn hàng?"
-                                description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                                onConfirm={handleStatusUpdate}
-                                // onCancel={cancel}
-                                okText="Xác nhận"
-                                cancelText="Không"
-                            >
-                                <button className="w-auto p-3 bg-orange-300 rounded text-white">
-                                    {data.status !== "5" ? (data.status === "4" ? "Hoàn thành" : "Xác nhận đơn") : "Đơn hàng đã bị hủy"}
-                                </button>
-                            </Popconfirm>
-                            {data.status !== "2" && data.status !== "3" && data.status !== "4" && data.status !== "5" && (
+                            ) : (
                                 <Popconfirm
-                                    title="Từ chối xác nhận?"
-                                    description="Bạn có chắc chắn muốn từ chối xác nhận đơn hàng này?"
-                                    onConfirm={handleCancelOrder}
-                                    // onCancel={cancel}
-                                    okText="Từ chối"
+                                    title="Xác nhận đơn hàng?"
+                                    description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
+                                    onConfirm={handleStatusUpdate}
+                                    okText="Xác nhận"
                                     cancelText="Không"
                                 >
-                                    <button className="w-auto p-3 bg-rose-500 rounded text-white">
-                                        Từ chối xác nhận
+                                    <button className="w-auto p-3 bg-orange-300 rounded text-white">
+                                        Xác nhận
                                     </button>
                                 </Popconfirm>
                             )}
                         </>
+                    )}
+                    {data.status === "3" && (
+                        <Popconfirm
+                            title="Xác nhận đơn hàng?"
+                            description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
+                            onConfirm={handleStatusUpdate}
+                            okText="Xác nhận"
+                            cancelText="Không"
+                        >
+                            <button className="w-auto p-3 bg-orange-300 rounded text-white">
+                                Xác nhận
+                            </button>
+                        </Popconfirm>
+                    )}
+                    {data.status === "4" && (
+                        <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
+                            Đã hoàn thành
+                        </button>
+                    )}
+                    {data.status === "5" && (
+                        <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
+                            Đơn hàng đã bị hủy
+                        </button>
                     )}
                 </div>
             </div>
