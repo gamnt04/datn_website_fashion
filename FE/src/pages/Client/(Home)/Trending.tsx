@@ -104,7 +104,11 @@ const Trending_Products = () => {
           {/* view all */}
           <div className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
             {" "}
-            <Link onClick={ScrollTop} className="text-[16px] font-bold " to={"/shops"}>
+            <Link
+              onClick={ScrollTop}
+              className="text-[16px] font-bold "
+              to={"/shops"}
+            >
               Xem thêm
             </Link>
           </div>
