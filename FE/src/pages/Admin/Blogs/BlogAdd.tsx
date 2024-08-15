@@ -2,17 +2,22 @@ import React, { useState, useRef, useMemo, useContext } from 'react';
 import JoditEditor from 'jodit-react';
 import axios from 'axios';
 import parse from 'html-react-parser';
-import { message } from 'antd';
+import { Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import slugify from 'react-slugify';
+import LoadingOverlay from 'react-loading-overlay-ts';
 const BlogAdd = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 	const editor = useRef(null);
 	const [content, setContent] = useState('');
   const parser = new DOMParser();
+  const [isLoading, setIsLoading] = useState(false);
   const doc = parser.parseFromString(content, "text/html");
   const navigate = useNavigate();
+
+
   const onSubmit = async () => {
+    setIsLoading(true);
     try {
       const images = doc.querySelectorAll("img");
       const CLOUD_NAME = "dwya9mxip";
@@ -67,6 +72,8 @@ const BlogAdd = () => {
     throw new Error("Failed to upload images");
   }
     } catch (error) {
+    }finally {
+      setIsLoading(false);
     }
   }
   const config = useMemo(
@@ -82,6 +89,20 @@ const BlogAdd = () => {
 
 	return (
     <>
+    <LoadingOverlay
+      active={isLoading}
+      spinner
+      text="Loading"
+      styles={{
+        overlay: (base) => ({
+          ...base,
+          position: "fixed",
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1000,
+        }),
+      }}
+    >
 		<JoditEditor
     className='!text-black mt-20'
 			ref={editor}
@@ -94,8 +115,9 @@ const BlogAdd = () => {
       }}
 		/>
     <div>
-      <button onClick={() =>{onSubmit()}}>Tạo mới bài viết</button>
+      <Button type='primary mt-10' onClick={() =>{onSubmit()}}>Tạo mới bài viết</Button>
     </div>
+    </LoadingOverlay>
     </>
 	);
 };
