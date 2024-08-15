@@ -97,7 +97,6 @@ const Pay = () => {
           orderDescription: `Order ${orderId._id}`,
           language: 'vn'
         });
-
         // Lưu thông tin thanh toán trước khi chuyển hướng
         sessionStorage.setItem('item_order', JSON.stringify(item_order));
 
