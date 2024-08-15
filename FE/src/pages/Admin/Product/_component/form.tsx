@@ -178,7 +178,7 @@ const Form_Item = ({ mode }: any) => {
                     }
                   ]}
                 >
-                  <Input className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] " />
+                  <InputNumber className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] " />
                 </Form.Item>
               </>
             )}
