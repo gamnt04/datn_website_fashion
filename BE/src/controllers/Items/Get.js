@@ -50,21 +50,20 @@ export async function get_items_client(req, res) {
       ];
     }
     const data = await Products.paginate(querry, options);
-    await Products.populate(data.docs, { path: 'attributes' });
+    await Products.populate(data.docs, { path: "attributes" });
     for (const id_data of data.docs) {
       if (id_data.attributes) {
         let total_stock = 1;
         id_data.attributes.values.map((i) => {
-          i.size.map(l => {
-            total_stock += l.stock_attribute
-          })
-        })
+          i.size.map((l) => {
+            total_stock += l.stock_attribute;
+          });
+        });
         id_data.stock_product = total_stock;
+      } else {
+        id_data.stock_product = id_data.stock;
       }
-      else {
-        id_data.stock_product = id_data.stock
-      }
-    };
+    }
     data.docs = data.docs.filter((item) => item.stock_product > 0);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({

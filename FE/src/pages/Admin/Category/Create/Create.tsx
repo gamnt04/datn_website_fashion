@@ -1,11 +1,11 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import useCategoryMutation from "../../../../common/hooks/Category/useCategoryMutation";
 import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
-import { UploadImage } from "../../../../systems/utils/uploadImage"; // Đường dẫn đến uploadImage.ts
-import { useForm } from "react-hook-form";
-import { Form, Switch } from "antd";
+import { UploadImage } from "../../../../systems/utils/uploadImage";
 
 const CreateComponent = () => {
   const [showMessage, setShowMessage] = useState(false);
@@ -20,20 +20,20 @@ const CreateComponent = () => {
 
   const handleSubmitForm = async (data: ICategory | any) => {
     try {
-      if (data.image_category) {
-        const imageUrls = await UploadImage(data.image_category);
+      if (data.image_category && data.image_category[0]) {
+        const imageFile = data.image_category[0];
+        const imageUrl = await UploadImage(imageFile);
 
-        // Prepare form data
         const formData = {
           ...data,
-          image_category: imageUrls[0], // Gán URL của ảnh từ Cloudinary
+          image_category: imageUrl,
         };
 
         await onSubmit(formData);
         setShowMessage(true);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -57,7 +57,7 @@ const CreateComponent = () => {
       <form onSubmit={handleSubmit(handleSubmitForm)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900 text-center">
+            <h2 className="text-2xl font-semibold leading-7 text-gray-900 text-center">
               Thêm danh mục
             </h2>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 justify-center">
@@ -77,6 +77,9 @@ const CreateComponent = () => {
                         {...register("name_category", { required: true })}
                       />
                     </div>
+                    {errors.name_category && (
+                      <p className="text-red-600">Vui lòng nhập tên danh mục</p>
+                    )}
                   </div>
                   <label
                     htmlFor="image_category"
@@ -91,24 +94,20 @@ const CreateComponent = () => {
                         {...register("image_category", { required: true })}
                       />
                     </div>
+                    {errors.image_category && (
+                      <p className="text-red-600">Vui lòng chọn hình ảnh</p>
+                    )}
                   </div>
-                  <p>
-                    {errors.image_category && (
-                      <span>Vui lòng không được để trống</span>
-                    )}
-                  </p>
-                  <p>
-                    {errors.image_category && (
-                      <span>Vui lòng chọn hình ảnh</span>
-                    )}
-                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div className="mt-6 flex items-center justify-center gap-x-6">
-          <button className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <button
+            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            type="submit"
+          >
             {isPending ? "Đang thêm" : "Xác nhận"}
           </button>
         </div>

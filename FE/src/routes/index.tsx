@@ -40,6 +40,7 @@ import Logout from "../common/hooks/Auth/Logout";
 import SearchResults from "../components/common/Client/SearchResults";
 import BlogEdit from "../pages/Admin/Blogs/BlogEdit";
 import ForgotPassword from "../pages/Client/User/ForgotPass";
+import CategoryDetail from "../pages/Admin/Category/CategoryDetail";
 const RouterComponent = () => {
   return (
     <>
@@ -62,10 +63,7 @@ const RouterComponent = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
             {/* <Route path="blogs/detailblog" element={<DetailBlogs />} /> */}
-            <Route
-              path="shops/:id"
-              element={<ProductDetail />}
-            />
+            <Route path="shops/:id" element={<ProductDetail />} />
 
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
@@ -82,6 +80,7 @@ const RouterComponent = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="category" element={<List_Category />} />
+            <Route path="category/products/:id" element={<CategoryDetail />} />
             {/* <Route path="test1" element={<Add_Item />} />
             <Route path="test2/:id" element={<Edit_Item />} /> */}
             <Route path="products/add" element={<Add_Item />} />
@@ -97,9 +96,8 @@ const RouterComponent = () => {
               element={<OrdersDetali />}
             />
             <Route path="/admin/contact" element={<ListContact />} />
-            
-              <Route path="blogs" element={<Blog />} />
-            
+
+            <Route path="blogs" element={<Blog />} />
 
             <Route path="blogs/add_blog" element={<BlogAdd />} />
             <Route path="blogs/:id" element={<BlogEdit />} />
