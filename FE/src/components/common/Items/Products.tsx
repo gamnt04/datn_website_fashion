@@ -99,7 +99,7 @@ const Products = ({ items }: any) => {
       className="flex flex-col justify-between w-full gap-y-5"
       key={items._id}
     >
-      <div className="relative group w-full">
+      <div className="relative w-full group">
         <Link
           onClick={ScrollTop}
           to={`/shops/${items._id}`}
@@ -114,7 +114,7 @@ const Products = ({ items }: any) => {
         </Link>
         {/* hover show icon cart */}
         <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
-          <div className="absolute flex flex-col rounded top-0 p-1 right-0">
+          <div className="absolute top-0 right-0 flex flex-col p-1 rounded">
             {account ? (
               checkFavourite(items?._id) ? (
                 <button
@@ -147,10 +147,10 @@ const Products = ({ items }: any) => {
             </button> */}
           </div>
         </div>
-        <div className="flex justify-center items-center flex-col px-4 py-4 gap-y-2">
+        <div className="flex flex-col items-center justify-center px-4 py-4 gap-y-2">
           <Link
             onClick={ScrollTop}
-            to={`/shops/detail_product/${items?._id}`}
+            to={`/shops/${items?._id}`}
             className="text-md text-center font-bold lg:text-[16px] hover:text-black line-clamp-2"
           >
             {items?.name_product.length > 15
