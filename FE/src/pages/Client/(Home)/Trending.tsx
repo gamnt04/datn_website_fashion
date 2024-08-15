@@ -49,7 +49,7 @@ const Trending_Products = () => {
     <div className="py-16 text-center border-b overflow-hidden">
       {/* title */}
       <div className="text-center flex flex-col items-center mb-[50px]">
-        <span className="text-[42px] font-medium tracking-wide mb-[20px]">
+        <span className="text-2xl font-medium tracking-wide mb-[20px]">
           Sản phẩm nổi bật
         </span>
         <p className="opacity-80 text-[16px]my-4">

@@ -11,11 +11,11 @@ const OrdersDetali = () => {
     const { data, refetch } = Query_Orders(id);
     const { mutate } = useMutation({
         mutationFn: async (comfirm: any) => {
-            const { data } = await confirmCancelOrder(comfirm);
+            const data = await confirmCancelOrder(comfirm);
             return data;
         },
-        onSuccess: (comfirm) => {
-            if (comfirm === true) {
+        onSuccess: (data) => {
+            if (data?.data_status_order === true) {
                 messageApi.open({
                     type: "success",
                     content: "Bạn đã xác nhận hủy đơn hàng!",
@@ -53,7 +53,6 @@ const OrdersDetali = () => {
         const nextStatus = statusOrder[data.status] || "4";
         try {
             const response = await instance.patch(`/orders/${id}`, { status: nextStatus });
-            console.log(response.data);
             messageApi.open({
                 type: "success",
                 content: response.data.status === "4" ? "Đơn hàng đã được giao" : "Cập nhật trạng thái đơn hàng thành công!",
