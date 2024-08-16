@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Products from "../../../components/common/Items/Products";
+import { useLocation } from "react-router-dom";
 
 interface Products_ShopProps {
   cate_id: string[];
@@ -13,15 +14,22 @@ interface Products_ShopProps {
 }
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
-  cate_id,
   priceRanges,
   selectedColors,
   selectedSizes,
   sortOption,
 }) => {
+  const { search } = useLocation();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 11; // Số lượng sản phẩm mỗi trang
-
+  const [cate_id, setCategoryId] = useState<string[]>([]);
+  useEffect(() => {
+    const queryParams = new URLSearchParams(search);
+    const categoryParam = queryParams.get("category");
+    if (categoryParam) {
+      setCategoryId(categoryParam.split(","));
+    }
+  }, [search]);
   const {
     data: products,
     isLoading,
