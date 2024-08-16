@@ -54,7 +54,7 @@ const WaitingForGoods = ({ dataProps }: any) => {
                             </div>
 
                             <div className="">
-                                {item.items.map((product: any) => {
+                                {item?.items.map((product: any) => {
                                     return (<div className="flex flex-row gap-4 py-[12px] w-full">
                                         <div className="basis-24">
                                             <img src={product?.productId?.image_product} className="w-full h-[80px] " alt="" />
@@ -94,21 +94,37 @@ const WaitingForGoods = ({ dataProps }: any) => {
                                         đề nào.
                                     </p>
                                     <div className="flex gap-3 lg:basis-3/12 w-full">
-                                        <Button className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
+                                        <Button className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded " disabled>
                                             Đã Nhận Hàng
                                         </Button>
-                                        <Popconfirm
-                                            title="Yêu cầu hủy dơn hàng?"
-                                            description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                                            onConfirm={() => mutate(item?._id)}
-                                            // onCancel={cancel}
-                                            okText="Có"
-                                            cancelText="Không"
-                                        >
-                                            <Button h-10 className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
-                                                Yêu cầu hủy đơn
-                                            </Button>
-                                        </Popconfirm></div>
+                                        {item.cancellationRequested === true ? (
+                                            <Popconfirm
+                                                title="Yêu cầu hủy dơn hàng?"
+                                                description="Bạn có muốn yêu cầu hủy đơn hàng này?"
+                                                onConfirm={() => mutate(item?._id)}
+                                                // onCancel={cancel}
+                                                okText="Có"
+                                                cancelText="Không"
+                                            >
+                                                <Button h-10 className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded" disabled>
+                                                    Yêu cầu hủy đơn
+                                                </Button>
+                                            </Popconfirm>
+                                        ) : (
+                                            <Popconfirm
+                                                title="Yêu cầu hủy dơn hàng?"
+                                                description="Bạn có muốn yêu cầu hủy đơn hàng này?"
+                                                onConfirm={() => mutate(item?._id)}
+                                                // onCancel={cancel}
+                                                okText="Có"
+                                                cancelText="Không"
+                                            >
+                                                <Button h-10 className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
+                                                    Yêu cầu hủy đơn
+                                                </Button>
+                                            </Popconfirm>
+                                        )}
+                                    </div>
 
                                 </div>
                             </div>

@@ -23,10 +23,7 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth } = List_Auth(userId);
-  // console.log(auth);
-
   const [selectedAddress, setSelectedAddress] = useState(null);
-
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
@@ -124,6 +121,8 @@ const Pay = () => {
       ...order
     }
   })
+  console.log(dataSo);
+
   const columns = [
     {
       title: 'Sản phẩm',
@@ -137,7 +136,7 @@ const Pay = () => {
       dataIndex: 'name_product',
       key: 'name_product',
       render: (_: any, order: any) => (
-        <div className="lg:flex lg:items-center gap-32">
+        <div className="lg:flex lg:items-center gap-10">
           <div>
             <h1 className="font-bold text-sm lg:text-base">{order?.productId?.name_product}</h1>
             <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
@@ -248,10 +247,10 @@ const Pay = () => {
               <div className="flex items-center justify-end gap-8 p-6">
                 {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                 <p className="text-xl font-bold text-black">
-                  {data?.totalPrice?.toLocaleString("vi", {
+                  <p>Tổng số tiền: {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
-                  })}
+                  })}</p>
                 </p>
               </div>
             </div>
@@ -275,6 +274,7 @@ const Pay = () => {
                 <div>
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng tiền hàng</p>
+                    {data?.quantity}
                     <p>
                       {data?.totalPrice?.toLocaleString("vi", {
                         style: "currency",

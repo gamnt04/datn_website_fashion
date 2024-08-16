@@ -23,13 +23,14 @@ export interface IOrder {
     address?: string;
     code?: string;
   };
+  cancellationRequested?: boolean;
   discount: number;
   totalPrice: number;
   status?:
-    | "Chờ xác nhận"
-    | "Đang chuẩn bị hàng"
-    | "Đang vận chuyển"
-    | "Đã giao hàng"
-    | "Đã hủy";
+  | "Chờ xác nhận"
+  | "Đang chuẩn bị hàng"
+  | "Đang vận chuyển"
+  | "Đã giao hàng"
+  | "Đã hủy";
   datetime?: Date;
 }
