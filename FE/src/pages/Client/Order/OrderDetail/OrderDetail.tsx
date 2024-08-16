@@ -3,6 +3,8 @@ import { Query_Orders } from "../../../../common/hooks/Order/querry_Order";
 const OrderDetail = () => {
   const { id } = useParams();
   const { data } = Query_Orders(id)
+  console.log(data);
+
   const formatDate = (datetime: any) => {
     if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
     const date = new Date(datetime);
@@ -123,7 +125,11 @@ const OrderDetail = () => {
         ) : (
           <div className="border-b">
             <div className="px-5 py-4">
-              <p>Vui lòng thành toán <span className="font-bold">{data?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> khi nhận hàng</p>
+              {data?.customerInfo?.payment === "VNPAY" ? (
+                <p>Bạn đã thành toán <span className="font-bold">{data?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> qua VNPAY</p>
+              ) : (
+                <p>Vui lòng thành toán <span className="font-bold">{data?.totalPrice?.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</span> khi nhận hàng</p>
+              )}
             </div>
           </div>
         )}
