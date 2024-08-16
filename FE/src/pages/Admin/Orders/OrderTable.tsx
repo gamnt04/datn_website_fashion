@@ -78,7 +78,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       render: (_: any, order: any) => {
         return (
           <p>
-            {order?.status == 1 ? "Chờ xác nhận" : order?.status == 2 ? "Đang chuẩn bị" : order?.status == 3 ? "Đang vận chuyển" : order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
+            {order?.cancellationRequested ? order?.cancelledByAdmin ? "Đã xác nhận yêu cầu" : "Yêu cầu gửi lên" : order?.status == 1 ? "Chờ xác nhận" : order?.status == 2 ? "Đang chuẩn bị" : order?.status == 3 ? "Đang vận chuyển" : order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
           </p>
         );
       },

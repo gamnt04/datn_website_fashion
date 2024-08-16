@@ -141,11 +141,12 @@ export const getTop10ProductSale = async () => {
 export const Cancel_Order = async (id: any) => {
   try {
     const { data } = await instance.post(`/orders/${id}/cancel`);
-    if (data) {
-      console.log("Yêu cầu hủy đơn thành công", data);
-    } else {
-      console.log("Yêu cầu hủy đơn hàng thất bại", data);
-    }
+    // if (data) {
+    //   console.log("Yêu cầu hủy đơn thành công", data);
+
+    // } else {
+    //   console.log("Yêu cầu hủy đơn hàng thất bại", data);
+    // }
     console.log(data);
     return data;
   } catch (error) {

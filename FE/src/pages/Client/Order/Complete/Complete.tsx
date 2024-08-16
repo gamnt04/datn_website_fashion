@@ -11,27 +11,27 @@ const Complete = ({ dataProps }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-  const addCart = (_id?: string | number) => {
+  const addCart = (orderId?: string | number) => {
     if (account) {
-      dataProps.map((i: any) => {
-        if (i?.items) {
-          i?.items.map((j: any) => {
-            if (j.productId) {
-              mutate({
-                userId: account?._id,
-                productId: j.productId?._id,
-                color: j.color_item,
-                size: j.name_size,
-                quantity: j.quantity,
-                price: j.price_item,
-                image: j.productId?.image_product,
-                name: j.productId?.name_product,
-                _id: _id
-              });
-            }
-          })
-        }
-      })
+      const order = dataProps.find((i: any) => i?._id === orderId);
+      if (order?.items) {
+        for (let i = 0; i < order.items.length; i++) {
+          const j = order.items[i];
+          if (j.productId) {
+            mutate({
+              userId: account?._id,
+              productId: j?.productId?._id,
+              color: j?.color_item,
+              size: j?.name_size,
+              quantity: j?.quantity,
+              price_item_attr: j?.price_item,
+              image: j?.productId?.image_product,
+              name: j?.productId?.name_product,
+              _id: orderId
+            });
+          }
+        };
+      }
     }
     else {
       navi('/login')
@@ -112,7 +112,7 @@ const Complete = ({ dataProps }: any) => {
                     <Popconfirm
                       title="Mua lại đơn hàng?"
                       description="Bạn có chắc chắn muốn mua lại không?"
-                      onConfirm={() => addCart(dataProps?._id)}
+                      onConfirm={() => addCart(item?._id)}
                       // onCancel={cancel}
                       okText="Có "
                       cancelText="Không"
