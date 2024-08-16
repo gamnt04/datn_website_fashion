@@ -6,14 +6,15 @@ import { TiDelete } from "react-icons/ti";
 import { FaRecycle } from "react-icons/fa";
 import { Query_Trash_Item } from "../../../common/hooks/Products/Products";
 import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
+import ProductPrice from "./_component/productPrice";
 
 const TrashProduct = () => {
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-  const { mutate } = Mutation_items('RESTORE_ITEM_and_DESTROY_ITEM');
-  const { data, isLoading } = Query_Trash_Item()
+  const { mutate } = Mutation_items("RESTORE_ITEM_and_DESTROY_ITEM");
+  const { data, isLoading } = Query_Trash_Item();
   const dataSource = data?.map((product: IProduct, index: number) => ({
     key: product._id,
     index: index + 1,
@@ -69,8 +70,10 @@ const TrashProduct = () => {
     },
     {
       title: "Giá sản phẩm",
-      dataIndex: "price_product",
       key: "price_product",
+      render: (product: IProduct) => {
+        return <ProductPrice attributeId={product.attributes} />;
+      },
     },
     {
       title: "Thời gian tạo",
@@ -89,10 +92,15 @@ const TrashProduct = () => {
       render: (_: any, product: any) => {
         return (
           <Space>
-            <Button type="primary" onClick={() => mutate({
-              action: 'restore',
-              id_item: product._id
-            })}>
+            <Button
+              type="primary"
+              onClick={() =>
+                mutate({
+                  action: "restore",
+                  id_item: product._id,
+                })
+              }
+            >
               <FaRecycle />
             </Button>
             <Popconfirm

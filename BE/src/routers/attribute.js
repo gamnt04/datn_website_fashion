@@ -5,7 +5,10 @@ import express from "express";
 //   updateAttribute,
 //   deleteAttribute,
 // } from "../controllers/attribute";
-import { getAllAttributes } from "../controllers/attribute/attribute";
+import {
+  getAllAttributes,
+  getAttributeById,
+} from "../controllers/attribute/attribute";
 
 const Routes_Attribute = express.Router();
 //Route tạo mới 1 thuộc tính
@@ -18,7 +21,7 @@ const Routes_Attribute = express.Router();
 Routes_Attribute.get("/attributes", getAllAttributes);
 
 //Route lấy 1 thuộc tính theo id
-// router.get("/attributes/:id", getAttributeById);
+Routes_Attribute.get("/attributes/:id", getAttributeById);
 
 //Route để xóa 1 thuộc tính
 // router.delete("/attributes/:id", deleteAttribute);
