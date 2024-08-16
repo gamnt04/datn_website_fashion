@@ -20,7 +20,7 @@ const Order_All = () => {
     const { data, refetch } = List_One_Order_User(userId);
     const [messageApi, contextHolder] = message.useMessage();
     // const {setActive} = useContext(LoadingContext)
-    
+
     const handleMenuClick = (menu: any) => {
         setActiveMenu(menu);
     };
@@ -32,7 +32,7 @@ const Order_All = () => {
     }
 
     useEffect(() => {
-        
+
         const fetchData = async () => {
             try {
                 console.log('location.search:');
@@ -41,15 +41,13 @@ const Order_All = () => {
                 console.log(parsed.query.vnp_TransactionStatus);
 
                 if (parsed.query.vnp_TransactionStatus === '00') {
-                    
-                    
                     const itemOrder = sessionStorage.getItem('item_order');
                     const customerInfo = sessionStorage.getItem('customerInfo');
 
                     if (itemOrder && customerInfo) {
                         const getItemOrder = JSON.parse(itemOrder);
                         console.log(getItemOrder);
-                        
+
                         const dataForm = JSON.parse(customerInfo);
                         // setActive(true)
                         const response = await instance.post('/orderspayment', {
@@ -61,10 +59,10 @@ const Order_All = () => {
                             totalPrice: Number(parsed.query.vnp_Amount) / 100,
                             status: '2',
                         });
-                        
-                        
+
+
                         console.log(response.data);
-                        if(response.data){
+                        if (response.data) {
                             message.success('Thanh toán thành công');
                             sessionStorage.removeItem('item_order');
                             sessionStorage.removeItem('customerInfo');
@@ -83,7 +81,7 @@ const Order_All = () => {
         fetchData();
     }, [location.search]);
 
-    
+
     const orderCounts: Record<string, number> = {
         'Chờ Xác Nhận': fiterOrrder('1')?.length,
         'Đang Chuẩn Bị Hàng': fiterOrrder('2')?.length,
@@ -94,7 +92,7 @@ const Order_All = () => {
 
     return (
         <>
-        {contextHolder}
+            {contextHolder}
             <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs ">
                 {['Chờ Xác Nhận', 'Đang Chuẩn Bị Hàng', 'Đang Vận Chuyển', 'Hoàn Thành', 'Đã Hủy'].map((menu) => (
                     <li key={menu} className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400

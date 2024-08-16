@@ -463,7 +463,7 @@ export const updateOrderStatus = async (req, res) => {
     await order.save();
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Order status updated successfully"});
+      .json({ message: "Order status updated successfully" });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -533,11 +533,9 @@ export const userCancelOrder = async (req, res) => {
     }
     order.cancellationRequested = true;
     await order.save();
-    res
-      .status(StatusCodes.OK)
-      .json({ message: "Yêu cầu hủy đơn hàng thành công" });
+    res.status(StatusCodes.OK).json({ message: "Yêu cầu hủy đơn hàng thành công", data_status_order: order.cancellationRequested });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    return res.status(500).json({ message: "Lỗi máy chủ!" })
   }
 };
 
@@ -590,11 +588,11 @@ export const adminCancelOrder = async (req, res) => {
     }
     await order.save();
     res.status(200).json({
-      message : "Yêu cầu hủy đơn hàng đã được xác nhận",
-      data_status_order : order.cancellationRequested
+      message: "Yêu cầu hủy đơn hàng đã được xác nhận",
+      data_status_order: order.cancellationRequested
     });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    return res.status(500).json({ message: "Lỗi máy chủ!" })
   }
 };
 export const getOrderByNumber = async (req, res) => {
