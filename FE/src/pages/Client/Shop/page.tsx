@@ -1,8 +1,10 @@
 import { useState } from "react";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
+import { useNavigate } from "react-router-dom";
 
 const IndexShops = () => {
+  const navigate = useNavigate();
   const [cate_id, setCategoryId] = useState<string[]>([]); // Sửa kiểu thành mảng string
   const [priceRanges, setPriceRanges] = useState<
     { min: number; max: number }[]
@@ -12,7 +14,8 @@ const IndexShops = () => {
   const [sortOption, setSortOption] = useState<string>("");
 
   const handleCategorySelect = (id: string[]) => {
-    setCategoryId(id); // Cập nhật toàn bộ mảng ID
+    setCategoryId(id);
+    navigate(`/shops?category=${id.join(",")}`); // Chuyển hướng đến trang sản phẩm theo danh mục
   };
 
   const handlePriceChange = (priceRanges: { min: number; max: number }[]) => {
