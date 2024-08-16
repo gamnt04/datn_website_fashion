@@ -3,6 +3,7 @@ import {
   create,
   get,
   getById,
+  getCatogoryById,
   remove,
   statistical,
   update,
@@ -12,6 +13,7 @@ const Routes_categories = Router();
 // Routes_Products.get("/category", get_items_client);
 Routes_categories.get("/category", get);
 Routes_categories.get("/category/:id", getById);
+Routes_categories.get("/category/products/:id", getCatogoryById);
 Routes_categories.post("/category", create);
 Routes_categories.delete("/category/:id", remove);
 Routes_categories.put("/category/:id", update);

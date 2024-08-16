@@ -1,4 +1,5 @@
 import Category from "../../models/Items/Category.js";
+import Products from "../../models/Items/Products.js";
 import { categoryValidator } from "../../validations/category.js";
 
 export const create = async (req, res) => {
@@ -102,6 +103,24 @@ export const getById = async (req, res) => {
     });
   }
 };
+export async function getCatogoryById(req, res) {
+  try {
+    const { id } = req.params;
+
+    const category = await Category.findById(id);
+
+    if (!category) {
+      return res.status(404).json({ message: "Danh mục không tồn tại" });
+    }
+
+    const products = await Products.find({ category_id: category._id });
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy sản phẩm" });
+  }
+}
+
 export const update = async (req, res) => {
   try {
     const { error } = categoryValidator.validate(req.body, {
