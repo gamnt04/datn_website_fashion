@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Canceled from "../Canceled/Canceled";
 import Complete from "../Complete/Complete";
 import WaitingForDelivery from "../WaitingForDelivery/WaitingForDelivery";
@@ -87,14 +87,13 @@ const Order_All: React.FC<Order_AllProps> = ({ data }) => {
   }, [location.search]);
 
   const filterOrder = (status: string) =>
-    data.filter((order) => order.status === statuses[status]);
+    data.filter((order) => order.status === statuses[status]
+    );
 
   const hasData = (status: string) => filterOrder(status).length > 0;
-
   const { order, error, loading, searchOrderByNumber } =
     useSearchOrderByNumber();
   const [searchTerm, setSearchTerm] = useState("");
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     searchOrderByNumber(searchTerm);

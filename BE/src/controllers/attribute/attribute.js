@@ -54,17 +54,17 @@ export const getAllAttributes = async (req, res) => {
   }
 };
 // // Controller để lấy một thuộc tính theo ID
-// export const getAttributeById = async (req, res) => {
-//     try {
-//         const attribute = await attribute.findById(req.params.id).populate("values");
-//         if (!attribute) {
-//             return res.status(404).json({ message: "Attribute not found" });
-//         }
-//         res.json(attribute);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+export const getAttributeById = async (req, res) => {
+  try {
+    const attri = await attribute.findById(req.params.id).populate("values");
+    if (!attri) {
+      return res.status(404).json({ message: "Attribute not found" });
+    }
+    res.json(attri);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // // Controller để cập nhật một thuộc tính
 // export const updateAttribute = async (req, res) => {
