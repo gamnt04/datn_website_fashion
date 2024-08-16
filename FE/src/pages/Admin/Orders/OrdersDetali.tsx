@@ -20,6 +20,7 @@ const OrdersDetali = () => {
                     type: "success",
                     content: "Bạn đã xác nhận hủy đơn hàng!",
                 });
+                refetch();
             } else {
                 messageApi.open({
                     type: "success",
