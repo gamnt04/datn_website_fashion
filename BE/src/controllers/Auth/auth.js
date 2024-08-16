@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 import User from "../../models/Auth/users";
 import { signupSchema } from "../../validations/auth";
+import mongoose from "mongoose";
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -155,7 +156,6 @@ export const logout = async (req, res) => {
   }
 };
 
-// be/src/controllers/auth.js
 export const refreshToken = async (req, res) => {
   try {
     const oldToken = req.headers.authorization;
@@ -213,15 +213,55 @@ export const isTokenBlacklisted = async (token) => {
   return !!tokenInBlacklist;
 };
 
+// export const add_address = async (req, res) => {
+//   const { userId, newAddress } = req.body;
+
+//   // Kiểm tra thông tin địa chỉ
+//   if (
+//     !newAddress ||
+//     !newAddress.fullName ||
+//     !newAddress.phoneNumber ||
+//     !newAddress.addressDetails ||
+//     !newAddress.address
+//   ) {
+//     return res
+//       .status(StatusCodes.BAD_REQUEST)
+//       .json({ error: "Thông tin địa chỉ không được để trống" });
+//   }
+
+//   try {
+//     // Tìm người dùng
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res
+//         .status(StatusCodes.NOT_FOUND)
+//         .json({ error: "Người dùng không tồn tại" });
+//     }
+
+//     // Cập nhật địa chỉ
+//     user.address = newAddress;
+
+//     // Lưu thay đổi
+//     await user.save();
+//     return res
+//       .status(StatusCodes.OK)
+//       .json({ message: "Đã thêm địa chỉ thành công", address: user.address });
+//   } catch (error) {
+//     console.error("Lỗi khi thêm địa chỉ:", error);
+//     return res
+//       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+//       .json({ message: "Lỗi khi thêm địa chỉ" });
+//   }
+// };
+
 export const add_address = async (req, res) => {
-  const { userId, newAddress } = req.body;
+  const { userId, newAddress, setDefault } = req.body;
 
   // Kiểm tra thông tin địa chỉ
   if (
     !newAddress ||
     !newAddress.fullName ||
     !newAddress.phoneNumber ||
-    !newAddress.addressDetails ||
     !newAddress.address
   ) {
     return res
@@ -238,14 +278,27 @@ export const add_address = async (req, res) => {
         .json({ error: "Người dùng không tồn tại" });
     }
 
-    // Cập nhật địa chỉ
-    user.address = newAddress;
+    // Nếu địa chỉ mới được chọn làm mặc định, đặt tất cả các địa chỉ khác thành không phải mặc định
+    if (setDefault) {
+      user.address.forEach((address) => {
+        address.checked = false;
+      });
+    }
+
+    // Thêm địa chỉ mới vào mảng địa chỉ và thiết lập làm mặc định nếu cần
+    user.address.push({
+      ...newAddress,
+      checked: setDefault, // Đặt địa chỉ mới làm mặc định nếu setDefault là true
+    });
 
     // Lưu thay đổi
-    await user.save();
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Đã thêm địa chỉ thành công", address: user.address });
+    const updatedUser = await user.save();
+
+    // Trả về dữ liệu cập nhật
+    return res.status(StatusCodes.OK).json({
+      message: "Đã thêm địa chỉ thành công",
+      address: updatedUser.address,
+    });
   } catch (error) {
     console.error("Lỗi khi thêm địa chỉ:", error);
     return res
@@ -253,7 +306,6 @@ export const add_address = async (req, res) => {
       .json({ message: "Lỗi khi thêm địa chỉ" });
   }
 };
-
 export const get_address = async (req, res) => {
   const userId = req.params.userId;
 
@@ -277,9 +329,51 @@ export const get_address = async (req, res) => {
   }
 };
 
-export const updateUserAddress = async (req, res) => {
+export const getAddressById = async (req, res) => {
+  const { userId, addressId } = req.params;
+
+  if (!userId || !mongoose.isValidObjectId(userId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID người dùng không hợp lệ" });
+  }
+
+  if (!addressId || !mongoose.isValidObjectId(addressId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID địa chỉ không hợp lệ" });
+  }
+
+  try {
+    // Tìm người dùng theo ID
+    const user = await User.findById(userId).exec();
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
+    }
+
+    // Tìm địa chỉ theo ID trong mảng địa chỉ
+    const address = user.address.id(addressId);
+    if (!address) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy địa chỉ" });
+    }
+
+    // Trả về địa chỉ
+    return res.status(StatusCodes.OK).json({ address });
+  } catch (error) {
+    console.error("Lỗi khi lấy địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi lấy địa chỉ" });
+  }
+};
+
+export const setDefaultAddress = async (req, res) => {
   const userId = req.params.userId;
-  const { updatedAddress } = req.body;
+  const addressId = req.params.addressId; // ID của địa chỉ cần thiết lập làm mặc định
 
   try {
     // Tìm người dùng trong CSDL bằng userId
@@ -292,25 +386,91 @@ export const updateUserAddress = async (req, res) => {
       });
     }
 
-    // Ghi log để kiểm tra dữ liệu đầu vào
-    console.log("Dữ liệu địa chỉ cập nhật:", updatedAddress);
+    // Kiểm tra nếu địa chỉId hợp lệ
+    if (!mongoose.isValidObjectId(addressId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "ID địa chỉ không hợp lệ",
+      });
+    }
 
-    // Cập nhật địa chỉ
-    // Để cập nhật, ta cần đảm bảo rằng các thuộc tính của `updatedAddress` thay thế các thuộc tính cũ
-    user.address = { ...user.address, ...updatedAddress };
+    // Đặt tất cả các địa chỉ khác thành không phải mặc định
+    user.address.forEach((address) => {
+      address.checked = false;
+    });
 
-    // Ghi log để kiểm tra dữ liệu sau khi cập nhật
-    console.log("Địa chỉ sau khi cập nhật:", user.address);
+    // Tìm địa chỉ cần thiết lập làm mặc định
+    const address = user.address.id(addressId);
+
+    // Kiểm tra nếu không tìm thấy địa chỉ
+    if (!address) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy địa chỉ",
+      });
+    }
+
+    // Đặt địa chỉ này thành mặc định
+    address.checked = true;
 
     // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
     const updatedUser = await user.save();
 
-    // Ghi log để kiểm tra dữ liệu sau khi lưu
-    console.log("Dữ liệu người dùng sau khi lưu:", updatedUser.address);
+    return res.status(StatusCodes.OK).json({
+      message: "Đã thiết lập địa chỉ mặc định thành công",
+      address: updatedUser.address.id(addressId),
+    });
+  } catch (error) {
+    console.error("Lỗi khi thiết lập địa chỉ mặc định:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Lỗi khi thiết lập địa chỉ mặc định",
+    });
+  }
+};
+
+export const updateUserAddress = async (req, res) => {
+  const userId = req.params.userId;
+  const addressId = req.params.addressId; // ID của địa chỉ cần cập nhật
+  const updatedAddress = req.body; // Dữ liệu địa chỉ mới
+
+  try {
+    // Tìm người dùng trong CSDL bằng userId
+    const user = await User.findById(userId);
+
+    // Kiểm tra nếu không tìm thấy người dùng
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy người dùng",
+      });
+    }
+
+    // Kiểm tra nếu địa chỉId hợp lệ
+    if (!mongoose.isValidObjectId(addressId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "ID địa chỉ không hợp lệ",
+      });
+    }
+
+    // Tìm địa chỉ cần cập nhật trong mảng địa chỉ
+    const address = user.address.id(addressId);
+
+    // Kiểm tra nếu không tìm thấy địa chỉ
+    if (!address) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy địa chỉ",
+      });
+    }
+
+    // Cập nhật địa chỉ với dữ liệu mới
+    address.set(updatedAddress);
+
+    // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
+    const updatedUser = await user.save();
+
+    // Lấy địa chỉ đã được cập nhật từ dữ liệu người dùng đã lưu
+    const updatedAddressData = updatedUser.address.id(addressId);
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: updatedUser.address,
+      address: updatedAddressData,
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
@@ -321,7 +481,19 @@ export const updateUserAddress = async (req, res) => {
 };
 
 export const delete_address = async (req, res) => {
-  const userId = req.params.userId;
+  const { userId, addressId } = req.params;
+
+  if (!userId || !mongoose.isValidObjectId(userId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID người dùng không hợp lệ" });
+  }
+
+  if (!addressId || !mongoose.isValidObjectId(addressId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID địa chỉ không hợp lệ" });
+  }
 
   try {
     // Tìm người dùng
@@ -332,14 +504,24 @@ export const delete_address = async (req, res) => {
         .json({ message: "Không tìm thấy người dùng" });
     }
 
-    // Xóa địa chỉ
-    user.address = {};
+    // Xóa địa chỉ theo ID
+    const addressIndex = user.address.findIndex(
+      (address) => address._id.toString() === addressId
+    );
+
+    if (addressIndex === -1) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy địa chỉ" });
+    }
+
+    user.address.splice(addressIndex, 1); // Xóa địa chỉ
 
     // Lưu thay đổi
     await user.save();
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Đã xóa địa chỉ thành công" });
+      .json({ message: "Đã xóa địa chỉ thành công", address: user.address });
   } catch (error) {
     console.error("Lỗi khi xóa địa chỉ:", error);
     return res
