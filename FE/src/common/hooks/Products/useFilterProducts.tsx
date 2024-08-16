@@ -28,8 +28,7 @@ const fetchFilteredProducts = async (
   sizes: string[],
   page: number = 1,
   limit: number = 20,
-  sort: string = "",
-  sortOption: string
+  sortOption: string = ""
 ) => {
   const endpoint = "/products/filter/product";
 
@@ -41,8 +40,7 @@ const fetchFilteredProducts = async (
     name_size: sizes.length > 0 ? sizes.join(",") : undefined,
     _page: page,
     _limit: limit,
-    _sort: sort,
-    sortOption, // Thêm tham số sort vào request
+    _sort: sortOption,
   };
 
   try {
@@ -66,7 +64,7 @@ export const useFilteredProducts = (
   sizes: string[],
   page: number = 1,
   limit: number = 20,
-  sort: string = "" // Thêm tham số sort
+  sortOption: string = ""
 ) => {
   const queryKey = [
     "products",
@@ -76,7 +74,7 @@ export const useFilteredProducts = (
     sizes,
     page,
     limit,
-    sort, // Thêm sort vào queryKey
+    sortOption,
   ];
 
   const { data, error, isLoading, isError } = useQuery<
@@ -92,7 +90,7 @@ export const useFilteredProducts = (
         sizes,
         page,
         limit,
-        sort
+        sortOption
       ),
   });
 
