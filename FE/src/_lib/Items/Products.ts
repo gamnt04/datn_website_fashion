@@ -151,7 +151,7 @@ export const remove_multiple_products = async (data: {
 export const destroy_delete_Product = async (id: string) => {
   try {
     const response = await fetch(
-      `http://localhost:2004/api/v1/products/permanent/${id}`,
+      `http://localhost:2004/api/v1/products/destroy/${id}`,
       {
         method: "DELETE",
       }

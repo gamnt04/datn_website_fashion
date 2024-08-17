@@ -20,31 +20,6 @@ const TrashProduct = () => {
     index: index + 1,
     ...product,
   }));
-  // const { mutate } = useMutation({
-  //   mutationFn: async (id) => {
-  // restore
-  //     try {
-  //       return await instance.delete(`/products/destroy/${id}`);
-  //     } catch (error) {
-  //       throw new Error((error as any).message);
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     messageApi.open({
-  //       type: "success",
-  //       content: "Xóa vĩnh viễn sản phẩm thành công",
-  //     });
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["Product_Trash"],
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     messageApi.open({
-  //       type: "error",
-  //       content: error.message,
-  //     });
-  //   },
-  // });
   const columns = [
     {
       title: "",
