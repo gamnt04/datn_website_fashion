@@ -22,7 +22,6 @@ Routes_Products.get("/products/dashboard", get_item_dashboard);
 Routes_Products.get("/products/:id", getProductById);
 //Filter
 Routes_Products.get("/products/filter/product", filterItems);
-
 Routes_Products.post("/products", createProduct);
 Routes_Products.put("/products/:id", updateProductById);
 Routes_Products.post("/products/remove", removeMultipleProducts);
