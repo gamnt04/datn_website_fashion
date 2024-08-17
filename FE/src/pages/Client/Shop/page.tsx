@@ -1,11 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 import { useNavigate } from "react-router-dom";
 
 const IndexShops = () => {
   const navigate = useNavigate();
-  const [cate_id, setCategoryId] = useState<string[]>([]); // Sửa kiểu thành mảng string
+  const [cate_id, setCategoryId] = useState<string[]>([]);
   const [priceRanges, setPriceRanges] = useState<
     { min: number; max: number }[]
   >([]);
@@ -15,7 +15,7 @@ const IndexShops = () => {
 
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
-    navigate(`/shops?category=${id.join(",")}`); // Chuyển hướng đến trang sản phẩm theo danh mục
+    navigate(`/shops?category=${id.join(",")}`);
   };
 
   const handlePriceChange = (priceRanges: { min: number; max: number }[]) => {
@@ -71,8 +71,6 @@ const IndexShops = () => {
           sortOption={sortOption}
         />
       </div>
-
-      {/* <Get_in_touch /> */}
     </div>
   );
 };
