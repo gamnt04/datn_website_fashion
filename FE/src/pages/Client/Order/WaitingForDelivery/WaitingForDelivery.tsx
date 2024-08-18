@@ -1,12 +1,40 @@
 import { Link } from "react-router-dom";
 import { IOrder } from "../../../../common/interfaces/Orders"
 import { Car, TotalPrice } from "../../../../components/common/Client/_component/Icons";
-import { Button } from "antd";
+import { Button, message } from "antd";
+import instance from "../../../../configs/axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 const WaitingForDelivery = ({ dataProps }: any) => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient()
+  const { mutate } = useMutation({
+    mutationFn: async (id: any) => {
+      try {
+        const { data } = await instance.patch(`/orders/${id}`, { status: "4" });
+        return data
+      } catch (error) {
+        messageApi.open({
+          type: 'error',
+          content: 'Nhận hàng không thành công',
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["Orders_Key"]
+      })
+      messageApi.open({
+        type: 'success',
+        content: 'Đã nhận hàng thành công',
+      });
+
+    }
+  })
   return (
     <>
+      {contextHolder}
       {!dataProps || dataProps.length === 0 ? (
 
         <div className="flex justify-center items-center">
@@ -18,7 +46,7 @@ const WaitingForDelivery = ({ dataProps }: any) => {
             <div className="my-4 px-2">
 
               <div className="flex gap-2 py-5 border-b-2 justify-between">
-                <Link to={`/profile/order/${item._id}`} className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded">
+                <Link to={`/ profile / order / ${item._id}`} className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded">
                   Xem ngay
                 </Link>
                 <div className="flex">
@@ -71,7 +99,7 @@ const WaitingForDelivery = ({ dataProps }: any) => {
                   được giao đến bạn và sản phẩm nhận được không có vấn
                   đề nào.
                 </p>
-                <Button className="bg-stone-300 w-full h-10 lg:w-[30%] text-white text-[12px] rounded">
+                <Button className="bg-stone-300 w-full h-10 lg:w-[30%] text-white text-[12px] rounded" onClick={() => mutate(item?._id)}>
                   Đã Nhận Hàng
                 </Button>
               </div>
