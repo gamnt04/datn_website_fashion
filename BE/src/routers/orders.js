@@ -16,6 +16,7 @@ import {
   getAllOrderByMonthOfYear,
   getTop10ProductBestSale
 } from "../controllers/Orders/orders";
+import { list_items_order_by_user } from "../controllers/Orders/options";
 
 const router = Router();
 router.post("/orders", createOrder);
@@ -33,5 +34,8 @@ router.get("/orders/:id", getOrderById);
 router.patch("/orders/:id", updateOrderStatus);
 router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
-router.post("/orderspayment", createOrderPayment)
+router.post("/orderspayment", createOrderPayment);
+
+// ---
+router.get('/list_order/:id_user', list_items_order_by_user)
 export default router;
