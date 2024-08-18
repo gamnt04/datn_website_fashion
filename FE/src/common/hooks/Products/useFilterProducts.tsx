@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { AxiosError } from "axios";
@@ -8,6 +6,7 @@ interface Product {
   _id: string;
   name_product: string;
   price_product: number;
+  stock_product?: number;
 }
 
 interface ProductResponse {
@@ -30,7 +29,7 @@ const fetchFilteredProducts = async (
   limit: number = 20,
   sortOption: string = ""
 ) => {
-  const endpoint = "/products/filter/product";
+  const endpoint = "/products/filter/product"; // Điều chỉnh endpoint nếu cần thiết
 
   const params: { [key: string]: any } = {
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
@@ -49,8 +48,7 @@ const fetchFilteredProducts = async (
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const message = error.response?.data.message || "An error occurred";
-      const status = error.response?.status?.toString() || "500";
-      throw new AxiosError(message, status);
+      throw new AxiosError(message, error.code, error.request, error.response);
     } else {
       throw new Error("An unknown error occurred");
     }

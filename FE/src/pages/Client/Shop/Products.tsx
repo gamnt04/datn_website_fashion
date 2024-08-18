@@ -12,7 +12,6 @@ interface Products_ShopProps {
   selectedSizes: string[];
   sortOption: string;
 }
-
 const Products_Shop: React.FC<Products_ShopProps> = ({
   priceRanges,
   selectedColors,

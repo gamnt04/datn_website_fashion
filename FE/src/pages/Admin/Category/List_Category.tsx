@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, message, Popconfirm, Table, Pagination, Switch } from "antd";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
