@@ -90,15 +90,14 @@ const List_Products = () => {
           ) : (
             <div className="w-auto">
               <List_item dataProps={propsData} />
+              <div
+                className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
+                onClick={handleViewAll}
+              >
+                <span className="text-[15px]">Xem tất cả</span>
+              </div>
             </div>
           )}
-          {/* view all */}
-          <div
-            className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
-            onClick={handleViewAll}
-          >
-            <span className="text-[15px]">Xem tất cả</span>
-          </div>
         </>
       )}
     </div>
