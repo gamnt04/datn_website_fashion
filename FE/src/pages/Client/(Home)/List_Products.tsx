@@ -11,19 +11,33 @@ import { ICategory } from "../../../common/interfaces/Category";
 const List_Products = () => {
   const { data, isLoading } = Query_Limit_Items(12);
   const { data: category } = useCategoryQuery();
+
+  const visibleCategories =
+    category?.filter((category: ICategory) => category.published) || [];
+
   const [selectedCategory, setSelectedCategory] = useState("all");
   const navigate = useNavigate();
+
   const filteredProducts =
     selectedCategory === "all"
-      ? data
+      ? data?.filter((product: any) =>
+          visibleCategories.some(
+            (cat: ICategory) => cat._id === product.category_id
+          )
+        )
       : data?.filter(
-          (product: any) => product.category_id === selectedCategory
+          (product: any) =>
+            product.category_id === selectedCategory &&
+            visibleCategories.some(
+              (cat: ICategory) => cat._id === product.category_id
+            )
         );
 
   const propsData = {
     data: filteredProducts,
     style: "lg:grid-cols-4 md:grid-cols-3",
   };
+
   const handleViewAll = () => {
     if (selectedCategory === "all") {
       navigate("/shops");
@@ -36,6 +50,7 @@ const List_Products = () => {
       }
     }
   };
+
   return (
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
@@ -58,7 +73,7 @@ const List_Products = () => {
           >
             Tất cả
           </button>
-          {category?.map((cat: ICategory) => (
+          {visibleCategories?.map((cat: ICategory) => (
             <button
               key={cat._id}
               className={`relative mx-2 ${

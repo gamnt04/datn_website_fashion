@@ -6,9 +6,21 @@ import { Query_Products } from "../../../common/hooks/Products/Products";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { IProduct } from "../../../common/interfaces/Product";
+import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
+import { ICategory } from "../../../common/interfaces/Category";
 
 const Trending_Products = () => {
   const { data, isLoading } = Query_Products();
+  const { data: categories } = useCategoryQuery();
+
+  const visibleCategories =
+    categories?.filter((category: ICategory) => category.published) || [];
+  const filteredProducts = data?.filter((product: IProduct) =>
+    visibleCategories.some(
+      (category: ICategory) => category._id === product.category_id
+    )
+  );
+
   const sizeListItems = useRef<HTMLDivElement | null>(null);
   const backItems = useRef<HTMLButtonElement | null>(null);
   const nextItems = useRef<HTMLButtonElement | null>(null);
@@ -46,7 +58,7 @@ const Trending_Products = () => {
   };
 
   return (
-    <div className="py-16 text-center border-b overflow-hidden">
+    <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
       <div className="text-center flex flex-col items-center mb-[50px]">
         <span className="text-2xl font-medium tracking-wide mb-[20px]">
@@ -65,8 +77,8 @@ const Trending_Products = () => {
       ) : (
         <>
           {/* products */}
-          {data?.length === 0 ? (
-            <div className="flex justify-center items-center">
+          {filteredProducts?.length === 0 ? (
+            <div className="flex items-center justify-center">
               <img
                 src="../../src/assets/Images/Products/no-data.png"
                 alt="Không có sản phẩm"
@@ -78,7 +90,7 @@ const Trending_Products = () => {
                 ref={sizeListItems}
                 className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[1.5%]  mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%]"
               >
-                {data?.map((item: IProduct) => {
+                {filteredProducts?.map((item: IProduct) => {
                   return <Products key={item._id} items={item} />;
                 })}
               </div>
