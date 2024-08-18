@@ -5,8 +5,8 @@ import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin, Table } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import queryString from "query-string";
-import randomstring from "randomstring";
+// import queryString from "query-string";
+// import randomstring from "randomstring";
 import { nanoid } from 'nanoid';
 import {
   Add_Address,
@@ -15,6 +15,7 @@ import {
 import { Address, Chevron_right } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Loader } from "lucide-react";
 
 const OrderPay = () => {
   const routing = useNavigate();
@@ -23,12 +24,9 @@ const OrderPay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
-  // console.log(auth);
-
-  const [selectedAddress, setSelectedAddress] = useState(null);
-
+  const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
-  const { onSubmit, contextHolder, messageApi } = Pay_Mutation();
+  const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
   let data: any;
   if (data_sessionStorage) {
@@ -38,87 +36,88 @@ const OrderPay = () => {
   }
   useEffect(() => {
     if (auth && auth?.address) {
-      setSelectedAddress(auth?.address);
-      setValue("userName", auth?.address?.fullName);
-      setValue("phone", auth?.address?.phoneNumber);
-      setValue("email", auth?.email);
-      setValue("address", `${auth?.address?.addressDetails} - ${auth?.address?.address}`);
+      const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
+      const address = selectedAddress || defaultAddress;
+      if (address) {
+        setSelectedAddress(address);
+        setValue("userName", address.fullName);
+        setValue("phone", address.phoneNumber);
+        setValue("email", auth.email);
+        setValue("address", `${address.addressDetails} - ${address.address}`);
+      }
     }
-  }, [auth, setValue]);
-
+  }, [auth, selectedAddress, setValue]);
   const handleTAdd = () => {
     setAddress(!address);
+    if (isOpen) setIsOpen(false); // Tắt modal "Địa chỉ của tôi" nếu đang bật
     if (isOpen) setIsOpen(false);
   };
 
   const handleAddress = () => {
     setIsOpen(!isOpen);
+    if (address) setAddress(false); // Tắt modal "Địa chỉ mới" nếu đang bật
     if (address) setAddress(false);
   };
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsOpen(false);
-    setValue("userName", address?.fullName);
-    setValue("phone", address?.phoneNumber);
-    setValue("email", address?.email)
-    setValue("address", `${address?.addressDetails} - ${address?.address}`);
   };
 
   // add order
   const onAddOrder = async (data_form: any) => {
-    if (!data_form.address || data_form.address.trim() === "") {
-        messageApi.open({
-            type: "warning",
-            content: "Vui lòng chọn địa chỉ!",
-        });
-        return;
+    if (!data_form.address || data_form?.address?.trim() === "") {
+      messageApi.open({
+        type: "warning",
+        content: "Vui lòng chọn địa chỉ!",
+      });
+      return;
     }
 
-    const item_order = {
-        userId: userId,
-        items: data?.data_order,
-        customerInfo: {
-            ...data_form
-        },
-        totalPrice: data?.totalPrice,
-        email: user?.user?.email,
+    const item_order: any = {
+      userId: userId,
+      items: data?.data_order,
+      customerInfo: {
+        ...data_form
+      },
+      totalPrice: data?.totalPrice,
+      email: user?.user?.email,
     };
 
-    try { 
-        if (data_form.payment === "VNPAY") { 
-             
-            const orderId = JSON.parse(sessionStorage.getItem('item_order') as string); 
-            sessionStorage.setItem('customerInfo', JSON.stringify({...data_form}));
-            console.log("ok",orderId.totalPrice)
-            // Tạo URL thanh toán VNPAY 
-            const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, { 
-                orderId: nanoid(24), 
-                totalPrice: orderId.totalPrice, 
-                orderDescription: `Order ${orderId._id}`, 
-                language: 'vn' 
-            }); 
-            
-            // Lưu thông tin thanh toán trước khi chuyển hướng
-            sessionStorage.setItem('item_order', JSON.stringify(item_order));
-            
-            // Redirect người dùng đến trang thanh toán
-            window.location.href = UrlPayment.data.paymentUrl;
-        } else { 
-            // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
-            onSubmit(item_order); 
-        } 
-    } catch (error) { 
-        console.error("Order Creation Error: ", error); 
-        messageApi.open({ 
-            type: "error", 
-            content: "Lỗi tạo đơn hàng!", 
-        }); 
+    try {
+      if (data_form.payment === "VNPAY") {
+
+        const orderId = JSON.parse(sessionStorage.getItem('item_order') as string);
+        sessionStorage.setItem('customerInfo', JSON.stringify({ ...data_form }));
+        console.log("ok", orderId.totalPrice)
+        // Tạo URL thanh toán VNPAY 
+        const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
+          orderId: nanoid(24),
+          totalPrice: orderId.totalPrice,
+          orderDescription: `Order ${orderId._id}`,
+          language: 'vn'
+        });
+
+        // Lưu thông tin thanh toán trước khi chuyển hướng
+        sessionStorage.setItem('item_order', JSON.stringify(item_order));
+
+        // Redirect người dùng đến trang thanh toán
+        window.location.href = UrlPayment.data.paymentUrl;
+      } else {
+        // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
+        onSubmit(item_order);
+      }
+    } catch (error) {
+      console.error("Order Creation Error: ", error);
+      messageApi.open({
+        type: "error",
+        content: "Lỗi tạo đơn hàng!",
+      });
     }
-};
+  };
 
 
 
-   
+
   const dataSo = data?.data_order.map((order: any) => {
     return {
       key: order.productId._id,
@@ -188,7 +187,15 @@ const OrderPay = () => {
       ),
     },
   ];
-
+  if (loadingOrder) {
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="animate-spin">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="xl:w-[1440px] w-[95vw] mx-auto">
@@ -218,9 +225,27 @@ const OrderPay = () => {
                 </div>
                 <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
                   <div className="flex items-center gap-4">
-                    <h1 className="font-bold">{selectedAddress?.fullName}</h1>
-                    <p className="font-bold">{selectedAddress?.phoneNumber}</p>
-                    <p>{selectedAddress?.addressDetails + " - " + selectedAddress?.address}</p>
+                    {selectedAddress ? (
+                      <div className="flex items-center gap-4">
+                        <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                        <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                        <p>
+                          {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
+                        </p>
+                      </div>
+                    ) : (
+                      auth?.address?.map(
+                        (item: any, index: any) =>
+                          item.checked === true && (
+                            <div key={index} className="flex items-center gap-4">
+                              <h1 className="font-bold">{item?.fullName}</h1>
+                              <p className="font-bold">{item?.phoneNumber}</p>
+                              <p>
+                                {item?.addressDetails + " - " + item?.address}
+                              </p>
+                            </div>
+                          )
+                      ))}
                   </div>
                   <div className="flex items-center gap-8">
                     {/* {!selectedAddress?.checked === true ? ('') : (
@@ -242,7 +267,7 @@ const OrderPay = () => {
                 </div>
               </div>
               <div className="border my-4 rounded shadow-sm">
-                
+
                 <Table columns={columns} dataSource={dataSo} pagination={false} />
                 <div className="flex items-center justify-end gap-8 p-6">
                   {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
