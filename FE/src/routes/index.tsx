@@ -42,6 +42,7 @@ import BlogEdit from "../pages/Admin/Blogs/BlogEdit";
 import ForgotPassword from "../pages/Client/User/ForgotPass";
 import CategoryDetail from "../pages/Admin/Category/CategoryDetail";
 import OrderPay from "../pages/Client/pay/oderPay";
+import List_order from "../pages/Client/List_Order/page";
 const RouterComponent = () => {
   return (
     <>
@@ -74,6 +75,7 @@ const RouterComponent = () => {
               <Route path="/profile/allorder" element={<Order_Menu />} />
               {/* <Route path="/profile/allorder" element={<Order />} /> */}
               <Route path="/profile/order/:id" element={<OrderDetail />} />
+              <Route path="/profile/list_order/:id" element={<List_order />} />
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
