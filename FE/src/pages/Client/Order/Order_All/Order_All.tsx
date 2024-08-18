@@ -24,6 +24,8 @@ interface Order_AllProps {
 }
 
 const Order_All: React.FC<Order_AllProps> = ({ data }) => {
+  console.log(data);
+
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const [isActive, setActive] = useState<boolean>(false);
