@@ -6,6 +6,8 @@ import { ICategory } from "../../../../common/interfaces/Category";
 const AboutUS = () => {
   //const arr = [1, 2, 3];
   const { data, isLoading } = useCategoryQuery();
+  const visibleCategories =
+    data?.filter((category: ICategory) => category.published) || [];
   if (isLoading) return <LoadingOutlined />;
   return (
     <div className="container lg:mt-[40px] mt-[60px]">
@@ -158,7 +160,7 @@ const AboutUS = () => {
             Bộ sưu tập của chúng tôi
           </h2>
           <div className=" grid lg:grid-cols-3 md:grid-cold-2 grid-cols-1 gap-3 text-center *:duration-300 *:cursor-pointer *:overflow-hidden *:rounded *:lg:shadow-lg *:shadow">
-            {data?.map((category: ICategory) => (
+            {visibleCategories?.map((category: ICategory) => (
               <div className="text-center lg:w-[459.68px] lg:h-[514.67px] image-container hover:scale-105">
                 <img
                   src={category.image_category}
