@@ -17,26 +17,26 @@ const cartSchema = new Schema(
         quantity: {
           type: Number,
           required: true,
-          default : 1,
+          default: 1,
         },
-        price_item : {
-          type : Number,
-          required : true
+        price_item: {
+          type: Number,
+          required: true
         },
         color_item: String,
-        stock_item : Number,
+        stock_item: Number,
         name_size: String,
-        quantity_attr : Number,
-        total_price_item : Number,
-        status_checked : {
-          type : Boolean,
-          default : true
+        quantity_attr: Number,
+        total_price_item: Number,
+        status_checked: {
+          type: Boolean,
+          default: false
         }
       }
     ],
-    total_price : {
-      type : Number,
-      default : 0
+    total_price: {
+      type: Number,
+      default: 0
     }
   },
   {
