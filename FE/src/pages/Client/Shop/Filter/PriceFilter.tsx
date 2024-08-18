@@ -134,47 +134,56 @@
 
 // export default PriceFilter;
 
-
 import React from "react";
-
+import { CaretUpOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 interface SortFilterProps {
   sortOption: string;
   onSortChange: (sortOption: string) => void;
 }
 
-
 const PriceFilter: React.FC<SortFilterProps> = ({
   sortOption,
   onSortChange,
 }) => {
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onSortChange(e.target.value);
+  const handleSortChange = () => {
+    if (sortOption === "") {
+      onSortChange("price_attribute:asc");
+    } else if (sortOption === "price_attribute:asc") {
+      onSortChange("price_attribute:desc");
+    } else {
+      onSortChange("");
+    }
   };
+
   return (
-    <div className="relative inline-block text-left">
-      <select
-        value={sortOption}
-        onChange={handleSortChange}
-        className={`flex items-center px-4 py-3 border-none outline-none  mt-[2px] ${
-          sortOption ? "font-bold" : "font-bold"
-        }`}
-      >
-        <option className="font-bold" value="">
-          Giá
-        </option>
-        <option className="font-bold" value="price_attribute:asc">
-          Giá: tăng dần
-        </option>
-        <option className="font-bold" value="price_attribute:desc">
-          Giá: giảm dần
-        </option>
-      </select>
+    <div className="relative inline-block text-left" onClick={handleSortChange}>
+      <div className="flex items-center px-4 py-3">
+        <span className="mr-1 font-semibold">Giá</span>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+          className="ml-1"
+        >
+          <CaretUpOutlined
+            className="w-3 h-3"
+            style={{
+              color: sortOption === "price_attribute:asc" ? "blue" : "#999",
+            }}
+          />
+          <CaretDownOutlined
+            className="w-3 h-3 -mt-1"
+            style={{
+              color: sortOption === "price_attribute:desc" ? "blue" : "#999",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-
 export default PriceFilter;
-
-
