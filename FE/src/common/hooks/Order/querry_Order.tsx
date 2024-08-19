@@ -22,7 +22,7 @@ export function List_One_Order_User(userId: string) {
   return { data, ...rest };
 }
 export const Query_Orders = (id?: string, page?: number, status?: string) => {
-  const key = id ? ["Orders_Key", id] : ["Orders_Key"];
+  const key = id ? ["Order_Key", id] : ["Order_Key"];
   const { data, ...rest } = useQuery({
     queryKey: [...key, page, status],
     queryFn: async () => {
