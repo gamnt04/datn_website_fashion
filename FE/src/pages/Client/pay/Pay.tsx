@@ -13,6 +13,7 @@ import { Address, Chevron_right } from "../../../components/common/Client/_compo
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Loader } from "lucide-react";
+import { nanoid } from "nanoid";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -93,7 +94,7 @@ const Pay = () => {
 
         // Tạo URL thanh toán VNPAY 
         const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
-          orderId: orderId._id,
+          orderId: nanoid(24),
           totalPrice: vnPayment,
           orderDescription: `Order ${orderId._id}`,
           language: 'vn'
