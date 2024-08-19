@@ -70,6 +70,7 @@ const RouterComponent = () => {
               <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
+              {/* <Route path="/profile/allorder" element={<Order_All />} /> */}
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
