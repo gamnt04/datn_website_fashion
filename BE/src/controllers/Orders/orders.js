@@ -553,11 +553,9 @@ export const userCancelOrder = async (req, res) => {
     }
     order.cancellationRequested = true;
     await order.save();
-    res
-      .status(StatusCodes.OK)
-      .json({ message: "Yêu cầu hủy đơn hàng thành công" });
+    res.status(StatusCodes.OK).json({ message: "Yêu cầu hủy đơn hàng thành công", data_status_order: order.cancellationRequested });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    return res.status(500).json({ message: "Lỗi máy chủ!" })
   }
 };
 
@@ -614,7 +612,7 @@ export const adminCancelOrder = async (req, res) => {
       data_status_order: order.cancellationRequested
     });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    return res.status(500).json({ message: "Lỗi máy chủ!" })
   }
 };
 export const getOrderByNumber = async (req, res) => {

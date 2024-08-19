@@ -2,10 +2,8 @@ import { useForm } from "react-hook-form";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Spin, Table } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Table } from "antd";
 import { useEffect, useState } from "react";
-import queryString from "query-string";
 
 import {
   Add_Address,
@@ -23,10 +21,7 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth } = List_Auth(userId);
-  // console.log(auth);
-
-  const [selectedAddress, setSelectedAddress] = useState(null);
-
+  const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
@@ -38,35 +33,40 @@ const Pay = () => {
   }
   useEffect(() => {
     if (auth && auth?.address) {
-      setSelectedAddress(auth?.address);
-      setValue("userName", auth?.address?.fullName);
-      setValue("phone", auth?.address?.phoneNumber);
-      setValue("email", auth?.email);
-      setValue("address", `${auth?.address?.addressDetails} - ${auth?.address?.address}`);
+      const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
+      const address = selectedAddress || defaultAddress;
+      if (address) {
+        setSelectedAddress(address);
+        setValue("userName", address.fullName);
+        setValue("phone", address.phoneNumber);
+        setValue("email", auth.email);
+        setValue("address", `${address.addressDetails} - ${address.address}`);
+      }
     }
-  }, [auth, setValue]);
-
+  }, [auth, selectedAddress, setValue]);
   const handleTAdd = () => {
     setAddress(!address);
+    if (isOpen) setIsOpen(false); // Tắt modal "Địa chỉ của tôi" nếu đang bật
     if (isOpen) setIsOpen(false);
   };
 
   const handleAddress = () => {
     setIsOpen(!isOpen);
+    if (address) setAddress(false); // Tắt modal "Địa chỉ mới" nếu đang bật
     if (address) setAddress(false);
   };
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsOpen(false);
-    setValue("userName", address?.fullName);
-    setValue("phone", address?.phoneNumber);
-    setValue("email", address?.email)
-    setValue("address", `${address?.addressDetails} - ${address?.address}`);
   };
 
   // add order
   const onAddOrder = async (data_form: any) => {
-    if (!data_form.address || data_form.address.trim() === "") {
+    console.log(data_form);
+
+    if (!data_form.address || data_form?.address.trim() === "") {
+      console.log(data_form.address);
+
       messageApi.open({
         type: "warning",
         content: "Vui lòng chọn địa chỉ!",
@@ -83,6 +83,7 @@ const Pay = () => {
       totalPrice: data?.totalPrice,
       email: user?.user?.email,
     };
+    console.log(item_order);
 
     try {
       if (data_form.payment === "VNPAY") {
@@ -114,10 +115,6 @@ const Pay = () => {
       });
     }
   };
-
-
-
-
   const dataSo = data?.data_order.map((order: any) => {
     return {
       key: order.productId._id,
@@ -137,7 +134,7 @@ const Pay = () => {
       dataIndex: 'name_product',
       key: 'name_product',
       render: (_: any, order: any) => (
-        <div className="lg:flex lg:items-center gap-32">
+        <div className="lg:flex lg:items-center gap-10">
           <div>
             <h1 className="font-bold text-sm lg:text-base">{order?.productId?.name_product}</h1>
             <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
@@ -220,9 +217,27 @@ const Pay = () => {
               </div>
               <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
                 <div className="flex items-center gap-4">
-                  <h1 className="font-bold">{selectedAddress?.fullName}</h1>
-                  <p className="font-bold">{selectedAddress?.phoneNumber}</p>
-                  <p>{selectedAddress?.addressDetails + " - " + selectedAddress?.address}</p>
+                  {selectedAddress ? (
+                    <div className="flex items-center gap-4">
+                      <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                      <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                      <p>
+                        {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
+                      </p>
+                    </div>
+                  ) : (
+                    auth?.address?.map(
+                      (item: any, index: any) =>
+                        item.checked === true && (
+                          <div key={index} className="flex items-center gap-4">
+                            <h1 className="font-bold">{item?.fullName}</h1>
+                            <p className="font-bold">{item?.phoneNumber}</p>
+                            <p>
+                              {item?.addressDetails + " - " + item?.address}
+                            </p>
+                          </div>
+                        )
+                    ))}
                 </div>
                 <div className="flex items-center gap-8">
                   {/* {!selectedAddress?.checked === true ? ('') : (
@@ -239,7 +254,6 @@ const Pay = () => {
                       <Chevron_right />
                     </span>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -248,10 +262,10 @@ const Pay = () => {
               <div className="flex items-center justify-end gap-8 p-6">
                 {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                 <p className="text-xl font-bold text-black">
-                  {data?.totalPrice?.toLocaleString("vi", {
+                  <p>Tổng số tiền: {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
-                  })}
+                  })}</p>
                 </p>
               </div>
             </div>
@@ -275,6 +289,7 @@ const Pay = () => {
                 <div>
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng tiền hàng</p>
+                    {data?.quantity}
                     <p>
                       {data?.totalPrice?.toLocaleString("vi", {
                         style: "currency",
@@ -329,7 +344,7 @@ const Pay = () => {
           }
         </div >
 
-      </div>
+      </div >
 
     </>
   );

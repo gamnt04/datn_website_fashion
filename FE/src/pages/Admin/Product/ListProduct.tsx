@@ -21,6 +21,7 @@ import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
+import ProductPrice from "./_component/productPrice";
 const ListProduct = () => {
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
@@ -114,8 +115,10 @@ const ListProduct = () => {
     },
     {
       title: "Giá sản phẩm",
-      dataIndex: "price_product",
-      key: "price_product"
+      key: "price_product",
+      render: (product: IProduct) => {
+        return <ProductPrice attributeId={product.attributes} />;
+      }
     },
     {
       title: "Thời gian tạo",

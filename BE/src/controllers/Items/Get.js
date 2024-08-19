@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
 import Attribute from "../../models/attribute/attribute";
+import Category from "../../models/Items/Category";
 
 // list all
 export const getAllProducts = async (req, res) => {
@@ -130,9 +131,8 @@ export const getProductById = async (req, res) => {
     });
   }
 };
-
 export async function filterItems(req, res) {
-  const { cate_id, color, name_size, price_ranges } = req.query;
+  const { color, name_size, price_ranges } = req.query;
   const { _page = 1, _limit = 20, _sort = "" } = req.query;
 
   const page = parseInt(_page, 10) || 1;
@@ -147,12 +147,21 @@ export async function filterItems(req, res) {
   };
 
   try {
-    const query = {};
+    const visibleCategories = await Category.find({ published: true }).select(
+      "_id"
+    );
 
-    if (cate_id) {
-      const cateArray = cate_id.split(",").map((id) => id.trim());
-      query.category_id = { $in: cateArray };
+    if (!visibleCategories || visibleCategories.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không có Sản Phẩm nào đang được hiển thị!",
+      });
     }
+
+    const visibleCategoryIds = visibleCategories.map((cat) =>
+      cat._id.toString()
+    );
+
+    const query = { category_id: { $in: visibleCategoryIds } };
 
     if (price_ranges) {
       try {
@@ -216,7 +225,6 @@ export async function filterItems(req, res) {
                     sizeArray.includes(sizeObj.name_size.toLowerCase())
                   ) {
                     total_stock += sizeObj.stock_attribute;
-                    // Cập nhật giá nhỏ nhất và lớn nhất
                     if (sizeObj.price_attribute < minPrice)
                       minPrice = sizeObj.price_attribute;
                     if (sizeObj.price_attribute > maxPrice)
@@ -230,7 +238,7 @@ export async function filterItems(req, res) {
 
         if (matched) {
           item.stock_product = total_stock;
-          item.price_product = minPrice; // Sử dụng giá nhỏ nhất để sắp xếp
+          item.price_product = minPrice;
           filteredProducts.push(item);
         }
       } else {
@@ -239,7 +247,6 @@ export async function filterItems(req, res) {
       }
     }
 
-    // Sắp xếp các sản phẩm đã lọc theo giá
     if (_sort.includes("price_attribute")) {
       filteredProducts.sort((a, b) => {
         const sortOrder = _sort.split(":")[1] === "desc" ? -1 : 1;

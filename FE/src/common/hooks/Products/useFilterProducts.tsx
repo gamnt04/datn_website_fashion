@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { AxiosError } from "axios";
@@ -8,6 +6,7 @@ interface Product {
   _id: string;
   name_product: string;
   price_product: number;
+  stock_product?: number;
 }
 
 interface ProductResponse {
@@ -28,10 +27,9 @@ const fetchFilteredProducts = async (
   sizes: string[],
   page: number = 1,
   limit: number = 20,
-  sort: string = "",
-  sortOption: string
+  sortOption: string = ""
 ) => {
-  const endpoint = "/products/filter/product";
+  const endpoint = "/products/filter/product"; // Điều chỉnh endpoint nếu cần thiết
 
   const params: { [key: string]: any } = {
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
@@ -41,8 +39,7 @@ const fetchFilteredProducts = async (
     name_size: sizes.length > 0 ? sizes.join(",") : undefined,
     _page: page,
     _limit: limit,
-    _sort: sort,
-    sortOption, // Thêm tham số sort vào request
+    _sort: sortOption,
   };
 
   try {
@@ -51,8 +48,7 @@ const fetchFilteredProducts = async (
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const message = error.response?.data.message || "An error occurred";
-      const status = error.response?.status?.toString() || "500";
-      throw new AxiosError(message, status);
+      throw new AxiosError(message, error.code, error.request, error.response);
     } else {
       throw new Error("An unknown error occurred");
     }
@@ -66,7 +62,7 @@ export const useFilteredProducts = (
   sizes: string[],
   page: number = 1,
   limit: number = 20,
-  sort: string = "" // Thêm tham số sort
+  sortOption: string = ""
 ) => {
   const queryKey = [
     "products",
@@ -76,7 +72,7 @@ export const useFilteredProducts = (
     sizes,
     page,
     limit,
-    sort, // Thêm sort vào queryKey
+    sortOption,
   ];
 
   const { data, error, isLoading, isError } = useQuery<
@@ -92,7 +88,7 @@ export const useFilteredProducts = (
         sizes,
         page,
         limit,
-        sort
+        sortOption
       ),
   });
 

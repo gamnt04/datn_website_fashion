@@ -9,7 +9,6 @@ import {
   Input
 } from "antd";
 import { useNavigate } from "react-router-dom";
-
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
 import CategoryUpdate from "./update";
