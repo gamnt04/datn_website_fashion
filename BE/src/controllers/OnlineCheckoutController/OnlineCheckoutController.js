@@ -8,7 +8,7 @@ const app = express();
 const tmnCode = "N4OAU1DW";
 const secretKey = "F4FX3YXLUF6X6KFACETVIFBRB46YS8IK";
 const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-const returnUrl = "http://localhost:5173/profile/allorder";
+const returnUrl = "http://localhost:5173/profile/list_order";
 
 // Hàm sắp xếp object
 function sortObject(obj) {
