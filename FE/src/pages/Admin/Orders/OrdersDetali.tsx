@@ -1,41 +1,15 @@
 import { useParams } from "react-router-dom";
 import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
-import { useMutation } from "@tanstack/react-query";
-import { confirmCancelOrder } from "../../../services/orderProduct";
 import { message, Popconfirm, Table } from "antd";
+import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 
 const OrdersDetali = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const { id } = useParams();
     const { data, refetch } = Query_Orders(id);
-    const { mutate } = useMutation({
-        mutationFn: async (comfirm: any) => {
-            const data = await confirmCancelOrder(comfirm);
-            return data;
-        },
-        onSuccess: (data) => {
-            if (data?.data_status_order === true) {
-                messageApi.open({
-                    type: "success",
-                    content: "Bạn đã xác nhận hủy đơn hàng!",
-                });
-                refetch();
-            } else {
-                messageApi.open({
-                    type: "success",
-                    content: "Bạn đã từ chối hủy đơn hàng!",
-                });
-                refetch();
-            }
-        },
-        onError: () => {
-            messageApi.open({
-                type: "error",
-                content: "Thất bại",
-            });
-        }
-    })
+    const { mutate, contextHolder: h } = useOrderMutations('CONFIRM_CANCEL')
+    const { mutate: cancel, contextHolder: r } = useOrderMutations('CANCEL_PRODUCT');
     const handleStatusUpdate = async () => {
         if (!data) return;
         if (data.status === "5") {
@@ -63,25 +37,6 @@ const OrdersDetali = () => {
             messageApi.open({
                 type: "error",
                 content: "Cập nhật trạng thái đơn hàng thất bại!",
-            })
-        }
-    };
-
-    const handleCancelOrder = async () => {
-        if (!data) return;
-        try {
-            const response = await instance.patch(`/orders/${id}`, { status: "5" });
-            console.log(response.data);
-            messageApi.open({
-                type: "success",
-                content: "Đã hủy đơn hàng!",
-            })
-            refetch();
-        } catch (error) {
-            console.log(error);
-            messageApi.open({
-                type: "error",
-                content: "Hủy đơn hàng thất bại!",
             })
         }
     };
@@ -143,6 +98,8 @@ const OrdersDetali = () => {
     return (
         <>
             {contextHolder}
+            {h}
+            {r}
             <h1 className="font-bold text-3xl text-black mt-4 text-center">Chi tiết đơn hàng</h1>
             <div className="overflow-x-auto my-6 shadow p-[20px] rounded">
                 <Table columns={columns} dataSource={dataSort} pagination={false} />
@@ -225,7 +182,7 @@ const OrdersDetali = () => {
                             <Popconfirm
                                 title="Từ chối xác nhận?"
                                 description="Bạn có chắc chắn muốn từ chối xác nhận đơn hàng này?"
-                                onConfirm={handleCancelOrder}
+                                onConfirm={() => cancel(data?._id)}
                                 okText="Từ chối"
                                 cancelText="Không"
                             >
