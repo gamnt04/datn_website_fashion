@@ -1,3 +1,4 @@
+import { search } from "jodit/esm/plugins/search/search";
 import instance from "../../configs/axios";
 
 export const list_Auth = async () => {
@@ -49,16 +50,23 @@ export const SignIn = async (user: any) => {
     localStorage.setItem("user", JSON.stringify(data?.data));
     return data;
   } catch (error) {
-    return error
+    return error;
   }
 };
-
 
 export async function set_default_address(item: any) {
   try {
     const data = await instance.post(`/auths/${item.id_user}`, item.id_item);
-    return data
+    return data;
   } catch (error) {
-    return error
+    return error;
   }
 }
+export const getUserByUsername = async (searchName) => {
+  try {
+    const { data } = await instance.post("/auth/search", { searchName });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};

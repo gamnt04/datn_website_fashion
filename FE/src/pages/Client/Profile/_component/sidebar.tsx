@@ -44,7 +44,11 @@ const Sidebar_Profile: React.FC = () => {
       getItem(<NavLink to="/profile/address">Địa chỉ</NavLink>, "1-2"),
       getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3")
     ]),
-    getItem(<NavLink to="">Yêu thích</NavLink>, "2", <Heart className="h-5" />),
+    getItem(
+      <NavLink to="/favourite">Yêu thích</NavLink>,
+      "2",
+      <Heart className="h-5" />
+    ),
     getItem(
       <NavLink to="/profile/allorder">Đơn hàng của tôi</NavLink>,
       "3",

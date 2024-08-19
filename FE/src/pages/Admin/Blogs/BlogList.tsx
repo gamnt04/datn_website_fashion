@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { Blog } from "../../../common/interfaces/Blog";
 import instance from "../../../configs/axios";
-import { Button, Table, Popconfirm, message, Switch } from "antd";
+import { Button, Table, Popconfirm, message, Switch, Input } from "antd";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { PlusCircleFilled } from "@ant-design/icons";
 import parse from "html-react-parser";
+import { useSearchBlogByName } from "../../../common/hooks/Blog/querry_blog";
 
 const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
-  const { data: blogs = [], refetch } = useQuery({
+  const [searchName, setSearchName] = useState("");
+  const { data: searchData } = useSearchBlogByName(searchName);
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["blogs"],
     queryFn: async () => {
       const response = await instance.get("/blogs");
@@ -17,33 +20,50 @@ const BlogList: React.FC = () => {
     }
   });
 
+  const dataSource = (searchName ? searchData : data)?.map((blog) => ({
+    key: blog._id,
+    ...blog
+  }));
+
+  const onHandleSearch = () => {
+    setSearchName(searchName.trim());
+  };
   const handleDelete = async (id: string) => {
     try {
       const response = await instance.delete(`/blogs/${id}`);
       if (response.status === 200) {
         messageApi.success("Xóa thành công");
-        refetch();
       } else {
         throw new Error("Xóa blog không thành công");
       }
     } catch (error) {
       console.error("Lỗi khi xóa blog:", error);
-      messageApi.error(`Xóa blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."}`);
+      messageApi.error(
+        `Xóa blog không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
     }
   };
 
   const mutation = useMutation({
     mutationFn: async (updatedBlog: Blog) => {
-      const response = await instance.put(`/update_blog/${updatedBlog._id}`, updatedBlog);
+      const response = await instance.put(
+        `/update_blog/${updatedBlog._id}`,
+        updatedBlog
+      );
       return response.data;
     },
     onSuccess: () => {
       messageApi.success("Cập nhật blog thành công");
-      refetch();
     },
     onError: (error: unknown) => {
       console.error("Lỗi khi cập nhật blog:", error);
-      messageApi.error(`Cập nhật blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."}`);
+      messageApi.error(
+        `Cập nhật blog không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
     }
   });
 
@@ -52,7 +72,8 @@ const BlogList: React.FC = () => {
   };
 
   const renderContentSnippet = (content: string) => {
-    const shortContent = content.length > 100 ? content.substring(0, 100) + "..." : content;
+    const shortContent =
+      content.length > 100 ? content.substring(0, 100) + "..." : content;
     return parse(shortContent);
   };
 
@@ -77,18 +98,18 @@ const BlogList: React.FC = () => {
       dataIndex: "content",
       render: (content: string) => {
         return <div>{extractH1Content(content)}</div>;
-      },
+      }
     },
     {
       key: "createdAt",
       title: "Thời gian",
       dataIndex: "createdAt",
-      render: (text: string) => new Date(text).toLocaleDateString(),
+      render: (text: string) => new Date(text).toLocaleDateString()
     },
     {
       key: "author",
       title: "Tác giả",
-      dataIndex: "author",
+      dataIndex: "author"
     },
     {
       key: "content",
@@ -96,7 +117,7 @@ const BlogList: React.FC = () => {
       dataIndex: "content",
       render: (content: string) => {
         return <div>{renderContentSnippet(content)}</div>;
-      },
+      }
     },
     {
       key: "imageUrl",
@@ -105,19 +126,26 @@ const BlogList: React.FC = () => {
       render: (content: string) => {
         const imageUrl = extractFirstImage(content);
         return imageUrl ? (
-          <img src={imageUrl} alt="Blog" style={{ width: 100, height: 100, objectFit: "cover" }} />
+          <img
+            src={imageUrl}
+            alt="Blog"
+            style={{ width: 100, height: 100, objectFit: "cover" }}
+          />
         ) : (
           <span>Không có ảnh</span>
         );
-      },
+      }
     },
     {
       key: "published",
       title: "Ẩn",
       dataIndex: "published",
       render: (published: boolean, record: Blog) => (
-        <Switch checked={published} onChange={() => handleTogglePublished(record)} />
-      ),
+        <Switch
+          checked={published}
+          onChange={() => handleTogglePublished(record)}
+        />
+      )
     },
     {
       key: "actions",
@@ -139,9 +167,11 @@ const BlogList: React.FC = () => {
             <Button type="primary">Chỉnh sửa</Button>
           </Link>
         </>
-      ),
-    },
+      )
+    }
   ];
+  if (isLoading) return <div className="">loading...</div>;
+  if (isError) return <div className="">{error.message}</div>;
 
   return (
     <div className="container mx-auto mt-40">
@@ -154,10 +184,17 @@ const BlogList: React.FC = () => {
           </Link>
         </Button>
       </div>
-      {blogs.length === 0 ? (
+      <div className="">
+        <Input
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+        />
+        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
+      </div>
+      {data.length === 0 ? (
         <p>Không có blog nào.</p>
       ) : (
-        <Table dataSource={blogs} rowKey="_id" columns={columns} />
+        <Table dataSource={dataSource} rowKey="_id" columns={columns} />
       )}
     </div>
   );

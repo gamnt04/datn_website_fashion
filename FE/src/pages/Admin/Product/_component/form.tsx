@@ -13,11 +13,11 @@ import { Form } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { IAttribute } from "../../../../common/interfaces/Product";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../../common/interfaces/Category";
 import useHookForm from "../../../../common/hooks/form/My_form";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import { useCategoryQuery } from "../../../../common/hooks/Category/useCategoryQuery";
 
 type FieldType = {
   name_product: string;
@@ -44,7 +44,7 @@ const Form_Item = ({ mode }: any) => {
     handleImageChange,
     handleGalleryChange,
     loading,
-    data_one_item,
+    data_one_item
   } = useHookForm({ mode });
   const { data } = useCategoryQuery();
   const [form] = Form.useForm();
@@ -322,9 +322,10 @@ const Form_Item = ({ mode }: any) => {
                                       </Form.Item>
                                     </div>
 
-
-                                    <DeleteOutlined onClick={() => removeSize(sizeName)} style={{ fontSize: '20px' }} />
-
+                                    <DeleteOutlined
+                                      onClick={() => removeSize(sizeName)}
+                                      style={{ fontSize: "20px" }}
+                                    />
                                   </div>
                                 )
                               )}
@@ -332,13 +333,13 @@ const Form_Item = ({ mode }: any) => {
                                 <Button
                                   type="primary"
                                   onClick={() => addSize()}
-                                  style={{ padding: '20px 10px' }}
+                                  style={{ padding: "20px 10px" }}
                                 >
                                   Thêm kích cỡ
                                 </Button>
                                 <Button
                                   onClick={() => remove(name)}
-                                  style={{ padding: '20px 10px' }}
+                                  style={{ padding: "20px 10px" }}
                                   className=" bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
                                 >
                                   Xóa thuộc tính
@@ -351,7 +352,7 @@ const Form_Item = ({ mode }: any) => {
                     ))}
                     <Form.Item>
                       <Button
-                        style={{ padding: '20px 10px' }}
+                        style={{ padding: "20px 10px" }}
                         type="primary"
                         onClick={() => add()}
                       >
@@ -464,15 +465,18 @@ const Form_Item = ({ mode }: any) => {
         <Form.Item>
           {mode === true ? (
             <Button
-              style={{ padding: '20px 10px' }}
+              style={{ padding: "20px 10px" }}
               type="primary"
               htmlType="submit"
             >
               {isPending || loading ? "Loading" : "Cập nhật sản phẩm"}
             </Button>
           ) : (
-            <Button style={{ padding: '20px 10px' }}
-              type="primary" htmlType="submit">
+            <Button
+              style={{ padding: "20px 10px" }}
+              type="primary"
+              htmlType="submit"
+            >
               {isPending || loading ? "Loading" : "Tạo sản phẩm"}
             </Button>
           )}

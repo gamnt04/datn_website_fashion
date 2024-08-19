@@ -16,6 +16,24 @@ export const GetAllUser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+export const GetUsersByNameOrNumberPhone = async (req, res) => {
+  try {
+    const { searchUser } = req.body;
+    const users = await User.find({
+      userName: { $regex: new RegExp(searchUser, "i") }
+    });
+    if (users === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: error.message || "Không có tài khoản nào" });
+    }
+    return res.status(StatusCodes.OK).json(users);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message || "Lỗi máy chủ!" });
+  }
+};
 export const Get_All_User_Search = async (req, res) => {
   const { _search = "" } = req.query;
   try {
@@ -23,20 +41,20 @@ export const Get_All_User_Search = async (req, res) => {
     if (_search) {
       querry.$and = [
         {
-          userName: { $regex: new RegExp(_search, "i") },
-        },
+          userName: { $regex: new RegExp(_search, "i") }
+        }
       ];
     }
     const user = await User.find(querry);
     console.log(user);
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      user,
+      user
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 };
@@ -78,13 +96,13 @@ export const signup = async (req, res) => {
     if (error) {
       const messages = error.details.map((item) => item.message);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        messages,
+        messages
       });
     }
 
     if (existUser) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Email đã tồn tại"],
+        messages: ["Email đã tồn tại"]
       });
     }
     // Mã hóa mật khẩu
@@ -95,7 +113,7 @@ export const signup = async (req, res) => {
     const user = await User.create({
       ...req.body,
       password: hashedPassword,
-      role,
+      role
     });
     return res
       .status(StatusCodes.CREATED)
@@ -111,17 +129,17 @@ export const signin = async (req, res) => {
     // user = { _id: , name: , xxx}
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        messages: ["Email không tồn tại"],
+        messages: ["Email không tồn tại"]
       });
     }
     const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Mật khẩu không chính xác"],
+        messages: ["Mật khẩu không chính xác"]
       });
     }
     const token = jwt.sign({ userId: user._id }, "123456", {
-      expiresIn: "7d",
+      expiresIn: "7d"
     });
     // const accessToken = generateAccessToken(user._id);
     // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
@@ -288,7 +306,7 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
@@ -310,12 +328,12 @@ export const updateUserAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: updatedUser.address,
+      address: updatedUser.address
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ",
+      message: "Lỗi khi cập nhật địa chỉ"
     });
   }
 };
@@ -368,7 +386,7 @@ export const updateUser = async (req, res) => {
         updatedFields.push({
           field: key,
           value: updatedData[key], // Thêm trường value để lưu giá trị cập nhật
-          time: new Date(),
+          time: new Date()
         });
         user[key] = updatedData[key];
       }
@@ -384,7 +402,7 @@ export const updateUser = async (req, res) => {
     return res.status(StatusCodes.OK).json({
       message: "Cập nhật người dùng thành công",
       updatedFields,
-      user,
+      user
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng:", error);

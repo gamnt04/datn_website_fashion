@@ -83,7 +83,6 @@ interface ChartTwoState {
 
 const ChartRevenueWeekly: React.FC = () => {
   const { data: orderByDayOfWeekData } = useOrdersByDayOfWeek();
-
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",

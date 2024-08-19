@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema(
     name_product: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     // slug: {
     //   type: String,f
@@ -15,41 +15,41 @@ const productSchema = new mongoose.Schema(
     // },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "Category"
     },
     price_product: {
       type: Number,
       min: 1,
-      default: 1,
+      default: 1
     },
     image_product: {
       type: String,
-      required: true,
+      required: true
     },
     gallery_product: {
-      type: [String],
+      type: [String]
     },
     description_product: {
       type: String,
       minlength: 6,
-      maxlength: 5000,
+      maxlength: 5000
     },
     stock_product: {
       type: Number,
-      default: 1,
+      default: 1
     },
     stock: Number,
     attributes: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Attributes",
+      ref: "Attributes"
     },
     featured_product: {
       type: Boolean,
-      default: false,
+      default: false
     },
     tag_product: {
-      type: [String],
-    },
+      type: [String]
+    }
   },
   { timestamps: true, versionKey: false }
 );
@@ -57,12 +57,12 @@ const productSchema = new mongoose.Schema(
 productSchema.plugin(mongoosePaginate);
 productSchema.plugin(mongooseDelete, {
   deletedAt: true,
-  overrideMethods: "all",
+  overrideMethods: "all"
 });
 
 productSchema.statics.filterByPrice = function (minPrice, maxPrice, options) {
   const query = {
-    price_product: { $gte: minPrice, $lte: maxPrice },
+    price_product: { $gte: minPrice, $lte: maxPrice }
   };
 
   return this.paginate(query, options);
@@ -78,32 +78,32 @@ productSchema.statics.sortByAttributePrice = function (
         from: "attributes", // Tên collection của Attributes
         localField: "attributes",
         foreignField: "_id",
-        as: "attributes_details",
-      },
+        as: "attributes_details"
+      }
     },
     {
-      $unwind: "$attributes_details",
+      $unwind: "$attributes_details"
     },
     {
-      $unwind: "$attributes_details.values",
+      $unwind: "$attributes_details.values"
     },
     {
-      $unwind: "$attributes_details.values.size",
+      $unwind: "$attributes_details.values.size"
     },
     {
       $sort: {
-        "attributes_details.values.size.price_attribute": sortOrder,
-      },
+        "attributes_details.values.size.price_attribute": sortOrder
+      }
     },
     {
       $group: {
         _id: "$_id",
-        product: { $first: "$$ROOT" }, // Giữ lại thông tin sản phẩm đầu tiên trong nhóm sau khi sắp xếp
-      },
+        product: { $first: "$$ROOT" } // Giữ lại thông tin sản phẩm đầu tiên trong nhóm sau khi sắp xếp
+      }
     },
     {
-      $replaceRoot: { newRoot: "$product" },
-    },
+      $replaceRoot: { newRoot: "$product" }
+    }
   ]).exec();
 };
 

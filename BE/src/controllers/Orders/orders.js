@@ -26,8 +26,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`
       },
       totalPrice
     });
@@ -124,20 +125,27 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ''}${customerInfo.addressDetail || ''}`
+          address: `${customerInfo.address || ""}${
+            customerInfo.addressDetail || ""
+          }`
         },
-        totalPrice,
-
+        totalPrice
       });
       await SendMail(customerInfo.email, order);
       await Cart.findOneAndDelete({ userId: userId });
-      return res.status(201).json({ data, message: "Tạo đơn hàng thanh toán online thành công" });
+      return res
+        .status(201)
+        .json({ data, message: "Tạo đơn hàng thanh toán online thành công" });
     } else {
-      return res.status(400).json({ message: "Lỗi rồi fix lại thanh toán online" });
+      return res
+        .status(400)
+        .json({ message: "Lỗi rồi fix lại thanh toán online" });
     }
   } catch (error) {
     console.error("Error creating order payment:", error);
-    return res.status(500).json({ message: "Lỗi rồi fix lại thanh toán online" });
+    return res
+      .status(500)
+      .json({ message: "Lỗi rồi fix lại thanh toán online" });
   }
 };
 export const getAllOrderToday = async (req, res) => {
@@ -182,12 +190,17 @@ export const getAllOrderWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
+const timeZone = "Asia/Ho_Chi_Minh";
+
 export const getOrderByDayOfWeek = async (req, res) => {
   try {
     const now = new Date();
     const dayOfWeek = now.getDay();
-    const startWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
-    startWeek.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+
+    const adjustedDayOfWeek = (dayOfWeek + 6) % 7;
+
+    const startWeek = new Date(now);
+    startWeek.setDate(now.getDate() - adjustedDayOfWeek);
     startWeek.setHours(0, 0, 0, 0);
 
     const orderByDay = [];
@@ -195,15 +208,21 @@ export const getOrderByDayOfWeek = async (req, res) => {
     for (let i = 0; i < 7; i++) {
       let currentDay = new Date(startWeek);
       currentDay.setDate(currentDay.getDate() + i);
-      let nextDay = new Date(currentDay);
-      nextDay.setDate(nextDay.getDate() + 1);
+      currentDay.setHours(0, 0, 0, 0);
+      let startOfDay = new Date(
+        currentDay.toLocaleString("en-US", { timeZone })
+      );
+      startOfDay.setHours(0, 0, 0, 0);
+      let endOfDay = new Date(startOfDay);
+      endOfDay.setDate(startOfDay.getDate() + 1);
+      endOfDay.setHours(0, 0, 0, 0);
 
       const orderDay = await Order.aggregate([
         {
           $match: {
             datetime: {
-              $gte: currentDay,
-              $lt: nextDay
+              $gte: startOfDay,
+              $lt: endOfDay
             }
           }
         },
@@ -218,13 +237,13 @@ export const getOrderByDayOfWeek = async (req, res) => {
 
       if (orderDay.length > 0) {
         orderByDay.push({
-          day: currentDay.toISOString().slice(0, 10), // Ngày theo định dạng YYYY-MM-DD
+          day: startOfDay.toISOString().slice(0, 10), // Ngày theo định dạng YYYY-MM-DD
           totalOrders: orderDay[0].totalOrders,
           totalRevenue: orderDay[0].totalRevenue
         });
       } else {
         orderByDay.push({
-          day: currentDay.toISOString().slice(0, 10),
+          day: startOfDay.toISOString().slice(0, 10),
           totalOrders: 0,
           totalRevenue: 0
         });
@@ -238,6 +257,7 @@ export const getOrderByDayOfWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
 export const getAllOrderMonth = async (req, res) => {
   try {
     const now = new Date();
@@ -463,7 +483,7 @@ export const updateOrderStatus = async (req, res) => {
     await order.save();
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Order status updated successfully"});
+      .json({ message: "Order status updated successfully" });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -590,8 +610,8 @@ export const adminCancelOrder = async (req, res) => {
     }
     await order.save();
     res.status(200).json({
-      message : "Yêu cầu hủy đơn hàng đã được xác nhận",
-      data_status_order : order.cancellationRequested
+      message: "Yêu cầu hủy đơn hàng đã được xác nhận",
+      data_status_order: order.cancellationRequested
     });
   } catch (error) {
     res.status(500).send("Internal Server Error");
