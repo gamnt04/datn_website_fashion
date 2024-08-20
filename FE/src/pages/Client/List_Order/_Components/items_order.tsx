@@ -1,6 +1,5 @@
-import React from 'react'
 
-export default function Items_order({product} : any) {
+export default function Items_order({ product }: any) {
     return (
         <div className="flex flex-row gap-4 py-[12px] w-full">
             <div className="basis-24">

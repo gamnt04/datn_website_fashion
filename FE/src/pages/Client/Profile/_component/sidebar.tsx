@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { MenuProps } from "antd";
-import { Menu, Modal, Button } from "antd";
+import { Menu, Modal } from "antd";
 import { Box, Heart, LogOut, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
@@ -44,6 +44,7 @@ const Sidebar_Profile: React.FC = () => {
       getItem(<NavLink to="/profile/address">Địa chỉ</NavLink>, "1-2"),
       getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3")
     ]),
+<<<<<<< HEAD
     getItem(
       <NavLink to="/favourite">Yêu thích</NavLink>,
       "2",
@@ -54,6 +55,10 @@ const Sidebar_Profile: React.FC = () => {
       "3",
       <Box className="h-5" />
     ),
+=======
+    getItem(<NavLink to="">Yêu thích</NavLink>, "2", <Heart className="h-5" />),
+    getItem(<NavLink to={`/profile/list_order`}>Đơn hàng của tôi</NavLink>, "3", <Box className="h-5" />),
+>>>>>>> main
     {
       type: "divider"
     },
