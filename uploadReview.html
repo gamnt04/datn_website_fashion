@@ -1,0 +1,366 @@
+<!-- import { useState, useEffect } from "react";
+import { IProduct } from "../../../common/interfaces/Product";
+import { Query_Products } from "../../../common/hooks/Products/Products";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../configs/axios";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import {
+  Button,
+  Form,
+  GetProp,
+  Input,
+  Popconfirm,
+  Upload,
+  UploadFile,
+  UploadProps,
+  message,
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
+type FieldType = {
+  contentReview?: string;
+  imagesReview?: File[];
+};
+
+const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+const DescriptionProduct = ({ product }: IProduct) => {
+  const [toggleDes, setTogleDes] = useState<boolean>(true);
+  const [editReviewId, setEditReviewId] = useState<string | null>(null);
+  const [form] = Form.useForm();
+  const { id } = useParams();
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const queryClient = useQueryClient();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const CLOUD_NAME = "dwya9mxip";
+  const PRESET_NAME = "upImgProduct";
+  const FOLDER_NAME = "PRODUCTS";
+  const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Thêm ảnh</div>
+    </button>
+  );
+
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
+    setFileList(newFileList);
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const { data, isLoading, isError } = Query_Products(id);
+
+  useEffect(() => {
+    if (editReviewId && data?.product?.reviews) {
+      const review = data.product.reviews.find(
+        (r: any) => r._id === editReviewId
+      );
+      if (review) {
+        form.setFieldsValue({
+          contentReview: review.contentReview,
+        });
+        // Set the existing review images to fileList
+        setFileList(
+          review.imagesReview
+            ? review.imagesReview.map((url: string) => ({
+                uid: url, // unique id for the image
+                url,
+                status: "done",
+              }))
+            : []
+        );
+      }
+    }
+  }, [editReviewId, data, form]);
+
+  const { mutate: deleteReview } = useMutation({
+    mutationFn: async (reviewId: string) => {
+      const { data } = await instance.delete(
+        `/review/${userId}/${id}/${reviewId}`
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
+      message.success("Xóa thành công");
+    },
+    onError: () => {
+      message.error("Xóa thất bại");
+    },
+  });
+
+  const { mutate: updateReview } = useMutation({
+    mutationFn: async ({
+      reviewId,
+      contentReview,
+      imagesReview,
+    }: {
+      reviewId: string;
+      contentReview: string;
+      imagesReview?: File[];
+    }) => {
+      const formData = new FormData();
+      formData.append("contentReview", contentReview);
+      imagesReview?.forEach((file) => formData.append("imagesReview", file));
+      console.log(formData);
+
+      const { data } = await instance.put(
+        `/review/${userId}/${id}/${reviewId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(data);
+      return data;
+    },
+    onSuccess: (data) => {
+      console.log("API Response:", data);
+      const newFileList = data.review.imagesReview.map(
+        (url: string, index: number) => ({
+          uid: `${editReviewId}-${index}`, // Unique id for each image
+          name: `image-${index}`, // Placeholder name for each image
+          url: `${url}?t=${new Date().getTime()}`, // Adding a timestamp to avoid caching
+          status: "done",
+        })
+      );
+
+      console.log("Updated fileList:", newFileList);
+
+      setFileList(newFileList);
+      setEditReviewId(null);
+      message.success("Cập nhật thành công");
+    },
+    onError: () => {
+      message.error("Cập nhật thất bại");
+    },
+  });
+
+  const handleEditClick = (
+    reviewId: string,
+    contentReview: string,
+    imagesReview: string[]
+  ) => {
+    setEditReviewId(reviewId);
+    form.setFieldsValue({ contentReview });
+
+    // Tạo unique uids cho mỗi file và cung cấp tên property
+    const updatedFileList = imagesReview.map((url, index) => ({
+      uid: `${reviewId}-${index}`, // Unique id cho mỗi ảnh
+      name: `image-${index}`, // Tên placeholder cho mỗi ảnh
+      url,
+      status: "done",
+    }));
+
+    setFileList(updatedFileList);
+  };
+
+  const handleUpdateReview = (values: FieldType) => {
+    if (editReviewId) {
+      // Xử lý và upload ảnh mới
+      const uploadImages = async () => {
+        const uploadedImages = await Promise.all(
+          fileList.map(async (file) => {
+            if (!file.url) {
+              const formData = new FormData();
+              formData.append("file", file.originFileObj as File);
+              formData.append("upload_preset", PRESET_NAME);
+              formData.append("folder", FOLDER_NAME);
+
+              const response = await fetch(api, {
+                method: "POST",
+                body: formData,
+              });
+              const result = await response.json();
+              return result.secure_url; // Trả về URL của ảnh đã upload
+            }
+            return file.url; // Giữ nguyên URL của ảnh cũ nếu không có thay đổi
+          })
+        );
+
+        console.log("Uploaded Images:", uploadedImages);
+
+        // Sau khi upload ảnh, cập nhật review với các URL ảnh mới
+        updateReview({
+          reviewId: editReviewId,
+          contentReview: values.contentReview || "",
+          imagesReview: uploadedImages,
+        }).then(() =>
+          queryClient.invalidateQueries({ queryKey: ["Product_Key", id] })
+        );
+      };
+     
+      uploadImages();
+      
+    }
+  };
+
+  return (
+    <>
+      {/* description */}
+      <div className="flex flex-col border-t lg:py-10 lg:mt-10 mb:py-[34px] mb:mt-8">
+        {/* menu description */}
+        <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 *:whitespace-nowrap *:px-6 *:lg:py-2.5 *:mb:py-[7px] *:rounded *:border *:place-items-center *:lg:text-base *:mb:text-xs">
+          <button
+            onClick={() => setTogleDes(true)}
+            className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
+              toggleDes ? "border-[#05422C] text-[#05422C] bg-[#F2F6F4]" : ""
+            }`}
+          >
+            Mô tả
+          </button>
+          <button
+            onClick={() => setTogleDes(false)}
+            className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
+              toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
+            }`}
+          >
+            Đánh giá({data?.product?.reviews.length || 0})
+          </button>
+        </ul>
+        {/* text description */}
+        <div className={toggleDes ? "block" : "hidden"}>
+          <section className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:py-6 mb:pt-[19px]">
+            <p>{product?.description_product}</p>
+          </section>
+        </div>
+        {/* detail comment */}
+        {!toggleDes &&
+          data?.product?.reviews &&
+          data.product.reviews.map((review: any) => (
+            <section className="block" key={review._id}>
+              <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
+                {/* content comment */}
+                <div className="border rounded-2xl lg:p-6 mb:p-5">
+                  {/* user and time comment */}
+                  <div className="flex items-center justify-between gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
+                    <div>
+                      <strong className="text-base text-[#1A1E26] font-medium">
+                        {review.user.userName}
+                        <span className="text-sm text-[#9D9EA2] font-light pl-[5px]">
+                          |
+                        </span>
+                        <span className="text-sm text-[#9D9EA2] font-light">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </span>
+                      </strong>
+                    </div>
+                    <div className="flex gap-x-2">
+                      <Popconfirm
+                        title="Xóa đánh giá"
+                        description="Bạn có chắc chắn muốn xóa đánh giá này?"
+                        onConfirm={() => deleteReview(review._id)}
+                        okText="Có"
+                        cancelText="Không"
+                      >
+                        <Button danger>Xóa</Button>
+                      </Popconfirm>
+                      <Button
+                        onClick={() =>
+                          handleEditClick(
+                            review._id,
+                            review.contentReview,
+                            review.imagesReview || []
+                          )
+                        }
+                      >
+                        Cập nhật
+                      </Button>
+                    </div>
+                  </div>
+                  {/* text comment */}
+                  <section className="flex flex-col gap-y-4">
+                    {editReviewId === review._id ? (
+                      <Form
+                        form={form}
+                        onFinish={handleUpdateReview}
+                        layout="vertical"
+                        initialValues={{ contentReview: review.contentReview }}
+                      >
+                        <Form.Item
+                          name="contentReview"
+                          label="Nội dung đánh giá"
+                        >
+                          <Input.TextArea rows={4} />
+                        </Form.Item>
+                        <Form.Item name="imagesReview" label="Chỉnh sửa ảnh">
+                          <Upload
+                            listType="picture-card"
+                            fileList={fileList}
+                            onChange={handleChange}
+                            onPreview={handlePreview}
+                            customRequest={async ({ file, onSuccess }) => {
+                              const formData = new FormData();
+                              formData.append("file", file as File);
+                              formData.append("upload_preset", PRESET_NAME);
+                              formData.append("folder", FOLDER_NAME);
+                              try {
+                                const response = await fetch(api, {
+                                  method: "POST",
+                                  body: formData,
+                                });
+                                const result = await response.json();
+                                const url = result.secure_url;
+                                file.url = url;
+                                onSuccess?.();
+                              } catch (error) {
+                                console.error("Upload error:", error);
+                              }
+                            }}
+                          >
+                            {fileList.length >= 8 ? null : uploadButton}
+                          </Upload>
+                        </Form.Item>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Lưu
+                          </Button>
+                        </Form.Item>
+                      </Form>
+                    ) : (
+                      <>
+                        <p className="text-[#1A1E26] text-base">
+                          {review.contentReview}
+                        </p>
+                        {review.imagesReview && (
+                          <img
+                            src={review.imagesReview}
+                            alt="Review Image"
+                            className="w-[100px] h-[100px] mt-4 rounded"
+                          />
+                        )}
+                      </>
+                    )}
+                  </section>
+                </div>
+              </div>
+            </section>
+          ))}
+      </div>
+    </>
+  );
+};
+
+export default DescriptionProduct; -->
