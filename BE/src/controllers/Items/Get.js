@@ -103,9 +103,15 @@ export async function get_item_dashboard(req, res) {
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Products.findById(req.params.id).populate(
-      "attributes"
-    );
+    const product = await Products.findById(req.params.id)
+      .populate("attributes")
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "user",
+          select: "userName",
+        },
+      });
     if (!product) {
       return res
         .status(StatusCodes.NOT_FOUND)

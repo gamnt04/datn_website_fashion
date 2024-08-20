@@ -26,11 +26,10 @@ const ProfileHook = () => {
   const PRESET_NAME = "upImgProduct";
   const FOLDER_NAME = "PRODUCTS";
   const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
+  const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
   const { data, isLoading, isPending, isError, error } = useQuery({
     queryKey: ["AUTH_KEY", userId],

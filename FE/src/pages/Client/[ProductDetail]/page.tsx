@@ -10,6 +10,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 const ProductDetail = () => {
   const { id } = useParams();
   const { data, isLoading, isError } = Query_Products(id);
+
   return (
     <>
       <div className="xl:w-[1440px] w-[95vw] mx-auto">
@@ -43,9 +44,7 @@ const ProductDetail = () => {
           )}
         </div>
       </div>
-
     </>
-
   );
 };
 
