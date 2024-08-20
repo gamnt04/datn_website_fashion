@@ -62,26 +62,23 @@ export const createOrder = async (req, res) => {
 };
 export const createOrderPayment = async (req, res) => {
   try {
-    // Chuyển req.body sang đối tượng JSON
     const requestBody = JSON.parse(JSON.stringify(req.body));
     const { userId, items, customerInfo, totalPrice } = requestBody;
-    console.log(requestBody);
+    console.log("Request body:", requestBody);
 
+    // Tạo đơn hàng mới
     const data = await Order.create(requestBody);
-    console.log(data);
+    console.log("Order created:", data);
 
+    // Cập nhật số lượng tồn kho cho các sản phẩm trong đơn hàng
     for (let i of items) {
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
         for (let j of data_attr) {
           for (let k of j.values) {
-            if (k.color == i.color_item) {
+            if (k.color === i.color_item) {
               for (let x of k.size) {
-                if (x.name_size) {
-                  if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute - i.quantity;
-                  }
-                } else {
+                if (x.name_size === i.name_size) {
                   x.stock_attribute = x.stock_attribute - i.quantity;
                 }
               }
@@ -98,25 +95,26 @@ export const createOrderPayment = async (req, res) => {
       }
     }
 
-    // Giả sử dataCart được lấy từ cơ sở dữ liệu
+    // Lấy giỏ hàng của người dùng
     const dataCart = await Cart.findOne({ userId: userId });
     if (!dataCart) {
       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
     }
 
+    // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
     dataCart.products = dataCart.products.filter((i) => {
-      return !req.body.items.some((j) => {
-        if (i.productId._id.toString() === j.productId._id.toString()) {
-          if (i.status_checked) {
-            return true;
-          }
-        }
-        return false;
-      });
+      const foundItem = items.some((j) => i.productId._id.toString() === j.productId._id.toString() && i.color_item === j.color_item && i.name_size === j.name_size);
+      if (foundItem) {
+        console.log(`Removing product from cart: ${i.productId._id}`);
+      }
+      return !foundItem;
     });
+
+    // Lưu lại giỏ hàng sau khi cập nhật
     await dataCart.save();
 
     if (data) {
+      // Gửi email xác nhận đơn hàng
       const order = new Order({
         userId,
         items,
@@ -148,6 +146,7 @@ export const createOrderPayment = async (req, res) => {
       .json({ message: "Lỗi rồi fix lại thanh toán online" });
   }
 };
+
 export const getAllOrderToday = async (req, res) => {
   try {
     const startOfday = new Date();

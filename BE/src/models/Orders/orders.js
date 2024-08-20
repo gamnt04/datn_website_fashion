@@ -10,27 +10,6 @@ const generateOrderNumber = () => {
   return `${timestamp}-${random}`;
 };
 
-const orderItemSchema = new mongoose.Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  image: {
-    type: String,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-});
 
 const orderSchema = new mongoose.Schema({
   userId: {

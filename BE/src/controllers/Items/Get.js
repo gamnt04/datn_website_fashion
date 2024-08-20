@@ -42,14 +42,45 @@ export async function get_items_client(req, res) {
     limit: _limit,
   };
   try {
-    const querry = {};
+    const querry = {
+      $and: [],
+    };
+
     if (_search) {
-      querry.$and = [
-        {
-          name_product: { $regex: new RegExp(_search, "i") },
-        },
-      ];
+      querry.$and.push({
+        name_product: { $regex: new RegExp(_search, "i") },
+      });
     }
+
+    if (_category_id) {
+      // Tìm kiếm các danh mục có trạng thái published là true và khớp với _category_id
+      const category = await Category.findOne({
+        _id: _category_id,
+        published: true,
+      });
+
+      if (!category) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Danh mục bị ẩn hoặc không tồn tại!",
+        });
+      }
+
+      querry.$and.push({
+        category_id: _category_id,
+      });
+    } else {
+      // Tìm kiếm các sản phẩm mà danh mục của chúng có trạng thái published là true
+      const visibleCategories = await Category.find({ published: true }).select(
+        "_id"
+      );
+
+      const visibleCategoryIds = visibleCategories.map((cat) => cat._id);
+
+      querry.$and.push({
+        category_id: { $in: visibleCategoryIds },
+      });
+    }
+
     const data = await Products.paginate(querry, options);
     await Products.populate(data.docs, { path: "attributes" });
     for (const id_data of data.docs) {
@@ -68,16 +99,16 @@ export async function get_items_client(req, res) {
     data.docs = data.docs.filter((item) => item.stock_product > 0);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Khong co data!",
+        message: "Không có dữ liệu!",
       });
     }
     return res.status(StatusCodes.OK).json({
-      message: "Done !",
+      message: "Thành công!",
       data,
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Lỗi server!",
     });
   }
 }
@@ -138,7 +169,7 @@ export const getProductById = async (req, res) => {
   }
 };
 export async function filterItems(req, res) {
-  const { color, name_size, price_ranges } = req.query;
+  const { cate_id, color, name_size, price_ranges } = req.query;
   const { _page = 1, _limit = 20, _sort = "" } = req.query;
 
   const page = parseInt(_page, 10) || 1;
@@ -153,6 +184,7 @@ export async function filterItems(req, res) {
   };
 
   try {
+    //const query = {};
     const visibleCategories = await Category.find({ published: true }).select(
       "_id"
     );
@@ -169,6 +201,10 @@ export async function filterItems(req, res) {
 
     const query = { category_id: { $in: visibleCategoryIds } };
 
+    if (cate_id) {
+      const cateArray = cate_id.split(",").map((id) => id.trim());
+      query.category_id = { $in: cateArray };
+    }
     if (price_ranges) {
       try {
         const priceRangesArray = JSON.parse(price_ranges);

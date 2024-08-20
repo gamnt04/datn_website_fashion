@@ -141,12 +141,6 @@ export const getTop10ProductSale = async () => {
 export const Cancel_Order = async (id: any) => {
   try {
     const { data } = await instance.post(`/orders/${id}/cancel`);
-    // if (data) {
-    //   console.log("Yêu cầu hủy đơn thành công", data);
-
-    // } else {
-    //   console.log("Yêu cầu hủy đơn hàng thất bại", data);
-    // }
     console.log(data);
     return data;
   } catch (error) {
@@ -164,3 +158,39 @@ export const confirmCancelOrder = async ({ id, confirm }: any) => {
     console.log(error);
   }
 };
+export const cancel_product = async (id: any) => {
+  try {
+    const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const complete_product = async (id: any) => {
+  console.log(id);
+
+  try {
+    const { data } = await instance.patch(`/orders/${id}`, { status: "4" })
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+// export const updateOrderStatus = async (id: any, currentStatus: string) => {
+//   const statusOrder: any = {
+//     "1": "2",
+//     "2": "3",
+//     "3": "4",
+//   };
+//   if (currentStatus === "5") {
+//     return;
+//   }
+//   const nextStatus = statusOrder[currentStatus] || "4";
+
+//   try {
+//     const { data } = await instance.patch(`/orders/${id}`, { status: nextStatus });
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
