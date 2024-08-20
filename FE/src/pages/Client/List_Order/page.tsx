@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Spin } from "antd";
+import { Button, message, Popconfirm, Spin } from "antd";
 import { Query_Order } from "../../../_lib/React_Query/Orders/Query"
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Items_order from "./_Components/items_order";
@@ -7,7 +7,10 @@ import { Car, TotalPrice } from "../../../components/common/Client/_component/Ic
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { LoadingOutlined } from "@ant-design/icons";
-
+import { useEffect, useState } from "react";
+import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
+import queryString from 'query-string';
+import instance from "../../../configs/axios";
 export default function List_order() {
     const [searchParams, setSearchParams] = useSearchParams();
     const { mutate: cancel, contextHolder } = useOrderMutations('CANCEL_PRODUCT');
@@ -18,7 +21,8 @@ export default function List_order() {
     const account = user?.user;
     const navi = useNavigate();
     const { mutate: add } = Mutation_Cart("ADD");
-
+    const { data: orderData, refetch } = List_One_Order_User(userId);
+    const [paymentPending, setPaymentPending] = useState(false);
     function status_item(status: string | number) {
         switch (+status) {
             case 1:
@@ -89,7 +93,68 @@ export default function List_order() {
             navi('/login')
         }
     };
-    if (isPending) {
+    useEffect(() => {
+        refetch()
+    }, [userId])
+    const fiterOrrder = (status: string) => {
+        return data?.filter((orders: any) => orders.status === status);
+    }
+
+    useEffect(() => {
+        
+        const fetchData = async () => {
+            try {
+                setPaymentPending(true);
+                console.log('location.search:');
+                const parsed = queryString.parseUrl(location.search);
+                console.log(parsed)
+                console.log(parsed.query.vnp_TransactionStatus);
+
+                if (parsed.query.vnp_TransactionStatus === '00') {
+                    
+                    
+                    const itemOrder = sessionStorage.getItem('item_order');
+                    const customerInfo = sessionStorage.getItem('customerInfo');
+
+                    if (itemOrder && customerInfo) {
+                        const getItemOrder = JSON.parse(itemOrder);
+                        console.log(getItemOrder);
+                        
+                        const dataForm = JSON.parse(customerInfo);
+                        // setActive(true)
+                        const response = await instance.post('/orderspayment', {
+                            userId: getItemOrder.userId,
+                            items: getItemOrder?.items,
+                            customerInfo: {
+                                ...dataForm
+                            },
+                            totalPrice: Number(parsed.query.vnp_Amount) / 100,
+                            status: '2',
+                        });
+                        
+                        
+                        console.log(response.data);
+                        if(response.data){
+                            message.success('Thanh toán thành công');
+                            sessionStorage.removeItem('item_order');
+                            sessionStorage.removeItem('customerInfo');
+                            refetch();
+                        }
+                    } else {
+                        console.error('Item order or customer info is missing in session storage');
+                    }
+                }
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                message.error('Có lỗi xảy ra trong quá trình thanh toán');
+            } finally {
+                setPaymentPending(false); // Kết thúc trạng thái loading cho thanh toán
+            }
+        };
+
+        fetchData();
+    }, [location.search]);
+    if (isPending || paymentPending) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -97,6 +162,7 @@ export default function List_order() {
         );
     }
     return (
+        
         <div>
             {contextHolder}
             {f}
@@ -245,5 +311,6 @@ export default function List_order() {
 
 
         </div >
+        
     )
 }
