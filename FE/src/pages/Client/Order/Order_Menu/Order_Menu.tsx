@@ -8,11 +8,6 @@ import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { List_One_Order_User } from "../../../../common/hooks/Order/querry_Order";
 import Order_All from "../Order_All/Order_All";
 
-interface Order {
-  status: string;
-  // Thêm các thuộc tính khác của đơn hàng nếu có
-}
-
 const Order_Menu: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<string>("Tất Cả");
   const [user] = useLocalStorage("user", {});
@@ -36,7 +31,7 @@ const Order_Menu: React.FC = () => {
     "Đang Vận Chuyển": filterOrder("3")?.length || 0,
     "Hoàn Thành": filterOrder("4")?.length || 0,
     "Đã Hủy": filterOrder("5")?.length || 0,
-    "Tất Cả": data?.length || 0,
+    "Tất Cả": data?.length || 0
   };
 
   const menuItems = [
@@ -45,7 +40,7 @@ const Order_Menu: React.FC = () => {
     "Đang Chuẩn Bị Hàng",
     "Đang Vận Chuyển",
     "Hoàn Thành",
-    "Đã Hủy",
+    "Đã Hủy"
   ];
 
   return (
