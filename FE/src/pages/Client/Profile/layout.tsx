@@ -7,7 +7,7 @@ const Layout_Profile = () => {
       <div className="grid grid-cols-[250px_auto] gap-x-10   mt-16 mb-10">
         <Sidebar_Profile />
         <div className="min-h-[80vh] ">
-          <Outlet></Outlet>
+          <Outlet/>
         </div>
       </div>
     </div>
