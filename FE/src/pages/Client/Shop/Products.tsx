@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin } from "antd";
@@ -27,6 +28,9 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     const categoryParam = queryParams.get("category");
     if (categoryParam) {
       setCategoryId(categoryParam.split(","));
+    } else {
+      // Nếu không có category, hiển thị tất cả sản phẩm
+      setCategoryId([]);
     }
   }, [search]);
   const {
