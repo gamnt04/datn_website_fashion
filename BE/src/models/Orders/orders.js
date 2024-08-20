@@ -76,5 +76,4 @@ orderSchema.statics.findByOrderNumber = function (orderNumber) {
 
 orderSchema.plugin(mongoosePaginate);
 
-
 export default mongoose.model("Order", orderSchema);
