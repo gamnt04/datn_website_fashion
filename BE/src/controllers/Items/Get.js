@@ -163,7 +163,7 @@ export const getProductById = async (req, res) => {
   }
 };
 export async function filterItems(req, res) {
-  const { color, name_size, price_ranges } = req.query;
+  const { cate_id, color, name_size, price_ranges } = req.query;
   const { _page = 1, _limit = 20, _sort = "" } = req.query;
 
   const page = parseInt(_page, 10) || 1;
@@ -178,6 +178,7 @@ export async function filterItems(req, res) {
   };
 
   try {
+    //const query = {};
     const visibleCategories = await Category.find({ published: true }).select(
       "_id"
     );
@@ -194,6 +195,10 @@ export async function filterItems(req, res) {
 
     const query = { category_id: { $in: visibleCategoryIds } };
 
+    if (cate_id) {
+      const cateArray = cate_id.split(",").map((id) => id.trim());
+      query.category_id = { $in: cateArray };
+    }
     if (price_ranges) {
       try {
         const priceRangesArray = JSON.parse(price_ranges);
