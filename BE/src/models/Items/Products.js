@@ -50,6 +50,20 @@ const productSchema = new mongoose.Schema(
     tag_product: {
       type: [String],
     },
+    reviews: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        imagesReview: { type: [String], default: [] },
+        videoReview: { type: String, default: "" },
+        contentReview: { type: String, required: true },
+        created_at: { type: Date, default: Date.now },
+        updated_at: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 );
