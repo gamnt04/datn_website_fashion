@@ -306,7 +306,7 @@ export const add_address = async (req, res) => {
     // Thêm địa chỉ mới vào mảng địa chỉ và thiết lập làm mặc định nếu cần
     user.address.push({
       ...newAddress,
-      checked: setDefault, // Đặt địa chỉ mới làm mặc định nếu setDefault là true
+      checked: setDefault // Đặt địa chỉ mới làm mặc định nếu setDefault là true
     });
 
     // Lưu thay đổi
@@ -315,7 +315,7 @@ export const add_address = async (req, res) => {
     // Trả về dữ liệu cập nhật
     return res.status(StatusCodes.OK).json({
       message: "Đã thêm địa chỉ thành công",
-      address: updatedUser.address,
+      address: updatedUser.address
     });
   } catch (error) {
     console.error("Lỗi khi thêm địa chỉ:", error);
@@ -407,7 +407,7 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -422,7 +422,7 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -434,12 +434,12 @@ export const setDefaultAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã thiết lập địa chỉ mặc định thành công",
-      address: updatedUser.address.id(addressId),
+      address: updatedUser.address.id(addressId)
     });
   } catch (error) {
     console.error("Lỗi khi thiết lập địa chỉ mặc định:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi thiết lập địa chỉ mặc định",
+      message: "Lỗi khi thiết lập địa chỉ mặc định"
     });
   }
 };
@@ -456,14 +456,14 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -473,7 +473,7 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -488,11 +488,7 @@ export const updateUserAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-<<<<<<< HEAD
       address: updatedUser.address
-=======
-      address: updatedAddressData,
->>>>>>> main
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
