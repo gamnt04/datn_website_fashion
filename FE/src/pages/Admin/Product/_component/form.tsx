@@ -10,7 +10,6 @@ import {
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { Form } from "antd";
-import TextArea from "antd/es/input/TextArea";
 import { IAttribute } from "../../../../common/interfaces/Product";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
@@ -18,6 +17,7 @@ import { ICategory } from "../../../../common/interfaces/Category";
 import useHookForm from "../../../../common/hooks/form/My_form";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import { Filed_form } from "./filed_form";
 
 type FieldType = {
   name_product: string;
@@ -35,17 +35,9 @@ type FieldType = {
 const Form_Item = ({ mode }: any) => {
   const [status_attr, setStatus_Attr] = useState(true);
   let image_item: any;
-  let gallery_item: any = [];
-
-  const {
-    onSubmit,
-    isPending,
-    isError,
-    handleImageChange,
-    handleGalleryChange,
-    loading,
-    data_one_item,
-  } = useHookForm({ mode });
+  const gallery_item: any = [];
+  // hooks
+  const { onSubmit, isPending, isError, handleImageChange, handleGalleryChange, loading, data_one_item } = useHookForm({ mode });
   const { data } = useCategoryQuery();
   const [form] = Form.useForm();
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
@@ -59,12 +51,10 @@ const Form_Item = ({ mode }: any) => {
   if (mode && data_one_item?.data?.product?.image_product) {
     image_item = [
       {
-        uid: "-1",
-        name: "image.png",
+        uid: '-1',
+        name: "",
         status: "done",
-        url:
-          data_one_item?.data?.product?.image_product &&
-          data_one_item?.data?.product?.image_product
+        url: data_one_item?.data?.product?.image_product && data_one_item?.data?.product?.image_product
       }
     ];
     data_one_item?.data?.product?.gallery_product?.map(
@@ -88,8 +78,9 @@ const Form_Item = ({ mode }: any) => {
       size: attr.size || [{}]
     }))
   };
+
   return (
-    <div className=" relative  text-[#1C2434] min-h-[90vh] mt-[100px] mx-10">
+    <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-10">
       {(isPending || loading) && (
         <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
           <div className="animate-spin">
@@ -118,31 +109,19 @@ const Form_Item = ({ mode }: any) => {
           <div>
             <div>
               {" "}
-              <label htmlFor="" className=" font-medium text-sm">
-                Tên sản phẩm
-              </label>
-              <Form.Item<FieldType>
-                name="name_product"
-                rules={[
-                  { required: true, message: "Tên sản phẩm bắt buộc nhập!" }
-                ]}
-              >
-                <Input className="mt-2 py-2 text-[#1C2434] border-gray-600 hover:bg-[#F5F7FD] active:bg-[#active:bg-[#F5F7FD]] !outline-none " />
-              </Form.Item>
+              <label className=" font-medium text-sm">Tên sản phẩm</label>
+              <Filed_form props={{
+                name_field: 'name_product', ruler_field: [{ required: true, message: "Tên sản phẩm bắt buộc nhập!" }]
+              }} />
             </div>
             <div className="">
               {" "}
-              <label htmlFor="" className="text-[#1C2434] font-medium text-sm">
-                Danh mục
-              </label>
+              <label htmlFor="" className="text-[#1C2434] font-medium text-sm">Danh mục</label>
               <Form.Item
                 className="mt-2"
                 name="category_id"
                 rules={[
-                  {
-                    required: true,
-                    message: "Danh mục sản phẩm bắt buộc chọn!"
-                  }
+                  { required: true, message: "Danh mục sản phẩm bắt buộc chọn!" }
                 ]}
               >
                 <Select
@@ -155,44 +134,30 @@ const Form_Item = ({ mode }: any) => {
                 ></Select>
               </Form.Item>
             </div>
-
             {status_attr && (
               <>
-                <label
-                  htmlFor=""
-                  className="text-[#1C2434] font-medium text-sm"
-                >
-                  Giá sản phẩm
-                </label>
-                <Form.Item<FieldType>
-                  name="price_product"
-                  rules={[
-                    { required: true, message: "Giá sản phẩm bắt buộc nhập!" },
-                    {
-                      type: "number",
-                      min: 0,
-                      message: "Giá sản phẩm phải là số dương!",
-                      transform(value) {
-                        return Number(value);
-                      }
+                <label className="text-[#1C2434] font-medium text-sm">Giá sản phẩm</label>
+                <Filed_form props={{
+                  name_field: 'price_product', ruler_field: [{ required: true, message: "Giá sản phẩm bắt buộc nhập!" },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Giá sản phẩm phải là số dương!",
+                    transform(value: number) {
+                      return Number(value);
                     }
-                  ]}
-                >
-                  <InputNumber className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] " />
-                </Form.Item>
+                  }
+                  ],
+                  action: 'price'
+                }} />
               </>
             )}
 
-            <label htmlFor="" className="text-[#1C2434]font-medium text-sm">
-              Mô tả sản phẩm
-            </label>
-            <Form.Item<FieldType> name="description_product">
-              <TextArea
-                className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] "
-                rows={4}
-              />
-            </Form.Item>
-
+            <label className="text-[#1C2434]font-medium text-sm">Mô tả sản phẩm</label>
+            <Filed_form props={{
+              name_field: 'description_product',
+              action: 'textarea'
+            }} />
             <Form.List
               name="attributes"
               initialValue={data_one_item?.data?.product?.attributes?.values}
@@ -203,32 +168,18 @@ const Form_Item = ({ mode }: any) => {
                   : setStatus_Attr(true);
                 return (
                   <>
-                    <label
-                      htmlFor=""
-                      className="text-[#1C2434] font-medium text-sm"
-                    >
-                      Thuộc tính sản phẩm
-                    </label>
+                    <div className="text-[#1C2434] font-medium text-sm">Thuộc tính sản phẩm</div>
                     {fields.map(({ key, name, ...restField }) => (
                       <div key={key}>
-                        <label
-                          htmlFor=""
-                          className="text-[#1C2434] font-medium text-sm"
-                        >
-                          Màu :
-                        </label>
-                        <Form.Item
-                          {...restField}
-                          name={[name, "color"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập màu sắc!"
-                            }
-                          ]}
-                        >
-                          <Input className=" mt-2 py-2 max-w-[200px] border-gray-600 !outline-none " />
-                        </Form.Item>
+                        <label htmlFor="" className="text-[#1C2434] font-medium text-sm" >Màu :</label>
+                        <Filed_form props={{
+                          name_field: [name, "color"],
+                          ruler_field: [{
+                            required: true,
+                            message: "Vui lòng nhập màu sắc!"
+                          }],
+                          restField: restField
+                        }} />
                         <Form.List name={[name, "size"]} initialValue={[{}]}>
                           {(
                             sizeFields,
@@ -241,106 +192,52 @@ const Form_Item = ({ mode }: any) => {
                                   name: sizeName,
                                   ...restSizeField
                                 }) => (
-                                  <div
-                                    key={sizeKey}
-                                    className="flex items-center gap-[13px] mb-2 -mt-2"
-                                  >
+                                  <div key={sizeKey} className="flex items-center gap-[13px] mb-2 -mt-2">
                                     <div>
-                                      <label
-                                        htmlFor=""
-                                        className="text-[#1C2434] font-medium text-sm"
-                                      >
-                                        Kích cỡ :
-                                      </label>
+                                      <label className="text-[#1C2434] font-medium text-sm" >Kích cỡ :</label>
                                       <Form.Item
                                         {...restSizeField}
-                                        name={[sizeName, "name_size"]}
-                                      >
+                                        name={[sizeName, "name_size"]}>
                                         <Input className=" mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none " />
                                       </Form.Item>
                                     </div>
-
-                                    <div>
-                                      <label
-                                        htmlFor=""
-                                        className="text-[#1C2434] font-medium text-sm"
-                                      >
-                                        Số lượng :
-                                      </label>
-                                      <Form.Item
-                                        {...restSizeField}
-                                        name={[sizeName, "stock_attribute"]}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: "Số lượng là bắt buộc!"
-                                          },
-                                          {
-                                            type: "number",
-                                            min: 0,
-                                            message:
-                                              "Số lượng phải là số dương!",
-                                            transform(value) {
+                                    <div><label className="text-[#1C2434] font-medium text-sm" >Số lượng :</label>
+                                      <Filed_form props={{
+                                        name_field: [sizeName, "stock_attribute"],
+                                        ruler_field: [{ required: true, message: "Số lượng là bắt buộc!" },
+                                        {
+                                          type: "number", min: 0, message:
+                                            "Số lượng phải là số dương!", transform(value: number) {
                                               return Number(value);
                                             }
-                                          }
-                                        ]}
-                                      >
-                                        <Input className="w-[183px]  mt-2 py-2 max-w-[200px] border-gray-600 !outline-none " />
-                                      </Form.Item>
+                                        }],
+                                        restField: restSizeField
+                                      }} />
                                     </div>
-
                                     <div>
-                                      <label
-                                        htmlFor=""
-                                        className="font-medium text-sm"
-                                      >
-                                        Giá :
-                                      </label>{" "}
+                                      <label className="font-medium text-sm">  Giá :</label>
                                       <br />
-                                      <Form.Item
-                                        {...restSizeField}
-                                        name={[sizeName, "price_attribute"]}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message:
-                                              "Giá sản phẩm bắt buộc nhập!"
-                                          },
-                                          {
-                                            type: "number",
-                                            min: 0,
-                                            message:
-                                              "Giá sản phẩm phải là số dương!",
-                                            transform(value) {
-                                              return Number(value);
-                                            }
-                                          }
-                                        ]}
-                                      >
-                                        <InputNumber className="w-[183px]  mt-2 py-1 max-w-[200px] border-gray-600 !outline-none " />
-                                      </Form.Item>
+                                      <Filed_form props={{
+                                        name_field: [sizeName, "price_attribute"],
+                                        ruler_field: [{ required: true, message: "Giá sản phẩm bắt buộc nhập!" },
+                                        {
+                                          type: "number", min: 0, message: "Giá sản phẩm phải là số dương!",
+                                          transform(value: number) { return Number(value); }
+                                        }
+                                        ],
+                                        restField: restSizeField
+                                      }} />
                                     </div>
-
-
                                     <DeleteOutlined onClick={() => removeSize(sizeName)} style={{ fontSize: '20px' }} />
-
                                   </div>
                                 )
                               )}
                               <div className="flex items-center gap-4 mb-4">
-                                <Button
-                                  type="primary"
-                                  onClick={() => addSize()}
-                                  style={{ padding: '20px 10px' }}
-                                >
+                                <Button type="primary" onClick={() => addSize()} className="px-2 " >
                                   Thêm kích cỡ
                                 </Button>
-                                <Button
-                                  onClick={() => remove(name)}
-                                  style={{ padding: '20px 10px' }}
-                                  className=" bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
-                                >
+                                <Button onClick={() => remove(name)}
+                                  className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover">
                                   Xóa thuộc tính
                                 </Button>
                               </div>
@@ -349,105 +246,56 @@ const Form_Item = ({ mode }: any) => {
                         </Form.List>
                       </div>
                     ))}
-                    <Form.Item>
-                      <Button
-                        style={{ padding: '20px 10px' }}
-                        type="primary"
-                        onClick={() => add()}
-                      >
-                        Thêm thuộc tính
-                      </Button>
-                    </Form.Item>
+                    <Button className="px-2 my-4" type="primary" onClick={() => add()}>
+                      Thêm options
+                    </Button>
                   </>
                 );
               }}
             </Form.List>
-            <Form.Item<FieldType> name="tag_product">
-              <label htmlFor="" className="text-[#171821] font-medium text-sm">
-                Tags sản phẩm
-              </label>
-              <div>
-                <Select
-                  mode="tags"
-                  notFoundContent="Không tìm thấy tags"
-                  allowClear
-                  className=" mt-2 *:py-2 max-w-[200px] * border-gray-600 !outline-none "
-                />
-              </div>
-            </Form.Item>
-            <Form.Item<FieldType>
-              name="featured_product"
-              valuePropName="checked"
-            >
+            <Form.Item<FieldType> name="featured_product" valuePropName="checked">
               <Checkbox className="text-[#1C2434]">Sản phẩm nổi bật</Checkbox>
             </Form.Item>
           </div>
           <div>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col items-start justify-between gap-4">
               <div>
-                <label
-                  htmlFor=""
-                  className=" text-[#1C2434] font-medium text-sm"
-                >
-                  Ảnh sản phẩm
-                </label>
+                <label className=" text-[#1C2434] font-medium text-sm">Ảnh sản phẩm</label>
                 <Form.Item<FieldType>
                   name="image_product"
-                  initialValue={{
-                    ...data_one_item?.data?.product?.image_product
-                  }}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Ảnh sản phẩm là bắt buộc!"
-                    }
-                  ]}
-                >
+                  initialValue={{ ...data_one_item?.data?.product?.image_product }}
+                  rules={[{
+                    required: true,
+                    message: "Ảnh sản phẩm là bắt buộc!"
+                  }]} >
                   <Upload
-                    fileList={mode ? image_item : undefined}
+                    defaultFileList={mode && image_item}
                     listType="picture-card"
                     beforeUpload={() => false}
                     onChange={handleImageChange}
                     className="mt-2"
-                    maxCount={1}
-                  >
+                    maxCount={1}>
                     <button
-                      style={{ border: 0, background: "none" }}
-                      type="button"
-                    >
+                      type="button">
                       <PlusOutlined />
                     </button>
                   </Upload>
                 </Form.Item>
               </div>
               <div>
-                <label
-                  htmlFor=""
-                  className=" text-[#1C2434] font-medium text-sm"
-                >
-                  Bộ sưu tập
-                </label>
-                <Form.Item<FieldType>
-                  name="gallery_product"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Bộ sưu tập sản phẩm là bắt buộc!"
-                    }
-                  ]}
-                >
+                <label className=" text-[#1C2434] font-medium text-sm">Bộ sưu tập</label>
+                <Form.Item<FieldType> name="gallery_product" rules={[{
+                  required: true,
+                  message: "Bộ sưu tập sản phẩm là bắt buộc!"
+                }]} >
                   <Upload
-                    fileList={mode ? gallery_item : undefined}
+                    defaultFileList={mode && gallery_item}
                     listType="picture-card"
                     beforeUpload={() => false}
                     onChange={handleGalleryChange}
                     multiple={true}
-                    className="mt-2"
-                  >
-                    <button
-                      style={{ border: 0, background: "none" }}
-                      type="button"
-                    >
+                    className="mt-2">
+                    <button type="button">
                       <PlusOutlined />
                     </button>
                   </Upload>
@@ -457,29 +305,15 @@ const Form_Item = ({ mode }: any) => {
           </div>
         </div>
         {isError && (
-          <span className="text-red-500">
-            Lỗi! Vui lòng kiểm tra và thử lại!
-          </span>
+          <span className="text-red-500">Lỗi! Vui lòng kiểm tra và thử lại!</span>
         )}
         <Form.Item>
-          {mode === true ? (
-            <Button
-              style={{ padding: '20px 10px' }}
-              type="primary"
-              htmlType="submit"
-            >
-              {isPending || loading ? "Loading" : "Cập nhật sản phẩm"}
-            </Button>
-          ) : (
-            <Button style={{ padding: '20px 10px' }}
-              type="primary" htmlType="submit">
-              {isPending || loading ? "Loading" : "Tạo sản phẩm"}
-            </Button>
-          )}
+          <Button type="primary" htmlType="submit" >
+            {isPending || loading ? "Loading" : (mode ? "Cập nhật sản phẩm" : "Tạo sản phẩm")}
+          </Button>
         </Form.Item>
       </Form>
     </div>
   );
 };
-
 export default Form_Item;
