@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { create_contact, delete_contact, get_contact, getById_contact } from "../controllers/contact/contact";
+import {
+  create_contact,
+  delete_contact,
+  get_contact,
+  getById_contact,
+  update,
+} from "../controllers/contact/contact";
 
 const Router_Contact = Router();
 
@@ -8,5 +14,5 @@ Router_Contact.post("/contact", create_contact);
 Router_Contact.get("/contact", get_contact);
 Router_Contact.get("/contact/:id", getById_contact);
 Router_Contact.delete("/contact/:id", delete_contact);
-
+Router_Contact.put("/contact/feedback/:id", update);
 export default Router_Contact;

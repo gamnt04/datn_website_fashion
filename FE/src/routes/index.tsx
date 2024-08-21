@@ -39,6 +39,8 @@ import ForgotPassword from "../pages/Client/User/ForgotPass";
 import CategoryDetail from "../pages/Admin/Category/CategoryDetail";
 import OrderPay from "../pages/Client/pay/oderPay";
 import List_order from "../pages/Client/List_Order/page";
+import Feedback from "../pages/Admin/contact/Feedback";
+import ContactDetail from "../pages/Admin/contact/ContactDetail";
 const RouterComponent = () => {
   return (
     <>
@@ -94,6 +96,8 @@ const RouterComponent = () => {
               element={<OrdersDetali />}
             />
             <Route path="/admin/contact" element={<ListContact />} />
+            <Route path="contact/:id" element={<ContactDetail />} />
+            <Route path="feedback/:id" element={<Feedback />} />
 
             <Route path="blogs" element={<Blog />} />
 

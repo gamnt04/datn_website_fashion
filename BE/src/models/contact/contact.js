@@ -3,21 +3,30 @@ import mongoose, { Schema } from "mongoose";
 const contactSchema = new Schema(
   {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true
-        },
-    message: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-},
+    content: {
+      type: String,
+      required: true,
+    },
+    response_content: {
+      type: String,
+    },
+    responder_email: {
+      type: String,
+    },
+    response_date: {
+      type: Date,
+    },
+  },
   {
     timestamps: true,
-    versionKey: false //Loại bỏ versionKey tự động tạo
+    versionKey: false, // Loại bỏ versionKey tự động tạo
   }
 );
 
