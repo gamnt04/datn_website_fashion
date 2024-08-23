@@ -17,7 +17,13 @@ export const add_cart = async (data: any) => {
     console.log(error || "Loi server !");
   }
 };
-
+export const updateQuantity = async (data: any) => {
+  try {
+    await instance.post("/cart/update-quantity-products-to-cart", data);
+  } catch (error) {
+    console.log(error || "Lỗi server!");
+  }
+};
 export const up_quantity = async (data: any) => {
   try {
     await instance.post("/cart/up", data);
@@ -38,7 +44,6 @@ export const remove_quantity = async (data: any) => {
   try {
     await instance.post("/cart/remove", data);
     console.log(data);
-
   } catch (error) {
     console.log(error || "Loi server !");
   }

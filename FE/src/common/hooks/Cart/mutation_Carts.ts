@@ -5,10 +5,18 @@ import {
   handle_checked_products,
   remove_multiple_products,
   remove_quantity,
-  up_quantity
+  up_quantity,
+  updateQuantity
 } from "../../../_lib/Cart/Cart";
 import { toast } from "react-toastify";
-type Actions = "ADD" | "UP" | "DOW" | "REMOVE" | "REMOVE_MULTIPLE" | "HANLDE_STATUS_CHECKED";
+type Actions =
+  | "ADD"
+  | "UP"
+  | "UPDATEQUANTITY"
+  | "DOW"
+  | "REMOVE"
+  | "REMOVE_MULTIPLE"
+  | "HANLDE_STATUS_CHECKED";
 
 export function Mutation_Cart(action: Actions) {
   const queryClient = useQueryClient();
@@ -22,6 +30,8 @@ export function Mutation_Cart(action: Actions) {
           return await add_cart(data);
         case "UP":
           return await up_quantity(data);
+        case "UPDATEQUANTITY":
+          return await updateQuantity(data);
         case "DOW":
           return await dow_quantity(data);
         case "REMOVE":
