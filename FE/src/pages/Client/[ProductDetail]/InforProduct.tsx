@@ -106,14 +106,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         }
         return;
       case "up":
-        if (color && size) {
-          if (quantity_item < quantity_attr) {
-            setQuantity_item(quantity_item + 1);
-          } else {
-            Swal.fire("Vượt quá số lượng sản phẩm!");
-          }
-        }
-        else if (color || size) {
+        if (quantity_attr) {
           if (quantity_item < quantity_attr) {
             setQuantity_item(quantity_item + 1);
           } else {
@@ -194,12 +187,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </span>
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
           <div className="flex flex-col gap-y-2 justify-between">
-            <section className="lg:w-[163px] mb:w-[157px] mb:mt-[8px] lg:mt-0 h-[21px] *:lg:text-sm *:mb:text-xs flex justify-between items-start">
-              <div className="flex gap-x-2">
-                <strong>135</strong>
-                <span className="text-[#C8C9CB]">Reviews</span>
-              </div>
-            </section>
             <div className="flex gap-x-2 items-end">
               {
                 (min && max) ? (
@@ -268,7 +255,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <button onClick={() => handle_quantity_item("dow")}>
                   <Dow />
                 </button>
-                <input
+                <input onChange={(e) => (quantity_attr && (+e.target.value <= quantity_attr) && setQuantity_item(+(e.target.value)))}
                   className="bg-[#F4F4F4] text-center rounded"
                   value={quantity_item}
                 />

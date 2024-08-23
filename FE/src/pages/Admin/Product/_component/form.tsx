@@ -3,7 +3,6 @@ import {
   Checkbox,
   FormProps,
   Input,
-  InputNumber,
   Select,
   Upload
 } from "antd";
