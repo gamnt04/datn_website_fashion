@@ -291,7 +291,7 @@ const OrderPay = () => {
                         Thanh toán khi nhận hàng
                       </option>
                       <option value="VNPAY">Thanh toán qua VNPAY</option>
-                      <option value="MoMo">Thanh toán bằng MoMo</option>
+                      {/* <option value="MoMo">Thanh toán bằng MoMo</option> */}
                     </select>
                   </div>
                 </div>
