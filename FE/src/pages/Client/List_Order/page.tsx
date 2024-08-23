@@ -24,7 +24,7 @@ import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
+// import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
 import queryString from "query-string";
 import instance from "../../../configs/axios";
 import { useMutation } from "@tanstack/react-query";
@@ -32,7 +32,7 @@ type FieldType = {
   contentReview?: string;
 };
 
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+// type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function List_order() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -46,7 +46,7 @@ export default function List_order() {
   const account = user?.user;
   const navi = useNavigate();
   const { mutate: add } = Mutation_Cart("ADD");
-  const { data: orderData, refetch } = List_One_Order_User(userId);
+  // const { data: orderData, refetch } = List_One_Order_User(userId);
   const [paymentPending, setPaymentPending] = useState(false);
   const [openReviewOrderId, setOpenReviewOrderId] = useState<string | null>(
     null
@@ -104,10 +104,6 @@ export default function List_order() {
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Submitting review for productId:", currentProductId);
-    console.log(userId);
-    console.log("Form values:", values);
-
     if (currentProductId) {
       addReview({
         contentReview: values.contentReview || "",
@@ -192,30 +188,20 @@ export default function List_order() {
       navi("/login");
     }
   };
-  useEffect(() => {
-    refetch();
-  }, [userId]);
-  const fiterOrrder = (status: string) => {
-    return data?.filter((orders: any) => orders.status === status);
-  };
-
+  // useEffect(() => {
+  //   refetch();
+  // }, [userId]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         setPaymentPending(true);
-        console.log("location.search:");
         const parsed = queryString.parseUrl(location.search);
-        console.log(parsed);
-        console.log(parsed.query.vnp_TransactionStatus);
-
         if (parsed.query.vnp_TransactionStatus === "00") {
           const itemOrder = sessionStorage.getItem("item_order");
           const customerInfo = sessionStorage.getItem("customerInfo");
 
           if (itemOrder && customerInfo) {
             const getItemOrder = JSON.parse(itemOrder);
-            console.log(getItemOrder);
-
             const dataForm = JSON.parse(customerInfo);
             // setActive(true)
             const response = await instance.post("/orderspayment", {
@@ -233,7 +219,7 @@ export default function List_order() {
               message.success("Thanh toán thành công");
               sessionStorage.removeItem("item_order");
               sessionStorage.removeItem("customerInfo");
-              refetch();
+              // refetch();
             }
           } else {
             console.error(
@@ -395,7 +381,7 @@ export default function List_order() {
                       {items?.items?.map((product: any) => (
                         <Button
                           type="default"
-                          className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded"
+                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
                           onClick={() =>
                             handleOpenReview(
                               items._id,
@@ -468,7 +454,7 @@ export default function List_order() {
                         </div>
                       )}
 
-                      <Button className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
+                      <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
                         Đã Nhận Hàng
                       </Button>
                       <Popconfirm
@@ -478,7 +464,7 @@ export default function List_order() {
                         okText="Có"
                         cancelText="Không"
                       >
-                        <Button className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
+                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
                           Mua Lại
                         </Button>
                       </Popconfirm>

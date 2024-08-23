@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema(
     price_product: {
       type: Number,
       min: 1,
-      default: 1,
+      // default: 1,
     },
     image_product: {
       type: String,

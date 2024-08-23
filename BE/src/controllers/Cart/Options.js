@@ -47,7 +47,7 @@ export const addItemToCart = async (req, res) => {
                     cart.products[i].total_price_item = price_item * cart.products[i].quantity;
                     check_item = true;
                 }
-                if (cart.products[i].quantity >= stock_item) {
+                if (cart.products[i].quantity = stock_item) {
                     cart.products[i].quantity = stock_item;
                     cart.products[i].total_price_item = price_item * cart.products[i].quantity;
                 }
