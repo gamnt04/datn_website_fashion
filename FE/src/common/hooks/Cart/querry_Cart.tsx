@@ -8,7 +8,6 @@ export const List_Cart = (userId: string) => {
       return await list_cart(userId);
     }
   });
-  console.log(data);
 
   // const calculateTotal = () => {
   //   if (!data || !data.products) return 0;

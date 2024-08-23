@@ -4,19 +4,19 @@ import { useProductsByCategory } from "../../../common/hooks/Category/useProduct
 import { Table, Spin, Alert, Button } from "antd";
 import { BackwardFilled, LoadingOutlined } from "@ant-design/icons";
 import { format } from "date-fns";
-import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 
 const CategoryDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const {
     data: products,
     isLoading: productsLoading,
-    error: productsError,
+    error: productsError
   } = useProductsByCategory(id || "");
   const {
     data: categories,
     isLoading: categoriesLoading,
-    error: categoriesError,
+    error: categoriesError
   } = useCategoryQuery();
   const [categoryName, setCategoryName] = useState<string>("");
 
@@ -62,7 +62,7 @@ const CategoryDetail: React.FC = () => {
       title: "STT",
       dataIndex: "index",
       key: "index",
-      render: (_: any, __: any, index: number) => index + 1, 
+      render: (_: any, __: any, index: number) => index + 1
     },
     {
       title: "Ảnh sản phẩm",
@@ -74,7 +74,7 @@ const CategoryDetail: React.FC = () => {
           alt="Product"
           style={{ width: 100, height: 100, objectFit: "cover" }}
         />
-      ),
+      )
     },
     {
       title: "Tên sản phẩm",
@@ -82,25 +82,25 @@ const CategoryDetail: React.FC = () => {
       key: "name_product",
       render: (text: string) => (
         <span className="line-clamp-2 max-w-[200px]">{text}</span>
-      ),
+      )
     },
     {
       title: "Giá",
       dataIndex: "price_product",
-      key: "price_product",
+      key: "price_product"
     },
     {
       title: "Thời gian tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text: string) => formatDate(text),
+      render: (text: string) => formatDate(text)
     },
     {
       title: "Thời gian cập nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (text: string) => formatDate(text),
-    },
+      render: (text: string) => formatDate(text)
+    }
   ];
 
   return (
@@ -121,7 +121,7 @@ const CategoryDetail: React.FC = () => {
           dataSource={products}
           columns={columns}
           rowKey={(record) => record._id}
-          pagination={false} 
+          pagination={false}
         />
       ) : (
         <div style={{ textAlign: "center", marginTop: 50 }}>

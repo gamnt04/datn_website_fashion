@@ -4,9 +4,9 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import List_item from "../../../components/common/Client/_component/List_item";
 import { Query_Limit_Items } from "../../../common/hooks/Products/Products";
-import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { useState } from "react";
 import { ICategory } from "../../../common/interfaces/Category";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 
 const List_Products = () => {
   const { data, isLoading } = Query_Limit_Items(12);
@@ -35,7 +35,7 @@ const List_Products = () => {
 
   const propsData = {
     data: filteredProducts,
-    style: "lg:grid-cols-4 md:grid-cols-3",
+    style: "lg:grid-cols-4 md:grid-cols-3"
   };
 
   const handleViewAll = () => {
