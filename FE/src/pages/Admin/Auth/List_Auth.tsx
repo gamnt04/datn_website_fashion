@@ -4,6 +4,7 @@ import { Button, Image, Skeleton, Spin, Table, Modal, Form, Input } from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import SearchComponent from "./Search";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
 interface UpdateField {
   field: string;
   value: string;
@@ -14,24 +15,28 @@ const List_Auth = () => {
   const [data, setData] = useState<any>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
-
+  const [searchName, setSearchName] = useState("");
+  const { data: searchData } = useSearchUserByUsername(searchName);
   const { data: initialData, isLoading } = useQuery({
     queryKey: ["LIST_AUTH"],
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    },
+    }
   });
 
-  const dataSource = (data ? data?.user : initialData?.data)?.map(
+  const onHandleSearch = () => {
+    setSearchName(searchName.trim());
+  };
+
+  const dataSource = (searchName ? searchData : initialData?.data)?.map(
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth,
+        ...auth
       };
     }
   );
-
   const columns = [
     {
       title: "Ảnh người dùng",
@@ -42,7 +47,7 @@ const List_Auth = () => {
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
           <Image src={auth.avatar} alt="" width={70} />
-        ),
+        )
     },
     {
       title: "Tên người dùng",
@@ -53,7 +58,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        ),
+        )
     },
     {
       title: "Email",
@@ -64,7 +69,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        ),
+        )
     },
     {
       title: "Cập nhật gần đây",
@@ -76,7 +81,7 @@ const List_Auth = () => {
           return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
         }
         return "Chưa có cập nhật";
-      },
+      }
     },
 
     {
@@ -93,7 +98,7 @@ const List_Auth = () => {
         } else {
           return "Chưa có cập nhật";
         }
-      },
+      }
     },
     {
       title: "Quyền",
@@ -104,8 +109,8 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        ),
-    },
+        )
+    }
   ];
 
   const showModal = (updatedFields) => {
@@ -146,7 +151,7 @@ const List_Auth = () => {
         field: update.field,
         value: update.value,
         time,
-        date,
+        date
       };
     });
 
@@ -172,6 +177,13 @@ const List_Auth = () => {
         {initialData && (
           <SearchComponent initialData={initialData} setData={setData} />
         )}
+      </div>
+      <div className="">
+        <Input
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+        />
+        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
       </div>
       <Spin
         spinning={isLoading}

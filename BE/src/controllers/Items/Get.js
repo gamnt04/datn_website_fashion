@@ -11,19 +11,19 @@ export const getAllProducts = async (req, res) => {
     if (_search) {
       querry.$and = [
         {
-          name_product: { $regex: new RegExp(_search, "i") },
-        },
+          name_product: { $regex: new RegExp(_search, "i") }
+        }
       ];
     }
     const products = await Products.find(querry);
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      products,
+      products
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 };
@@ -35,20 +35,20 @@ export async function get_items_client(req, res) {
     _sort = "",
     _limit = 20,
     _search = "",
-    _category_id = "",
+    _category_id = ""
   } = req.query;
   const options = {
     page: _page,
-    limit: _limit,
+    limit: _limit
   };
   try {
     const querry = {
-      $and: [],
+      $and: []
     };
 
     if (_search) {
       querry.$and.push({
-        name_product: { $regex: new RegExp(_search, "i") },
+        name_product: { $regex: new RegExp(_search, "i") }
       });
     }
 
@@ -56,17 +56,17 @@ export async function get_items_client(req, res) {
       // Tìm kiếm các danh mục có trạng thái published là true và khớp với _category_id
       const category = await Category.findOne({
         _id: _category_id,
-        published: true,
+        published: true
       });
 
       if (!category) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          message: "Danh mục bị ẩn hoặc không tồn tại!",
+          message: "Danh mục bị ẩn hoặc không tồn tại!"
         });
       }
 
       querry.$and.push({
-        category_id: _category_id,
+        category_id: _category_id
       });
     } else {
       // Tìm kiếm các sản phẩm mà danh mục của chúng có trạng thái published là true
@@ -77,7 +77,7 @@ export async function get_items_client(req, res) {
       const visibleCategoryIds = visibleCategories.map((cat) => cat._id);
 
       querry.$and.push({
-        category_id: { $in: visibleCategoryIds },
+        category_id: { $in: visibleCategoryIds }
       });
     }
 
@@ -99,16 +99,16 @@ export async function get_items_client(req, res) {
     data.docs = data.docs.filter((item) => item.stock_product > 0);
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có dữ liệu!",
+        message: "Không có dữ liệu!"
       });
     }
     return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data,
+      data
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server!",
+      message: error.message || "Lỗi server!"
     });
   }
 }
@@ -118,16 +118,16 @@ export async function get_item_dashboard(req, res) {
   try {
     const options = {
       page: _page,
-      limit: _limit,
+      limit: _limit
     };
     const data = await Products.paginate({}, options);
     return res.status(StatusCodes.OK).json({
       message: "OK",
-      data,
+      data
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 }
@@ -140,8 +140,8 @@ export const getProductById = async (req, res) => {
         path: "reviews",
         populate: {
           path: "user",
-          select: "userName",
-        },
+          select: "userName"
+        }
       });
     if (!product) {
       return res
@@ -153,18 +153,18 @@ export const getProductById = async (req, res) => {
         const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
         return {
           ...item,
-          size: new_data,
+          size: new_data
         };
       });
     }
     await product.save();
     return res.status(StatusCodes.OK).json({
-      product,
+      product
     });
   } catch (error) {
     console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server !",
+      message: error.message || "Lỗi server !"
     });
   }
 };
@@ -180,7 +180,7 @@ export async function filterItems(req, res) {
     limit,
     sort: _sort
       ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
-      : { "attributes.values.size.price_attribute": 1 },
+      : { "attributes.values.size.price_attribute": 1 }
   };
 
   try {
@@ -191,7 +191,7 @@ export async function filterItems(req, res) {
 
     if (!visibleCategories || visibleCategories.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có Sản Phẩm nào đang được hiển thị!",
+        message: "Không có Sản Phẩm nào đang được hiển thị!"
       });
     }
 
@@ -211,8 +211,8 @@ export async function filterItems(req, res) {
         query.$or = priceRangesArray.map((range) => ({
           price_product: {
             $gte: parseFloat(range.min),
-            $lte: parseFloat(range.max),
-          },
+            $lte: parseFloat(range.max)
+          }
         }));
       } catch (e) {
         return res
@@ -309,8 +309,8 @@ export async function filterItems(req, res) {
         totalItems: data.totalDocs,
         currentPage: data.page,
         totalPages: data.totalPages,
-        itemsPerPage: data.limit,
-      },
+        itemsPerPage: data.limit
+      }
     });
   } catch (error) {
     console.error("Server Error:", error);
@@ -319,3 +319,21 @@ export async function filterItems(req, res) {
       .json({ message: error.message || "Lỗi máy chủ!" });
   }
 }
+export const getProductsByName = async (req, res) => {
+  try {
+    const { searchName } = req.body;
+    const products = await Products.find({
+      name_product: { $regex: new RegExp(searchName, "i") }
+    });
+    if (products.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không Có Sản Phẩm Nào" });
+    }
+    return res.status(StatusCodes.OK).json(products);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message || "Lỗi máy chủ!" });
+  }
+};

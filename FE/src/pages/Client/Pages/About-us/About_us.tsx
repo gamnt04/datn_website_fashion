@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "../../../../resources/svg/Icon/Icon";
-import useCategoryQuery from "../../../../common/hooks/Category/useCategoryQuery";
 import { LoadingOutlined } from "@ant-design/icons";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { useCategoryQuery } from "../../../../common/hooks/Category/useCategoryQuery";
 const AboutUS = () => {
   //const arr = [1, 2, 3];
   const { data, isLoading } = useCategoryQuery();
