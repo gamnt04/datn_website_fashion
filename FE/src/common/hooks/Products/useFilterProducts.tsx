@@ -21,6 +21,7 @@ interface ProductResponse {
 }
 
 const fetchFilteredProducts = async (
+  query: string,
   cate_id: string[],
   priceRanges: { min: number; max: number }[],
   colors: string[],
@@ -32,6 +33,7 @@ const fetchFilteredProducts = async (
   const endpoint = "/products/filter/product"; // Điều chỉnh endpoint nếu cần thiết
 
   const params: { [key: string]: any } = {
+    _search: query,
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
     price_ranges:
       priceRanges.length > 0 ? JSON.stringify(priceRanges) : undefined,
@@ -56,6 +58,7 @@ const fetchFilteredProducts = async (
 };
 
 export const useFilteredProducts = (
+  query: string,
   cate_id: string[],
   priceRanges: { min: number; max: number }[],
   colors: string[],
@@ -66,6 +69,7 @@ export const useFilteredProducts = (
 ) => {
   const queryKey = [
     "products",
+    query,
     cate_id,
     priceRanges,
     colors,
@@ -82,6 +86,7 @@ export const useFilteredProducts = (
     queryKey,
     queryFn: () =>
       fetchFilteredProducts(
+        query,
         cate_id,
         priceRanges,
         colors,
