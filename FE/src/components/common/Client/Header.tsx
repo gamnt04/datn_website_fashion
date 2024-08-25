@@ -21,6 +21,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
+    searchError,
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -152,24 +153,29 @@ const Header = () => {
             <div ref={searchRef} className="relative w-full max-w-xl">
               <form
                 onSubmit={handleSearch}
-                className={`relative w-[298px] *:h-[36px] hidden lg:block gap-x-2  duration-300`}
+                className="relative w-[298px] h-[36px] hidden lg:block gap-x-2 duration-300"
               >
                 <input
                   type="text"
                   value={query}
                   onChange={handleInputChange}
                   onFocus={() => setShowSuggestions(true)}
-                  placeholder="Search..."
-                  className="w-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
+                  placeholder="Tìm kiếm..."
+                  className="w-full h-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
                 />
                 <button
                   type="submit"
-                  className="absolute grid place-items-center text-black top-0 right-0 rounded-[50%] w-[36px] duration-300 cursor-pointer"
+                  className="absolute grid place-items-center text-black top-0 right-0 rounded-[50%] w-[36px] h-[36px] duration-300 cursor-pointer"
                 >
                   <Search size={20} />
                 </button>
               </form>
-              {showSuggestions && query.length > 0 && (
+              {searchError && (
+                <div className="absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md px-4 py-2 text-black">
+                  {searchError}
+                </div>
+              )}
+              {showSuggestions && query.length > 0 && !searchError && (
                 <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
                   {isLoading ? (
                     <div className="flex justify-center px-4 py-2 text-gray-700">
@@ -187,16 +193,16 @@ const Header = () => {
                           <img
                             src={suggestion.image_product}
                             alt={suggestion.name_product}
-                            className="w-8 h-8 mr-2"
+                            className="w-12 h-12 mr-2"
                           />
-                          <p className="text-black hover:underline">
+                          <p className="text-black hover:underline line-clamp-1">
                             {suggestion.name_product}
                           </p>
                         </Link>
                       ))}
                     </ul>
                   ) : (
-                    <div className="px-4 py-2 text-gray-700">
+                    <div className="px-4 py-2 text-gray-700 break-words">
                       Tìm kiếm "{query}"
                     </div>
                   )}
@@ -268,7 +274,7 @@ const Header = () => {
                   src={getUser?.avatar ? getUser?.avatar : ""}
                   alt=""
                   width={40}
-                  className="rounded-full w-12 h-8"
+                  className="w-12 h-8 rounded-full"
                 />
               </Link>
               <Link
