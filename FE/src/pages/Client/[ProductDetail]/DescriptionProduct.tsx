@@ -12,6 +12,7 @@ type FieldType = {
 };
 
 const DescriptionProduct = ({ product }: IProduct) => {
+  const formattedDescription = product?.description_product.replace(/\n/g, '<br />');
   const [toggleDes, setTogleDes] = useState<boolean>(true);
   const [editReviewId, setEditReviewId] = useState<string | null>(null);
   const [form] = Form.useForm();
@@ -121,7 +122,7 @@ const DescriptionProduct = ({ product }: IProduct) => {
         </ul>
         <div className={toggleDes ? "block" : "hidden"}>
           <section className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:py-6 mb:pt-[19px]">
-            <p>{product?.description_product}</p>
+          <div dangerouslySetInnerHTML={{ __html: formattedDescription }} className="show_description my-4"/>
           </section>
         </div>
         {!toggleDes &&
