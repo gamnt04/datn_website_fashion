@@ -9,6 +9,9 @@ export function Convert_Color(item: string) {
     else if (item == 'vàng' || item == 'Yellow') {
         color = 'bg-yellow-500 border-none'
     }
+    else if (item == 'hồng' || item == 'pink') {
+        color = 'bg-yellow-500 border-none'
+    }
     else if (item == 'green' || item == 'Xanh lá') {
         color = 'bg-green-500 border-none'
     }

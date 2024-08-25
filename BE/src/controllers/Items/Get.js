@@ -120,7 +120,7 @@ export async function get_item_dashboard(req, res) {
       page: _page,
       limit: _limit,
     };
-    const data = await Products.paginate({}, options);
+    const data = await Products.paginate({ sort: { createdAt: -1 } }, options);
     return res.status(StatusCodes.OK).json({
       message: "OK",
       data,
