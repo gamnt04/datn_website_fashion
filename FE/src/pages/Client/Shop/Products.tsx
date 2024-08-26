@@ -13,6 +13,7 @@ interface Products_ShopProps {
   selectedSizes: string[];
   sortOption: string;
 }
+
 const Products_Shop: React.FC<Products_ShopProps> = ({
   priceRanges,
   selectedColors,
@@ -39,6 +40,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     isError,
     error,
   } = useFilteredProducts(
+    search,
     cate_id,
     priceRanges,
     selectedColors,
