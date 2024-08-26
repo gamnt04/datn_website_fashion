@@ -12,10 +12,10 @@ const CreateComponent = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<ICategory>();
   const { onSubmit, isPending } = useCategoryMutation({
-    action: "CREATE",
+    action: "CREATE"
   });
 
   const handleSubmitForm = async (data: ICategory | any) => {
@@ -26,7 +26,7 @@ const CreateComponent = () => {
 
         const formData = {
           ...data,
-          image_category: imageUrl,
+          image_category: imageUrl
         };
 
         await onSubmit(formData);
@@ -65,7 +65,7 @@ const CreateComponent = () => {
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-[16px] font-medium leading-6 text-gray-900"
                   >
                     Tên danh mục
                   </label>
@@ -78,12 +78,14 @@ const CreateComponent = () => {
                       />
                     </div>
                     {errors.name_category && (
-                      <p className="text-red-600">Vui lòng nhập tên danh mục</p>
+                      <p className="text-red-600">
+                        Tên danh mục bắt buộc nhập!
+                      </p>
                     )}
                   </div>
                   <label
                     htmlFor="image_category"
-                    className="block text-sm font-medium leading-6 text-gray-900 mt-4"
+                    className="block text-[16px] font-medium leading-6 text-gray-900 mt-4"
                   >
                     Hình ảnh danh mục
                   </label>
@@ -95,7 +97,9 @@ const CreateComponent = () => {
                       />
                     </div>
                     {errors.image_category && (
-                      <p className="text-red-600">Vui lòng chọn hình ảnh</p>
+                      <p className="text-red-600">
+                        Ảnh danh mục bắt buộc nhập!
+                      </p>
                     )}
                   </div>
                 </div>

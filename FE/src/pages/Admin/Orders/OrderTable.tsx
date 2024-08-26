@@ -1,8 +1,9 @@
-import { Pagination, Table } from "antd";
+import { Pagination, Select, Table } from "antd";
 import { Link } from "react-router-dom";
 import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
+import { useState } from "react";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   const formatDate = (datetime: any) => {
@@ -12,7 +13,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   };
   const dataSort = orders?.map((order: any) => ({
     key: order._id,
-    ...order,
+    ...order
   }));
   const createFilters = (order: IOrder[]) => {
     return order
@@ -23,12 +24,12 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       )
       .map((orderNumber: string) => ({
         text: orderNumber,
-        value: orderNumber,
+        value: orderNumber
       }));
   };
   const columns: ColumnType<IOrder>[] = [
     {
-      title: "Mã đơn",
+      title: "Mã Đơn",
       dataIndex: "orderNumber",
       key: "orderNumber",
       filterSearch: true,
@@ -39,53 +40,70 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       },
       sorter: (a: IOrder, b: IOrder) =>
         a.orderNumber.localeCompare(b.orderNumber),
-      sortDirections: ["ascend", "descend"] as SortOrder[],
+      sortDirections: ["ascend", "descend"] as SortOrder[]
     },
     {
-      title: "Người mua",
+      title: "Người Mua",
       dataIndex: "userName",
       key: "userName",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>,
+      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>
     },
     {
-      title: "Số điện thoại",
+      title: "Số Điện Thoại",
       dataIndex: "phone",
       key: "phone",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>,
+      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>
     },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    //   render: (_: any, order: any) => <p>{order?.customerInfo?.email}</p>
+    // },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.email}</p>,
-    },
-    {
-      title: "Ngày đặt",
+      title: "Ngày Đặt",
       dataIndex: "datetime",
       key: "datetime",
-      render: (_: any, order: any) => <p>{formatDate(order?.datetime)}</p>,
+      render: (_: any, order: any) => <p>{formatDate(order?.datetime)}</p>
     },
     {
-      title: "Hình thức",
+      title: "Hình Thức",
       dataIndex: "payment",
       key: "payment",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>,
+      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>
     },
     {
-      title: "Trạng thái",
+      title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
       render: (_: any, order: any) => {
         return (
-          <p>
-            {order?.cancellationRequested ? order?.cancelledByAdmin ? "Đã xác nhận yêu cầu" : "Yêu cầu gửi lên" : order?.status == 1 ? "Chờ xác nhận" : order?.status == 2 ? "Đang chuẩn bị" : order?.status == 3 ? "Đang vận chuyển" : order?.status == 4 ? "Đã giao hàng" : "Đã hủy"}
-          </p>
+          <>
+            {order?.cancellationRequested ? (
+              order?.cancelledByAdmin ? (
+                <p className="text-blue-700">Đã xác nhận yêu cầu</p>
+              ) : (
+                <p className="text-yellow-600">Yêu cầu gửi lên</p>
+              )
+            ) : order?.status == 1 ? (
+              <p className="text-gray-500">Chờ xác nhận</p>
+            ) : order?.status == 2 ? (
+              <p className="text-yellow-500">Đang chuẩn bị hàng</p>
+            ) : order?.status == 3 ? (
+              <p className="text-blue-500">Đang vận chuyển</p>
+            ) : order?.status == 4 ? (
+              <p className="text-green-600">Đã giao hàng</p>
+            ) : (
+              <p className="text-red-600">Đã hủy</p>
+            )}
+          </>
         );
-      },
+      }
     },
     {
       dataIndex: "action",
       key: "action",
+      title: "Thao Tác  ",
       render: (_: any, orders: any) => (
         <>
           <Link to={`/admin/orders/${orders._id}/orderDetali`}>
@@ -94,15 +112,14 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
             </span>
           </Link>
         </>
-      ),
-    },
+      )
+    }
   ];
 
   return (
     <div className="">
       <Table columns={columns} dataSource={dataSort} pagination={false} />
       <div className="flex justify-between items-center mt-4">
-        <div className="max-w-full overflow-hidden"></div>
         <Pagination
           current={currentPage}
           pageSize={10}
