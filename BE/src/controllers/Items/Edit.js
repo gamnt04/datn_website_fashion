@@ -13,12 +13,12 @@ export const updateProductById = async (req, res) => {
         message,
       });
     }
-    const check_name_item = await Products.findOne({ name_product });
-    if (check_name_item) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Ten san pham da ton tai",
-      });
-    }
+    // const check_name_item = await Products.findOne({ name_product });
+    // if (check_name_item) {
+    //   return res.status(StatusCodes.BAD_REQUEST).json({
+    //     message: "Ten san pham da ton tai",
+    //   });
+    // }
     let convertAttribute;
     if (req.body.attributes) {
       convertAttribute = JSON.parse(req.body.attributes);
@@ -59,7 +59,7 @@ export const updateProductById = async (req, res) => {
       }
       return res.status(200).json(product);
     } else {
-      const product = await Products.findByIdAndUpdate(req.params.id,req.body, {
+      const product = await Products.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
       });

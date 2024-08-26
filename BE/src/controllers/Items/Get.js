@@ -85,7 +85,7 @@ export async function get_items_client(req, res) {
     await Products.populate(data.docs, { path: "attributes" });
     for (const id_data of data.docs) {
       if (id_data.attributes) {
-        let total_stock = 1;
+        let total_stock = 0;
         id_data.attributes.values.map((i) => {
           i.size.map((l) => {
             total_stock += l.stock_attribute;
@@ -114,13 +114,14 @@ export async function get_items_client(req, res) {
 }
 
 export async function get_item_dashboard(req, res) {
-  const { _page = 1, _limit = 30, _sort = "" } = req.query;
+  const { _page = 1, _limit = 10, _sort = "" } = req.query;
   try {
     const options = {
       page: _page,
       limit: _limit,
+      sort: { createdAt: -1 }
     };
-    const data = await Products.paginate({ sort: { createdAt: -1 } }, options);
+    const data = await Products.paginate({}, options);
     return res.status(StatusCodes.OK).json({
       message: "OK",
       data,

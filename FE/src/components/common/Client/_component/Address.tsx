@@ -552,10 +552,11 @@ export const List_Address = ({
   handleTAdd,
   handleAddressSelect,
   handleAddress,
+  selectedAddress
 }: any) => {
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50" >
       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[600px] max-h-[600px] overflow-auto hidden_scroll_x">
         <h1 className="py-3 text-center text-xl font-medium">
           Địa chỉ của tôi
@@ -586,7 +587,7 @@ export const List_Address = ({
                     <p className="text-gray-400 py-2">{item.addressDetails}</p>
                     <p className="text-gray-400">{item.address}</p>
                     <div className="flex gap-3 mt-3">
-                      <Button className="py-5">Mặc định</Button>
+                      {item.checked && <Button className="py-5">Mặc định</Button>}
                     </div>
                   </div>
                 </div>
@@ -600,11 +601,15 @@ export const List_Address = ({
                         title="Địa chỉ nhận hàng"
                         description="Bạn có muốn chọn làm địa chỉ nhận hàng không?"
                         onConfirm={() => handleAddressSelect(item)}
-
                         okText="Có"
                         cancelText="Không"
                       >
-                        <Button className="w-9 h-9"><CheckOutlined /></Button>
+                        {selectedAddress === item ? (
+                          <Button className="w-9 h-9 !bg-slate-100 cursor-not-allowed" disabled><CheckOutlined /></Button>
+                        ) : (
+                          <Button className="w-9 h-9"><CheckOutlined /></Button>
+                        )}
+
                       </Popconfirm>
                     </div>
                   </div>

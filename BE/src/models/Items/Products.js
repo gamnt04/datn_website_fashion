@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema(
     price_product: {
       type: Number,
       min: 1,
-      default: 1,
+      // default: 1,
     },
     image_product: {
       type: String,
@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema(
     },
     stock_product: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     stock: Number,
     attributes: {
