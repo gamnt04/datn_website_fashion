@@ -1,12 +1,16 @@
 import { useState } from "react";
 import OrderTable from "./OrderTable";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
-import { Select } from "antd";
+import { Button, Input, Select } from "antd";
 const { Option } = Select;
 const OrderList = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading, totalPages } = Query_Orders(undefined, currentPage, statusFilter);
+  const { data, isLoading, totalPages } = Query_Orders(
+    undefined,
+    currentPage,
+    statusFilter
+  );
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
@@ -18,14 +22,16 @@ const OrderList = () => {
 
   return (
     <div>
-      <div className="mt-16 mx-2">
-        <div>
-          <div className="flex justify-between my-3">
-            <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng</h1>
+      <div className=" mx-6">
+        <div className="flex items-center justify-between mt-20 mb-5">
+          <h1 className="text-2xl font-semibold">Quản Lý Đơn Hàng</h1>{" "}
+        </div>
+        <div className="mb-2 flex justify-between">
+          <div className="space-x-5">
             <Select
               value={statusFilter}
               onChange={handleStatusChange}
-              className="w-[160px] h-[40px]"
+              className="w-[200px] h-[40px]"
               placeholder="Lọc trạng thái"
             >
               <Option value="">Lọc trạng thái</Option>
@@ -36,14 +42,24 @@ const OrderList = () => {
               <Option value="5">Đã hủy</Option>
             </Select>
           </div>
-          <OrderTable
-            orders={data}
-            isLoading={isLoading}
-            currentPage={currentPage}
-            goToPage={goToPage}
-            totalPages={totalPages}
-          />
+          <div className="flex space-x-5">
+            <Input
+              className="w-[500px]"
+              // value={searchName}
+              // onChange={(e) => setSearchName(e.target.value)}
+              placeholder="nhâp tên hoặc số điện thoại của khách hàng để tìm kiếm..."
+            />
+            <Button type="primary">Tìm kiếm</Button>
+          </div>
         </div>
+
+        <OrderTable
+          orders={data}
+          isLoading={isLoading}
+          currentPage={currentPage}
+          goToPage={goToPage}
+          totalPages={totalPages}
+        />
       </div>
     </div>
   );

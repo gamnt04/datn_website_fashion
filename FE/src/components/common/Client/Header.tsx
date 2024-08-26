@@ -10,6 +10,7 @@ import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import logo from "../../../assets/Images/Logo/logo white.png";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
@@ -21,7 +22,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
-    searchError,
+    searchError
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -83,7 +84,7 @@ const Header = () => {
     if (!account) {
       message.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!",
+        content: "Hãy đăng nhập tài khoản của bạn !!"
       });
     }
   };
@@ -121,7 +122,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)",
+                : "translateX(-200%)"
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -136,8 +137,8 @@ const Header = () => {
               className="lg:relative absolute lg:left-0 lg:translate-x-0 left-[35%] -translate-x-full h-auto mr-2 flex items-start"
             >
               <img
-                className="lg:w-[50px] md:h-[40px] h-[35px]"
-                src="../../src/assets/Images/Logo/logo.png"
+                className="lg:w-[140px] md:h-[40px] h-[40px]"
+                src={logo}
                 alt="Logo"
               />
             </Link>
@@ -153,7 +154,7 @@ const Header = () => {
             <div ref={searchRef} className="relative w-full max-w-xl">
               <form
                 onSubmit={handleSearch}
-                className="relative w-[298px] h-[36px] hidden lg:block gap-x-2 duration-300"
+                className="relative w-[375px] h-[36px] hidden lg:block  duration-300"
               >
                 <input
                   type="text"
@@ -161,7 +162,7 @@ const Header = () => {
                   onChange={handleInputChange}
                   onFocus={() => setShowSuggestions(true)}
                   placeholder="Tìm kiếm..."
-                  className="w-full h-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
+                  className="w-[375px]  h-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
                 />
                 <button
                   type="submit"
@@ -171,12 +172,12 @@ const Header = () => {
                 </button>
               </form>
               {searchError && (
-                <div className="absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md px-4 py-2 text-black">
+                <div className="absolute w-[375px mt-2 bg-white border border-gray-300 rounded-md px-4 py-2 text-black">
                   {searchError}
                 </div>
               )}
               {showSuggestions && query.length > 0 && !searchError && (
-                <div className="search-results absolute w-[300px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
+                <div className="search-results absolute w-[375px] mt-2 bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto">
                   {isLoading ? (
                     <div className="flex justify-center px-4 py-2 text-gray-700">
                       <LoadingOutlined />
