@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Empty } from "antd";
+import { Empty, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import MenuShop from "../../../pages/Client/Shop/MenuShop";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
@@ -38,7 +38,6 @@ const SearchResults = () => {
     itemsPerPage,
     sortOption
   );
-  console.log(`results`, results);
 
   const totalPages = results ? Math.ceil(results.data.length / 10) : 1;
   const hasMore = currentPage < totalPages;
@@ -71,17 +70,13 @@ const SearchResults = () => {
 
   const resetSizeFilter = () => setSelectedSizes([]);
 
-  // Kiểm tra loading và error trước
   if (isLoading)
     return (
-      <div>
-        <LoadingOutlined />
+      <div className="flex items-center justify-center h-screen">
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
       </div>
     );
   if (isError) return <div>Có lỗi xảy ra: {error?.message}</div>;
-
-  // Kiểm tra xem có kết quả không
-  const hasResults = results && results.data && results.data.length > 0;
 
   return (
     <div className="lg:mt-[40px] mt-[60px]">
@@ -114,7 +109,7 @@ const SearchResults = () => {
           onSizeChange={handleSizeChange}
         />
 
-        {hasResults ? (
+        {results && results?.data.length > 0 ? (
           <>
             <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
               {results?.data
