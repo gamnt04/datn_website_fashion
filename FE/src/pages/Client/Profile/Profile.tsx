@@ -46,7 +46,28 @@ const Profile = () => {
     setPreviewImage,
   } = ProfileHook();
 
+  const validateBirthDate = (_, value) => {
+    if (!value) {
+      return Promise.resolve(); // Không cần kiểm tra nếu người dùng không nhập ngày
+    }
+
+    const today = dayjs(); // Ngày hiện tại
+    const birthDate = value; // Đối tượng Dayjs
+    const age = today.diff(birthDate, "year"); // Tính tuổi
+    if (age < 5) {
+      return Promise.reject(new Error("Tuổi phải lớn hơn 5"));
+    }
+
+    if (age > 100) {
+      return Promise.reject(new Error("Tuổi phải nhỏ hơn 100."));
+    }
+
+    return Promise.resolve();
+  };
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log(values);
+
     const imageUrls = fileList
       .filter((file) => file.status === "done")
       .map((file) => file.response?.secure_url);
@@ -94,7 +115,12 @@ const Profile = () => {
                 <Form.Item
                   name="userName"
                   label="Tên đăng nhập"
-                  rules={[]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Tên đăng nhập là bắt buộc!",
+                    },
+                  ]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
                 >
@@ -104,10 +130,20 @@ const Profile = () => {
                 <Form.Item<FieldType>
                   label="Họ và tên"
                   name="fullName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Họ và tên là bắt buộc!",
+                    },
+                    {
+                      min: 3,
+                      message: "Họ và tên phải lớn hơn 3 ký tự!",
+                    },
+                  ]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
                 >
-                  <Input />
+                  <Input placeholder="Nhập họ và tên của bạn" />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -115,6 +151,13 @@ const Profile = () => {
                   name="email"
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Email là bắt buộc!",
+                    },
+                    { type: "email", message: "Không đúng định dạng Email" },
+                  ]}
                 >
                   <Input />
                 </Form.Item>
@@ -124,14 +167,20 @@ const Profile = () => {
                   name="phone"
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
+                  rules={[
+                    {
+                      pattern: /^[0-9]{10,11}$/,
+                      message: "Số điện thoại không hợp lệ!",
+                    },
+                  ]}
                 >
-                  <Input />
+                  <Input placeholder="Nhập số điện thoại của bạn" />
                 </Form.Item>
 
                 <Form.Item<FieldType>
                   label="Ngày sinh"
                   name="birthDate"
-                  rules={[]}
+                  rules={[{ validator: validateBirthDate }]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
                 >
