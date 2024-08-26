@@ -30,7 +30,7 @@ const Pay = () => {
   if (data_sessionStorage) {
     data = JSON.parse(data_sessionStorage);
   } else {
-    routing("/");
+    routing("/profile/list_order");
   }
   useEffect(() => {
     if (auth && auth?.address) {
@@ -47,13 +47,13 @@ const Pay = () => {
   }, [auth, selectedAddress, setValue]);
   const handleTAdd = () => {
     setAddress(!address);
-    if (isOpen) setIsOpen(false); // Tắt modal "Địa chỉ của tôi" nếu đang bật
+    if (isOpen) setIsOpen(false);
     if (isOpen) setIsOpen(false);
   };
 
   const handleAddress = () => {
     setIsOpen(!isOpen);
-    if (address) setAddress(false); // Tắt modal "Địa chỉ mới" nếu đang bật
+    if (address) setAddress(false);
     if (address) setAddress(false);
   };
   const handleAddressSelect = (address: any) => {
@@ -91,21 +91,15 @@ const Pay = () => {
         const vnPayment = JSON.parse(sessionStorage.getItem('totalPriceCart') as string);
         const orderId = JSON.parse(sessionStorage.getItem('item_order') as string);
         sessionStorage.setItem('customerInfo', JSON.stringify({ ...data_form }));
-
-        // Tạo URL thanh toán VNPAY 
         const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
           orderId: nanoid(24),
           totalPrice: vnPayment,
           orderDescription: `Order ${orderId._id}`,
           language: 'vn'
         });
-        // Lưu thông tin thanh toán trước khi chuyển hướng
         sessionStorage.setItem('item_order', JSON.stringify(item_order));
-
-        // Redirect người dùng đến trang thanh toán
         window.location.href = UrlPayment.data.paymentUrl;
       } else {
-        // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
         onSubmit(item_order);
       }
     } catch (error) {
@@ -138,9 +132,9 @@ const Pay = () => {
         <div className="lg:flex lg:items-center gap-10">
           <div>
             <h1 className="font-bold text-sm lg:text-base">{order?.productId?.name_product}</h1>
-            <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
+            {/* <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
               Đổi trả miễn phí 15 ngày
-            </p>
+            </p> */}
             <div className="flex justify-between md:hidden mt-2">
               <p className="text-sm lg:text-base">{order?.price_item?.toLocaleString("vi", {
                 style: "currency",
@@ -220,36 +214,40 @@ const Pay = () => {
                 <div className="flex items-center gap-4">
                   {auth?.address.length === 0 ? ('Bạn hay thêm địa chỉ trước khi thanh toán') : (
                     <>
-                      {selectedAddress ? (
-                        <div className="flex items-center gap-4">
-                          <h1 className="font-bold">{selectedAddress?.fullName}</h1>
-                          <p className="font-bold">{selectedAddress?.phoneNumber}</p>
-                          <p>
-                            {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
-                          </p>
-                        </div>
-                      ) : (
-                        auth?.address?.map(
-                          (item: any, index: any) =>
-                            item.checked === true && (
-                              <div key={index} className="flex items-center gap-4">
-                                <h1 className="font-bold">{item?.fullName}</h1>
-                                <p className="font-bold">{item?.phoneNumber}</p>
-                                <p>
-                                  {item?.addressDetails + " - " + item?.address}
-                                </p>
-                              </div>
-                            )
-                        ))}
+                      {selectedAddress === undefined ? ("Bạn cần chọn địa chỉ") : (
+                        <>
+                          {selectedAddress ? (
+                            <div className="flex items-center gap-4">
+                              <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                              <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                              <p>
+                                {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
+                              </p>
+                            </div>
+                          ) : (
+                            auth?.address?.map(
+                              (item: any, index: any) =>
+                                item.checked === true && (
+                                  <div key={index} className="flex items-center gap-4">
+                                    <h1 className="font-bold">{item?.fullName}</h1>
+                                    <p className="font-bold">{item?.phoneNumber}</p>
+                                    <p>
+                                      {item?.addressDetails + " - " + item?.address}
+                                    </p>
+                                  </div>
+                                )
+                            ))}
+                        </>
+                      )}
                     </>
                   )}
                 </div>
                 <div className="flex items-center gap-8">
-                  {/* {!selectedAddress?.checked === true ? ('') : (
-                      <div className="border py-2 px-4 rounded border-black hidden lg:block">
-                        Mặc định
-                      </div>
-                    )} */}
+                  {!selectedAddress?.checked === true ? ('') : (
+                    <div className="border py-2 px-4 rounded border-black hidden lg:block">
+                      Mặc định
+                    </div>
+                  )}
                   <div
                     className="text-blue-400 underline cursor-pointer"
                     onClick={handleAddress}
@@ -321,11 +319,11 @@ const Pay = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-between items-center py-6 px-6">
-                <p>
+              <div className="flex justify-end items-center py-6 px-6">
+                {/* <p>
                   Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo{" "}
                   <span className="text-blue-400">Điều khoản</span>
-                </p>
+                </p> */}
                 <button
                   className="w-[200px] py-3 bg-black text-white font-bold rounded"
                   type="submit"
@@ -344,6 +342,7 @@ const Pay = () => {
                 handleTAdd={handleTAdd}
                 handleAddressSelect={handleAddressSelect}
                 handleAddress={handleAddress}
+                selectedAddress={selectedAddress}
               ></List_Address>
             )
           }

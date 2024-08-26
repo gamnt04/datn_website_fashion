@@ -27,7 +27,6 @@ const ListProduct = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate } = Mutation_items("REMOVE_and_REMOVE_MULTIPLE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
   const { data, isLoading, isError, error } = Query_Products_Dashboard();
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useQueryProductsSearch(searchName);

@@ -103,25 +103,6 @@ const OrdersDetali = () => {
             <h1 className="font-bold text-3xl text-black mt-4 text-center">Chi tiết đơn hàng</h1>
             <div className="overflow-x-auto my-6 shadow p-[20px] rounded">
                 <Table columns={columns} dataSource={dataSort} pagination={false} />
-                <div className="bg-white divide-y divide-gray-200">
-                    {/* <div className="flex justify-between py-4">
-                        <p>Đơn vị vận chuyển</p>
-                        <p>Giao hàng tiết kiệm: 20000 đ</p>
-                    </div> */}
-                    {/* <div className="flex gap-8 py-4">
-                        <span className="flex gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                                className="lucide lucide-ticket text-orange-300">
-                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                                <path d="M13 5v2" /><path d="M13 17v2" /><path d="M13 11v2" />
-                            </svg>
-                            <p>Voucher</p>
-                        </span>
-                        <p>Mã voucher:</p>
-                    </div> */}
-                    <p className="flex justify-end items-end pt-4 font-bold">Tổng tiền:<span className="text-black pl-2 text-xl"> {data.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })} </span></p>
-                </div>
             </div>
             <div className="overflow-x-auto my-6 shadow p-[20px] rounded">
                 <div className="flex items-center gap-4 my-3 border-b py-3">
@@ -176,7 +157,7 @@ const OrdersDetali = () => {
                                 cancelText="Không"
                             >
                                 <button className="w-auto p-3 bg-orange-300 rounded text-white">
-                                    Xác nhận
+                                    {data.status === "1" ? "Chờ xác nhận" : ""}
                                 </button>
                             </Popconfirm>
                             <Popconfirm
@@ -228,7 +209,7 @@ const OrdersDetali = () => {
                                     cancelText="Không"
                                 >
                                     <button className="w-auto p-3 bg-orange-300 rounded text-white">
-                                        Xác nhận
+                                        {data.status === "2" ? "Xác nhận vận chuyển" : ""}
                                     </button>
                                 </Popconfirm>
                             )}
@@ -242,8 +223,8 @@ const OrdersDetali = () => {
                             okText="Xác nhận"
                             cancelText="Không"
                         >
-                            <button className="w-auto p-3 bg-orange-300 rounded text-white">
-                                Xác nhận
+                            <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
+                                {data.status === "3" ? "Đang vận chuyển" : ""}
                             </button>
                         </Popconfirm>
                     )}
