@@ -23,13 +23,16 @@ import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
 import ProductPrice from "./_component/productPrice";
+import { AiOutlinePlus } from "react-icons/ai";
 const ListProduct = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate } = Mutation_items("REMOVE_and_REMOVE_MULTIPLE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const { data, isLoading, isError, error } = Query_Products_Dashboard(+(searchParams?.get('_page') || 1));
+  const { data, isLoading, isError, error } = Query_Products_Dashboard(
+    +(searchParams?.get("_page") || 1)
+  );
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useQueryProductsSearch(searchName);
   const dataSource = (searchName ? searchData : data?.docs)?.map(
@@ -63,7 +66,6 @@ const ListProduct = () => {
     });
   };
 
-
   function handle_page(i: number) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set("_page", String(i));
@@ -86,7 +88,7 @@ const ListProduct = () => {
   };
   const columns = [
     {
-      title: "",
+      title: <Checkbox />,
       dataIndex: "checkbox",
       key: "checkbox",
       render: (_: any, product: IProduct) => (
@@ -178,35 +180,44 @@ const ListProduct = () => {
   return (
     <>
       {contextHolder}
-      <div>
-        <div className="flex justify-between mt-36">
-          {" "}
-          <Popconfirm
-            title="Xóa sản phẩm khỏi giỏ hàng?"
-            description="Bạn có chắc chắn muốn xóa không?"
-            onConfirm={handleRemoveMultiple}
-            okText="Có"
-            cancelText="Không"
-          >
-            <Button danger>
-              <DeleteOutlined style={{ fontSize: "24px" }} />
-              Xóa sản phẩm đã chọn
-            </Button>
-          </Popconfirm>
-          <Link to="/admin/products/add" className="flex justify-end mb-2">
-            <Button type="primary">
-              <FaPlus />
-              Thêm sản phẩm
+      <div className="mx-6">
+        <div className="flex items-center justify-between mb-5 mt-20">
+          <h1 className="text-2xl font-semibold">Quản Lý Sản Phẩm</h1>{" "}
+          <Link to="/admin/products/add">
+            <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
+              <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SẢN PHẨM
             </Button>
           </Link>
         </div>
-        <div className="">
-          <Input
-            type="text"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-          />
-          <Button onSubmit={() => onHandleSearch}>Tìm Kiếm</Button>
+
+        <div className="mb-2 flex justify-between">
+          <div className="space-x-5">
+            <Checkbox className="ml-4" />
+            <Button>Chọn tất cả (7)</Button>
+            <Popconfirm
+              title="Xóa sản phẩm khỏi giỏ hàng?"
+              description="Bạn có chắc chắn muốn xóa không?"
+              onConfirm={handleRemoveMultiple}
+              okText="Có"
+              cancelText="Không"
+            >
+              <Button danger>
+                <DeleteOutlined style={{ fontSize: "24px" }} />
+                Xóa sản phẩm đã chọn
+              </Button>
+            </Popconfirm>
+          </div>
+          <div className="flex space-x-5">
+            <Input
+              className="w-[500px]"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              placeholder="nhâp tên sản phẩm để tìm kiếm..."
+            />
+            <Button onSubmit={() => onHandleSearch} type="primary">
+              Tìm kiếm
+            </Button>
+          </div>
         </div>
 
         <Table columns={columns} dataSource={dataSource} pagination={false} />

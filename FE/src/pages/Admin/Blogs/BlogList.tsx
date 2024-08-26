@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import { Blog } from "../../../common/interfaces/Blog";
 import instance from "../../../configs/axios";
-import { Button, Table, Popconfirm, message, Switch, Input } from "antd";
+import {
+  Button,
+  Table,
+  Popconfirm,
+  message,
+  Switch,
+  Input,
+  Checkbox
+} from "antd";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { PlusCircleFilled } from "@ant-design/icons";
+import { DeleteOutlined, PlusCircleFilled } from "@ant-design/icons";
 import parse from "html-react-parser";
 import { useSearchBlogByName } from "../../../common/hooks/Blog/querry_blog";
+import { AiOutlinePlus } from "react-icons/ai";
 
 const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -93,35 +102,13 @@ const BlogList: React.FC = () => {
   };
   const columns = [
     {
-      key: "title",
-      title: "Tiêu đề",
-      dataIndex: "content",
-      render: (content: string) => {
-        return <div>{extractH1Content(content)}</div>;
-      }
-    },
-    {
-      key: "createdAt",
-      title: "Thời gian",
-      dataIndex: "createdAt",
-      render: (text: string) => new Date(text).toLocaleDateString()
-    },
-    {
-      key: "author",
-      title: "Tác giả",
-      dataIndex: "author"
-    },
-    {
-      key: "content",
-      title: "Nội dung",
-      dataIndex: "content",
-      render: (content: string) => {
-        return <div>{renderContentSnippet(content)}</div>;
-      }
+      key: "checkbox",
+      title: <Checkbox />,
+      render: (_: any, cate: ICategory) => <Checkbox />
     },
     {
       key: "imageUrl",
-      title: "Ảnh",
+      title: "Ảnh Bài Viết",
       dataIndex: "content",
       render: (content: string) => {
         const imageUrl = extractFirstImage(content);
@@ -137,8 +124,36 @@ const BlogList: React.FC = () => {
       }
     },
     {
+      key: "title",
+      title: "Tiêu Đề Bài Viết",
+      dataIndex: "content",
+      render: (content: string) => {
+        return <div>{extractH1Content(content)}</div>;
+      }
+    },
+    // {
+    //   key: "createdAt",
+    //   title: "Thời gian",
+    //   dataIndex: "createdAt",
+    //   render: (text: string) => new Date(text).toLocaleDateString()
+    // },
+    {
+      key: "author",
+      title: "Tác Giả",
+      dataIndex: "author"
+    },
+    {
+      key: "content",
+      title: "Nội dung",
+      dataIndex: "content",
+      render: (content: string) => {
+        return <div>{renderContentSnippet(content)}</div>;
+      }
+    },
+
+    {
       key: "published",
-      title: "Ẩn",
+      title: "Hiển Thị",
       dataIndex: "published",
       render: (published: boolean, record: Blog) => (
         <Switch
@@ -149,7 +164,7 @@ const BlogList: React.FC = () => {
     },
     {
       key: "actions",
-      title: "Hành động",
+      title: "Thao Tác",
       render: (_: any, blogs: Blog) => (
         <>
           <Popconfirm
@@ -174,28 +189,56 @@ const BlogList: React.FC = () => {
   if (isError) return <div className="">{error.message}</div>;
 
   return (
-    <div className="container mx-auto mt-40">
+    <div className="container ">
       {contextHolder}
-      <div className="flex item-center justify-between">
-        <h1 className="text-3xl font-semibold">Danh sách bài viết</h1>
-        <Button type="primary">
-          <Link to="add_blog">
-            <PlusCircleFilled /> Thêm bài viết
-          </Link>
-        </Button>
+      <div className="mx-6">
+        {" "}
+        <div className="">
+          <div className="flex items-center justify-between mb-5 mt-20">
+            <h1 className="text-2xl font-semibold">Quản Lý Bài Viết</h1>{" "}
+            <Link to="add_blog">
+              <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
+                <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI BÀI VIẾT
+              </Button>
+            </Link>
+          </div>
+
+          <div className="mb-2 flex justify-between">
+            <div className="space-x-5">
+              <Checkbox className="ml-4" />
+              <Button>Chọn tất cả (7)</Button>
+              <Popconfirm
+                title="Xóa sản phẩm khỏi giỏ hàng?"
+                description="Bạn có chắc chắn muốn xóa không?"
+                // onConfirm={handleRemoveMultiple}
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button danger>
+                  <DeleteOutlined style={{ fontSize: "24px" }} />
+                  Xóa sản phẩm đã chọn
+                </Button>
+              </Popconfirm>
+            </div>
+            <div className="flex space-x-5">
+              <Input
+                className="w-[500px]"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                placeholder="nhâp tên sản phẩm để tìm kiếm..."
+              />
+              <Button onSubmit={() => onHandleSearch} type="primary">
+                Tìm kiếm
+              </Button>
+            </div>
+          </div>
+        </div>
+        {data.length === 0 ? (
+          <p>Không có blog nào.</p>
+        ) : (
+          <Table dataSource={dataSource} rowKey="_id" columns={columns} />
+        )}
       </div>
-      <div className="">
-        <Input
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-        />
-        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
-      </div>
-      {data.length === 0 ? (
-        <p>Không có blog nào.</p>
-      ) : (
-        <Table dataSource={dataSource} rowKey="_id" columns={columns} />
-      )}
     </div>
   );
 };
