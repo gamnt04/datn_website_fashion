@@ -23,7 +23,7 @@ export function useOrderMutations(action: Action) {
                     throw new Error('Invalid action');
             }
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: ['Order_Key']
             });
@@ -35,10 +35,17 @@ export function useOrderMutations(action: Action) {
                     })
                     break;
                 case "CONFIRM_CANCEL":
-                    messageApi.open({
-                        type: 'success',
-                        content: 'Xác nhận hủy đơn hàng thành công',
-                    })
+                    if (data.data_status_order === true) {
+                        messageApi.open({
+                            type: 'success',
+                            content: 'Yêu cầu hủy đơn hàng đã được xác nhận',
+                        })
+                    } else {
+                        messageApi.open({
+                            type: 'success',
+                            content: 'Yêu cầu hủy đơn hàng đã bị từ chối',
+                        })
+                    }
                     break;
                 case "CANCEL_PRODUCT":
                     messageApi.open({
