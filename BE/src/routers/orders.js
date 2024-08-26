@@ -27,7 +27,6 @@ router.get("/orders/all_order_month", getAllOrderMonth);
 router.get("/orders/all_order_by_day_of_week", getOrderByDayOfWeek);
 router.get("/orders/all_order_by_month_of_year", getAllOrderByMonthOfYear);
 router.get("/orders/top_10_products_best_sale", getTop10ProductBestSale);
-
 router.get("/orders/FilterNumber/:orderNumber", getOrderByNumber);
 router.get("/orders/get_order_user/:userId", getOneOrderUser);
 router.get("/orders/:id", getOrderById);

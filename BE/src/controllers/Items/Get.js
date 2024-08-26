@@ -85,7 +85,7 @@ export async function get_items_client(req, res) {
     await Products.populate(data.docs, { path: "attributes" });
     for (const id_data of data.docs) {
       if (id_data.attributes) {
-        let total_stock = 1;
+        let total_stock = 0;
         id_data.attributes.values.map((i) => {
           i.size.map((l) => {
             total_stock += l.stock_attribute;
