@@ -454,7 +454,7 @@ export default function List_order() {
                         </div>
                       )}
 
-                      <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
+                      <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none disabled cursor-not-allowed">
                         Đã Nhận Hàng
                       </Button>
                       <Popconfirm
