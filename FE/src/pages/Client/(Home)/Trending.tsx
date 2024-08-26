@@ -13,18 +13,13 @@ const Trending_Products = () => {
   const { data, isLoading } = Query_Products();
   const { data: categories } = useCategoryQuery();
 
-  const visibleCategories =
-    categories?.filter((category: ICategory) => category.published) || [];
+  const visibleCategories = categories?.filter((category: ICategory) => category.published) || [];
   const filteredProducts = data?.filter((product: IProduct) =>
-    visibleCategories.some(
-      (category: ICategory) => category._id === product.category_id
-    )
+    visibleCategories.some((category: ICategory) => category._id === product.category_id)
   );
-
   const sizeListItems = useRef<HTMLDivElement | null>(null);
   const backItems = useRef<HTMLButtonElement | null>(null);
   const nextItems = useRef<HTMLButtonElement | null>(null);
-
   const handleNext = () => {
     if (sizeListItems.current) {
       const offsetWidthListItems = sizeListItems.current.offsetWidth || 0;
@@ -40,7 +35,6 @@ const Trending_Products = () => {
         (sizeGapColumn / 100) * offsetWidthListItems;
     }
   };
-
   const handlePrevious = () => {
     if (sizeListItems.current) {
       const offsetWidthListItems = sizeListItems.current.offsetWidth || 0;
@@ -56,7 +50,6 @@ const Trending_Products = () => {
         (sizeGapColumn / 100) * offsetWidthListItems;
     }
   };
-
   return (
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
@@ -73,7 +66,7 @@ const Trending_Products = () => {
       ) : (
         <>
           {/* products */}
-          {filteredProducts?.length === 0 ? (
+          {filteredProducts?.length == 0 ? (
             <div className="flex items-center justify-center">
               <img
                 src="../../src/assets/Images/Products/no-data.png"
@@ -87,7 +80,9 @@ const Trending_Products = () => {
                 className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[1.5%]  mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%]"
               >
                 {filteredProducts?.map((item: IProduct) => {
-                  return <Products key={item._id} items={item} />;
+                  if (item?.featured_product === true) {
+                    return <Products key={item._id} items={item} />;
+                  }
                 })}
               </div>
               {/* back, next page */}
