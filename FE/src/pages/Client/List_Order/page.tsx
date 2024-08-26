@@ -24,7 +24,7 @@ import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
+// import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
 import queryString from "query-string";
 import instance from "../../../configs/axios";
 import { useMutation } from "@tanstack/react-query";
@@ -32,21 +32,17 @@ type FieldType = {
   contentReview?: string;
 };
 
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+// type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function List_order() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { mutate: cancel, contextHolder } = useOrderMutations("CANCEL_PRODUCT");
-  const { mutate: complete, contextHolder: f } =
-    useOrderMutations("COMPLETED_PRODUCT");
-  const { mutate: confirm, contextHolder: s } =
-    useOrderMutations("REQUEST_CANCEL");
+  const { mutate, contextHolder } = useOrderMutations("REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT");
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const account = user?.user;
   const navi = useNavigate();
   const { mutate: add } = Mutation_Cart("ADD");
-  const { data: orderData, refetch } = List_One_Order_User(userId);
+  // const { data: orderData, refetch } = List_One_Order_User(userId);
   const [paymentPending, setPaymentPending] = useState(false);
   const [openReviewOrderId, setOpenReviewOrderId] = useState<string | null>(
     null
@@ -104,10 +100,6 @@ export default function List_order() {
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Submitting review for productId:", currentProductId);
-    console.log(userId);
-    console.log("Form values:", values);
-
     if (currentProductId) {
       addReview({
         contentReview: values.contentReview || "",
@@ -152,7 +144,7 @@ export default function List_order() {
     id_user: userId,
     page: 1,
     limit: 20,
-    status: +status_order,
+    status: +(status_order || 1),
   };
   const menuItems = [
     "Tất Cả",
@@ -193,29 +185,16 @@ export default function List_order() {
     }
   };
   useEffect(() => {
-    refetch();
-  }, [userId]);
-  const fiterOrrder = (status: string) => {
-    return data?.filter((orders: any) => orders.status === status);
-  };
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setPaymentPending(true);
-        console.log("location.search:");
         const parsed = queryString.parseUrl(location.search);
-        console.log(parsed);
-        console.log(parsed.query.vnp_TransactionStatus);
-
         if (parsed.query.vnp_TransactionStatus === "00") {
           const itemOrder = sessionStorage.getItem("item_order");
           const customerInfo = sessionStorage.getItem("customerInfo");
 
           if (itemOrder && customerInfo) {
             const getItemOrder = JSON.parse(itemOrder);
-            console.log(getItemOrder);
-
             const dataForm = JSON.parse(customerInfo);
             // setActive(true)
             const response = await instance.post("/orderspayment", {
@@ -233,7 +212,7 @@ export default function List_order() {
               message.success("Thanh toán thành công");
               sessionStorage.removeItem("item_order");
               sessionStorage.removeItem("customerInfo");
-              refetch();
+              // refetch();
             }
           } else {
             console.error(
@@ -261,8 +240,6 @@ export default function List_order() {
   return (
     <div>
       {contextHolder}
-      {f}
-      {s}
       <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center *:border-b-2 *:cursor-pointer *:border-white justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs">
         {menuItems.map((menu, i) => (
           <li
@@ -330,7 +307,7 @@ export default function List_order() {
                       <Popconfirm
                         title="Hủy dơn hàng?"
                         description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                        onConfirm={() => cancel(items._id)}
+                        onConfirm={() => mutate({ id_item: items._id, action: 'huy' })}
                         // onCancel={cancel}
                         okText="Có "
                         cancelText="Không"
@@ -352,7 +329,7 @@ export default function List_order() {
                         <Popconfirm
                           title="Yêu cầu hủy dơn hàng?"
                           description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                          onConfirm={() => confirm(items?._id)}
+                          onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy' })}
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -386,16 +363,16 @@ export default function List_order() {
                   ) : items?.status === "3" ? (
                     <Button
                       className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
-                      onClick={() => complete(items?._id)}
+                      onClick={() => mutate({ id_item: items._id })}
                     >
                       Đã Nhận Hàng
                     </Button>
                   ) : items?.status === "4" ? (
                     <div className="flex gap-3 lg:basis-3/12 w-full">
-                      {items?.items?.map((product: any) => (
+                      {items?.items?.map(() => (
                         <Button
                           type="default"
-                          className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded"
+                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
                           onClick={() =>
                             handleOpenReview(
                               items._id,
@@ -468,7 +445,7 @@ export default function List_order() {
                         </div>
                       )}
 
-                      <Button className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
+                      <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none disabled cursor-not-allowed">
                         Đã Nhận Hàng
                       </Button>
                       <Popconfirm
@@ -478,7 +455,7 @@ export default function List_order() {
                         okText="Có"
                         cancelText="Không"
                       >
-                        <Button className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded">
+                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
                           Mua Lại
                         </Button>
                       </Popconfirm>

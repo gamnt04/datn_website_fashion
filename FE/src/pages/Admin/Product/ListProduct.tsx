@@ -16,7 +16,7 @@ import {
   Table
 } from "antd";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { FaDeleteLeft, FaPlus } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
@@ -25,15 +25,17 @@ import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
 import ProductPrice from "./_component/productPrice";
 import { AiOutlinePlus } from "react-icons/ai";
 const ListProduct = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate } = Mutation_items("REMOVE_and_REMOVE_MULTIPLE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
-  const { data, isLoading, isError, error } = Query_Products_Dashboard();
+  const { data, isLoading, isError, error } = Query_Products_Dashboard(
+    +(searchParams?.get("_page") || 1)
+  );
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useQueryProductsSearch(searchName);
-  const dataSource = (searchName ? searchData : data)?.map(
+  const dataSource = (searchName ? searchData : data?.docs)?.map(
     (product: IProduct, index: number) => ({
       key: product._id,
       index: index + 1,
@@ -63,6 +65,12 @@ const ListProduct = () => {
       }
     });
   };
+
+  function handle_page(i: number) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("_page", String(i));
+    setSearchParams(newParams);
+  }
 
   const handleCheckboxChange = (productId: string) => {
     if (selectedProductIds.includes(productId)) {
@@ -212,13 +220,14 @@ const ListProduct = () => {
           </div>
         </div>
 
-        <Table columns={columns} dataSource={dataSource} />
-        <Pagination
-          current={currentPage}
-          pageSize={10}
-          total={totalPages * 10}
-          onChange={goToPage}
-        />
+        <Table columns={columns} dataSource={dataSource} pagination={false} />
+        <div className="my-4 grid place-items-center">
+          <Pagination
+            defaultCurrent={data?.page}
+            total={data?.totalDocs}
+            onChange={(i) => handle_page(i)}
+          />
+        </div>
       </div>
     </>
   );

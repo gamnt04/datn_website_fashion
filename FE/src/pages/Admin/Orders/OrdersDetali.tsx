@@ -9,8 +9,9 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const { data, refetch } = Query_Orders(id);
   const { mutate, contextHolder: h } = useOrderMutations("CONFIRM_CANCEL");
-  const { mutate: cancel, contextHolder: r } =
-    useOrderMutations("CANCEL_PRODUCT");
+  const { mutate: cancel, contextHolder: r } = useOrderMutations(
+    "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
+  );
   const handleStatusUpdate = async () => {
     if (!data) return;
     if (data.status === "5") {

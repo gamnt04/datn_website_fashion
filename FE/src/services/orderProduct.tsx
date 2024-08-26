@@ -141,8 +141,12 @@ export const getTop10ProductSale = async () => {
 export const Cancel_Order = async (id: any) => {
   try {
     const { data } = await instance.post(`/orders/${id}/cancel`);
-    console.log(data);
-    return data;
+    const message = 'yeu_cau_huy';
+    const res = {
+      data,
+      message
+    }
+    return res;
   } catch (error) {
     console.log(error);
   }
@@ -161,7 +165,12 @@ export const confirmCancelOrder = async ({ id, confirm }: any) => {
 export const cancel_product = async (id: any) => {
   try {
     const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
-    return data;
+    const message = 'huy';
+    const res = {
+      data,
+      message
+    }
+    return res;
   } catch (error) {
     console.log(error);
   }

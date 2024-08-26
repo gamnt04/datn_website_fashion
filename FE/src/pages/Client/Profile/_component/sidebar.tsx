@@ -4,6 +4,7 @@ import { Menu, Modal } from "antd";
 import { Box, Heart, LogOut, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
+import { SiAwssecretsmanager } from "react-icons/si";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -17,11 +18,14 @@ function getItem(
     key,
     icon,
     children,
-    label
+    label,
   } as MenuItem;
 }
 
 const Sidebar_Profile: React.FC = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const roleAdmin = user?.user?.role;
+  console.log(roleAdmin);
   const { mutate } = useLogout();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -42,26 +46,35 @@ const Sidebar_Profile: React.FC = () => {
     getItem("Thông tin tài khoản", "1", <User className="h-5" />, [
       getItem(<NavLink to="/profile">Hồ sơ</NavLink>, "1-1"),
       getItem(<NavLink to="/profile/address">Địa chỉ</NavLink>, "1-2"),
-      getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3")
+      getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3"),
     ]),
-    getItem(
-      <NavLink to="/favourite">Yêu thích</NavLink>,
-      "2",
-      <Heart className="h-5" />
-    ),
+    // getItem(
+    //   <NavLink to="/favourite">Yêu thích</NavLink>,
+    //   "2",
+    //   <Heart className="h-5" />
+    // ),
     getItem(
       <NavLink to={`/profile/list_order`}>Đơn hàng của tôi</NavLink>,
       "3",
       <Box className="h-5" />
     ),
+    ...(roleAdmin === "admin"
+      ? [
+          getItem(
+            <NavLink to={`/admin`}>Chế độ quản lý</NavLink>,
+            "4",
+            <SiAwssecretsmanager className="h-10 w-5 bold-icon" />
+          ),
+        ]
+      : []),
     {
-      type: "divider"
+      type: "divider",
     },
     getItem(
       <p onClick={showModal}>Đăng xuất</p>,
-      "4",
+      "5",
       <LogOut className="h-5 " />
-    )
+    ),
   ];
 
   const onClick: MenuProps["onClick"] = (e) => {
