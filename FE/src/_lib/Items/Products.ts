@@ -32,7 +32,7 @@ export async function get_items_dashboard(page?: number) {
       console.warn("Kiem tra lai server hoac internet !");
     }
     const { data } = await res.json();
-    return data.docs;
+    return data;
   } catch (error) {
     console.log(error || "Loi server!");
   }
