@@ -1,12 +1,13 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { X } from "lucide-react";
 import UpdateComponent from "./Update";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { FaEdit } from "react-icons/fa";
+import { Button } from "antd";
 interface CategoryUpdateProps {
   id?: string;
   data: ICategory[];
@@ -25,11 +26,8 @@ export default function CategoryCreate({ id, data }: CategoryUpdateProps) {
 
   return (
     <div>
-      <Button
-        sx={{ color: "inherit", padding: 0, minWidth: "auto" }}
-        onClick={handleClickOpen}
-      >
-        Sửa
+      <Button onClick={handleClickOpen} type="primary">
+        <FaEdit />
       </Button>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>

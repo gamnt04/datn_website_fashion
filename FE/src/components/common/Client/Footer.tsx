@@ -1,19 +1,17 @@
 import { Link } from "react-router-dom";
-
+import logo from "../../../assets/Images/Logo/logo black.png";
 const Footer = () => {
   return (
     <div className="xl:w-full xl:flex xl:justify-center border-t">
       <div className="xl:w-[1440px] mb:w-full xl:px-0 mb:px-6 grid grid-cols-1 py-10 gap-4 sm:grid-cols-2 md:grid-cols-4 ">
         <div>
           <Link to="/" className="*:h-14 mr-2 *:w-18">
-            <img
-              src="../../src/assets/Images/Logo/logo.png"
-              alt="Logo"
-            />
+            <img src={logo} alt="Logo" />
           </Link>
 
           <p className="text-[#999999] mt-[30px] mb-[15px] w-60">
-            Address: Stark Funiture Store 4956 Polk Street, Arizona, United States
+            Address: Stark Funiture Store 4956 Polk Street, Arizona, United
+            States
           </p>
 
           <ul>

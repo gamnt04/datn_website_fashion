@@ -6,7 +6,9 @@ import {
   Table,
   Pagination,
   Switch,
-  Input
+  Input,
+  Space,
+  Checkbox
 } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +23,8 @@ import {
   useCategoryQuery,
   useSearchCategoryByName
 } from "../../../common/hooks/Category/useCategoryQuery";
+import { DeleteOutlined } from "@ant-design/icons";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
@@ -110,25 +114,13 @@ const List_Category: React.FC = () => {
 
   const columns: ColumnsType<ICategory> = [
     {
-      key: "name_category",
-      title: "Tên Danh mục",
-      dataIndex: "name_category",
-      filterSearch: true,
-      filters: data ? createFilters(data) : [],
-      onFilter: (value: string | any, record: ICategory) => {
-        const filterValue = value as string;
-        return record.name_category.includes(filterValue);
-      },
-      sorter: (a: ICategory, b: ICategory) =>
-        a.name_category.localeCompare(b.name_category),
-      sortDirections: ["ascend", "descend"],
-      render: (text: string, record: ICategory) => (
-        <a onClick={() => handleViewProducts(record)}>{text}</a>
-      )
+      key: "checkbox",
+      title: <Checkbox />,
+      render: (_: any, cate: ICategory) => <Checkbox />
     },
     {
       key: "image_category",
-      title: "Ảnh Danh mục",
+      title: "Ảnh Danh Mục",
       render: (_: any, record: ICategory) => (
         <img
           src={
@@ -142,16 +134,28 @@ const List_Category: React.FC = () => {
       )
     },
     {
-      key: "published",
-      title: "Hiển thị",
-      dataIndex: "published",
-      render: (published: boolean, record: ICategory) => (
-        <Switch
-          checked={published}
-          onChange={() => handleTogglePublished(record)}
-        />
+      key: "name_category",
+      title: "Tên Danh Mục",
+      dataIndex: "name_category",
+      filterSearch: true,
+      filters: data ? createFilters(data) : [],
+      onFilter: (value: string | any, record: ICategory) => {
+        const filterValue = value as string;
+        return record.name_category.includes(filterValue);
+      },
+      sorter: (a: ICategory, b: ICategory) =>
+        a.name_category.localeCompare(b.name_category),
+      sortDirections: ["ascend", "descend"],
+      render: (text: string, record: ICategory) => (
+        <a
+          onClick={() => handleViewProducts(record)}
+          style={{ fontSize: "16px", fontWeight: "inherit" }}
+        >
+          {text}
+        </a>
       )
     },
+
     {
       key: "createdAt",
       title: "Ngày Tạo",
@@ -163,10 +167,22 @@ const List_Category: React.FC = () => {
       dataIndex: "updatedAt"
     },
     {
+      key: "published",
+      title: "Hiển Thị",
+      dataIndex: "published",
+      render: (published: boolean, record: ICategory) => (
+        <Switch
+          checked={published}
+          onChange={() => handleTogglePublished(record)}
+        />
+      )
+    },
+    {
       key: "action",
+      title: "Thao Tác",
       render: (_: any, category: ICategory) => {
         return (
-          <div className="flex space-x-3">
+          <div className="flex space-x-5">
             {contextHolder}
             <Popconfirm
               title="Xóa danh mục"
@@ -175,11 +191,12 @@ const List_Category: React.FC = () => {
               okText="Đồng ý"
               cancelText="Hủy bỏ"
             >
-              <Button danger>Xóa</Button>
+              <Button danger>
+                <FaDeleteLeft />
+              </Button>
             </Popconfirm>
-            <Button>
-              <CategoryUpdate data={data} id={category._id} />
-            </Button>
+
+            <CategoryUpdate data={data} id={category._id} />
           </div>
         );
       }
@@ -222,18 +239,41 @@ const List_Category: React.FC = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <>
-          <div className="flex items-center justify-between mb-10 mt-10">
-            <h1 className="text-2xl font-semibold">Quản lý danh mục</h1>
+        <div className="m-6">
+          <div className="flex items-center justify-between mb-5 mt-20">
+            <h1 className="text-2xl font-semibold">Quản Lý Danh Mục</h1>
             <UpdateComponent />
           </div>
-          <div className="">
-            <Input
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-            />
-            <Button onSubmit={() => onHandleSearch}>Tìm Kiếm</Button>
+          <div className="mb-2 flex justify-between">
+            <div className="space-x-5">
+              <Checkbox className="ml-4" />
+              <Button>Chọn tất cả (7)</Button>
+              <Popconfirm
+                title="Xóa sản phẩm khỏi giỏ hàng?"
+                description="Bạn có chắc chắn muốn xóa không?"
+                // onConfirm={handleRemoveMultiple}
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button danger>
+                  <DeleteOutlined style={{ fontSize: "24px" }} />
+                  Xóa sản phẩm đã chọn
+                </Button>
+              </Popconfirm>
+            </div>
+            <div className="flex space-x-5">
+              <Input
+                className="w-[500px]"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                placeholder="nhâp tên danh mục để tìm kiếm..."
+              />
+              <Button onSubmit={() => onHandleSearch} type="primary">
+                Tìm kiếm
+              </Button>
+            </div>
           </div>
+
           <Table
             dataSource={dataSource.slice(
               (currentPage - 1) * pageSize,
@@ -246,7 +286,7 @@ const List_Category: React.FC = () => {
             <div className="max-w-full overflow-hidden"></div>
             <Pagination {...paginationProps} />
           </div>
-        </>
+        </div>
       )}
     </>
   );
