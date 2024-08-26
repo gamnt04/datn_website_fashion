@@ -40,6 +40,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       sorter: (a: IOrder, b: IOrder) =>
         a.orderNumber.localeCompare(b.orderNumber),
       sortDirections: ["ascend", "descend"] as SortOrder[],
+      render: (_: any, order: any) => <p className="font-bold">{order?.orderNumber}</p>,
     },
     {
       title: "Người mua",
