@@ -20,9 +20,9 @@ export const Query_Products = (id?: string | number, page?: number) => {
   return { data, ...rest };
 };
 
-export function Query_Products_Dashboard(page?: number) {
+export function Query_Products_Dashboard(page: number) {
   const { data, ...rest } = useQuery({
-    queryKey: ["Product_Key"],
+    queryKey: ["Product_Key", page],
     queryFn: () => get_items_dashboard(page)
   });
   return { data, ...rest };

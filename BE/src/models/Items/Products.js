@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema(
     },
     stock_product: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     stock: Number,
     attributes: {
