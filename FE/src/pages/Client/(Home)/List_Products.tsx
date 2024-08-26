@@ -7,6 +7,7 @@ import { Query_Limit_Items } from "../../../common/hooks/Products/Products";
 import { useState } from "react";
 import { ICategory } from "../../../common/interfaces/Category";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 
 const List_Products = () => {
   const { data, isLoading } = Query_Limit_Items(12);
@@ -35,7 +36,7 @@ const List_Products = () => {
 
   const propsData = {
     data: filteredProducts,
-    style: "lg:grid-cols-4 md:grid-cols-3"
+    style: "lg:grid-cols-4 md:grid-cols-3",
   };
 
   const handleViewAll = () => {
@@ -55,13 +56,9 @@ const List_Products = () => {
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
       <div className="flex flex-col items-center text-center">
-        <span className="text-2xl font-semibold tracking-wide">
+        <span className="mb-4 text-[42px] font-medium tracking-wide">
           Danh sách sản phẩm
         </span>
-        <p className="my-4 text-sm opacity-80">
-          Tìm một sản phẩm lý tưởng phù hợp với sở thích của bạn trong danh mục
-          lựa chọn hệ thống treo tuyệt vời của chúng tôi.
-        </p>
         <nav className="flex flex-wrap justify-center gap-4 mb-8">
           <button
             className={`relative mx-2 ${
@@ -107,7 +104,10 @@ const List_Products = () => {
               <List_item dataProps={propsData} />
               <div
                 className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
-                onClick={handleViewAll}
+                onClick={() => {
+                  handleViewAll();
+                  ScrollTop();
+                }}
               >
                 <span className="text-[15px]">Xem tất cả</span>
               </div>

@@ -53,14 +53,10 @@ const Trending_Products = () => {
   return (
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
-      <div className="text-center flex flex-col items-center mb-[50px]">
-        <span className="text-2xl font-medium tracking-wide mb-[20px]">
+      <div className="text-center flex flex-col items-center mb-[30px]">
+        <span className="text-[42px] font-medium tracking-wide ">
           Sản phẩm nổi bật
         </span>
-        <p className="opacity-80 text-[16px]my-4">
-          Find a bright ideal to suit your taste width our great selection of
-          suspension.
-        </p>
       </div>
 
       {isLoading ? (

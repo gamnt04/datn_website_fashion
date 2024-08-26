@@ -6,7 +6,7 @@ import {
   Palette,
   Shirt,
   Trash2,
-  User2
+  User2,
 } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
@@ -21,11 +21,13 @@ export default function Sidebar_Dashboard() {
   return (
     <aside className="h-screen w-[290px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3 px-6">
       <div className="items-center py-3">
-        <img
-          src="https://picsum.photos/300/300"
-          alt=""
-          className="w-[242px] h-[30px]"
-        />
+        <Link to={`/`}>
+          <img
+            src="https://picsum.photos/300/300"
+            alt=""
+            className="w-[242px] h-[30px]"
+          />
+        </Link>
       </div>
 
       <div>
@@ -37,8 +39,9 @@ export default function Sidebar_Dashboard() {
             <LayoutDashboard />
             <span className="text-[16px] text-[#c4cee3]">Bảng điều khiển</span>
             <ChevronDown
-              className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
-                }`}
+              className={`ml-auto transform ${
+                expandedSection === "dashboard" ? "rotate-180" : ""
+              }`}
             />
           </button>
 
@@ -64,8 +67,9 @@ export default function Sidebar_Dashboard() {
             <Shirt />
             <span className="text-[16px] text-[#c4cee3]">Sản phẩm</span>
             <ChevronDown
-              className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
-                }`}
+              className={`ml-auto transform ${
+                expandedSection === "products" ? "rotate-180" : ""
+              }`}
             />
           </button>
 
@@ -102,8 +106,9 @@ export default function Sidebar_Dashboard() {
             <Palette />
             <span className="text-[16px] text-[#c4cee3]">Thuộc Tính</span>
             <ChevronDown
-              className={`ml-auto transform ${expandedSection === "attribute" ? "rotate-180" : ""
-                }`}
+              className={`ml-auto transform ${
+                expandedSection === "attribute" ? "rotate-180" : ""
+              }`}
             />
           </button>
 
