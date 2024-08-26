@@ -21,7 +21,7 @@ const ContactForm: React.FC = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined
+          progress: undefined,
         });
         return;
       }
@@ -29,16 +29,16 @@ const ContactForm: React.FC = () => {
       const data = {
         name: formData.get("to_name"),
         email: formData.get("from_name"),
-        message: formData.get("message")
+        content: formData.get("content"),
       };
 
       try {
         const response = await fetch("http://localhost:2004/api/v1/contact", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
 
         if (response.ok) {
@@ -58,7 +58,7 @@ const ContactForm: React.FC = () => {
                   closeOnClick: true,
                   pauseOnHover: true,
                   draggable: true,
-                  progress: undefined
+                  progress: undefined,
                 });
               },
               (error) => {
@@ -69,7 +69,7 @@ const ContactForm: React.FC = () => {
                   closeOnClick: true,
                   pauseOnHover: true,
                   draggable: true,
-                  progress: undefined
+                  progress: undefined,
                 });
               }
             );
@@ -81,7 +81,7 @@ const ContactForm: React.FC = () => {
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
-            progress: undefined
+            progress: undefined,
           });
         }
       } catch (error) {
@@ -92,7 +92,7 @@ const ContactForm: React.FC = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined
+          progress: undefined,
         });
       }
     }
@@ -112,7 +112,8 @@ const ContactForm: React.FC = () => {
             <p className="text-[16px] text-[#999999] mt-5 max-w-[683px]">
               Minimalist styling is not about creating a cold, hard, empty white
               box of a home. It is about using simple and natural forms, and
-              taking away layers without losing the aesthetic appeal of the space.
+              taking away layers without losing the aesthetic appeal of the
+              space.
             </p>
             <form ref={form} onSubmit={sendEmail}>
               <label className="block mt-4">Name</label>
@@ -131,10 +132,10 @@ const ContactForm: React.FC = () => {
                 placeholder="Email"
                 required
               />
-              <label className="block mt-4">Message</label>
+              <label className="block mt-4">Content</label>
               <textarea
                 className="lg:w-[683px] md:w-[90%] w-full h-[45px] border border-[#999999] rounded-md pl-4 pb-24 pt-7"
-                name="message"
+                name="content"
                 placeholder="Comment"
                 required
               />
@@ -158,7 +159,6 @@ const ContactForm: React.FC = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

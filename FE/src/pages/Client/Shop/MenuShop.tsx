@@ -3,9 +3,9 @@ import CategoryFilter from "./Filter/CategoryFilter";
 import PriceFilter from "./Filter/PriceFilter";
 import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
-import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
 import TimeFilter from "./Filter/TimeFilter";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 
 interface MenuShopProps {
   onCategorySelect: (ids: string[]) => void; // Cập nhật kiểu ở đây
@@ -36,14 +36,14 @@ const MenuShop: React.FC<MenuShopProps> = ({
   toggleSize,
   resetSizeFilter,
   onSizeChange,
-  sortOption,
+  sortOption
 }) => {
   const { data: categoryData } = useCategoryQuery();
   const {
     colors: colorOptions,
     sizes: sizeOptions,
     loading,
-    error,
+    error
   } = useAttributes();
 
   if (loading) return <p>Loading...</p>;

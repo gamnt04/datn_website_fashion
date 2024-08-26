@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { Button, message, Popconfirm, Table, Pagination, Switch } from "antd";
+import {
+  Button,
+  message,
+  Popconfirm,
+  Table,
+  Pagination,
+  Switch,
+  Input
+} from "antd";
 import { useNavigate } from "react-router-dom";
-import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
+
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
 import CategoryUpdate from "./update";
@@ -9,6 +17,10 @@ import { ColumnsType } from "antd/es/table";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UpdateComponent from "./Create";
 import instance from "../../../configs/axios";
+import {
+  useCategoryQuery,
+  useSearchCategoryByName
+} from "../../../common/hooks/Category/useCategoryQuery";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
@@ -16,16 +28,22 @@ const List_Category: React.FC = () => {
   const { data, isLoading } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchName, setSearchName] = useState("");
+  const { data: searchData } = useSearchCategoryByName(searchName);
 
   const pageSize = 4;
 
-  const dataSource = Array.isArray(data)
-    ? data.map((category: ICategory) => ({
-        key: category._id,
-        ...category,
-      }))
+  const dataSource = Array.isArray(searchName && searchData ? searchData : data)
+    ? (searchName && searchData ? searchData : data).map(
+        (category: ICategory) => ({
+          key: category._id,
+          ...category
+        })
+      )
     : [];
-
+  const onHandleSearch = () => {
+    setSearchName(searchName);
+  };
   const { mutate: deleteCategory } = useMutation({
     mutationFn: async (id: ICategory) => {
       try {
@@ -37,17 +55,17 @@ const List_Category: React.FC = () => {
     onSuccess: () => {
       messageApi.open({
         type: "success",
-        content: "Xóa Danh mục thành công",
+        content: "Xóa Danh mục thành công"
       });
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error) => {
       messageApi.open({
         type: "error",
-        content: error.message,
+        content: error.message
       });
       throw error;
-    },
+    }
   });
 
   const mutation = useMutation({
@@ -69,7 +87,7 @@ const List_Category: React.FC = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    },
+    }
   });
 
   const handleTogglePublished = (category: ICategory) => {
@@ -106,7 +124,7 @@ const List_Category: React.FC = () => {
       sortDirections: ["ascend", "descend"],
       render: (text: string, record: ICategory) => (
         <a onClick={() => handleViewProducts(record)}>{text}</a>
-      ),
+      )
     },
     {
       key: "image_category",
@@ -121,7 +139,7 @@ const List_Category: React.FC = () => {
           alt={record.name_category}
           style={{ width: 100, height: 100, objectFit: "cover" }}
         />
-      ),
+      )
     },
     {
       key: "published",
@@ -132,17 +150,17 @@ const List_Category: React.FC = () => {
           checked={published}
           onChange={() => handleTogglePublished(record)}
         />
-      ),
+      )
     },
     {
       key: "createdAt",
       title: "Ngày Tạo",
-      dataIndex: "createdAt",
+      dataIndex: "createdAt"
     },
     {
       key: "updatedAt",
       title: "Ngày Sửa",
-      dataIndex: "updatedAt",
+      dataIndex: "updatedAt"
     },
     {
       key: "action",
@@ -164,8 +182,8 @@ const List_Category: React.FC = () => {
             </Button>
           </div>
         );
-      },
-    },
+      }
+    }
   ];
 
   const onChangePage = (page: number) => {
@@ -196,7 +214,7 @@ const List_Category: React.FC = () => {
       return originalElement;
     },
     onChange: onChangePage,
-    showTotal: (total: number) => `Tổng ${total} mục`,
+    showTotal: (total: number) => `Tổng ${total} mục`
   };
 
   return (
@@ -208,6 +226,13 @@ const List_Category: React.FC = () => {
           <div className="flex items-center justify-between mb-10 mt-10">
             <h1 className="text-2xl font-semibold">Quản lý danh mục</h1>
             <UpdateComponent />
+          </div>
+          <div className="">
+            <Input
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+            />
+            <Button onSubmit={() => onHandleSearch}>Tìm Kiếm</Button>
           </div>
           <Table
             dataSource={dataSource.slice(

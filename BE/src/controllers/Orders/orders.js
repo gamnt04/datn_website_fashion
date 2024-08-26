@@ -26,10 +26,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""}`,
       },
-      totalPrice,
+      totalPrice
     });
     await order.save();
     const dataCart = await Cart.findOne({ userId }).populate("products");
@@ -102,7 +101,12 @@ export const createOrderPayment = async (req, res) => {
 
     // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
     dataCart.products = dataCart.products.filter((i) => {
-      const foundItem = items.some((j) => i.productId._id.toString() === j.productId._id.toString() && i.color_item === j.color_item && i.name_size === j.name_size);
+      const foundItem = items.some(
+        (j) =>
+          i.productId._id.toString() === j.productId._id.toString() &&
+          i.color_item === j.color_item &&
+          i.name_size === j.name_size
+      );
       if (foundItem) {
         console.log(`Removing product from cart: ${i.productId._id}`);
       }
@@ -123,9 +127,9 @@ export const createOrderPayment = async (req, res) => {
           payment: customerInfo.payment,
           userName: customerInfo.userName,
           address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`,
+            }`
         },
-        totalPrice,
+        totalPrice
       });
       await SendMail(customerInfo.email, order);
       await Cart.findOneAndDelete({ userId: userId });
@@ -154,8 +158,8 @@ export const getAllOrderToday = async (req, res) => {
     const orderToDay = await Order.find({
       datetime: {
         $gte: startOfday,
-        $lte: endOfday,
-      },
+        $lte: endOfday
+      }
     }).exec();
     return res.status(StatusCodes.OK).json(orderToDay);
   } catch (error) {
@@ -177,8 +181,8 @@ export const getAllOrderWeek = async (req, res) => {
     const orderOfWeek = await Order.find({
       datetime: {
         $gte: startWeek,
-        $lte: endWeek,
-      },
+        $lte: endWeek
+      }
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfWeek);
   } catch (error) {
@@ -187,12 +191,17 @@ export const getAllOrderWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
+const timeZone = "Asia/Ho_Chi_Minh";
+
 export const getOrderByDayOfWeek = async (req, res) => {
   try {
     const now = new Date();
     const dayOfWeek = now.getDay();
-    const startWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
-    startWeek.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+
+    const adjustedDayOfWeek = (dayOfWeek + 6) % 7;
+
+    const startWeek = new Date(now);
+    startWeek.setDate(now.getDate() - adjustedDayOfWeek);
     startWeek.setHours(0, 0, 0, 0);
 
     const orderByDay = [];
@@ -200,38 +209,44 @@ export const getOrderByDayOfWeek = async (req, res) => {
     for (let i = 0; i < 7; i++) {
       let currentDay = new Date(startWeek);
       currentDay.setDate(currentDay.getDate() + i);
-      let nextDay = new Date(currentDay);
-      nextDay.setDate(nextDay.getDate() + 1);
+      currentDay.setHours(0, 0, 0, 0);
+      let startOfDay = new Date(
+        currentDay.toLocaleString("en-US", { timeZone })
+      );
+      startOfDay.setHours(0, 0, 0, 0);
+      let endOfDay = new Date(startOfDay);
+      endOfDay.setDate(startOfDay.getDate() + 1);
+      endOfDay.setHours(0, 0, 0, 0);
 
       const orderDay = await Order.aggregate([
         {
           $match: {
             datetime: {
-              $gte: currentDay,
-              $lt: nextDay,
-            },
-          },
+              $gte: startOfDay,
+              $lt: endOfDay
+            }
+          }
         },
         {
           $group: {
             _id: null,
             totalOrders: { $sum: 1 },
-            totalRevenue: { $sum: "$totalPrice" },
-          },
-        },
+            totalRevenue: { $sum: "$totalPrice" }
+          }
+        }
       ]);
 
       if (orderDay.length > 0) {
         orderByDay.push({
-          day: currentDay.toISOString().slice(0, 10), // Ngày theo định dạng YYYY-MM-DD
+          day: startOfDay.toISOString().slice(0, 10), // Ngày theo định dạng YYYY-MM-DD
           totalOrders: orderDay[0].totalOrders,
-          totalRevenue: orderDay[0].totalRevenue,
+          totalRevenue: orderDay[0].totalRevenue
         });
       } else {
         orderByDay.push({
-          day: currentDay.toISOString().slice(0, 10),
+          day: startOfDay.toISOString().slice(0, 10),
           totalOrders: 0,
-          totalRevenue: 0,
+          totalRevenue: 0
         });
       }
     }
@@ -253,8 +268,8 @@ export const getAllOrderMonth = async (req, res) => {
     const orderOfMonth = await Order.find({
       datetime: {
         $gte: startMonth,
-        $lte: endMonth,
-      },
+        $lte: endMonth
+      }
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfMonth);
   } catch (error) {
@@ -273,28 +288,28 @@ export const getAllOrderByMonthOfYear = async (req, res) => {
         $match: {
           datetime: {
             $gte: new Date(`${currentYear}-01-01T00:00:00.000Z`),
-            $lte: new Date(`${currentYear}-12-31T23:59:59.999Z`),
-          },
-        },
+            $lte: new Date(`${currentYear}-12-31T23:59:59.999Z`)
+          }
+        }
       },
       {
         $group: {
           _id: { $month: "$datetime" },
           totalOrders: { $sum: 1 },
-          totalRevenue: { $sum: "$totalPrice" },
-        },
+          totalRevenue: { $sum: "$totalPrice" }
+        }
       },
       {
-        $sort: { _id: 1 },
+        $sort: { _id: 1 }
       },
       {
         $project: {
           month: "$_id",
           totalOrders: 1,
           totalRevenue: 1,
-          _id: 0,
-        },
-      },
+          _id: 0
+        }
+      }
     ]);
 
     return res.status(StatusCodes.OK).json({ data: ordersByMonth });
@@ -304,7 +319,6 @@ export const getAllOrderByMonthOfYear = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const getTop10ProductBestSale = async (req, res) => {
   try {
     const orders = await Order.find({});
@@ -336,7 +350,6 @@ export const getTop10ProductBestSale = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
-
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -358,11 +371,11 @@ export const getOneOrderUser = async (req, res) => {
     _limit = 20,
     _sort = "",
     _search = "",
-    _status = "",
+    _status = ""
   } = req.query;
   const options = {
     page: _page,
-    limit: _limit,
+    limit: _limit
   };
   const query = { userId: req.params.userId };
   // if (_search) {
@@ -390,7 +403,7 @@ export const updateOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const order = await Order.findOneAndUpdate({ _id: orderId }, req.body, {
-      new: true,
+      new: true
     });
     if (!order) {
       return res
@@ -481,7 +494,7 @@ export async function get_orders_client(req, res) {
     _limit = 7,
     _sort = "",
     _search = "",
-    _status = "",
+    _status = ""
   } = req.query;
 
   const options = {
@@ -505,7 +518,7 @@ export async function get_orders_client(req, res) {
 
     if (!data || data.docs.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có dữ liệu!",
+        message: "Không có dữ liệu!"
       });
     }
 
@@ -513,11 +526,11 @@ export async function get_orders_client(req, res) {
       message: "Hoàn thành!",
       data,
       totalDocs: data.totalDocs, // Tổng số đơn hàng
-      totalPages: data.totalPages, // Tổng số trang
+      totalPages: data.totalPages // Tổng số trang
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server!",
+      message: error.message || "Lỗi server!"
     });
   }
 }
@@ -538,12 +551,10 @@ export const userCancelOrder = async (req, res) => {
     }
     order.cancellationRequested = true;
     await order.save();
-    res
-      .status(StatusCodes.OK)
-      .json({
-        message: "Yêu cầu hủy đơn hàng thành công",
-        data_status_order: order.cancellationRequested,
-      });
+    res.status(StatusCodes.OK).json({
+      message: "Yêu cầu hủy đơn hàng thành công",
+      data_status_order: order.cancellationRequested
+    });
   } catch (error) {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
@@ -599,7 +610,7 @@ export const adminCancelOrder = async (req, res) => {
     await order.save();
     res.status(200).json({
       message: "Yêu cầu hủy đơn hàng đã được xác nhận",
-      data_status_order: order.cancellationRequested,
+      data_status_order: order.cancellationRequested
     });
   } catch (error) {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
