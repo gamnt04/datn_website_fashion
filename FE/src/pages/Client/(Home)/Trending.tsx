@@ -6,8 +6,8 @@ import { Query_Products } from "../../../common/hooks/Products/Products";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { IProduct } from "../../../common/interfaces/Product";
-import useCategoryQuery from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 
 const Trending_Products = () => {
   const { data, isLoading } = Query_Products();

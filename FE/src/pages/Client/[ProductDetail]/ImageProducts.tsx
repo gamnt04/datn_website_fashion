@@ -7,10 +7,15 @@ interface ImageProductProp {
 }
 
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
-  const { image_product, gallery_product } = product;
+  const { image_product } = product;
+  let { gallery_product } = product;
   const [currentImage, setCurrentImage] = useState(image_product);
+  gallery_product = [
+    ...gallery_product,
+    image_product
+  ]
   const chunkArray = (array: any, size: any) => {
-    const result = [];
+    let result = [];
     for (let i = 0; i < array.length; i += size) {
       result.push(array.slice(i, i + size));
     }
@@ -27,7 +32,6 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
             alt="Product"
             className="w-full h-full rounded"
           />
-
         </div>
         <div className=" lg:w-[45%]">
           {gallery_product && gallery_product.length > 0 ? (

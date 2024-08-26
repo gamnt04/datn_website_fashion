@@ -4,7 +4,8 @@ import {
   get_items_client,
   get_items_dashboard,
   get_limit_items,
-  getDeletedProducts
+  getDeletedProducts,
+  getProductsByName
 } from "../../../_lib/Items/Products";
 // import { reduce } from "lodash";
 
@@ -19,16 +20,15 @@ export const Query_Products = (id?: string | number, page?: number) => {
   return { data, ...rest };
 };
 
-
-export function Query_Products_Dashboard (page?: number)  {
-  const {data, ...rest} = useQuery({
-    queryKey : ["Product_Key"],
-    queryFn : () => get_items_dashboard(page)
+export function Query_Products_Dashboard(page?: number) {
+  const { data, ...rest } = useQuery({
+    queryKey: ["Product_Key"],
+    queryFn: () => get_items_dashboard(page)
   });
-  return {data, ...rest}
+  return { data, ...rest };
 }
 
-export const Query_Limit_Items = ( limit: number) => {
+export const Query_Limit_Items = (limit: number) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Product_Key", limit],
     queryFn: async () => await get_limit_items(limit)
@@ -36,10 +36,18 @@ export const Query_Limit_Items = ( limit: number) => {
   return { data, ...rest };
 };
 
-export function Query_Trash_Item () {
-  const {data, ...rest} = useQuery({
-    queryKey : ['Product_Key'],
-    queryFn : () => getDeletedProducts()
-  })
-  return {data, ...rest}
+export function Query_Trash_Item() {
+  const { data, ...rest } = useQuery({
+    queryKey: ["Product_Key"],
+    queryFn: () => getDeletedProducts()
+  });
+  return { data, ...rest };
 }
+export const useQueryProductsSearch = (searchName) => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["Search_Products", searchName],
+    queryFn: () => getProductsByName(searchName),
+    enabled: !!searchName
+  });
+  return { data, ...rest };
+};
