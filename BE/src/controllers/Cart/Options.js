@@ -38,9 +38,7 @@ export const addItemToCart = async (req, res) => {
           }
         }
       }
-    } else {
-      quantity_attr = quantity;
-    }
+    } else { quantity_attr = quantity; }
 
     let cart = await Cart.findOne({ userId });
     if (!cart) {

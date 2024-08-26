@@ -218,27 +218,31 @@ const Pay = () => {
               </div>
               <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
                 <div className="flex items-center gap-4">
-                  {selectedAddress ? (
-                    <div className="flex items-center gap-4">
-                      <h1 className="font-bold">{selectedAddress?.fullName}</h1>
-                      <p className="font-bold">{selectedAddress?.phoneNumber}</p>
-                      <p>
-                        {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
-                      </p>
-                    </div>
-                  ) : (
-                    auth?.address?.map(
-                      (item: any, index: any) =>
-                        item.checked === true && (
-                          <div key={index} className="flex items-center gap-4">
-                            <h1 className="font-bold">{item?.fullName}</h1>
-                            <p className="font-bold">{item?.phoneNumber}</p>
-                            <p>
-                              {item?.addressDetails + " - " + item?.address}
-                            </p>
-                          </div>
-                        )
-                    ))}
+                  {auth?.address.length === 0 ? ('Bạn hay thêm địa chỉ trước khi thanh toán') : (
+                    <>
+                      {selectedAddress ? (
+                        <div className="flex items-center gap-4">
+                          <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                          <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                          <p>
+                            {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
+                          </p>
+                        </div>
+                      ) : (
+                        auth?.address?.map(
+                          (item: any, index: any) =>
+                            item.checked === true && (
+                              <div key={index} className="flex items-center gap-4">
+                                <h1 className="font-bold">{item?.fullName}</h1>
+                                <p className="font-bold">{item?.phoneNumber}</p>
+                                <p>
+                                  {item?.addressDetails + " - " + item?.address}
+                                </p>
+                              </div>
+                            )
+                        ))}
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center gap-8">
                   {/* {!selectedAddress?.checked === true ? ('') : (
@@ -282,7 +286,7 @@ const Pay = () => {
                       Thanh toán khi nhận hàng
                     </option>
                     <option value="VNPAY">Thanh toán qua VNPAY</option>
-                    <option value="MoMo">Thanh toán bằng MoMo</option>
+                    {/* <option value="MoMo">Thanh toán bằng MoMo</option> */}
                   </select>
                 </div>
               </div>
