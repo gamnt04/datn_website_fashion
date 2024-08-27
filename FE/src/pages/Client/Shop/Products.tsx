@@ -7,6 +7,7 @@ import Products from "../../../components/common/Items/Products";
 import { useLocation } from "react-router-dom";
 
 interface Products_ShopProps {
+  query: string;
   cate_id: string[];
   priceRanges: { min: number; max: number }[];
   selectedColors: string[];
@@ -15,6 +16,7 @@ interface Products_ShopProps {
 }
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
+  query,
   priceRanges,
   selectedColors,
   selectedSizes,
@@ -34,13 +36,14 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
       setCategoryId([]);
     }
   }, [search]);
+  //const [query] = useState();
   const {
     data: products,
     isLoading,
     isError,
     error,
   } = useFilteredProducts(
-    search,
+    query,
     cate_id,
     priceRanges,
     selectedColors,

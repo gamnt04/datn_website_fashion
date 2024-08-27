@@ -165,6 +165,7 @@ const Header = () => {
                 />
                 <button
                   type="submit"
+                  onClick={ScrollTop}
                   className="absolute grid place-items-center text-black top-0 right-0 rounded-[50%] w-[36px] h-[36px] duration-300 cursor-pointer"
                 >
                   <Search size={20} />
