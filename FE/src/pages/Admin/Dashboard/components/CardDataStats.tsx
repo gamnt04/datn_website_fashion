@@ -39,7 +39,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
               levelUp && "text-meta-3"
             } ${levelDown && "text-meta-5"} `}
           >
-            {rate}
+            {/* {rate}
 
             {levelUp && (
               <svg
@@ -70,7 +70,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
                   fill=""
                 />
               </svg>
-            )}
+            )} */}
           </span>
         </div>
       </div>
