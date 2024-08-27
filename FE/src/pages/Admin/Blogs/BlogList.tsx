@@ -8,7 +8,9 @@ import {
   message,
   Switch,
   Input,
-  Checkbox
+  Checkbox,
+  Space,
+  Pagination
 } from "antd";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -16,6 +18,8 @@ import { DeleteOutlined, PlusCircleFilled } from "@ant-design/icons";
 import parse from "html-react-parser";
 import { useSearchBlogByName } from "../../../common/hooks/Blog/querry_blog";
 import { AiOutlinePlus } from "react-icons/ai";
+import { FaEdit } from "react-icons/fa";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -167,7 +171,7 @@ const BlogList: React.FC = () => {
       title: "Thao Tác",
       render: (_: any, blogs: Blog) => (
         <>
-          <Popconfirm
+          {/* <Popconfirm
             title="Xóa Blog"
             description="Bạn có chắc chắn muốn xóa blog này không?"
             onConfirm={() => handleDelete(blogs._id!)}
@@ -180,11 +184,31 @@ const BlogList: React.FC = () => {
           </Popconfirm>
           <Link to={`${blogs._id}`}>
             <Button type="primary">Chỉnh sửa</Button>
-          </Link>
+          </Link> */}
+          <Space>
+            <Button type="primary">
+              <Link to={`${blogs._id}`}>
+                <FaEdit />
+              </Link>
+            </Button>
+            <Popconfirm
+              title="Xóa bài viết"
+              description="Bạn có muốn xóa bài viết này không ?"
+              onConfirm={() => handleDelete(blogs._id!)}
+              // onCancel={cancel}
+              okText="Có"
+              cancelText="Không"
+            >
+              <Button danger>
+                <FaDeleteLeft />
+              </Button>
+            </Popconfirm>
+          </Space>
         </>
       )
     }
   ];
+
   if (isLoading) return <div className="">loading...</div>;
   if (isError) return <div className="">{error.message}</div>;
 
