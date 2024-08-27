@@ -30,7 +30,7 @@ const fetchFilteredProducts = async (
   limit: number = 20,
   sortOption: string = ""
 ) => {
-  const endpoint = "/products/filter/product"; // Điều chỉnh endpoint nếu cần thiết
+  const endpoint = "/products/filter/product";
 
   const params: { [key: string]: any } = {
     _search: query,
@@ -50,7 +50,7 @@ const fetchFilteredProducts = async (
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const message = error.response?.data.message || "An error occurred";
-      throw new AxiosError(message, error.code, error.request, error.response);
+      throw new Error(message);
     } else {
       throw new Error("An unknown error occurred");
     }
