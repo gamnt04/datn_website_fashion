@@ -6,9 +6,10 @@ import {
   Palette,
   Shirt,
   Trash2,
-  User2,
+  User2
 } from "lucide-react";
 import { useState } from "react";
+import logo from "../../../../assets/Images/Logo/logo white.png";
 import { Link, NavLink } from "react-router-dom";
 
 export default function Sidebar_Dashboard() {
@@ -20,14 +21,8 @@ export default function Sidebar_Dashboard() {
 
   return (
     <aside className="h-screen w-[290px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3 px-6">
-      <div className="items-center py-3">
-        <Link to={`/`}>
-          <img
-            src="https://picsum.photos/300/300"
-            alt=""
-            className="w-[242px] h-[30px]"
-          />
-        </Link>
+      <div className="items-center py-1">
+        <img src={logo} alt="" className="w-[242px] h-[45px]" />
       </div>
 
       <div>
