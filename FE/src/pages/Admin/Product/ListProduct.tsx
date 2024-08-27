@@ -97,13 +97,9 @@ const ListProduct = () => {
         ></Checkbox>
       )
     },
+
     {
-      title: "STT",
-      dataIndex: "index",
-      key: "index"
-    },
-    {
-      title: "Ảnh sản phẩm",
+      title: "Ảnh Sản Phẩm",
       dataIndex: "image",
       key: "image",
       render: (_: any, product: any) => (
@@ -115,7 +111,7 @@ const ListProduct = () => {
       )
     },
     {
-      title: "Tên sản phẩm",
+      title: "Tên Sản Phẩm",
       dataIndex: "name_product",
       render: (_: any, product: any) => (
         <span className="line-clamp-2 max-w-[200px]">
@@ -124,26 +120,27 @@ const ListProduct = () => {
       )
     },
     {
-      title: "Giá sản phẩm",
+      title: "Giá Sản Phẩm",
       key: "price_product",
       render: (product: IProduct) => {
         return <ProductPrice attributeId={product.attributes} />;
       }
     },
     {
-      title: "Thời gian tạo",
+      title: "Thời Gian Tạo",
       dataIndex: "created_at",
       key: "createdAt",
       render: (_: any, product: IProduct) => formatDate(product.createdAt)
     },
     {
-      title: "Thời gian cập nhật",
+      title: "Thời Gian Cập Nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
       render: (_: any, product: IProduct) => formatDate(product.updatedAt)
     },
     {
       key: "actions",
+      title: "Thao Tác",
       render: (_: any, product: any) => {
         return (
           <Space>
@@ -154,7 +151,7 @@ const ListProduct = () => {
             </Button>
             <Popconfirm
               title="Xóa sản phẩm"
-              description="Bạn chắc chắn muốn xóa sản phẩm này chứ?"
+              description="Bạn có muốn xóa sản phẩm này không ?"
               onConfirm={() =>
                 mutate({
                   id_item: product._id,
@@ -162,8 +159,8 @@ const ListProduct = () => {
                 })
               }
               // onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
+              okText="Có"
+              cancelText="Không"
             >
               <Button danger>
                 <FaDeleteLeft />
@@ -195,8 +192,8 @@ const ListProduct = () => {
             <Checkbox className="ml-4" />
             <Button>Chọn tất cả (7)</Button>
             <Popconfirm
-              title="Xóa sản phẩm khỏi giỏ hàng?"
-              description="Bạn có chắc chắn muốn xóa không?"
+              title="Xóa sản phẩm "
+              description="Bạn có muốn xóa sản phẩm này không ?"
               onConfirm={handleRemoveMultiple}
               okText="Có"
               cancelText="Không"
