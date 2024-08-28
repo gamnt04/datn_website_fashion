@@ -12,6 +12,7 @@ type FieldType = {
 };
 
 const Register: React.FC = () => {
+  const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate, isPending, status_api } = useSignUp();
 
@@ -25,7 +26,7 @@ const Register: React.FC = () => {
 
   if (isPending) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex items-center justify-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </div>
     );
@@ -51,6 +52,7 @@ const Register: React.FC = () => {
                   initialValues={{ remember: true }}
                   onFinish={onFinish}
                   autoComplete="off"
+                  form={form}
                   layout="vertical"
                   className="space-y-4"
                 >

@@ -21,7 +21,7 @@ const SearchResults = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<any>("");
-  const itemsPerPage = 11; // Số lượng sản phẩm mỗi trang
+  const itemsPerPage = 1; // Số lượng sản phẩm mỗi trang0
 
   const {
     data: results,
@@ -39,7 +39,9 @@ const SearchResults = () => {
     sortOption
   );
 
-  const totalPages = results ? Math.ceil(results.data.length / 10) : 1;
+  const totalPages = results
+    ? Math.ceil(results.data.length / itemsPerPage)
+    : 1;
   const hasMore = currentPage < totalPages;
   // Hàm xử lý cho MenuShop
   const handleCategorySelect = (id: string[]) => {
@@ -113,14 +115,17 @@ const SearchResults = () => {
           <>
             <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
               {results?.data
-                .slice((currentPage - 1) * 10, currentPage * 10)
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                )
                 .map((product: any) => (
                   <Products key={product._id} items={product} />
                 ))}
             </div>
 
-            {results.data.length > 10 && (
-              <div className="flex flex-col items-center mt-8">
+            {results.data.length > 0 && (
+              <div className="flex flex-col items-center my-4">
                 <div className="flex items-center mb-4 space-x-4">
                   <button
                     onClick={() =>

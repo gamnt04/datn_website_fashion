@@ -76,13 +76,13 @@ export async function add_items_client(items: any) {
     const res = await fetch(`${baseUri}`, {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(items.dataBody)
+      body: JSON.stringify(items.dataBody),
     });
     if (!res.ok) {
       toast.error("Tạo sản phẩm thất bại!! vui lòng kiểm tra lại", {
-        autoClose: 500
+        autoClose: 500,
       });
       return res;
     } else {
@@ -100,9 +100,9 @@ export async function edit_items_client(product: any) {
     const res = await fetch(`${baseUri}/${product.id_item}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(product.dataBody)
+      body: JSON.stringify(product.dataBody),
     });
 
     if (!res.ok) {
@@ -114,7 +114,7 @@ export async function edit_items_client(product: any) {
       throw new Error("Request failed with status " + res.status);
     } else {
       toast.success(`Cập nhật sản phẩm mã ${product.id_item} thành công.`, {
-        autoClose: 500
+        autoClose: 500,
       });
     }
     const data = await res.json();
@@ -128,16 +128,16 @@ export async function edit_items_client(product: any) {
 export async function remove_items(dataBody: any) {
   try {
     const res = await fetch(`${baseUri}/${dataBody.id_item}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
     if (!res.ok) {
       toast.error(`Không thể xóa sản phẩm ${dataBody.id_item}`, {
-        autoClose: 500
+        autoClose: 500,
       });
       return res;
     } else {
       toast.success(`Xóa sản phẩm ${dataBody.id_item}  thành công`, {
-        autoClose: 500
+        autoClose: 500,
       });
     }
     return res;
@@ -160,7 +160,7 @@ export const destroy_delete_Product = async (id: string) => {
     const response = await fetch(
       `http://localhost:2004/api/v1/products/destroy/${id}`,
       {
-        method: "DELETE"
+        method: "DELETE",
       }
     );
     if (!response.ok) {
@@ -179,16 +179,16 @@ export const destroy_delete_Product = async (id: string) => {
 export const restoreProduct = async (item: any) => {
   try {
     const response = await fetch(`${baseUri}/recycle/${item.id_item}`, {
-      method: "PATCH"
+      method: "PATCH",
     });
     if (!response.ok) {
       toast.error(`Không thể khôi phục sản phẩm ${item.id_item}`, {
-        autoClose: 500
+        autoClose: 500,
       });
       return response;
     } else {
       toast.success(`Khôi phục sản phẩm ${item.id_item}  thành công`, {
-        autoClose: 500
+        autoClose: 500,
       });
     }
     await response.json();
