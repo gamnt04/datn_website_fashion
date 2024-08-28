@@ -7,7 +7,7 @@ const categorySchema = mongoose.Schema(
     name_category: {
       type: String,
       required: true,
-      unique: false,
+      unique: true,
     },
     image_category: {
       type: String,
@@ -17,7 +17,7 @@ const categorySchema = mongoose.Schema(
       slug: "name_category",
       unique: true,
     },
-    published: { type: Boolean, default: false },
+    published: { type: Boolean, default: true },
   },
 
   {
