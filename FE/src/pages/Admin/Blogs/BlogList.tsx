@@ -29,7 +29,7 @@ const BlogList: React.FC = () => {
       return response.data;
     }
   });
-  const dataSource = (searchName ? searchData : data)?.map((blog) => ({
+  const dataSource = (searchName ? searchData : data)?.map((blog: any) => ({
     key: blog._id,
     ...blog
   }));

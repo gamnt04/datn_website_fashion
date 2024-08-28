@@ -125,7 +125,7 @@ const BlogDetail = () => {
 
         {/* Related Blogs */}
         <aside className="sticky p-4 bg-gray-100 rounded-lg shadow-md h-fit top-16">
-          <h2 className="mb-4 text-xl font-semibold">Bài viết liên quan</h2>
+          <h2 className="mb-4 text-xl font-semibold">Tất cả bài viết</h2>
           <ul>
             {relatedBlogs.length > 0 ? (
               relatedBlogs.map((relatedBlog) => {
