@@ -1,25 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useProductsByCategory } from "../../../common/hooks/Category/useProductsByCategory";
-import { Table, Spin, Alert, Button } from "antd";
+import { Table, Spin, Alert, Button, Popconfirm, message } from "antd";
 import { BackwardFilled, LoadingOutlined } from "@ant-design/icons";
 import { format } from "date-fns";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { IProduct } from "../../../common/interfaces/Product";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../configs/axios";
 
 const CategoryDetail: React.FC = () => {
+  const queryClient = useQueryClient();
+  const [messageApi, contextHolder] = message.useMessage();
   const { id } = useParams<{ id: string }>();
   const {
     data: products,
     isLoading: productsLoading,
-    error: productsError
+    error: productsError,
   } = useProductsByCategory(id || "");
   const {
     data: categories,
     isLoading: categoriesLoading,
-    error: categoriesError
+    error: categoriesError,
   } = useCategoryQuery();
   const [categoryName, setCategoryName] = useState<string>("");
-
+  const { mutate } = useMutation({
+    mutationFn: async (id: IProduct) => {
+      try {
+        return await instance.delete(`/products/${id}`);
+      } catch (error) {
+        throw new Error("Xóa sản phẩm thất bại");
+      }
+    },
+    onSuccess: () => {
+      messageApi.open({
+        type: "success",
+        content: "Xóa Sản phẩm thành công",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+    onError: (error) => {
+      messageApi.open({
+        type: "error",
+        content: error.message,
+      });
+      throw error;
+    },
+  });
   const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
   useEffect(() => {
@@ -62,7 +91,7 @@ const CategoryDetail: React.FC = () => {
       title: "STT",
       dataIndex: "index",
       key: "index",
-      render: (_: any, __: any, index: number) => index + 1
+      render: (_: any, __: any, index: number) => index + 1,
     },
     {
       title: "Ảnh sản phẩm",
@@ -74,7 +103,7 @@ const CategoryDetail: React.FC = () => {
           alt="Product"
           style={{ width: 100, height: 100, objectFit: "cover" }}
         />
-      )
+      ),
     },
     {
       title: "Tên sản phẩm",
@@ -82,25 +111,47 @@ const CategoryDetail: React.FC = () => {
       key: "name_product",
       render: (text: string) => (
         <span className="line-clamp-2 max-w-[200px]">{text}</span>
-      )
+      ),
     },
     {
       title: "Giá",
       dataIndex: "price_product",
-      key: "price_product"
+      key: "price_product",
     },
     {
       title: "Thời gian tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text: string) => formatDate(text)
+      render: (text: string) => formatDate(text),
     },
     {
       title: "Thời gian cập nhật",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (text: string) => formatDate(text)
-    }
+      render: (text: string) => formatDate(text),
+    },
+    {
+      key: "action",
+      render: (_: any, product: any) => {
+        return (
+          <>
+            <div className="flex space-x-3">
+              {contextHolder}
+              <Popconfirm
+                title="Xóa sản phẩm"
+                description="Bạn có muốn xóa ko?"
+                onConfirm={() => mutate(product._id!)}
+                // onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button danger>Delete</Button>
+              </Popconfirm>
+            </div>
+          </>
+        );
+      },
+    },
   ];
 
   return (
