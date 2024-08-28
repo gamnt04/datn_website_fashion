@@ -11,7 +11,6 @@ const BlogDetail = () => {
   const [title, setTitle] = useState("");
   const [toc, setToc] = useState<any[]>([]); // State for table of contents
 
-  console.log("Blog:", slug);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -21,7 +20,7 @@ const BlogDetail = () => {
         );
         const parser = new DOMParser();
         const doc = parser.parseFromString(response.data.content, "text/html");
-
+        console.log("Parsed Document:", response);
         setTitle(doc.querySelector("h1")?.innerText ?? "Không có tiêu đề");
         const h1Tag = doc.querySelector("h1");
         if (h1Tag) {
@@ -31,8 +30,8 @@ const BlogDetail = () => {
           content: doc.body.innerHTML,
           createdAt: response.data.createdAt,
           author: response.data.author,
+          published: response.data.published,
         });
-
         // Generate TOC
         const tocItems = Array.from(doc.querySelectorAll("h1, h2, h3")).map(
           (heading: any) => ({
@@ -42,6 +41,7 @@ const BlogDetail = () => {
           })
         );
         setToc(tocItems);
+
       } catch (error) {
         console.error("Error fetching blog:", error);
       }
@@ -67,6 +67,7 @@ const BlogDetail = () => {
     console.log("Updated Related Blogs State:", relatedBlogs);
   }, [relatedBlogs]);
 
+  useEffect(() => {},[])
   if (!blog) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -79,8 +80,9 @@ const BlogDetail = () => {
   }
 
   return (
-    <div className="container flex gap-8 px-4 py-10 mx-auto lg:px-20">
+    <div className="container flex gap-8 px-4 py-10 mx-auto lg:px-20 justify-between">
       {/* Main content */}
+      { blog.published === true ? (
       <div className="flex-1">
         <h1 className="mb-4 text-4xl font-bold text-black">{title}</h1>
         <p className="mb-6 text-sm text-gray-600">
@@ -90,7 +92,9 @@ const BlogDetail = () => {
           {parse(blog.content)}
         </div>
       </div>
-
+      ) : (
+        <h1 className="text-4xl font-bold text-black">Bài viết này không hiển thị</h1>
+      )}
       {/* Sidebar */}
       <div className="flex flex-col w-1/3 gap-8">
         {/* Table of Contents */}

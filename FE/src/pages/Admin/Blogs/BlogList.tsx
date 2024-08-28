@@ -21,7 +21,8 @@ const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useSearchBlogByName(searchName);
-  const { data, isLoading, isError, error } = useQuery({
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["blogs"],
     queryFn: async () => {
       const response = await instance.get("/blogs");
@@ -53,7 +54,6 @@ const BlogList: React.FC = () => {
       );
     }
   };
-
   const mutation = useMutation({
     mutationFn: async (updatedBlog: Blog) => {
       const response = await instance.put(
@@ -75,9 +75,24 @@ const BlogList: React.FC = () => {
       );
     }
   });
-
-  const handleTogglePublished = (blog: Blog) => {
-    mutation.mutate({ ...blog, published: !blog.published });
+  const handleTogglePublished = async (blog: Blog) => {
+    try {
+      const updatedBlog = { ...blog, published: !blog.published };
+      const response = await instance.put(`/update_blog/${blog._id}`, updatedBlog);
+      if (response.status === 200) {
+        messageApi.success("Cập nhật trạng thái hiển thị thành công");
+        refetch();
+      } else {
+        throw new Error("Cập nhật trạng thái hiển thị không thành công");
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái hiển thị:", error);
+      messageApi.error(
+        `Cập nhật trạng thái hiển thị không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
+    }
   };
 
   const renderContentSnippet = (content: string) => {
@@ -186,7 +201,7 @@ const BlogList: React.FC = () => {
     }
   ];
   if (isLoading) return <div className="">loading...</div>;
-  if (isError) return <div className="">{error.message}</div>;
+  if (isError) return <div className="">{(error as any).message}</div>;
 
   return (
     <div className="container ">
@@ -227,13 +242,13 @@ const BlogList: React.FC = () => {
                 onChange={(e) => setSearchName(e.target.value)}
                 placeholder="nhâp tên sản phẩm để tìm kiếm..."
               />
-              <Button onSubmit={() => onHandleSearch} type="primary">
+              <Button onClick={onHandleSearch} type="primary">
                 Tìm kiếm
               </Button>
             </div>
           </div>
         </div>
-        {data.length === 0 ? (
+        {data && data.length === 0 ? (
           <p>Không có blog nào.</p>
         ) : (
           <Table dataSource={dataSource} rowKey="_id" columns={columns} />
