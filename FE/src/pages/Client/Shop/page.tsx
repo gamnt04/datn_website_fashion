@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const IndexShops = () => {
   const navigate = useNavigate();
@@ -46,7 +46,14 @@ const IndexShops = () => {
     <div className="lg:mt-[40px] mt-[60px]">
       <div className="xl:w-[1440px] w-[95vw] mx-auto">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-          Trang chủ &#10148; Sản phẩm &#10148; Tất cả
+          <Link to={`/`} className="text-gray-500 hover:text-black">
+            Trang chủ
+          </Link>
+          <span className="mx-1 text-gray-500">&#10148;</span>
+          <Link to={`/shops`} className="text-gray-500 hover:text-black">
+            Sản phẩm
+          </Link>
+          <span className="mx-1 text-gray-500">&#10148;</span> Tất cả
         </div>
         <MenuShop
           onCategorySelect={handleCategorySelect}
