@@ -68,7 +68,7 @@ const RouterComponent = () => {
             {/* <Route path="blogs/detailblog" element={<DetailBlogs />} /> */}
             <Route path="shops/:id" element={<ProductDetail />} />
 
-            <Route path="shops/:id/reviews" element={<DescriptionProduct />} />
+            {/* <Route path="shops/:id/reviews" element={<DescriptionProduct />} /> */}
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
