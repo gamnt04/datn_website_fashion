@@ -12,7 +12,7 @@ import {
   Popconfirm,
   Table,
   TableProps,
-  Spin
+  Spin,
 } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -47,18 +47,18 @@ const ListCart = () => {
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
-      id: item?._id
+      id: item?._id,
     };
     removeSingle(data_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công"
+      content: "Xóa thành công",
     });
   };
 
   const handleRemoveMultiple = () => {
     const product_item = {
-      userId: userId
+      userId: userId,
     };
     const data_cart = dataSort?.filter(
       (item: any) => item?.status_checked && item
@@ -66,14 +66,14 @@ const ListCart = () => {
     if (data_cart.length === 0) {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn sản phẩm trước khi thanh toán!"
+        content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
       });
       return;
     }
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công"
+      content: "Xóa thành công",
     });
   };
 
@@ -82,7 +82,7 @@ const ListCart = () => {
       userId: userId,
       productId: productId,
       color: color,
-      size: size
+      size: size,
     };
     handle_status_checked(item_client);
   };
@@ -97,7 +97,7 @@ const ListCart = () => {
       updateQuantity({
         userId: userId,
         productId: product?._id,
-        quantity: inputValue
+        quantity: inputValue,
       });
     }
 
@@ -108,7 +108,7 @@ const ListCart = () => {
     (product: any) =>
       product?.productId?._id && {
         key: product?.productId?._id,
-        ...product
+        ...product,
       }
   );
 
@@ -129,7 +129,7 @@ const ListCart = () => {
             }
           ></Checkbox>
         );
-      }
+      },
     },
     {
       key: "image",
@@ -145,7 +145,7 @@ const ListCart = () => {
             />
           </Link>
         );
-      }
+      },
     },
     {
       title: "Sản phẩm",
@@ -155,7 +155,7 @@ const ListCart = () => {
         <>
           <Link
             to={`/shops/${product?.productId?._id}`}
-            className="text-gray-900 hover:text-gray-900 font-bold py-2"
+            className="py-2 font-bold text-gray-900 hover:text-gray-900"
           >
             {product?.productId?.name_product}
           </Link>
@@ -163,7 +163,7 @@ const ListCart = () => {
             {product?.color_item} - {product?.name_size}
           </p>
         </>
-      )
+      ),
     },
     {
       title: "Đơn giá",
@@ -174,11 +174,11 @@ const ListCart = () => {
           <div className="font-medium">
             {product?.price_item.toLocaleString("vi", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </div>
         );
-      }
+      },
     },
     {
       key: "quantity",
@@ -192,7 +192,7 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size
+                size: product?.name_size,
               }}
             />
             {editingProductId === product?.productId ? (
@@ -216,12 +216,12 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product,
                 color: product?.color_item,
-                size: product?.name_size
+                size: product?.name_size,
               }}
             />
           </div>
         );
-      }
+      },
     },
     {
       title: <span className="whitespace-nowrap">Tổng tiền</span>,
@@ -232,11 +232,11 @@ const ListCart = () => {
           <div className="font-medium">
             {(product?.total_price_item).toLocaleString("vi", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </div>
         );
-      }
+      },
     },
     {
       key: "action",
@@ -255,8 +255,8 @@ const ListCart = () => {
             </Popconfirm>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
 
   // next order
@@ -269,7 +269,7 @@ const ListCart = () => {
       if (data_cart.length === 0) {
         messageApi.open({
           type: "warning",
-          content: "Vui lòng chọn sản phẩm trước khi thanh toán!"
+          content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
         });
         return;
       }
@@ -278,7 +278,7 @@ const ListCart = () => {
         data_order: data_cart,
         totalPrice: data?.total_price,
         action: "data_cart",
-        _id: data?._id
+        _id: data?._id,
       };
       sessionStorage.setItem("item_order", JSON.stringify(data_order));
       routing("/cart/pay");
@@ -289,7 +289,7 @@ const ListCart = () => {
 
   if (isPending) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex items-center justify-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </div>
     );
@@ -303,8 +303,12 @@ const ListCart = () => {
     <div className="xl:w-[1440px] w-[95vw] mx-auto">
       <div className="w-[95%] mx-[2.5%] mt-[70px]">
         {contextHolder}
-        <div className="text-sm py-6 bg-gray-100 font-medium px-[2.5%] rounded">
-          Home &#10148; Cart
+        <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+          <Link to={`/`} className="text-gray-500 hover:text-black">
+            Trang chủ
+          </Link>
+          <span className="mx-1 text-gray-500">&#10148;</span>
+          Giỏ hàng
         </div>
         <>
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
@@ -327,25 +331,25 @@ const ListCart = () => {
             </div>
 
             <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-              <div className="w-full h-full flex flex-col lg:p-6 mb:p-4 border rounded-lg">
+              <div className="flex flex-col w-full h-full border rounded-lg lg:p-6 mb:p-4">
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Tổng giá trị đơn hàng</strong>
-                  <p className="font-bold text-xl text-yellow-500">
+                  <p className="text-xl font-bold text-yellow-500">
                     {data?.total_price?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND"
+                      currency: "VND",
                     })}
                   </p>
                 </div>
-                <div className="flex flex-col border-y py-5 my-5">
-                  <span className="text-xs mb-2">Nhập mã giảm giá</span>
+                <div className="flex flex-col py-5 my-5 border-y">
+                  <span className="mb-2 text-xs">Nhập mã giảm giá</span>
                   <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
                     <input
                       className="px-4 outline-none"
                       type="text"
                       placeholder="Enter Code"
                     />
-                    <button className="grid place-items-center bg-black text-gray-100 md:text-base mb:text-sm">
+                    <button className="grid text-gray-100 bg-black place-items-center md:text-base mb:text-sm">
                       Apply
                     </button>
                   </form>
@@ -355,13 +359,13 @@ const ListCart = () => {
                   <strong>
                     {data?.total_price?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND"
+                      currency: "VND",
                     })}
                   </strong>
                 </div>
                 <button
                   onClick={next_order}
-                  className="px-4 py-3 mt-4 mr-5 duration-200 text-white font-semibold bg-black hover:bg-white hover:text-black border border-black rounded focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+                  className="px-4 py-3 mt-4 mr-5 font-semibold text-white duration-200 bg-black border border-black rounded hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
                 >
                   Tiến hành thanh toán
                 </button>
