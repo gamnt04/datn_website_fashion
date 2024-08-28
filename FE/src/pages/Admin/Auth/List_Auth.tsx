@@ -1,11 +1,25 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Image, Skeleton, Spin, Table, Modal, Form, Input } from "antd";
+import {
+  Button,
+  Image,
+  Skeleton,
+  Spin,
+  Table,
+  Modal,
+  Form,
+  Input,
+  Select
+} from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import SearchComponent from "./Search";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
+<<<<<<< HEAD
+import { Option } from "antd/es/mentions";
+=======
 
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
 interface UpdateField {
   field: string;
   value: string;
@@ -41,18 +55,29 @@ const List_Auth = () => {
 
   const columns = [
     {
-      title: "Ảnh người dùng",
+      title: "Ảnh Người Dùng",
       dataIndex: "avatar",
       key: "avatar",
       render: (_: any, auth: any) =>
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
+<<<<<<< HEAD
+          <Image
+            src={auth.avatar}
+            alt=""
+            width={80}
+            height={80}
+            className="object-cover"
+          />
+        )
+=======
           <Image src={auth.avatar} alt="" width={70} />
         ),
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
     },
     {
-      title: "Tên người dùng",
+      title: "Tên Người Dùng",
       dataIndex: "userName",
       key: "userName",
       render: (_: any, auth: any) =>
@@ -74,7 +99,18 @@ const List_Auth = () => {
         ),
     },
     {
-      title: "Cập nhật gần đây",
+      title: "Quyền",
+      dataIndex: "role",
+      key: "role",
+      render: (_: any, auth: any) =>
+        isLoading ? (
+          <Skeleton.Input style={{ width: 100 }} active size="small" />
+        ) : (
+          auth.role
+        )
+    },
+    {
+      title: "Cập Nhật Gần Đây",
       dataIndex: "updatedFields",
       key: "updatedFields",
       render: (updatedFields) => {
@@ -86,19 +122,26 @@ const List_Auth = () => {
       },
     },
     {
-      title: "Nội dung cập nhật",
+      title: "Nội Dung Cập Nhật",
       dataIndex: "updatedFields",
       key: "updatedFields",
       render: (updatedFields: any) => {
         if (updatedFields && updatedFields.length > 0) {
           return (
-            <Button onClick={() => showModal(updatedFields)}>
+            <Button
+              onClick={() => showModal(updatedFields)}
+              className="p-3 text-white border-gray-300 rounded-lg bg-blue-600 hover:bg-blue-500 focus:outline-none"
+            >
               Xem chi tiết
             </Button>
           );
         } else {
-          return "Chưa có cập nhật";
+          return <p className="text-red-500">Chưa có cập nhật</p>;
         }
+<<<<<<< HEAD
+      }
+    }
+=======
       },
     },
     {
@@ -112,6 +155,7 @@ const List_Auth = () => {
           auth.role
         ),
     },
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
   ];
 
   const formatDate = (isoString: string) => {
@@ -153,12 +197,65 @@ const List_Auth = () => {
 
   return (
     <>
-      <div className="flex justify-between my-5">
-        <h1 className="text-xl font-bold">Danh sách tài khoản</h1>
-        {initialData && (
-          <SearchComponent initialData={initialData} setData={setData} />
-        )}
+      <div className="mx-6">
+        {" "}
+        <div className="flex items-center justify-between mb-5 mt-20">
+          <h1 className="text-2xl font-semibold">Quản Lý Người Dùng</h1>{" "}
+        </div>
+        <div className="mb-2 flex justify-between">
+          <div className="space-x-5">
+            <Select
+              // value={statusFilter}
+              // onChange={handleStatusChange}
+              className="w-[200px] h-[40px]"
+              placeholder="Lọc quyền người dùng"
+            ></Select>
+          </div>
+          <div className="flex space-x-5">
+            <Input
+              className="w-[500px]"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              placeholder="nhâp tên sản phẩm để tìm kiếm..."
+            />
+            <Button onSubmit={() => onHandleSearch} type="primary">
+              Tìm kiếm
+            </Button>
+          </div>
+        </div>
+        <Spin
+          spinning={isLoading}
+          indicator={<LoadingOutlined spin />}
+          size="large"
+        >
+          <Table columns={columns} dataSource={dataSource} />
+        </Spin>
+        <Modal
+          title="Chi tiết cập nhật"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width={500}
+          style={{ maxHeight: "80vh", overflowY: "auto" }}
+        >
+          {selectedUpdate ? (
+            <Form style={{ maxWidth: 500 }}>
+              <Form.Item>
+                <Input.TextArea
+                  value={getUpdateDetails(selectedUpdate)}
+                  readOnly
+                  rows={15}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Form>
+          ) : (
+            <p>Không có thông tin cập nhật</p>
+          )}
+        </Modal>
       </div>
+<<<<<<< HEAD
+=======
       <div className="">
         <Input
           value={searchName}
@@ -197,6 +294,7 @@ const List_Auth = () => {
           <p>Không có thông tin cập nhật</p>
         )}
       </Modal>
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
     </>
   );
 };
