@@ -19,7 +19,7 @@ const Favourite = () => {
     if (!userId) {
       messageApi.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!!"
+        content: "Hãy đăng nhập tài khoản của bạn !!!",
       });
     } else {
       RemoveFavouriteProduct(
@@ -28,15 +28,15 @@ const Favourite = () => {
           onSuccess: () => {
             messageApi.open({
               type: "success",
-              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn"
+              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn",
             });
           },
           onError: () => {
             messageApi.open({
               type: "error",
-              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau"
+              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau",
             });
-          }
+          },
         }
       );
     }
@@ -49,7 +49,11 @@ const Favourite = () => {
     <div className="lg:mt-[40px] mt-[60px] lg:w-[1440px] lg:mx-auto ">
       {contextHolder}
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-        Home &#10148; Products &#10148; Favorites
+        <Link to={`/`} className="text-gray-500 hover:text-black">
+          Trang chủ
+        </Link>
+        <span className="mx-1 text-gray-500">&#10148;</span>
+        Yêu thích
       </div>
       <div className="mt-8 grid mb:grid-cols-[49%_49%] md:grid-cols-[32%_32%_32%] lg:mx-auto lg:w-[1330px] lg:gap-x-[1.5%] lg:grid-cols-4 xl:auto-rows-[450px] justify-between gap-y-8">
         {data?.products.length === 0 ? (
@@ -73,7 +77,7 @@ const Favourite = () => {
                     alt={items?.productId?.name_product}
                   />
                 </Link>
-                <div className="absolute flex flex-col rounded top-0 p-1 right-0">
+                <div className="absolute top-0 right-0 flex flex-col p-1 rounded">
                   <button
                     className="p-2 border-none rounded"
                     onClick={() => handleRemoveFavorites(items?.productId?._id)}
@@ -82,7 +86,7 @@ const Favourite = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex justify-center items-center flex-col px-4 pb-6 gap-y-2">
+              <div className="flex flex-col items-center justify-center px-4 pb-6 gap-y-2">
                 <Link
                   onClick={ScrollTop}
                   to={`/shops/detail_product/${items?.productId?._id}`}
@@ -93,7 +97,7 @@ const Favourite = () => {
                 <p className="font-normal text-gray-700 text-[16px]">
                   {items?.productId?.price_product?.toLocaleString("vi-VN", {
                     style: "currency",
-                    currency: "VND"
+                    currency: "VND",
                   })}
                 </p>
               </div>
