@@ -47,14 +47,14 @@ const Blogs = () => {
                     className="image_blog w-full h-full object-cover transition-transform duration-300 hover:scale-105 "
                   />
                 </div>
-                <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
+                {/* <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
                   <Link
                     to={`/blogs/${blog.slug}`}
                     className="text-white text-[20px] font-semibold"
                   >
-                    View full details
+                    Chi tiết bài viết
                   </Link>
-                </div>
+                </div> */}
                 <div className="px-4 py-4">
                   <h2 className="py-[10px] text-[20px] font-semibold">
                     <Link to={`/blogs/${blog.slug}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
@@ -73,7 +73,7 @@ const Blogs = () => {
                       to={`/blogs/${blog.slug}`}
                       className="text-blue-500 hover:text-blue-700 font-semibold"
                     >
-                      Read More
+                      Xem thêm
                     </Link>
                   </div>
                 </div>
