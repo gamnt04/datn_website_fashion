@@ -7,6 +7,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
   const {
     onSubmit,
     formErrors,
@@ -25,6 +26,7 @@ const Login = () => {
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const email: string = values.email || "";
     const password: string = values.password || "";
+
     const { error } = signInSchema.validate(values, {
       abortEarly: false,
     });
@@ -49,7 +51,7 @@ const Login = () => {
 
   if (isPending) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex items-center justify-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </div>
     );
@@ -57,18 +59,18 @@ const Login = () => {
 
   if (isError && error) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex items-center justify-center h-screen">
         <div>Error: {error.message}</div>
       </div>
     );
   }
 
   return (
-    <div className="container flex flex-col mx-auto bg-white rounded-lg mt-5">
+    <div className="container flex flex-col mx-auto mt-5 bg-white rounded-lg">
       <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
         <div className="flex items-center justify-center w-full ">
           <div className="flex items-center xl:p-7">
-            <div className="flex flex-col w-full h-full p-6 text-center bg-white shadow-lg rounded-3xl border">
+            <div className="flex flex-col w-full h-full p-6 text-center bg-white border shadow-lg rounded-3xl">
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Đăng nhập
               </h3>
@@ -81,6 +83,7 @@ const Login = () => {
               <Form
                 name="basic"
                 initialValues={{ remember: true }}
+                form={form}
                 onFinish={onFinish}
                 autoComplete="off"
                 layout="vertical"
@@ -125,7 +128,7 @@ const Login = () => {
                 <p className="text-sm text-gray-600">
                   <span
                     onClick={handleForgotPassword}
-                    className="font-bold text-blue-600 hover:underline cursor-pointer"
+                    className="font-bold text-blue-600 cursor-pointer hover:underline"
                   >
                     Quên mật khẩu?
                   </span>

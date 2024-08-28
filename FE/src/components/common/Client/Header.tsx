@@ -22,7 +22,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
-    searchError
+    searchError,
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -84,7 +84,7 @@ const Header = () => {
     if (!account) {
       message.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!"
+        content: "Hãy đăng nhập tài khoản của bạn !!",
       });
     }
   };
@@ -122,7 +122,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)"
+                : "translateX(-200%)",
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -173,7 +173,7 @@ const Header = () => {
                 </button>
               </form>
               {searchError && (
-                <div className="absolute w-[375px mt-2 bg-white border border-gray-300 rounded-md px-4 py-2 text-black">
+                <div className="absolute w-[375px] mt-2 bg-white border border-gray-300 rounded-md px-4 py-2 text-black">
                   {searchError}
                 </div>
               )}
