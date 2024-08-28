@@ -22,7 +22,11 @@ const Blogs = () => {
     <div className="xl:w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] my-[40px]">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-          Home &#10148; Products &#10148; Blog
+          <Link to={`/`} className="text-gray-500 hover:text-black">
+            Trang chủ
+          </Link>
+          <span className="mx-1 text-gray-500">&#10148;</span>
+          Bài viết
         </div>
         <div className="container mx-auto pt-[20px] text-center">
           <h1 className="text-[30px] font-bold">Tin tức nổi bật</h1>
