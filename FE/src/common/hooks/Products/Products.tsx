@@ -5,8 +5,9 @@ import {
   get_items_dashboard,
   get_limit_items,
   getDeletedProducts,
-  getProductsByName
+  getProductsByName,
 } from "../../../_lib/Items/Products";
+import { DatabaseFilled } from "@ant-design/icons";
 // import { reduce } from "lodash";
 
 export const Query_Products = (id?: string | number, page?: number) => {
@@ -15,7 +16,7 @@ export const Query_Products = (id?: string | number, page?: number) => {
     queryKey: key,
     queryFn: async () => {
       return id ? await get_detail_items(id) : await get_items_client(page);
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -23,7 +24,7 @@ export const Query_Products = (id?: string | number, page?: number) => {
 export function Query_Products_Dashboard(page: number) {
   const { data, ...rest } = useQuery({
     queryKey: ["Product_Key", page],
-    queryFn: () => get_items_dashboard(page)
+    queryFn: () => get_items_dashboard(page),
   });
   return { data, ...rest };
 }
@@ -31,7 +32,7 @@ export function Query_Products_Dashboard(page: number) {
 export const Query_Limit_Items = (limit: number) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Product_Key", limit],
-    queryFn: async () => await get_limit_items(limit)
+    queryFn: async () => await get_limit_items(limit),
   });
   return { data, ...rest };
 };
@@ -39,7 +40,7 @@ export const Query_Limit_Items = (limit: number) => {
 export function Query_Trash_Item() {
   const { data, ...rest } = useQuery({
     queryKey: ["Product_Key"],
-    queryFn: () => getDeletedProducts()
+    queryFn: () => getDeletedProducts(),
   });
   return { data, ...rest };
 }
@@ -47,7 +48,7 @@ export const useQueryProductsSearch = (searchName) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_Products", searchName],
     queryFn: () => getProductsByName(searchName),
-    enabled: !!searchName
+    enabled: !!searchName,
   });
   return { data, ...rest };
 };

@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
@@ -17,6 +17,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   const [showMessage, setShowMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [initialValues, setInitialValues] = useState<ICategory | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // Thêm trạng thái xem trước ảnh
 
   const {
     register,
@@ -52,6 +53,11 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
     if (!findDataById) return;
     setInitialValues(findDataById);
     reset(findDataById);
+
+    // Cập nhật ảnh xem trước nếu có ảnh hiện tại
+    if (findDataById.image_category) {
+      setImagePreview(findDataById.image_category);
+    }
   }, [data, id, reset]);
 
   const watchFields = watch();
@@ -77,9 +83,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
         formData.image_category.length > 0
       ) {
         const file = formData.image_category[0];
-        console.log("Selected file:", file);
         const uploadedUrl = await UploadImage(file);
-        console.log("Uploaded URL:", uploadedUrl);
         imageUrl = uploadedUrl;
       }
 
@@ -87,7 +91,6 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
         ...formData,
         image_category: imageUrl,
       };
-      console.log("Updated Category:", updatedCategory);
 
       mutation.mutate(updatedCategory);
     } catch (error) {
@@ -97,10 +100,29 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   };
 
   useEffect(() => {
+    if (
+      watchFields.image_category instanceof FileList &&
+      watchFields.image_category.length > 0
+    ) {
+      const file = watchFields.image_category[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else if (typeof watchFields.image_category === "string") {
+      setImagePreview(watchFields.image_category);
+    } else {
+      setImagePreview(null);
+    }
+  }, [watchFields.image_category]);
+
+  useEffect(() => {
     if (showMessage) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setShowMessage(false);
       }, 3000);
+      return () => clearTimeout(timer);
     }
   }, [showMessage]);
 
@@ -123,7 +145,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
               <div className="sm:col-span-6 flex justify-center">
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="productName"
+                    htmlFor="name"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Tên danh mục
@@ -136,35 +158,40 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
                         {...register("name_category", { required: true })}
                       />
                     </div>
-                    <p>
-                      {errors.name_category && (
-                        <span>Vui lòng không được để trống</span>
-                      )}
-                    </p>
+                    {errors.name_category && (
+                      <p className="text-red-600">
+                        Vui lòng không được để trống
+                      </p>
+                    )}
                   </div>
-                  <div className="mt-2">
-                    <label
-                      htmlFor="image_category"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Ảnh danh mục
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <Input
-                          type="file"
-                          placeholder="Nhập ảnh danh mục..."
-                          {...register("image_category")}
-                        />
+                  <label
+                    htmlFor="image_category"
+                    className="block text-sm font-medium leading-6 text-gray-900 mt-4"
+                  >
+                    Hình ảnh danh mục
+                  </label>
+                  <div className="mt-2 flex items-center">
+                    <div className="relative flex items-center">
+                      <div
+                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${
+                          imagePreview ? "block" : "block"
+                        }`}
+                      >
+                        <span className="text-3xl text-gray-500">+</span>
                       </div>
-                    </div>
-                    <p>
-                      {errors.image_category && (
-                        <span className="text-red-600">
-                          Vui lòng không được để trống
-                        </span>
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Image Preview"
+                          className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
+                        />
                       )}
-                    </p>
+                      <Input
+                        type="file"
+                        {...register("image_category")}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
