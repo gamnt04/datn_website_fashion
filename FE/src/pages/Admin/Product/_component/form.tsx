@@ -1,11 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  FormProps,
-  Input,
-  Select,
-  Upload
-} from "antd";
+import { Button, Checkbox, FormProps, Input, Select, Upload } from "antd";
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { Form } from "antd";
@@ -89,7 +82,7 @@ const Form_Item = ({ mode }: any) => {
   };
 
   return (
-    <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-10">
+    <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-6">
       {(isPending || loading) && (
         <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
           <div className="animate-spin">
@@ -97,9 +90,9 @@ const Form_Item = ({ mode }: any) => {
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between -mt-5 mb-5">
         <h1 className="text-[26px] font-semibold">
-          {mode ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+          {mode ? "Cập nhật sản phẩm" : "Thêm Mới Sản Phẩm"}
         </h1>
         <Link to="/admin/products">
           <Button type="primary">
@@ -429,7 +422,7 @@ const Form_Item = ({ mode }: any) => {
               ? "Loading"
               : mode
               ? "Cập nhật sản phẩm"
-              : "Tạo sản phẩm"}
+              : "Tạo mới sản phẩm"}
           </Button>
         </Form.Item>
       </Form>
