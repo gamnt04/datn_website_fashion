@@ -42,14 +42,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -92,10 +92,10 @@ const Header = () => {
     <>
       <div
         ref={toggleFixedHeader}
-        className="w-full fixed top-0 z-[6] !bg-[#001529] text-white"
+        className="w-full fixed top-0 z-[100] !bg-[#001529] text-white"
       >
         {contentHolder}
-        <header className="mx-auto relative xl:w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
+        <header className="mx-auto relative max-w-[1440px] flex justify-between items-center mb:w-[95vw] lg:h-20 lg:py-0 py-3">
           {/* menu mobile */}
           <button
             onClick={toggleMenuMobile}
@@ -154,7 +154,7 @@ const Header = () => {
             <div ref={searchRef} className="relative w-full max-w-xl">
               <form
                 onSubmit={handleSearch}
-                className="relative w-[375px] h-[36px] hidden lg:block  duration-300"
+                className="relative w-[300px] h-[36px] hidden lg:block  duration-300"
               >
                 <input
                   type="text"
@@ -162,7 +162,7 @@ const Header = () => {
                   onChange={handleInputChange}
                   onFocus={() => setShowSuggestions(true)}
                   placeholder="Tìm kiếm..."
-                  className="w-[375px]  h-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
+                  className="w-[300px]  h-full pl-5 text-sm font-normal text-gray-800 border border-gray-400 rounded outline-none focus:border-black pr-14"
                 />
                 <button
                   type="submit"
@@ -228,7 +228,7 @@ const Header = () => {
               to={account ? "/cart" : "/login"}
             >
               {data?.products && data?.products.length > 0 && (
-                <span className="absolute bg-red-500 px-1 h-4 flex items-center text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
+                <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
                   {data?.products?.length}
                 </span>
               )}

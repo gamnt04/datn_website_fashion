@@ -3,34 +3,32 @@ import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 import { Button, message, Popconfirm, Table } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
-
+import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 const OrdersDetali = () => {
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
   const [messageApi, contextHolder] = message.useMessage();
   const { id } = useParams();
   const { data, refetch } = Query_Orders(id);
-  const { mutate, contextHolder: h } = useOrderMutations("CONFIRM_CANCEL");
-  const { mutate: cancel, contextHolder: r } = useOrderMutations(
+  const { mutate } = useOrderMutations("CONFIRM_CANCEL");
+  const dispathNotification = Mutation_Notification('Add');
+  const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-  const handleStatusUpdate = async () => {
+  const handleStatusUpdate = async (status: number | string, code_order?: string | number) => {
     if (!data) return;
-    if (data.status === "5") {
-      messageApi.open({
-        type: "error",
-        content: "Đơn hàng đã bị hủy, không thể cập nhật trạng thái!"
-      });
-      return;
-    }
-
-    const statusOrder: Record<string, string> = {
-      "1": "2",
-      "2": "3",
-      "3": "4"
-    };
-    const nextStatus = statusOrder[data.status] || "4";
+    const message = (status === 2) ? `Người bán đã xác nhận đơn hàng ${code_order}` : (status === 3) ?
+      `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!` :
+      `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: data?.userId,
+      message: message
+    })
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: nextStatus
+        status: status
       });
       messageApi.open({
         type: "success",
@@ -164,7 +162,7 @@ const OrdersDetali = () => {
             </p>
           </div>
           <div className="flex items-center gap-4 border-b py-3">
-            <p className="text-black font-semibold">Trạng thái đơn hàng</p>
+            <p className="text-black font-semibold w-[20%]">Trạng thái đơn hàng</p>
             {data?.status == 1 ? (
               <p className="w-auto p-3 border-2 border-gray-500 text-gray-500 rounded">
                 Chờ xác nhận{" "}
@@ -182,9 +180,13 @@ const OrdersDetali = () => {
                 Đang giao hàng
               </p>
             ) : (
-              <p className="w-auto p-3 border-2 border-red-600 text-red-600 rounded">
-                Đã hủy
-              </p>
+              <div className="flex items-center justify-between w-full">
+                <p className="w-auto p-3 border-2 border-red-600 text-red-600 rounded">
+                  Đã hủy
+                </p>
+                <p className="font-bold">Lý do: <span className="font-normal text-slate-500">{data.cancellationReason}</span></p>
+              </div>
+
             )}
           </div>
           <div className="flex justify-between my-4">
@@ -256,12 +258,12 @@ const OrdersDetali = () => {
             </div>
           </div>
           <div className="flex gap-5 justify-center mt-[60px]">
-            {data.status === "1" && (
+            {(data.status === "1") && (
               <>
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
                   description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                  onConfirm={handleStatusUpdate}
+                  onConfirm={() => handleStatusUpdate(2, data?.orderNumber)}
                   okText="Xác nhận"
                   cancelText="Không"
                 >
@@ -272,7 +274,7 @@ const OrdersDetali = () => {
                 <Popconfirm
                   title="Từ chối xác nhận?"
                   description="Bạn có chắc chắn muốn từ chối xác nhận đơn hàng này?"
-                  onConfirm={() => cancel(data?._id)}
+                  onConfirm={() => cancel({ id_item: data._id, action: 'huy' })}
                   okText="Từ chối"
                   cancelText="Không"
                 >
@@ -289,7 +291,7 @@ const OrdersDetali = () => {
                     <Popconfirm
                       title="Xác nhận hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                      onConfirm={() => mutate({ id: data?._id, confirm: true })}
+                      onConfirm={() => mutate({ id_item: data?._id, confirm: true })}
                       okText="Xác nhận"
                       cancelText="Không"
                     >
@@ -301,7 +303,7 @@ const OrdersDetali = () => {
                       title="Từ chối hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
                       onConfirm={() =>
-                        mutate({ id: data?._id, confirm: false })
+                        mutate({ id_item: data?._id, confirm: false })
                       }
                       okText="Từ chối"
                       cancelText="Không"
@@ -315,12 +317,12 @@ const OrdersDetali = () => {
                   <Popconfirm
                     title="Xác nhận đơn hàng?"
                     description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                    onConfirm={handleStatusUpdate}
+                    onConfirm={() => handleStatusUpdate(3, data?.orderNumber)}
                     okText="Xác nhận"
                     cancelText="Không"
                   >
                     <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
-                      Xác nhận
+                      Xác nhận vận chuyển
                     </button>
                   </Popconfirm>
                 )}
@@ -330,12 +332,11 @@ const OrdersDetali = () => {
               <Popconfirm
                 title="Xác nhận đơn hàng?"
                 description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                onConfirm={handleStatusUpdate}
                 okText="Xác nhận"
                 cancelText="Không"
               >
-                <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
-                  Xác nhận
+                <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
+                  Đang vận chuyển
                 </button>
               </Popconfirm>
             )}

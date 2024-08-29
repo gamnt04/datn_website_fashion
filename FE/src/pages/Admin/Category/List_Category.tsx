@@ -25,7 +25,7 @@ import {
 } from "../../../common/hooks/Category/useCategoryQuery";
 import { DeleteOutlined } from "@ant-design/icons";
 import { FaDeleteLeft } from "react-icons/fa6";
-import { FaEdit } from "react-icons/fa";
+import { format } from "date-fns";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
@@ -94,7 +94,10 @@ const List_Category: React.FC = () => {
       );
     },
   });
-
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    return format(date, "HH:mm dd/MM/yyyy");
+  };
   const handleTogglePublished = (category: ICategory) => {
     mutation.mutate({ ...category, published: !category.published });
   };
@@ -161,11 +164,13 @@ const List_Category: React.FC = () => {
       key: "createdAt",
       title: "Ngày Tạo",
       dataIndex: "createdAt",
+      render: (_: any, product: ICategory) => formatDate(product.createdAt),
     },
     {
       key: "updatedAt",
       title: "Ngày Sửa",
       dataIndex: "updatedAt",
+      render: (_: any, product: ICategory) => formatDate(product.updatedAt),
     },
     {
       key: "published",
@@ -184,6 +189,7 @@ const List_Category: React.FC = () => {
       render: (_: any, category: ICategory) => {
         return (
           <Space>
+            {contextHolder}
             <CategoryUpdate data={data} id={category._id} />
             <Popconfirm
               title="Xoá danh mục sản phẩm"

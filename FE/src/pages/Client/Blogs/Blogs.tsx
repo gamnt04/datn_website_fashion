@@ -19,7 +19,7 @@ const Blogs = () => {
   const publishedBlogs = filterPublishedBlogs(data || []);
 
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+    <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] my-[40px]">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           <Link to={`/`} className="text-gray-500 hover:text-black">
