@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import emailjs from "@emailjs/browser";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const ContactForm: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);
@@ -102,9 +103,13 @@ const ContactForm: React.FC = () => {
     <div className="xl:w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-          Home &#10148; Products &#10148; Contact
+          <Link to={`/`} className="text-gray-500 hover:text-black">
+            Trang chủ
+          </Link>
+          <span className="mx-1 text-gray-500">&#10148;</span>
+          Liên hệ
         </div>
-        <div className="mx-auto grid grid-cols-1 gap-4 my-10 sm:grid-cols-2 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 mx-auto my-10 sm:grid-cols-2 md:grid-cols-2">
           <div>
             <h2 className="text-[25px] text-[#222222] font-semibold">
               Stay in touch! Contact us
@@ -263,7 +268,7 @@ export default ContactForm;
 //       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
 //         Home &#10148; Products &#10148; Contact
 //       </div>
-//       <div className="mx-auto grid grid-cols-1 gap-4 my-10 sm:grid-cols-2 md:grid-cols-2">
+//       <div className="grid grid-cols-1 gap-4 mx-auto my-10 sm:grid-cols-2 md:grid-cols-2">
 //         <div>
 //           <h2 className="text-xl text-[#222222] font-semibold">
 //             Stay in touch! Contact us

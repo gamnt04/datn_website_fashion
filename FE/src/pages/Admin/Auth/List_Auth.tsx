@@ -1,10 +1,25 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Image, Skeleton, Spin, Table, Modal, Form, Input } from "antd";
+import {
+  Button,
+  Image,
+  Skeleton,
+  Spin,
+  Table,
+  Modal,
+  Form,
+  Input,
+  Select
+} from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import SearchComponent from "./Search";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
+<<<<<<< HEAD
+import { Option } from "antd/es/mentions";
+=======
+
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
 interface UpdateField {
   field: string;
   value: string;
@@ -22,7 +37,7 @@ const List_Auth = () => {
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    }
+    },
   });
 
   const onHandleSearch = () => {
@@ -33,24 +48,36 @@ const List_Auth = () => {
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth
+        ...auth,
       };
     }
   );
+
   const columns = [
     {
-      title: "Ảnh người dùng",
+      title: "Ảnh Người Dùng",
       dataIndex: "avatar",
       key: "avatar",
       render: (_: any, auth: any) =>
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
-          <Image src={auth.avatar} alt="" width={70} />
+<<<<<<< HEAD
+          <Image
+            src={auth.avatar}
+            alt=""
+            width={80}
+            height={80}
+            className="object-cover"
+          />
         )
+=======
+          <Image src={auth.avatar} alt="" width={70} />
+        ),
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
     },
     {
-      title: "Tên người dùng",
+      title: "Tên Người Dùng",
       dataIndex: "userName",
       key: "userName",
       render: (_: any, auth: any) =>
@@ -58,7 +85,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        )
+        ),
     },
     {
       title: "Email",
@@ -69,36 +96,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        )
-    },
-    {
-      title: "Cập nhật gần đây",
-      dataIndex: "updatedFields",
-      key: "updatedFields",
-      render: (updatedFields) => {
-        if (updatedFields && updatedFields.length > 0) {
-          const latestUpdate = updatedFields[updatedFields.length - 1].time;
-          return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
-        }
-        return "Chưa có cập nhật";
-      }
-    },
-
-    {
-      title: "Nội dung cập nhật",
-      dataIndex: "updatedFields",
-      key: "updatedFields",
-      render: (updatedFields: any) => {
-        if (updatedFields && updatedFields.length > 0) {
-          return (
-            <Button onClick={() => showModal(updatedFields)}>
-              Xem chi tiết
-            </Button>
-          );
-        } else {
-          return "Chưa có cập nhật";
-        }
-      }
+        ),
     },
     {
       title: "Quyền",
@@ -110,8 +108,77 @@ const List_Auth = () => {
         ) : (
           auth.role
         )
+    },
+    {
+      title: "Cập Nhật Gần Đây",
+      dataIndex: "updatedFields",
+      key: "updatedFields",
+      render: (updatedFields) => {
+        if (updatedFields && updatedFields.length > 0) {
+          const latestUpdate = updatedFields[updatedFields.length - 1].time;
+          return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
+        }
+        return "Chưa có cập nhật";
+      },
+    },
+    {
+      title: "Nội Dung Cập Nhật",
+      dataIndex: "updatedFields",
+      key: "updatedFields",
+      render: (updatedFields: any) => {
+        if (updatedFields && updatedFields.length > 0) {
+          return (
+            <Button
+              onClick={() => showModal(updatedFields)}
+              className="p-3 text-white border-gray-300 rounded-lg bg-blue-600 hover:bg-blue-500 focus:outline-none"
+            >
+              Xem chi tiết
+            </Button>
+          );
+        } else {
+          return <p className="text-red-500">Chưa có cập nhật</p>;
+        }
+<<<<<<< HEAD
+      }
     }
+=======
+      },
+    },
+    {
+      title: "Quyền",
+      dataIndex: "role",
+      key: "role",
+      render: (_: any, auth: any) =>
+        isLoading ? (
+          <Skeleton.Input style={{ width: 100 }} active size="small" />
+        ) : (
+          auth.role
+        ),
+    },
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
   ];
+
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString(); // Chỉ lấy ngày, tháng, năm
+  };
+
+  const getLatestUpdateDetails = (updatedFields: UpdateField[]) => {
+    if (!updatedFields || updatedFields.length === 0) {
+      return "Không có thông tin cập nhật";
+    }
+
+    const latestUpdate = updatedFields[updatedFields.length - 1];
+    const date = new Date(latestUpdate.time).toLocaleDateString();
+    const time = new Date(latestUpdate.time).toLocaleTimeString();
+
+    let fieldValue = latestUpdate.value;
+    if (latestUpdate.field === "birthDate") {
+      fieldValue = formatDate(fieldValue);
+    }
+
+    return `Ngày cập nhật: ${date}\n\nNội dung cập nhật:\n${latestUpdate.field}: ${fieldValue} (${time})`;
+  };
 
   const showModal = (updatedFields) => {
     if (updatedFields && updatedFields.length > 0) {
@@ -128,56 +195,67 @@ const List_Auth = () => {
     setIsModalVisible(false);
   };
 
-  const getUpdateDetails = (updatedFields: UpdateField[]) => {
-    if (!updatedFields || updatedFields.length === 0) {
-      return "Không có thông tin cập nhật";
-    }
-
-    const latestUpdatesByField: {
-      [key: string]: {
-        field: string;
-        value: string;
-        time: string;
-        date: string;
-      };
-    } = {};
-
-    updatedFields.forEach((update) => {
-      const date = new Date(update.time).toLocaleDateString();
-      const time = new Date(update.time).toLocaleTimeString();
-      const key = `${date}-${update.field}`;
-
-      latestUpdatesByField[key] = {
-        field: update.field,
-        value: update.value,
-        time,
-        date
-      };
-    });
-
-    // Sử dụng reduce để nhóm và định dạng kết quả, sau đó chuyển đối tượng thành mảng các chuỗi
-    const result = Object.values(latestUpdatesByField).reduce(
-      (acc, { date, field, value, time }) => {
-        if (!acc[date]) {
-          acc[date] = `Ngày cập nhật:\n ${date}\n \nNội dung cập nhật:\n`;
-        }
-        acc[date] += `${field}: ${value} (${time})\n`;
-        return acc;
-      },
-      {} as { [key: string]: string }
-    );
-
-    // Chuyển đối tượng thành mảng các chuỗi và nối chúng
-    return Object.values(result).join("\n");
-  };
   return (
     <>
-      <div className="flex justify-between my-5">
-        <h1 className="text-xl font-bold">Danh sách tài khoản</h1>
-        {initialData && (
-          <SearchComponent initialData={initialData} setData={setData} />
-        )}
+      <div className="mx-6">
+        {" "}
+        <div className="flex items-center justify-between mb-5 mt-20">
+          <h1 className="text-2xl font-semibold">Quản Lý Người Dùng</h1>{" "}
+        </div>
+        <div className="mb-2 flex justify-between">
+          <div className="space-x-5">
+            <Select
+              // value={statusFilter}
+              // onChange={handleStatusChange}
+              className="w-[200px] h-[40px]"
+              placeholder="Lọc quyền người dùng"
+            ></Select>
+          </div>
+          <div className="flex space-x-5">
+            <Input
+              className="w-[500px]"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              placeholder="nhâp tên sản phẩm để tìm kiếm..."
+            />
+            <Button onSubmit={() => onHandleSearch} type="primary">
+              Tìm kiếm
+            </Button>
+          </div>
+        </div>
+        <Spin
+          spinning={isLoading}
+          indicator={<LoadingOutlined spin />}
+          size="large"
+        >
+          <Table columns={columns} dataSource={dataSource} />
+        </Spin>
+        <Modal
+          title="Chi tiết cập nhật"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width={500}
+          style={{ maxHeight: "80vh", overflowY: "auto" }}
+        >
+          {selectedUpdate ? (
+            <Form style={{ maxWidth: 500 }}>
+              <Form.Item>
+                <Input.TextArea
+                  value={getUpdateDetails(selectedUpdate)}
+                  readOnly
+                  rows={15}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Form>
+          ) : (
+            <p>Không có thông tin cập nhật</p>
+          )}
+        </Modal>
       </div>
+<<<<<<< HEAD
+=======
       <div className="">
         <Input
           value={searchName}
@@ -205,7 +283,7 @@ const List_Auth = () => {
           <Form style={{ maxWidth: 500 }}>
             <Form.Item>
               <Input.TextArea
-                value={getUpdateDetails(selectedUpdate)}
+                value={getLatestUpdateDetails(selectedUpdate)}
                 readOnly
                 rows={15}
                 style={{ width: "100%" }}
@@ -216,6 +294,7 @@ const List_Auth = () => {
           <p>Không có thông tin cập nhật</p>
         )}
       </Modal>
+>>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
     </>
   );
 };

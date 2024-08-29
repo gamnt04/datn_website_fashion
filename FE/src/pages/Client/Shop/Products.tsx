@@ -7,6 +7,7 @@ import Products from "../../../components/common/Items/Products";
 import { useLocation } from "react-router-dom";
 
 interface Products_ShopProps {
+  query: string;
   cate_id: string[];
   priceRanges: { min: number; max: number }[];
   selectedColors: string[];
@@ -15,6 +16,7 @@ interface Products_ShopProps {
 }
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
+  query,
   priceRanges,
   selectedColors,
   selectedSizes,
@@ -22,7 +24,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
 }) => {
   const { search } = useLocation();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 11; // Số lượng sản phẩm mỗi trang
+  const itemsPerPage = 16; // Số lượng sản phẩm mỗi trang
   const [cate_id, setCategoryId] = useState<string[]>([]);
   useEffect(() => {
     const queryParams = new URLSearchParams(search);
@@ -34,13 +36,14 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
       setCategoryId([]);
     }
   }, [search]);
+  //const [query] = useState();
   const {
     data: products,
     isLoading,
     isError,
     error,
   } = useFilteredProducts(
-    search,
+    query,
     cate_id,
     priceRanges,
     selectedColors,
@@ -74,56 +77,62 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     <div>
       {products?.data?.length ? (
         <>
-          <div className="grid grid-cols-2 gap-6 mt-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
             {products.data.map((item: any) => (
               <Products key={item._id} items={item} />
             ))}
           </div>
-          <div className="flex flex-col items-center mt-8">
-            <div className="flex items-center mb-4 space-x-4">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={`px-4 py-2 border rounded-md ${
-                  currentPage === 1
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
-                disabled={currentPage === 1}
-              >
-                &#10094; Trang trước
-              </button>
-              <span className="text-lg font-semibold">Trang {currentPage}</span>
-              <button
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className={`px-4 py-2 border rounded-md ${
-                  !hasMore
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
-                disabled={!hasMore}
-              >
-                Trang tiếp theo &#10095;
-              </button>
+          {products?.data?.length > 16 && (
+            <div className="flex flex-col items-center my-4">
+              <div className="flex items-center mb-4 space-x-4">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  className={`px-4 py-2 border rounded-md ${
+                    currentPage === 1
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                  disabled={currentPage === 1}
+                >
+                  &#10094; Trang trước
+                </button>
+                <span className="text-lg font-semibold">
+                  Trang {currentPage}
+                </span>
+                <button
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  className={`px-4 py-2 border rounded-md ${
+                    !hasMore
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                  disabled={!hasMore}
+                >
+                  Trang tiếp theo &#10095;
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center space-x-2">
+                {totalPages > 1 &&
+                  Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-4 py-2 border rounded-md ${
+                          currentPage === page
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-200 text-black hover:bg-gray-300"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+              </div>
             </div>
-            <div className="flex flex-wrap items-center space-x-2">
-              {totalPages > 1 &&
-                Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 border rounded-md ${
-                        currentPage === page
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-black hover:bg-gray-300"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-            </div>
-          </div>
+          )}
         </>
       ) : (
         <div className="flex items-center justify-center h-screen">

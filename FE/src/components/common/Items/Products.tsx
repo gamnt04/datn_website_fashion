@@ -106,7 +106,7 @@ const Products = ({ items }: any) => {
           className="h-full cursor-pointer"
         >
           <img
-            className="w-full h-[250px] lg:h-[400px] object-cover"
+            className="w-full h-[250px] lg:h-[400px] object-cover bg-[#f3f3f3]"
             loading="lazy"
             src={items.image_product}
             alt={items.name_product}
