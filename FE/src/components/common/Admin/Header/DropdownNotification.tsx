@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Query_Orders } from "../../../../common/hooks/Order/querry_Order";
-import { useNotification } from "../../../../common/hooks/Notification/Notification";
+import { Query_notification } from "../../../../_lib/React_Query/Notification/Query";
+import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   // const { data, isLoading } = Query_Orders()
   // console.log(data);
-  const { data, isLoading } = useNotification();
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const { data, isLoading } = Query_notification(userId);
   console.log(data);
 
   if (isLoading) return <div>Loading...</div>
@@ -53,7 +55,6 @@ const DropdownNotification = () => {
             <ul className="flex max-h-[300px] flex-col overflow-y-auto">
 
               {data?.notifications?.map((orders: any) => {
-                console.log(orders);
                 return (
                   <li key={orders?._id}>
                     <Link

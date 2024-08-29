@@ -2,7 +2,6 @@ import {
   Button,
   Form,
   FormProps,
-  GetProp,
   Image,
   Input,
   message,
@@ -11,7 +10,6 @@ import {
   Radio,
   Spin,
   UploadFile,
-  UploadProps,
 } from "antd";
 import { Query_Order } from "../../../_lib/React_Query/Orders/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -273,8 +271,6 @@ export default function List_order() {
       ) : (
         <div>
           {data?.data?.docs?.map((items: any) => {
-            console.log(items);
-
             return (
               <div className="border-t py-4">
                 <div className="flex gap-2 py-5 border-b-2 justify-between">

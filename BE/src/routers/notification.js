@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { createNotification, getNotification } from "../controllers/Notification/notification";
+import { createNotification, getNotificationByUser } from "../controllers/Notification/notification";
 
 const router = Router();
 router.post("/notification", createNotification);
-router.get("/notification", getNotification);
+router.get("/notification/:userId", getNotificationByUser);
 export default router
