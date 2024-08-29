@@ -3,13 +3,12 @@ import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 import { Button, message, Popconfirm, Table } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
-
 const OrdersDetali = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { id } = useParams();
   const { data, refetch } = Query_Orders(id);
-  const { mutate, contextHolder: h } = useOrderMutations("CONFIRM_CANCEL");
-  const { mutate: cancel, contextHolder: r } = useOrderMutations(
+  const { mutate } = useOrderMutations("CONFIRM_CANCEL");
+  const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
   const handleStatusUpdate = async () => {
@@ -164,7 +163,7 @@ const OrdersDetali = () => {
             </p>
           </div>
           <div className="flex items-center gap-4 border-b py-3">
-            <p className="text-black font-semibold">Trạng thái đơn hàng</p>
+            <p className="text-black font-semibold w-[20%]">Trạng thái đơn hàng</p>
             {data?.status == 1 ? (
               <p className="w-auto p-3 border-2 border-gray-500 text-gray-500 rounded">
                 Chờ xác nhận{" "}
@@ -182,9 +181,13 @@ const OrdersDetali = () => {
                 Đang giao hàng
               </p>
             ) : (
-              <p className="w-auto p-3 border-2 border-red-600 text-red-600 rounded">
-                Đã hủy
-              </p>
+              <div className="flex items-center justify-between w-full">
+                <p className="w-auto p-3 border-2 border-red-600 text-red-600 rounded">
+                  Đã hủy
+                </p>
+                <p className="font-bold">Lý do: <span className="font-normal text-slate-500">{data.cancellationReason}</span></p>
+              </div>
+
             )}
           </div>
           <div className="flex justify-between my-4">
@@ -272,7 +275,7 @@ const OrdersDetali = () => {
                 <Popconfirm
                   title="Từ chối xác nhận?"
                   description="Bạn có chắc chắn muốn từ chối xác nhận đơn hàng này?"
-                  onConfirm={() => cancel(data?._id)}
+                  onConfirm={() => cancel({ id_item: data._id, action: 'huy' })}
                   okText="Từ chối"
                   cancelText="Không"
                 >
@@ -289,7 +292,7 @@ const OrdersDetali = () => {
                     <Popconfirm
                       title="Xác nhận hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                      onConfirm={() => mutate({ id: data?._id, confirm: true })}
+                      onConfirm={() => mutate({ id_item: data?._id, confirm: true })}
                       okText="Xác nhận"
                       cancelText="Không"
                     >
@@ -301,7 +304,7 @@ const OrdersDetali = () => {
                       title="Từ chối hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
                       onConfirm={() =>
-                        mutate({ id: data?._id, confirm: false })
+                        mutate({ id_item: data?._id, confirm: false })
                       }
                       okText="Từ chối"
                       cancelText="Không"
@@ -334,8 +337,8 @@ const OrdersDetali = () => {
                 okText="Xác nhận"
                 cancelText="Không"
               >
-                <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
-                  Xác nhận
+                <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white cursor-not-allowed" disabled>
+                  Đang vận chuyển
                 </button>
               </Popconfirm>
             )}
