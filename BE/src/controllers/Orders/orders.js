@@ -423,12 +423,6 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, total_price } = req.body;
-    const validStatuses = ["1", "2", "3", "4", "5"];
-    if (!validStatuses.includes(status)) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: "Invalid status" });
-    }
     const order = await Order.findById(id);
     if (!order) {
       return res
@@ -441,7 +435,7 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
-    if (status === "2") {
+    if (status === 2) {
       const items = order.items;
       for (let i of items) {
         if (i.productId.attributes) {
@@ -473,14 +467,6 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     await order.save();
-    const notification = new Notification({
-      userId: order.userId,
-      receiver_id: "duonghainam03012004@gmail.com",
-      message: cancellationReason,
-    });
-    console.log(notification);
-
-    await notification.save();
     return res
       .status(StatusCodes.OK)
       .json({ message: "Order status updated successfully" });

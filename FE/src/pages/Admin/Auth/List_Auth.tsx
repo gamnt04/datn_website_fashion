@@ -12,14 +12,9 @@ import {
   Select
 } from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
-import SearchComponent from "./Search";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
-<<<<<<< HEAD
-import { Option } from "antd/es/mentions";
-=======
 
->>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
 interface UpdateField {
   field: string;
   value: string;
@@ -27,7 +22,6 @@ interface UpdateField {
 }
 
 const List_Auth = () => {
-  const [data, setData] = useState<any>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
   const [searchName, setSearchName] = useState("");
@@ -62,19 +56,8 @@ const List_Auth = () => {
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
-<<<<<<< HEAD
-          <Image
-            src={auth.avatar}
-            alt=""
-            width={80}
-            height={80}
-            className="object-cover"
-          />
-        )
-=======
           <Image src={auth.avatar} alt="" width={70} />
         ),
->>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
     },
     {
       title: "Tên Người Dùng",
@@ -138,10 +121,6 @@ const List_Auth = () => {
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
-<<<<<<< HEAD
-      }
-    }
-=======
       },
     },
     {
@@ -155,7 +134,6 @@ const List_Auth = () => {
           auth.role
         ),
     },
->>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
   ];
 
   const formatDate = (isoString: string) => {
@@ -180,7 +158,7 @@ const List_Auth = () => {
     return `Ngày cập nhật: ${date}\n\nNội dung cập nhật:\n${latestUpdate.field}: ${fieldValue} (${time})`;
   };
 
-  const showModal = (updatedFields) => {
+  const showModal = (updatedFields: any) => {
     if (updatedFields && updatedFields.length > 0) {
       setSelectedUpdate(updatedFields);
       setIsModalVisible(true);
@@ -254,8 +232,6 @@ const List_Auth = () => {
           )}
         </Modal>
       </div>
-<<<<<<< HEAD
-=======
       <div className="">
         <Input
           value={searchName}
@@ -294,7 +270,6 @@ const List_Auth = () => {
           <p>Không có thông tin cập nhật</p>
         )}
       </Modal>
->>>>>>> 830622529a02c5d64c4883b407a5361c0eebb652
     </>
   );
 };
