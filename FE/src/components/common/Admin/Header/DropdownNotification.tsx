@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Query_notification } from "../../../../_lib/React_Query/Notification/Query";
+import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  // const { data, isLoading } = Query_Orders()
+  // console.log(data);
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const { data, isLoading } = Query_notification(userId);
+  console.log(data);
 
+  if (isLoading) return <div>Loading...</div>
   return (
     <div className="relative">
       <li>
@@ -43,93 +52,29 @@ const DropdownNotification = () => {
                 Thông Báo
               </h5>
             </div>
-
             <ul className="flex max-h-[300px] flex-col overflow-y-auto">
-              <li>
-                <Link
-                  className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                  to="#"
-                >
-                  <p className="text-sm text-black">
-                    <span className=" ">Edit your information in a swipe</span>
-                    <br />
-                    <span className="mt-[5px] text-[#8A99AF]">
-                      Sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim.
-                    </span>
-                  </p>
 
-                  <p className="text-xs text-blue-400">12 May, 2025</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                  to="#"
-                >
-                  <p className="text-sm text-black">
-                    <span className=" ">Edit your information in a swipe</span>
-                    <br />
-                    <span className="mt-[5px] text-[#8A99AF]">
-                      Sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim.
-                    </span>
-                  </p>
+              {data?.notifications?.map((orders: any) => {
+                return (
+                  <li key={orders?._id}>
+                    <Link
+                      className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
+                      to={`/admin/orders/${orders?._id}/orderDetali`}
+                    >
+                      <p className="text-sm text-black">
+                        <p className=" "><span className="font-bold">{orders?.userId}</span> đã hủy đơn hàng</p>
+                        <p>{orders?.orderId}</p>
+                        <span className="mt-[5px] text-[#8A99AF]">
+                          Lý do:{orders?.message}
+                        </span>
+                      </p>
 
-                  <p className="text-xs text-blue-400">12 May, 2025</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                  to="#"
-                >
-                  <p className="text-sm text-black">
-                    <span className=" ">Edit your information in a swipe</span>
-                    <br />
-                    <span className="mt-[5px] text-[#8A99AF]">
-                      Sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim.
-                    </span>
-                  </p>
+                      {/* <p className="text-xs text-blue-400">12 May, 2025</p> */}
+                    </Link>
+                  </li>
+                )
+              })}
 
-                  <p className="text-xs text-blue-400">12 May, 2025</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                  to="#"
-                >
-                  <p className="text-sm text-black">
-                    <span className=" ">Edit your information in a swipe</span>
-                    <br />
-                    <span className="mt-[5px] text-[#8A99AF]">
-                      Sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim.
-                    </span>
-                  </p>
-
-                  <p className="text-xs text-blue-400">12 May, 2025</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                  to="#"
-                >
-                  <p className="text-sm text-black">
-                    <span className=" ">Edit your information in a swipe</span>
-                    <br />
-                    <span className="mt-[5px] text-[#8A99AF]">
-                      Sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim.
-                    </span>
-                  </p>
-
-                  <p className="text-xs text-blue-400">12 May, 2025</p>
-                </Link>
-              </li>
             </ul>
           </div>
         )}

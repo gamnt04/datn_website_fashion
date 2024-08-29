@@ -37,7 +37,7 @@ const useForm = ({ mode }: { mode?: string }) => {
         setLoading(true);
         const imageUrl = mode ? await UploadImage(imageFile[0]) : await UploadImage(imageFile[0]);
         const galleryUrls = await UploadGallery(galleryFiles);
-        const attributesJson = JSON.stringify(dataForm.attributes);
+        const attributesJson =(dataForm?.attributes?.length > 0) && JSON.stringify(dataForm.attributes);
         setLoading(false);
         const finalValues = {
             ...dataForm,

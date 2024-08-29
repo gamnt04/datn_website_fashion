@@ -8,7 +8,9 @@ import {
   message,
   Switch,
   Input,
-  Checkbox
+  Checkbox,
+  Space,
+  Pagination
 } from "antd";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -16,19 +18,22 @@ import { DeleteOutlined, PlusCircleFilled } from "@ant-design/icons";
 import parse from "html-react-parser";
 import { useSearchBlogByName } from "../../../common/hooks/Blog/querry_blog";
 import { AiOutlinePlus } from "react-icons/ai";
+import { FaEdit } from "react-icons/fa";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useSearchBlogByName(searchName);
-  const { data, isLoading, isError, error } = useQuery({
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["blogs"],
     queryFn: async () => {
       const response = await instance.get("/blogs");
       return response.data;
     }
   });
-  const dataSource = (searchName ? searchData : data)?.map((blog) => ({
+  const dataSource = (searchName ? searchData : data)?.map((blog: any) => ({
     key: blog._id,
     ...blog
   }));
@@ -53,7 +58,6 @@ const BlogList: React.FC = () => {
       );
     }
   };
-
   const mutation = useMutation({
     mutationFn: async (updatedBlog: Blog) => {
       const response = await instance.put(
@@ -75,9 +79,24 @@ const BlogList: React.FC = () => {
       );
     }
   });
-
-  const handleTogglePublished = (blog: Blog) => {
-    mutation.mutate({ ...blog, published: !blog.published });
+  const handleTogglePublished = async (blog: Blog) => {
+    try {
+      const updatedBlog = { ...blog, published: !blog.published };
+      const response = await instance.put(`/update_blog/${blog._id}`, updatedBlog);
+      if (response.status === 200) {
+        messageApi.success("Cập nhật trạng thái hiển thị thành công");
+        refetch();
+      } else {
+        throw new Error("Cập nhật trạng thái hiển thị không thành công");
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái hiển thị:", error);
+      messageApi.error(
+        `Cập nhật trạng thái hiển thị không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
+    }
   };
 
   const renderContentSnippet = (content: string) => {
@@ -167,7 +186,7 @@ const BlogList: React.FC = () => {
       title: "Thao Tác",
       render: (_: any, blogs: Blog) => (
         <>
-          <Popconfirm
+          {/* <Popconfirm
             title="Xóa Blog"
             description="Bạn có chắc chắn muốn xóa blog này không?"
             onConfirm={() => handleDelete(blogs._id!)}
@@ -180,13 +199,33 @@ const BlogList: React.FC = () => {
           </Popconfirm>
           <Link to={`${blogs._id}`}>
             <Button type="primary">Chỉnh sửa</Button>
-          </Link>
+          </Link> */}
+          <Space>
+            <Button type="primary">
+              <Link to={`${blogs._id}`}>
+                <FaEdit />
+              </Link>
+            </Button>
+            <Popconfirm
+              title="Xóa bài viết"
+              description="Bạn có muốn xóa bài viết này không ?"
+              onConfirm={() => handleDelete(blogs._id!)}
+              // onCancel={cancel}
+              okText="Có"
+              cancelText="Không"
+            >
+              <Button danger>
+                <FaDeleteLeft />
+              </Button>
+            </Popconfirm>
+          </Space>
         </>
       )
     }
   ];
+
   if (isLoading) return <div className="">loading...</div>;
-  if (isError) return <div className="">{error.message}</div>;
+  if (isError) return <div className="">{(error as any).message}</div>;
 
   return (
     <div className="container ">
@@ -227,13 +266,13 @@ const BlogList: React.FC = () => {
                 onChange={(e) => setSearchName(e.target.value)}
                 placeholder="nhâp tên sản phẩm để tìm kiếm..."
               />
-              <Button onSubmit={() => onHandleSearch} type="primary">
+              <Button onClick={onHandleSearch} type="primary">
                 Tìm kiếm
               </Button>
             </div>
           </div>
         </div>
-        {data.length === 0 ? (
+        {data && data.length === 0 ? (
           <p>Không có blog nào.</p>
         ) : (
           <Table dataSource={dataSource} rowKey="_id" columns={columns} />

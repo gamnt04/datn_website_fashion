@@ -38,11 +38,10 @@ import BlogEdit from "../pages/Admin/Blogs/BlogEdit";
 import ForgotPassword from "../pages/Client/User/ForgotPass";
 import CategoryDetail from "../pages/Admin/Category/CategoryDetail";
 import OrderPay from "../pages/Client/pay/oderPay";
-import Layout_Review from "../pages/Client/Review/page";
-import DescriptionProduct from "../pages/Client/[ProductDetail]/DescriptionProduct";
 import List_order from "../pages/Client/List_Order/page";
 import Feedback from "../pages/Admin/contact/Feedback";
 import ContactDetail from "../pages/Admin/contact/ContactDetail";
+import Notification from "../components/Notification/Page";
 const RouterComponent = () => {
   return (
     <>
@@ -72,6 +71,7 @@ const RouterComponent = () => {
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
+              <Route path="/profile/notification" element={<Notification />} />
               <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
@@ -83,6 +83,7 @@ const RouterComponent = () => {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="/admin/notification" element={<Notification />} />
             <Route path="category" element={<List_Category />} />
             <Route path="category/products/:id" element={<CategoryDetail />} />
             {/* <Route path="test1" element={<Add_Item />} />
@@ -95,10 +96,7 @@ const RouterComponent = () => {
             <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="auth" element={<List_Auth />} />
-            <Route
-              path="/admin/orders/:id/orderDetali"
-              element={<OrdersDetali />}
-            />
+            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="contact/:id" element={<ContactDetail />} />
             <Route path="feedback/:id" element={<Feedback />} />

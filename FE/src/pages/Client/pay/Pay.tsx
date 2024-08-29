@@ -190,7 +190,7 @@ const Pay = () => {
   }
   return (
     <>
-      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="max-w-[1440px] w-[95vw] mx-auto">
         {contextHolder}
         <div className="mt-20">
           <div className="mb-6">
