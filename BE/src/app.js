@@ -13,6 +13,7 @@ import Router_Contact from "./routers/contact";
 import Routes_payments from "./routers/OnlineCheckoutRoutes";
 import Routes_Attribute from "./routers/attribute";
 import Routes_review from "./routers/review";
+import Router_Notification from "./routers/notification";
 
 dotenv.config();
 const app = express();
@@ -28,9 +29,8 @@ app.use("/api/v1", Routes_orders);
 app.use("/api/v1", Routes_Carts);
 app.use("/api/v1", Routes_auth);
 app.use("/api/v1", Routes_Favorites);
-
+app.use("/api/v1", Router_Notification);
 app.use("/api/v1", Router_Contact);
-
 app.use("/api/v1", Routes_blog);
 app.use("/api/v1", Routes_payments);
 app.use("/api/v1", Routes_review);
