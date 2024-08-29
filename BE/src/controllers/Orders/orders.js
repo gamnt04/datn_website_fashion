@@ -26,7 +26,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""}`,
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`
       },
       totalPrice
     });
@@ -126,8 +128,9 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`
+          address: `${customerInfo.address || ""}${
+            customerInfo.addressDetail || ""
+          }`
         },
         totalPrice
       });
@@ -500,7 +503,7 @@ export async function get_orders_client(req, res) {
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { datetime: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { datetime: -1 } // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
   };
 
   const query = {};
@@ -629,5 +632,28 @@ export const getOrderByNumber = async (req, res) => {
   } catch (error) {
     console.error("Error fetching order:", error);
     return res.status(500).json({ message: "Lỗi máy chủ!" });
+  }
+};
+export const getOrderByNumberOrPhoneNumber = async (req, res) => {
+  try {
+    const { searchOrder } = req.body;
+    const orders = await Order.find({
+      $or: [
+        { orderNumber: { $regex: new RegExp(searchOrder, "i") } },
+        { "customerInfo.phone": { $regex: new RegExp(searchOrder, "i") } }
+      ]
+    }).lean();
+
+    if (orders === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không có đơn hàng nào khớp với tìm kiếm" });
+    }
+
+    return res.status(StatusCodes.OK).json(orders);
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Lỗi server"
+    });
   }
 };

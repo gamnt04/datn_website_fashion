@@ -63,17 +63,23 @@ export const GetAuthById = async (req, res) => {
       .json({ error: "MongoDB Query Error" });
   }
 };
-export const GetUsersByName = async (req, res) => {
+export const GetUsersByEmailOrName = async (req, res) => {
   try {
     const { searchUser } = req.body;
+
     const users = await User.find({
-      userName: { $regex: new RegExp(searchUser, "i") }
+      $or: [
+        { email: { $regex: new RegExp(searchUser, "i") } },
+        { userName: { $regex: new RegExp(searchUser, "i") } }
+      ]
     });
-    if (users === 0) {
+
+    if (users.length === 0) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ message: error.message || "Không có tài khoản nào" });
+        .json({ message: "Không có tài khoản nào khớp với tìm kiếm" });
     }
+
     return res.status(StatusCodes.OK).json(users);
   } catch (error) {
     return res
