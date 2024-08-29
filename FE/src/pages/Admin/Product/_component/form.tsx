@@ -18,7 +18,7 @@ type FieldType = {
   category_id: string[];
   image_product: string;
   gallery_product: string[];
-  stock_product: number;
+  stock: number;
   attributes: IAttribute[];
   featured_product: boolean;
   tag_product: string[];
@@ -171,8 +171,32 @@ const Form_Item = ({ mode }: any) => {
                     action: "price"
                   }}
                 />
+                <label className="text-[#1C2434] font-medium text-sm">
+                  Số lượng sản phẩm
+                </label>
+                <Filed_form
+                  props={{
+                    name_field: "stock",
+                    ruler_field: [
+                      {
+                        required: true,
+                        message: "Số lượng sản phẩm bắt buộc nhập!"
+                      },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Số lượng sản phẩm phải là số dương!",
+                        transform(value: number) {
+                          return Number(value);
+                        }
+                      }
+                    ],
+                    action: "price"
+                  }}
+                />
               </>
             )}
+
 
             <label className="text-[#1C2434]font-medium text-sm">
               Mô tả sản phẩm
@@ -421,8 +445,8 @@ const Form_Item = ({ mode }: any) => {
             {isPending || loading
               ? "Loading"
               : mode
-              ? "Cập nhật sản phẩm"
-              : "Tạo mới sản phẩm"}
+                ? "Cập nhật sản phẩm"
+                : "Tạo mới sản phẩm"}
           </Button>
         </Form.Item>
       </Form>
