@@ -1,30 +1,43 @@
 import { useState } from "react";
 import OrderTable from "./OrderTable";
-import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
+import {
+  Query_Orders,
+  useSearchOrdersByNumberOrNumberPhone
+} from "../../../common/hooks/Order/querry_Order";
 import { Button, Input, Select } from "antd";
 const { Option } = Select;
+
 const OrderList = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchOrder, setSearchOrder] = useState("");
+  const { data: searchData } =
+    useSearchOrdersByNumberOrNumberPhone(searchOrder);
   const { data, isLoading, totalPages } = Query_Orders(
     undefined,
     currentPage,
     statusFilter
   );
+  const dataSource = searchData ? searchData : data;
+
+  const onHandleSearch = () => {
+    setSearchOrder(searchOrder.trim());
+  };
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
     setCurrentPage(1);
   };
-  const goToPage = (page: any) => {
+
+  const goToPage = (page) => {
     setCurrentPage(page);
   };
 
   return (
     <div>
-      <div className=" mx-6">
+      <div className="mx-6">
         <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-2xl font-semibold">Quản Lý Đơn Hàng</h1>{" "}
+          <h1 className="text-2xl font-semibold">Quản Lý Đơn Hàng</h1>
         </div>
         <div className="mb-2 flex justify-between">
           <div className="space-x-5">
@@ -45,18 +58,18 @@ const OrderList = () => {
           <div className="flex space-x-5">
             <Input
               className="w-[500px] h-9"
-              // value={searchName}
-              // onChange={(e) => setSearchName(e.target.value)}
-              placeholder="nhâp tên hoặc số điện thoại của khách hàng để tìm kiếm..."
+              value={searchOrder}
+              onChange={(e) => setSearchOrder(e.target.value)}
+              placeholder="Nhập mã đơn hàng hoặc số điện thoại của khách hàng để tìm kiếm..."
             />
-            <Button type="primary" className="h-9">
+            <Button onClick={onHandleSearch} type="primary" className="h-9">
               Tìm kiếm
             </Button>
           </div>
         </div>
 
         <OrderTable
-          orders={data}
+          orders={dataSource}
           isLoading={isLoading}
           currentPage={currentPage}
           goToPage={goToPage}

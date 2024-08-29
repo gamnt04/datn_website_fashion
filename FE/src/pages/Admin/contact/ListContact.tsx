@@ -1,17 +1,28 @@
 import { useNavigate } from "react-router-dom";
-import { useContacts } from "../../../common/hooks/Contact/useContacts";
+import {
+  useContacts,
+  useSearchContactByNameOrEmail
+} from "../../../common/hooks/Contact/useContacts";
 import { format } from "date-fns";
 import { IContact } from "../../../common/interfaces/Contact";
 import Loading from "../../../components/base/Loading/Loading";
 import { Button, Input, Select, Table } from "antd";
+import { useState } from "react";
 
 const ListContact = () => {
   const { contacts, isLoading, error } = useContacts();
   const navigate = useNavigate();
-  const dataSource = contacts?.map((contact: IContact) => ({
-    key: contact._id,
-    ...contact
-  }));
+  const [searchContact, setSearchContact] = useState("");
+  const { data: searchData } = useSearchContactByNameOrEmail(searchContact);
+  const dataSource = (searchContact ? searchData : contacts)?.map(
+    (contact: IContact) => ({
+      key: contact._id,
+      ...contact
+    })
+  );
+  const onHandleSearch = () => {
+    setSearchContact(searchContact.trim());
+  };
   const columns = [
     {
       title: "Tên Liên Hệ",
@@ -35,8 +46,8 @@ const ListContact = () => {
     },
     {
       title: " Tin Nhắn",
-      dataIndex: "content",
-      key: "content"
+      dataIndex: "message",
+      key: "message"
     },
     {
       title: "  Ngày Tạo",
@@ -180,11 +191,13 @@ const ListContact = () => {
         <div className="flex space-x-5">
           <Input
             className="w-[500px]"
-            // value={searchName}
-            // onChange={(e) => setSearchName(e.target.value)}
-            placeholder="nhâp tên sản phẩm để tìm kiếm..."
+            value={searchContact}
+            onChange={(e) => setSearchContact(e.target.value)}
+            placeholder="nhâp tên hoặc email của khách hàng liên hệ ..."
           />
-          <Button type="primary">Tìm kiếm</Button>
+          <Button type="primary" onClick={onHandleSearch}>
+            Tìm kiếm
+          </Button>
         </div>
       </div>
 

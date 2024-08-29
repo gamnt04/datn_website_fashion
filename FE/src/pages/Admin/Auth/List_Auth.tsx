@@ -14,7 +14,10 @@ import {
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
 interface UpdateField {
   field: string;
   value: string;
@@ -31,7 +34,7 @@ const List_Auth = () => {
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    },
+    }
   });
 
   const onHandleSearch = () => {
@@ -42,7 +45,7 @@ const List_Auth = () => {
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth,
+        ...auth
       };
     }
   );
@@ -56,8 +59,19 @@ const List_Auth = () => {
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
+<<<<<<< HEAD
+          <Image
+            src={auth.avatar}
+            alt=""
+            width={80}
+            height={80}
+            className="object-cover"
+          />
+        )
+=======
           <Image src={auth.avatar} alt="" width={70} />
         ),
+>>>>>>> main
     },
     {
       title: "Tên Người Dùng",
@@ -68,7 +82,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        ),
+        )
     },
     {
       title: "Email",
@@ -79,7 +93,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        ),
+        )
     },
     {
       title: "Quyền",
@@ -102,7 +116,7 @@ const List_Auth = () => {
           return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
         }
         return "Chưa có cập nhật";
-      },
+      }
     },
     {
       title: "Nội Dung Cập Nhật",
@@ -121,6 +135,10 @@ const List_Auth = () => {
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
+<<<<<<< HEAD
+      }
+    }
+=======
       },
     },
     {
@@ -134,6 +152,7 @@ const List_Auth = () => {
           auth.role
         ),
     },
+>>>>>>> main
   ];
 
   const formatDate = (isoString: string) => {
@@ -232,6 +251,8 @@ const List_Auth = () => {
           )}
         </Modal>
       </div>
+<<<<<<< HEAD
+=======
       <div className="">
         <Input
           value={searchName}
@@ -270,6 +291,7 @@ const List_Auth = () => {
           <p>Không có thông tin cập nhật</p>
         )}
       </Modal>
+>>>>>>> main
     </>
   );
 };
