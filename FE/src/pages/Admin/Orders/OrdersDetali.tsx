@@ -3,33 +3,32 @@ import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 import { Button, message, Popconfirm, Table } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
+import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 const OrdersDetali = () => {
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
   const [messageApi, contextHolder] = message.useMessage();
   const { id } = useParams();
   const { data, refetch } = Query_Orders(id);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
+  const dispathNotification = Mutation_Notification('Add');
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-  const handleStatusUpdate = async () => {
+  const handleStatusUpdate = async (status: number | string, code_order?: string | number) => {
     if (!data) return;
-    if (data.status === "5") {
-      messageApi.open({
-        type: "error",
-        content: "Đơn hàng đã bị hủy, không thể cập nhật trạng thái!"
-      });
-      return;
-    }
-
-    const statusOrder: Record<string, string> = {
-      "1": "2",
-      "2": "3",
-      "3": "4"
-    };
-    const nextStatus = statusOrder[data.status] || "4";
+    const message = (status === 2) ? `Người bán đã xác nhận đơn hàng ${code_order}` : (status === 3) ?
+      `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!` :
+      `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: data?.userId,
+      message: message
+    })
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: nextStatus
+        status: status
       });
       messageApi.open({
         type: "success",
@@ -259,12 +258,12 @@ const OrdersDetali = () => {
             </div>
           </div>
           <div className="flex gap-5 justify-center mt-[60px]">
-            {data.status === "1" && (
+            {(data.status === "1") && (
               <>
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
                   description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                  onConfirm={handleStatusUpdate}
+                  onConfirm={() => handleStatusUpdate(2, data?.orderNumber)}
                   okText="Xác nhận"
                   cancelText="Không"
                 >
@@ -318,12 +317,12 @@ const OrdersDetali = () => {
                   <Popconfirm
                     title="Xác nhận đơn hàng?"
                     description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                    onConfirm={handleStatusUpdate}
+                    onConfirm={() => handleStatusUpdate(3, data?.orderNumber)}
                     okText="Xác nhận"
                     cancelText="Không"
                   >
                     <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
-                      Xác nhận
+                      Xác nhận vận chuyển
                     </button>
                   </Popconfirm>
                 )}
@@ -333,11 +332,10 @@ const OrdersDetali = () => {
               <Popconfirm
                 title="Xác nhận đơn hàng?"
                 description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                onConfirm={handleStatusUpdate}
                 okText="Xác nhận"
                 cancelText="Không"
               >
-                <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white cursor-not-allowed" disabled>
+                <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
                   Đang vận chuyển
                 </button>
               </Popconfirm>
