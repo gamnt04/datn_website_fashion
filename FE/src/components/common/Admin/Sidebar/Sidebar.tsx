@@ -20,90 +20,88 @@ export default function Sidebar_Dashboard() {
   };
 
   return (
-    <aside className="h-screen w-[290px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3 px-6">
-      <div className="items-center py-1">
+    <aside className="h-screen w-[200px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3">
+      <div className="items-center py-1 px-2">
         <img src={logo} alt="" className="w-[242px] h-[45px]" />
       </div>
 
-      <div>
-        <div>
-          <button
-            onClick={() => toggleExpand("dashboard")}
-            className="flex bg-[#333A48] items-center gap-x-4 py-3  w-full text-left"
-          >
-            <LayoutDashboard />
-            <span className="text-[16px] text-[#c4cee3]">Bảng điều khiển</span>
-            <ChevronDown
-              className={`ml-auto transform ${
-                expandedSection === "dashboard" ? "rotate-180" : ""
+      <div className="whitespace-nowrap *:text-sm *:px-2">
+        <button
+          onClick={() => toggleExpand("dashboard")}
+          className="flex bg-[#333A48] items-center gap-x-4 py-3  w-full text-left"
+        >
+          <LayoutDashboard />
+          <span className="text-[#c4cee3]">Bảng điều khiển</span>
+          <ChevronDown
+            className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
               }`}
-            />
-          </button>
+          />
+        </button>
 
-          {expandedSection === "dashboard" && (
-            <div className="ml-8 mt-2">
-              <NavLink
-                to="/admin"
-                className="flex items-center px-2 py-3  hover:text-white text-[16px] text-gray-300"
-              >
-                Tổng quan
-              </NavLink>
-            </div>
-          )}
-        </div>
+        {expandedSection === "dashboard" && (
+          <div className="ml-8 mt-2">
+            <NavLink
+              to="/admin"
+              className="flex items-center px-2 py-3  hover:text-white text-gray-300">
+              Tổng quan
+            </NavLink>
+            <NavLink
+              to="/admin/notification"
+              className="flex items-center px-2 py-3  hover:text-white  text-gray-300" >
+              Thông báo
+            </NavLink>
+          </div>
+        )}
       </div>
 
-      <div>
-        <div>
-          <button
-            onClick={() => toggleExpand("products")}
-            className="flex items-center gap-x-4 py-3  w-full text-left"
-          >
-            <Shirt />
-            <span className="text-[16px] text-[#c4cee3]">Sản phẩm</span>
-            <ChevronDown
-              className={`ml-auto transform ${
-                expandedSection === "products" ? "rotate-180" : ""
-              }`}
-            />
-          </button>
 
-          {expandedSection === "products" && (
-            <div className="ml-8 mt-2">
-              <NavLink
-                to="/admin/products"
-                className="flex items-center px-2 py-3  hover:text-white text-[16px] text-gray-300"
-              >
-                Danh sách sản phẩm
-              </NavLink>
-              <NavLink
-                to="/admin/products/add"
-                className="flex items-center px-2 py-3  hover:text-white text-[16px] text-gray-300"
-              >
-                Thêm mới sản phẩm
-              </NavLink>
-              <NavLink
-                to="/admin/category"
-                className="flex items-center px-2 py-3  hover:text-white text-[16px] text-gray-300"
-              >
-                Quản lý danh mục
-              </NavLink>
-            </div>
-          )}
-        </div>
+      <div className="*:px-2">
+        <button
+          onClick={() => toggleExpand("products")}
+          className="flex items-center gap-x-4 py-3  w-full text-left"
+        >
+          <Shirt />
+          <span className="text-[#c4cee3]">Sản phẩm</span>
+          <ChevronDown
+            className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
+              }`}
+          />
+        </button>
+
+        {expandedSection === "products" && (
+          <div className="ml-8 mt-2">
+            <NavLink
+              to="/admin/products"
+              className="flex items-center px-2 py-3  hover:text-white text-gray-300"
+            >
+              Danh sách sản phẩm
+            </NavLink>
+            <NavLink
+              to="/admin/products/add"
+              className="flex items-center px-2 py-3  hover:text-white text-gray-300"
+            >
+              Thêm mới sản phẩm
+            </NavLink>
+            <NavLink
+              to="/admin/category"
+              className="flex items-center px-2 py-3  hover:text-white text-gray-300"
+            >
+              Quản lý danh mục
+            </NavLink>
+          </div>
+        )}
       </div>
       <div>
-        <div>
+        <div className="*:px-2">
           <button
             onClick={() => toggleExpand("attribute")}
             className="flex items-center gap-x-4 py-3  w-full text-left"
           >
             <Palette />
-            <span className="text-[16px] text-[#c4cee3]">Thuộc Tính</span>
+            <span className=" text-[#c4cee3]">Thuộc Tính</span>
             <ChevronDown
-              className={`ml-auto transform ${
-                expandedSection === "attribute" ? "rotate-180" : ""
-              }`}
+              className={`ml-auto transform ${expandedSection === "attribute" ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -111,13 +109,13 @@ export default function Sidebar_Dashboard() {
             <div className="ml-8 mt-2">
               <NavLink
                 to="/admin/products"
-                className="flex items-center px-2 py-3  hover:text-white text-[16px] text-gray-300"
+                className="flex items-center px-2 py-3  hover:text-white text-gray-300"
               >
                 Màu sắc
               </NavLink>
               <NavLink
                 to="/admin/products/add"
-                className="flex items-center px-2 py-3  hover:text-white text-[16px] text-gray-300"
+                className="flex items-center px-2 py-3  hover:text-white text-gray-300"
               >
                 Kích Cỡ
               </NavLink>
@@ -126,35 +124,35 @@ export default function Sidebar_Dashboard() {
         </div>
       </div>
 
-      <div>
+      <div className="*:px-2">
         <Link
           to={`/admin/orders`}
           className="flex items-center gap-x-4 py-3  w-full text-left"
         >
           <Box />
-          <span className="text-[16px] text-[#c4cee3]">Đơn Hàng</span>
+          <span className=" text-[#c4cee3]">Đơn Hàng</span>
         </Link>
       </div>
-      <div>
+      <div className="*:px-2">
         <Link
           to={`/admin/auth`}
           className="flex items-center gap-x-4 py-3  w-full text-left"
         >
           <User2 />
-          <span className="text-[16px] text-[#c4cee3]">Tài khoản</span>
+          <span className=" text-[#c4cee3]">Tài khoản</span>
         </Link>
       </div>
-      <div>
+      <div className="*:px-2">
         <Link
           to={`/admin/contact`}
           className="flex items-center gap-x-4 py-3  w-full text-left"
         >
           <Contact />
-          <span className="text-[16px] text-[#c4cee3]">Liên hệ</span>
+          <span className=" text-[#c4cee3]">Liên hệ</span>
         </Link>
       </div>
 
-      <div>
+      <div className="*:px-2">
         <Link
           to={`/admin/blogs`}
           className="flex items-center gap-x-4 py-3  w-full text-left"
@@ -177,16 +175,16 @@ export default function Sidebar_Dashboard() {
             <path d="M3 18h18" />
             <path d="M4 11h6" />
           </svg>
-          <span className="text-[16px] text-[#c4cee3]">Bài viết</span>
+          <span className="text-[#c4cee3]">Bài viết</span>
         </Link>
       </div>
-      <div>
+      <div className="*:px-2">
         <Link
           to={`/admin/trash`}
           className="flex items-center gap-x-4 py-3  w-full text-left"
         >
           <Trash2 />
-          <span className="text-[16px] text-[#c4cee3]">Thùng rác</span>
+          <span className="text-[#c4cee3]">Thùng rác</span>
         </Link>
       </div>
     </aside>

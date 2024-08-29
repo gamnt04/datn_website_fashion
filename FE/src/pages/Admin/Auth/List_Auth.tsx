@@ -14,6 +14,10 @@ import {
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 interface UpdateField {
   field: string;
   value: string;
@@ -21,7 +25,6 @@ interface UpdateField {
 }
 
 const List_Auth = () => {
-  const [data, setData] = useState<any>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
   const [searchName, setSearchName] = useState("");
@@ -56,6 +59,7 @@ const List_Auth = () => {
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
+<<<<<<< HEAD
           <Image
             src={auth.avatar}
             alt=""
@@ -64,6 +68,10 @@ const List_Auth = () => {
             className="object-cover"
           />
         )
+=======
+          <Image src={auth.avatar} alt="" width={70} />
+        ),
+>>>>>>> main
     },
     {
       title: "Tên Người Dùng",
@@ -127,8 +135,24 @@ const List_Auth = () => {
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
+<<<<<<< HEAD
       }
     }
+=======
+      },
+    },
+    {
+      title: "Quyền",
+      dataIndex: "role",
+      key: "role",
+      render: (_: any, auth: any) =>
+        isLoading ? (
+          <Skeleton.Input style={{ width: 100 }} active size="small" />
+        ) : (
+          auth.role
+        ),
+    },
+>>>>>>> main
   ];
 
   const formatDate = (isoString: string) => {
@@ -153,7 +177,7 @@ const List_Auth = () => {
     return `Ngày cập nhật: ${date}\n\nNội dung cập nhật:\n${latestUpdate.field}: ${fieldValue} (${time})`;
   };
 
-  const showModal = (updatedFields) => {
+  const showModal = (updatedFields: any) => {
     if (updatedFields && updatedFields.length > 0) {
       setSelectedUpdate(updatedFields);
       setIsModalVisible(true);
@@ -227,6 +251,47 @@ const List_Auth = () => {
           )}
         </Modal>
       </div>
+<<<<<<< HEAD
+=======
+      <div className="">
+        <Input
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+        />
+        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
+      </div>
+      <Spin
+        spinning={isLoading}
+        indicator={<LoadingOutlined spin />}
+        size="large"
+      >
+        <Table columns={columns} dataSource={dataSource} />
+      </Spin>
+
+      <Modal
+        title="Chi tiết cập nhật"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={500}
+        style={{ maxHeight: "80vh", overflowY: "auto" }}
+      >
+        {selectedUpdate ? (
+          <Form style={{ maxWidth: 500 }}>
+            <Form.Item>
+              <Input.TextArea
+                value={getLatestUpdateDetails(selectedUpdate)}
+                readOnly
+                rows={15}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </Form>
+        ) : (
+          <p>Không có thông tin cập nhật</p>
+        )}
+      </Modal>
+>>>>>>> main
     </>
   );
 };

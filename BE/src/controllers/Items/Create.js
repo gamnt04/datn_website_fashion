@@ -57,19 +57,19 @@ export const createProduct = async (req, res) => {
         message,
       });
     }
-    if (dataClient.attributes) {
+    if (dataClient.attributes && dataClient.attributes.length > 0) {
       const convertAttribute = JSON.parse(dataClient.attributes)
       const data = await Products.create(newProductData);
       const varriant = convertAttribute.map(item => (
         {
           color: item.color ? item.color : '',
-          size: item.size.map(data_size =>(
-              {
-                name_size: data_size.name_size ? data_size.name_size.toString() : '',
-                stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
-                price_attribute: data_size.price_attribute ? +data_size.price_attribute : 1
-              }
-            )
+          size: item.size.map(data_size => (
+            {
+              name_size: data_size.name_size ? data_size.name_size.toString() : '',
+              stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
+              price_attribute: data_size.price_attribute ? +data_size.price_attribute : 1
+            }
+          )
           )
         }
       ));
@@ -77,7 +77,6 @@ export const createProduct = async (req, res) => {
         id_item: data._id,
         values: varriant
       };
-      // console.log(data_attr);
       const new_attr = await Attributes.create(data_attr);
       await Products.findByIdAndUpdate(data._id, {
         $set: { attributes: new_attr._id }
