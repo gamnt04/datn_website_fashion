@@ -8,6 +8,7 @@ import {
   message,
   Modal,
   Popconfirm,
+  Radio,
   Spin,
   UploadFile,
   UploadProps,
@@ -37,6 +38,7 @@ type FieldType = {
 export default function List_order() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { mutate, contextHolder } = useOrderMutations("REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT");
+  const [selectedReason, setSelectedReason] = useState('');
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const account = user?.user;
@@ -55,6 +57,7 @@ export default function List_order() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
 
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
@@ -144,7 +147,7 @@ export default function List_order() {
     id_user: userId,
     page: 1,
     limit: 20,
-    status: +(status_order || 1),
+    status: +(status_order || 0),
   };
   const menuItems = [
     "Tất Cả",
@@ -159,6 +162,8 @@ export default function List_order() {
   // yêu cầu hủy
   // đã nhận hàng
   const { data, isPending } = Query_Order(dataClient);
+  console.log(data);
+
   const addCart = (orderId?: string | number) => {
     if (userId) {
       const order = data?.data?.docs?.find((i: any) => i?._id === orderId);
@@ -230,6 +235,13 @@ export default function List_order() {
 
     fetchData();
   }, [location.search]);
+  const reasons = [
+    'Thay đổi ý định',
+    'Tìm được giá tốt hơn',
+    'Đặt nhầm sản phẩm',
+    'Khác'
+  ];
+
   if (isPending || paymentPending) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -261,6 +273,8 @@ export default function List_order() {
       ) : (
         <div>
           {data?.data?.docs?.map((items: any) => {
+            console.log(items);
+
             return (
               <div className="border-t py-4">
                 <div className="flex gap-2 py-5 border-b-2 justify-between">
@@ -279,7 +293,8 @@ export default function List_order() {
                 </div>
                 {items?.items.map((product: any) => {
                   return <Items_order product={product} />;
-                })}
+                }
+                )}
                 <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
                   <div className="flex items-center gap-1">
                     <TotalPrice />
@@ -305,9 +320,23 @@ export default function List_order() {
                         Chờ xác nhận
                       </Button>
                       <Popconfirm
-                        title="Hủy dơn hàng?"
-                        description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                        onConfirm={() => mutate({ id_item: items._id, action: 'huy' })}
+                        title="Hủy đơn hàng?"
+                        description={
+                          <div>
+                            <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                            <div>
+                              <p>Chọn lý do hủy:</p>
+                              <Radio.Group className="flex flex-col gap-2" onChange={(e) => setSelectedReason(e.target.value)}>
+                                {reasons.map((reason, index) => (
+                                  <Radio key={index} value={reason}>
+                                    {reason}
+                                  </Radio>
+                                ))}
+                              </Radio.Group>
+                            </div>
+                          </div>
+                        }
+                        onConfirm={() => mutate({ id_item: items._id, action: 'huy', cancellationReason: selectedReason })}
                         // onCancel={cancel}
                         okText="Có "
                         cancelText="Không"
@@ -329,7 +358,7 @@ export default function List_order() {
                         <Popconfirm
                           title="Yêu cầu hủy dơn hàng?"
                           description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                          onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy' })}
+                          // onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy', cancellationReason: selectedReason })}
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -345,8 +374,22 @@ export default function List_order() {
                       ) : (
                         <Popconfirm
                           title="Yêu cầu hủy dơn hàng?"
-                          description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                          onConfirm={() => confirm(items?._id)}
+                          description={
+                            <div>
+                              <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                              <div>
+                                <p>Chọn lý do hủy:</p>
+                                <Radio.Group className="flex flex-col gap-2" onChange={(e) => setSelectedReason(e.target.value)}>
+                                  {reasons.map((reason, index) => (
+                                    <Radio key={index} value={reason}>
+                                      {reason}
+                                    </Radio>
+                                  ))}
+                                </Radio.Group>
+                              </div>
+                            </div>
+                          }
+                          onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy', cancellationReason: selectedReason })}
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -362,7 +405,7 @@ export default function List_order() {
                     </div>
                   ) : items?.status === "3" ? (
                     <Button
-                      className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
+                      className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
                       onClick={() => mutate({ id_item: items._id })}
                     >
                       Đã Nhận Hàng
@@ -455,9 +498,18 @@ export default function List_order() {
                         okText="Có"
                         cancelText="Không"
                       >
-                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
-                          Mua Lại
-                        </Button>
+                        {items?.items.map((product: any) => (
+                          (product?.productId?.stock_product === 0 ? (
+                            <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none cursor-not-allowed" disabled>
+                              Mua Lại
+                            </Button>
+                          ) : (
+                            <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
+                              Mua Lại
+                            </Button>
+                          ))
+                        ))}
+
                       </Popconfirm>
                     </div>
                   ) : (
@@ -469,9 +521,18 @@ export default function List_order() {
                       okText="Có "
                       cancelText="Không"
                     >
-                      <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại
-                      </Button>
+                      {items?.items.map((product: any) => (
+                        (product?.productId?.stock_product === 0 ? (
+                          <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none cursor-not-allowed" disabled>
+                            Mua Lại
+                          </Button>
+                        ) : (
+                          <Button className="bg-red-500 hover:!bg-red-600 !w-full h-10 ] !text-white text-[12px] rounded border-none">
+                            Mua Lại
+                          </Button>
+                        ))
+                      ))}
+
                     </Popconfirm>
                   )}
                 </div>
@@ -479,7 +540,8 @@ export default function List_order() {
             );
           })}
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
