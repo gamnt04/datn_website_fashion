@@ -13,7 +13,7 @@ import {
   Get_All_User_Search,
   getAddressById,
   setDefaultAddress,
-  GetUsersByName
+  GetUsersByEmailOrName
 } from "../controllers/Auth/auth";
 import { forgotPassword } from "../controllers/Auth/ForgotPass";
 const Routes_auth = express.Router();
@@ -22,7 +22,7 @@ Routes_auth.post("/auth/signin", signin);
 Routes_auth.post("/auth/logout", logout);
 Routes_auth.get("/auth/:userId", GetAuthById);
 Routes_auth.put("/auth/:userId", updateUser);
-Routes_auth.post("/auth/search", GetUsersByName);
+Routes_auth.post("/auth/search", GetUsersByEmailOrName);
 Routes_auth.get("/auths/search", Get_All_User_Search);
 
 // Routes_auth.put("/auth/${userId}/avatar", updateUserAvatar);
