@@ -8,19 +8,19 @@ const IndexHome = () => {
   return (
     <div className="lg:mt-[20px] mt-[60px]">
       <Banner />
-      <div className="xl:w-[1440px] w-[95vw] mx-auto ">
+      <div className="max-w-[1440px] w-[95vw] mx-auto ">
         <div className="w-full">
           <Trending_Products />
         </div>
       </div>
       <Fres />
-      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="max-w-[1440px] w-[95vw] mx-auto">
         <div className="w-full">
           <List_Products />
           <Ourblog />
         </div>
       </div>
-      {/* <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      {/* <div className="max-w-[1440px] w-[95vw] mx-auto">
             
         </div> */}
     </div>

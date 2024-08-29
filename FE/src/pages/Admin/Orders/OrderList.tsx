@@ -44,12 +44,14 @@ const OrderList = () => {
           </div>
           <div className="flex space-x-5">
             <Input
-              className="w-[500px]"
+              className="w-[500px] h-9"
               // value={searchName}
               // onChange={(e) => setSearchName(e.target.value)}
               placeholder="nhâp tên hoặc số điện thoại của khách hàng để tìm kiếm..."
             />
-            <Button type="primary">Tìm kiếm</Button>
+            <Button type="primary" className="h-9">
+              Tìm kiếm
+            </Button>
           </div>
         </div>
 

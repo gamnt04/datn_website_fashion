@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
-import { Link } from "react-router-dom";
-
+import { useQuery } from '@tanstack/react-query';
+import instance from '../../../configs/axios';
+import { Link } from 'react-router-dom';
+import HTMLReactParser from 'html-react-parser/lib/index';
 const Blogs = () => {
   const { data } = useQuery({
-    queryKey: ["BLOGS"],
+    queryKey: ['BLOGS'],
     queryFn: async () => {
-      const { data } = await instance.get("/blogs");
-      return data;
-    },
+      const { data } = await instance.get('/blogs');
+      return data
+    }
   });
 
   // Hàm lọc bài viết đã xuất bản
@@ -19,7 +19,7 @@ const Blogs = () => {
   const publishedBlogs = filterPublishedBlogs(data || []);
 
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+    <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] my-[40px]">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           <Link to={`/`} className="text-gray-500 hover:text-black">
@@ -39,31 +39,25 @@ const Blogs = () => {
             const image = doc.querySelector("img");
             const content = doc.querySelector("p");
             return (
-              <div
-                key={blog._id}
-                className="overflow-hidden transition-shadow duration-300 border rounded-lg shadow-lg hover:shadow-2xl"
-              >
+              <div key={blog._id} className="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
                 <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover">
                   <img
                     src={image?.src}
                     // alt={image?.title}
-                    className="object-cover w-full h-full transition-transform duration-300 image_blog hover:scale-105 "
+                    className="image_blog w-full h-full object-cover transition-transform duration-300 hover:scale-105 "
                   />
                 </div>
-                <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
+                {/* <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
                   <Link
                     to={`/blogs/${blog.slug}`}
                     className="text-white text-[20px] font-semibold"
                   >
-                    View full details
+                    Chi tiết bài viết
                   </Link>
-                </div>
+                </div> */}
                 <div className="px-4 py-4">
                   <h2 className="py-[10px] text-[20px] font-semibold">
-                    <Link
-                      to={`/blogs/${blog.slug}`}
-                      className="text-gray-900 transition-colors duration-300 hover:text-blue-600"
-                    >
+                    <Link to={`/blogs/${blog.slug}`} className="text-gray-900 hover:text-blue-600 transition-colors duration-300">
                       {title?.innerText}
                     </Link>
                   </h2>
@@ -74,12 +68,12 @@ const Blogs = () => {
                   <p className="mt-2 text-gray-700">
                     {String(content?.innerHTML).substring(0, 100)}...
                   </p>
-                  <div className="mt-4 text-center">
+                  <div className="text-center mt-4">
                     <Link
                       to={`/blogs/${blog.slug}`}
-                      className="font-semibold text-blue-500 hover:text-blue-700"
+                      className="text-blue-500 hover:text-blue-700 font-semibold"
                     >
-                      Read More
+                      Xem thêm
                     </Link>
                   </div>
                 </div>
