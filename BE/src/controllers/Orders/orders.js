@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
 import Attributes from "../../models/attribute/attribute";
+import Notification from "../../models/Notification/Notification";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 export const createOrder = async (req, res) => {
@@ -422,32 +423,24 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, total_price } = req.body;
-
     const validStatuses = ["1", "2", "3", "4", "5"];
     if (!validStatuses.includes(status)) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Invalid status" });
     }
-
     const order = await Order.findById(id);
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
     }
-
     if (order.status === "4" || order.status === "5") {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" });
     }
-
-    // Update order status
     order.status = status;
-    // order.totalPrice = total_price;
-
-    // If order is confirmed, update product quantities
     if (status === "2") {
       const items = order.items;
       for (let i of items) {
@@ -478,7 +471,16 @@ export const updateOrderStatus = async (req, res) => {
         }
       }
     }
+
     await order.save();
+    const notification = new Notification({
+      userId: order.userId,
+      receiver_id: "duonghainam03012004@gmail.com",
+      message: cancellationReason,
+    });
+    console.log(notification);
+
+    await notification.save();
     return res
       .status(StatusCodes.OK)
       .json({ message: "Order status updated successfully" });
@@ -500,7 +502,7 @@ export async function get_orders_client(req, res) {
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { datetime: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { datetime: -1 },
   };
 
   const query = {};
@@ -537,6 +539,9 @@ export async function get_orders_client(req, res) {
 
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
+  const { cancellationReason } = req.body;
+  console.log(cancellationReason);
+
   try {
     const order = await Order.findById(id);
     if (!order) {
@@ -550,6 +555,12 @@ export const userCancelOrder = async (req, res) => {
         .json({ message: "Đơn hàng đã bị hủy" });
     }
     order.cancellationRequested = true;
+    if (cancellationReason) {
+      order.cancellationReason = cancellationReason; // Lưu lý do hủy đơn hàng
+      console.log(order.cancellationReason);
+
+    }
+
     await order.save();
     res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng thành công",
