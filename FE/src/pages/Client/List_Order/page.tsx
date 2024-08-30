@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 import queryString from "query-string";
 import instance from "../../../configs/axios";
 import { useMutation } from "@tanstack/react-query";
+import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 type FieldType = {
   contentReview?: string;
 };
@@ -36,6 +37,7 @@ type FieldType = {
 export default function List_order() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { mutate, contextHolder } = useOrderMutations("REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT");
+  const dispathNotification = Mutation_Notification('Add');
   const [selectedReason, setSelectedReason] = useState('');
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -110,6 +112,17 @@ export default function List_order() {
     }
   };
 
+  // yeu cau huy don
+  function yeu_cau_huy_don(dataBody: { id_item: string | number, action?: string, cancellationReason?: string, orderNumber?: string | number, linkUri?: string | number }) {
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: 'duonghainam03012004@gmail.com',
+      message: `Người dùng ${user?.user?.userName} đã yêu càu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
+      different: dataBody?.linkUri
+    })
+    mutate(dataBody);
+  }
+
   function status_item(status: string | number) {
     switch (+status) {
       case 1:
@@ -160,7 +173,6 @@ export default function List_order() {
   // yêu cầu hủy
   // đã nhận hàng
   const { data, isPending } = Query_Order(dataClient);
-  console.log(data);
 
   const addCart = (orderId?: string | number) => {
     if (userId) {
@@ -354,8 +366,6 @@ export default function List_order() {
                         <Popconfirm
                           title="Yêu cầu hủy dơn hàng?"
                           description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                          // onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy', cancellationReason: selectedReason })}
-                          // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
                         >
@@ -385,7 +395,7 @@ export default function List_order() {
                               </div>
                             </div>
                           }
-                          onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy', cancellationReason: selectedReason })}
+                          onConfirm={() => yeu_cau_huy_don({ id_item: items?._id, action: 'yeu_cau_huy', cancellationReason: selectedReason, orderNumber: items?.orderNumber, linkUri: items?._id })}
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -402,7 +412,12 @@ export default function List_order() {
                   ) : items?.status === "3" ? (
                     <Button
                       className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
-                      onClick={() => mutate({ id_item: items._id })}
+                      onClick={() => (mutate({ id_item: items._id }),
+                        dispathNotification?.mutate({
+                          userId: userId,
+                          receiver_id: userId,
+                          message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                        }))}
                     >
                       Đã Nhận Hàng
                     </Button>

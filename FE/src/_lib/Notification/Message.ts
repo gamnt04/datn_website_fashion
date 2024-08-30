@@ -1,9 +1,8 @@
 import instance from "../../configs/axios";
 
-export const add_Notification = async (dataMessage: { userId: string | number, receiver_id: string | number, message: any }) => {
+export const add_Notification = async (dataMessage: { userId: string | number, receiver_id: string | number, message: string | number, different?: string | number }) => {
     try {
         const res = await instance.post(`/notification`, dataMessage);
-        console.log(res)
         return res;
     } catch (error) {
         console.log(error);

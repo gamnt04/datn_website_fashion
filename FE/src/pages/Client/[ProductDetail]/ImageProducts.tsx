@@ -38,7 +38,7 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
             <Carousel arrows draggable className="flex justify-center">
               {chunks.map((chunk, index) => (
                 <div key={index} className="flex justify-center">
-                  {chunk.map((item: any, subIndex: any) => (
+                  {chunk?.map((item: any, subIndex: any) => (
                     <button
                       key={subIndex}
                       className="hover:scale-110"

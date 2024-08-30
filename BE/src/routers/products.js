@@ -4,6 +4,7 @@ import {
   get_item_dashboard,
   get_items_client,
   getAllProducts,
+  getDetailProductDashBoard,
   getProductById,
   getProductsByName
 } from "../controllers/Items/Get";
@@ -21,6 +22,7 @@ Routes_Products.get("/products_all", getAllProducts);
 Routes_Products.get("/products", get_items_client);
 Routes_Products.get("/products/dashboard", get_item_dashboard);
 Routes_Products.get("/products/:id", getProductById);
+Routes_Products.get("/products/dashboard/:id", getDetailProductDashBoard);
 Routes_Products.post("/products/search", getProductsByName);
 
 //Filter

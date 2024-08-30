@@ -60,13 +60,11 @@ export const UploadGallery = async (
   const PRESET_NAME = "upImgProduct";
   const FOLDER_NAME = "PRODUCTS";
   const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
   const uploadPromises = Array.from(files).map(async (file) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", PRESET_NAME);
     formData.append("folder", FOLDER_NAME);
-
     const response = await axios.post(api, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -74,7 +72,6 @@ export const UploadGallery = async (
     });
     return response.data.secure_url;
   });
-
   try {
     const uploadedUrls = await Promise.all(uploadPromises);
     return uploadedUrls;
