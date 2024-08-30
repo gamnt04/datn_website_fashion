@@ -7,7 +7,6 @@ import {
   message,
   Modal,
   Popconfirm,
-  Radio,
   Spin,
   UploadFile,
 } from "antd";
@@ -23,26 +22,25 @@ import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-// import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
+
 import queryString from "query-string";
 import instance from "../../../configs/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 type FieldType = {
   contentReview?: string;
 };
 
-// type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
-
 export default function List_order() {
+  const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { mutate, contextHolder } = useOrderMutations("REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT");
-  const [selectedReason, setSelectedReason] = useState('');
+  const { mutate, contextHolder } = useOrderMutations(
+    "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
+  );
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const account = user?.user;
   const navi = useNavigate();
   const { mutate: add } = Mutation_Cart("ADD");
-  // const { data: orderData, refetch } = List_One_Order_User(userId);
   const [paymentPending, setPaymentPending] = useState(false);
   const [openReviewOrderId, setOpenReviewOrderId] = useState<string | null>(
     null
@@ -54,58 +52,71 @@ export default function List_order() {
   }>({});
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-
 
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
       contentReview: string;
       productId: string;
-      imagesReview: string[];
+      orderId: String;
     }) => {
-      const { data } = await instance.post(
-        `/review/${userId}/${reviewData.productId}`, // Chỉnh sửa URL nếu cần
-        {
-          contentReview: reviewData.contentReview,
-          imagesReview: reviewData.imagesReview,
-        }
-      );
+      const { data } = await instance.post(`/review/${userId}`, {
+        productId: reviewData.productId,
+        contentReview: reviewData.contentReview,
+        orderId: reviewData.orderId,
+      });
       return data;
     },
     onSuccess: () => {
-      message.success("Thêm thành công");
-      setOpenReview(false); // Đóng form sau khi thêm thành công
+      message.success("Gửi đánh giá thành công");
       setReviewedOrders((prev) => ({
         ...prev,
         [openReviewOrderId!]: new Set([
           ...Array.from(prev[openReviewOrderId!] || []),
           currentProductId!,
         ]),
-      })); // Cập nhật danh sách sản phẩm đã đánh giá trong đơn hàng
+      }));
     },
     onError: () => {
-      message.error("Thêm thất bại");
+      message.error("Gửi đánh giá thất bại");
     },
   });
+  const [initialContent, setInitialContent] = useState(""); // State để giữ giá trị ban đầu
 
-  const handleOpenReview = (orderId: string, productId: string) => {
-    if (reviewedOrders[orderId]?.has(productId)) {
-      navi(`/shops/${productId}`); // Điều hướng đến trang chi tiết sản phẩm khi đã đánh giá
-    } else if (openReviewOrderId === orderId) {
-      setOpenReview(!openReview);
+  // Truy vấn dữ liệu đánh giá dựa trên currentReviewId
+  const { data: dataReviewById } = useQuery({
+    queryKey: ["Review_Key", currentReviewId],
+    queryFn: async () => {
+      const { data } = await instance.get(`/reviews/${currentReviewId}`);
+      return data;
+    },
+    enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
+  });
+  console.log(dataReviewById);
+
+  // Cập nhật initialContent khi nhận được dataReviewById
+  useEffect(() => {
+    if (dataReviewById) {
+      setInitialContent(dataReviewById.review?.contentReview || "");
+    }
+  }, [dataReviewById]);
+
+  const handleOpenReview = (orderId, productId, reviewId) => {
+    if (openReviewOrderId === orderId && openReview) {
+      setOpenReview(false);
     } else {
       setOpenReview(true);
       setOpenReviewOrderId(orderId);
+      setCurrentProductId(productId);
+      setCurrentReviewId(reviewId); // Thiết lập currentReviewId trước khi useQuery chạy
     }
-    setCurrentProductId(productId);
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    if (currentProductId) {
+    if (currentProductId && openReviewOrderId) {
       addReview({
         contentReview: values.contentReview || "",
         productId: currentProductId,
-        imagesReview: fileList.map((file) => file.url as string), // Gửi URL ảnh lên server
+        orderId: openReviewOrderId,
       });
     }
   };
@@ -145,7 +156,7 @@ export default function List_order() {
     id_user: userId,
     page: 1,
     limit: 20,
-    status: +(status_order || 0),
+    status: +(status_order || 1),
   };
   const menuItems = [
     "Tất Cả",
@@ -156,9 +167,6 @@ export default function List_order() {
     "Đã Hủy",
   ];
 
-  // hủy đơn
-  // yêu cầu hủy
-  // đã nhận hàng
   const { data, isPending } = Query_Order(dataClient);
   console.log(data);
 
@@ -233,13 +241,6 @@ export default function List_order() {
 
     fetchData();
   }, [location.search]);
-  const reasons = [
-    'Thay đổi ý định',
-    'Tìm được giá tốt hơn',
-    'Đặt nhầm sản phẩm',
-    'Khác'
-  ];
-
   if (isPending || paymentPending) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -271,6 +272,8 @@ export default function List_order() {
       ) : (
         <div>
           {data?.data?.docs?.map((items: any) => {
+            console.log(items);
+
             return (
               <div className="border-t py-4">
                 <div className="flex gap-2 py-5 border-b-2 justify-between">
@@ -289,8 +292,7 @@ export default function List_order() {
                 </div>
                 {items?.items.map((product: any) => {
                   return <Items_order product={product} />;
-                }
-                )}
+                })}
                 <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
                   <div className="flex items-center gap-1">
                     <TotalPrice />
@@ -316,23 +318,11 @@ export default function List_order() {
                         Chờ xác nhận
                       </Button>
                       <Popconfirm
-                        title="Hủy đơn hàng?"
-                        description={
-                          <div>
-                            <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
-                            <div>
-                              <p>Chọn lý do hủy:</p>
-                              <Radio.Group className="flex flex-col gap-2" onChange={(e) => setSelectedReason(e.target.value)}>
-                                {reasons.map((reason, index) => (
-                                  <Radio key={index} value={reason}>
-                                    {reason}
-                                  </Radio>
-                                ))}
-                              </Radio.Group>
-                            </div>
-                          </div>
+                        title="Hủy dơn hàng?"
+                        description="Bạn có chắc chắn muốn hủy đơn hàng này?"
+                        onConfirm={() =>
+                          mutate({ id_item: items._id, action: "huy" })
                         }
-                        onConfirm={() => mutate({ id_item: items._id, action: 'huy', cancellationReason: selectedReason })}
                         // onCancel={cancel}
                         okText="Có "
                         cancelText="Không"
@@ -354,7 +344,12 @@ export default function List_order() {
                         <Popconfirm
                           title="Yêu cầu hủy dơn hàng?"
                           description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                          // onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy', cancellationReason: selectedReason })}
+                          onConfirm={() =>
+                            mutate({
+                              id_item: items._id,
+                              action: "yeu_cau_huy",
+                            })
+                          }
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -370,22 +365,8 @@ export default function List_order() {
                       ) : (
                         <Popconfirm
                           title="Yêu cầu hủy dơn hàng?"
-                          description={
-                            <div>
-                              <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
-                              <div>
-                                <p>Chọn lý do hủy:</p>
-                                <Radio.Group className="flex flex-col gap-2" onChange={(e) => setSelectedReason(e.target.value)}>
-                                  {reasons.map((reason, index) => (
-                                    <Radio key={index} value={reason}>
-                                      {reason}
-                                    </Radio>
-                                  ))}
-                                </Radio.Group>
-                              </div>
-                            </div>
-                          }
-                          onConfirm={() => mutate({ id_item: items._id, action: 'yeu_cau_huy', cancellationReason: selectedReason })}
+                          description="Bạn có muốn yêu cầu hủy đơn hàng này?"
+                          onConfirm={() => confirm(items?._id)}
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -401,32 +382,26 @@ export default function List_order() {
                     </div>
                   ) : items?.status === "3" ? (
                     <Button
-                      className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
+                      className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
                       onClick={() => mutate({ id_item: items._id })}
                     >
                       Đã Nhận Hàng
                     </Button>
                   ) : items?.status === "4" ? (
                     <div className="flex gap-3 lg:basis-3/12 w-full">
-                      {items?.items?.map(() => (
-                        <Button
-                          type="default"
-                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
-                          onClick={() =>
-                            handleOpenReview(
-                              items._id,
-                              items.items[0]?.productId?._id
-                            )
-                          }
-                        >
-                          {reviewedOrders[items._id]?.has(
-                            items.items[0]?.productId?._id || ""
+                      <Button
+                        type="default"
+                        className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
+                        onClick={() =>
+                          handleOpenReview(
+                            items._id,
+                            items.items[0]?.productId?._id,
+                            items.reviews
                           )
-                            ? "Xem đánh giá"
-                            : "Đánh giá"}
-                        </Button>
-                      ))}
-
+                        }
+                      >
+                        {items?.reviews ? "Xem đánh giá" : "Đánh giá"}
+                      </Button>
                       {openReview && openReviewOrderId === items._id && (
                         <div>
                           <Modal
@@ -439,40 +414,103 @@ export default function List_order() {
                               ĐÁNH GIÁ SẢN PHẨM
                             </h1>
 
-                            <div className="flex items-center gap-4 mb-4">
-                              <div className="w-[50px] h-[50px]">
-                                <img
-                                  src={items.items[0]?.productId?.image_product}
-                                  alt=""
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div>
-                                {items.items[0]?.productId?.name_product}
-                              </div>
-                            </div>
-                            <Form onFinish={onFinish}>
-                              <Form.Item
-                                name="contentReview"
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Vui lòng nhập nội dung đánh giá!",
-                                  },
-                                ]}
-                              >
-                                <Input.TextArea
-                                  rows={4}
-                                  placeholder="Nhập nội dung đánh giá"
-                                />
-                              </Form.Item>
+                            {items.items.map((item, index) => {
+                              console.log(items?.reviews);
 
-                              <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                  Gửi đánh giá
-                                </Button>
-                              </Form.Item>
-                            </Form>
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex flex-col gap-4 mb-4"
+                                >
+                                  <div className="flex items-center gap-4">
+                                    <div className="w-[50px] h-[50px]">
+                                      <img
+                                        src={item.productId?.image_product}
+                                        alt=""
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <div>{item.productId?.name_product}</div>
+                                  </div>
+
+                                  <Form
+                                    onFinish={(values) => {
+                                      addReview({
+                                        contentReview:
+                                          values[`contentReview_${index}`] ||
+                                          "",
+                                        productId: item.productId._id,
+                                        orderId: items?._id,
+                                      });
+                                    }}
+                                  >
+                                    {items?.reviews.map((review) => (
+                                      <div>
+                                        <Form.Item
+                                          name={`contentReview_${index}`} // Đảm bảo name là duy nhất
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message:
+                                                "Vui lòng nhập nội dung đánh giá!",
+                                            },
+                                          ]}
+                                          initialValue={
+                                            review?.contentReview || "notfound"
+                                          }
+                                        >
+                                          <Input.TextArea
+                                            rows={4}
+                                            placeholder="Nhập nội dung đánh giá"
+                                          />
+                                        </Form.Item>
+
+                                        {review?.contentReview ? (
+                                          <div>
+                                            <Form.Item>
+                                              <Button
+                                                type="primary"
+                                                // htmlType="submit"
+                                              >
+                                                Xem đánh giá
+                                              </Button>
+                                            </Form.Item>
+                                          </div>
+                                        ) : (
+                                          <div>
+                                            <Form.Item
+                                              name={`contentReview_${index}`} // Đảm bảo name là duy nhất
+                                              rules={[
+                                                {
+                                                  required: true,
+                                                  message:
+                                                    "Vui lòng nhập nội dung đánh giá!",
+                                                },
+                                              ]}
+                                            >
+                                              <Input.TextArea
+                                                rows={4}
+                                                placeholder="Nhập nội dung đánh giá"
+                                              />
+                                            </Form.Item>
+
+                                            <Form.Item>
+                                              <Button
+                                                type="primary"
+                                                htmlType="submit"
+                                              >
+                                                Gửi đánh giá
+                                              </Button>
+                                            </Form.Item>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </Form>
+                                </div>
+                              );
+                            })}
+
                             <Modal
                               open={previewOpen}
                               footer={null}
@@ -494,18 +532,9 @@ export default function List_order() {
                         okText="Có"
                         cancelText="Không"
                       >
-                        {items?.items.map((product: any) => (
-                          (product?.productId?.stock_product === 0 ? (
-                            <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none cursor-not-allowed" disabled>
-                              Mua Lại
-                            </Button>
-                          ) : (
-                            <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
-                              Mua Lại
-                            </Button>
-                          ))
-                        ))}
-
+                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
+                          Mua Lại
+                        </Button>
                       </Popconfirm>
                     </div>
                   ) : (
@@ -517,18 +546,9 @@ export default function List_order() {
                       okText="Có "
                       cancelText="Không"
                     >
-                      {items?.items.map((product: any) => (
-                        (product?.productId?.stock_product === 0 ? (
-                          <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none cursor-not-allowed" disabled>
-                            Mua Lại
-                          </Button>
-                        ) : (
-                          <Button className="bg-red-500 hover:!bg-red-600 !w-full h-10 ] !text-white text-[12px] rounded border-none">
-                            Mua Lại
-                          </Button>
-                        ))
-                      ))}
-
+                      <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
+                        Mua Lại
+                      </Button>
                     </Popconfirm>
                   )}
                 </div>
@@ -536,8 +556,7 @@ export default function List_order() {
             );
           })}
         </div>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }

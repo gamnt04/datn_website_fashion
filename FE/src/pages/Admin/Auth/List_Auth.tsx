@@ -9,15 +9,11 @@ import {
   Modal,
   Form,
   Input,
-  Select
+  Select,
 } from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 interface UpdateField {
   field: string;
   value: string;
@@ -34,7 +30,7 @@ const List_Auth = () => {
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    }
+    },
   });
 
   const onHandleSearch = () => {
@@ -45,7 +41,7 @@ const List_Auth = () => {
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth
+        ...auth,
       };
     }
   );
@@ -59,7 +55,6 @@ const List_Auth = () => {
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
-<<<<<<< HEAD
           <Image
             src={auth.avatar}
             alt=""
@@ -67,11 +62,7 @@ const List_Auth = () => {
             height={80}
             className="object-cover"
           />
-        )
-=======
-          <Image src={auth.avatar} alt="" width={70} />
         ),
->>>>>>> main
     },
     {
       title: "Tên Người Dùng",
@@ -82,7 +73,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        )
+        ),
     },
     {
       title: "Email",
@@ -93,7 +84,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        )
+        ),
     },
     {
       title: "Quyền",
@@ -104,7 +95,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        )
+        ),
     },
     {
       title: "Cập Nhật Gần Đây",
@@ -116,7 +107,7 @@ const List_Auth = () => {
           return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
         }
         return "Chưa có cập nhật";
-      }
+      },
     },
     {
       title: "Nội Dung Cập Nhật",
@@ -135,24 +126,8 @@ const List_Auth = () => {
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
-<<<<<<< HEAD
-      }
-    }
-=======
       },
     },
-    {
-      title: "Quyền",
-      dataIndex: "role",
-      key: "role",
-      render: (_: any, auth: any) =>
-        isLoading ? (
-          <Skeleton.Input style={{ width: 100 }} active size="small" />
-        ) : (
-          auth.role
-        ),
-    },
->>>>>>> main
   ];
 
   const formatDate = (isoString: string) => {
@@ -251,47 +226,6 @@ const List_Auth = () => {
           )}
         </Modal>
       </div>
-<<<<<<< HEAD
-=======
-      <div className="">
-        <Input
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-        />
-        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
-      </div>
-      <Spin
-        spinning={isLoading}
-        indicator={<LoadingOutlined spin />}
-        size="large"
-      >
-        <Table columns={columns} dataSource={dataSource} />
-      </Spin>
-
-      <Modal
-        title="Chi tiết cập nhật"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={500}
-        style={{ maxHeight: "80vh", overflowY: "auto" }}
-      >
-        {selectedUpdate ? (
-          <Form style={{ maxWidth: 500 }}>
-            <Form.Item>
-              <Input.TextArea
-                value={getLatestUpdateDetails(selectedUpdate)}
-                readOnly
-                rows={15}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Form>
-        ) : (
-          <p>Không có thông tin cập nhật</p>
-        )}
-      </Modal>
->>>>>>> main
     </>
   );
 };

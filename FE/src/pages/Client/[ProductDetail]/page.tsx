@@ -35,9 +35,7 @@ const ProductDetail = () => {
                 </div>
               </div>
               {/* description */}
-              <div>
-                <DescriptionProduct product={data?.product} />
-              </div>
+              <div>{/* <DescriptionProduct product={data?.product} /> */}</div>
               {/* related item */}
               <ProductRelated product={data?.product} />
             </div>
