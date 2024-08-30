@@ -14,7 +14,8 @@ import {
   getOrderByDayOfWeek,
   getAllOrderMonth,
   getAllOrderByMonthOfYear,
-  getTop10ProductBestSale
+  getTop10ProductBestSale,
+  getOrderByNumberOrPhoneNumber
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 
@@ -34,7 +35,8 @@ router.patch("/orders/:id", updateOrderStatus);
 router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
 router.post("/orderspayment", createOrderPayment);
+router.post("/orders/search", getOrderByNumberOrPhoneNumber);
 
 // ---
-router.get('/list_order/:id_user', list_items_order_by_user)
+router.get("/list_order/:id_user", list_items_order_by_user);
 export default router;

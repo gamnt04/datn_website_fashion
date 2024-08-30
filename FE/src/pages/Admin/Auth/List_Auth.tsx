@@ -112,7 +112,7 @@ const List_Auth = () => {
         if (updatedFields && updatedFields.length > 0) {
           return (
             <Button
-              onClick={() => showModal(updatedFields)}
+onClick={() => showModal(updatedFields)}
               className="p-3 text-white border-gray-300 rounded-lg bg-blue-600 hover:bg-blue-500 focus:outline-none"
             >
               Xem chi tiết
@@ -210,7 +210,7 @@ const List_Auth = () => {
         </Spin>
         <Modal
           title="Chi tiết cập nhật"
-          visible={isModalVisible}
+visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
           width={500}
@@ -220,7 +220,7 @@ const List_Auth = () => {
             <Form style={{ maxWidth: 500 }}>
               <Form.Item>
                 <Input.TextArea
-                  value={getUpdateDetails(selectedUpdate)}
+                  value={getLatestUpdateDetails(selectedUpdate)}
                   readOnly
                   rows={15}
                   style={{ width: "100%" }}
