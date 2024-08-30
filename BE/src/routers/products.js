@@ -5,12 +5,12 @@ import {
   get_items_client,
   getAllProducts,
   getProductById,
-  getProductsByName
+  getProductsByName,
 } from "../controllers/Items/Get";
 import {
   deleteProductById,
   destroy_delete,
-  removeMultipleProducts
+  removeMultipleProducts,
 } from "../controllers/Items/Remove";
 import { updateProductById } from "../controllers/Items/Edit";
 import { createProduct } from "../controllers/Items/Create";
