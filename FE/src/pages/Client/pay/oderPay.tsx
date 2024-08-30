@@ -204,7 +204,7 @@ const OrderPay = () => {
 
   return (
     <>
-      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="max-w-[1440px] w-[95vw] mx-auto">
         {contextHolder}
         {isLoading ? (
           <div className="flex justify-center items-center h-screen">

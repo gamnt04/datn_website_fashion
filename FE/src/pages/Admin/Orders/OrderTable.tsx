@@ -1,9 +1,8 @@
-import { Pagination, Select, Table } from "antd";
+import { Pagination, Table } from "antd";
 import { Link } from "react-router-dom";
 import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
-import { useState } from "react";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   const formatDate = (datetime: any) => {
