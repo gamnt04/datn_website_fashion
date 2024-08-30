@@ -1,24 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { AxiosError } from "axios";
-
-interface Product {
-  _id: string;
-  name_product: string;
-  price_product: number;
-  stock_product?: number;
-}
-
-interface ProductResponse {
-  message: string;
-  data: Product[];
-  pagination: {
-    totalItems: number;
-    currentPage: number;
-    totalPages: number;
-    itemsPerPage: number;
-  };
-}
+import { ProductResponse } from "../../../common/interfaces/Product";
 
 const fetchFilteredProducts = async (
   query: string,

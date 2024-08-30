@@ -58,7 +58,7 @@ const Feedback = () => {
       );
 
       if (result.status === 200) {
-        toast.success("Gửi email thành công!", {
+        toast.success("Phản Hồi thành công!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -69,7 +69,7 @@ const Feedback = () => {
         });
         navigate("/admin/contact");
       } else {
-        toast.error("Gửi email thất bại!", {
+        toast.error("Phản Hồi thất bại!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,

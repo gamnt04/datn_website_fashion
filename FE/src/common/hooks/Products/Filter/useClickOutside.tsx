@@ -1,25 +1,21 @@
 import { useEffect, useRef } from "react";
 
-function useClickOutside(handler: () => void) {
-  const ref = useRef<HTMLDivElement>(null);
+function useClickOutside<T extends HTMLElement>(handler: () => void) {
+  const ref = useRef<T>(null);
 
   useEffect(() => {
-    const listener = (event: Event) => {
-      // Chỉ xử lý khi sự kiện là MouseEvent hoặc TouchEvent
-      if (
-        ref.current &&
-        !(event.target instanceof Node && ref.current.contains(event.target))
-      ) {
-        handler();
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        handler(); // Chỉ gọi handler khi click ra ngoài dropdown
       }
     };
 
-    document.addEventListener("mousedown", listener as EventListener);
-    document.addEventListener("touchstart", listener as EventListener);
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
 
     return () => {
-      document.removeEventListener("mousedown", listener as EventListener);
-      document.removeEventListener("touchstart", listener as EventListener);
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
     };
   }, [handler]);
 
