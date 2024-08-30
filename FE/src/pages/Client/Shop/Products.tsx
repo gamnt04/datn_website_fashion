@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Products from "../../../components/common/Items/Products";
 import { useLocation } from "react-router-dom";
+import { IProduct } from "../../../common/interfaces/Product";
 
 interface Products_ShopProps {
   query: string;
@@ -15,6 +15,33 @@ interface Products_ShopProps {
   sortOption: string;
 }
 
+const sortProducts = (products: IProduct[], sortOption: string) => {
+  switch (sortOption) {
+    case "newest":
+      return products.sort(
+        (a, b) =>
+          new Date(b.updatedAt as string).getTime() -
+          new Date(a.updatedAt as string).getTime()
+      );
+    case "oldest":
+      return products.sort(
+        (a, b) =>
+          new Date(a.updatedAt as string).getTime() -
+          new Date(b.updatedAt as string).getTime()
+      );
+    case "price_asc":
+      return products.sort(
+        (a, b) => (a.price_product ?? 0) - (b.price_product ?? 0)
+      );
+    case "price_desc":
+      return products.sort(
+        (a, b) => (b.price_product ?? 0) - (a.price_product ?? 0)
+      );
+    default:
+      return products;
+  }
+};
+
 const Products_Shop: React.FC<Products_ShopProps> = ({
   query,
   priceRanges,
@@ -24,21 +51,22 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
 }) => {
   const { search } = useLocation();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 16; // Số lượng sản phẩm mỗi trang
+  const itemsPerPage = 16;
   const [cate_id, setCategoryId] = useState<string[]>([]);
+  const [sortedProducts, setSortedProducts] = useState<IProduct[]>([]);
+
   useEffect(() => {
     const queryParams = new URLSearchParams(search);
     const categoryParam = queryParams.get("category");
     if (categoryParam) {
       setCategoryId(categoryParam.split(","));
     } else {
-      // Nếu không có category, hiển thị tất cả sản phẩm
       setCategoryId([]);
     }
   }, [search]);
-  //const [query] = useState();
+
   const {
-    data: products,
+    data: productsResponse,
     isLoading,
     isError,
     error,
@@ -52,6 +80,13 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     itemsPerPage,
     sortOption
   );
+
+  useEffect(() => {
+    if (productsResponse?.data) {
+      const sorted = sortProducts(productsResponse.data, sortOption);
+      setSortedProducts(sorted);
+    }
+  }, [productsResponse, sortOption]);
 
   if (isLoading) {
     return (
@@ -69,20 +104,20 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     );
   }
 
-  const totalItems = products?.pagination?.totalItems || 0;
-  const totalPages = products?.pagination?.totalPages || 1;
+  const totalItems = productsResponse?.pagination?.totalItems || 0;
+  const totalPages = productsResponse?.pagination?.totalPages || 1;
   const hasMore = currentPage < totalPages;
 
   return (
     <div>
-      {products?.data?.length ? (
+      {sortedProducts.length ? (
         <>
           <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
-            {products.data.map((item: any) => (
+            {sortedProducts.map((item: IProduct) => (
               <Products key={item._id} items={item} />
             ))}
           </div>
-          {products?.data?.length > 16 && (
+          {totalItems > itemsPerPage && (
             <div className="flex flex-col items-center my-4">
               <div className="flex items-center mb-4 space-x-4">
                 <button
