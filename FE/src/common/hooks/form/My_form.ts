@@ -50,7 +50,7 @@ const useForm = ({ mode }: { mode?: string }) => {
         const finalValues = {
             ...dataForm,
             image_product: imageUrl,
-            gallery_product: galleryUrls,
+            gallery_product: mode ? galleryUrls : a,
             attributes: attributesJson,
         };
         let dataClient = {
