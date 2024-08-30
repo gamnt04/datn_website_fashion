@@ -11,12 +11,20 @@ import Swal from "sweetalert2";
 interface InforProductProp {
   product: IProduct;
 }
+
+interface IAttr {
+  color?: string | number,
+  size?: any,
+  _id? : string | number
+}
+
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const navi = useNavigate();
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
   const [size, setSize] = useState();
   const [arr_size, setArr_Size] = useState<any>();
+  const [arr_color, setArr_Color] = useState<any>();
   const [price_attr, set_price_attr] = useState(0);
   const [quantity_attr, setQuantity_attr] = useState();
   const [quantity_item, setQuantity_item] = useState<number>(1);
@@ -35,7 +43,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           quantity: quantity_item,
           color: color,
           size: size,
-          stock_item : quantity_attr,
+          stock_item: quantity_attr,
         };
         mutate(item);
       }
@@ -54,6 +62,19 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   useEffect(() => {
     if (!dataProps?.product?.attributes) {
       setQuantity_attr(stock);
+    }
+    else {
+      const a : IAttr[] = [];
+      dataProps?.product?.attributes?.values?.map((item: any) => {
+        item?.size?.map((x: any) => {
+          if (x?.stock_attribute > 0) {
+            if (!a.includes(item)) {
+              a.push(item);
+            }
+          }
+        })
+      })
+      setArr_Color(a)
     }
   }, [dataProps]);
 
@@ -214,12 +235,12 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 Color
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataProps?.product?.attributes?.values?.map((item: any) => (
+                {arr_color?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
                     className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
                       } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
-                  ></button>
+                  />
                 ))}
               </div>
             </div>

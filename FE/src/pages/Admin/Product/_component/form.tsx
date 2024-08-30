@@ -25,6 +25,7 @@ type FieldType = {
 };
 
 const Form_Item = ({ mode }: any) => {
+  const [check_edit_form, setCheckEditForm] = useState<boolean>(true)
   const [status_attr, setStatus_Attr] = useState(true);
   let image_item: any;
   const gallery_item: any = [];
@@ -81,6 +82,10 @@ const Form_Item = ({ mode }: any) => {
     }))
   };
 
+  const onFormValuesChange = () => {
+    setCheckEditForm(false)
+  };
+
   return (
     <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-6">
       {(isPending || loading) && (
@@ -106,6 +111,7 @@ const Form_Item = ({ mode }: any) => {
         layout="vertical"
         onFinish={onFinish}
         initialValues={initialValues}
+        onValuesChange={onFormValuesChange} 
       >
         <div className="grid grid-cols-[60%,40%] gap-8">
           <div>
@@ -116,7 +122,7 @@ const Form_Item = ({ mode }: any) => {
                 props={{
                   name_field: "name_product",
                   ruler_field: [
-                    { required: true, message: "Tên sản phẩm bắt buộc nhập!" }
+                    { required: true, message: "Tên sản phẩm bắt buộc nhập!", whitespace: true }
                   ]
                 }}
               />
@@ -132,7 +138,8 @@ const Form_Item = ({ mode }: any) => {
                 rules={[
                   {
                     required: true,
-                    message: "Danh mục sản phẩm bắt buộc chọn!"
+                    message: "Danh mục sản phẩm bắt buộc chọn!",
+                    whitespace: true
                   }
                 ]}
               >
@@ -196,7 +203,6 @@ const Form_Item = ({ mode }: any) => {
                 />
               </>
             )}
-
 
             <label className="text-[#1C2434]font-medium text-sm">
               Mô tả sản phẩm
@@ -441,13 +447,25 @@ const Form_Item = ({ mode }: any) => {
           </span>
         )}
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            {isPending || loading
-              ? "Loading"
-              : mode
-                ? "Cập nhật sản phẩm"
-                : "Tạo mới sản phẩm"}
-          </Button>
+          {
+            check_edit_form ?
+              <Button type="primary" htmlType="button" className="bg-gray-300">
+                {isPending || loading
+                  ? "Loading"
+                  : mode
+                    ? "Cập nhật sản phẩm"
+                    : "Tạo mới sản phẩm"}
+              </Button> :
+              <Button type="primary" htmlType="submit">
+                {isPending || loading
+                  ? "Loading"
+                  : mode
+                    ? "Cập nhật sản phẩm"
+                    : "Tạo mới sản phẩm"}
+              </Button>
+
+          }
+
         </Form.Item>
       </Form>
     </div>
