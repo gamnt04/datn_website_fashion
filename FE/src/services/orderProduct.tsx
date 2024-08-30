@@ -152,9 +152,9 @@ export const Cancel_Order = async (id: any, cancellationReason: any) => {
   }
 };
 
-export const confirmCancelOrder = async ({ id, confirm }: any) => {
+export const confirmCancelOrder = async ({ id_item, confirm }: any) => {
   try {
-    const { data } = await instance.post(`/orders/${id}/cancel/confirm`, {
+    const { data } = await instance.post(`/orders/${id_item}/cancel/confirm`, {
       confirm
     });
     return data;

@@ -561,7 +561,7 @@ export const userCancelOrder = async (req, res) => {
 };
 
 export const adminCancelOrder = async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
   const { confirm } = req.body;
   try {
     const order = await Order.findById(id);

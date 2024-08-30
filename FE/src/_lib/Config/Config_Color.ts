@@ -1,9 +1,9 @@
 export function Convert_Color(item: string) {
     let color: string;
-    if (item == 'Red' || item == 'Đỏ') {
+    if (item == 'Red' || item == 'Đỏ' || item == 'đỏ') {
         color = 'bg-red-500 border-none'
     }
-    else if (item == 'Black' || item == 'Đen') {
+    else if (item == 'Black' || item == 'Đen'  || item == 'đen') {
         color = 'bg-black border-none'
     }
     else if (item == 'vàng' || item == 'Yellow') {
