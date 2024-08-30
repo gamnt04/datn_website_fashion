@@ -10,7 +10,7 @@ const ProductRelated = ({product} : {product : IProduct}) => {
 
   return (
     <div className="w-full mt-[10px]">
-      <div className="xl:w-[1440px] mb:w-[95%] mb:mx-[2.5%] md:mx-auto *:w-full">
+      <div className="max-w-[1440px] mb:w-[95%] mb:mx-[2.5%] md:mx-auto *:w-full">
         <hr />
         <div className="pt-[60px]">
           <h2 className="text-xl font-semibold">You may also like</h2>

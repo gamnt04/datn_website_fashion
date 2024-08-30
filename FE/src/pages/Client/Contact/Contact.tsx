@@ -101,7 +101,7 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+    <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           Home &#10148; Products &#10148; Contact

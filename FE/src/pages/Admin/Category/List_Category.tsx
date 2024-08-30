@@ -10,7 +10,7 @@ import {
   Space,
   Checkbox,
 } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
@@ -25,6 +25,7 @@ import {
 } from "../../../common/hooks/Category/useCategoryQuery";
 import { DeleteOutlined } from "@ant-design/icons";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { format } from "date-fns";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
@@ -93,7 +94,10 @@ const List_Category: React.FC = () => {
       );
     },
   });
-
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    return format(date, "HH:mm dd/MM/yyyy");
+  };
   const handleTogglePublished = (category: ICategory) => {
     mutation.mutate({ ...category, published: !category.published });
   };
@@ -129,7 +133,7 @@ const List_Category: React.FC = () => {
               : URL.createObjectURL(record.image_category[0])
           }
           alt={record.name_category}
-          style={{ width: 100, height: 100, objectFit: "cover" }}
+          style={{ width: 80, height: 80, objectFit: "cover" }}
         />
       ),
     },
@@ -160,11 +164,13 @@ const List_Category: React.FC = () => {
       key: "createdAt",
       title: "Ngày Tạo",
       dataIndex: "createdAt",
+      render: (_: any, product: ICategory) => formatDate(product.createdAt),
     },
     {
       key: "updatedAt",
       title: "Ngày Sửa",
       dataIndex: "updatedAt",
+      render: (_: any, product: ICategory) => formatDate(product.updatedAt),
     },
     {
       key: "published",
@@ -182,22 +188,21 @@ const List_Category: React.FC = () => {
       title: "Thao Tác",
       render: (_: any, category: ICategory) => {
         return (
-          <div className="flex space-x-5">
+          <Space>
             {contextHolder}
+            <CategoryUpdate data={data} id={category._id} />
             <Popconfirm
-              title="Xóa danh mục"
-              description="Bạn có muốn xóa danh mục này không?"
+              title="Xoá danh mục sản phẩm"
+              description="Bạn có muốn xóa danh mục sản phẩm này không ?"
               onConfirm={() => deleteCategory(category._id!)}
-              okText="Đồng ý"
-              cancelText="Hủy bỏ"
+              okText="Có"
+              cancelText="Không"
             >
               <Button danger>
                 <FaDeleteLeft />
               </Button>
             </Popconfirm>
-
-            <CategoryUpdate data={data} id={category._id} />
-          </div>
+          </Space>
         );
       },
     },
