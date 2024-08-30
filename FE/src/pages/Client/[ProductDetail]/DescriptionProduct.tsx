@@ -12,7 +12,10 @@ type FieldType = {
 };
 
 const DescriptionProduct = ({ product }: IProduct) => {
-  const formattedDescription = product?.description_product.replace(/\n/g, '<br />');
+  const formattedDescription = product?.description_product.replace(
+    /\n/g,
+    "<br />"
+  );
   const [toggleDes, setTogleDes] = useState<boolean>(true);
   const [editReviewId, setEditReviewId] = useState<string | null>(null);
   const [form] = Form.useForm();
@@ -22,6 +25,7 @@ const DescriptionProduct = ({ product }: IProduct) => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = Query_Products(id);
+  console.log(data);
 
   useEffect(() => {
     if (editReviewId && data?.product?.reviews) {
@@ -36,64 +40,64 @@ const DescriptionProduct = ({ product }: IProduct) => {
     }
   }, [editReviewId, data, form]);
 
-  const { mutate: deleteReview } = useMutation({
-    mutationFn: async (reviewId: string) => {
-      const { data } = await instance.delete(
-        `/review/${userId}/${id}/${reviewId}`
-      );
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
-      message.success("Xóa thành công");
-    },
-    onError: () => {
-      message.error("Xóa thất bại");
-    },
-  });
+  // const { mutate: deleteReview } = useMutation({
+  //   mutationFn: async (reviewId: string) => {
+  //     const { data } = await instance.delete(
+  //       `/review/${userId}/${id}/${reviewId}`
+  //     );
+  //     return data;
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
+  //     message.success("Xóa thành công");
+  //   },
+  //   onError: () => {
+  //     message.error("Xóa thất bại");
+  //   },
+  // });
 
-  const { mutate: updateReview } = useMutation({
-    mutationFn: async ({
-      reviewId,
-      contentReview,
-    }: {
-      reviewId: string;
-      contentReview: string;
-    }) => {
-      const { data } = await instance.put(
-        `/review/${userId}/${id}/${reviewId}`,
-        { contentReview },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
-      message.success("Cập nhật thành công");
-      setEditReviewId(null);
-    },
-    onError: () => {
-      message.error("Cập nhật thất bại");
-    },
-  });
+  // const { mutate: updateReview } = useMutation({
+  //   mutationFn: async ({
+  //     reviewId,
+  //     contentReview,
+  //   }: {
+  //     reviewId: string;
+  //     contentReview: string;
+  //   }) => {
+  //     const { data } = await instance.put(
+  //       `/review/${userId}/${id}/${reviewId}`,
+  //       { contentReview },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     return data;
+  //   },
+  //   onSuccess: (data) => {
+  //     queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
+  //     message.success("Cập nhật thành công");
+  //     setEditReviewId(null);
+  //   },
+  //   onError: () => {
+  //     message.error("Cập nhật thất bại");
+  //   },
+  // });
 
   const handleEditClick = (reviewId: string, contentReview: string) => {
     setEditReviewId(reviewId);
     form.setFieldsValue({ contentReview });
   };
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    if (editReviewId) {
-      updateReview({
-        reviewId: editReviewId,
-        contentReview: values.contentReview || "",
-      });
-    }
-  };
+  // const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  //   if (editReviewId) {
+  //     updateReview({
+  //       reviewId: editReviewId,
+  //       contentReview: values.contentReview || "",
+  //     });
+  //   }
+  // };
 
   const isOwnReview = (reviewUserId: string) => {
     return userId === reviewUserId;
@@ -122,29 +126,33 @@ const DescriptionProduct = ({ product }: IProduct) => {
         </ul>
         <div className={toggleDes ? "block" : "hidden"}>
           <section className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:py-6 mb:pt-[19px]">
-          <div dangerouslySetInnerHTML={{ __html: formattedDescription }} className="show_description my-4"/>
+            <div
+              dangerouslySetInnerHTML={{ __html: formattedDescription }}
+              className="show_description my-4"
+            />
           </section>
         </div>
         {!toggleDes &&
           data?.product?.reviews &&
-          data.product.reviews.map((review: any) => (
-            <section className="block" key={review._id}>
+          data?.product?.reviews.map((review: any) => (
+            // key={review._id}
+            <section className="block">
               <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
                 <div className="border rounded-2xl lg:p-6 mb:p-5">
                   <div className="flex items-center justify-between gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
                     <div>
                       <strong className="text-base text-[#1A1E26] font-medium">
-                        {review.user.userName}
+                        {/* {review.user.userName} */}
                         <span className="text-sm text-[#9D9EA2] font-light pl-[5px]">
                           |
                         </span>
                         <span className="text-sm text-[#9D9EA2] font-light">
-                          {new Date(review.created_at).toLocaleDateString()}
+                          {/* {new Date(review.created_at).toLocaleDateString()} */}
                         </span>
                       </strong>
                     </div>
                     <div className="flex gap-x-2">
-                      {isOwnReview(review.user._id) && (
+                      {/* {isOwnReview(review.user._id) && (
                         <>
                           <Popconfirm
                             title="Xóa đánh giá"
@@ -163,15 +171,15 @@ const DescriptionProduct = ({ product }: IProduct) => {
                             Cập nhật
                           </Button>
                         </>
-                      )}
+                      )} */}
                     </div>
                   </div>
-                  <section className="flex flex-col gap-y-4">
+                  {/* <section className="flex flex-col gap-y-4">
                     {editReviewId === review._id ? (
                       <Form
                         name="basic"
                         form={form}
-                        onFinish={onFinish}
+                        // onFinish={onFinish}
                         layout="vertical"
                         initialValues={{ contentReview: review.contentReview }}
                       >
@@ -192,7 +200,7 @@ const DescriptionProduct = ({ product }: IProduct) => {
                         {review.contentReview}
                       </p>
                     )}
-                  </section>
+                  </section> */}
                 </div>
               </div>
             </section>
