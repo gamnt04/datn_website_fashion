@@ -39,6 +39,6 @@ Routes_Products.post("/products/remove", removeMultipleProducts);
 Routes_Products.delete("/products/:id", deleteProductById);
 Routes_Products.delete("/products/destroy/:id", destroy_delete);
 Routes_Products.patch("/products/recycle/:id", restore_item);
-Routes_Products.get("/products/dashboard/trash", getTrash);
+Routes_Products.get("/products/adminstration/dashboard/trash", getTrash);
 
 export default Routes_Products;

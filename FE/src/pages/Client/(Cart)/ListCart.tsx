@@ -154,7 +154,7 @@ const ListCart = () => {
       key: "name",
       render: (_: any, product: any) => (
         <>
-        <Het_hang dataProps={product}/>
+          <Het_hang dataProps={product} />
           <Link
             to={`/shops/${product?.productId?._id}`}
             className="py-2 font-bold text-gray-900 hover:text-gray-900"
@@ -202,7 +202,7 @@ const ListCart = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(Number(e.target.value))}
                 onBlur={() => handleBlur(product?.productId)}
-                className="px-0 text-center"
+                className="px-0 text-center !max-w-20"
               />
             ) : (
               <Input
@@ -210,7 +210,7 @@ const ListCart = () => {
                 onClick={() =>
                   handleQuantityClick(product?.productId, product?.quantity)
                 }
-                className="px-0 text-center"
+                className="px-0 text-center !max-w-20"
               />
             )}
             <Up_btn
@@ -260,7 +260,6 @@ const ListCart = () => {
       },
     },
   ];
-
   // next order
   function next_order() {
     ScrollTop();
@@ -268,12 +267,12 @@ const ListCart = () => {
       (item: any) => item?.status_checked && item
     );
     if (userId) {
-      if (data_cart.length === 0) {
+      if (data_cart.length === 0 || data?.total_price < 1) {
         messageApi.open({
           type: "warning",
           content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
         });
-        return;
+        return null
       }
       const data_order = {
         id_user: userId,
@@ -343,7 +342,7 @@ const ListCart = () => {
                     })}
                   </p>
                 </div>
-                <div className="flex flex-col py-5 my-5 border-y">
+                {/* <div className="flex flex-col py-5 my-5 border-y">
                   <span className="mb-2 text-xs">Nhập mã giảm giá</span>
                   <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
                     <input
@@ -355,7 +354,8 @@ const ListCart = () => {
                       Apply
                     </button>
                   </form>
-                </div>
+                </div> */}
+                <div className="my-2"></div>
                 <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                   <strong>Cần thanh toán :</strong>
                   <strong>
