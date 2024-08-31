@@ -10,41 +10,53 @@ const Footer = () => {
           </Link>
 
           <p className="text-[#999999] mt-[30px] mb-[15px] w-60">
-            Tòa nhà FPT Polytechnic, P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm,
-            Hà Nội, Việt Nam
+
+            Địa chỉ : Tòa nhà FPT Polytechnic, đường Trịnh Văn Bô, Phương Canh,
+            Nam Từ Liêm, Hà Nội
           </p>
 
           <ul>
             <li className="text-[#999999] mb-[7px]">
-              Điện thoại:
+
+              Điện thoại :
+
               <a className="underline hover:text-black" href="">
-                520-901-7672
+                0364854076
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999]">
-              Email:
+              Email :
               <a className="underline hover:text-black" href="">
-                demo@demo.com
+                sevenshop@gmail.com
               </a>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-lg font-medium">Về chúng tôi</h4>
+
+          <h4 className="text-lg font-medium">Giới thiệu</h4>
+          <ul>
+            <li className="text-[#999999] mt-[30px] mb-[15px]">
+              <a className="hover:underline hover:text-black" href="">
+                Về chúng tôi
+
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
                 Công ty của chúng tôi
+
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
+
                 Liên hệ với chúng tôi
+>
               </a>
             </li>
           </ul>
@@ -65,11 +77,18 @@ const Footer = () => {
         </div>
 
         <div>
-          <h4 className="text-lg font-medium">Thông tin</h4>
+
+          <h4 className="text-lg font-medium">Chính sách</h4>
+          <ul>
+            <li className="text-[#999999] mt-[30px] mb-[15px]">
+              <a className="hover:underline hover:text-black" href="">
+                Giao hàng
+
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
                 Vận chuyển
+
               </a>
             </li>
           </ul>
@@ -83,7 +102,9 @@ const Footer = () => {
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
+
                 Hướng dẫn chọn kích thước
+
               </a>
             </li>
           </ul>
@@ -98,7 +119,9 @@ const Footer = () => {
 
         <div>
           <div>
-            <h4 className="text-lg font-medium">Bản tin</h4>
+
+            <h4 className="text-lg font-medium">Ưu đãi</h4>
+
             <p className="text-[#999999] mt-[30px] mb-[15px]">
               Hãy là người đầu tiên biết về những sản phẩm mới và ưu đãi độc
               quyền của chúng tôi.
@@ -111,7 +134,9 @@ const Footer = () => {
               className="w-full py-2 border-none rounded outline-none focus:ring-0 peer"
               placeholder="Email"
             />
-            <button className="px-2 whitespace-nowrap">Đăng ký</button>
+
+            <button className="">Nhận</button>
+
           </div>
           <div className="flex gap-4">
             <a href="#" className="group">
