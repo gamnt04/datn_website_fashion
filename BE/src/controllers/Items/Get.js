@@ -355,7 +355,6 @@ export const getDetailProductDashBoard = async (req, res) => {
 export async function filterItems(req, res) {
   const { cate_id, color, name_size, price_ranges, _search } = req.query;
   const { _page = 1, _limit = 20, _sort = "" } = req.query;
-
   const page = parseInt(_page, 10) || 1;
   const limit = parseInt(_limit, 10) || 20;
 
@@ -421,7 +420,22 @@ export async function filterItems(req, res) {
     }
 
     const data = await Products.paginate(query, options);
+    await Products.populate(data.docs, { path : 'attributes' })
     const filteredProducts = [];
+    for (const id_data of data?.docs) {
+      if (id_data.attributes) {
+        let total_stock = 0;
+        id_data.attributes.values.map((i) => {
+          i.size.map((l) => {
+            total_stock += l.stock_attribute;
+          });
+        });
+        id_data.stock_product = total_stock;
+      } else {
+        id_data.stock_product = id_data.stock;
+      }
+    }
+    data.docs = data.docs.filter((item) => item.stock_product > 0);
 
     if (!data || data.docs.length < 1) {
       return res.status(StatusCodes.OK).json({
