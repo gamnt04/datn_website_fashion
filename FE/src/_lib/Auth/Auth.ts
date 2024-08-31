@@ -11,7 +11,7 @@ export const list_Auth = async () => {
 export const Search_Auth = async (searchQuery: any) => {
   try {
     const { data } = await instance.get(`/auths/search`, {
-      params: { _search: searchQuery }
+      params: { _search: searchQuery },
     });
     return data;
   } catch (error) {

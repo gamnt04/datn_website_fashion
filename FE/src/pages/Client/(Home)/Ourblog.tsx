@@ -37,7 +37,7 @@ const Ourblog = () => {
           </div>
         ) : (
           <>
-            <div className="container mx-auto grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
+            <div className="container  mx-auto grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
               {featuredBlogs.map((blog: any) => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(blog.content, "text/html");
@@ -48,10 +48,10 @@ const Ourblog = () => {
                 return (
                   <div
                     key={blog._id}
-                    className="overflow-hidden transition-shadow duration-300 rounded-lg shadow-lg hover:shadow-xl"
+                    className="relative pb-6 overflow-hidden transition-shadow duration-300 rounded-lg shadow-lg hover:shadow-xl"
                   >
                     <Link to={`/blogs/${blog.slug}`}>
-                      <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover">
+                      <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover ">
                         <img
                           src={image?.src}
                           alt={title?.textContent || "Blog image"}
@@ -70,13 +70,10 @@ const Ourblog = () => {
                         <h2 className=" text-[20px] font-semibold text-gray-900 transition-colors duration-300 hover:text-blue-600 line-clamp-2">
                           {title?.textContent}
                         </h2>
-                        <div className="flex text-[#7D7D7D]  space-x-4 my-3 ">
-                          <p className="line-clamp-3">
-                            {" "}
-                            {content?.textContent}
-                          </p>
+                        <div className="flex text-[#7D7D7D] space-x-4 my-2 ">
+                          <p className="line-clamp-3">{content?.textContent}</p>
                         </div>
-                        <div className="flex text-[#7D7D7D] text-[14px] space-x-4 mb-2 ">
+                        <div className="flex text-[#7D7D7D] text-[14px] space-x-4  absolute bottom-4">
                           <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
                         </div>
                       </div>
