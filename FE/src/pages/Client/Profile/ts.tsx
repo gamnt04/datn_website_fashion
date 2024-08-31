@@ -49,10 +49,10 @@ const Profile = () => {
     });
   };
   const routing = useNavigate();
-      console.log(user);
-      if (!localStorage.getItem('user')) {
-        routing('/')
-      }
+  console.log(user);
+  if (!localStorage.getItem("user")) {
+    routing("/");
+  }
 
   //   const handleSaveProfile = async (e: any) => {
   //     e.preventDefault();
@@ -94,12 +94,12 @@ const Profile = () => {
 
   //   const handleFileInputChange = (e: any) => {
   //     const file = e.target.files[0];
-  //     setAvatarFile(file); 
+  //     setAvatarFile(file);
   //     const reader = new FileReader();
   //     reader.onloadend = () => {
   //       setProfileInfo({
   //         ...profileInfo,
-  //         avatar: reader.result, 
+  //         avatar: reader.result,
   //       });
   //     };
   //     if (file) {
@@ -108,9 +108,6 @@ const Profile = () => {
   //   };
 
   // console.log(profileInfo);
-
-
-
 
   return (
     <>
@@ -122,8 +119,8 @@ const Profile = () => {
           </p>
         </div>
         <div className="py-8">
-          <div className="flex flex-row flex-wrap lg:flex-nowrap text-sm">
-            <div className="basis-full order-2 lg:order-1 lg:basis-2/3">
+          <div className="flex flex-row flex-wrap text-sm lg:flex-nowrap">
+            <div className="order-2 basis-full lg:order-1 lg:basis-2/3">
               <form className="w-full">
                 <div className="flex items-center gap-5 py-2 lg:py-3">
                   <p className="w-36 text-left lg:text-right py-1 text-[#777777]">
@@ -131,7 +128,7 @@ const Profile = () => {
                   </p>
                   <p>{profileInfo.userName}</p>
                 </div>
-                <div className="flex flex-col lg:flex lg:items-center lg:flex-row gap-x-5 lg:gap-5 py-2 lg:py-3">
+                <div className="flex flex-col py-2 lg:flex lg:items-center lg:flex-row gap-x-5 lg:gap-5 lg:py-3">
                   <label className="w-36 text-left lg:text-right py-1 text-[#777777]">
                     Tên
                   </label>
@@ -144,16 +141,13 @@ const Profile = () => {
                     placeholder="Nhập tên của bạn"
                   />
                 </div>
-                <div className="flex flex-col lg:flex lg:items-center lg:flex-row gap-x-5 lg:gap-5 py-2 lg:py-3">
+                <div className="flex flex-col py-2 lg:flex lg:items-center lg:flex-row gap-x-5 lg:gap-5 lg:py-3">
                   <p className="w-36 text-left lg:text-right py-1 text-[#777777]">
                     Email
                   </p>
                   <div className="flex justify-between gap-3">
                     <p>{profileInfo.email}</p>
-                    <a
-                      href="#"
-                      className="underline text-blue-400"
-                    >
+                    <a href="#" className="text-blue-400 underline">
                       Thay đổi
                     </a>
                   </div>
@@ -163,10 +157,7 @@ const Profile = () => {
                     Số điện thoại
                   </p>
                   <p>{profileInfo.phoneNumber}</p>
-                  <a
-                    href="#"
-                    className="underline text-blue-400"
-                  >
+                  <a href="#" className="text-blue-400 underline">
                     Thêm
                   </a>
                 </div>
@@ -185,18 +176,18 @@ const Profile = () => {
                 <div className="flex justify-center">
                   <button
                     type="submit"
-                    className="bg-black text-white py-2 px-6 my-6"
+                    className="px-6 py-2 my-6 text-white bg-black"
                   >
                     Lưu
                   </button>
                 </div>
               </form>
             </div>
-            <div className="order-1 border-b p-3 my-4 basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
+            <div className="order-1 p-3 my-4 border-b basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
               <div className="flex justify-center">
                 <img
                   src={profileInfo.avatar || "https://picsum.photos/300/300"}
-                  className="w-44 h-44 rounded-full"
+                  className="rounded-full w-44 h-44"
                   alt="Avatar"
                 />
               </div>
@@ -204,13 +195,12 @@ const Profile = () => {
                 <input
                   type="file"
                   accept="image/*"
-
                   className="hidden"
                   id="avatar-input"
                 />
                 <label
                   htmlFor="avatar-input"
-                  className="border py-3 px-6 my-9 rounded-lg cursor-pointer"
+                  className="px-6 py-3 border rounded-lg cursor-pointer my-9"
                 >
                   Chọn ảnh
                 </label>

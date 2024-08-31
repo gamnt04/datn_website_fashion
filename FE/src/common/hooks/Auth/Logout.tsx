@@ -6,7 +6,7 @@ const Logout = () => {
   const navigate = useNavigate();
   const { mutate } = useMutation({
     mutationFn: async () => {
-      await localStorage.removeItem("user");
+      localStorage.removeItem("user");
     },
     onSuccess: () => {
       toast.success("Đăng xuất thành công!", { autoClose: 500 });
