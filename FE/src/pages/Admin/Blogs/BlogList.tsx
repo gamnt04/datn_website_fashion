@@ -82,7 +82,10 @@ const BlogList: React.FC = () => {
   const handleTogglePublished = async (blog: Blog) => {
     try {
       const updatedBlog = { ...blog, published: !blog.published };
-      const response = await instance.put(`/update_blog/${blog._id}`, updatedBlog);
+      const response = await instance.put(
+        `/update_blog/${blog._id}`,
+        updatedBlog
+      );
       if (response.status === 200) {
         messageApi.success("Cập nhật trạng thái hiển thị thành công");
         refetch();
@@ -244,7 +247,7 @@ const BlogList: React.FC = () => {
 
           <div className="mb-2 flex justify-between">
             <div className="space-x-5">
-              <Checkbox className="ml-4" />
+              {/* <Checkbox className="ml-4" />
               <Button>Chọn tất cả (7)</Button>
               <Popconfirm
                 title="Xóa sản phẩm khỏi giỏ hàng?"
@@ -257,7 +260,7 @@ const BlogList: React.FC = () => {
                   <DeleteOutlined style={{ fontSize: "24px" }} />
                   Xóa sản phẩm đã chọn
                 </Button>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
             <div className="flex space-x-5">
               <Input
