@@ -10,16 +10,13 @@ const Footer = () => {
           </Link>
 
           <p className="text-[#999999] mt-[30px] mb-[15px] w-60">
-
             Địa chỉ : Tòa nhà FPT Polytechnic, đường Trịnh Văn Bô, Phương Canh,
             Nam Từ Liêm, Hà Nội
           </p>
 
           <ul>
             <li className="text-[#999999] mb-[7px]">
-
               Điện thoại :
-
               <a className="underline hover:text-black" href="">
                 0364854076
               </a>
@@ -36,27 +33,26 @@ const Footer = () => {
         </div>
 
         <div>
-
           <h4 className="text-lg font-medium">Giới thiệu</h4>
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
                 Về chúng tôi
+              </a>
+            </li>
+          </ul>
 
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
                 Công ty của chúng tôi
-
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-
                 Liên hệ với chúng tôi
->
               </a>
             </li>
           </ul>
@@ -77,18 +73,18 @@ const Footer = () => {
         </div>
 
         <div>
-
           <h4 className="text-lg font-medium">Chính sách</h4>
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
                 Giao hàng
-
+              </a>
+            </li>{" "}
+          </ul>
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
                 Vận chuyển
-
               </a>
             </li>
           </ul>
@@ -102,9 +98,7 @@ const Footer = () => {
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-
                 Hướng dẫn chọn kích thước
-
               </a>
             </li>
           </ul>
@@ -119,7 +113,6 @@ const Footer = () => {
 
         <div>
           <div>
-
             <h4 className="text-lg font-medium">Ưu đãi</h4>
 
             <p className="text-[#999999] mt-[30px] mb-[15px]">
@@ -136,7 +129,6 @@ const Footer = () => {
             />
 
             <button className="">Nhận</button>
-
           </div>
           <div className="flex gap-4">
             <a href="#" className="group">
