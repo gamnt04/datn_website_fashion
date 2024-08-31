@@ -25,12 +25,13 @@ import { useEffect, useState } from "react";
 
 import queryString from "query-string";
 import instance from "../../../configs/axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 type FieldType = {
   contentReview?: string;
 };
 
 export default function List_order() {
+  const queryClient = useQueryClient();
   const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const { mutate, contextHolder } = useOrderMutations(
@@ -52,6 +53,16 @@ export default function List_order() {
   }>({});
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  // Truy vấn dữ liệu đánh giá dựa trên currentReviewId
+  const { data: dataReviewById } = useQuery({
+    queryKey: ["Review_Key", currentReviewId],
+    queryFn: async () => {
+      const { data } = await instance.get(`/reviews/${currentReviewId}`);
+      return data;
+    },
+    enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
+  });
+  console.log(dataReviewById);
 
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
@@ -67,6 +78,9 @@ export default function List_order() {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["Order_Key"],
+      });
       message.success("Gửi đánh giá thành công");
       setReviewedOrders((prev) => ({
         ...prev,
@@ -81,17 +95,6 @@ export default function List_order() {
     },
   });
   const [initialContent, setInitialContent] = useState(""); // State để giữ giá trị ban đầu
-
-  // Truy vấn dữ liệu đánh giá dựa trên currentReviewId
-  const { data: dataReviewById } = useQuery({
-    queryKey: ["Review_Key", currentReviewId],
-    queryFn: async () => {
-      const { data } = await instance.get(`/reviews/${currentReviewId}`);
-      return data;
-    },
-    enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
-  });
-  console.log(dataReviewById);
 
   // Cập nhật initialContent khi nhận được dataReviewById
   useEffect(() => {
@@ -400,8 +403,11 @@ export default function List_order() {
                           )
                         }
                       >
-                        {items?.reviews ? "Xem đánh giá" : "Đánh giá"}
+                        {items?.reviews.length > 0
+                          ? "Xem đánh giá"
+                          : "Đánh giá"}
                       </Button>
+
                       {openReview && openReviewOrderId === items._id && (
                         <div>
                           <Modal
@@ -414,102 +420,105 @@ export default function List_order() {
                               ĐÁNH GIÁ SẢN PHẨM
                             </h1>
 
-                            {items.items.map((item, index) => {
-                              console.log(items?.reviews);
+                            {/* Tạo một tập hợp các sản phẩm để nhóm thuộc tính cùng sản phẩm lại */}
+                            {items.items
+                              .reduce((acc, item) => {
+                                const existingProduct = acc.find(
+                                  (p) => p.productId === item.productId._id
+                                );
+                                if (existingProduct) {
+                                  existingProduct.items.push(item);
+                                } else {
+                                  acc.push({
+                                    productId: item.productId._id,
+                                    productName: item.productId.name_product,
+                                    productImage: item.productId.image_product,
+                                    items: [item],
+                                  });
+                                }
+                                return acc;
+                              }, [])
+                              .map((productGroup, index) => {
+                                const review = items.reviews.find(
+                                  (r) => r.productId === productGroup.productId
+                                );
 
-                              return (
-                                <div
-                                  key={index}
-                                  className="flex flex-col gap-4 mb-4"
-                                >
-                                  <div className="flex items-center gap-4">
-                                    <div className="w-[50px] h-[50px]">
-                                      <img
-                                        src={item.productId?.image_product}
-                                        alt=""
-                                        className="w-full h-full object-cover"
-                                      />
-                                    </div>
-                                    <div>{item.productId?.name_product}</div>
-                                  </div>
-
-                                  <Form
-                                    onFinish={(values) => {
-                                      addReview({
-                                        contentReview:
-                                          values[`contentReview_${index}`] ||
-                                          "",
-                                        productId: item.productId._id,
-                                        orderId: items?._id,
-                                      });
-                                    }}
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex flex-col gap-4 mb-4"
                                   >
-                                    {items?.reviews.map((review) => (
-                                      <div>
-                                        <Form.Item
-                                          name={`contentReview_${index}`} // Đảm bảo name là duy nhất
-                                          rules={[
-                                            {
-                                              required: true,
-                                              message:
-                                                "Vui lòng nhập nội dung đánh giá!",
-                                            },
-                                          ]}
-                                          initialValue={
-                                            review?.contentReview || "notfound"
-                                          }
-                                        >
-                                          <Input.TextArea
-                                            rows={4}
-                                            placeholder="Nhập nội dung đánh giá"
-                                          />
-                                        </Form.Item>
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-[50px] h-[50px]">
+                                        <img
+                                          src={productGroup.productImage}
+                                          alt=""
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                      <div>{productGroup.productName}</div>
+                                    </div>
 
-                                        {review?.contentReview ? (
-                                          <div>
-                                            <Form.Item>
-                                              <Button
-                                                type="primary"
-                                                // htmlType="submit"
+                                    <Form
+                                      onFinish={(values) => {
+                                        addReview({
+                                          contentReview:
+                                            values[`contentReview_${index}`] ||
+                                            "",
+                                          productId: productGroup.productId,
+                                          orderId: items?._id,
+                                        });
+                                      }}
+                                    >
+                                      <Form.Item
+                                        name={`contentReview_${index}`} // Đảm bảo name là duy nhất
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message:
+                                              "Vui lòng nhập nội dung đánh giá!",
+                                          },
+                                        ]}
+                                        initialValue={
+                                          review ? review.contentReview : ""
+                                        }
+                                      >
+                                        <Input.TextArea
+                                          rows={4}
+                                          placeholder="Nhập nội dung đánh giá"
+                                          disabled={!!review} // Vô hiệu hóa nếu đã có đánh giá
+                                        />
+                                      </Form.Item>
+
+                                      {review ? (
+                                        <div>
+                                          <Form.Item>
+                                            <Button className="bg-black text-white">
+                                              <Link
+                                                to={`/shops/${review?.productId}`}
+                                                className="ant-btn ant-btn-primary "
                                               >
                                                 Xem đánh giá
-                                              </Button>
-                                            </Form.Item>
-                                          </div>
-                                        ) : (
-                                          <div>
-                                            <Form.Item
-                                              name={`contentReview_${index}`} // Đảm bảo name là duy nhất
-                                              rules={[
-                                                {
-                                                  required: true,
-                                                  message:
-                                                    "Vui lòng nhập nội dung đánh giá!",
-                                                },
-                                              ]}
+                                              </Link>
+                                            </Button>
+                                          </Form.Item>
+                                        </div>
+                                      ) : (
+                                        <div>
+                                          <Form.Item>
+                                            <Button
+                                              type="primary"
+                                              htmlType="submit"
                                             >
-                                              <Input.TextArea
-                                                rows={4}
-                                                placeholder="Nhập nội dung đánh giá"
-                                              />
-                                            </Form.Item>
-
-                                            <Form.Item>
-                                              <Button
-                                                type="primary"
-                                                htmlType="submit"
-                                              >
-                                                Gửi đánh giá
-                                              </Button>
-                                            </Form.Item>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </Form>
-                                </div>
-                              );
-                            })}
+                                              Gửi đánh giá
+                                            </Button>
+                                          </Form.Item>
+                                        </div>
+                                      )}
+                                    </Form>
+                                  </div>
+                                );
+                              })}
 
                             <Modal
                               open={previewOpen}
