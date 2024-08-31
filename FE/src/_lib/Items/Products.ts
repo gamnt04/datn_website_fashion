@@ -214,7 +214,7 @@ export const restoreProduct = async (item: any) => {
 
 export async function getDeletedProducts() {
   try {
-    const response = await fetch(`${baseUri}/dashboard/trash`);
+    const response = await fetch(`${baseUri}/adminstration/dashboard/trash`);
     if (!response.ok) {
       throw new Error("Không thể lấy danh sách sản phẩm đã xóa");
     }
@@ -225,7 +225,7 @@ export async function getDeletedProducts() {
     throw error;
   }
 }
-export const getProductsByName = async (searchName : any) => {
+export const getProductsByName = async (searchName: any) => {
   try {
     const { data } = await instance.post("/products/search", { searchName });
     return data;

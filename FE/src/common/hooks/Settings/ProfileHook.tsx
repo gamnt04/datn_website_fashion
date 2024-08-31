@@ -41,7 +41,6 @@ const ProfileHook = () => {
       return data;
     },
   });
-  console.log(data?.address);
 
   const { mutate } = useMutation({
     mutationFn: async (newUser) => {
