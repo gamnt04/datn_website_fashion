@@ -93,13 +93,13 @@ const Feedback = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-10 mt-10">
+    <div className="container p-4 mx-auto">
+      <div className="flex items-center justify-between mt-10 mb-10">
         <h1 className="text-2xl font-semibold">Phản hồi liên hệ</h1>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block mb-2 text-sm font-bold text-gray-700">
             Email người yêu cầu
           </label>
           <input
@@ -110,7 +110,7 @@ const Feedback = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block mb-2 text-sm font-bold text-gray-700">
             Nội dung yêu cầu
           </label>
           <textarea
@@ -122,7 +122,7 @@ const Feedback = () => {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block mb-2 text-sm font-bold text-gray-700"
             htmlFor="responseContent"
           >
             Nội dung phản hồi
@@ -137,7 +137,7 @@ const Feedback = () => {
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block mb-2 text-sm font-bold text-gray-700"
             htmlFor="responderEmail"
           >
             Email phản hồi
@@ -152,7 +152,7 @@ const Feedback = () => {
         </div>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
+          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-400"
         >
           Gửi phản hồi
         </button>
