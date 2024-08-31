@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 import { Link, useNavigate } from "react-router-dom";
+import ArrangeFilter from "./Filter/ArrangeFilter";
 
 const IndexShops = () => {
   const navigate = useNavigate();
@@ -22,9 +23,13 @@ const IndexShops = () => {
     setPriceRanges(priceRanges);
   };
 
-  const handleColorChange = (colors: string[]) => setSelectedColors(colors);
+  const handleColorChange = (colors: string[]) => {
+    setSelectedColors(colors);
+  };
 
-  const handleSizeChange = (sizes: string[]) => setSelectedSizes(sizes);
+  const handleSizeChange = (sizes: string[]) => {
+    setSelectedSizes(sizes);
+  };
 
   const toggleColor = (color: string) => {
     setSelectedColors((prev) =>
@@ -42,9 +47,13 @@ const IndexShops = () => {
 
   const resetSizeFilter = () => setSelectedSizes([]);
 
+  const handleSortChange = (value: string) => {
+    setSortOption(value);
+  };
+
   return (
     <div className="lg:mt-[40px] mt-[60px]">
-      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="max-w-[1440px] w-[95vw] mx-auto">
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           <Link to={`/`} className="text-gray-500 hover:text-black">
             Trang chủ
@@ -55,28 +64,35 @@ const IndexShops = () => {
           </Link>
           <span className="mx-1 text-gray-500">&#10148;</span> Tất cả
         </div>
-        <MenuShop
-          onCategorySelect={handleCategorySelect}
-          onPriceChange={handlePriceChange}
-          setSearch={() => {}}
-          setSort={setSortOption}
-          sortOption={sortOption}
-          selectedColors={selectedColors}
-          toggleColor={toggleColor}
-          resetColorFilter={resetColorFilter}
-          onColorChange={handleColorChange}
-          selectedSizes={selectedSizes}
-          toggleSize={toggleSize}
-          resetSizeFilter={resetSizeFilter}
-          onSizeChange={handleSizeChange}
-        />
-        <Products_Shop
-          cate_id={cate_id} // Truyền mảng ID
-          priceRanges={priceRanges}
-          selectedColors={selectedColors}
-          selectedSizes={selectedSizes}
-          sortOption={sortOption}
-        />
+        <div className="xl:grid grid-cols-[21%_76%] justify-between">
+          <MenuShop
+            onCategorySelect={handleCategorySelect}
+            onPriceChange={handlePriceChange}
+            setSearch={() => {}}
+            selectedColors={selectedColors}
+            toggleColor={toggleColor}
+            resetColorFilter={resetColorFilter}
+            onColorChange={handleColorChange}
+            selectedSizes={selectedSizes}
+            toggleSize={toggleSize}
+            resetSizeFilter={resetSizeFilter}
+            onSizeChange={handleSizeChange}
+          />
+          <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
+            <ArrangeFilter
+              sortOption={sortOption}
+              onSortChange={handleSortChange}
+            />
+            <Products_Shop
+              query="" // Add default or dynamic query if needed
+              cate_id={cate_id} // Truyền mảng ID
+              priceRanges={priceRanges}
+              selectedColors={selectedColors}
+              selectedSizes={selectedSizes}
+              sortOption={sortOption}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

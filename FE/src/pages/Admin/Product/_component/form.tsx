@@ -1,11 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  FormProps,
-  Input,
-  Select,
-  Upload
-} from "antd";
+import { Button, Checkbox, FormProps, Input, Select, Upload } from "antd";
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { Form } from "antd";
@@ -25,13 +18,14 @@ type FieldType = {
   category_id: string[];
   image_product: string;
   gallery_product: string[];
-  stock_product: number;
+  stock: number;
   attributes: IAttribute[];
   featured_product: boolean;
   tag_product: string[];
 };
 
 const Form_Item = ({ mode }: any) => {
+  const [check_edit_form, setCheckEditForm] = useState<boolean>(true)
   const [status_attr, setStatus_Attr] = useState(true);
   let image_item: any;
   const gallery_item: any = [];
@@ -88,8 +82,12 @@ const Form_Item = ({ mode }: any) => {
     }))
   };
 
+  const onFormValuesChange = () => {
+    setCheckEditForm(false)
+  };
+
   return (
-    <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-10">
+    <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-6">
       {(isPending || loading) && (
         <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
           <div className="animate-spin">
@@ -97,9 +95,9 @@ const Form_Item = ({ mode }: any) => {
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between -mt-5 mb-5">
         <h1 className="text-[26px] font-semibold">
-          {mode ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+          {mode ? "Cập nhật sản phẩm" : "Thêm Mới Sản Phẩm"}
         </h1>
         <Link to="/admin/products">
           <Button type="primary">
@@ -113,6 +111,7 @@ const Form_Item = ({ mode }: any) => {
         layout="vertical"
         onFinish={onFinish}
         initialValues={initialValues}
+        onValuesChange={onFormValuesChange} 
       >
         <div className="grid grid-cols-[60%,40%] gap-8">
           <div>
@@ -123,7 +122,7 @@ const Form_Item = ({ mode }: any) => {
                 props={{
                   name_field: "name_product",
                   ruler_field: [
-                    { required: true, message: "Tên sản phẩm bắt buộc nhập!" }
+                    { required: true, message: "Tên sản phẩm bắt buộc nhập!", whitespace: true }
                   ]
                 }}
               />
@@ -139,7 +138,8 @@ const Form_Item = ({ mode }: any) => {
                 rules={[
                   {
                     required: true,
-                    message: "Danh mục sản phẩm bắt buộc chọn!"
+                    message: "Danh mục sản phẩm bắt buộc chọn!",
+                    whitespace: true
                   }
                 ]}
               >
@@ -170,6 +170,29 @@ const Form_Item = ({ mode }: any) => {
                         type: "number",
                         min: 0,
                         message: "Giá sản phẩm phải là số dương!",
+                        transform(value: number) {
+                          return Number(value);
+                        }
+                      }
+                    ],
+                    action: "price"
+                  }}
+                />
+                <label className="text-[#1C2434] font-medium text-sm">
+                  Số lượng sản phẩm
+                </label>
+                <Filed_form
+                  props={{
+                    name_field: "stock",
+                    ruler_field: [
+                      {
+                        required: true,
+                        message: "Số lượng sản phẩm bắt buộc nhập!"
+                      },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Số lượng sản phẩm phải là số dương!",
                         transform(value: number) {
                           return Number(value);
                         }
@@ -424,13 +447,25 @@ const Form_Item = ({ mode }: any) => {
           </span>
         )}
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            {isPending || loading
-              ? "Loading"
-              : mode
-              ? "Cập nhật sản phẩm"
-              : "Tạo sản phẩm"}
-          </Button>
+          {
+            check_edit_form ?
+              <Button type="primary" htmlType="button" className="bg-gray-300">
+                {isPending || loading
+                  ? "Loading"
+                  : mode
+                    ? "Cập nhật sản phẩm"
+                    : "Tạo mới sản phẩm"}
+              </Button> :
+              <Button type="primary" htmlType="submit">
+                {isPending || loading
+                  ? "Loading"
+                  : mode
+                    ? "Cập nhật sản phẩm"
+                    : "Tạo mới sản phẩm"}
+              </Button>
+
+          }
+
         </Form.Item>
       </Form>
     </div>

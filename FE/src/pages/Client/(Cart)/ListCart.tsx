@@ -1,7 +1,7 @@
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import Dow_btn from "./dow";
-import Up_btn from "./up";
+import Dow_btn from "./_components/dow";
+import Up_btn from "./_components/up";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import {
 } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
+import Het_hang from "./_components/het_hang";
 
 interface DataType {
   key: string;
@@ -153,6 +154,7 @@ const ListCart = () => {
       key: "name",
       render: (_: any, product: any) => (
         <>
+        <Het_hang dataProps={product}/>
           <Link
             to={`/shops/${product?.productId?._id}`}
             className="py-2 font-bold text-gray-900 hover:text-gray-900"
@@ -214,7 +216,7 @@ const ListCart = () => {
             <Up_btn
               dataProps={{
                 id_item: product?.productId,
-                quantity_item: product,
+                quantity_item: product?.quantity,
                 color: product?.color_item,
                 size: product?.name_size,
               }}
@@ -300,7 +302,7 @@ const ListCart = () => {
   }
 
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+    <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="w-[95%] mx-[2.5%] mt-[70px]">
         {contextHolder}
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">

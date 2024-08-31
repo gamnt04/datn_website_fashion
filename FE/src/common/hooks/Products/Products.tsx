@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  get_detai_items_dashboard,
   get_detail_items,
   get_items_client,
   get_items_dashboard,
@@ -7,7 +8,6 @@ import {
   getDeletedProducts,
   getProductsByName,
 } from "../../../_lib/Items/Products";
-import { DatabaseFilled } from "@ant-design/icons";
 // import { reduce } from "lodash";
 
 export const Query_Products = (id?: string | number, page?: number) => {
@@ -29,6 +29,16 @@ export function Query_Products_Dashboard(page: number) {
   return { data, ...rest };
 }
 
+export const Query_Detail_Products_Dashboard = (id: string | number) => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["Product_Key", id],
+    queryFn: () => get_detai_items_dashboard(id),
+    enabled: !!id
+  });
+  return { data, ...rest };
+};
+
+
 export const Query_Limit_Items = (limit: number) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Product_Key", limit],
@@ -44,7 +54,7 @@ export function Query_Trash_Item() {
   });
   return { data, ...rest };
 }
-export const useQueryProductsSearch = (searchName) => {
+export const useQueryProductsSearch = (searchName : any) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_Products", searchName],
     queryFn: () => getProductsByName(searchName),

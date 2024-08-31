@@ -138,9 +138,9 @@ export const getTop10ProductSale = async () => {
 
 // huy don hang có yêu cầu xác nhận
 
-export const Cancel_Order = async (id: any) => {
+export const Cancel_Order = async (id: any, cancellationReason: any) => {
   try {
-    const { data } = await instance.post(`/orders/${id}/cancel`);
+    const { data } = await instance.post(`/orders/${id}/cancel`, { cancellationReason });
     const message = 'yeu_cau_huy';
     const res = {
       data,
@@ -152,9 +152,9 @@ export const Cancel_Order = async (id: any) => {
   }
 };
 
-export const confirmCancelOrder = async ({ id, confirm }: any) => {
+export const confirmCancelOrder = async ({ id_item, confirm }: any) => {
   try {
-    const { data } = await instance.post(`/orders/${id}/cancel/confirm`, {
+    const { data } = await instance.post(`/orders/${id_item}/cancel/confirm`, {
       confirm
     });
     return data;
@@ -162,7 +162,7 @@ export const confirmCancelOrder = async ({ id, confirm }: any) => {
     console.log(error);
   }
 };
-export const cancel_product = async (id: any) => {
+export const cancel_product = async (id: any,) => {
   try {
     const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
     const message = 'huy';
@@ -170,11 +170,15 @@ export const cancel_product = async (id: any) => {
       data,
       message
     }
+    console.log(data);
+
     return res;
   } catch (error) {
     console.log(error);
   }
 };
+
+
 export const complete_product = async (id: any) => {
   console.log(id);
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu, Modal } from "antd";
-import { Box, Heart, LogOut, User } from "lucide-react";
+import { BellRing, Box, Heart, LogOut, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
 import { SiAwssecretsmanager } from "react-icons/si";
@@ -25,7 +25,6 @@ function getItem(
 const Sidebar_Profile: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const roleAdmin = user?.user?.role;
-  console.log(roleAdmin);
   const { mutate } = useLogout();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -57,6 +56,11 @@ const Sidebar_Profile: React.FC = () => {
       <NavLink to={`/profile/list_order`}>Đơn hàng của tôi</NavLink>,
       "3",
       <Box className="h-5" />
+    ),
+    getItem(
+      <NavLink to={`/profile/notification`}>Thông báo</NavLink>,
+      "10",
+      <BellRing className="h-5" />
     ),
     ...(roleAdmin === "admin"
       ? [
