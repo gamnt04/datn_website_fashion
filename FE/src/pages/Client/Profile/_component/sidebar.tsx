@@ -63,7 +63,7 @@ const Sidebar_Profile: React.FC = () => {
           getItem(
             <NavLink to={`/admin`}>Chế độ quản lý</NavLink>,
             "4",
-            <SiAwssecretsmanager className="h-10 w-5 bold-icon" />
+            <SiAwssecretsmanager className="w-5 h-10 bold-icon" />
           ),
         ]
       : []),
