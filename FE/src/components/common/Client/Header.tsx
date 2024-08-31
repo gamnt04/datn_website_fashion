@@ -36,6 +36,7 @@ const Header = () => {
   const { data: Favouritedata } = useListFavouriteProducts(account);
 
   const { data } = List_Cart(account);
+  const count_item_cart = data?.products?.filter((item : any) => item?.productId) ?? [];
   useEffect(() => {
     typeof window !== "undefined" &&
       window.addEventListener("scroll", () => {
@@ -229,7 +230,7 @@ const Header = () => {
             >
               {data?.products && data?.products.length > 0 && (
                 <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
-                  {data?.products?.length}
+                  {count_item_cart?.length}
                 </span>
               )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
@@ -270,7 +271,10 @@ const Header = () => {
             )}
 
             {/* option / menu */}
-            <div className="duration-300 cursor-pointer hover:scale-105 ">
+            <div
+              onClick={ScrollTop}
+              className="duration-300 cursor-pointer hover:scale-105 "
+            >
               <Link ref={ref_user} to={"/profile"}>
                 <img
                   src={getUser?.avatar ? getUser?.avatar : ""}
