@@ -25,7 +25,7 @@ const Ourblog = () => {
   const featuredBlogs = publishedBlogs.slice(0, 3);
 
   return (
-    <div className="xl:w-[1440px] w-[95vw] mx-auto">
+    <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
         <div className="container mx-auto pt-[20px] text-center">
           <h1 className="text-[42px] font-medium ">Tin tức nổi bật</h1>

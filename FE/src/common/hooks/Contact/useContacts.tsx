@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { getContactByNameOrEmail } from "../../../_lib/Contact/Contact";
 
 const API_URL = "http://localhost:2004/api/v1/contact";
 
@@ -20,7 +21,7 @@ export const useContacts = () => {
   // Sử dụng useQuery để lấy dữ liệu
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["contacts"],
-    queryFn: fetchContacts,
+    queryFn: fetchContacts
   });
 
   // Sử dụng useMutation để xóa contact
@@ -28,7 +29,7 @@ export const useContacts = () => {
     mutationFn: removeContact,
     onSuccess: () => {
       queryClient.invalidateQueries(["contacts"]);
-    },
+    }
   });
 
   return {
@@ -36,6 +37,14 @@ export const useContacts = () => {
     isLoading,
     error,
     refetch,
-    removeContact: mutation.mutate,
+    removeContact: mutation.mutate
   };
+};
+export const useSearchContactByNameOrEmail = (searchContact) => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["Search_Contact", searchContact],
+    queryFn: () => getContactByNameOrEmail(searchContact),
+    enabled: !!searchContact
+  });
+  return { data, ...rest };
 };

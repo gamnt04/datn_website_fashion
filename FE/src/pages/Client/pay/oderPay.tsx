@@ -5,9 +5,7 @@ import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin, Table } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-// import queryString from "query-string";
-// import randomstring from "randomstring";
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 import {
   Add_Address,
   List_Address,
@@ -28,12 +26,14 @@ const OrderPay = () => {
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
+  
   let data: any;
   if (data_sessionStorage) {
     data = JSON.parse(data_sessionStorage);
   } else {
     routing("/profile/list_order");
   }
+
   useEffect(() => {
     if (auth && auth?.address) {
       const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
@@ -47,23 +47,23 @@ const OrderPay = () => {
       }
     }
   }, [auth, selectedAddress, setValue]);
+
   const handleTAdd = () => {
     setAddress(!address);
-    if (isOpen) setIsOpen(false);
     if (isOpen) setIsOpen(false);
   };
 
   const handleAddress = () => {
     setIsOpen(!isOpen);
     if (address) setAddress(false);
-    if (address) setAddress(false);
   };
+
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsOpen(false);
   };
 
-  // add order
+  // Hàm xử lý thanh toán đơn hàng
   const onAddOrder = async (data_form: any) => {
     if (!data_form.address || data_form?.address?.trim() === "") {
       messageApi.open({
@@ -77,7 +77,7 @@ const OrderPay = () => {
       userId: userId,
       items: data?.data_order,
       customerInfo: {
-        ...data_form
+        ...data_form,
       },
       totalPrice: data?.totalPrice,
       email: user?.user?.email,
@@ -85,18 +85,23 @@ const OrderPay = () => {
 
     try {
       if (data_form.payment === "VNPAY") {
-        const orderId = JSON.parse(sessionStorage.getItem('item_order') as string);
-        sessionStorage.setItem('customerInfo', JSON.stringify({ ...data_form }));
-        console.log("ok", orderId.totalPrice)
-        const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
+        sessionStorage.setItem("customerInfo", JSON.stringify({ ...data_form }));
+
+        // Tạo URL thanh toán VNPay
+        const response = await axios.post("http://localhost:2004/api/v1/create_payment_url", {
           orderId: nanoid(24),
-          totalPrice: orderId.totalPrice,
-          orderDescription: `Order ${orderId._id}`,
-          language: 'vn'
+          totalPrice: data?.totalPrice,
+          orderDescription: `Order ${nanoid(10)}`,
+          language: "vn",
         });
-        sessionStorage.setItem('item_order', JSON.stringify(item_order));
-        window.location.href = UrlPayment.data.paymentUrl;
+
+        if (response.data && response.data.paymentUrl) {
+          window.location.href = response.data.paymentUrl;
+        } else {
+          throw new Error("Không thể tạo URL thanh toán");
+        }
       } else {
+        // Xử lý các phương thức thanh toán khác
         onSubmit(item_order);
       }
     } catch (error) {
@@ -108,39 +113,43 @@ const OrderPay = () => {
     }
   };
 
+  const dataSo = data?.data_order.map((order: any) => ({
+    key: order.productId._id,
+    ...order,
+  }));
 
-
-
-  const dataSo = data?.data_order.map((order: any) => {
-    return {
-      key: order.productId._id,
-      ...order
-    }
-  })
   const columns = [
     {
-      title: 'Sản phẩm',
-      dataIndex: 'image_product',
-      key: 'image_product',
+      title: "Sản phẩm",
+      dataIndex: "image_product",
+      key: "image_product",
       render: (_: any, order: any) => (
-        <img src={order.productId.image_product} className="w-[70px] lg:w-[100px] lg:h-[100px]" alt="" />
+        <img
+          src={order.productId.image_product}
+          className="w-[70px] lg:w-[100px] lg:h-[100px]"
+          alt=""
+        />
       ),
     },
     {
-      dataIndex: 'name_product',
-      key: 'name_product',
+      dataIndex: "name_product",
+      key: "name_product",
       render: (_: any, order: any) => (
         <div className="lg:flex lg:items-center gap-10">
           <div>
-            <h1 className="font-bold text-sm lg:text-base">{order?.productId?.name_product}</h1>
+            <h1 className="font-bold text-sm lg:text-base">
+              {order?.productId?.name_product}
+            </h1>
             <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
               Đổi trả miễn phí 15 ngày
             </p>
             <div className="flex justify-between md:hidden mt-2">
-              <p className="text-sm lg:text-base">{order?.price_item?.toLocaleString("vi", {
-                style: "currency",
-                currency: "VND",
-              })}</p>
+              <p className="text-sm lg:text-base">
+                {order?.price_item?.toLocaleString("vi", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
               <p className="text-sm lg:text-base">x {order?.quantity}</p>
             </div>
           </div>
@@ -151,25 +160,27 @@ const OrderPay = () => {
       ),
     },
     {
-      dataIndex: 'price_product',
-      key: 'price_product',
+      dataIndex: "price_product",
+      key: "price_product",
       render: (_: any, order: any) => (
-        <p className="hidden lg:block text-sm lg:text-base">{order?.price_item?.toLocaleString("vi", {
-          style: "currency",
-          currency: "VND",
-        })}</p>
+        <p className="hidden lg:block text-sm lg:text-base">
+          {order?.price_item?.toLocaleString("vi", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </p>
       ),
     },
     {
-      dataIndex: 'quantity',
-      key: 'quantity',
+      dataIndex: "quantity",
+      key: "quantity",
       render: (_: any, order: any) => (
         <p className="hidden lg:block text-sm lg:text-base"> x {order?.quantity}</p>
       ),
     },
     {
-      dataIndex: 'total_price_item',
-      key: 'total_price_item',
+      dataIndex: "total_price_item",
+      key: "total_price_item",
       render: (_: any, order: any) => (
         <p className="font-bold hidden lg:block text-sm lg:text-base">
           {order?.total_price_item?.toLocaleString("vi", {
@@ -180,6 +191,7 @@ const OrderPay = () => {
       ),
     },
   ];
+
   if (loadingOrder) {
     return (
       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
@@ -189,9 +201,10 @@ const OrderPay = () => {
       </div>
     );
   }
+
   return (
     <>
-      <div className="xl:w-[1440px] w-[95vw] mx-auto">
+      <div className="max-w-[1440px] w-[95vw] mx-auto">
         {contextHolder}
         {isLoading ? (
           <div className="flex justify-center items-center h-screen">

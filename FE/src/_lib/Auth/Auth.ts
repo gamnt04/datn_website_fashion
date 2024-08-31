@@ -61,9 +61,11 @@ export async function set_default_address(item: any) {
     return error;
   }
 }
-export const getUserByUsername = async (searchName) => {
+export const getUserByUsername = async (searchUser) => {
   try {
-    const { data } = await instance.post("/auth/search", { searchName });
+    const { data } = await instance.post("/auth/search", {
+      searchUser
+    });
     return data;
   } catch (error) {
     console.error(error);

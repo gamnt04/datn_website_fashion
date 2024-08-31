@@ -27,7 +27,7 @@ const OrderDetail = () => {
               </div>
             </Link>
             <div className="flex gap-3 items-center">
-              <p>MÃ đơn hàng: {data?.orderNumber}</p>
+              <p>Mã đơn hàng: <span className="font-bold">{data?.orderNumber}</span></p>
               <p className="border-l-2 pl-3">{data?.status == 1 ? "Chờ xác nhận" :
                 data?.status == 2 ? "Đang chuẩn bị hàng" :
                   data?.status == 3 ? "Đang vận chuyển" :

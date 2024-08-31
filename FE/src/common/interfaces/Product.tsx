@@ -27,3 +27,13 @@ export interface IAttribute {
   color: string;
   size: ISize[];
 }
+export interface ProductResponse {
+  message: string;
+  data: IProduct[];
+  pagination: {
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+    itemsPerPage: number;
+  };
+}
