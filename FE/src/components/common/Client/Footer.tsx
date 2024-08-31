@@ -10,87 +10,87 @@ const Footer = () => {
           </Link>
 
           <p className="text-[#999999] mt-[30px] mb-[15px] w-60">
-            Address: Stark Funiture Store 4956 Polk Street, Arizona, United
-            States
+            Địa chỉ : Tòa nhà FPT Polytechnic, đường Trịnh Văn Bô, Phương Canh,
+            Nam Từ Liêm, Hà Nội
           </p>
 
           <ul>
             <li className="text-[#999999] mb-[7px]">
-              Phone:
+              Điện thoại :
               <a className="underline hover:text-black" href="">
-                520-901-7672
+                0364854076
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999]">
-              Email:
+              Email :
               <a className="underline hover:text-black" href="">
-                demo@demo.com
+                sevenshop@gmail.com
               </a>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-lg font-medium">About Us</h4>
+          <h4 className="text-lg font-medium">Giới thiệu</h4>
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                Our Company
+                Về chúng tôi
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                Contact Us
+                Liên hệ
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                FAQs
+                Câu hỏi thường gặp
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999]">
               <a className="hover:underline hover:text-black" href="">
-                Terms and conditions
+                Điều khoản và điều kiện
               </a>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-lg font-medium">Information</h4>
+          <h4 className="text-lg font-medium">Chính sách</h4>
           <ul>
             <li className="text-[#999999] mt-[30px] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                Delivery
+                Giao hàng
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                Search
+                Tìm kiếm
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                Size Guide
+                Hướng dẫn kích cỡ
               </a>
             </li>
           </ul>
           <ul>
             <li className="text-[#999999] mb-[15px]">
               <a className="hover:underline hover:text-black" href="">
-                Support
+                Hỗ trợ
               </a>
             </li>
           </ul>
@@ -98,9 +98,10 @@ const Footer = () => {
 
         <div>
           <div>
-            <h4 className="text-lg font-medium">Newsletter</h4>
+            <h4 className="text-lg font-medium">Ưu đãi</h4>
             <p className="text-[#999999] mt-[30px] mb-[15px]">
-              Be the first to know about our new arrivals and exclusive offers.
+              Hãy là người đầu tiên biết về những sản phẩm mới và ưu đãi độc
+              quyền của chúng tôi.
             </p>
           </div>
           <div className="relative flex mb-4 border-b-[1px] border-[#999999]">
@@ -110,7 +111,7 @@ const Footer = () => {
               className="w-full py-2 border-none rounded outline-none focus:ring-0 peer"
               placeholder="Email"
             />
-            <button className="">Subscribe</button>
+            <button className="">Nhận</button>
           </div>
           <div className="flex gap-4">
             <a href="#" className="group">

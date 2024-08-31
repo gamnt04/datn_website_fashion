@@ -40,14 +40,14 @@ const Feedback = () => {
       await instance.put(`/contact/feedback/${id}`, {
         response_content: responseContent,
         responder_email: responderEmail,
-        response_date: new Date(), // Thêm ngày phản hồi
+        response_date: new Date() // Thêm ngày phản hồi
       });
 
       // Gửi email phản hồi
       const emailData = {
         to_name: requestEmail, // Địa chỉ email người yêu cầu
         from_name: responderEmail, // Tên người phản hồi
-        message: responseContent, // Nội dung phản hồi
+        message: responseContent // Nội dung phản hồi
       };
 
       const result = await emailjs.send(
@@ -65,7 +65,7 @@ const Feedback = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
+          progress: undefined
         });
         navigate("/admin/contact");
       } else {
@@ -76,7 +76,7 @@ const Feedback = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
+          progress: undefined
         });
       }
     } catch (error) {
@@ -87,14 +87,14 @@ const Feedback = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        progress: undefined,
+        progress: undefined
       });
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-10 mt-10">
+    <div className="container mx-6 ">
+      <div className="flex items-center justify-between  mb-10 mt-[80px]">
         <h1 className="text-2xl font-semibold">Phản hồi liên hệ</h1>
       </div>
       <form onSubmit={handleSubmit}>

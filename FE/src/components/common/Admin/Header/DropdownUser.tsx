@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { List_Auth } from "../../../../common/hooks/Auth/querry_Auth";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const idUser = user?.user?._id;
+  const { data, isError, isLoading, error } = List_Auth(idUser);
+  if (isLoading) return <div className="">loading...</div>;
+  if (isError) return <div className="">{error.message}</div>;
   return (
     <div>
       {" "}
@@ -13,17 +19,13 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Admin quản trị
+            {data?.userName}
           </span>
-          <span className="block text-xs text-[#677381]">Quản trị</span>
+          <span className="block text-xs text-[#677381]">{data?.email}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full ">
-          <img
-            src="https://picsum.photos/300/300"
-            className=" rounded-full"
-            alt="User"
-          />
+          <img src={data?.avatar} className=" rounded-full" alt="User" />
         </span>
 
         <svg
@@ -45,7 +47,7 @@ const DropdownUser = () => {
       {/* <!-- Dropdown Start --> */}
       {dropdownOpen && (
         <div
-          className={`absolute right-10 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark`}
+          className={`absolute right-[73px] mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark`}
         >
           <ul className="flex text-[#677381]  flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
             <li>

@@ -9,7 +9,7 @@ import {
   Modal,
   Form,
   Input,
-  Select,
+  Select
 } from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -30,7 +30,7 @@ const List_Auth = () => {
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    },
+    }
   });
 
   const onHandleSearch = () => {
@@ -41,7 +41,7 @@ const List_Auth = () => {
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth,
+        ...auth
       };
     }
   );
@@ -62,7 +62,7 @@ const List_Auth = () => {
             height={80}
             className="object-cover"
           />
-        ),
+        )
     },
     {
       title: "Tên Người Dùng",
@@ -73,7 +73,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        ),
+        )
     },
     {
       title: "Email",
@@ -84,7 +84,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        ),
+        )
     },
     {
       title: "Quyền",
@@ -95,7 +95,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        ),
+        )
     },
     {
       title: "Cập Nhật Gần Đây",
@@ -107,7 +107,7 @@ const List_Auth = () => {
           return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
         }
         return "Chưa có cập nhật";
-      },
+      }
     },
     {
       title: "Nội Dung Cập Nhật",
@@ -126,7 +126,7 @@ const List_Auth = () => {
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
-      },
+      }
     },
     {
       title: "Quyền",
@@ -137,8 +137,8 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        ),
-    },
+        )
+    }
   ];
 
   const formatDate = (isoString: string) => {
@@ -187,12 +187,12 @@ const List_Auth = () => {
         </div>
         <div className="mb-2 flex justify-between">
           <div className="space-x-5">
-            <Select
+            {/* <Select
               // value={statusFilter}
               // onChange={handleStatusChange}
               className="w-[200px] h-[40px]"
               placeholder="Lọc quyền người dùng"
-            ></Select>
+            ></Select> */}
           </div>
           <div className="flex space-x-5">
             <Input
@@ -237,44 +237,6 @@ const List_Auth = () => {
           )}
         </Modal>
       </div>
-      <div className="">
-        <Input
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-        />
-        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
-      </div>
-      <Spin
-        spinning={isLoading}
-        indicator={<LoadingOutlined spin />}
-        size="large"
-      >
-        <Table columns={columns} dataSource={dataSource} />
-      </Spin>
-
-      <Modal
-        title="Chi tiết cập nhật"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={500}
-        style={{ maxHeight: "80vh", overflowY: "auto" }}
-      >
-        {selectedUpdate ? (
-          <Form style={{ maxWidth: 500 }}>
-            <Form.Item>
-              <Input.TextArea
-                value={getLatestUpdateDetails(selectedUpdate)}
-                readOnly
-                rows={15}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Form>
-        ) : (
-          <p>Không có thông tin cập nhật</p>
-        )}
-      </Modal>
     </>
   );
 };
