@@ -11,6 +11,13 @@ import Swal from "sweetalert2";
 interface InforProductProp {
   product: IProduct;
 }
+
+interface IAttr {
+  color?: string | number;
+  size?: any;
+  _id?: string | number;
+}
+
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   console.log(dataProps);
 
@@ -19,6 +26,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [color, setColor] = useState();
   const [size, setSize] = useState();
   const [arr_size, setArr_Size] = useState<any>();
+  const [arr_color, setArr_Color] = useState<any>();
   const [price_attr, set_price_attr] = useState(0);
   const [quantity_attr, setQuantity_attr] = useState();
   const [quantity_item, setQuantity_item] = useState<number>(1);
@@ -54,6 +62,18 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   useEffect(() => {
     if (!dataProps?.products?.attributes) {
       setQuantity_attr(stock);
+    } else {
+      const a: IAttr[] = [];
+      dataProps?.product?.attributes?.values?.map((item: any) => {
+        item?.size?.map((x: any) => {
+          if (x?.stock_attribute > 0) {
+            if (!a.includes(item)) {
+              a.push(item);
+            }
+          }
+        });
+      });
+      setArr_Color(a);
     }
   }, [dataProps]);
 

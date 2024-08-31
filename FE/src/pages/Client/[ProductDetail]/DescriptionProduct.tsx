@@ -140,7 +140,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   return (
     <>
       <div className="flex flex-col border-t lg:py-10 lg:mt-10 mb:py-[34px] mb:mt-8">
-        <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 whitespace-nowrap px-6 lg:py-2.5 mb:py-[7px] rounded border place-items-center lg:text-base mb:text-xs">
+        <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 *:whitespace-nowrap *:px-6 *:lg:py-2.5 *:mb:py-[7px] *:rounded *:border *:place-items-center *:lg:text-base *:mb:text-xs">
           <button
             onClick={() => setTogleDes(true)}
             className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
@@ -166,12 +166,13 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
             />
           </section>
         </div>
+
         {!toggleDes &&
-          data?.review &&
-          data?.review.map((review: any) => (
-            <div>
-              {review?.reviews.map((review) => (
-                <section className="block">
+          data?.review?.length > 0 &&
+          data.review.map((review: any) => (
+            <div key={review._id}>
+              {review?.reviews.map((review: any) => (
+                <section className="block" key={review._id}>
                   <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
                     <div className="border rounded-2xl lg:p-6 mb:p-5">
                       <div className="flex items-center justify-between gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">

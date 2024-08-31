@@ -7,6 +7,7 @@ export const getCartByUserId = async (req, res) => {
     const dataCart = await Cart.findOne({ userId }).populate(
       "products.productId"
     );
+    await Cart.populate(dataCart.products, { path: 'productId.attributes' });
     if (!dataCart) {
       return res.status(StatusCodes.OK).json([]);
     }

@@ -128,6 +128,17 @@ const List_Auth = () => {
         }
       },
     },
+    {
+      title: "Quyền",
+      dataIndex: "role",
+      key: "role",
+      render: (_: any, auth: any) =>
+        isLoading ? (
+          <Skeleton.Input style={{ width: 100 }} active size="small" />
+        ) : (
+          auth.role
+        ),
+    },
   ];
 
   const formatDate = (isoString: string) => {
@@ -214,7 +225,7 @@ const List_Auth = () => {
             <Form style={{ maxWidth: 500 }}>
               <Form.Item>
                 <Input.TextArea
-                  value={getUpdateDetails(selectedUpdate)}
+                  value={getLatestUpdateDetails(selectedUpdate)}
                   readOnly
                   rows={15}
                   style={{ width: "100%" }}
@@ -226,6 +237,44 @@ const List_Auth = () => {
           )}
         </Modal>
       </div>
+      <div className="">
+        <Input
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+        />
+        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
+      </div>
+      <Spin
+        spinning={isLoading}
+        indicator={<LoadingOutlined spin />}
+        size="large"
+      >
+        <Table columns={columns} dataSource={dataSource} />
+      </Spin>
+
+      <Modal
+        title="Chi tiết cập nhật"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={500}
+        style={{ maxHeight: "80vh", overflowY: "auto" }}
+      >
+        {selectedUpdate ? (
+          <Form style={{ maxWidth: 500 }}>
+            <Form.Item>
+              <Input.TextArea
+                value={getLatestUpdateDetails(selectedUpdate)}
+                readOnly
+                rows={15}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </Form>
+        ) : (
+          <p>Không có thông tin cập nhật</p>
+        )}
+      </Modal>
     </>
   );
 };
