@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
 import Attribute from "../../models/attribute/attribute";
 import Category from "../../models/Items/Category";
+import mongoose from "mongoose";
 
 // list all
 export const getAllProducts = async (req, res) => {
@@ -135,22 +136,86 @@ export async function get_item_dashboard(req, res) {
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Products.findById(req.params.id)
-      .populate("attributes")
-      .populate({
-        path: "reviews",
-        populate: {
-          path: "user",
-          select: "userName",
+    const productId = req.params.id;
+    const products = await Products.findById(req.params.id).populate(
+      "attributes"
+    );
+
+    // Kiểm tra tính hợp lệ của ObjectId
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "ID sản phẩm không hợp lệ" });
+    }
+
+    // Sử dụng aggregate để lấy sản phẩm và đánh giá liên quan
+    const review = await Products.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(productId) } }, // Tìm sản phẩm bằng productId
+      {
+        $lookup: {
+          from: "reviews", // Tên collection chứa các đánh giá
+          localField: "reviews", // Trường trong sản phẩm chứa ID đánh giá
+          foreignField: "_id", // Trường trong reviews chứa ID đánh giá
+          as: "reviews",
         },
-      });
-    if (!product) {
+      },
+      {
+        $lookup: {
+          from: "users", // Tên collection chứa người dùng
+          localField: "reviews.user", // Trường trong reviews chứa ID người dùng
+          foreignField: "_id", // Trường trong users chứa ID người dùng
+          as: "reviewUsers",
+        },
+      },
+      {
+        $unwind: {
+          path: "$reviews",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          "reviews.userDetails": {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$reviewUsers",
+                  as: "user",
+                  cond: { $eq: ["$$user._id", "$reviews.user"] },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $addFields: {
+          // Thêm trường userName vào reviews từ userDetails
+          "reviews.userName": {
+            $ifNull: ["$reviews.userDetails.userName", "Unknown"],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          name: { $first: "$name" },
+          description: { $first: "$description" },
+          reviews: { $push: "$reviews" },
+          attributes: { $first: "$attributes" },
+          // Thêm các trường khác nếu cần
+        },
+      },
+    ]);
+
+    if (!products) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
-    if (product.attributes.values) {
-      product.attributes.values = product.attributes.values.map((item) => {
+    if (products.attributes.values) {
+      products.attributes.values = products.attributes.values.map((item) => {
         const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
         return {
           ...item,
@@ -158,9 +223,11 @@ export const getProductById = async (req, res) => {
         };
       });
     }
-    await product.save();
+    await products.save();
+
     return res.status(StatusCodes.OK).json({
-      product,
+      products,
+      review,
     });
   } catch (error) {
     console.error("Error getting product by ID:", error);
@@ -170,6 +237,100 @@ export const getProductById = async (req, res) => {
   }
 };
 
+// export const getProductById = async (req, res) => {
+//   try {
+//     const productId = req.params.id;
+//     const products = await Products.findById(req.params.id).populate(
+//       "attributes"
+//     );
+
+//     // Kiểm tra tính hợp lệ của ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(productId)) {
+//       return res
+//         .status(StatusCodes.BAD_REQUEST)
+//         .json({ message: "ID sản phẩm không hợp lệ" });
+//     }
+
+//     // Sử dụng aggregate để lấy sản phẩm và đánh giá liên quan
+//     const product = await Products.aggregate([
+//       { $match: { _id: new mongoose.Types.ObjectId(productId) } },
+//       {
+//         $lookup: {
+//           from: "reviews", // Tên của collection reviews
+//           localField: "reviews",
+//           foreignField: "_id",
+//           as: "reviews",
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: "users", // Tên của collection users
+//           localField: "reviews.user",
+//           foreignField: "_id",
+//           as: "reviewUsers",
+//         },
+//       },
+//       {
+//         $unwind: {
+//           path: "$reviews",
+//           preserveNullAndEmptyArrays: true,
+//         },
+//       },
+//       {
+//         $addFields: {
+//           "reviews.user": {
+//             $arrayElemAt: [
+//               {
+//                 $filter: {
+//                   input: "$reviewUsers",
+//                   as: "user",
+//                   cond: { $eq: ["$$user._id", "$reviews.user"] },
+//                 },
+//               },
+//               0,
+//             ],
+//           },
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: "$_id",
+//           name: { $first: "$name" },
+//           description: { $first: "$description" },
+//           reviews: { $push: "$reviews" },
+//           attributes: { $first: "$attributes" },
+//           // Thêm các trường khác nếu cần
+//         },
+//       },
+//     ]);
+
+//     if (!products) {
+//       return res
+//         .status(StatusCodes.NOT_FOUND)
+//         .json({ message: "Không tìm thấy sản phẩm" });
+//     }
+//     if (products.attributes.values) {
+//       products.attributes.values = products.attributes.values.map((item) => {
+//         const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
+//         return {
+//           ...item,
+//           size: new_data,
+//         };
+//       });
+//     }
+//     await products.save();
+
+//     return res.status(StatusCodes.OK).json({
+//       products,
+//       product,
+//     });
+//   } catch (error) {
+//     console.error("Error getting product by ID:", error);
+//     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+//       message: error.message || "Lỗi server !",
+//     });
+//   }
+// };
 export const getDetailProductDashBoard = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id)
