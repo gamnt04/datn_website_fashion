@@ -10,7 +10,6 @@ const generateOrderNumber = () => {
   return `${timestamp}-${random}`;
 };
 
-
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -44,12 +43,19 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  reviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
 
   status: {
     type: String,
     enum: ["1", "2", "3", "4", "5"],
     default: "1",
   },
+
   cancellationRequested: {
     type: Boolean,
     default: false,

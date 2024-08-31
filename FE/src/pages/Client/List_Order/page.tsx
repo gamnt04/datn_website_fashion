@@ -23,28 +23,29 @@ import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-// import { List_One_Order_User } from "../../../common/hooks/Order/querry_Order";
+
 import queryString from "query-string";
 import instance from "../../../configs/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 type FieldType = {
   contentReview?: string;
 };
 
-// type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
-
 export default function List_order() {
+  const queryClient = useQueryClient();
+  const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { mutate, contextHolder } = useOrderMutations("REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT");
-  const dispathNotification = Mutation_Notification('Add');
-  const [selectedReason, setSelectedReason] = useState('');
+  const { mutate, contextHolder } = useOrderMutations(
+    "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
+  );
+  const dispathNotification = Mutation_Notification("Add");
+  const [selectedReason, setSelectedReason] = useState("");
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const account = user?.user;
   const navi = useNavigate();
   const { mutate: add } = Mutation_Cart("ADD");
-  // const { data: orderData, refetch } = List_One_Order_User(userId);
   const [paymentPending, setPaymentPending] = useState(false);
   const [openReviewOrderId, setOpenReviewOrderId] = useState<string | null>(
     null
@@ -56,70 +57,96 @@ export default function List_order() {
   }>({});
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-
+  // Truy vấn dữ liệu đánh giá dựa trên currentReviewId
+  const { data: dataReviewById } = useQuery({
+    queryKey: ["Review_Key", currentReviewId],
+    queryFn: async () => {
+      const { data } = await instance.get(`/reviews/${currentReviewId}`);
+      return data;
+    },
+    enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
+  });
+  console.log(dataReviewById);
 
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
       contentReview: string;
       productId: string;
-      imagesReview: string[];
+      orderId: String;
     }) => {
-      const { data } = await instance.post(
-        `/review/${userId}/${reviewData.productId}`, // Chỉnh sửa URL nếu cần
-        {
-          contentReview: reviewData.contentReview,
-          imagesReview: reviewData.imagesReview,
-        }
-      );
+      const { data } = await instance.post(`/review/${userId}`, {
+        productId: reviewData.productId,
+        contentReview: reviewData.contentReview,
+        orderId: reviewData.orderId,
+      });
       return data;
     },
     onSuccess: () => {
-      message.success("Thêm thành công");
-      setOpenReview(false); // Đóng form sau khi thêm thành công
+      queryClient.invalidateQueries({
+        queryKey: ["Order_Key"],
+      });
+      message.success("Gửi đánh giá thành công");
       setReviewedOrders((prev) => ({
         ...prev,
         [openReviewOrderId!]: new Set([
           ...Array.from(prev[openReviewOrderId!] || []),
           currentProductId!,
         ]),
-      })); // Cập nhật danh sách sản phẩm đã đánh giá trong đơn hàng
+      }));
     },
     onError: () => {
-      message.error("Thêm thất bại");
+      message.error("Gửi đánh giá thất bại");
     },
   });
+  const [initialContent, setInitialContent] = useState(""); // State để giữ giá trị ban đầu
+  const reasons = [
+    "Thay đổi ý định",
+    "Tìm được giá tốt hơn",
+    "Đặt nhầm sản phẩm",
+    "Khác",
+  ];
+  // Cập nhật initialContent khi nhận được dataReviewById
+  useEffect(() => {
+    if (dataReviewById) {
+      setInitialContent(dataReviewById.review?.contentReview || "");
+    }
+  }, [dataReviewById]);
 
-  const handleOpenReview = (orderId: string, productId: string) => {
-    if (reviewedOrders[orderId]?.has(productId)) {
-      navi(`/shops/${productId}`); // Điều hướng đến trang chi tiết sản phẩm khi đã đánh giá
-    } else if (openReviewOrderId === orderId) {
-      setOpenReview(!openReview);
+  const handleOpenReview = (orderId, productId, reviewId) => {
+    if (openReviewOrderId === orderId && openReview) {
+      setOpenReview(false);
     } else {
       setOpenReview(true);
       setOpenReviewOrderId(orderId);
+      setCurrentProductId(productId);
+      setCurrentReviewId(reviewId); // Thiết lập currentReviewId trước khi useQuery chạy
     }
-    setCurrentProductId(productId);
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    if (currentProductId) {
+    if (currentProductId && openReviewOrderId) {
       addReview({
         contentReview: values.contentReview || "",
         productId: currentProductId,
-        imagesReview: fileList.map((file) => file.url as string), // Gửi URL ảnh lên server
+        orderId: openReviewOrderId,
       });
     }
   };
 
   // yeu cau huy don
-  function yeu_cau_huy_don(dataBody: { id_item: string | number, action?: string, cancellationReason?: string, orderNumber?: string | number, linkUri?: string | number }) {
+  function yeu_cau_huy_don(dataBody: {
+    id_item: string | number;
+    action?: string;
+    cancellationReason?: string;
+    orderNumber?: string | number;
+    linkUri?: string | number;
+  }) {
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: 'duonghainam03012004@gmail.com',
+      receiver_id: "duonghainam03012004@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã yêu càu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.linkUri
-    })
+      different: dataBody?.linkUri,
+    });
     mutate(dataBody);
   }
 
@@ -158,7 +185,7 @@ export default function List_order() {
     id_user: userId,
     page: 1,
     limit: 20,
-    status: +(status_order || 0),
+    status: +(status_order || 1),
   };
   const menuItems = [
     "Tất Cả",
@@ -169,9 +196,6 @@ export default function List_order() {
     "Đã Hủy",
   ];
 
-  // hủy đơn
-  // yêu cầu hủy
-  // đã nhận hàng
   const { data, isPending } = Query_Order(dataClient);
 
   const addCart = (orderId?: string | number) => {
@@ -245,13 +269,6 @@ export default function List_order() {
 
     fetchData();
   }, [location.search]);
-  const reasons = [
-    'Thay đổi ý định',
-    'Tìm được giá tốt hơn',
-    'Đặt nhầm sản phẩm',
-    'Khác'
-  ];
-
   if (isPending || paymentPending) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -283,6 +300,8 @@ export default function List_order() {
       ) : (
         <div>
           {data?.data?.docs?.map((items: any) => {
+            console.log(items);
+
             return (
               <div className="border-t py-4">
                 <div className="flex gap-2 py-5 border-b-2 justify-between">
@@ -301,8 +320,7 @@ export default function List_order() {
                 </div>
                 {items?.items.map((product: any) => {
                   return <Items_order product={product} />;
-                }
-                )}
+                })}
                 <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
                   <div className="flex items-center gap-1">
                     <TotalPrice />
@@ -328,23 +346,11 @@ export default function List_order() {
                         Chờ xác nhận
                       </Button>
                       <Popconfirm
-                        title="Hủy đơn hàng?"
-                        description={
-                          <div>
-                            <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
-                            <div>
-                              <p>Chọn lý do hủy:</p>
-                              <Radio.Group className="flex flex-col gap-2" onChange={(e) => setSelectedReason(e.target.value)}>
-                                {reasons.map((reason, index) => (
-                                  <Radio key={index} value={reason}>
-                                    {reason}
-                                  </Radio>
-                                ))}
-                              </Radio.Group>
-                            </div>
-                          </div>
+                        title="Hủy dơn hàng?"
+                        description="Bạn có chắc chắn muốn hủy đơn hàng này?"
+                        onConfirm={() =>
+                          mutate({ id_item: items._id, action: "huy" })
                         }
-                        onConfirm={() => mutate({ id_item: items._id, action: 'huy', cancellationReason: selectedReason })}
                         // onCancel={cancel}
                         okText="Có "
                         cancelText="Không"
@@ -385,7 +391,12 @@ export default function List_order() {
                               <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
                               <div>
                                 <p>Chọn lý do hủy:</p>
-                                <Radio.Group className="flex flex-col gap-2" onChange={(e) => setSelectedReason(e.target.value)}>
+                                <Radio.Group
+                                  className="flex flex-col gap-2"
+                                  onChange={(e) =>
+                                    setSelectedReason(e.target.value)
+                                  }
+                                >
                                   {reasons.map((reason, index) => (
                                     <Radio key={index} value={reason}>
                                       {reason}
@@ -395,7 +406,15 @@ export default function List_order() {
                               </div>
                             </div>
                           }
-                          onConfirm={() => yeu_cau_huy_don({ id_item: items?._id, action: 'yeu_cau_huy', cancellationReason: selectedReason, orderNumber: items?.orderNumber, linkUri: items?._id })}
+                          onConfirm={() =>
+                            yeu_cau_huy_don({
+                              id_item: items?._id,
+                              action: "yeu_cau_huy",
+                              cancellationReason: selectedReason,
+                              orderNumber: items?.orderNumber,
+                              linkUri: items?._id,
+                            })
+                          }
                           // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
@@ -412,35 +431,34 @@ export default function List_order() {
                   ) : items?.status === "3" ? (
                     <Button
                       className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
-                      onClick={() => (mutate({ id_item: items._id }),
+                      onClick={() => (
+                        mutate({ id_item: items._id }),
                         dispathNotification?.mutate({
                           userId: userId,
                           receiver_id: userId,
                           message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                        }))}
+                        })
+                      )}
                     >
                       Đã Nhận Hàng
                     </Button>
                   ) : items?.status === "4" ? (
                     <div className="flex gap-3 lg:basis-3/12 w-full">
-                      {items?.items?.map(() => (
-                        <Button
-                          type="default"
-                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
-                          onClick={() =>
-                            handleOpenReview(
-                              items._id,
-                              items.items[0]?.productId?._id
-                            )
-                          }
-                        >
-                          {reviewedOrders[items._id]?.has(
-                            items.items[0]?.productId?._id || ""
+                      <Button
+                        type="default"
+                        className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
+                        onClick={() =>
+                          handleOpenReview(
+                            items._id,
+                            items.items[0]?.productId?._id,
+                            items.reviews
                           )
-                            ? "Xem đánh giá"
-                            : "Đánh giá"}
-                        </Button>
-                      ))}
+                        }
+                      >
+                        {items?.reviews.length > 0
+                          ? "Xem đánh giá"
+                          : "Đánh giá"}
+                      </Button>
 
                       {openReview && openReviewOrderId === items._id && (
                         <div>
@@ -454,40 +472,106 @@ export default function List_order() {
                               ĐÁNH GIÁ SẢN PHẨM
                             </h1>
 
-                            <div className="flex items-center gap-4 mb-4">
-                              <div className="w-[50px] h-[50px]">
-                                <img
-                                  src={items.items[0]?.productId?.image_product}
-                                  alt=""
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div>
-                                {items.items[0]?.productId?.name_product}
-                              </div>
-                            </div>
-                            <Form onFinish={onFinish}>
-                              <Form.Item
-                                name="contentReview"
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Vui lòng nhập nội dung đánh giá!",
-                                  },
-                                ]}
-                              >
-                                <Input.TextArea
-                                  rows={4}
-                                  placeholder="Nhập nội dung đánh giá"
-                                />
-                              </Form.Item>
+                            {/* Tạo một tập hợp các sản phẩm để nhóm thuộc tính cùng sản phẩm lại */}
+                            {items.items
+                              .reduce((acc, item) => {
+                                const existingProduct = acc.find(
+                                  (p) => p.productId === item.productId._id
+                                );
+                                if (existingProduct) {
+                                  existingProduct.items.push(item);
+                                } else {
+                                  acc.push({
+                                    productId: item.productId._id,
+                                    productName: item.productId.name_product,
+                                    productImage: item.productId.image_product,
+                                    items: [item],
+                                  });
+                                }
+                                return acc;
+                              }, [])
+                              .map((productGroup, index) => {
+                                const review = items.reviews.find(
+                                  (r) => r.productId === productGroup.productId
+                                );
 
-                              <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                  Gửi đánh giá
-                                </Button>
-                              </Form.Item>
-                            </Form>
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex flex-col gap-4 mb-4"
+                                  >
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-[50px] h-[50px]">
+                                        <img
+                                          src={productGroup.productImage}
+                                          alt=""
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                      <div>{productGroup.productName}</div>
+                                    </div>
+
+                                    <Form
+                                      onFinish={(values) => {
+                                        addReview({
+                                          contentReview:
+                                            values[`contentReview_${index}`] ||
+                                            "",
+                                          productId: productGroup.productId,
+                                          orderId: items?._id,
+                                        });
+                                      }}
+                                    >
+                                      <Form.Item
+                                        name={`contentReview_${index}`} // Đảm bảo name là duy nhất
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message:
+                                              "Vui lòng nhập nội dung đánh giá!",
+                                          },
+                                        ]}
+                                        initialValue={
+                                          review ? review.contentReview : ""
+                                        }
+                                      >
+                                        <Input.TextArea
+                                          rows={4}
+                                          placeholder="Nhập nội dung đánh giá"
+                                          disabled={!!review} // Vô hiệu hóa nếu đã có đánh giá
+                                        />
+                                      </Form.Item>
+
+                                      {review ? (
+                                        <div>
+                                          <Form.Item>
+                                            <Button className="bg-black text-white">
+                                              <Link
+                                                to={`/shops/${review?.productId}`}
+                                                className="ant-btn ant-btn-primary "
+                                              >
+                                                Xem đánh giá
+                                              </Link>
+                                            </Button>
+                                          </Form.Item>
+                                        </div>
+                                      ) : (
+                                        <div>
+                                          <Form.Item>
+                                            <Button
+                                              type="primary"
+                                              htmlType="submit"
+                                            >
+                                              Gửi đánh giá
+                                            </Button>
+                                          </Form.Item>
+                                        </div>
+                                      )}
+                                    </Form>
+                                  </div>
+                                );
+                              })}
+
                             <Modal
                               open={previewOpen}
                               footer={null}
@@ -512,7 +596,6 @@ export default function List_order() {
                         <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
                           Mua Lại
                         </Button>
-
                       </Popconfirm>
                     </div>
                   ) : (
@@ -534,8 +617,7 @@ export default function List_order() {
             );
           })}
         </div>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }

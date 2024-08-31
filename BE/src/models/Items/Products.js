@@ -52,16 +52,8 @@ const productSchema = new mongoose.Schema(
     },
     reviews: [
       {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-        imagesReview: { type: [String], default: [] },
-        videoReview: { type: String, default: "" },
-        contentReview: { type: String, required: true },
-        created_at: { type: Date, default: Date.now },
-        updated_at: { type: Date, default: Date.now },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
       },
     ],
   },

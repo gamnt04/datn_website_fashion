@@ -9,12 +9,11 @@ import {
   Modal,
   Form,
   Input,
-  Select
+  Select,
 } from "antd";
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
-
 interface UpdateField {
   field: string;
   value: string;
@@ -56,7 +55,13 @@ const List_Auth = () => {
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
-          <Image src={auth.avatar} alt="" width={70} />
+          <Image
+            src={auth.avatar}
+            alt=""
+            width={80}
+            height={80}
+            className="object-cover"
+          />
         ),
     },
     {
@@ -90,7 +95,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        )
+        ),
     },
     {
       title: "Cập Nhật Gần Đây",
@@ -112,7 +117,7 @@ const List_Auth = () => {
         if (updatedFields && updatedFields.length > 0) {
           return (
             <Button
-onClick={() => showModal(updatedFields)}
+              onClick={() => showModal(updatedFields)}
               className="p-3 text-white border-gray-300 rounded-lg bg-blue-600 hover:bg-blue-500 focus:outline-none"
             >
               Xem chi tiết
@@ -210,7 +215,7 @@ onClick={() => showModal(updatedFields)}
         </Spin>
         <Modal
           title="Chi tiết cập nhật"
-visible={isModalVisible}
+          visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
           width={500}
