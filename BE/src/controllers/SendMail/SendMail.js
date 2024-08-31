@@ -50,7 +50,7 @@ async function SendMail(email, order) {
           <p>${name_product}</p>
         </td>
         <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-          <div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${color_item}; margin: auto;"></div>
+          <div style="padding: 8px; text-align: center;">${color_item}</div>
         </td>
         <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
           <div style="background-color: black; color: white; padding: 5px 10px; border-radius: 5px;">${name_size}</div>

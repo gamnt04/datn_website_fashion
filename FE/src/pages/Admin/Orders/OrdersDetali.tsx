@@ -16,6 +16,15 @@ const OrdersDetali = () => {
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
+  // id_item: data?._id, confirm: true
+  function yeu_cau(dataBody: { id_item: string | number, comfirm?: boolean | string, numberOrder?: string | number, action?: string }) {
+    mutate(dataBody);
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: data?.userId,
+      message: `Người bán đã ${dataBody?.action === 'xac_nhan' ? 'xác nhận' : 'từ chối'} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`
+    })
+  }
   const handleStatusUpdate = async (status: number | string, code_order?: string | number) => {
     if (!data) return;
     const message = (status === 2) ? `Người bán đã xác nhận đơn hàng ${code_order}` : (status === 3) ?
@@ -291,19 +300,19 @@ const OrdersDetali = () => {
                     <Popconfirm
                       title="Xác nhận hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                      onConfirm={() => mutate({ id_item: data?._id, confirm: true })}
+                      onConfirm={() => yeu_cau({ id_item: data?._id, confirm: true, numberOrder: data?.orderNumber, action: 'xac_nhan' })}
                       okText="Xác nhận"
                       cancelText="Không"
                     >
-                      <Button className="w-auto p-3 bg-green-500 rounded text-white">
+                      <button className="w-auto p-3 bg-green-500 rounded text-white">
                         Xác nhận yêu cầu
-                      </Button>
+                      </button>
                     </Popconfirm>
                     <Popconfirm
                       title="Từ chối hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
                       onConfirm={() =>
-                        mutate({ id_item: data?._id, confirm: false })
+                        yeu_cau({ id_item: data?._id, confirm: false, numberOrder: data?.orderNumber, action: 'tu_choi' })
                       }
                       okText="Từ chối"
                       cancelText="Không"

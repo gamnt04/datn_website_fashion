@@ -331,6 +331,27 @@ export const getProductById = async (req, res) => {
 //     });
 //   }
 // };
+export const getDetailProductDashBoard = async (req, res) => {
+  try {
+    const product = await Products.findById(req.params.id)
+      .populate("attributes")
+    if (!product) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy sản phẩm" });
+    }
+    return res.status(StatusCodes.OK).json({
+      product,
+    });
+  } catch (error) {
+    console.error("Error getting product by ID:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Lỗi server !",
+    });
+  }
+};
+
+
 export async function filterItems(req, res) {
   const { cate_id, color, name_size, price_ranges, _search } = req.query;
   const { _page = 1, _limit = 20, _sort = "" } = req.query;
