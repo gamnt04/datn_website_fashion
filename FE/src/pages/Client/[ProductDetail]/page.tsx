@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ImageProducts from "./ImageProducts";
 import InforProduct from "./InforProduct";
 import ProductRelated from "./RelatedProducts";
@@ -16,10 +16,18 @@ const ProductDetail = () => {
       <div className="xl:w-[1440px] w-[95vw] mx-auto">
         <div className="lg:mt-[40px] mt-[60px] lg:w-full w-[90vw] mx-auto">
           <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
-            Home &#10148; Products &#10148; Detail
+            <Link to={`/`} className="text-gray-500 hover:text-black">
+              Trang chủ
+            </Link>
+            <span className="mx-1 text-gray-500">&#10148;</span>
+            <Link to={`/shops`} className="text-gray-500 hover:text-black">
+              Sản phẩm
+            </Link>
+            <span className="mx-1 text-gray-500">&#10148;</span> Chi tiết sản
+            phẩm
           </div>
           {isLoading ? (
-            <div className="flex justify-center items-center h-screen">
+            <div className="flex items-center justify-center h-screen">
               <Spin indicator={<LoadingOutlined spin />} size="large" />
             </div>
           ) : (
