@@ -7,13 +7,12 @@ interface ImageProductProp {
 }
 
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
+  console.log(product);
   const { image_product } = product;
+
   let { gallery_product } = product;
   const [currentImage, setCurrentImage] = useState(image_product);
-  gallery_product = [
-    ...gallery_product,
-    image_product
-  ]
+  gallery_product = [...gallery_product, image_product];
   const chunkArray = (array: any, size: any) => {
     let result = [];
     for (let i = 0; i < array.length; i += size) {
@@ -59,7 +58,6 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
               <h3>No images to display</h3>
             </div>
           )}
-
         </div>
       </div>
     </div>
