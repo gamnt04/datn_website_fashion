@@ -3,11 +3,11 @@ export default function Items_order({ product }: any) {
     return (
 
         <div className="relative flex flex-row gap-4 py-[12px] w-full">
-            {product?.productId?.stock_product === 0 && (
+            {/* {product?.productId?.stock_product === 0 && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
                     <span className="text-white font-bold">Hết hàng</span>
                 </div>
-            )}
+            )} */}
             <div className="basis-24">
                 <img src={product?.productId?.image_product} className="w-full h-[80px] " alt="" />
             </div>
