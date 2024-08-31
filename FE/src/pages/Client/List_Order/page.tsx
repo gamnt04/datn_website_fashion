@@ -509,17 +509,9 @@ export default function List_order() {
                         okText="Có"
                         cancelText="Không"
                       >
-                        {items?.items.map((product: any) => (
-                          (product?.productId?.stock_product === 0 ? (
-                            <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none cursor-not-allowed" disabled>
-                              Mua Lại
-                            </Button>
-                          ) : (
-                            <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
-                              Mua Lại
-                            </Button>
-                          ))
-                        ))}
+                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
+                          Mua Lại
+                        </Button>
 
                       </Popconfirm>
                     </div>
@@ -532,18 +524,9 @@ export default function List_order() {
                       okText="Có "
                       cancelText="Không"
                     >
-                      {items?.items.map((product: any) => (
-                        (product?.productId?.stock_product === 0 ? (
-                          <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none cursor-not-allowed" disabled>
-                            Mua Lại
-                          </Button>
-                        ) : (
-                          <Button className="bg-red-500 hover:!bg-red-600 !w-full h-10 ] !text-white text-[12px] rounded border-none">
-                            Mua Lại
-                          </Button>
-                        ))
-                      ))}
-
+                      <Button className="bg-red-500 hover:!bg-red-600 !w-full h-10 ] !text-white text-[12px] rounded border-none">
+                        Mua Lại
+                      </Button>
                     </Popconfirm>
                   )}
                 </div>
