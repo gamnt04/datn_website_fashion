@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import {
   useContacts,
-  useSearchContactByNameOrEmail
+  useSearchContactByNameOrEmail,
 } from "../../../common/hooks/Contact/useContacts";
 import { format } from "date-fns";
 import { IContact } from "../../../common/interfaces/Contact";
@@ -11,13 +11,14 @@ import { useState } from "react";
 
 const ListContact = () => {
   const { contacts, isLoading, error } = useContacts();
+
   const navigate = useNavigate();
   const [searchContact, setSearchContact] = useState("");
   const { data: searchData } = useSearchContactByNameOrEmail(searchContact);
   const dataSource = (searchContact ? searchData : contacts)?.map(
     (contact: IContact) => ({
       key: contact._id,
-      ...contact
+      ...contact,
     })
   );
   const onHandleSearch = () => {
@@ -37,25 +38,25 @@ const ListContact = () => {
             {contact.name}
           </button>
         </>
-      )
+      ),
     },
     {
       title: "Email",
       dataIndex: "email",
-      key: "email"
+      key: "email",
     },
     {
       title: " Tin Nhắn",
-      dataIndex: "message",
-      key: "message"
+      dataIndex: "content",
+      key: "content",
     },
     {
       title: "  Ngày Tạo",
-      dataIndex: "content",
-      key: "content",
+      dataIndex: "createdAt",
+      key: "createdAt",
       render: (_: any, contact: IContact) => (
         <>{formatDate(contact.createdAt)}</>
-      )
+      ),
     },
     {
       title: "    Thao Tác",
@@ -66,13 +67,13 @@ const ListContact = () => {
           {" "}
           <Button
             onClick={() => handleResponse(contact._id!)}
-            className="p-3 text-white border-gray-300 rounded-lg bg-blue-600 hover:bg-blue-500 focus:outline-none"
+            className="p-3 text-white bg-blue-600 border-gray-300 rounded-lg hover:bg-blue-500 focus:outline-none"
           >
             Phản hồi
           </Button>
         </>
-      )
-    }
+      ),
+    },
   ];
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -151,7 +152,7 @@ const ListContact = () => {
     //                   <td className="px-4 py-4 text-sm">
     //                     <button
     //                       onClick={() => handleResponse(contact._id!)}
-    //                       className="p-3 text-white border rounded-lg bg-blue-500 hover:bg-blue-400 focus:outline-none"
+    //                       className="p-3 text-white bg-blue-500 border rounded-lg hover:bg-blue-400 focus:outline-none"
     //                     >
     //                       Phản hồi
     //                     </button>
@@ -175,11 +176,11 @@ const ListContact = () => {
     //   </div>
     // </div>
     <div className="mx-6">
-      <div className="flex items-center justify-between mb-5 mt-20">
+      <div className="flex items-center justify-between mt-20 mb-5">
         <h1 className="text-2xl font-semibold">Quản Lý Liên Hệ</h1>{" "}
       </div>
 
-      <div className="mb-2 flex justify-between">
+      <div className="flex justify-between mb-2">
         <div className="space-x-5">
           <Select
             // value={statusFilter}
