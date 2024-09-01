@@ -16,7 +16,6 @@ const fetchFilteredProducts = async (
   const endpoint = "/products/filter/product";
 
   const params: { [key: string]: any } = {
-    _search: query,
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
     price_ranges:
       priceRanges.length > 0 ? JSON.stringify(priceRanges) : undefined,
