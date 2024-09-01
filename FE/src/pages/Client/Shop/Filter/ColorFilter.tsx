@@ -71,24 +71,13 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
     onColorChange(updatedColors);
   };
 
-  // Lấy nhãn hiển thị cho màu đã chọn
-  const getSelectedColorLabel = () => {
-    if (selectedColors.length === 0) {
-      return "Màu sắc";
-    }
-    if (selectedColors.length === 1) {
-      return `Màu: ${selectedColors[0]}`;
-    }
-    return `Màu: ${selectedColors.join(", ")}`;
-  };
-
   return (
     <div className="relative border border-gray-200">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full py-2 px-4 text-gray-900  rounded-md "
       >
-        <strong>{getSelectedColorLabel()}</strong>
+        <strong>Màu </strong>
         <span
           className={`shrink-0 transition duration-300 ${
             isOpen ? "-rotate-180" : ""

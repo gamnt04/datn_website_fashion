@@ -42,21 +42,6 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
     onPriceChange([]);
   }, [resetPriceFilter, onPriceChange]);
 
-  const getSelectedPriceLabels = () => {
-    if (selectedPriceRanges.length === 0) {
-      return "Giá";
-    }
-    return selectedPriceRanges
-      .map((range) => {
-        if (range.max === Infinity) {
-          return `Trên $${Math.round(range.min / 1000)}K`;
-        }
-        return `$${Math.round(range.min / 1000)}K - $${Math.round(
-          range.max / 1000
-        )}K`;
-      })
-      .join(", ");
-  };
 
   return (
     <div className="border border-gray-200">
@@ -66,7 +51,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
         onToggle={() => setIsOpen(!isOpen)}
       >
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900">
-          <strong>{getSelectedPriceLabels()}</strong>
+          <strong>Giá </strong>
           <span className="shrink-0 transition duration-300 group-open:-rotate-180">
             <SlArrowDown />
           </span>

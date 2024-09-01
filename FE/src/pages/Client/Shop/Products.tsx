@@ -171,7 +171,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
         </>
       ) : (
         <div className="flex items-center justify-center h-screen">
-          <img src="/assets/Images/Products/no-data.png" alt="No products" />
+          <img
+            src="../../src/assets/Images/Products/no-data.png"
+            alt="Không có sản phẩm"
+          />
         </div>
       )}
     </div>
