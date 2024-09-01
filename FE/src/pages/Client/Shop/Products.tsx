@@ -3,13 +3,12 @@ import { useFilteredProducts } from "../../../common/hooks/Products/useFilterPro
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Products from "../../../components/common/Items/Products";
-import { useLocation } from "react-router-dom";
 import { IProduct } from "../../../common/interfaces/Product";
 
 interface Products_ShopProps {
   query: string;
   cate_id: string[];
-  priceRanges: { min: number; max: number }[];
+  price_ranges: { min: number; max: number }[];
   selectedColors: string[];
   selectedSizes: string[];
   sortOption: string;
@@ -18,23 +17,23 @@ interface Products_ShopProps {
 const sortProducts = (products: IProduct[], sortOption: string) => {
   switch (sortOption) {
     case "newest":
-      return products.sort(
+      return [...products].sort(
         (a, b) =>
           new Date(b.updatedAt as string).getTime() -
           new Date(a.updatedAt as string).getTime()
       );
     case "oldest":
-      return products.sort(
+      return [...products].sort(
         (a, b) =>
           new Date(a.updatedAt as string).getTime() -
           new Date(b.updatedAt as string).getTime()
       );
     case "price_asc":
-      return products.sort(
+      return [...products].sort(
         (a, b) => (a.price_product ?? 0) - (b.price_product ?? 0)
       );
     case "price_desc":
-      return products.sort(
+      return [...products].sort(
         (a, b) => (b.price_product ?? 0) - (a.price_product ?? 0)
       );
     default:
@@ -44,26 +43,14 @@ const sortProducts = (products: IProduct[], sortOption: string) => {
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
   query,
-  priceRanges,
+  cate_id,
+  price_ranges,
   selectedColors,
   selectedSizes,
   sortOption,
 }) => {
-  const { search } = useLocation();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 16;
-  const [cate_id, setCategoryId] = useState<string[]>([]);
-  const [sortedProducts, setSortedProducts] = useState<IProduct[]>([]);
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(search);
-    const categoryParam = queryParams.get("category");
-    if (categoryParam) {
-      setCategoryId(categoryParam.split(","));
-    } else {
-      setCategoryId([]);
-    }
-  }, [search]);
 
   const {
     data: productsResponse,
@@ -73,13 +60,15 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   } = useFilteredProducts(
     query,
     cate_id,
-    priceRanges,
+    price_ranges,
     selectedColors,
     selectedSizes,
     currentPage,
     itemsPerPage,
     sortOption
   );
+
+  const [sortedProducts, setSortedProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
     if (productsResponse?.data) {
