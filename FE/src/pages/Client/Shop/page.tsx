@@ -86,7 +86,7 @@ const IndexShops = () => {
             <Products_Shop
               query="" // Add default or dynamic query if needed
               cate_id={cate_id} // Truyền mảng ID
-              priceRanges={priceRanges}
+              price_ranges={priceRanges}
               selectedColors={selectedColors}
               selectedSizes={selectedSizes}
               sortOption={sortOption}
