@@ -12,43 +12,52 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // Kiểm tra xem khoảng giá có được chọn không
   const isPriceRangeSelected = useCallback(
     (min: number, max: number) => {
-      return selectedPriceRanges.some(
-        (range) => range.min === min && range.max === max
+      return selectedPriceRanges.some((range) =>
+        max === Infinity
+          ? range.min === min && range.max === Infinity
+          : range.min === min && range.max === max
       );
     },
     [selectedPriceRanges]
   );
 
+  // Xử lý thay đổi khoảng giá
   const handlePriceChangeToggle = useCallback(
     (min: number, max: number) => {
-      handlePriceChange(min, max);
-      const newPriceRanges = selectedPriceRanges.some(
-        (range) => range.min === min && range.max === max
-      )
+      const newPriceRanges = isPriceRangeSelected(min, max)
         ? selectedPriceRanges.filter(
-            (range) => !(range.min === min && range.max === max)
+            (range) =>
+              !(range.min === min && (range.max === max || max === Infinity))
           )
         : [...selectedPriceRanges, { min, max }];
 
+      // Cập nhật trạng thái chọn khoảng giá
+      handlePriceChange(min, max);
       onPriceChange(newPriceRanges);
     },
-    [handlePriceChange, onPriceChange, selectedPriceRanges]
+    [
+      handlePriceChange,
+      onPriceChange,
+      selectedPriceRanges,
+      isPriceRangeSelected,
+    ]
   );
 
+  // Xử lý đặt lại bộ lọc
   const handleResetClick = useCallback(() => {
     resetPriceFilter();
     onPriceChange([]);
   }, [resetPriceFilter, onPriceChange]);
-
 
   return (
     <div className="border border-gray-200">
       <details
         className="group [&_summary::-webkit-details-marker]:hidden *:px-4"
         open={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
+        onToggle={() => setIsOpen((prev) => !prev)}
       >
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900">
           <strong>Giá </strong>
@@ -68,15 +77,15 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
                   className="mr-2"
                 />
                 <label htmlFor="price-0-150k" className="text-gray-700 text-lg">
-                  $0K - $150K
+                  $0 - $150K
                 </label>
               </div>
               <div className="flex items-center mb-2">
                 <input
                   type="checkbox"
                   id="price-150k-200k"
-                  checked={isPriceRangeSelected(150001, 200000)}
-                  onChange={() => handlePriceChangeToggle(150001, 200000)}
+                  checked={isPriceRangeSelected(150000, 200000)}
+                  onChange={() => handlePriceChangeToggle(150000, 200000)}
                   className="mr-2"
                 />
                 <label
@@ -90,8 +99,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
                 <input
                   type="checkbox"
                   id="price-200k-300k"
-                  checked={isPriceRangeSelected(200001, 300000)}
-                  onChange={() => handlePriceChangeToggle(200001, 300000)}
+                  checked={isPriceRangeSelected(200000, 300000)}
+                  onChange={() => handlePriceChangeToggle(200000, 300000)}
                   className="mr-2"
                 />
                 <label
@@ -105,8 +114,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
                 <input
                   type="checkbox"
                   id="price-300k-above"
-                  checked={isPriceRangeSelected(300001, Infinity)}
-                  onChange={() => handlePriceChangeToggle(300001, Infinity)}
+                  checked={isPriceRangeSelected(300000, Infinity)}
+                  onChange={() => handlePriceChangeToggle(300000, Infinity)}
                   className="mr-2"
                 />
                 <label
