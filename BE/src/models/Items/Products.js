@@ -66,14 +66,51 @@ productSchema.plugin(mongooseDelete, {
   overrideMethods: "all",
 });
 
-productSchema.statics.filterByPrice = function (minPrice, maxPrice, options) {
-  const query = {
-    price_product: { $gte: minPrice, $lte: maxPrice },
-  };
+productSchema.statics.filterByAttributePrice = function (
+  priceRanges,
+  options = {}
+) {
+  const priceConditions = priceRanges.map(({ minPrice, maxPrice }) => ({
+    $match: {
+      "attributes_details.values.size.price_attribute": {
+        $gte: minPrice,
+        $lte: maxPrice,
+      },
+    },
+  }));
 
-  return this.paginate(query, options);
+  return this.aggregate([
+    {
+      $lookup: {
+        from: "attributes",
+        localField: "attributes",
+        foreignField: "_id",
+        as: "attributes_details",
+      },
+    },
+    {
+      $unwind: "$attributes_details",
+    },
+    {
+      $unwind: "$attributes_details.values",
+    },
+    {
+      $unwind: "$attributes_details.values.size",
+    },
+    ...priceConditions,
+    {
+      $group: {
+        _id: "$_id",
+        product: { $first: "$$ROOT" },
+      },
+    },
+    {
+      $replaceRoot: { newRoot: "$product" },
+    },
+  ])
+    .option(options)
+    .exec();
 };
-
 productSchema.statics.sortByAttributePrice = function (
   sortOrder = 1,
   options = {}

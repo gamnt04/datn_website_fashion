@@ -1,30 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
 import { AxiosError } from "axios";
+import instance from "../../../configs/axios";
 import { ProductResponse } from "../../../common/interfaces/Product";
+import { useQuery } from "@tanstack/react-query";
 
 const fetchFilteredProducts = async (
   query: string,
   cate_id: string[],
-  priceRanges: { min: number; max: number }[],
+  price_ranges: { min: number; max: number }[],
   colors: string[],
   sizes: string[],
   page: number = 1,
   limit: number = 20,
   sortOption: string = ""
 ) => {
-  const endpoint = "/products/filter/product";
+  const endpoint = "/products/filter/Product";
 
   const params: { [key: string]: any } = {
+    _search: query,
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
     price_ranges:
-      priceRanges.length > 0 ? JSON.stringify(priceRanges) : undefined,
+      price_ranges.length > 0 ? JSON.stringify(price_ranges) : undefined,
     color: colors.length > 0 ? colors.join(",") : undefined,
     name_size: sizes.length > 0 ? sizes.join(",") : undefined,
     _page: page,
     _limit: limit,
     _sort: sortOption,
   };
+
+  Object.keys(params).forEach(
+    (key) => params[key] === undefined && delete params[key]
+  );
 
   try {
     const response = await instance.get<ProductResponse>(endpoint, { params });
@@ -42,7 +47,7 @@ const fetchFilteredProducts = async (
 export const useFilteredProducts = (
   query: string,
   cate_id: string[],
-  priceRanges: { min: number; max: number }[],
+  price_ranges: { min: number; max: number }[],
   colors: string[],
   sizes: string[],
   page: number = 1,
@@ -53,7 +58,7 @@ export const useFilteredProducts = (
     "products",
     query,
     cate_id,
-    priceRanges,
+    JSON.stringify(price_ranges),
     colors,
     sizes,
     page,
@@ -70,7 +75,7 @@ export const useFilteredProducts = (
       fetchFilteredProducts(
         query,
         cate_id,
-        priceRanges,
+        price_ranges,
         colors,
         sizes,
         page,
