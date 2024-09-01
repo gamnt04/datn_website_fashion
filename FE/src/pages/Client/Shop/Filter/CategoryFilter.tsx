@@ -80,20 +80,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         </div>
       )}
 
-      {selectedCategories.length > 0 && (
-        <div className="mt-2">
-          <strong>Selected Categories:</strong>
-          <ul className="mt-1">
-            {categories
-              .filter((category) => selectedCategories.includes(category._id))
-              .map((category) => (
-                <li key={category._id} className="text-gray-700 py-1">
-                  {category.name_category}
-                </li>
-              ))}
-          </ul>
-        </div>
-      )}
+      
     </div>
   );
 };
