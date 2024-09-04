@@ -9,10 +9,10 @@ const DropdownNotification = () => {
   // console.log(data);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isLoading } = Query_notification(userId);
+  const data = Query_notification(userId)
   console.log(data);
 
-  if (isLoading) return <div>Loading...</div>
+  // if (isLoading) return <div>Loading...</div>
   return (
     <div className="relative">
       <li>
@@ -53,28 +53,27 @@ const DropdownNotification = () => {
               </h5>
             </div>
             <ul className="flex max-h-[300px] flex-col overflow-y-auto">
-
-              {data?.notifications?.map((orders: any) => {
+              {data?.data.notifications?.map((orders: any) => {
                 return (
                   <li key={orders?._id}>
-                    <Link
+                    <div
                       className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                      to={`/admin/orders/${orders?._id}/orderDetali`}
                     >
                       <p className="text-sm text-black">
-                        <p className=" "><span className="font-bold">{orders?.userId}</span> đã hủy đơn hàng</p>
-                        <p>{orders?.orderId}</p>
-                        <span className="mt-[5px] text-[#8A99AF]">
+                        <span className="mt-[5px] text-[#8A99AF] mr-4">
                           Lý do:{orders?.message}
                         </span>
+                        {
+                          orders?.different &&
+                          <Link to={`/admin/orders/${orders?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
+                            Chi tiết
+                          </Link>
+                        }
                       </p>
-
-                      {/* <p className="text-xs text-blue-400">12 May, 2025</p> */}
-                    </Link>
+                    </div>
                   </li>
                 )
               })}
-
             </ul>
           </div>
         )}

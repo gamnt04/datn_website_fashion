@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
-import { Button, message, Popconfirm, Table } from "antd";
+import { message, Popconfirm, Table } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -16,7 +16,6 @@ const OrdersDetali = () => {
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-  // id_item: data?._id, confirm: true
   function yeu_cau(dataBody: { id_item: string | number, comfirm?: boolean | string, numberOrder?: string | number, action?: string }) {
     mutate(dataBody);
     dispathNotification?.mutate({
@@ -193,7 +192,7 @@ const OrdersDetali = () => {
                 <p className="w-auto p-3 border-2 border-red-600 text-red-600 rounded">
                   Đã hủy
                 </p>
-                <p className="font-bold">Lý do: <span className="font-normal text-slate-500">{data.cancellationReason}</span></p>
+                {/* <p className="font-bold">Lý do: <span className="font-normal text-slate-500">{data.cancellationReason}</span></p> */}
               </div>
 
             )}
