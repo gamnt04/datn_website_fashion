@@ -8,3 +8,8 @@ export interface ICategory {
   createdAt?: string | number;
   updatedAt?: string | number;
 }
+export interface ApiResponse {
+  status: number;
+  data?: any;
+  message?: string;
+}
