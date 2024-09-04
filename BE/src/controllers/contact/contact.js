@@ -9,12 +9,12 @@ export const create_contact = async (req, res) => {
     }
     return res.status(200).json({
       message: "Bạn đã tạo thành công",
-      data
+      data,
     });
   } catch (error) {
     return res.json({
       name: error.name,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -32,12 +32,12 @@ export const get_contact = async (req, res) => {
     }
     return res.status(200).json({
       message: "Thành công",
-      data
+      data,
     });
   } catch (error) {
     return res.status(400).json({
       name: error.name,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -49,12 +49,12 @@ export const getById_contact = async (req, res) => {
     }
     return res.status(200).json({
       message: "Thành công",
-      data
+      data,
     });
   } catch (error) {
     return res.json({
       name: error.name,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -66,12 +66,12 @@ export const delete_contact = async (req, res) => {
     }
     return res.status(200).json({
       message: "Xóa thành công",
-      data
+      data,
     });
   } catch (error) {
     return res.json({
       name: error.name,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -104,8 +104,8 @@ export const getContactByNameOrEmail = async (req, res) => {
     const contacts = await Contact.find({
       $or: [
         { name: { $regex: new RegExp(searchContact, "i") } },
-        { email: { $regex: new RegExp(searchContact, "i") } }
-      ]
+        { email: { $regex: new RegExp(searchContact, "i") } },
+      ],
     });
     if (contacts.length === 0) {
       return res

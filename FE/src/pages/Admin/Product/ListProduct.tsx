@@ -189,8 +189,8 @@ const ListProduct = () => {
 
         <div className="mb-2 flex justify-between">
           <div className="space-x-5">
-            <Checkbox className="ml-4" />
-            <Button>Chọn tất cả (7)</Button>
+            {/* <Checkbox className="ml-4" />
+            <Button>Chọn tất cả (7)</Button> */}
             <Popconfirm
               title="Xóa sản phẩm "
               description="Bạn có muốn xóa sản phẩm này không ?"

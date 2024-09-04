@@ -8,7 +8,7 @@ import {
   Switch,
   Input,
   Space,
-  Checkbox,
+  Checkbox
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ import UpdateComponent from "./Create";
 import instance from "../../../configs/axios";
 import {
   useCategoryQuery,
-  useSearchCategoryByName,
+  useSearchCategoryByName
 } from "../../../common/hooks/Category/useCategoryQuery";
 import { DeleteOutlined } from "@ant-design/icons";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -42,7 +42,7 @@ const List_Category: React.FC = () => {
     ? (searchName && searchData ? searchData : data).map(
         (category: ICategory) => ({
           key: category._id,
-          ...category,
+          ...category
         })
       )
     : [];
@@ -60,17 +60,17 @@ const List_Category: React.FC = () => {
     onSuccess: () => {
       messageApi.open({
         type: "success",
-        content: "Xóa Danh mục thành công",
+        content: "Xóa Danh mục thành công"
       });
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error) => {
       messageApi.open({
         type: "error",
-        content: error.message,
+        content: error.message
       });
       throw error;
-    },
+    }
   });
 
   const mutation = useMutation({
@@ -92,7 +92,7 @@ const List_Category: React.FC = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    },
+    }
   });
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -120,7 +120,7 @@ const List_Category: React.FC = () => {
     {
       key: "checkbox",
       title: <Checkbox />,
-      render: (_: any, cate: ICategory) => <Checkbox />,
+      render: (_: any, cate: ICategory) => <Checkbox />
     },
     {
       key: "image_category",
@@ -128,14 +128,15 @@ const List_Category: React.FC = () => {
       render: (_: any, record: ICategory) => (
         <img
           src={
-            typeof record.image_category === "string"
-              ? record.image_category
-              : URL.createObjectURL(record.image_category[0])
+            // typeof record.image_category === "string"
+            //   ? record.image_category
+            //   : URL.createObjectURL(record.image_category[0])
+            record.image_category
           }
           alt={record.name_category}
           style={{ width: 80, height: 80, objectFit: "cover" }}
         />
-      ),
+      )
     },
     {
       key: "name_category",
@@ -157,20 +158,20 @@ const List_Category: React.FC = () => {
         >
           {text}
         </a>
-      ),
+      )
     },
 
     {
       key: "createdAt",
       title: "Ngày Tạo",
       dataIndex: "createdAt",
-      render: (_: any, product: ICategory) => formatDate(product.createdAt),
+      render: (_: any, product: ICategory) => formatDate(product.createdAt)
     },
     {
       key: "updatedAt",
       title: "Ngày Sửa",
       dataIndex: "updatedAt",
-      render: (_: any, product: ICategory) => formatDate(product.updatedAt),
+      render: (_: any, product: ICategory) => formatDate(product.updatedAt)
     },
     {
       key: "published",
@@ -181,7 +182,7 @@ const List_Category: React.FC = () => {
           checked={published}
           onChange={() => handleTogglePublished(record)}
         />
-      ),
+      )
     },
     {
       key: "action",
@@ -204,8 +205,8 @@ const List_Category: React.FC = () => {
             </Popconfirm>
           </Space>
         );
-      },
-    },
+      }
+    }
   ];
 
   const onChangePage = (page: number) => {
@@ -236,7 +237,7 @@ const List_Category: React.FC = () => {
       return originalElement;
     },
     onChange: onChangePage,
-    showTotal: (total: number) => `Tổng ${total} mục`,
+    showTotal: (total: number) => `Tổng ${total} mục`
   };
 
   return (
@@ -251,7 +252,7 @@ const List_Category: React.FC = () => {
           </div>
           <div className="mb-2 flex justify-between">
             <div className="space-x-5">
-              <Checkbox className="ml-4" />
+              {/* <Checkbox className="ml-4" />
               <Button>Chọn tất cả (7)</Button>
               <Popconfirm
                 title="Xóa sản phẩm khỏi giỏ hàng?"
@@ -264,7 +265,7 @@ const List_Category: React.FC = () => {
                   <DeleteOutlined style={{ fontSize: "24px" }} />
                   Xóa sản phẩm đã chọn
                 </Button>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
             <div className="flex space-x-5">
               <Input
