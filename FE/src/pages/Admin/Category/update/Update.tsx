@@ -18,7 +18,10 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [initialValues, setInitialValues] = useState<ICategory | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null); // Thêm trạng thái xem trước ảnh
-
+  const [messageContent, setMessageContent] = React.useState("");
+  const [messageType, setMessageType] = React.useState<"success" | "error">(
+    "success"
+  );
   const {
     register,
     handleSubmit,
@@ -38,13 +41,18 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       return data;
     },
     onSuccess: () => {
+      setMessageContent("Cập nhật danh mục thành công!");
+      setMessageType("success");
       setShowMessage(true);
       queryClient.invalidateQueries({
         queryKey: ["CATEGORY_KEY"],
       });
     },
     onError: (error: any) => {
-      setErrorMessage(error.message || "Đã có lỗi xảy ra");
+      setMessageContent("Tên danh mục đã tồn tại");
+      setMessageType("error");
+      setShowMessage(true);
+      console.error("Lỗi khi gửi yêu cầu: ", error);
     },
   });
 
@@ -130,10 +138,10 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
     <div>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
       <Message
-        message={"Sửa danh mục thành công !"}
+        message={messageContent}
         timeout={3000}
         openMessage={showMessage}
-        type={"success"}
+        type={messageType}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-12">
