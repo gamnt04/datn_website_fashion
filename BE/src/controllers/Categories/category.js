@@ -6,42 +6,31 @@ import { categoryValidator } from "../../validations/category.js";
 
 export const create = async (req, res) => {
   try {
-    // Validate request body
+    // Validate input data
     const { error } = categoryValidator.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
       const errors = error.details.map((err) => err.message);
-      return res.status(400).json({
-        message: errors,
-      });
+      return res.status(400).json({ message: errors });
     }
 
-    // Check for duplicate category name
-    const { name_category } = req.body;
-    const existingCategory = await Category.findOne({ name_category });
+    // Check if the category name already exists
+    const existingCategory = await Category.findOne({
+      name_category: req.body.name_category,
+    });
     if (existingCategory) {
-      return res.status(400).json({
-        message: "Tên danh mục đã tồn tại!",
-      });
+      return res.status(400).json({ message: "Danh mục đã tồn tại." });
     }
 
-    // Create new category
+    // Create a new category
     const data = await Category.create(req.body);
     if (!data) {
       throw new Error("Error creating category");
     }
-
-    return res.status(201).json({
-      message: "Thêm danh mục thành công!",
-      data,
-    });
+    return res.status(200).json({ message: "Success", data });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      name: error.name,
-      message: error.message,
-    });
+    return res.status(500).json({ name: error.name, message: error.message });
   }
 };
 
@@ -158,6 +147,7 @@ export async function getCatogoryById(req, res) {
 
 export const update = async (req, res) => {
   try {
+    // Kiểm tra tính hợp lệ của dữ liệu đầu vào
     const { error } = categoryValidator.validate(req.body, {
       abortEarly: false,
       allowUnknown: true,
@@ -168,8 +158,24 @@ export const update = async (req, res) => {
         message: errors,
       });
     }
+
+    const { id } = req.params;
+    const { name_category } = req.body;
+
+    // Kiểm tra xem tên danh mục mới có tồn tại chưa
+    const existingCategory = await Category.findOne({
+      name_category,
+      _id: { $ne: id }, // Loại trừ danh mục hiện tại đang được cập nhật
+    });
+    if (existingCategory) {
+      return res.status(400).json({
+        message: "Danh mục đã tồn tại.",
+      });
+    }
+
+    // Cập nhật danh mục
     const data = await Category.findByIdAndUpdate(
-      { _id: req.params.id },
+      id, // Sửa từ { _id: req.params.id } thành id
       req.body,
       { new: true }
     );
@@ -180,7 +186,7 @@ export const update = async (req, res) => {
       data,
     });
   } catch (error) {
-    return res.json({
+    return res.status(500).json({
       name: error.name,
       message: error.message,
     });
@@ -189,16 +195,24 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    const data = await Category.findByIdAndDelete({ _id: req.params.id });
-    if (!data) {
-      throw new Error(`Failed to delete category`);
+    const categoryId = req.params.id;
+    const category = await Category.findByIdAndDelete(categoryId);
+
+    if (!category) {
+      return res.status(404).json({
+        message: "Danh mục không tồn tại",
+      });
     }
+    await Products.updateMany(
+      { category_id: categoryId },
+      { $unset: { category_id: "" } }
+    );
+
     return res.status(200).json({
-      message: "Remove success",
-      data,
+      message: "Xóa danh mục thành công ",
     });
   } catch (error) {
-    return res.json({
+    return res.status(500).json({
       name: error.name,
       message: error.message,
     });
