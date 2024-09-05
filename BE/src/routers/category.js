@@ -7,7 +7,7 @@ import {
   getCatogoryById,
   remove,
   statistical,
-  update
+  update,
 } from "../controllers/Categories/category";
 
 const Routes_categories = Router();
