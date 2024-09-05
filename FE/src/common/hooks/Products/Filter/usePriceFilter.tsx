@@ -10,27 +10,31 @@ const usePriceFilter = () => {
     []
   );
 
-  const handlePriceChange = (min: number | null, max: number | null) => {
-    if (min === null || max === null) {
-      setSelectedPriceRanges([]);
-    } else {
-      setSelectedPriceRanges((prev) => {
-        const newRange = { min, max };
-        const isRangeSelected = prev.some(
-          (range) => range.min === min && range.max === max
-        );
+  // Xử lý thay đổi khoảng giá
+  const handlePriceChange = (min: number, max: number) => {
+    setSelectedPriceRanges((prev) => {
+      // Tạo khoảng giá mới
+      const newRange = { min, max };
 
-        if (isRangeSelected) {
-          return prev.filter(
-            (range) => !(range.min === min && range.max === max)
-          );
-        } else {
-          return [...prev, newRange];
-        }
-      });
-    }
+      // Kiểm tra nếu khoảng giá mới đã tồn tại trong danh sách được chọn
+      const isRangeSelected = prev.some(
+        (range) => range.min === min && (range.max === max || max === Infinity)
+      );
+
+      if (isRangeSelected) {
+        // Nếu đã chọn thì loại bỏ khoảng giá
+        return prev.filter(
+          (range) =>
+            !(range.min === min && (range.max === max || max === Infinity))
+        );
+      } else {
+        // Nếu chưa chọn thì thêm khoảng giá vào danh sách
+        return [...prev, newRange];
+      }
+    });
   };
 
+  // Đặt lại bộ lọc
   const resetPriceFilter = () => {
     setSelectedPriceRanges([]);
   };

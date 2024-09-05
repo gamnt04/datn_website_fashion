@@ -5,21 +5,21 @@ import instance from "../../../configs/axios";
 import { toast } from "react-toastify";
 
 const Feedback = () => {
-  const { id } = useParams(); // Lấy ID của contact từ URL
-  const navigate = useNavigate(); // Hook để điều hướng
-  const [responseContent, setResponseContent] = useState("");
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [responsemessage, setResponsemessage] = useState("");
   const [responderEmail, setResponderEmail] = useState("");
   const [requestEmail, setRequestEmail] = useState("");
-  const [requestContent, setRequestContent] = useState("");
+  const [Content, setContent] = useState("");
 
   useEffect(() => {
     const fetchContact = async () => {
       try {
         const { data } = await instance.get(`/contact/${id}`);
-        console.log("Fetched contact data:", data); // Kiểm tra dữ liệu
-        if (data && data.data && data.data.email && data.data.content) {
+        console.log("Fetched contact data:", data);
+        if (data && data.data) {
           setRequestEmail(data.data.email);
-          setRequestContent(data.data.content);
+          setContent(data.data.content);
         } else {
           console.error("Data not in expected format:", data);
         }
@@ -36,47 +36,47 @@ const Feedback = () => {
     event.preventDefault();
 
     try {
-      // Gửi phản hồi lên server
       await instance.put(`/contact/feedback/${id}`, {
-        response_content: responseContent,
+        response_message: responsemessage,
         responder_email: responderEmail,
-        response_date: new Date() // Thêm ngày phản hồi
+        request_content: Content,
+        response_date: new Date(),
       });
 
-      // Gửi email phản hồi
       const emailData = {
-        to_name: requestEmail, // Địa chỉ email người yêu cầu
-        from_name: responderEmail, // Tên người phản hồi
-        message: responseContent // Nội dung phản hồi
+        to_email: requestEmail,
+        from_email: responderEmail,
+        response_message: responsemessage,
+        request_content: Content,
       };
-
+      console.log("Email data being sent:", emailData);
       const result = await emailjs.send(
-        "service_cwchhdc", // Thay thế bằng Service ID của bạn
-        "template_dxp3ou9", // Thay thế bằng Template ID của bạn
+        "service_hpiuvdb",
+        "template_nts3fhh",
         emailData,
-        "kGSzc2RJ3qF1lHtBo" // Thay thế bằng User ID của bạn
+        "HnQ2o-Hb2FLVuBiAl"
       );
 
       if (result.status === 200) {
-        toast.success("Phản Hồi thành công!", {
+        toast.success("Phản hồi thành công!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined
+          progress: undefined,
         });
         navigate("/admin/contact");
       } else {
-        toast.error("Phản Hồi thất bại!", {
+        toast.error("Phản hồi thất bại!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined
+          progress: undefined,
         });
       }
     } catch (error) {
@@ -87,16 +87,14 @@ const Feedback = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        progress: undefined
+        progress: undefined,
       });
     }
   };
 
   return (
-
-    <div className="container mx-6 ">
-      <div className="flex items-center justify-between  mb-10 mt-[80px]">
-
+    <div className="container mx-6">
+      <div className="flex items-center justify-between mb-10 mt-[80px]">
         <h1 className="text-2xl font-semibold">Phản hồi liên hệ</h1>
       </div>
       <form onSubmit={handleSubmit}>
@@ -116,7 +114,7 @@ const Feedback = () => {
             Nội dung yêu cầu
           </label>
           <textarea
-            value={requestContent || ""}
+            value={Content || ""}
             readOnly
             className="w-full p-2 border border-gray-300 rounded"
             rows={4}
@@ -131,8 +129,8 @@ const Feedback = () => {
           </label>
           <textarea
             id="responseContent"
-            value={responseContent}
-            onChange={(e) => setResponseContent(e.target.value)}
+            value={responsemessage}
+            onChange={(e) => setResponsemessage(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
             rows={4}
           />
