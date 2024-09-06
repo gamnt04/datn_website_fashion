@@ -93,7 +93,7 @@ const ListProduct = () => {
       key: "checkbox",
       render: (_: any, product: IProduct) => (
         <Checkbox
-          onChange={() => handleCheckboxChange(product?._id)}
+          onChange={() => handleCheckboxChange(product?._id!)}
         ></Checkbox>
       )
     },

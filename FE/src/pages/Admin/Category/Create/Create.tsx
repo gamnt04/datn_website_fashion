@@ -1,25 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useCategoryMutation from "../../../../common/hooks/Category/useCategoryMutation";
 import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CreateComponent = () => {
-  const [showMessage, setShowMessage] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showMessage, setShowMessage] = React.useState(false);
+  const [messageContent, setMessageContent] = React.useState("");
+  const [messageType, setMessageType] = React.useState<"success" | "error">(
+    "success"
+  );
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm<ICategory>();
-  const { onSubmit, isPending } = useCategoryMutation({
+
+  const { mutateAsync, isLoading } = useCategoryMutation({
     action: "CREATE",
+    onSuccess: () => {
+      setMessageContent("Thêm danh mục thành công!");
+      setMessageType("success");
+      setShowMessage(true);
+    },
+    onError: (error) => {
+      setMessageContent("Tên danh mục đã tồn tại");
+      setMessageType("error");
+      setShowMessage(true);
+      console.error("Lỗi khi gửi yêu cầu: ", error);
+    },
   });
 
-  const handleSubmitForm = async (data: ICategory | any) => {
+  const handleSubmitForm = async (data: ICategory) => {
     try {
       if (data.image_category && data.image_category[0]) {
         const imageFile = data.image_category[0];
@@ -30,11 +49,11 @@ const CreateComponent = () => {
           image_category: imageUrl,
         };
 
-        await onSubmit(formData);
-        setShowMessage(true);
+        await mutateAsync(formData);
+        queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
       }
     } catch (error) {
-      console.error(error);
+      console.error("Lỗi khi gửi yêu cầu: ", error);
     }
   };
 
@@ -67,10 +86,10 @@ const CreateComponent = () => {
   return (
     <div>
       <Message
-        message={"Thêm danh mục thành công !"}
+        message={messageContent}
         timeout={2000}
         openMessage={showMessage}
-        type={"success"}
+        type={messageType}
       />
       <form onSubmit={handleSubmit(handleSubmitForm)}>
         <div className="space-y-12">
@@ -82,7 +101,7 @@ const CreateComponent = () => {
               <div className="sm:col-span-6 flex justify-center">
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="name"
+                    htmlFor="name_category"
                     className="block text-[16px] font-medium leading-6 text-gray-900"
                   >
                     Tên danh mục
@@ -96,9 +115,7 @@ const CreateComponent = () => {
                       />
                     </div>
                     {errors.name_category && (
-                      <p className="text-red-600">
-                        Tên danh mục bắt buộc nhập!
-                      </p>
+                      <p className="text-red-600">Tên danh mục là bắt buộc!</p>
                     )}
                   </div>
                   <label
@@ -119,7 +136,7 @@ const CreateComponent = () => {
                       {imagePreview && (
                         <img
                           src={imagePreview}
-                          alt="Image Preview"
+                          alt="Xem trước hình ảnh"
                           className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
                         />
                       )}
@@ -140,7 +157,7 @@ const CreateComponent = () => {
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             type="submit"
           >
-            {isPending ? "Đang thêm" : "Xác nhận"}
+            {isLoading ? "Đang thêm..." : "Xác nhận"}
           </button>
         </div>
       </form>
