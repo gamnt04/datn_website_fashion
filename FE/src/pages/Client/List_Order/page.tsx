@@ -144,8 +144,23 @@ export default function List_order() {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: "duonghainam03012004@gmail.com",
-      message: `Người dùng ${user?.user?.userName} đã yêu càu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
+      message: `Người dùng ${user?.user?.userName} đã yêu cầu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
+    });
+    mutate(dataBody);
+  }
+  function huy_don(dataBody: {
+    id_item: string | number;
+    action?: string;
+    cancellationReason?: string;
+    orderNumber?: string | number;
+    // linkUri?: string | number;
+  }) {
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: "duonghainam03012004@gmail.com",
+      message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
+      // different: dataBody?.linkUri,
     });
     mutate(dataBody);
   }
@@ -347,9 +362,34 @@ export default function List_order() {
                       </Button>
                       <Popconfirm
                         title="Hủy dơn hàng?"
-                        description="Bạn có chắc chắn muốn hủy đơn hàng này?"
+                        description={
+                          <div>
+                            <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                            <div>
+                              <p>Chọn lý do hủy:</p>
+                              <Radio.Group
+                                className="flex flex-col gap-2"
+                                onChange={(e) =>
+                                  setSelectedReason(e.target.value)
+                                }
+                              >
+                                {reasons.map((reason, index) => (
+                                  <Radio key={index} value={reason}>
+                                    {reason}
+                                  </Radio>
+                                ))}
+                              </Radio.Group>
+                            </div>
+                          </div>
+                        }
                         onConfirm={() =>
-                          mutate({ id_item: items._id, action: "huy" })
+                          huy_don({
+                            id_item: items?._id,
+                            action: "huy",
+                            cancellationReason: selectedReason,
+                            orderNumber: items?.orderNumber,
+                            // linkUri: items?._id,
+                          })
                         }
                         // onCancel={cancel}
                         okText="Có "
@@ -607,7 +647,7 @@ export default function List_order() {
                       okText="Có "
                       cancelText="Không"
                     >
-                      <Button className="bg-red-500 hover:!bg-red-600 !w-full h-10 ] !text-white text-[12px] rounded border-none">
+                      <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
                         Mua Lại
                       </Button>
                     </Popconfirm>
