@@ -5,10 +5,22 @@ import { Link, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { Button, Form, FormProps, Input, Popconfirm, message } from "antd";
+import {
+  Button,
+  Form,
+  FormProps,
+  Input,
+  Popconfirm,
+  Spin,
+  Upload,
+  message,
+} from "antd";
+import { AiFillStar, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
 type FieldType = {
   contentReview?: string;
+  image_review?: string[]; // Thêm image_review vào FieldType
 };
 
 const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
@@ -16,6 +28,10 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     /\n/g,
     "<br />"
   );
+  const CLOUD_NAME = "dwya9mxip";
+  const PRESET_NAME = "upImgProduct";
+  const FOLDER_NAME = "PRODUCTS";
+  const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
   const [toggleDes, setTogleDes] = useState<boolean>(true);
   const [editReviewId, setEditReviewId] = useState<string | null>(null);
   const [form] = Form.useForm();
@@ -23,8 +39,11 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const queryClient = useQueryClient();
+  const [rating, setRating] = useState({}); // Trạng thái để lưu giá trị rating của các review
 
   const { data, isLoading, isError } = Query_Products(productId);
+  console.log(data);
+
   console.log(data.review);
 
   useEffect(() => {
@@ -35,6 +54,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       if (review) {
         form.setFieldsValue({
           contentReview: review.contentReview,
+          image_review: review.image_review || [], // Cập nhật hình ảnh
         });
       }
     }
@@ -59,21 +79,30 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     },
   });
 
+  const handleRatingChange = (reviewId, rate) => {
+    setRating((prevRating) => ({
+      ...prevRating,
+      [reviewId]: rate, // Lưu giá trị rating tương ứng với mỗi review
+    }));
+  };
+
   const { mutate: updateReview } = useMutation({
     mutationFn: async ({
       reviewId,
       productId,
       orderId,
       contentReview,
+      image_review,
     }: {
       reviewId: string;
       productId: string;
       orderId: string;
       contentReview: string;
+      image_review?: string[];
     }) => {
       const { data } = await instance.put(
         `/review/${userId}/${productId}/${reviewId}/${orderId}`,
-        { contentReview },
+        { contentReview, image_review }, // Cập nhật nội dung và hình ảnh
         {
           headers: {
             "Content-Type": "application/json",
@@ -102,6 +131,27 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     form.setFieldsValue({ contentReview });
   };
 
+  const handlePreview = async (file) => {
+    let src = file.url || file.thumbUrl;
+
+    if (!src) {
+      src = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
+    }
+
+    const imgWindow = window.open(src);
+    imgWindow.document.write(`<img src="${src}" style="width: 100%;" />`);
+  };
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
       // Tìm sản phẩm từ data
@@ -124,6 +174,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         contentReview: values.contentReview || "",
         productId,
         orderId,
+        image_review: values.image_review || [], // Thêm image_review vào payload
       });
     }
   };
@@ -167,11 +218,18 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
           </section>
         </div>
 
+        {!toggleDes && isLoading && (
+          <div className="flex justify-center items-center h-40">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </div>
+        )}
+
         {!toggleDes &&
+          !isLoading &&
           data?.review?.length > 0 &&
-          data.review.map((review: any) => (
-            <div key={review._id}>
-              {review?.reviews.map((review: any) => (
+          data.review.map((reviewItem) => (
+            <div key={reviewItem._id}>
+              {reviewItem?.reviews.map((review) => (
                 <section className="block" key={review._id}>
                   <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
                     <div className="border rounded-2xl lg:p-6 mb:p-5">
@@ -179,7 +237,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                         <div>
                           <strong className="text-base text-[#1A1E26] font-medium">
                             {review.userId}
-                            <span className="text-sm text-[#9D9EA2] font-light pl-[5px]">
+                            <span className="text-sm text-[#9D9EA2] font-light pl-[5px] pr-[5px]">
                               |
                             </span>
                             <span className="text-sm text-[#9D9EA2] font-light">
@@ -230,14 +288,96 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             layout="vertical"
                             initialValues={{
                               contentReview: review.contentReview,
+                              rating_review: review.rating_review,
+                              image_review: review.image_review,
                             }}
                           >
+                            {/* Chỉnh sửa rating */}
+                            <Form.Item name="rating_review">
+                              <div className="flex items-center gap-1 mb-[20px]">
+                                {[1, 2, 3, 4, 5].map((rate) => (
+                                  <span
+                                    key={rate}
+                                    onClick={() => {
+                                      form.setFieldsValue({
+                                        rating_review: rate,
+                                      });
+                                      handleRatingChange(review._id, rate);
+                                    }}
+                                  >
+                                    {rate <=
+                                    form.getFieldValue("rating_review") ? (
+                                      <AiFillStar className="text-yellow-400 text-2xl" />
+                                    ) : (
+                                      <AiOutlineStar className="text-yellow-400 text-2xl" />
+                                    )}
+                                  </span>
+                                ))}
+                              </div>
+                            </Form.Item>
+
+                            {/* Chỉnh sửa nội dung đánh giá */}
                             <Form.Item
                               name="contentReview"
                               label="Nội dung đánh giá"
                             >
                               <Input.TextArea rows={4} />
                             </Form.Item>
+
+                            {/* Chỉnh sửa hình ảnh */}
+                            <Form.Item name="image_review" label="Hình ảnh">
+                              <Upload
+                                listType="picture-card"
+                                fileList={(
+                                  form.getFieldValue("image_review") || []
+                                ).map((url, index) => ({
+                                  uid: index.toString(),
+                                  url,
+                                }))}
+                                onChange={({ fileList }) => {
+                                  form.setFieldsValue({
+                                    image_review: fileList.map(
+                                      (file) => file.url || file.thumbUrl
+                                    ),
+                                  });
+                                }}
+                                onPreview={handlePreview}
+                                customRequest={async ({ file, onSuccess }) => {
+                                  const formData = new FormData();
+                                  formData.append("file", file);
+                                  formData.append("upload_preset", PRESET_NAME);
+                                  formData.append("folder", FOLDER_NAME);
+
+                                  try {
+                                    const response = await fetch(api, {
+                                      method: "POST",
+                                      body: formData,
+                                    });
+                                    const result = await response.json();
+                                    file.url = result.secure_url;
+                                    onSuccess?.();
+
+                                    form.setFieldsValue({
+                                      image_review: [
+                                        ...(form.getFieldValue(
+                                          "image_review"
+                                        ) || []),
+                                        result.secure_url,
+                                      ],
+                                    });
+                                  } catch (error) {
+                                    console.error("Upload error:", error);
+                                  }
+                                }}
+                              >
+                                {(form.getFieldValue("image_review") || [])
+                                  .length >= 8
+                                  ? null
+                                  : uploadButton}
+                              </Upload>
+                            </Form.Item>
+
+                            {/* Các nút hành động */}
                             <Form.Item>
                               <Button
                                 type="primary"
@@ -253,9 +393,48 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                           </Form>
                         ) : (
                           <div>
+                            <div className="flex items-center  mb-[10px]">
+                              {Array.from({ length: 5 }, (_, index) => (
+                                <span key={index}>
+                                  {index <
+                                  (rating[review._id] ||
+                                    review.rating_review) ? (
+                                    <AiFillStar className="text-yellow-400 text-2xl" />
+                                  ) : (
+                                    <AiOutlineStar className="text-yellow-400 text-2xl" />
+                                  )}
+                                </span>
+                              ))}
+                            </div>
                             <p className="text-[#1A1E26] text-base">
                               {review.contentReview}
                             </p>
+                            <div className="mt-[20px] flex flex-wrap gap-2">
+                              {review.image_review &&
+                              review.image_review.length > 0 ? (
+                                review.image_review.map((imageUrl, index) => (
+                                  <div
+                                    key={index}
+                                    className="relative w-[120px] h-[120px]"
+                                  >
+                                    <img
+                                      src={imageUrl}
+                                      alt={`Review Image ${index + 1}`}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        borderRadius: "8px",
+                                      }}
+                                    />
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-gray-500">
+                                  No images available
+                                </p>
+                              )}
+                            </div>
                           </div>
                         )}
                       </section>

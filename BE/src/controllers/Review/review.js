@@ -8,62 +8,70 @@ import mongoose from "mongoose";
 export const addReviewProduct = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { orderId, productId, contentReview } = req.body;
+    const { orderId, productId, contentReview, rating_review, image_review } =
+      req.body;
 
-    // Kiểm tra xem contentReview có tồn tại không
+    // Kiểm tra nội dung review
     if (!contentReview || typeof contentReview !== "string") {
       return res
         .status(400)
         .json({ error: "nội dung review là bắt buộc và phải là 1 chuỗi" });
     }
 
-    // Tìm sản phẩm theo ID
+    // Kiểm tra rating
+    if (
+      !rating_review ||
+      typeof rating_review !== "number" ||
+      rating_review < 1 ||
+      rating_review > 5
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Rating phải nằm trong khoảng từ 1 đến 5" });
+    }
+
+    // Kiểm tra hình ảnh
+    if (
+      !image_review ||
+      !Array.isArray(image_review) ||
+      image_review.length === 0
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Ít nhất phải có 1 hình ảnh trong review" });
+    }
+
+    // Tìm sản phẩm và đơn hàng
     const product = await Products.findById(productId);
-    if (!product) {
-      return res.status(404).json({ error: "ProductId not found" });
-    }
+    if (!product) return res.status(404).json({ error: "ProductId not found" });
 
-    // Tìm đơn hàng theo ID
     const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ error: "OrderId not found" });
-    }
+    if (!order) return res.status(404).json({ error: "OrderId not found" });
 
-    // Tìm tất cả các review của đơn hàng
-    const reviews = await Review.find({ orderId: orderId });
-
-    // Kiểm tra xem người dùng đã đánh giá sản phẩm này trong đơn hàng chưa
-    const existingReview = reviews.find(
-      (review) =>
-        review.productId.toString() === productId &&
-        review.userId.toString() === userId
-    );
-
+    // Kiểm tra review tồn tại
+    const existingReview = await Review.findOne({ orderId, productId, userId });
     if (existingReview) {
-      return res.status(400).json({
-        error: "Bạn đã đánh giá sản phẩm này trong đơn hàng rồi!",
-      });
+      return res
+        .status(400)
+        .json({ error: "Bạn đã đánh giá sản phẩm này trong đơn hàng rồi!" });
     }
 
-    // Tạo và lưu review
+    // Tạo review mới
     const newReview = new Review({
       userId,
       orderId,
       productId,
       contentReview,
+      rating_review,
+      image_review,
     });
+
     const saveReview = await newReview.save();
 
-    // Khởi tạo mảng reviews nếu chưa tồn tại
-    if (!product.reviews) {
-      product.reviews = [];
-    }
+    // Cập nhật reviews trong product và order
     product.reviews.push(saveReview._id);
     await product.save();
 
-    if (!order.reviews) {
-      order.reviews = [];
-    }
     order.reviews.push(saveReview._id);
     await order.save();
 
@@ -80,6 +88,13 @@ export const addReviewProduct = async (req, res) => {
 export const getAllReviewsInProduct = async (req, res) => {
   try {
     const { productId } = req.params;
+
+    // Kiểm tra xem productId có phải là ObjectId hợp lệ không
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: "Invalid product ID" });
+    }
+
+    // Tìm product và populate reviews
     const product = await Products.findById(productId).populate({
       path: "reviews",
       populate: {
@@ -92,7 +107,8 @@ export const getAllReviewsInProduct = async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    res
+    // Trả về các reviews của sản phẩm
+    return res
       .status(200)
       .json({ message: "Product reviews:", reviews: product.reviews });
   } catch (error) {
@@ -103,33 +119,21 @@ export const getAllReviewsInProduct = async (req, res) => {
 
 export const updateReviewProduct = async (req, res) => {
   try {
-    const { userId, productId, reviewId, orderId } = req.params;
-    const { contentReview } = req.body;
+    const { userId, productId, reviewId } = req.params;
+    const { contentReview, rating_review, image_review } = req.body;
 
-    // Tìm sản phẩm theo productId
-    const product = await Products.findById(productId);
-    if (!product) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Product not found" });
-    }
-
-    // Tìm review theo reviewId
     const review = await Review.findById(reviewId);
-    if (!review) {
+    if (!review)
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Review not found" });
-    }
 
-    // Kiểm tra xem review có thuộc về sản phẩm không
     if (review.productId.toString() !== productId.toString()) {
       return res
         .status(StatusCodes.FORBIDDEN)
         .json({ error: "Review does not belong to this product" });
     }
 
-    // Kiểm tra quyền sở hữu review
     if (!review.userId.equals(userId)) {
       return res
         .status(StatusCodes.FORBIDDEN)
@@ -137,45 +141,15 @@ export const updateReviewProduct = async (req, res) => {
     }
 
     // Cập nhật các trường nếu có
-    if (contentReview) {
-      review.contentReview = contentReview;
-    }
+    if (contentReview) review.contentReview = contentReview;
+    if (rating_review && rating_review >= 1 && rating_review <= 5)
+      review.rating_review = rating_review;
+    if (image_review && Array.isArray(image_review) && image_review.length > 0)
+      review.image_review = image_review;
 
-    // Cập nhật thời gian cập nhật
     review.updatedAt = Date.now();
-
-    // Lưu review
     await review.save();
 
-    // Cập nhật đơn hàng nếu orderId được cung cấp
-    if (orderId) {
-      const order = await Order.findById(orderId);
-      if (!order) {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ error: "Order not found" });
-      }
-
-      // Tìm review trong mảng reviews của order
-      const reviewIndex = order.reviews.findIndex(
-        (rev) => rev._id.toString() === reviewId.toString()
-      );
-
-      if (reviewIndex !== -1) {
-        // Cập nhật review trong order
-        order.reviews[reviewIndex].contentReview = review.contentReview;
-        order.reviews[reviewIndex].updatedAt = review.updatedAt;
-
-        // Lưu đơn hàng sau khi cập nhật
-        await order.save();
-      } else {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ error: "Review not found in the specified order" });
-      }
-    }
-
-    // Trả về phản hồi với thông tin cập nhật
     return res
       .status(StatusCodes.OK)
       .json({ message: "Review updated successfully", review });
@@ -274,10 +248,8 @@ export const getReviewById = async (req, res) => {
 
     // Tìm review và populate productId và userId
     const review = await Review.findById(reviewId)
-      .populate("productId")
+      .populate("productId", "productName") // Populate productId và chỉ lấy trường productName
       .populate("userId", "userName"); // Populate userId và chỉ lấy trường userName
-
-    console.log("Review:", review); // Log review để kiểm tra dữ liệu
 
     if (!review) {
       return res.status(404).json({ error: "Review not found" });
