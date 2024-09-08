@@ -58,7 +58,7 @@ const RouterComponent = () => {
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
             <Route path="/order/pay" element={<OrderPay />} />
-            <Route path="favourite" element={<Favourite />} />
+            <Route path="/favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
@@ -73,7 +73,6 @@ const RouterComponent = () => {
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
               <Route path="/profile/notification" element={<Notification />} />
-              <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
               {/* <Route path="/profile/allorder" element={<Order_All />} /> */}
