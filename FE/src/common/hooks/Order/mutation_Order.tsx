@@ -15,7 +15,7 @@ export function useOrderMutations(action: Action) {
                     return await confirmCancelOrder(data);
                 case 'REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT':
                     if (data?.action === 'huy') {
-                        return await cancel_product(data.id_item);
+                        return await cancel_product(data.id_item, data.cancellationReason);
                     }
                     if (data?.action === 'yeu_cau_huy') {
                         return await Cancel_Order(data?.id_item, data.cancellationReason);

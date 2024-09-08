@@ -9,7 +9,9 @@ export function Pay_Mutation() {
     const [messageApi, contextHolder] = message.useMessage();
     const { mutate, isPending } = useMutation({
         mutationFn: (order) => Add_Order(order),
-        onSuccess: async () => {
+
+        onSuccess: async (order) => {
+            console.log(order);
             messageApi.open({
                 type: 'success',
                 content: 'Bạn đã đặt hành thành công',
@@ -22,6 +24,8 @@ export function Pay_Mutation() {
     })
 
     const onSubmit = async (formData: any) => {
+        console.log(formData);
+
         mutate(formData);
     };
     return { mutate, onSubmit, userId, contextHolder, messageApi, isPending }
