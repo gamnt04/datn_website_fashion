@@ -58,12 +58,12 @@ const Products = ({ items }: any) => {
       message.open({
         type: "warning",
         content:
-          "Hãy đăng nhập tài khoản của bạn để có thể thêm được sản phẩm yêu thích !!!",
+          "Hãy đăng nhập tài khoản của bạn để có thể thêm được sản phẩm yêu thích !!!"
       });
     } else {
       message.open({
         type: "success",
-        content: "Đã thêm sản phẩm vào danh mục yêu thích của bạn",
+        content: "Đã thêm sản phẩm vào danh mục yêu thích của bạn"
       });
       AddFavouriteProduct({ userId, productId });
     }
@@ -72,7 +72,7 @@ const Products = ({ items }: any) => {
   const handleRemoveFromFavorites = (productId: any) => {
     message.open({
       type: "success",
-      content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn",
+      content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn"
     });
     RemoveFavouriteProduct({ userId, productId });
   };
@@ -170,7 +170,7 @@ const Products = ({ items }: any) => {
                 <span className="text-[#EB2606]">
                   {max?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </span>
               ) : (
@@ -178,14 +178,14 @@ const Products = ({ items }: any) => {
                   <span className="text-[#EB2606]">
                     {min?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND",
+                      currency: "VND"
                     })}
                   </span>{" "}
                   -
                   <span className="text-[#EB2606]">
                     {max?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND",
+                      currency: "VND"
                     })}
                   </span>
                 </>
@@ -195,7 +195,7 @@ const Products = ({ items }: any) => {
             <span className="text-[#EB2606]">
               {items?.price_product?.toLocaleString("vi", {
                 style: "currency",
-                currency: "VND",
+                currency: "VND"
               })}
             </span>
           )}
