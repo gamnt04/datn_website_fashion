@@ -27,9 +27,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`,
       },
       totalPrice,
     });
@@ -51,6 +50,33 @@ export const createOrder = async (req, res) => {
         return false;
       });
     });
+    for (let i of items) {
+      if (i.productId.attributes) {
+        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        for (let j of data_attr) {
+          for (let k of j.values) {
+            if (k.color == i.color_item) {
+              for (let x of k.size) {
+                if (x.name_size) {
+                  if (x.name_size == i.name_size) {
+                    x.stock_attribute = x.stock_attribute - i.quantity;
+                  }
+                } else {
+                  x.stock_attribute = x.stock_attribute - i.quantity;
+                }
+              }
+            }
+          }
+          await j.save();
+        }
+      } else {
+        const data_items = await Products.find({ _id: i.productId._id });
+        for (let a of data_items) {
+          a.stock_product = a.stock_product - i.quantity;
+          await a.save();
+        }
+      }
+    }
     await dataCart.save();
     await SendMail(email, order);
     return res.status(StatusCodes.CREATED).json(order);
@@ -129,9 +155,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`,
         },
         totalPrice,
       });
@@ -446,36 +471,36 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
-    if (status === 2) {
-      const items = order.items;
-      for (let i of items) {
-        if (i.productId.attributes) {
-          const data_attr = await Attributes.find({ id_item: i.productId._id });
-          for (let j of data_attr) {
-            for (let k of j.values) {
-              if (k.color == i.color_item) {
-                for (let x of k.size) {
-                  if (x.name_size) {
-                    if (x.name_size == i.name_size) {
-                      x.stock_attribute = x.stock_attribute - i.quantity;
-                    }
-                  } else {
-                    x.stock_attribute = x.stock_attribute - i.quantity;
-                  }
-                }
-              }
-            }
-            await j.save();
-          }
-        } else {
-          const data_items = await Products.find({ _id: i.productId._id });
-          for (let a of data_items) {
-            a.stock_product = a.stock_product - i.quantity;
-            await a.save();
-          }
-        }
-      }
-    }
+    // if (status === 2) {
+    //   const items = order.items;
+    //   for (let i of items) {
+    //     if (i.productId.attributes) {
+    //       const data_attr = await Attributes.find({ id_item: i.productId._id });
+    //       for (let j of data_attr) {
+    //         for (let k of j.values) {
+    //           if (k.color == i.color_item) {
+    //             for (let x of k.size) {
+    //               if (x.name_size) {
+    //                 if (x.name_size == i.name_size) {
+    //                   x.stock_attribute = x.stock_attribute - i.quantity;
+    //                 }
+    //               } else {
+    //                 x.stock_attribute = x.stock_attribute - i.quantity;
+    //               }
+    //             }
+    //           }
+    //         }
+    //         await j.save();
+    //       }
+    //     } else {
+    //       const data_items = await Products.find({ _id: i.productId._id });
+    //       for (let a of data_items) {
+    //         a.stock_product = a.stock_product - i.quantity;
+    //         await a.save();
+    //       }
+    //     }
+    //   }
+    // }
 
     await order.save();
     return res
