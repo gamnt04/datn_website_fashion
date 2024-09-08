@@ -162,9 +162,9 @@ export const confirmCancelOrder = async ({ id_item, confirm }: any) => {
     console.log(error);
   }
 };
-export const cancel_product = async (id: any,) => {
+export const cancel_product = async (id: any, cancellationReason: any) => {
   try {
-    const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+    const { data } = await instance.patch(`/orders/${id}`, { status: "5", cancellationReason })
     const message = 'huy';
     const res = {
       data,
