@@ -9,13 +9,12 @@ export function Pay_Mutation() {
     const [messageApi, contextHolder] = message.useMessage();
     const { mutate, isPending } = useMutation({
         mutationFn: (order) => Add_Order(order),
-
         onSuccess: async (order) => {
             console.log(order);
-            messageApi.open({
-                type: 'success',
-                content: 'Bạn đã đặt hành thành công',
-            })
+            // messageApi.open({
+            //     type: 'success',
+            //     content: 'Bạn đã đặt hành thành công',
+            // })
             // navigate("/allorder/order")
         },
         onError: () => {

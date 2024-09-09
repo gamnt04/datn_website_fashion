@@ -64,11 +64,11 @@ const orderSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  datetime: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  // datetime: {
+  //   type: Date,
+  //   default: Date.now,
+  // },
+}, { timestamps: true, versionKey: false });
 // Tạo pre-save hook để sinh orderNumber trước khi lưu vào cơ sở dữ liệu
 orderSchema.pre("save", function (next) {
   if (!this.orderNumber) {
