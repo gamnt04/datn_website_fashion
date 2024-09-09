@@ -5,8 +5,6 @@ import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Spin, Table } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import queryString from "query-string";
-import randomstring from "randomstring";
 import { nanoid } from "nanoid";
 import {
   Add_Address,
@@ -18,7 +16,7 @@ import {
 } from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { Loader } from "lucide-react";
 const OrderPay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
@@ -28,29 +26,30 @@ const OrderPay = () => {
   const { data: auth, isLoading } = List_Auth(userId);
   // console.log(auth);
 
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState<any>();
 
   const { register, handleSubmit, setValue } = useForm();
-  const { onSubmit, contextHolder, messageApi } = Pay_Mutation();
+  const { onSubmit, contextHolder, messageApi, isPending } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
   let data: any;
   if (data_sessionStorage) {
     data = JSON.parse(data_sessionStorage);
   } else {
-    routing("/");
+    routing("/profile/list_order");
   }
   useEffect(() => {
     if (auth && auth?.address) {
-      setSelectedAddress(auth?.address);
-      setValue("userName", auth?.address?.fullName);
-      setValue("phone", auth?.address?.phoneNumber);
-      setValue("email", auth?.email);
-      setValue(
-        "address",
-        `${auth?.address?.addressDetails} - ${auth?.address?.address}`
-      );
+      const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
+      const address = selectedAddress || defaultAddress;
+      if (address) {
+        setSelectedAddress(address);
+        setValue("userName", address.fullName);
+        setValue("phone", address.phoneNumber);
+        setValue("email", auth.email);
+        setValue("address", `${address.addressDetails} - ${address.address}`);
+      }
     }
-  }, [auth, setValue]);
+  }, [auth, selectedAddress, setValue]);
 
   const handleTAdd = () => {
     setAddress(!address);
@@ -211,7 +210,15 @@ const OrderPay = () => {
       )
     }
   ];
-
+  if (isPending) {
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="animate-spin">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="xl:w-[1440px] w-[95vw] mx-auto">
@@ -241,20 +248,42 @@ const OrderPay = () => {
                 </div>
                 <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
                   <div className="flex items-center gap-4">
-                    <h1 className="font-bold">{selectedAddress?.fullName}</h1>
-                    <p className="font-bold">{selectedAddress?.phoneNumber}</p>
-                    <p>
-                      {selectedAddress?.addressDetails +
-                        " - " +
-                        selectedAddress?.address}
-                    </p>
+                    {auth?.address.length === 0 ? ('Bạn hay thêm địa chỉ trước khi thanh toán') : (
+                      <>
+                        {selectedAddress === undefined ? ("Bạn cần chọn địa chỉ") : (
+                          <>
+                            {selectedAddress ? (
+                              <div className="flex items-center gap-4">
+                                <h1 className="font-bold">{selectedAddress?.fullName}</h1>
+                                <p className="font-bold">{selectedAddress?.phoneNumber}</p>
+                                <p>
+                                  {selectedAddress?.addressDetails + " - " + selectedAddress?.address}
+                                </p>
+                              </div>
+                            ) : (
+                              auth?.address?.map(
+                                (item: any, index: any) =>
+                                  item.checked === true && (
+                                    <div key={index} className="flex items-center gap-4">
+                                      <h1 className="font-bold">{item?.fullName}</h1>
+                                      <p className="font-bold">{item?.phoneNumber}</p>
+                                      <p>
+                                        {item?.addressDetails + " - " + item?.address}
+                                      </p>
+                                    </div>
+                                  )
+                              ))}
+                          </>
+                        )}
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-8">
-                    {/* {!selectedAddress?.checked === true ? ('') : (
+                    {!selectedAddress?.checked === true ? ('') : (
                       <div className="border py-2 px-4 rounded border-black hidden lg:block">
                         Mặc định
                       </div>
-                    )} */}
+                    )}
                     <div
                       className="text-blue-400 underline cursor-pointer"
                       onClick={handleAddress}
