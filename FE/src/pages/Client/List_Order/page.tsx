@@ -154,13 +154,14 @@ export default function List_order() {
     action?: string;
     cancellationReason?: string;
     orderNumber?: string | number;
-    // linkUri?: string | number;
+    order?: string | number;
+
   }) {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: "duonghainam03012004@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
-      // different: dataBody?.linkUri,
+      different: dataBody?.orderNumber,
     });
     mutate(dataBody);
   }
@@ -315,8 +316,6 @@ export default function List_order() {
       ) : (
         <div>
           {data?.data?.docs?.map((items: any) => {
-            console.log(items);
-
             return (
               <div className="border-t py-4">
                 <div className="flex gap-2 py-5 border-b-2 justify-between">
@@ -388,7 +387,6 @@ export default function List_order() {
                             action: "huy",
                             cancellationReason: selectedReason,
                             orderNumber: items?.orderNumber,
-                            // linkUri: items?._id,
                           })
                         }
                         // onCancel={cancel}

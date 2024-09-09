@@ -1,9 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
-import { message, Popconfirm, Radio, Table } from "antd";
+import { message, Popconfirm, Radio, Table, Timeline } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
-import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+import { Mutation_Notification, Query_notification } from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { LeftOutlined } from "@ant-design/icons";
 import { useState } from "react";
@@ -14,6 +14,7 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch } = Query_Orders(id);
+  const { data: no } = Query_notification()
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification('Add');
   const { mutate: cancel } = useOrderMutations(
@@ -24,7 +25,8 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === 'xac_nhan' ? 'xác nhận' : 'từ chối'} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`
+      message: `Người bán đã ${dataBody?.action === 'xac_nhan' ? 'xác nhận' : 'từ chối'} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      different: dataBody?.numberOrder,
     })
   }
   const reasons = [
@@ -37,7 +39,7 @@ const OrdersDetali = () => {
       userId: userId,
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
-      // different: dataBody?.linkUri,
+      different: dataBody?.numberOrder,
     });
     cancel(dataBody);
   }
@@ -75,6 +77,8 @@ const OrdersDetali = () => {
     key: item._id,
     ...item
   }));
+  const formattedDate = data?.updatedAt ? new Date(data.updatedAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+
   const columns = [
     {
       title: "Ảnh Sản Phẩm",
@@ -153,6 +157,61 @@ const OrdersDetali = () => {
           <h1 className="text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">Chi Tiết Đơn Hàng</h1>
 
         </div>
+        <div className="my-6 shadow rounded bg-white">
+          <div className="p-4 text-black font-semibold">Trạng thái đơn hàng</div>
+          <div>
+
+            {data?.status == 5 ? (
+              <div className="flex flex-col justify-center items-center gap-7 py-4">
+                <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
+                  Đã hủy
+                </p>
+                {no?.notifications.map((item: any) => {
+                  if (item?.different === data?.orderNumber) {
+                    return (
+                      <p>Lý do: {item?.message}</p>
+                    )
+                  }
+                })
+                }
+              </div>
+            ) : (
+              <>
+                <Timeline mode="alternate">
+                  {data?.status >= 1 && (
+                    <Timeline.Item color="gray">
+                      <p className="ant-typography ant-typography-secondary ant-typography-bold">
+                        Chờ xác nhận {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {data?.status >= 2 && (
+                    <Timeline.Item color="yellow">
+                      <p className="ant-typography ant-typography-warning ant-typography-bold">
+                        Đang chuẩn bị hàng {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {data?.status >= 3 && (
+                    <Timeline.Item color="blue">
+                      <p className="ant-typography ant-typography-primary ant-typography-bold">
+                        Đang vận chuyển {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {data?.status >= 4 && (
+                    <Timeline.Item color="green">
+                      <p className="ant-typography ant-typography-success ant-typography-bold">
+                        Hoàn thành {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                </Timeline>
+              </>
+            )}
+
+          </div>
+        </div>
         <div className="overflow-x-auto my-6 shadow  rounded">
           <Table columns={columns} dataSource={dataSort} pagination={false} />
           <div className="bg-white divide-y divide-gray-200">
@@ -184,8 +243,8 @@ const OrdersDetali = () => {
             </p>
           </div>
         </div>
-        <div className="bg-white overflow-x-auto my-6 shadow p-[20px] rounded">
-          <div className=" flex items-center gap-4 my-3 border-b py-3">
+        <div className="bg-white overflow-x-auto my-6 shadow p-4 rounded">
+          <div className=" flex items-center gap-4  border-b pb-4">
             <p className="text-black font-semibold">Phương thức thanh toán</p>
             <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
               {data?.status == 4
@@ -193,9 +252,9 @@ const OrdersDetali = () => {
                 : data?.customerInfo?.payment}
             </p>
           </div>
-          <div className="flex items-center gap-4 border-b py-3">
+          {/* <div className="flex items-center gap-4 border-b py-3">
             <p className="text-black font-semibold w-[20%]">Trạng thái đơn hàng</p>
-            {/* {data?.status == 1 ? (
+            {data?.status == 1 ? (
               <p className="w-auto p-3 border-2 border-gray-500 text-gray-500 rounded">
                 Chờ xác nhận{" "}
               </p>
@@ -217,12 +276,24 @@ const OrdersDetali = () => {
                   Đã hủy
                 </p>
               </div>
-            )} */}
+            )}
             <div className="flex gap-2">
               {data?.status == 5 ? (
-                <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
-                  Đã hủy
-                </p>
+                <div className="flex justify-between items-center gap-7">
+                  <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
+                    Đã hủy
+                  </p>
+                  {no?.notifications.map((item: any) => {
+                    if (item?.different === data?.orderNumber) {
+                      return (
+                        <p>Lý do: {item?.message}</p>
+                      )
+                    }
+                    console.log(item);
+
+                  })
+                  }
+                </div>
               ) : (
                 <>
                   <p
@@ -252,7 +323,7 @@ const OrdersDetali = () => {
                 </>
               )}
             </div>
-          </div>
+          </div> */}
           <div className="flex justify-between my-4">
             <div className="flex gap-6">
               <div className="flex-1">
