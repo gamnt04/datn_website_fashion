@@ -1,4 +1,4 @@
-import { ref } from "joi";
+import { number, ref } from "joi";
 import mongoose from "mongoose";
 
 const notification_Schema = new mongoose.Schema({
@@ -16,6 +16,7 @@ const notification_Schema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    different: String,
     status_notification: {
         type: Boolean,
         default: false

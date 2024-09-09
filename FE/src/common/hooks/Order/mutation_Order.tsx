@@ -10,14 +10,12 @@ export function useOrderMutations(action: Action) {
     const [messageApi, contextHolder] = message.useMessage();
     const { mutate, ...rest } = useMutation({
         mutationFn: async (data: { id_item: string | number, action?: string, cancellationReason?: string }) => {
-            console.log(data);
-
             switch (action) {
                 case "CONFIRM_CANCEL":
-                    return await confirmCancelOrder(data?.id_item);
+                    return await confirmCancelOrder(data);
                 case 'REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT':
                     if (data?.action === 'huy') {
-                        return await cancel_product(data.id_item);
+                        return await cancel_product(data.id_item, data.cancellationReason);
                     }
                     if (data?.action === 'yeu_cau_huy') {
                         return await Cancel_Order(data?.id_item, data.cancellationReason);

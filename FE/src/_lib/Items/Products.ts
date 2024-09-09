@@ -38,6 +38,20 @@ export async function get_items_dashboard(page?: number) {
   }
 }
 
+export async function get_detai_items_dashboard(id: number | string) {
+  try {
+    const uri = `${baseUri}/dashboard/${id}`;
+    const res = await fetch(`${uri}`);
+    if (!res.ok) {
+      console.warn("Kiem tra lai server hoac internet !");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+}
+
 export async function get_limit_items(limit: number) {
   try {
     const uri = `/products?&_limit=${limit}`;
@@ -200,7 +214,7 @@ export const restoreProduct = async (item: any) => {
 
 export async function getDeletedProducts() {
   try {
-    const response = await fetch(`${baseUri}/dashboard/trash`);
+    const response = await fetch(`${baseUri}/adminstration/dashboard/trash`);
     if (!response.ok) {
       throw new Error("Không thể lấy danh sách sản phẩm đã xóa");
     }
@@ -211,7 +225,7 @@ export async function getDeletedProducts() {
     throw error;
   }
 }
-export const getProductsByName = async (searchName) => {
+export const getProductsByName = async (searchName: any) => {
   try {
     const { data } = await instance.post("/products/search", { searchName });
     return data;

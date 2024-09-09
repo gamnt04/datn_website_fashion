@@ -30,7 +30,7 @@ import { format } from "date-fns";
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data, isLoading } = useCategoryQuery();
+  const { data, isLoading, refetch } = useCategoryQuery();
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchName, setSearchName] = useState("");
@@ -46,30 +46,26 @@ const List_Category: React.FC = () => {
         })
       )
     : [];
+
   const onHandleSearch = () => {
     setSearchName(searchName);
   };
+
   const { mutate: deleteCategory } = useMutation({
-    mutationFn: async (id: ICategory) => {
+    mutationFn: async (id: ICategory["_id"]) => {
       try {
-        return await instance.delete(`/category/${id}`);
+        await instance.delete(`/category/${id}`);
       } catch (error) {
-        throw new Error("Xóa Danh mục thất bại");
+        throw new Error("Xóa danh mục thất bại");
       }
     },
     onSuccess: () => {
-      messageApi.open({
-        type: "success",
-        content: "Xóa Danh mục thành công",
-      });
+      messageApi.success("Xóa danh mục thành công");
+      refetch();
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error) => {
-      messageApi.open({
-        type: "error",
-        content: error.message,
-      });
-      throw error;
+      messageApi.error(error.message || "Xóa danh mục không thành công");
     },
   });
 
@@ -94,10 +90,12 @@ const List_Category: React.FC = () => {
       );
     },
   });
+
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
+
   const handleTogglePublished = (category: ICategory) => {
     mutation.mutate({ ...category, published: !category.published });
   };
@@ -127,11 +125,7 @@ const List_Category: React.FC = () => {
       title: "Ảnh Danh Mục",
       render: (_: any, record: ICategory) => (
         <img
-          src={
-            typeof record.image_category === "string"
-              ? record.image_category
-              : URL.createObjectURL(record.image_category[0])
-          }
+          src={record.image_category}
           alt={record.name_category}
           style={{ width: 80, height: 80, objectFit: "cover" }}
         />
@@ -159,7 +153,6 @@ const List_Category: React.FC = () => {
         </a>
       ),
     },
-
     {
       key: "createdAt",
       title: "Ngày Tạo",
@@ -194,7 +187,7 @@ const List_Category: React.FC = () => {
             <Popconfirm
               title="Xoá danh mục sản phẩm"
               description="Bạn có muốn xóa danh mục sản phẩm này không ?"
-              onConfirm={() => deleteCategory(category._id!)}
+              onConfirm={() => deleteCategory(category._id)}
               okText="Có"
               cancelText="Không"
             >
@@ -250,30 +243,14 @@ const List_Category: React.FC = () => {
             <UpdateComponent />
           </div>
           <div className="mb-2 flex justify-between">
-            <div className="space-x-5">
-              <Checkbox className="ml-4" />
-              <Button>Chọn tất cả (7)</Button>
-              <Popconfirm
-                title="Xóa sản phẩm khỏi giỏ hàng?"
-                description="Bạn có chắc chắn muốn xóa không?"
-                // onConfirm={handleRemoveMultiple}
-                okText="Có"
-                cancelText="Không"
-              >
-                <Button danger>
-                  <DeleteOutlined style={{ fontSize: "24px" }} />
-                  Xóa sản phẩm đã chọn
-                </Button>
-              </Popconfirm>
-            </div>
             <div className="flex space-x-5">
               <Input
                 className="w-[500px]"
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
-                placeholder="nhâp tên danh mục để tìm kiếm..."
+                placeholder="Nhập tên danh mục để tìm kiếm..."
               />
-              <Button onSubmit={() => onHandleSearch} type="primary">
+              <Button onClick={onHandleSearch} type="primary">
                 Tìm kiếm
               </Button>
             </div>
@@ -288,7 +265,6 @@ const List_Category: React.FC = () => {
             pagination={false}
           />
           <div className="flex justify-between items-center mt-4">
-            <div className="max-w-full overflow-hidden"></div>
             <Pagination {...paginationProps} />
           </div>
         </div>

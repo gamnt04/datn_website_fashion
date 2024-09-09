@@ -1,27 +1,50 @@
 import { useState, useEffect } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
 import { Query_Products } from "../../../common/hooks/Products/Products";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { Button, Form, FormProps, Input, Popconfirm, message } from "antd";
+import {
+  Button,
+  Form,
+  FormProps,
+  Input,
+  Popconfirm,
+  Spin,
+  Upload,
+  message,
+} from "antd";
+import { AiFillStar, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
 type FieldType = {
   contentReview?: string;
+  image_review?: string[]; // Thêm image_review vào FieldType
 };
 
-const DescriptionProduct = ({ product }: IProduct) => {
-  const formattedDescription = product?.description_product.replace(/\n/g, '<br />');
+const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
+  const formattedDescription = product?.description_product.replace(
+    /\n/g,
+    "<br />"
+  );
+  const CLOUD_NAME = "dwya9mxip";
+  const PRESET_NAME = "upImgProduct";
+  const FOLDER_NAME = "PRODUCTS";
+  const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
   const [toggleDes, setTogleDes] = useState<boolean>(true);
   const [editReviewId, setEditReviewId] = useState<string | null>(null);
   const [form] = Form.useForm();
-  const { id } = useParams();
+  const { id: productId } = useParams();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const queryClient = useQueryClient();
+  const [rating, setRating] = useState({}); // Trạng thái để lưu giá trị rating của các review
 
-  const { data, isLoading, isError } = Query_Products(id);
+  const { data, isLoading, isError } = Query_Products(productId);
+  console.log(data);
+
+  console.log(data.review);
 
   useEffect(() => {
     if (editReviewId && data?.product?.reviews) {
@@ -31,20 +54,24 @@ const DescriptionProduct = ({ product }: IProduct) => {
       if (review) {
         form.setFieldsValue({
           contentReview: review.contentReview,
+          image_review: review.image_review || [], // Cập nhật hình ảnh
         });
       }
     }
   }, [editReviewId, data, form]);
 
   const { mutate: deleteReview } = useMutation({
-    mutationFn: async (reviewId: string) => {
+    mutationFn: async ({ reviewId, productId, orderId }) => {
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
       const { data } = await instance.delete(
-        `/review/${userId}/${id}/${reviewId}`
+        `/review/${userId}/${productId}/${reviewId}/${orderId}`
       );
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
+      queryClient.invalidateQueries({ queryKey: ["Product_Key"] });
       message.success("Xóa thành công");
     },
     onError: () => {
@@ -52,17 +79,30 @@ const DescriptionProduct = ({ product }: IProduct) => {
     },
   });
 
+  const handleRatingChange = (reviewId, rate) => {
+    setRating((prevRating) => ({
+      ...prevRating,
+      [reviewId]: rate, // Lưu giá trị rating tương ứng với mỗi review
+    }));
+  };
+
   const { mutate: updateReview } = useMutation({
     mutationFn: async ({
       reviewId,
+      productId,
+      orderId,
       contentReview,
+      image_review,
     }: {
       reviewId: string;
+      productId: string;
+      orderId: string;
       contentReview: string;
+      image_review?: string[];
     }) => {
       const { data } = await instance.put(
-        `/review/${userId}/${id}/${reviewId}`,
-        { contentReview },
+        `/review/${userId}/${productId}/${reviewId}/${orderId}`,
+        { contentReview, image_review }, // Cập nhật nội dung và hình ảnh
         {
           headers: {
             "Content-Type": "application/json",
@@ -71,8 +111,8 @@ const DescriptionProduct = ({ product }: IProduct) => {
       );
       return data;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["Product_Key", id] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Product_Key"] });
       message.success("Cập nhật thành công");
       setEditReviewId(null);
     },
@@ -81,16 +121,60 @@ const DescriptionProduct = ({ product }: IProduct) => {
     },
   });
 
-  const handleEditClick = (reviewId: string, contentReview: string) => {
+  const handleEditClick = (
+    reviewId: string,
+    productId: string,
+    orderId: string,
+    contentReview: string
+  ) => {
     setEditReviewId(reviewId);
     form.setFieldsValue({ contentReview });
   };
 
+  const handlePreview = async (file) => {
+    let src = file.url || file.thumbUrl;
+
+    if (!src) {
+      src = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
+    }
+
+    const imgWindow = window.open(src);
+    imgWindow.document.write(`<img src="${src}" style="width: 100%;" />`);
+  };
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
+      // Tìm sản phẩm từ data
+      const productId = data?.products?._id || "";
+
+      // Tìm review chính từ data.review
+      const reviewContainer = data?.review?.find((r: any) =>
+        r.reviews.some((subReview: any) => subReview._id === editReviewId)
+      );
+
+      // Nếu tìm thấy reviewContainer, tìm review con và lấy orderId
+      const review = reviewContainer?.reviews.find(
+        (subReview: any) => subReview._id === editReviewId
+      );
+      const orderId = review?.orderId || "";
+
+      // Gọi hàm updateReview với các tham số đã chuẩn bị
       updateReview({
         reviewId: editReviewId,
         contentReview: values.contentReview || "",
+        productId,
+        orderId,
+        image_review: values.image_review || [], // Thêm image_review vào payload
       });
     }
   };
@@ -99,10 +183,15 @@ const DescriptionProduct = ({ product }: IProduct) => {
     return userId === reviewUserId;
   };
 
+  const handleCancel = () => {
+    setEditReviewId(null);
+    form.resetFields(); // Reset form fields to their initial values
+  };
+
   return (
     <>
       <div className="flex flex-col border-t lg:py-10 lg:mt-10 mb:py-[34px] mb:mt-8">
-        <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 whitespace-nowrap px-6 lg:py-2.5 mb:py-[7px] rounded border place-items-center lg:text-base mb:text-xs">
+        <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 *:whitespace-nowrap *:px-6 *:lg:py-2.5 *:mb:py-[7px] *:rounded *:border *:place-items-center *:lg:text-base *:mb:text-xs">
           <button
             onClick={() => setTogleDes(true)}
             className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
@@ -117,85 +206,243 @@ const DescriptionProduct = ({ product }: IProduct) => {
               toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
             }`}
           >
-            Đánh giá({data?.product?.reviews.length || 0})
+            Đánh giá
           </button>
         </ul>
         <div className={toggleDes ? "block" : "hidden"}>
           <section className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:py-6 mb:pt-[19px]">
-          <div dangerouslySetInnerHTML={{ __html: formattedDescription }} className="show_description my-4"/>
+            <div
+              dangerouslySetInnerHTML={{ __html: formattedDescription }}
+              className="show_description my-4"
+            />
           </section>
         </div>
+
+        {!toggleDes && isLoading && (
+          <div className="flex justify-center items-center h-40">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </div>
+        )}
+
         {!toggleDes &&
-          data?.product?.reviews &&
-          data.product.reviews.map((review: any) => (
-            <section className="block" key={review._id}>
-              <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
-                <div className="border rounded-2xl lg:p-6 mb:p-5">
-                  <div className="flex items-center justify-between gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
-                    <div>
-                      <strong className="text-base text-[#1A1E26] font-medium">
-                        {review.user.userName}
-                        <span className="text-sm text-[#9D9EA2] font-light pl-[5px]">
-                          |
-                        </span>
-                        <span className="text-sm text-[#9D9EA2] font-light">
-                          {new Date(review.created_at).toLocaleDateString()}
-                        </span>
-                      </strong>
-                    </div>
-                    <div className="flex gap-x-2">
-                      {isOwnReview(review.user._id) && (
-                        <>
-                          <Popconfirm
-                            title="Xóa đánh giá"
-                            description="Bạn có chắc chắn muốn xóa đánh giá này?"
-                            onConfirm={() => deleteReview(review._id)}
-                            okText="Có"
-                            cancelText="Không"
+          !isLoading &&
+          data?.review?.length > 0 &&
+          data.review.map((reviewItem) => (
+            <div key={reviewItem._id}>
+              {reviewItem?.reviews.map((review) => (
+                <section className="block" key={review._id}>
+                  <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
+                    <div className="border rounded-2xl lg:p-6 mb:p-5">
+                      <div className="flex items-center justify-between gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
+                        <div>
+                          <strong className="text-base text-[#1A1E26] font-medium">
+                            {review.userId}
+                            <span className="text-sm text-[#9D9EA2] font-light pl-[5px] pr-[5px]">
+                              |
+                            </span>
+                            <span className="text-sm text-[#9D9EA2] font-light">
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </span>
+                          </strong>
+                        </div>
+                        <div className="flex gap-x-2">
+                          {isOwnReview(review.userId) && (
+                            <>
+                              <Popconfirm
+                                title="Xóa đánh giá"
+                                description="Bạn có chắc chắn muốn xóa đánh giá này?"
+                                onConfirm={() =>
+                                  deleteReview({
+                                    reviewId: review._id,
+                                    productId: review.productId,
+                                    orderId: review.orderId,
+                                  })
+                                }
+                                okText="Có"
+                                cancelText="Không"
+                              >
+                                <Button danger>Xóa</Button>
+                              </Popconfirm>
+                              <Button
+                                onClick={() =>
+                                  handleEditClick(
+                                    review._id,
+                                    review.productId,
+                                    review.orderId,
+                                    review.contentReview
+                                  )
+                                }
+                              >
+                                Cập nhật
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <section className="flex flex-col gap-y-4">
+                        {editReviewId === review._id ? (
+                          <Form
+                            name="basic"
+                            form={form}
+                            onFinish={onFinish}
+                            layout="vertical"
+                            initialValues={{
+                              contentReview: review.contentReview,
+                              rating_review: review.rating_review,
+                              image_review: review.image_review,
+                            }}
                           >
-                            <Button danger>Xóa</Button>
-                          </Popconfirm>
-                          <Button
-                            onClick={() =>
-                              handleEditClick(review._id, review.contentReview)
-                            }
-                          >
-                            Cập nhật
-                          </Button>
-                        </>
-                      )}
+                            {/* Chỉnh sửa rating */}
+                            <Form.Item name="rating_review">
+                              <div className="flex items-center gap-1 mb-[20px]">
+                                {[1, 2, 3, 4, 5].map((rate) => (
+                                  <span
+                                    key={rate}
+                                    onClick={() => {
+                                      form.setFieldsValue({
+                                        rating_review: rate,
+                                      });
+                                      handleRatingChange(review._id, rate);
+                                    }}
+                                  >
+                                    {rate <=
+                                    form.getFieldValue("rating_review") ? (
+                                      <AiFillStar className="text-yellow-400 text-2xl" />
+                                    ) : (
+                                      <AiOutlineStar className="text-yellow-400 text-2xl" />
+                                    )}
+                                  </span>
+                                ))}
+                              </div>
+                            </Form.Item>
+
+                            {/* Chỉnh sửa nội dung đánh giá */}
+                            <Form.Item
+                              name="contentReview"
+                              label="Nội dung đánh giá"
+                            >
+                              <Input.TextArea rows={4} />
+                            </Form.Item>
+
+                            {/* Chỉnh sửa hình ảnh */}
+                            <Form.Item name="image_review" label="Hình ảnh">
+                              <Upload
+                                listType="picture-card"
+                                fileList={(
+                                  form.getFieldValue("image_review") || []
+                                ).map((url, index) => ({
+                                  uid: index.toString(),
+                                  url,
+                                }))}
+                                onChange={({ fileList }) => {
+                                  form.setFieldsValue({
+                                    image_review: fileList.map(
+                                      (file) => file.url || file.thumbUrl
+                                    ),
+                                  });
+                                }}
+                                onPreview={handlePreview}
+                                customRequest={async ({ file, onSuccess }) => {
+                                  const formData = new FormData();
+                                  formData.append("file", file);
+                                  formData.append("upload_preset", PRESET_NAME);
+                                  formData.append("folder", FOLDER_NAME);
+
+                                  try {
+                                    const response = await fetch(api, {
+                                      method: "POST",
+                                      body: formData,
+                                    });
+                                    const result = await response.json();
+                                    file.url = result.secure_url;
+                                    onSuccess?.();
+
+                                    form.setFieldsValue({
+                                      image_review: [
+                                        ...(form.getFieldValue(
+                                          "image_review"
+                                        ) || []),
+                                        result.secure_url,
+                                      ],
+                                    });
+                                  } catch (error) {
+                                    console.error("Upload error:", error);
+                                  }
+                                }}
+                              >
+                                {(form.getFieldValue("image_review") || [])
+                                  .length >= 8
+                                  ? null
+                                  : uploadButton}
+                              </Upload>
+                            </Form.Item>
+
+                            {/* Các nút hành động */}
+                            <Form.Item>
+                              <Button
+                                type="primary"
+                                htmlType="submit"
+                                className="mr-[5px]"
+                              >
+                                Lưu
+                              </Button>
+                              <Button type="default" onClick={handleCancel}>
+                                Hủy
+                              </Button>
+                            </Form.Item>
+                          </Form>
+                        ) : (
+                          <div>
+                            <div className="flex items-center  mb-[10px]">
+                              {Array.from({ length: 5 }, (_, index) => (
+                                <span key={index}>
+                                  {index <
+                                  (rating[review._id] ||
+                                    review.rating_review) ? (
+                                    <AiFillStar className="text-yellow-400 text-2xl" />
+                                  ) : (
+                                    <AiOutlineStar className="text-yellow-400 text-2xl" />
+                                  )}
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-[#1A1E26] text-base">
+                              {review.contentReview}
+                            </p>
+                            <div className="mt-[20px] flex flex-wrap gap-2">
+                              {review.image_review &&
+                              review.image_review.length > 0 ? (
+                                review.image_review.map((imageUrl, index) => (
+                                  <div
+                                    key={index}
+                                    className="relative w-[120px] h-[120px]"
+                                  >
+                                    <img
+                                      src={imageUrl}
+                                      alt={`Review Image ${index + 1}`}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        borderRadius: "8px",
+                                      }}
+                                    />
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-gray-500">
+                                  No images available
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </section>
                     </div>
                   </div>
-                  <section className="flex flex-col gap-y-4">
-                    {editReviewId === review._id ? (
-                      <Form
-                        name="basic"
-                        form={form}
-                        onFinish={onFinish}
-                        layout="vertical"
-                        initialValues={{ contentReview: review.contentReview }}
-                      >
-                        <Form.Item
-                          name="contentReview"
-                          label="Nội dung đánh giá"
-                        >
-                          <Input.TextArea rows={4} />
-                        </Form.Item>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Lưu
-                          </Button>
-                        </Form.Item>
-                      </Form>
-                    ) : (
-                      <p className="text-[#1A1E26] text-base">
-                        {review.contentReview}
-                      </p>
-                    )}
-                  </section>
-                </div>
-              </div>
-            </section>
+                </section>
+              ))}
+            </div>
           ))}
       </div>
     </>

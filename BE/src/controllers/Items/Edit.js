@@ -59,7 +59,11 @@ export const updateProductById = async (req, res) => {
       }
       return res.status(200).json(product);
     } else {
-      const product = await Products.findByIdAndUpdate(req.params.id, req.body, {
+      const dataClient = {
+        ...req.body,
+        attributes: convertAttribute,
+      }
+      const product = await Products.findByIdAndUpdate(req.params.id, dataClient, {
         new: true,
         runValidators: true,
       });

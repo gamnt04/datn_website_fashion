@@ -1,7 +1,7 @@
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import Dow_btn from "./dow";
-import Up_btn from "./up";
+import Dow_btn from "./_components/dow";
+import Up_btn from "./_components/up";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import {
 } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
+import Het_hang from "./_components/het_hang";
 
 interface DataType {
   key: string;
@@ -37,11 +38,9 @@ const ListCart = () => {
     "HANLDE_STATUS_CHECKED"
   );
   const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
-
   useEffect(() => {
     sessionStorage.setItem("totalPriceCart", JSON.stringify(data?.total_price));
   }, [data?.total_price]);
-
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState<number | null>(null);
   const remove_item = (item: any) => {
@@ -92,7 +91,7 @@ const ListCart = () => {
     setInputValue(quantity);
   };
 
-  const handleBlur = (product) => {
+  const handleBlur = (product: any) => {
     if (inputValue !== product?.quantity) {
       updateQuantity({
         userId: userId,
@@ -111,6 +110,7 @@ const ListCart = () => {
         ...product,
       }
   );
+  console.log(dataSort);
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -153,6 +153,7 @@ const ListCart = () => {
       key: "name",
       render: (_: any, product: any) => (
         <>
+          <Het_hang dataProps={product} />
           <Link
             to={`/shops/${product?.productId?._id}`}
             className="py-2 font-bold text-gray-900 hover:text-gray-900"
@@ -200,7 +201,7 @@ const ListCart = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(Number(e.target.value))}
                 onBlur={() => handleBlur(product?.productId)}
-                className="px-0 text-center"
+                className="px-0 text-center !max-w-20"
               />
             ) : (
               <Input
@@ -208,13 +209,13 @@ const ListCart = () => {
                 onClick={() =>
                   handleQuantityClick(product?.productId, product?.quantity)
                 }
-                className="px-0 text-center"
+                className="px-0 text-center !max-w-20"
               />
             )}
             <Up_btn
               dataProps={{
                 id_item: product?.productId,
-                quantity_item: product,
+                quantity_item: product?.quantity,
                 color: product?.color_item,
                 size: product?.name_size,
               }}
@@ -258,7 +259,6 @@ const ListCart = () => {
       },
     },
   ];
-
   // next order
   function next_order() {
     ScrollTop();
@@ -266,12 +266,12 @@ const ListCart = () => {
       (item: any) => item?.status_checked && item
     );
     if (userId) {
-      if (data_cart.length === 0) {
+      if (data_cart.length === 0 || data?.total_price < 1) {
         messageApi.open({
           type: "warning",
           content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
         });
-        return;
+        return null
       }
       const data_order = {
         id_user: userId,
@@ -331,37 +331,40 @@ const ListCart = () => {
             </div>
 
             <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-              <div className="flex flex-col w-full h-full border rounded-lg lg:p-6 mb:p-4">
-                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                  <strong>Tổng giá trị đơn hàng</strong>
-                  <p className="text-xl font-bold text-yellow-500">
-                    {data?.total_price?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </p>
-                </div>
-                <div className="flex flex-col py-5 my-5 border-y">
-                  <span className="mb-2 text-xs">Nhập mã giảm giá</span>
-                  <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                    <input
-                      className="px-4 outline-none"
-                      type="text"
-                      placeholder="Enter Code"
-                    />
-                    <button className="grid text-gray-100 bg-black place-items-center md:text-base mb:text-sm">
-                      Apply
-                    </button>
-                  </form>
-                </div>
-                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                  <strong>Cần thanh toán :</strong>
-                  <strong>
-                    {data?.total_price?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </strong>
+              <div className="flex flex-col justify-between w-full h-[200px] border rounded-lg lg:p-6 mb:p-4">
+                <div>
+                  <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                    <strong>Tổng giá trị đơn hàng</strong>
+                    <p className="text-xl font-bold text-yellow-500">
+                      {data?.total_price?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </p>
+                  </div>
+                  {/* <div className="flex flex-col py-5 my-5 border-y">
+                    <span className="mb-2 text-xs">Nhập mã giảm giá</span>
+                    <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
+                      <input
+                        className="px-4 outline-none"
+                        type="text"
+                        placeholder="Enter Code"
+                      />
+                      <button className="grid text-gray-100 bg-black place-items-center md:text-base mb:text-sm">
+                        Apply
+                      </button>
+                    </form>
+                  </div> */}
+                  <div className="my-2"></div>
+                  <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                    <strong>Cần thanh toán :</strong>
+                    <strong>
+                      {data?.total_price?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </strong>
+                  </div>
                 </div>
                 <button
                   onClick={next_order}

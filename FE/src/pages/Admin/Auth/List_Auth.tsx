@@ -14,7 +14,6 @@ import {
 import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
-
 interface UpdateField {
   field: string;
   value: string;
@@ -31,7 +30,7 @@ const List_Auth = () => {
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    },
+    }
   });
 
   const onHandleSearch = () => {
@@ -42,7 +41,7 @@ const List_Auth = () => {
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth,
+        ...auth
       };
     }
   );
@@ -56,8 +55,14 @@ const List_Auth = () => {
         isLoading ? (
           <Skeleton.Avatar active size="large" shape="square" />
         ) : (
-          <Image src={auth.avatar} alt="" width={70} />
-        ),
+          <Image
+            src={auth.avatar}
+            alt=""
+            width={80}
+            height={80}
+            className="object-cover"
+          />
+        )
     },
     {
       title: "Tên Người Dùng",
@@ -68,7 +73,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        ),
+        )
     },
     {
       title: "Email",
@@ -79,7 +84,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        ),
+        )
     },
     {
       title: "Quyền",
@@ -102,7 +107,7 @@ const List_Auth = () => {
           return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
         }
         return "Chưa có cập nhật";
-      },
+      }
     },
     {
       title: "Nội Dung Cập Nhật",
@@ -112,7 +117,7 @@ const List_Auth = () => {
         if (updatedFields && updatedFields.length > 0) {
           return (
             <Button
-onClick={() => showModal(updatedFields)}
+              onClick={() => showModal(updatedFields)}
               className="p-3 text-white border-gray-300 rounded-lg bg-blue-600 hover:bg-blue-500 focus:outline-none"
             >
               Xem chi tiết
@@ -121,7 +126,7 @@ onClick={() => showModal(updatedFields)}
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
-      },
+      }
     },
     {
       title: "Quyền",
@@ -132,8 +137,8 @@ onClick={() => showModal(updatedFields)}
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        ),
-    },
+        )
+    }
   ];
 
   const formatDate = (isoString: string) => {
@@ -182,12 +187,12 @@ onClick={() => showModal(updatedFields)}
         </div>
         <div className="mb-2 flex justify-between">
           <div className="space-x-5">
-            <Select
+            {/* <Select
               // value={statusFilter}
               // onChange={handleStatusChange}
               className="w-[200px] h-[40px]"
               placeholder="Lọc quyền người dùng"
-            ></Select>
+            ></Select> */}
           </div>
           <div className="flex space-x-5">
             <Input
@@ -210,7 +215,7 @@ onClick={() => showModal(updatedFields)}
         </Spin>
         <Modal
           title="Chi tiết cập nhật"
-visible={isModalVisible}
+          visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
           width={500}
@@ -232,44 +237,6 @@ visible={isModalVisible}
           )}
         </Modal>
       </div>
-      <div className="">
-        <Input
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-        />
-        <Button onSubmit={() => onHandleSearch}>Tìm kiếm</Button>
-      </div>
-      <Spin
-        spinning={isLoading}
-        indicator={<LoadingOutlined spin />}
-        size="large"
-      >
-        <Table columns={columns} dataSource={dataSource} />
-      </Spin>
-
-      <Modal
-        title="Chi tiết cập nhật"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={500}
-        style={{ maxHeight: "80vh", overflowY: "auto" }}
-      >
-        {selectedUpdate ? (
-          <Form style={{ maxWidth: 500 }}>
-            <Form.Item>
-              <Input.TextArea
-                value={getLatestUpdateDetails(selectedUpdate)}
-                readOnly
-                rows={15}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Form>
-        ) : (
-          <p>Không có thông tin cập nhật</p>
-        )}
-      </Modal>
     </>
   );
 };

@@ -10,7 +10,6 @@ const generateOrderNumber = () => {
   return `${timestamp}-${random}`;
 };
 
-
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -44,12 +43,19 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  reviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
 
   status: {
     type: String,
     enum: ["1", "2", "3", "4", "5"],
     default: "1",
   },
+
   cancellationRequested: {
     type: Boolean,
     default: false,
@@ -58,11 +64,11 @@ const orderSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  datetime: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  // datetime: {
+  //   type: Date,
+  //   default: Date.now,
+  // },
+}, { timestamps: true, versionKey: false });
 // Tạo pre-save hook để sinh orderNumber trước khi lưu vào cơ sở dữ liệu
 orderSchema.pre("save", function (next) {
   if (!this.orderNumber) {

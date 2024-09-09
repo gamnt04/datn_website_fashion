@@ -1,6 +1,5 @@
-import { toast } from "react-toastify";
 import instance from "../configs/axios";
-
+import { toast } from "react-toastify";
 const baseUri = "http://localhost:2004/api/v1/orders";
 
 // export const GetAllOrder = async (page: number, status: string = "") => {
@@ -47,8 +46,6 @@ export const getOrderById = async (id: string) => {
   }
 };
 export const getOneOrderUser = async (userId: string) => {
-  console.log(userId);
-
   try {
     const { data } = await instance.get(`/orders/get_order_user/${userId}`);
 
@@ -68,8 +65,10 @@ export const Add_Order = async (order: any) => {
       toast.error("Đặt hàng không thành công", { autoClose: 500 });
     }
     return data?.data;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    if (error.response) {
+      toast.error("Sản phẩm số lượng không còn đủ trong kho", { autoClose: 500 });
+    }
   }
 };
 export const Update_Status = async (items: any) => {
@@ -136,7 +135,6 @@ export const getTop10ProductSale = async () => {
   }
 };
 
-// huy don hang có yêu cầu xác nhận
 
 export const Cancel_Order = async (id: any, cancellationReason: any) => {
   try {
@@ -152,9 +150,9 @@ export const Cancel_Order = async (id: any, cancellationReason: any) => {
   }
 };
 
-export const confirmCancelOrder = async ({ id, confirm }: any) => {
+export const confirmCancelOrder = async ({ id_item, confirm }: any) => {
   try {
-    const { data } = await instance.post(`/orders/${id}/cancel/confirm`, {
+    const { data } = await instance.post(`/orders/${id_item}/cancel/confirm`, {
       confirm
     });
     return data;
@@ -162,9 +160,9 @@ export const confirmCancelOrder = async ({ id, confirm }: any) => {
     console.log(error);
   }
 };
-export const cancel_product = async (id: any,) => {
+export const cancel_product = async (id: any, cancellationReason: any) => {
   try {
-    const { data } = await instance.patch(`/orders/${id}`, { status: "5" })
+    const { data } = await instance.patch(`/orders/${id}`, { status: "5", cancellationReason })
     const message = 'huy';
     const res = {
       data,

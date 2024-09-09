@@ -64,12 +64,12 @@ const Sidebar_Profile: React.FC = () => {
     ),
     ...(roleAdmin === "admin"
       ? [
-        getItem(
-          <NavLink to={`/admin`}>Chế độ quản lý</NavLink>,
-          "4",
-          <SiAwssecretsmanager className="h-10 w-5 bold-icon" />
-        ),
-      ]
+          getItem(
+            <NavLink to={`/admin`}>Chế độ quản lý</NavLink>,
+            "4",
+            <SiAwssecretsmanager className="w-5 h-10 bold-icon" />
+          ),
+        ]
       : []),
     {
       type: "divider",

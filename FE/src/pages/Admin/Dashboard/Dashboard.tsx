@@ -156,11 +156,10 @@ const MainContent = () => {
         </div>
         <div className=" mt-7 flex justify-between">
           <ChartRevenueWeekly />
-          <ChartPayment />
-        </div>
-        <div className="mt-7 flex space-x-7">
+          {/* <ChartPayment /> */}
           <TableTopProducts />
         </div>
+        <div className="mt-7 flex space-x-7">{/* <TableTopProducts /> */}</div>
       </div>
     </>
   );

@@ -4,14 +4,13 @@ import PriceFilter from "./Filter/PriceFilter";
 import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
-import TimeFilter from "./Filter/TimeFilter";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { AiOutlineFilter } from "react-icons/ai";
 
 interface MenuShopProps {
   onCategorySelect: (ids: string[]) => void; // Cập nhật kiểu ở đây
   onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
   setSearch: (search: string) => void;
-  setSort: (sort: string) => void;
   selectedColors: string[];
   toggleColor: (color: string) => void;
   resetColorFilter: () => void;
@@ -20,14 +19,11 @@ interface MenuShopProps {
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
   onSizeChange: (sizes: string[]) => void;
-  sortOption: string;
 }
 
 const MenuShop: React.FC<MenuShopProps> = ({
   onCategorySelect,
   onPriceChange,
-  setSearch,
-  setSort,
   selectedColors,
   toggleColor,
   resetColorFilter,
@@ -36,14 +32,13 @@ const MenuShop: React.FC<MenuShopProps> = ({
   toggleSize,
   resetSizeFilter,
   onSizeChange,
-  sortOption
 }) => {
   const { data: categoryData } = useCategoryQuery();
   const {
     colors: colorOptions,
     sizes: sizeOptions,
     loading,
-    error
+    error,
   } = useAttributes();
 
   if (loading) return <p>Loading...</p>;
@@ -54,26 +49,23 @@ const MenuShop: React.FC<MenuShopProps> = ({
   };
 
   return (
-    <div className="hidden h-auto gap-5 my-4 lg:flex">
-      <div className="">
-        <TimeFilter
-          onCategorySelect={function (ids: string[]): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+    <div className="hidden lg:block w-full  flex flex-col my-10 ">
+      <div className="flex items-center justify-center space-x-4 mb-7 mt-3">
+        <AiOutlineFilter className="text-3xl" />
+        <h1 className="text-3xl">Bộ Lọc Sản Phẩm</h1>
       </div>
-      <div className="">
+      <div className="w-full bg-gray-50">
         <CategoryFilter
           categories={categoryData || []}
           onCategorySelect={handleCategoryChange} // Truyền vào hàm mới
         />
       </div>
 
-      <div className="">
-        <PriceFilter sortOption={sortOption} onSortChange={setSort} />
+      <div className="w-full bg-gray-50 mt-2">
+        <PriceFilter onPriceChange={onPriceChange} />
       </div>
 
-      <div className="">
+      <div className="w-full bg-gray-50 mt-2">
         <ColorFilter
           selectedColors={selectedColors}
           toggleColor={toggleColor}
@@ -82,7 +74,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
           colorOptions={colorOptions}
         />
       </div>
-      <div className="">
+      <div className="w-full bg-gray-50 mt-2">
         <SizeFilter
           selectedSizes={selectedSizes}
           toggleSize={toggleSize}
