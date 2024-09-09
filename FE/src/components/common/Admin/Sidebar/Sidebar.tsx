@@ -6,6 +6,7 @@ import {
   Palette,
   Shirt,
   Trash2,
+  Truck,
   User2
 } from "lucide-react";
 import { useState } from "react";
@@ -140,6 +141,15 @@ export default function Sidebar_Dashboard() {
         >
           <User2 />
           <span className=" text-[#c4cee3]">Tài khoản</span>
+        </Link>
+      </div>
+      <div className="*:px-2">
+        <Link
+          to={`/admin/deliveries`}
+          className="flex items-center gap-x-4 py-3  w-full text-left"
+        >
+          <Truck />
+          <span className=" text-[#c4cee3]">Người giao hàng</span>
         </Link>
       </div>
       <div className="*:px-2">
