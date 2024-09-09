@@ -14,7 +14,7 @@ const contactSchema = new Schema(
       type: String,
       required: true,
     },
-    response_content: {
+    response_message: {
       type: String,
     },
     responder_email: {

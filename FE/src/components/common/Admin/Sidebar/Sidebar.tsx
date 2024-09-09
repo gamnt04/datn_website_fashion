@@ -21,9 +21,11 @@ export default function Sidebar_Dashboard() {
   };
 
   return (
-    <aside className="h-screen w-[200px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3">
+    <aside className="mx-auto h-screen w-[230px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3">
       <div className="items-center py-1 px-2">
-        <img src={logo} alt="" className="w-[242px] h-[45px]" />
+        <Link to={"/"}>
+          <img src={logo} alt="" className="w-[242px] h-[45px]" />
+        </Link>
       </div>
 
       <div className="whitespace-nowrap *:text-sm *:px-2">
@@ -34,8 +36,9 @@ export default function Sidebar_Dashboard() {
           <LayoutDashboard />
           <span className="text-[#c4cee3]">Bảng điều khiển</span>
           <ChevronDown
-            className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
-              }`}
+            className={`ml-auto transform ${
+              expandedSection === "dashboard" ? "rotate-180" : ""
+            }`}
           />
         </button>
 
@@ -43,18 +46,19 @@ export default function Sidebar_Dashboard() {
           <div className="ml-8 mt-2">
             <NavLink
               to="/admin"
-              className="flex items-center px-2 py-3  hover:text-white text-gray-300">
+              className="flex items-center px-2 py-3  hover:text-white text-gray-300"
+            >
               Tổng quan
             </NavLink>
             <NavLink
               to="/admin/notification"
-              className="flex items-center px-2 py-3  hover:text-white  text-gray-300" >
+              className="flex items-center px-2 py-3  hover:text-white  text-gray-300"
+            >
               Thông báo
             </NavLink>
           </div>
         )}
       </div>
-
 
       <div className="*:px-2">
         <button
@@ -64,8 +68,9 @@ export default function Sidebar_Dashboard() {
           <Shirt />
           <span className="text-[#c4cee3]">Sản phẩm</span>
           <ChevronDown
-            className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
-              }`}
+            className={`ml-auto transform ${
+              expandedSection === "products" ? "rotate-180" : ""
+            }`}
           />
         </button>
 
@@ -92,7 +97,7 @@ export default function Sidebar_Dashboard() {
           </div>
         )}
       </div>
-      <div>
+      {/* <div>
         <div className="*:px-2">
           <button
             onClick={() => toggleExpand("attribute")}
@@ -101,8 +106,9 @@ export default function Sidebar_Dashboard() {
             <Palette />
             <span className=" text-[#c4cee3]">Thuộc Tính</span>
             <ChevronDown
-              className={`ml-auto transform ${expandedSection === "attribute" ? "rotate-180" : ""
-                }`}
+              className={`ml-auto transform ${
+                expandedSection === "attribute" ? "rotate-180" : ""
+              }`}
             />
           </button>
 
@@ -123,7 +129,7 @@ export default function Sidebar_Dashboard() {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       <div className="*:px-2">
         <Link

@@ -43,6 +43,7 @@ import Feedback from "../pages/Admin/contact/Feedback";
 import ContactDetail from "../pages/Admin/contact/ContactDetail";
 import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
+import DescriptionProduct from "../pages/Client/[ProductDetail]/DescriptionProduct";
 const RouterComponent = () => {
   return (
     <>
@@ -58,7 +59,7 @@ const RouterComponent = () => {
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
             <Route path="/order/pay" element={<OrderPay />} />
-            <Route path="favourite" element={<Favourite />} />
+            <Route path="/favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
@@ -67,13 +68,12 @@ const RouterComponent = () => {
             {/* <Route path="products" element={<ListProducts />} /> */}
             {/* <Route path="blogs/detailblog" element={<DetailBlogs />} /> */}
             <Route path="shops/:id" element={<ProductDetail />} />
-
-            {/* <Route path="shops/:id/reviews" element={<DescriptionProduct />} /> */}
+            {/* 
+            <Route path="shops/:id#reviews" element={<DescriptionProduct />} /> */}
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
               <Route path="/profile/notification" element={<Notification />} />
-              <Route path="/profile/favourite" element={<Favourite />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
               {/* <Route path="/profile/allorder" element={<Order_All />} /> */}
@@ -97,7 +97,10 @@ const RouterComponent = () => {
             <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="auth" element={<List_Auth />} />
-            <Route path="/admin/orders/:id/orderDetali" element={<OrdersDetali />} />
+            <Route
+              path="/admin/orders/:id/orderDetali"
+              element={<OrdersDetali />}
+            />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="contact/:id" element={<ContactDetail />} />
             <Route path="feedback/:id" element={<Feedback />} />

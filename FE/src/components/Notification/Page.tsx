@@ -1,16 +1,18 @@
+import { Link } from "react-router-dom";
 import { Query_notification } from "../../_lib/React_Query/Notification/Query"
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
 
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
-    const data = Query_notification(userId)
+    const { data } = Query_notification(userId)
+
     return (
         <div className="space-y-4 text-sm">
             <strong className="text-lg">Thông báo của bạn</strong>
             {
-               data?.data?.notifications?.length > 0 ?
-                    data?.data?.notifications?.map((item: any) =>
+                data?.notifications?.length > 0 ?
+                    data?.notifications?.map((item: any) =>
                         <details className="group rounded-lg bg-gray-50 p-6 [&_summary::-webkit-details-marker]:hidden" open>
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
                                 <h2 className="font-medium">{item?.userId?.userName}</h2>
@@ -47,18 +49,26 @@ export default function Notification() {
                                 </span>
                             </summary>
                             <div className="flex items-end justify-between gap-x-10">
+                                <div>
+                                    <p className="mt-4 leading-relaxed text-gray-700">
+                                        {item?.message}
+                                    </p>
+                                    {
+                                        item?.different &&
+                                        <Link to={`/admin/orders/${item?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
+                                            Chi tiết
+                                        </Link>
+                                    }
+                                </div>
                                 <p className="mt-4 leading-relaxed text-gray-700">
-                                    {item?.message}
-                                </p>
-                                <p className="mt-4 leading-relaxed text-gray-700">
-                                    {item?.createdAt?.slice(0,10)}
+                                    {item?.createdAt?.slice(0, 10)}
                                 </p>
                             </div>
                         </details>
                     )
                     :
                     <div className="grid place-items-center w-full h-[70vh]">
-                    <span>Không có thông báo nào!</span>
+                        <span>Không có thông báo nào!</span>
                     </div>
             }
         </div>

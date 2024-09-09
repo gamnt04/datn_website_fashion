@@ -1,6 +1,48 @@
-import React, { useState } from "react";
+import React from "react";
 import { SlArrowDown } from "react-icons/sl";
-import useClickOutside from "../../../../common/hooks/Products/Filter/useClickOutside"; // Đảm bảo đường dẫn đúng với vị trí của hook
+
+// Hàm Convert_Color để chuyển đổi tên màu thành lớp CSS
+export function Convert_Color(item: string) {
+  let color: string;
+  switch (item.toLowerCase()) {
+    case "red":
+    case "đỏ":
+      color = "bg-red-500";
+      break;
+    case "black":
+    case "đen":
+      color = "bg-black";
+      break;
+    case "yellow":
+    case "vàng":
+      color = "bg-yellow-500";
+      break;
+    case "pink":
+    case "hồng":
+      color = "bg-pink-500";
+      break;
+    case "green":
+    case "xanh lá":
+      color = "bg-green-500";
+      break;
+    case "violet":
+    case "tím":
+      color = "bg-violet-500";
+      break;
+    case "blue":
+    case "xanh":
+      color = "bg-blue-500";
+      break;
+    case "brown":
+    case "nâu":
+      color = "bg-amber-950";
+      break;
+    default:
+      color = "bg-white border border-black";
+      break;
+  }
+  return color;
+}
 
 interface ColorFilterProps {
   colorOptions: string[];
@@ -17,11 +59,10 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
   resetColorFilter,
   onColorChange,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // Trạng thái để theo dõi xem dropdown có đang mở không
+  const [isOpen, setIsOpen] = React.useState(false);
 
-  // Sử dụng hook để theo dõi click ngoài
-  const ref = useClickOutside(() => setIsOpen(false));
-
+  // Xử lý sự kiện chọn màu
   const handleColorSelect = (color: string) => {
     toggleColor(color);
     const updatedColors = selectedColors.includes(color)
@@ -30,64 +71,50 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
     onColorChange(updatedColors);
   };
 
-  const getSelectedColorLabel = () => {
-    if (selectedColors.length === 0) {
-      return "Màu";
-    }
-    if (selectedColors.length === 1) {
-      return `Màu: ${selectedColors[0]}`;
-    }
-    return `Màu: ${selectedColors.join(", ")}`;
-  };
-
   return (
-    <div className="relative inline-block text-left" ref={ref}>
+    <div className="relative border border-gray-200">
       <button
-        type="button"
-        className="flex items-center py-3 px-4"
         onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full py-2 px-4 text-gray-900  rounded-md "
       >
-        <strong className="">
-          {getSelectedColorLabel()}
-        </strong>
-        <SlArrowDown
-          size={10}
-          className={`ml-2 transition-transform ${isOpen ? "rotate-180" : "rotate-0"
-            }`}
-          style={{ flexShrink: 0 }} // Đảm bảo mũi tên không bị thu nhỏ
-        />
+        <strong>Màu </strong>
+        <span
+          className={`shrink-0 transition duration-300 ${
+            isOpen ? "-rotate-180" : ""
+          }`}
+        >
+          <SlArrowDown />
+        </span>
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 p-3 w-[400px] bg-white border border-gray-200 rounded overflow-hidden">
-          <ul className="grid grid-cols-4 gap-1 max-h-60 overflow-y-auto">
+        <div className="w-full bg-white  rounded-md ">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
             {colorOptions.length > 0 ? (
-              colorOptions.map((color) => (
-                <li key={color}>
-                  <button
-                    className={`w-full text-left p-2 rounded hover:bg-gray-100 ${selectedColors.includes(color) ? "bg-gray-100" : ""}`}
-                    onClick={() => handleColorSelect(color)}
-                  >
-                    {color}
-                  </button>
-                </li>
-              ))
+              colorOptions.map((color) => {
+                const colorClass = Convert_Color(color);
+                return (
+                  <li key={color} className="flex items-center">
+                    <button
+                      className={`w-full text-left p-2 rounded flex items-center space-x-2 hover:bg-gray-100 ${
+                        selectedColors.includes(color) ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleColorSelect(color)}
+                    >
+                      <span
+                        className={`w-6 h-6 rounded-full ${colorClass}`}
+                      ></span>
+                      <span className="ml-2 flex-1 truncate whitespace-normal">
+                        {color}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })
             ) : (
-              <p className="px-4 py-2">No colors available</p>
+              <p className="px-4 py-2">Không có màu nào khả dụng</p>
             )}
           </ul>
-          <div className="w-full mt-4 flex justify-center">
-            <button
-              className="text-blue-500 underline"
-              onClick={() => {
-                resetColorFilter();
-                onColorChange([]); // Reset the filter
-              }}
-            >
-              Đặt lại
-            </button>
-          </div>
-
         </div>
       )}
     </div>

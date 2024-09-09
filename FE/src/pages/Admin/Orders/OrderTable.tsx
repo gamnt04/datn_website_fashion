@@ -66,7 +66,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       title: "Ngày Đặt",
       dataIndex: "datetime",
       key: "datetime",
-      render: (_: any, order: any) => <p>{formatDate(order?.datetime)}</p>
+      render: (_: any, order: any) => <p>{formatDate(order?.createdAt)}</p>
     },
     {
       title: "Hình Thức",
