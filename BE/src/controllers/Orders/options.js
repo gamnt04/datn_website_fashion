@@ -15,7 +15,7 @@ export async function list_items_order_by_user(req, res) {
     const options = {
       page: _page,
       limit: _limit,
-      sort: { datetime: -1 },
+      sort: { createdAt: -1 },
       populate: "reviews", // Thêm populate để lấy nội dung reviews
     };
 
