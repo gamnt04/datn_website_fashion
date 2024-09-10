@@ -1,29 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { format } from "date-fns";
 import {
   Query_Products_Dashboard,
   useQueryProductsSearch
 } from "../../../common/hooks/Products/Products";
-import { IProduct } from "../../../common/interfaces/Product";
 import {
   Button,
-  Checkbox,
   Input,
   message,
   Pagination,
   Popconfirm,
-  Space,
-  Table
 } from "antd";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { FaDeleteLeft, FaPlus } from "react-icons/fa6";
-import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
-import ProductPrice from "./_component/productPrice";
 import { AiOutlinePlus } from "react-icons/ai";
+import Data_Table from "./_component/Data_Table";
 const ListProduct = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -35,13 +28,6 @@ const ListProduct = () => {
   );
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useQueryProductsSearch(searchName);
-  const dataSource = (searchName ? searchData : data?.docs)?.map(
-    (product: IProduct, index: number) => ({
-      key: product._id,
-      index: index + 1,
-      ...product
-    })
-  );
   const onHandleSearch = () => {
     setSearchName(searchName.trim());
   };
@@ -81,97 +67,6 @@ const ListProduct = () => {
       setSelectedProductIds([...selectedProductIds, productId]);
     }
   };
-
-  const formatDate = (dateString: any) => {
-    const date = new Date(dateString);
-    return format(date, "HH:mm dd/MM/yyyy");
-  };
-  const columns = [
-    {
-      title: <Checkbox />,
-      dataIndex: "checkbox",
-      key: "checkbox",
-      render: (_: any, product: IProduct) => (
-        <Checkbox
-          onChange={() => handleCheckboxChange(product?._id!)}
-        ></Checkbox>
-      )
-    },
-
-    {
-      title: "Ảnh Sản Phẩm",
-      dataIndex: "image",
-      key: "image",
-      render: (_: any, product: any) => (
-        <img
-          src={product.image_product}
-          alt={product.name_product}
-          className="w-[80px] h-[80px]"
-        />
-      )
-    },
-    {
-      title: "Tên Sản Phẩm",
-      dataIndex: "name_product",
-      render: (_: any, product: any) => (
-        <span className="line-clamp-2 max-w-[200px]">
-          {product?.name_product}
-        </span>
-      )
-    },
-    {
-      title: "Giá Sản Phẩm",
-      key: "price_product",
-      render: (product: IProduct) => {
-        return <ProductPrice attributeId={product.attributes} />;
-      }
-    },
-    {
-      title: "Thời Gian Tạo",
-      dataIndex: "created_at",
-      key: "createdAt",
-      render: (_: any, product: IProduct) => formatDate(product.createdAt)
-    },
-    {
-      title: "Thời Gian Cập Nhật",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (_: any, product: IProduct) => formatDate(product.updatedAt)
-    },
-    {
-      key: "actions",
-      title: "Thao Tác",
-      render: (_: any, product: any) => {
-        return (
-          <Space>
-            <Button type="primary">
-              <Link to={`/admin/products/edit/${product._id}`}>
-                <FaEdit />
-              </Link>
-            </Button>
-            <Popconfirm
-              title="Xóa sản phẩm"
-              description="Bạn có muốn xóa sản phẩm này không ?"
-              onConfirm={() =>
-                mutate({
-                  id_item: product._id,
-                  action: "remove"
-                })
-              }
-              // onCancel={cancel}
-              okText="Có"
-              cancelText="Không"
-            >
-              <Button danger>
-                <FaDeleteLeft />
-              </Button>
-            </Popconfirm>
-          </Space>
-        );
-      }
-    }
-  ];
-
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>{error.message}</div>;
   return (
@@ -217,7 +112,12 @@ const ListProduct = () => {
           </div>
         </div>
 
-        <Table columns={columns} dataSource={dataSource} pagination={false} />
+        {/* <Table columns={columns} dataSource={dataSource} pagination={false} /> */}
+        <Data_Table dataProps={{
+          dataTable: searchName ? searchData : data?.docs,
+          handleCheckboxChange: handleCheckboxChange,
+          mutate: mutate
+        }} />
         <div className="my-4 grid place-items-center">
           <Pagination
             defaultCurrent={data?.page}
