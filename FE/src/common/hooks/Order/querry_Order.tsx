@@ -10,7 +10,10 @@ import {
   getOrderOfWeek,
   getTop10ProductSale
 } from "../../../services/orderProduct";
-import { GetOrderBuyNumberOrNumberPhone } from "../../../_lib/Orders/order";
+import {
+  GetNew10OrderInDay,
+  GetOrderBuyNumberOrNumberPhone
+} from "../../../_lib/Orders/order";
 
 export function List_One_Order_User(userId: string) {
   const { data, ...rest } = useQuery({
@@ -116,6 +119,13 @@ export const useSearchOrdersByNumberOrNumberPhone = (searchOrder) => {
     queryKey: ["Search_Order", searchOrder],
     queryFn: () => GetOrderBuyNumberOrNumberPhone(searchOrder),
     enabled: !!searchOrder
+  });
+  return { data, ...rest };
+};
+export const use10NewOrderInDay = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["NewOrderInDay"],
+    queryFn: () => GetNew10OrderInDay()
   });
   return { data, ...rest };
 };

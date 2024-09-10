@@ -275,7 +275,7 @@ export const getOrderByDayOfWeek = async (req, res) => {
 
       if (orderDay.length > 0) {
         orderByDay.push({
-          day: startOfDay.toISOString().slice(0, 10), // Ngày theo định dạng YYYY-MM-DD
+          day: startOfDay.toISOString().slice(0, 10),
           totalOrders: orderDay[0].totalOrders,
           totalRevenue: orderDay[0].totalRevenue
         });
@@ -387,6 +387,7 @@ export const getTop10ProductBestSale = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
+
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("reviews"); // Sử dụng populate để lấy thông tin reviews
@@ -694,35 +695,31 @@ export const getOrderByNumberOrPhoneNumber = async (req, res) => {
     });
   }
 };
-export const get10OrderNewInDay = async (req, res) => {
+export const get10NewOrderToday = async (req, res) => {
   try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfday = new Date();
+    startOfday.setHours(0, 0, 0, 0);
+    const endOfday = new Date();
+    endOfday.setHours(23, 59, 59, 999);
 
-    // const orders = await Order.find({
-    //   datetime: {
-    //     $gte: startOfDay,
-    //     $lte: endOfDay
-    //   }
-    // })
-    //   .sort({ datetime: 1 })
-    //   .limit(10);
+    const orderToDay = await Order.find({
+      datetime: {
+        $gte: startOfday,
+        $lte: endOfday
+      }
+    })
+      .sort({ datetime: 1 })
+      .limit(10)
+      .exec();
 
-    // if (!orders.length) {
-    //   return res
-    //     .status(StatusCodes.NOT_FOUND)
-    //     .json({ message: "No orders found for today" });
-    // }
+    if (!orderToDay || orderToDay.length === 0) {
+      return res.status(404).json({ message: "Đơn hàng không tìm thấy!" });
+    }
 
-    // return res.status(StatusCodes.OK).json({
-    //   message: "Top 10 first orders today",
-    //   orders
-    // });
+    return res.status(StatusCodes.OK).json(orderToDay);
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server"
-    });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };

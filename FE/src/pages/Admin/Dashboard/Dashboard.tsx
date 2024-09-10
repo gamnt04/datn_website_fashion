@@ -15,6 +15,7 @@ import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
 import ChartPayment from "./components/ChartPayment";
 import TableTopProducts from "./components/TableTopProducts";
 import ChartUser from "./components/ChartUser";
+import TableOrder from "./components/TableOrder";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
@@ -160,9 +161,10 @@ const MainContent = () => {
           {/* <ChartPayment /> */}
           {/* <TableTopProducts /> */}
           <ChartRevenueWeekly />
+          <TableTopProducts />
         </div>
         <div className="mt-7 flex space-x-7">
-          <TableTopProducts />
+          <TableOrder />
         </div>
       </div>
     </>
