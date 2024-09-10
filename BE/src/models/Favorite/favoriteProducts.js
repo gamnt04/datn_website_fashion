@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
-
-const { Schema } = mongoose;
+import mongoose, { Schema } from "mongoose";
 
 const favoriteProductSchema = new Schema(
   {
@@ -13,14 +11,17 @@ const favoriteProductSchema = new Schema(
       {
         productId: {
           type: Schema.Types.ObjectId,
-          ref: "Products",
-          required: true
+          ref: "Products"
         },
         status: {
           type: String,
           enum: ["available", "unavailable"],
           default: "available"
         }
+        // attributeId: {
+        //   type: mongoose.Schema.Types.ObjectId,
+        //   ref: "Attributes"
+        // }
       }
     ]
   },
