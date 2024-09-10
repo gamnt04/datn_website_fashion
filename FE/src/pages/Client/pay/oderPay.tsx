@@ -8,13 +8,15 @@ import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import {
   Add_Address,
-  List_Address,
+  List_Address
 } from "../../../components/common/Client/_component/Address";
-import { Address, Chevron_right } from "../../../components/common/Client/_component/Icons";
+import {
+  Address,
+  Chevron_right
+} from "../../../components/common/Client/_component/Icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Loader } from "lucide-react";
-
 const OrderPay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
@@ -22,18 +24,19 @@ const OrderPay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth, isLoading } = List_Auth(userId);
+  // console.log(auth);
+
   const [selectedAddress, setSelectedAddress] = useState<any>();
+
   const { register, handleSubmit, setValue } = useForm();
-  const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
+  const { onSubmit, contextHolder, messageApi, isPending } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
-  
   let data: any;
   if (data_sessionStorage) {
     data = JSON.parse(data_sessionStorage);
   } else {
     routing("/profile/list_order");
   }
-
   useEffect(() => {
     if (auth && auth?.address) {
       const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
@@ -57,67 +60,80 @@ const OrderPay = () => {
     setIsOpen(!isOpen);
     if (address) setAddress(false);
   };
-
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsOpen(false);
+    setValue("userName", address?.fullName);
+    setValue("phone", address?.phoneNumber);
+    setValue("email", address?.email);
+    setValue("address", `${address?.addressDetails} - ${address?.address}`);
   };
 
-  // Hàm xử lý thanh toán đơn hàng
+  // add order
   const onAddOrder = async (data_form: any) => {
-    if (!data_form.address || data_form?.address?.trim() === "") {
+    if (!data_form.address || data_form.address.trim() === "") {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn địa chỉ!",
+        content: "Vui lòng chọn địa chỉ!"
       });
       return;
     }
 
-    const item_order: any = {
+    const item_order = {
       userId: userId,
       items: data?.data_order,
       customerInfo: {
-        ...data_form,
+        ...data_form
       },
       totalPrice: data?.totalPrice,
-      email: user?.user?.email,
+      email: user?.user?.email
     };
 
     try {
       if (data_form.payment === "VNPAY") {
-        sessionStorage.setItem("customerInfo", JSON.stringify({ ...data_form }));
+        const orderId = JSON.parse(
+          sessionStorage.getItem("item_order") as string
+        );
+        sessionStorage.setItem(
+          "customerInfo",
+          JSON.stringify({ ...data_form })
+        );
+        console.log("ok", orderId.totalPrice);
+        // Tạo URL thanh toán VNPAY
+        const UrlPayment = await axios.post(
+          `http://localhost:2004/api/v1/create_payment_url`,
+          {
+            orderId: nanoid(24),
+            totalPrice: orderId.totalPrice,
+            orderDescription: `Order ${orderId._id}`,
+            language: "vn"
+          }
+        );
 
-        // Tạo URL thanh toán VNPay
-        const response = await axios.post("http://localhost:2004/api/v1/create_payment_url", {
-          orderId: nanoid(24),
-          totalPrice: data?.totalPrice,
-          orderDescription: `Order ${nanoid(10)}`,
-          language: "vn",
-        });
+        // Lưu thông tin thanh toán trước khi chuyển hướng
+        sessionStorage.setItem("item_order", JSON.stringify(item_order));
 
-        if (response.data && response.data.paymentUrl) {
-          window.location.href = response.data.paymentUrl;
-        } else {
-          throw new Error("Không thể tạo URL thanh toán");
-        }
+        // Redirect người dùng đến trang thanh toán
+        window.location.href = UrlPayment.data.paymentUrl;
       } else {
-        // Xử lý các phương thức thanh toán khác
+        // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng)
         onSubmit(item_order);
       }
     } catch (error) {
       console.error("Order Creation Error: ", error);
       messageApi.open({
         type: "error",
-        content: "Lỗi tạo đơn hàng!",
+        content: "Lỗi tạo đơn hàng!"
       });
     }
   };
 
-  const dataSo = data?.data_order.map((order: any) => ({
-    key: order.productId._id,
-    ...order,
-  }));
-
+  const dataSo = data?.data_order.map((order: any) => {
+    return {
+      key: order.productId._id,
+      ...order
+    };
+  });
   const columns = [
     {
       title: "Sản phẩm",
@@ -129,13 +145,13 @@ const OrderPay = () => {
           className="w-[70px] lg:w-[100px] lg:h-[100px]"
           alt=""
         />
-      ),
+      )
     },
     {
       dataIndex: "name_product",
       key: "name_product",
       render: (_: any, order: any) => (
-        <div className="lg:flex lg:items-center gap-10">
+        <div className="lg:flex lg:items-center gap-32">
           <div>
             <h1 className="font-bold text-sm lg:text-base">
               {order?.productId?.name_product}
@@ -147,7 +163,7 @@ const OrderPay = () => {
               <p className="text-sm lg:text-base">
                 {order?.price_item?.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND",
+                  currency: "VND"
                 })}
               </p>
               <p className="text-sm lg:text-base">x {order?.quantity}</p>
@@ -157,7 +173,7 @@ const OrderPay = () => {
             Loại: {order?.color_item} - {order?.name_size}
           </p>
         </div>
-      ),
+      )
     },
     {
       dataIndex: "price_product",
@@ -166,17 +182,20 @@ const OrderPay = () => {
         <p className="hidden lg:block text-sm lg:text-base">
           {order?.price_item?.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
+      )
     },
     {
       dataIndex: "quantity",
       key: "quantity",
       render: (_: any, order: any) => (
-        <p className="hidden lg:block text-sm lg:text-base"> x {order?.quantity}</p>
-      ),
+        <p className="hidden lg:block text-sm lg:text-base">
+          {" "}
+          x {order?.quantity}
+        </p>
+      )
     },
     {
       dataIndex: "total_price_item",
@@ -185,14 +204,13 @@ const OrderPay = () => {
         <p className="font-bold hidden lg:block text-sm lg:text-base">
           {order?.total_price_item?.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
-    },
+      )
+    }
   ];
-
-  if (loadingOrder) {
+  if (isPending) {
     return (
       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
         <div className="animate-spin">
@@ -201,10 +219,9 @@ const OrderPay = () => {
       </div>
     );
   }
-
   return (
     <>
-      <div className="max-w-[1440px] w-[95vw] mx-auto">
+      <div className="xl:w-[1440px] w-[95vw] mx-auto">
         {contextHolder}
         {isLoading ? (
           <div className="flex justify-center items-center h-screen">
@@ -262,11 +279,11 @@ const OrderPay = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-8">
-                    {/* {!selectedAddress?.checked === true ? ('') : (
+                    {!selectedAddress?.checked === true ? ('') : (
                       <div className="border py-2 px-4 rounded border-black hidden lg:block">
                         Mặc định
                       </div>
-                    )} */}
+                    )}
                     <div
                       className="text-blue-400 underline cursor-pointer"
                       onClick={handleAddress}
@@ -276,19 +293,21 @@ const OrderPay = () => {
                         <Chevron_right />
                       </span>
                     </div>
-
                   </div>
                 </div>
               </div>
               <div className="border my-4 rounded shadow-sm">
-
-                <Table columns={columns} dataSource={dataSo} pagination={false} />
+                <Table
+                  columns={columns}
+                  dataSource={dataSo}
+                  pagination={false}
+                />
                 <div className="flex items-center justify-end gap-8 p-6">
                   {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                   <p className="text-xl font-bold text-black">
                     {data?.totalPrice?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND",
+                      currency: "VND"
                     })}
                   </p>
                 </div>
@@ -305,7 +324,7 @@ const OrderPay = () => {
                         Thanh toán khi nhận hàng
                       </option>
                       <option value="VNPAY">Thanh toán qua VNPAY</option>
-                      {/* <option value="MoMo">Thanh toán bằng MoMo</option> */}
+                      <option value="MoMo">Thanh toán bằng MoMo</option>
                     </select>
                   </div>
                 </div>
@@ -316,7 +335,7 @@ const OrderPay = () => {
                       <p>
                         {data?.totalPrice?.toLocaleString("vi", {
                           style: "currency",
-                          currency: "VND",
+                          currency: "VND"
                         })}
                       </p>
                     </div>
@@ -333,17 +352,17 @@ const OrderPay = () => {
                       <p className="text-xl font-bold text-black">
                         {data?.totalPrice?.toLocaleString("vi", {
                           style: "currency",
-                          currency: "VND",
+                          currency: "VND"
                         })}
                       </p>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end items-center py-6 px-6">
-                  {/* <p>
+                <div className="flex justify-between items-center py-6 px-6">
+                  <p>
                     Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo{" "}
                     <span className="text-blue-400">Điều khoản</span>
-                  </p> */}
+                  </p>
                   <button
                     className="w-[200px] py-3 bg-black text-white font-bold rounded"
                     type="submit"
@@ -352,23 +371,21 @@ const OrderPay = () => {
                   </button>
                 </div>
               </div>
-            </form >
-            {address && <Add_Address handleAddress={handleAddress}></Add_Address>}
-            {
-              isOpen && (
-                <List_Address
-                  auth={auth.address}
-                  handleTAdd={handleTAdd}
-                  handleAddressSelect={handleAddressSelect}
-                  handleAddress={handleAddress}
-                  selectedAddress={selectedAddress}
-                ></List_Address>
-              )
-            }
-          </div >
+            </form>
+            {address && (
+              <Add_Address handleAddress={handleAddress}></Add_Address>
+            )}
+            {isOpen && (
+              <List_Address
+                auth={auth.address}
+                handleTAdd={handleTAdd}
+                handleAddressSelect={handleAddressSelect}
+                handleAddress={handleAddress}
+              ></List_Address>
+            )}
+          </div>
         )}
       </div>
-
     </>
   );
 };

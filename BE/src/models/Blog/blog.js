@@ -16,4 +16,3 @@ const blogSchema = new Schema({
 
 export default mongoose.model('blogs', blogSchema);
 
-

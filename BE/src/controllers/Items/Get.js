@@ -123,6 +123,8 @@ export async function get_item_dashboard(req, res) {
       sort: { createdAt: -1 },
     };
     const data = await Products.paginate({}, options);
+    await Products.populate(data.docs, {path : 'category_id'})
+    await Products.populate(data.docs, { path : 'attributes' })
     return res.status(StatusCodes.OK).json({
       message: "OK",
       data,
@@ -140,7 +142,6 @@ export const getProductById = async (req, res) => {
     const products = await Products.findById(req.params.id).populate(
       "attributes"
     );
-
     // Kiểm tra tính hợp lệ của ObjectId
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res
