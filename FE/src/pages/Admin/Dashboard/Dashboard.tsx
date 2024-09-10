@@ -14,6 +14,7 @@ import ChartRevenueStatistcs from "./components/ChartRevenueStatistics";
 import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
 import ChartPayment from "./components/ChartPayment";
 import TableTopProducts from "./components/TableTopProducts";
+import ChartUser from "./components/ChartUser";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
@@ -151,15 +152,18 @@ const MainContent = () => {
             </div>
           </CardDataStats>
         </div>
-        <div className="mt-6 lg:mt-8 grid md:mt-6 md:gap-6 ">
+        <div className="grid grid-cols-12 gap-4 md:gap-6 2xl:gap-7.5 mt-5">
           <ChartRevenueStatistcs />
+          <ChartUser />
         </div>
         <div className=" mt-7 flex justify-between">
-          <ChartRevenueWeekly />
           {/* <ChartPayment /> */}
+          {/* <TableTopProducts /> */}
+          <ChartRevenueWeekly />
+        </div>
+        <div className="mt-7 flex space-x-7">
           <TableTopProducts />
         </div>
-        <div className="mt-7 flex space-x-7">{/* <TableTopProducts /> */}</div>
       </div>
     </>
   );
