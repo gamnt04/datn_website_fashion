@@ -16,6 +16,7 @@ import { Loader } from "lucide-react";
 import { nanoid } from "nanoid";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { toast } from "react-toastify";
+import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -66,13 +67,15 @@ const Pay = () => {
   };
 
   const item_order_checkked = data?.products?.filter((value: any) => value?.status_checked);
-  const dataSort = item_order_checkked?.map((order: any) => {
+
+  const totalPrice = item_order_checkked?.reduce((a: any, curr: any) => (a + curr?.total_price_item), 0);
+  const item_lon_hon_0 = filter_positive_Stock_Item(item_order_checkked);
+  const dataSort = item_lon_hon_0?.map((order: any) => {
     return {
       key: order.productId._id,
       ...order
     }
   })
-  const totalPrice = item_order_checkked?.reduce((a: any, curr: any) => (a + curr?.total_price_item), 0);
   // add order
   const onAddOrder = async (data_form: any) => {
     if (!data_form.address || data_form?.address.trim() === "") {
@@ -93,9 +96,9 @@ const Pay = () => {
           return;
         }
       }
-      else {
+      else if (i?.quantity > i?.productId?.stock) {
         toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
-        chỉ còn ${i?.productId?.name_product?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
         return;
       }
     }
