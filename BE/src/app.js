@@ -14,6 +14,7 @@ import Routes_payments from "./routers/OnlineCheckoutRoutes";
 import Routes_Attribute from "./routers/attribute";
 import Routes_review from "./routers/review";
 import Router_Notification from "./routers/notification";
+import Route_Shipper from "./routers/shipper";
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.use("/api/v1", Router_Contact);
 app.use("/api/v1", Routes_blog);
 app.use("/api/v1", Routes_payments);
 app.use("/api/v1", Routes_review);
+app.use("/api/v1", Route_Shipper);
 
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;
