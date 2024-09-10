@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../../models/Auth/users";
 import { signupSchema } from "../../validations/auth";
 import mongoose from "mongoose";
+import Shipper from "../../models/Shipper/shipper";
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -167,31 +168,49 @@ export const signup = async (req, res) => {
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    const user = await User.findOne({ email });
-    // user = { _id: , name: , xxx}
+    // Tìm người dùng trong bảng User trước
+    let user = await User.findOne({ email });
+
+    // Nếu không tìm thấy trong bảng User, tìm trong bảng Courier
+    if (!user) {
+      user = await Shipper.findOne({ email });
+    }
+
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
         messages: ["Email không tồn tại"],
       });
     }
+
+    // So sánh mật khẩu
     const isMatch = await bcryptjs.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         messages: ["Mật khẩu không chính xác"],
       });
     }
-    const token = jwt.sign({ userId: user._id }, "123456", {
-      expiresIn: "7d",
-    });
-    // const accessToken = generateAccessToken(user._id);
-    // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
 
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Đăng nhập thành công", user, token });
+    // Tạo token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role || "courier" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Trả về phản hồi với thông tin đăng nhập
+    return res.status(StatusCodes.OK).json({
+      message: "Đăng nhập thành công",
+      user,
+      token,
+    });
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi server" });
   }
 };
 export const logout = async (req, res) => {
