@@ -193,9 +193,9 @@ export const signin = async (req, res) => {
         messages: ["Mật khẩu không chính xác"]
       });
     }
-    const token = jwt.sign({ userId: user._id }, "123456", {
-      expiresIn: "7d"
-    });
+    // const token = jwt.sign({ userId: user._id }, "123456", {
+    //   expiresIn: "7d"
+    // });
     // const accessToken = generateAccessToken(user._id);
     // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
 
