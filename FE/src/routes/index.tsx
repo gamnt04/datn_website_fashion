@@ -42,6 +42,7 @@ import List_order from "../pages/Client/List_Order/page";
 import Feedback from "../pages/Admin/contact/Feedback";
 import ContactDetail from "../pages/Admin/contact/ContactDetail";
 import Notification from "../components/Notification/Page";
+import CourierTable from "../pages/Admin/Shipper/Shipper";
 import DescriptionProduct from "../pages/Client/[ProductDetail]/DescriptionProduct";
 const RouterComponent = () => {
   return (
@@ -103,6 +104,7 @@ const RouterComponent = () => {
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="contact/:id" element={<ContactDetail />} />
             <Route path="feedback/:id" element={<Feedback />} />
+            <Route path="deliveries" element={<CourierTable/>} />
 
             <Route path="blogs" element={<Blog />} />
 
