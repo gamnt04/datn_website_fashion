@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../../models/Auth/users";
 import { signupSchema } from "../../validations/auth";
 import mongoose from "mongoose";
+import { date } from "joi";
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -24,20 +25,20 @@ export const Get_All_User_Search = async (req, res) => {
     if (_search) {
       querry.$and = [
         {
-          userName: { $regex: new RegExp(_search, "i") },
-        },
+          userName: { $regex: new RegExp(_search, "i") }
+        }
       ];
     }
     const user = await User.find(querry);
     console.log(user);
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      user,
+      user
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 };
@@ -70,8 +71,8 @@ export const GetUsersByEmailOrName = async (req, res) => {
     const users = await User.find({
       $or: [
         { email: { $regex: new RegExp(searchUser, "i") } },
-        { userName: { $regex: new RegExp(searchUser, "i") } },
-      ],
+        { userName: { $regex: new RegExp(searchUser, "i") } }
+      ]
     });
 
     if (users.length === 0) {
@@ -93,7 +94,7 @@ export const isAuthenticated = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "Vui lòng đăng nhập để tiếp tục.",
+      message: "Vui lòng đăng nhập để tiếp tục."
     });
   }
 
@@ -102,21 +103,21 @@ export const isAuthenticated = async (req, res, next) => {
     const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Người dùng không tồn tại.",
+        message: "Người dùng không tồn tại."
       });
     }
     req.user = user;
     next();
   } catch (error) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "Token không hợp lệ hoặc đã hết hạn.",
+      message: "Token không hợp lệ hoặc đã hết hạn."
     });
   }
 };
 export const isAdmin = (req, res, next) => {
   if (req.user.role !== "admin") {
     return res.status(StatusCodes.FORBIDDEN).json({
-      message: "Bạn không có quyền truy cập tài nguyên này.",
+      message: "Bạn không có quyền truy cập tài nguyên này."
     });
   }
   next();
@@ -138,13 +139,13 @@ export const signup = async (req, res) => {
     if (error) {
       const messages = error.details.map((item) => item.message);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        messages,
+        messages
       });
     }
 
     if (existUser) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Email đã tồn tại"],
+        messages: ["Email đã tồn tại"]
       });
     }
     // Mã hóa mật khẩu
@@ -155,7 +156,7 @@ export const signup = async (req, res) => {
     const user = await User.create({
       ...req.body,
       password: hashedPassword,
-      role,
+      role
     });
     return res
       .status(StatusCodes.CREATED)
@@ -172,17 +173,17 @@ export const signin = async (req, res) => {
     // user = { _id: , name: , xxx}
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        messages: ["Email không tồn tại"],
+        messages: ["Email không tồn tại"]
       });
     }
     const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Mật khẩu không chính xác"],
+        messages: ["Mật khẩu không chính xác"]
       });
     }
     const token = jwt.sign({ userId: user._id }, "123456", {
-      expiresIn: "7d",
+      expiresIn: "7d"
     });
     // const accessToken = generateAccessToken(user._id);
     // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
@@ -348,7 +349,7 @@ export const add_address = async (req, res) => {
     // Thêm địa chỉ mới vào mảng địa chỉ và thiết lập làm mặc định nếu cần
     user.address.push({
       ...newAddress,
-      checked: setDefault, // Đặt địa chỉ mới làm mặc định nếu setDefault là true
+      checked: setDefault // Đặt địa chỉ mới làm mặc định nếu setDefault là true
     });
 
     // Lưu thay đổi
@@ -357,7 +358,7 @@ export const add_address = async (req, res) => {
     // Trả về dữ liệu cập nhật
     return res.status(StatusCodes.OK).json({
       message: "Đã thêm địa chỉ thành công",
-      address: updatedUser.address,
+      address: updatedUser.address
     });
   } catch (error) {
     console.error("Lỗi khi thêm địa chỉ:", error);
@@ -442,14 +443,14 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -464,7 +465,7 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -476,12 +477,12 @@ export const setDefaultAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã thiết lập địa chỉ mặc định thành công",
-      address: updatedUser.address.id(addressId),
+      address: updatedUser.address.id(addressId)
     });
   } catch (error) {
     console.error("Lỗi khi thiết lập địa chỉ mặc định:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi thiết lập địa chỉ mặc định",
+      message: "Lỗi khi thiết lập địa chỉ mặc định"
     });
   }
 };
@@ -498,14 +499,14 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -515,7 +516,7 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -530,12 +531,12 @@ export const updateUserAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: updatedAddressData,
+      address: updatedAddressData
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ",
+      message: "Lỗi khi cập nhật địa chỉ"
     });
   }
 };
@@ -594,10 +595,7 @@ export const updateUser = async (req, res) => {
   const updatedData = req.body;
 
   try {
-    // Tìm người dùng hiện tại
     const user = await User.findById(userId);
-
-    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -610,7 +608,7 @@ export const updateUser = async (req, res) => {
         updatedFields.push({
           field: key,
           value: updatedData[key], // Thêm trường value để lưu giá trị cập nhật
-          time: new Date(),
+          time: new Date()
         });
         user[key] = updatedData[key];
       }
@@ -626,10 +624,54 @@ export const updateUser = async (req, res) => {
     return res.status(StatusCodes.OK).json({
       message: "Cập nhật người dùng thành công",
       updatedFields,
-      user,
+      user
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+
+export const newAuthIn7Day = async (req, res) => {
+  try {
+    const dayNow = new Date();
+    dayNow.setHours(23, 59, 59, 999);
+    const dayStart = new Date(dayNow);
+    dayStart.setDate(dayStart.getDate() - 7);
+    const usersByDate = await User.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: dayStart,
+            $lte: dayNow
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%d/%m/%Y", date: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+    if (usersByDate.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "No new users in the last 7 days" });
+    }
+    return res.status(StatusCodes.OK).json({
+      message: "New users in the last 7 days by date",
+      usersByDate
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách người dùng mới:", error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
