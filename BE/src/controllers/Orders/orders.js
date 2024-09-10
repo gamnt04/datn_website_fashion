@@ -2,7 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
 import Attributes from "../../models/attribute/attribute";
-import Notification from "../../models/Notification/Notification";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 export const createOrder = async (req, res) => {
@@ -60,7 +59,13 @@ export const createOrder = async (req, res) => {
               for (let x of k.size) {
                 if (x.name_size) {
                   if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute - i.quantity;
+                    if (x.stock_attribute < i.quantity) {
+                      return res.status(StatusCodes.BAD_REQUEST).json({
+                        message: "Sản phẩm không đủ hàng",
+                      });
+                    } else {
+                      x.stock_attribute = x.stock_attribute - i.quantity;
+                    }
                   }
                 } else {
                   x.stock_attribute = x.stock_attribute - i.quantity;
@@ -526,7 +531,11 @@ export async function get_orders_client(req, res) {
   const options = {
     page: _page,
     limit: _limit,
+<<<<<<< HEAD
     sort: _sort ? { [_sort]: 1 } : { datetime: -1 } // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+=======
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+>>>>>>> 2705b1cecfa1daebb570f2adc28473c6ec6dba44
   };
 
   const query = {};

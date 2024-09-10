@@ -122,11 +122,11 @@ const Complete = ({ dataProps }: any) => {
     if (currentProductId) {
       addReview({
         contentReview: values.contentReview || "",
-        productId: currentProductId,
+       productId: currentProductId,
         imagesReview: fileList.map((file) => file.url as string), // Gửi URL ảnh lên server
       });
     }
-  };
+  }; 
 
   const { mutate } = Mutation_Cart("ADD");
   const addCart = (orderId?: string | number) => {
