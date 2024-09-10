@@ -26,7 +26,6 @@ const cartSchema = new Schema(
         color_item: String,
         stock_item: Number,
         name_size: String,
-        quantity_attr: Number,
         total_price_item: Number,
         status_checked: {
           type: Boolean,

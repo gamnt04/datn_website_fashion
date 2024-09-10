@@ -10,8 +10,6 @@ import { LoadingOutlined } from "@ant-design/icons";
 const ProductDetail = () => {
   const { id } = useParams();
   const { data, isLoading, isError } = Query_Products(id);
-  console.log(data?.products);
-
   return (
     <>
       <div className="max-w-[1440px] w-[95vw] mx-auto">
