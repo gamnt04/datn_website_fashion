@@ -19,14 +19,11 @@ interface IAttr {
 }
 
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
-  console.log(dataProps);
-
   const navi = useNavigate();
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
   const [size, setSize] = useState();
   const [arr_size, setArr_Size] = useState<any>();
-  const [arr_color, setArr_Color] = useState<any>();
   const [price_attr, set_price_attr] = useState(0);
   const [quantity_attr, setQuantity_attr] = useState();
   const [quantity_item, setQuantity_item] = useState<number>(1);
@@ -35,19 +32,27 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
-  const addCart = (id?: string | number) => {
+  const addCart = (id?: string | number, action?: string) => {
     if (account) {
       if (quantity_attr) {
-        const item = {
+        let item: any = {
           userId: account,
           productId: id,
           price_item_attr: price_attr,
           quantity: quantity_item,
           color: color,
           size: size,
-          stock_item: quantity_attr,
         };
+        if (action === 'checkout') {
+          item = {
+            ...item,
+            status_checked: true
+          }
+        }
         mutate(item);
+        if (action === 'checkout') {
+          navi('/cart')
+        }
       } else {
         text_validate();
       }
@@ -73,7 +78,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           }
         });
       });
-      setArr_Color(a);
     }
   }, [dataProps]);
 
@@ -100,13 +104,13 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         setQuantity_item(1);
         ref_validate_attr?.current?.classList.add("hidden");
         ref_validate_attr?.current?.classList.remove("block");
-        for (let i of dataProps?.products?.attributes?.values) {
+        for (const i of dataProps?.products?.attributes?.values) {
           if (i?.color == color) {
-            for (let k of i.size) {
+            for (const k of i.size) {
               k?.name_size == item &&
                 (setQuantity_attr(k?.stock_attribute),
-                setSize(k.name_size),
-                set_price_attr(k?.price_attribute));
+                  setSize(k.name_size),
+                  set_price_attr(k?.price_attribute));
             }
           }
         }
@@ -118,7 +122,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   function handle_quantity_item(action: any) {
     switch (action) {
       case "dow":
-        if (color && size) {
+        if (quantity_attr) {
           if (quantity_item > 1) {
             setQuantity_item(quantity_item - 1);
           }
@@ -176,38 +180,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   }
   const price = price_product * quantity_item;
   const price_item_attr = price_attr * quantity_item;
-  // next order
-  function next_order() {
-    if (account) {
-      sessionStorage.removeItem("item_order");
-      if (!quantity_attr) {
-        text_validate();
-        return;
-      }
-      const items_order = [
-        {
-          productId: dataProps?.products,
-          quantity: quantity_item,
-          price_item: price_attr,
-          color_item: color,
-          name_size: size,
-          total_price_item: price_item_attr,
-        },
-      ];
-      const data_order = {
-        id_user: account?._id,
-        data_order: items_order,
-        totalPrice: price_item_attr,
-        action: "data_detail",
-      };
-
-      sessionStorage.setItem("item_order", JSON.stringify(data_order));
-      navi("/order/pay");
-    } else {
-      navi("/login");
-    }
-  }
-
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       <div className="flex flex-col lg:gap-y-2">
@@ -267,7 +239,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           </div>
         </div>
         {/* row 2 */}
-        {dataProps && (
+        {dataProps?.products?.attributes && (
           <>
             <div>
               <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
@@ -277,9 +249,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 {dataProps?.products?.attributes?.values?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
-                    className={`${Convert_Color(item?.color)} ${
-                      color == item?.color ? "after:block" : "after:hidden"
-                    } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
+                    className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
+                      } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
                   ></button>
                 ))}
               </div>
@@ -294,9 +265,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                   {arr_size?.map((item: any) => (
                     <button
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
-                      className={`${
-                        size == item?.name_size && "bg-black text-white"
-                      } hover:bg-black hover:text-white grid place-items-center`}
+                      className={`${size == item?.name_size && "bg-black text-white"
+                        } hover:bg-black hover:text-white grid place-items-center`}
                     >
                       {item?.name_size}
                     </button>
@@ -356,7 +326,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             </Button>
             {/* add cart */}
             <Button
-              onClick={next_order}
+              onClick={() => addCart(_id, 'checkout')}
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"
             >
               Thanh toán

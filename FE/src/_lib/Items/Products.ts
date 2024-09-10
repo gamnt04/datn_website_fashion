@@ -69,11 +69,11 @@ export async function get_detail_items(id: number | string) {
     }
 
     const res = await fetch(`${baseUri}/${id}`);
+    console.log(res)
     if (!res.ok) {
       console.warn("Server trả về trạng thái không thành công:", res.status);
       throw new Error("Không thể lấy sản phẩm");
     }
-
     const data = await res.json();
     if (!data) {
       throw new Error("Không có dữ liệu sản phẩm");
