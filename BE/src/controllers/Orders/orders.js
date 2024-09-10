@@ -31,7 +31,7 @@ export const createOrder = async (req, res) => {
       },
       totalPrice,
     });
-    await order.save();
+
     const dataCart = await Cart.findOne({ userId }).populate("products");
     if (!dataCart) {
       console.error("Cart not found for userId:", userId);
@@ -82,6 +82,7 @@ export const createOrder = async (req, res) => {
         }
       }
     }
+    await order.save();
     await dataCart.save();
     await SendMail(email, order);
     return res.status(StatusCodes.CREATED).json(order);
