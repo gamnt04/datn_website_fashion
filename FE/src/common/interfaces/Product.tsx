@@ -11,8 +11,9 @@ export interface IProduct {
   image_product?: string;
   gallery_product?: string[];
   tag_product?: string[];
+  stock?: number | string;
   //quantity_product?: number;
-  createdAt?: ReactNode;
+  createdAt: string | number;
   updatedAt?: ReactNode;
   deletedAt?: ReactNode;
   deleted?: boolean;
