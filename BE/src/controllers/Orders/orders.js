@@ -26,9 +26,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`
       },
       totalPrice
     });
@@ -51,6 +50,7 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
+      console.log(i.quantity)
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
         for (let j of data_attr) {
@@ -60,10 +60,6 @@ export const createOrder = async (req, res) => {
                 if (x.name_size) {
                   if (x.name_size == i.name_size) {
                     if (x.stock_attribute < i.quantity) {
-                      return res.status(StatusCodes.BAD_REQUEST).json({
-                        message: "Sản phẩm không đủ hàng"
-                      });
-                    } else {
                       x.stock_attribute = x.stock_attribute - i.quantity;
                     }
                   }
@@ -162,9 +158,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`
         },
         totalPrice
       });

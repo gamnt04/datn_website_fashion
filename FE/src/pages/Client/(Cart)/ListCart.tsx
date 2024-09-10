@@ -17,6 +17,7 @@ import {
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import Het_hang from "./_components/het_hang";
+import { toast } from "react-toastify";
 
 interface DataType {
   key: string;
@@ -110,7 +111,6 @@ const ListCart = () => {
         ...product,
       }
   );
-  console.log(dataSort);
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -259,9 +259,35 @@ const ListCart = () => {
       },
     },
   ];
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
+  const item_order_checkked = data?.products?.filter((value: any) => value?.status_checked);
   // next order
   function next_order() {
     ScrollTop();
+
+    // validate stock 
+    for (const i of item_order_checkked) {
+      if (i?.productId?.attributes) {
+        const check_color = i?.productId?.attributes?.values?.find((a: any) => a?.color === i?.color_item);
+        const check_size = check_color?.size?.find((b: any) => (b?.name_size?.trim() ? b?.name_size : undefined) === i?.name_size);
+        if (i?.quantity > check_size?.stock_attribute) {
+          toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
+            chỉ còn ${check_size?.stock_attribute}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+          return;
+        }
+      }
+      else {
+        toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
+          chỉ còn ${i?.productId?.name_product?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+        return;
+      }
+    }
     const data_cart = dataSort?.filter(
       (item: any) => item?.status_checked && item
     );
@@ -273,27 +299,12 @@ const ListCart = () => {
         });
         return null
       }
-      const data_order = {
-        id_user: userId,
-        data_order: data_cart,
-        totalPrice: data?.total_price,
-        action: "data_cart",
-        _id: data?._id,
-      };
-      sessionStorage.setItem("item_order", JSON.stringify(data_order));
       routing("/cart/pay");
     } else {
       routing("/login");
     }
   }
 
-  if (isPending) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
-      </div>
-    );
-  }
 
   if (isError) {
     return <p>{error.message}</p>;
