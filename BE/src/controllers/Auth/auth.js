@@ -4,11 +4,8 @@ import jwt from "jsonwebtoken";
 import User from "../../models/Auth/users";
 import { signupSchema } from "../../validations/auth";
 import mongoose from "mongoose";
-<<<<<<< HEAD
 import { date } from "joi";
-=======
 import Shipper from "../../models/Shipper/shipper";
->>>>>>> 2705b1cecfa1daebb570f2adc28473c6ec6dba44
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -196,14 +193,11 @@ export const signin = async (req, res) => {
         messages: ["Mật khẩu không chính xác"]
       });
     }
-<<<<<<< HEAD
     const token = jwt.sign({ userId: user._id }, "123456", {
       expiresIn: "7d"
     });
     // const accessToken = generateAccessToken(user._id);
     // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
-=======
->>>>>>> 2705b1cecfa1daebb570f2adc28473c6ec6dba44
 
     // Tạo token
     const token = jwt.sign(
@@ -216,7 +210,7 @@ export const signin = async (req, res) => {
     return res.status(StatusCodes.OK).json({
       message: "Đăng nhập thành công",
       user,
-      token,
+      token
     });
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
