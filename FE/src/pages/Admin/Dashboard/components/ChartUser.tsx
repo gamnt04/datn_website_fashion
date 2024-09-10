@@ -1,6 +1,7 @@
 import { ApexOptions } from "apexcharts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import { useGetNewUserIn7Day } from "../../../../common/hooks/Auth/querry_Auth";
 
 const options: ApexOptions = {
   colors: ["#80CAEE"],
@@ -16,7 +17,6 @@ const options: ApexOptions = {
       enabled: false
     }
   },
-
   responsive: [
     {
       breakpoint: 1536,
@@ -42,9 +42,8 @@ const options: ApexOptions = {
   dataLabels: {
     enabled: false
   },
-
   xaxis: {
-    categories: ["M", "T", "W", "T", "F", "S", "S"]
+    categories: [] // Sẽ được cập nhật từ dữ liệu
   },
   legend: {
     position: "top",
@@ -52,7 +51,6 @@ const options: ApexOptions = {
     fontFamily: "Satoshi",
     fontWeight: 500,
     fontSize: "14px",
-
     markers: {
       radius: 99
     }
@@ -67,27 +65,49 @@ interface ChartTwoState {
     name: string;
     data: number[];
   }[];
+  categories: string[];
 }
+
 const ChartUser: React.FC = () => {
+  const { data: dataUser } = useGetNewUserIn7Day();
+
   const [state, setState] = useState<ChartTwoState>({
     series: [
       {
-        name: "Revenue",
-        data: [13, 23, 20, 8, 13, 27, 15]
+        name: "Số lượng",
+        data: []
       }
-    ]
+    ],
+    categories: [] // Danh sách ngày
   });
 
-  const handleReset = () => {
-    setState((prevState) => ({
-      ...prevState
-    }));
-  };
-  handleReset;
+  useEffect(() => {
+    if (dataUser?.usersByDate) {
+      // Cập nhật categories và dữ liệu từ dataUser
+      const categories = dataUser.usersByDate.map((user) => user.day);
+      const chartData = dataUser.usersByDate.map((user) => user.totalUser);
+
+      setState({
+        series: [
+          {
+            name: "Số lượng",
+            data: chartData
+          }
+        ],
+        categories: categories
+      });
+    }
+  }, [dataUser]);
+
+  const totalUser =
+    dataUser?.usersByDate?.reduce(
+      (sum: number, user) => sum + user.totalUser,
+      0
+    ) || 0;
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-      <div className="flex justify-between  mb-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex justify-between mb-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center p-4">
           <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
             <svg
@@ -103,7 +123,7 @@ const ChartUser: React.FC = () => {
           </div>
           <div>
             <h5 className="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
-              14
+              {totalUser}
             </h5>
             <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
               Số lượng người dùng mới trong 7 ngày vừa qua
@@ -115,7 +135,7 @@ const ChartUser: React.FC = () => {
       <div>
         <div id="chartTwo" className="-ml-5 -mb-9 px-4">
           <ReactApexChart
-            options={options}
+            options={{ ...options, xaxis: { categories: state.categories } }}
             series={state.series}
             type="bar"
             height={350}

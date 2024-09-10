@@ -257,7 +257,6 @@ export const refreshToken = async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ error: "Token is blacklisted" });
     }
-
     // Giải mã oldToken để lấy userId
     let decoded;
     try {
@@ -273,7 +272,6 @@ export const refreshToken = async (req, res) => {
           .json({ error: "Invalid token" });
       }
     }
-
     const userId = decoded.userId;
     if (!userId) {
       return res
@@ -663,33 +661,38 @@ export const newAuthIn7Day = async (req, res) => {
     const dayNow = new Date();
     dayNow.setHours(23, 59, 59, 999);
     const dayStart = new Date(dayNow);
-    dayStart.setDate(dayStart.getDate() - 7);
-    const usersByDate = await User.aggregate([
-      {
-        $match: {
-          createdAt: {
-            $gte: dayStart,
-            $lte: dayNow
+    dayStart.setDate(dayStart.getDate() - 6);
+
+    const usersByDate = [];
+
+    for (let i = 0; i < 7; i++) {
+      let currentDay = new Date(dayStart);
+      currentDay.setDate(currentDay.getDate() + i);
+      currentDay.setHours(0, 0, 0, 0);
+      let startOfDay = new Date(currentDay);
+      const usersDate = await User.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: startOfDay,
+              $lt: new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+            }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalUser: { $sum: 1 }
           }
         }
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: { format: "%d/%m/%Y", date: "$createdAt" }
-          },
-          count: { $sum: 1 }
-        }
-      },
-      {
-        $sort: { _id: 1 }
-      }
-    ]);
-    if (usersByDate.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "No new users in the last 7 days" });
+      ]);
+
+      usersByDate.push({
+        day: startOfDay.toISOString().slice(0, 10),
+        totalUser: usersDate.length > 0 ? usersDate[0].totalUser : 0
+      });
     }
+
     return res.status(StatusCodes.OK).json({
       message: "New users in the last 7 days by date",
       usersByDate
