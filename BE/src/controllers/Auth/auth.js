@@ -139,6 +139,7 @@ export const signup = async (req, res) => {
   const { email, password } = req.body;
   const { error } = signupSchema.validate(req.body, { abortEarly: false });
   const existUser = await User.findOne({ email });
+  const existShipper = await Shipper.findOne({ email });
 
   try {
     if (error) {
@@ -149,6 +150,11 @@ export const signup = async (req, res) => {
     }
 
     if (existUser) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        messages: ["Email đã tồn tại"],
+      });
+    }
+    if (existShipper) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         messages: ["Email đã tồn tại"],
       });
@@ -175,10 +181,7 @@ export const signin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Tìm người dùng trong bảng User trước
     let user = await User.findOne({ email });
-
-    // Nếu không tìm thấy trong bảng User, tìm trong bảng Courier
     if (!user) {
       user = await Shipper.findOne({ email });
     }
