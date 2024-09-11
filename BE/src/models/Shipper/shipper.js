@@ -9,7 +9,7 @@ const validatePhoneNumber = (phone) => {
 
 const ShipperSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true }, // Tên shipper
+    fullName: { type: String, required: true }, // Tên shipper
     phone: {
       type: String,
       required: true,
@@ -41,8 +41,18 @@ const ShipperSchema = new mongoose.Schema(
     },
     vehicle: { type: String }, // Phương tiện
     token: { type: String }, // Thêm trường token
-    tokenExpiration: { type: Date }, // Thêm trường ngày hết hạn của token/ Token để xác minh email
-
+    address: [
+      {
+        fullName: { type: String },
+        phoneNumber: { type: String },
+        address: { type: String },
+        addressDetails: { type: String },
+        checked: { type: Boolean, default: false },
+      },
+    ],
+    birthDate: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ["courier"],

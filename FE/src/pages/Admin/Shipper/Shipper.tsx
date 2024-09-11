@@ -87,9 +87,9 @@ const ShipperList: React.FC = () => {
       ),
     },
     {
-      key: "name",
+      key: "fullName",
       title: "Tên ",
-      dataIndex: "name",
+      dataIndex: "fullName",
     },
     {
       key: "vehicle",

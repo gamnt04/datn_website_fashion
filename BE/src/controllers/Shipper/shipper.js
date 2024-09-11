@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import User from "../../models/Auth/users";
 dotenv.config();
 
-const sendEmail = async (name, email, password, token) => {
+const sendEmail = async (fullName, email, password, token) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -21,10 +21,10 @@ const sendEmail = async (name, email, password, token) => {
     from: process.env.SMTP_USER,
     to: email,
     subject: " Xác Nhận Tài Khoản",
-    text: `Kính gửi ${name},
+    text: `Kính gửi ${fullName},
 
     Chúng tôi đã đăng ký thành công tài khoản của bạn với thông tin dưới đây:
-    Tên người dùng: ${name}
+    Tên người dùng: ${fullName}
     Email:  ${email}
 
     Để hoàn tất quy trình đăng ký, vui lòng xác nhận tài khoản của bạn bằng cách nhấp vào liên kết bên dưới:
@@ -64,7 +64,16 @@ const generateToken = (email, role) => {
 // Tạo mới một shipper
 export const createShipper = async (req, res) => {
   try {
-    const { name, vehicle, phone, email, status, avatar } = req.body;
+    const {
+      fullName,
+      vehicle,
+      phone,
+      email,
+      status,
+      avatar,
+      address,
+      birthDate,
+    } = req.body;
     // Kiểm tra xem email đã tồn tại chưa
     const findEmailShipper = await Shipper.findOne({ email });
     if (findEmailShipper) {
@@ -83,13 +92,15 @@ export const createShipper = async (req, res) => {
     const verificationToken = generateToken(email, "shipper");
 
     const newShipper = new Shipper({
-      name,
+      fullName,
       vehicle,
       phone,
       email,
       password: hashedPassword,
       status,
       avatar,
+      address,
+      birthDate,
       token: verificationToken,
       tokenExpiration: Date.now() + 3600000, // Token hết hạn sau 1 giờ
     });
@@ -98,7 +109,7 @@ export const createShipper = async (req, res) => {
     await newShipper.save();
 
     // Gửi email xác thực
-    await sendEmail(name, email, defaultPassword, verificationToken);
+    await sendEmail(fullName, email, defaultPassword, verificationToken);
 
     res
       .status(201)
@@ -140,11 +151,11 @@ export const getShipperById = async (req, res) => {
 export const updateShipper = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, vehicle, phone, email, status, avatar } = req.body;
+    const { fullName, vehicle, phone, email, status, avatar } = req.body;
 
     const updatedShipper = await Shipper.findByIdAndUpdate(
       id,
-      { name, vehicle, phone, store, status, rating },
+      { fullName, vehicle, phone, store, status, rating },
       { new: true } // Trả về dữ liệu mới sau khi cập nhật
     );
 
@@ -181,11 +192,11 @@ export const deleteShipper = async (req, res) => {
 // Tìm kiếm theo tên shipper
 export const GetShippersByName = async (req, res) => {
   try {
-    const { name } = req.body; // Lấy name từ body của request
+    const { fullName } = req.body; // Lấy name từ body của request
 
     // Tìm kiếm shipper theo trường "name"
     const shippers = await Shipper.find({
-      name: { $regex: new RegExp(name, "i") }, // Tìm kiếm theo tên
+      name: { $regex: new RegExp(fullName, "i") }, // Tìm kiếm theo tên
     });
 
     if (shippers.length === 0) {
