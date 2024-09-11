@@ -5,6 +5,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import User from "../../models/Auth/users";
 dotenv.config();
 
 const sendEmail = async (name, email, password, token) => {
@@ -65,8 +66,12 @@ export const createShipper = async (req, res) => {
   try {
     const { name, vehicle, phone, email, status, avatar } = req.body;
     // Kiểm tra xem email đã tồn tại chưa
-    const existingShipper = await Shipper.findOne({ email });
-    if (existingShipper) {
+    const findEmailShipper = await Shipper.findOne({ email });
+    if (findEmailShipper) {
+      return res.status(400).json({ message: "Email đã tồn tại" });
+    }
+    const findEmailUser = await User.findOne({ email });
+    if (findEmailUser) {
       return res.status(400).json({ message: "Email đã tồn tại" });
     }
     // Tạo mật khẩu mặc định
@@ -99,7 +104,6 @@ export const createShipper = async (req, res) => {
       .status(201)
       .json({ message: "Tạo shipper thành công!", shipper: newShipper });
   } catch (error) {
-    console.error("Lỗi khi tạo shipper:", error); // Log lỗi ra console
     res
       .status(500)
       .json({ message: "Lỗi khi tạo shipper", error: error.message });
@@ -136,7 +140,7 @@ export const getShipperById = async (req, res) => {
 export const updateShipper = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, vehicle, phone, store, status, rating } = req.body;
+    const { name, vehicle, phone, email, status, avatar } = req.body;
 
     const updatedShipper = await Shipper.findByIdAndUpdate(
       id,
