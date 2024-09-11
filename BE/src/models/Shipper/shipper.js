@@ -37,7 +37,7 @@ const ShipperSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["On delivery", "Available", "Offline"], // Trạng thái shipper
-      default: "Available",
+      default: "Offline",
     },
     vehicle: { type: String }, // Phương tiện
     token: { type: String }, // Thêm trường token

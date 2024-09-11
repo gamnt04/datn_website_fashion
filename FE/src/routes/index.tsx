@@ -104,8 +104,7 @@ const RouterComponent = () => {
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="contact/:id" element={<ContactDetail />} />
             <Route path="feedback/:id" element={<Feedback />} />
-            <Route path="deliveries" element={<CourierTable/>} />
-
+            <Route path="deliveries" element={<CourierTable />} />
             <Route path="blogs" element={<Blog />} />
 
             <Route path="blogs/add_blog" element={<BlogAdd />} />
