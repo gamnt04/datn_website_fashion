@@ -43,7 +43,7 @@ const sendEmail = async (fullName, email, password, token) => {
 
 // Hàm tạo mật khẩu ngẫu nhiên dài 8 ký tự
 const randomPassword = () => {
-  return crypto.randomBytes(4).toString("hex"); // Sinh mật khẩu ngẫu nhiên dài 8 ký tự (4 byte)
+  return crypto.randomBytes(4).toString("hex");
 };
 
 // Hàm mã hóa mật khẩu
@@ -52,13 +52,13 @@ const hashPassword = async (password) => {
 };
 
 // Tạo token với thông tin role và email
-const generateToken = (email, role) => {
+const generateToken = (fullName, role) => {
   const payload = {
-    email,
+    fullName,
     role,
     exp: Math.floor(Date.now() / 1000) + 60 * 60, // Token hết hạn sau 1 giờ
   };
-  return jwt.sign(payload, process.env.JWT_SECRET); // Sử dụng bí mật từ biến môi trường
+  return jwt.sign(payload, process.env.JWT_SECRET);
 };
 
 // Tạo mới một shipper
@@ -89,7 +89,7 @@ export const createShipper = async (req, res) => {
     const hashedPassword = await hashPassword(defaultPassword);
 
     // Tạo token xác thực với email và role
-    const verificationToken = generateToken(email, "shipper");
+    const verificationToken = generateToken(fullName, "courier");
 
     const newShipper = new Shipper({
       fullName,
@@ -121,6 +121,97 @@ export const createShipper = async (req, res) => {
   }
 };
 
+// Hàm gửi email xác nhận
+const sendUpdateEmail = async (fullName, email, token) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.SMTP_USER,
+    to: email,
+    subject: "Xác Nhận Cập Nhật Thông Tin",
+    text: `Kính gửi ${fullName},
+
+    Chúng tôi đã cập nhật thông tin của bạn thành công. Vui lòng xác nhận cập nhật này bằng cách nhấp vào liên kết bên dưới:
+    http://your-domain.com/verify-update?token=${token}
+    
+    Xin chân thành cảm ơn!`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
+// Cập nhật thông tin shipper và gửi email xác nhận
+export const updateShipper = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      fullName,
+      vehicle,
+      phone,
+      email,
+      status,
+      avatar,
+      address,
+      birthDate,
+    } = req.body;
+
+    // Kiểm tra xem email đã tồn tại chưa
+    const findEmailShipper = await Shipper.findOne({ email });
+    if (findEmailShipper) {
+      return res.status(400).json({ message: "Email đã tồn tại" });
+    }
+    const findEmailUser = await User.findOne({ email });
+    if (findEmailUser) {
+      return res.status(400).json({ message: "Email đã tồn tại" });
+    }
+    // Tạo token xác thực cho việc cập nhật
+    const updateToken = generateToken(fullName, "courier");
+
+    const updatedShipper = await Shipper.findByIdAndUpdate(
+      id,
+      {
+        fullName,
+        vehicle,
+        phone,
+        email,
+        status,
+        avatar,
+        address,
+        birthDate,
+        token: updateToken,
+      },
+      { new: true } // Trả về dữ liệu mới sau khi cập nhật
+    );
+
+    if (!updatedShipper) {
+      return res.status(404).json({ message: "Không tìm thấy shipper" });
+    }
+
+    // Gửi email xác thực
+    await sendUpdateEmail(fullName, email, updateToken);
+
+    res.status(200).json({
+      message:
+        "Cập nhật shipper thành công! Vui lòng kiểm tra email để xác nhận.",
+      shipper: updatedShipper,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Lỗi khi cập nhật shipper", error: error.message });
+  }
+};
+
 // Lấy danh sách tất cả các shipper
 export const getAllShippers = async (req, res) => {
   try {
@@ -144,31 +235,6 @@ export const getShipperById = async (req, res) => {
     res.status(200).json(shipper);
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi lấy shipper", error });
-  }
-};
-
-// Cập nhật thông tin shipper
-export const updateShipper = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { fullName, vehicle, phone, email, status, avatar } = req.body;
-
-    const updatedShipper = await Shipper.findByIdAndUpdate(
-      id,
-      { fullName, vehicle, phone, store, status, rating },
-      { new: true } // Trả về dữ liệu mới sau khi cập nhật
-    );
-
-    if (!updatedShipper) {
-      return res.status(404).json({ message: "Không tìm thấy shipper" });
-    }
-
-    res.status(200).json({
-      message: "Cập nhật shipper thành công!",
-      shipper: updatedShipper,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi khi cập nhật shipper", error });
   }
 };
 
@@ -196,7 +262,7 @@ export const GetShippersByName = async (req, res) => {
 
     // Tìm kiếm shipper theo trường "name"
     const shippers = await Shipper.find({
-      name: { $regex: new RegExp(fullName, "i") }, // Tìm kiếm theo tên
+      fullName: { $regex: new RegExp(fullName, "i") }, // Tìm kiếm theo tên
     });
 
     if (shippers.length === 0) {
