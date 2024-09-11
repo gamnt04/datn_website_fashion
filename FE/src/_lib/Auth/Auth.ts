@@ -11,7 +11,7 @@ export const list_Auth = async () => {
 export const Search_Auth = async (searchQuery: any) => {
   try {
     const { data } = await instance.get(`/auths/search`, {
-      params: { _search: searchQuery },
+      params: { _search: searchQuery }
     });
     return data;
   } catch (error) {
@@ -66,6 +66,14 @@ export const getUserByUsername = async (searchUser) => {
     const { data } = await instance.post("/auth/search", {
       searchUser
     });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+export const getNewUserIn7Day = async () => {
+  try {
+    const { data } = await instance.get("/auths/new_auth_in_7_day");
     return data;
   } catch (error) {
     console.error(error);

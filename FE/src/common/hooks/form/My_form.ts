@@ -81,7 +81,7 @@ const useForm = ({ mode }: { mode?: string }) => {
         mutate(dataClient);
     }
     if (status_api === 'call_ok') {
-        routing('/admin/products')
+        // routing('/admin/products')
     }
     return {
         onSubmit,

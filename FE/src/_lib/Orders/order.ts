@@ -20,3 +20,11 @@ export const GetOrderBuyNumberOrNumberPhone = async (searchOrder) => {
     console.log(error);
   }
 };
+export const GetNew10OrderInDay = async () => {
+  try {
+    const { data } = await instance.get("/orders/all_order_day");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

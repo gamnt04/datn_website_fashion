@@ -64,7 +64,8 @@ export const Add_Order = async (order: any) => {
     } else {
       toast.error("Đặt hàng không thành công", { autoClose: 500 });
     }
-    return data?.data;
+
+    return data;
   } catch (error: any) {
     if (error.response) {
       toast.error("Sản phẩm số lượng không còn đủ trong kho", { autoClose: 500 });
