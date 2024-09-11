@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 
 type FieldType = {
-  name?: string;
+  fullName?: string;
   phone?: string;
   email?: string;
 };
@@ -75,7 +75,7 @@ const AddShipperForm: React.FC<AddShipperFormProps> = ({ open, onClose }) => {
         >
           <Form.Item<FieldType>
             label="Tên"
-            name="name"
+            name="fullName"
             rules={[
               { required: true, message: "Vui lòng nhập tên người vận chuyển" },
             ]}
