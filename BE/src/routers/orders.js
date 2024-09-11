@@ -15,7 +15,8 @@ import {
   getAllOrderMonth,
   getAllOrderByMonthOfYear,
   getTop10ProductBestSale,
-  getOrderByNumberOrPhoneNumber
+  getOrderByNumberOrPhoneNumber,
+  get10NewOrderToday
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 
@@ -25,6 +26,7 @@ router.get("/orders", get_orders_client);
 router.get("/orders/all_order_of_to_day", getAllOrderToday);
 router.get("/orders/all_order_week", getAllOrderWeek);
 router.get("/orders/all_order_month", getAllOrderMonth);
+router.get("/orders/all_order_day", get10NewOrderToday);
 router.get("/orders/all_order_by_day_of_week", getOrderByDayOfWeek);
 router.get("/orders/all_order_by_month_of_year", getAllOrderByMonthOfYear);
 router.get("/orders/top_10_products_best_sale", getTop10ProductBestSale);
