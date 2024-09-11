@@ -1,7 +1,7 @@
 export interface Shipper {
   _id: string;
   avatar: string;
-  name: string;
+  fullName: string;
   vehicle: string;
   phone: string;
   store: string;
