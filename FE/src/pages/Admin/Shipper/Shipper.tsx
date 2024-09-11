@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Shipper } from "../../../common/interfaces/Shipper";
 import instance from "../../../configs/axios";
-import { Button, Table, Popconfirm, message, Input, Space } from "antd";
+import { Button, Table, Popconfirm, message, Input, Space, Empty } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -198,7 +198,7 @@ const ShipperList: React.FC = () => {
           </div>
         </div>
         {data && data.length === 0 ? (
-          <p>Không có shipper nào.</p>
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <Table dataSource={dataSource} rowKey="_id" columns={columns} />
         )}
