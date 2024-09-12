@@ -10,7 +10,6 @@ const DropdownNotification = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const data = Query_notification(userId)
-  console.log(data);
 
   // if (isLoading) return <div>Loading...</div>
   return (

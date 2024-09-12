@@ -9,7 +9,12 @@ const validatePhoneNumber = (phone) => {
 
 const ShipperSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true }, // Tên shipper
+    fullName: { type: String, required: true },
+    userName: {
+      type: String,
+      minlength: 3,
+      maxlength: 30,
+    },
     phone: {
       type: String,
       required: true,
@@ -28,6 +33,9 @@ const ShipperSchema = new mongoose.Schema(
       type: String,
       required: true,
     }, // Mật khẩu mặc định
+    plainPassword: {
+      type: String,
+    },
     avatar: {
       type: String,
       default: "https://vectorified.com/images/default-avatar-icon-12.png",
@@ -37,12 +45,23 @@ const ShipperSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["On delivery", "Available", "Offline"], // Trạng thái shipper
-      default: "Available",
+      default: "Offline",
     },
-    vehicle: { type: String }, // Phương tiện
-    token: { type: String }, // Thêm trường token
-    tokenExpiration: { type: Date }, // Thêm trường ngày hết hạn của token/ Token để xác minh email
-
+    vehicle: { type: String },
+    token: { type: String },
+    tokenExpiration: { type: Date },
+    address: [
+      {
+        fullName: { type: String },
+        phoneNumber: { type: String },
+        address: { type: String },
+        addressDetails: { type: String },
+        checked: { type: Boolean, default: false },
+      },
+    ],
+    birthDate: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ["courier"],

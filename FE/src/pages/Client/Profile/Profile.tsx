@@ -4,8 +4,6 @@ import {
   Form,
   Input,
   FormProps,
-  GetProp,
-  UploadProps,
   Upload,
   Image,
   Spin,
@@ -19,9 +17,12 @@ export type FieldType = {
   phone?: string;
   birthDate?: string;
   avatar?: string;
+  vehicle?: string;
 };
 
 const Profile = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const role = user?.user?.role;
   const {
     contextHolder,
     isChanged,
@@ -110,8 +111,8 @@ const Profile = () => {
             onFinish={onFinish}
             autoComplete="off"
           >
-            <div className="flex flex-row flex-wrap lg:flex-nowrap text-sm">
-              <div className="basis-full order-2 lg:order-1 lg:basis-2/3">
+            <div className="flex flex-row flex-wrap text-sm lg:flex-nowrap">
+              <div className="order-2 basis-full lg:order-1 lg:basis-2/3">
                 <Form.Item
                   name="userName"
                   label="Tên đăng nhập"
@@ -177,6 +178,17 @@ const Profile = () => {
                   <Input placeholder="Nhập số điện thoại của bạn" />
                 </Form.Item>
 
+                {role === "courier" && (
+                  <Form.Item<FieldType>
+                    label="Phương tiện"
+                    name="vehicle"
+                    labelCol={{ span: 5 }}
+                    wrapperCol={{ span: 15 }}
+                  >
+                    <Input placeholder="Nhập phương tiện vận chuyển của bạn" />
+                  </Form.Item>
+                )}
+
                 <Form.Item<FieldType>
                   label="Ngày sinh"
                   name="birthDate"
@@ -200,20 +212,20 @@ const Profile = () => {
                   </Button>
                 </Form.Item>
               </div>
-              <div className="order-1 border-b p-3 my-4 basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
+              <div className="order-1 p-3 my-4 border-b basis-full lg:order-2 lg:border-b-0 lg:border-l-2 lg:basis-1/3">
                 <Form.Item<FieldType>
                   name="avatar"
                   className="flex items-center justify-center w-full"
                 >
                   <div className="flex flex-col items-center mb-4">
                     {uploading && (
-                      <div className="absolute w-full h-44 inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-full">
+                      <div className="absolute inset-0 flex items-center justify-center w-full bg-white bg-opacity-75 rounded-full h-44">
                         <Spin />
                       </div>
                     )}
                     <img
                       src={previewImage || data.avatar || ""}
-                      className="w-44 h-44 rounded-full"
+                      className="rounded-full w-44 h-44"
                       alt="Avatar"
                     />
                   </div>
