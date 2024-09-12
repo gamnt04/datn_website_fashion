@@ -11,6 +11,7 @@ export type FieldType = {
   phone?: string;
   birthDate?: string;
   avatar?: string;
+  vehicle?: string;
 };
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 

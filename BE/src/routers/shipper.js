@@ -6,6 +6,7 @@ import {
   updateShipper,
   deleteShipper,
   GetShippersByName,
+  verifyEmail,
 } from "../controllers/Shipper/shipper";
 
 const Route_Shipper = express.Router(); // Sử dụng Route_Shipper
@@ -27,4 +28,6 @@ Route_Shipper.put("/shippers/:id", updateShipper);
 // Xóa shipper
 Route_Shipper.delete("/shippers/:id", deleteShipper);
 
+//Xác thực email
+Route_Shipper.get("/verify", verifyEmail);
 export default Route_Shipper;
