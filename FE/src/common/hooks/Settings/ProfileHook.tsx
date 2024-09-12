@@ -19,6 +19,7 @@ const ProfileHook = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
+  const userRole = user?.user?.role;
   const [initialValues, setInitialValues] = useState<FieldType>({});
   const [isChanged, setIsChanged] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false); // Trạng thái lưu
@@ -45,8 +46,13 @@ const ProfileHook = () => {
   const { mutate } = useMutation({
     mutationFn: async (newUser) => {
       setIsSaving(true); // Bắt đầu lưu
-      const { data } = await instance.put(`/auth/${userId}`, newUser);
-      return data;
+      if (userRole === "courier") {
+        const { data } = await instance.put(`/shippers/${userId}`, newUser);
+        return data;
+      } else {
+        const { data } = await instance.put(`/auth/${userId}`, newUser);
+        return data;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
