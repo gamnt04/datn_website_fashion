@@ -26,9 +26,7 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""}`
       },
       totalPrice,
     });
@@ -51,6 +49,7 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
+      console.log(i.quantity)
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
         for (let j of data_attr) {
@@ -60,10 +59,12 @@ export const createOrder = async (req, res) => {
                 if (x.name_size) {
                   if (x.name_size == i.name_size) {
                     if (x.stock_attribute < i.quantity) {
+
                       return res.status(StatusCodes.BAD_REQUEST).json({
                         message: "Sản phẩm không đủ hàng",
                       });
                     } else {
+
                       x.stock_attribute = x.stock_attribute - i.quantity;
                     }
                   }
@@ -161,10 +162,10 @@ export const createOrderPayment = async (req, res) => {
           email: customerInfo.email,
           phone: customerInfo.phone,
           payment: customerInfo.payment,
-          userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          userName: customerInfo.userName
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`
+
         },
         totalPrice,
       });
@@ -275,7 +276,7 @@ export const getOrderByDayOfWeek = async (req, res) => {
 
       if (orderDay.length > 0) {
         orderByDay.push({
-          day: startOfDay.toISOString().slice(0, 10), // Ngày theo định dạng YYYY-MM-DD
+          day: startOfDay.toISOString().slice(0, 10),
           totalOrders: orderDay[0].totalOrders,
           totalRevenue: orderDay[0].totalRevenue,
         });
@@ -387,6 +388,7 @@ export const getTop10ProductBestSale = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
+
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("reviews"); // Sử dụng populate để lấy thông tin reviews
@@ -566,59 +568,7 @@ export async function get_orders_client(req, res) {
     });
   }
 }
-// export async function get_orders_client(req, res) {
-//   const {
-//     _page = 1,
-//     _limit = 7,
-//     _sort = "",
-//     _search = "",
-//     _status = "",
-//   } = req.query;
 
-//   const options = {
-//     page: _page,
-//     limit: _limit,
-//     sort: _sort ? { [_sort]: 1 } : { datetime: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
-//   };
-
-//   const query = {};
-
-//   // Lọc theo trạng thái đơn hàng nếu có
-//   if (_status) {
-//     query.status = _status;
-//   }
-
-//   // Nếu người dùng không phải admin, lọc đơn hàng theo shipperId
-//   if (req.user.role === "courier") {
-//     query.shipperId = req.user._id;
-//   }
-
-//   try {
-//     // Tìm kiếm theo _id nếu có _search
-//     if (_search) {
-//       query._id = { $regex: _search, $options: "i" }; // Tìm kiếm theo ID đơn hàng
-//     }
-
-//     const data = await Order.paginate(query, options);
-
-//     if (!data || data.docs.length < 1) {
-//       return res.status(StatusCodes.NOT_FOUND).json({
-//         message: "Không có dữ liệu!",
-//       });
-//     }
-
-//     return res.status(StatusCodes.OK).json({
-//       message: "Hoàn thành!",
-//       data,
-//       totalDocs: data.totalDocs, // Tổng số đơn hàng
-//       totalPages: data.totalPages, // Tổng số trang
-//     });
-//   } catch (error) {
-//     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-//       message: error.message || "Lỗi server!",
-//     });
-//   }
-// }
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
@@ -746,33 +696,30 @@ export const getOrderByNumberOrPhoneNumber = async (req, res) => {
     });
   }
 };
-export const get10OrderNewInDay = async (req, res) => {
+export const get10NewOrderToday = async (req, res) => {
   try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfday = new Date();
+    startOfday.setHours(0, 0, 0, 0);
+    const endOfday = new Date();
+    endOfday.setHours(23, 59, 59, 999);
 
-    // const orders = await Order.find({
-    //   datetime: {
-    //     $gte: startOfDay,
-    //     $lte: endOfDay
-    //   }
-    // })
-    //   .sort({ datetime: 1 })
-    //   .limit(10);
+    const orderToDay = await Order.find({
+      datetime: {
+        $gte: startOfday,
+        $lte: endOfday
+      }
+    })
+      .sort({ datetime: 1 })
+      .limit(10)
+      .exec();
 
-    // if (!orders.length) {
-    //   return res
-    //     .status(StatusCodes.NOT_FOUND)
-    //     .json({ message: "No orders found for today" });
-    // }
+    if (!orderToDay || orderToDay.length === 0) {
+      return res.status(404).json({ message: "Đơn hàng không tìm thấy!" });
+    }
 
-    // return res.status(StatusCodes.OK).json({
-    //   message: "Top 10 first orders today",
-    //   orders
-    // });
+    return res.status(StatusCodes.OK).json(orderToDay);
   } catch (error) {
+
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message || "Lỗi server",
     });
@@ -797,5 +744,6 @@ export const deliverSuccess = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
+
   }
 };

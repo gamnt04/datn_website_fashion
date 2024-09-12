@@ -123,8 +123,8 @@ export async function get_item_dashboard(req, res) {
       sort: { createdAt: -1 },
     };
     const data = await Products.paginate({}, options);
-    await Products.populate(data.docs, {path : 'category_id'})
-    await Products.populate(data.docs, { path : 'attributes' })
+    await Products.populate(data.docs, { path: 'category_id' })
+    await Products.populate(data.docs, { path: 'attributes' })
     return res.status(StatusCodes.OK).json({
       message: "OK",
       data,
@@ -139,9 +139,20 @@ export async function get_item_dashboard(req, res) {
 export const getProductById = async (req, res) => {
   try {
     const productId = req.params.id;
-    const products = await Products.findById(req.params.id).populate(
-      "attributes"
-    );
+    const products = await Products.findById(req.params.id);
+    if (products?.attributes) {
+      await Products?.populate(products, { path: 'attributes' })
+      if (products.attributes.values) {
+        products.attributes.values = products.attributes.values.map((item) => {
+          const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
+          return {
+            ...item,
+            size: new_data,
+          };
+        });
+      }
+      await products.save();
+    }
     // Kiểm tra tính hợp lệ của ObjectId
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res
@@ -215,16 +226,6 @@ export const getProductById = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy sản phẩm" });
     }
-    if (products.attributes.values) {
-      products.attributes.values = products.attributes.values.map((item) => {
-        const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
-        return {
-          ...item,
-          size: new_data,
-        };
-      });
-    }
-    await products.save();
 
     return res.status(StatusCodes.OK).json({
       products,

@@ -443,8 +443,7 @@ export default function List_order() {
                     <div className="flex gap-3 lg:basis-3/12 w-full">
                       <Button
                         className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded "
-                        disabled
-                      >
+                        disabled>
                         Đã Nhận Hàng
                       </Button>
                       {items.cancellationRequested === true ? (
