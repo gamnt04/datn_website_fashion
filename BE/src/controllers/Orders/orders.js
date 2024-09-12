@@ -59,9 +59,7 @@ export const createOrder = async (req, res) => {
               for (let x of k.size) {
                 if (x.name_size) {
                   if (x.name_size == i.name_size) {
-                    if (x.stock_attribute < i.quantity) {
-                      x.stock_attribute = x.stock_attribute - i.quantity;
-                    }
+                    x.stock_attribute = x.stock_attribute - i.quantity;
                   }
                 } else {
                   x.stock_attribute = x.stock_attribute - i.quantity;
