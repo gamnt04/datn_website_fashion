@@ -435,23 +435,28 @@ export const getAddressById = async (req, res) => {
   }
 
   try {
-    // Tìm người dùng theo ID
     const user = await User.findById(userId).exec();
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy người dùng" });
+    const shipper = await Shipper.findById(userId).exec();
+
+    let address;
+
+    // Tìm địa chỉ trong bảng User
+    if (user) {
+      address = user.address.id(addressId);
     }
 
-    // Tìm địa chỉ theo ID trong mảng địa chỉ
-    const address = user.address.id(addressId);
+    // Nếu không tìm thấy địa chỉ trong User, tìm trong Shipper
+    if (!address && shipper) {
+      address = shipper.address.id(addressId);
+    }
+
+    // Nếu không tìm thấy trong cả hai bảng
     if (!address) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy địa chỉ" });
     }
 
-    // Trả về địa chỉ
     return res.status(StatusCodes.OK).json({ address });
   } catch (error) {
     console.error("Lỗi khi lấy địa chỉ:", error);
