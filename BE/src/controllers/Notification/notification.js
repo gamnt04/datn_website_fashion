@@ -30,7 +30,7 @@ export const getNotificationByUser = async (req, res) => {
                 message: 'No User'
             })
         }
-        const notifications = await Notification.find({ receiver_id }).populate('userId');
+        const notifications = await Notification.find({ receiver_id }).sort({ datetime: -1 }).populate('userId');
         res.status(200).json({ notifications });
     } catch (error) {
         res.status(500).json({ message: "Lỗi rồi đại ca ơi" });
