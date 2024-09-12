@@ -16,7 +16,9 @@ import {
   getAllOrderByMonthOfYear,
   getTop10ProductBestSale,
   getOrderByNumberOrPhoneNumber,
-  get10OrderNewInDay
+  get10OrderNewInDay,
+  confirmDelivery,
+  deliverSuccess,
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 
@@ -38,6 +40,7 @@ router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
 router.post("/orderspayment", createOrderPayment);
 router.post("/orders/search", getOrderByNumberOrPhoneNumber);
+router.post("/deliver-success", deliverSuccess);
 
 // ---
 router.get("/list_order/:id_user", list_items_order_by_user);
