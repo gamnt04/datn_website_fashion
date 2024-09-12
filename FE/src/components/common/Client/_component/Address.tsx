@@ -127,9 +127,9 @@ type FieldType = {
 //   };
 
 //   return (
-//     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
 //       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
-//         <h1 className="py-3 text-center font-medium">Địa chỉ mới</h1>
+//         <h1 className="py-3 font-medium text-center">Địa chỉ mới</h1>
 //         {contextHolder}
 //         <Form
 //           form={form}
@@ -147,7 +147,7 @@ type FieldType = {
 //             ]}
 //           >
 //             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
+//               className="w-full px-2 py-2 border rounded focus:ring-0"
 //               placeholder="Họ và tên"
 //             />
 //           </Form.Item>
@@ -164,7 +164,7 @@ type FieldType = {
 //             ]}
 //           >
 //             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
+//               className="w-full px-2 py-2 border rounded focus:ring-0"
 //               placeholder="Số điện thoại"
 //             />
 //           </Form.Item>
@@ -250,13 +250,13 @@ type FieldType = {
 //             ]}
 //           >
 //             <Input
-//               className="w-full border px-2 py-2 rounded focus:ring-0"
+//               className="w-full px-2 py-2 border rounded focus:ring-0"
 //               placeholder="Địa chỉ cụ thể"
 //             />
 //           </Form.Item>
 
 //           <Form.Item
-//             className="w-full my-3 flex items-center gap-3"
+//             className="flex items-center w-full gap-3 my-3"
 //             name="checked"
 //             valuePropName="checked"
 //           >
@@ -264,14 +264,14 @@ type FieldType = {
 //           </Form.Item>
 
 //           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-//             <Button htmlType="submit" className="h-10 bg-black text-white">
+//             <Button htmlType="submit" className="h-10 text-white bg-black">
 //               Hoàn Thành
 //             </Button>
 //           </Form.Item>
 //         </Form>
 //         <Button
 //           onClick={handleAddress}
-//           className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
+//           className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5"
 //         >
 //           <CloseOutlined />
 //         </Button>
@@ -283,15 +283,22 @@ type FieldType = {
 export const Add_Address = ({ handleAddress }: any) => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
+  const userRole = user?.user?.role;
   const querryClient = useQueryClient();
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
   const { mutate } = useMutation({
     mutationFn: async (formData) => {
-      const { data } = await instance.post(`/auth/add_address`, formData);
-      form.resetFields();
-      return data;
+      if (userRole === "courier") {
+        const { data } = await instance.post(`/shippers/add_address`, formData);
+        form.resetFields();
+        return data;
+      } else {
+        const { data } = await instance.post(`/auth/add_address`, formData);
+        form.resetFields();
+        return data;
+      }
     },
     onSuccess: () => {
       querryClient.invalidateQueries({
@@ -316,13 +323,14 @@ export const Add_Address = ({ handleAddress }: any) => {
       newAddress: values,
       setDefault: values.checked, // Gửi thông tin về việc thiết lập địa chỉ làm mặc định
     };
+
     mutate(data_form);
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
-        <h1 className="py-3 text-center font-medium">Địa chỉ mới</h1>
+        <h1 className="py-3 font-medium text-center">Địa chỉ mới</h1>
         {contextHolder}
         <Form
           form={form}
@@ -340,7 +348,7 @@ export const Add_Address = ({ handleAddress }: any) => {
             ]}
           >
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Họ và tên"
             />
           </Form.Item>
@@ -357,7 +365,7 @@ export const Add_Address = ({ handleAddress }: any) => {
             ]}
           >
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Số điện thoại"
             />
           </Form.Item>
@@ -368,20 +376,20 @@ export const Add_Address = ({ handleAddress }: any) => {
             rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
           >
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
             />
           </Form.Item>
 
           <Form.Item name="addressDetails" className="w-full my-3">
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Địa chỉ cụ thể"
             />
           </Form.Item>
 
           <Form.Item
-            className="w-full my-3 flex items-center gap-3"
+            className="flex items-center w-full gap-3 my-3"
             name="checked"
             valuePropName="checked"
           >
@@ -389,14 +397,14 @@ export const Add_Address = ({ handleAddress }: any) => {
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button htmlType="submit" className="h-10 bg-black text-white">
+            <Button htmlType="submit" className="h-10 text-white bg-black">
               Hoàn Thành
             </Button>
           </Form.Item>
         </Form>
         <Button
           onClick={handleAddress}
-          className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
+          className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5"
         >
           <CloseOutlined />
         </Button>
@@ -408,9 +416,7 @@ export const Add_Address = ({ handleAddress }: any) => {
 export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  console.log(userId);
-  console.log(addressId);
-
+  const userRole = user?.user?.role;
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const queryClient = useQueryClient();
@@ -428,7 +434,6 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       return data;
     },
   });
-  console.log(data?.address);
 
   // Cập nhật giá trị của form khi dữ liệu đã được tải
   useEffect(() => {
@@ -440,12 +445,20 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   // Mutation để cập nhật địa chỉ
   const { mutate } = useMutation({
     mutationFn: async (formData) => {
-      const { data } = await instance.put(
-        `/auth/${userId}/${addressId}`,
-        formData
-      );
-      // form.resetFields();
-      return data;
+      if (userRole === "courier") {
+        const { data } = await instance.put(
+          `/shippers/${userId}/${addressId}`,
+          formData
+        );
+
+        return data;
+      } else {
+        const { data } = await instance.put(
+          `/auth/${userId}/${addressId}`,
+          formData
+        );
+        return data;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -469,9 +482,9 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
-        <h1 className="py-3 text-center font-medium">Chỉnh sửa địa chỉ</h1>
+        <h1 className="py-3 font-medium text-center">Chỉnh sửa địa chỉ</h1>
         {contextHolder}
         <Form
           form={form}
@@ -488,7 +501,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
             ]}
           >
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Họ và tên"
             />
           </Form.Item>
@@ -505,7 +518,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
             ]}
           >
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Số điện thoại"
             />
           </Form.Item>
@@ -518,27 +531,27 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
             ]}
           >
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
             />
           </Form.Item>
 
           <Form.Item name="addressDetails" className="w-full my-3">
             <Input
-              className="w-full border px-2 py-2 rounded focus:ring-0"
+              className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Địa chỉ cụ thể"
             />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button htmlType="submit" className="h-10 bg-black text-white">
+            <Button htmlType="submit" className="h-10 text-white bg-black">
               Hoàn Thành
             </Button>
           </Form.Item>
         </Form>
         <Button
           onClick={closeOpenUpdate}
-          className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
+          className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5"
         >
           <CloseOutlined />
         </Button>
@@ -552,13 +565,12 @@ export const List_Address = ({
   handleTAdd,
   handleAddressSelect,
   handleAddress,
-  selectedAddress
+  selectedAddress,
 }: any) => {
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50" >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[600px] max-h-[600px] overflow-auto hidden_scroll_x">
-        <h1 className="py-3 text-center text-xl font-medium">
+        <h1 className="py-3 text-xl font-medium text-center">
           Địa chỉ của tôi
         </h1>
         <div>
@@ -572,28 +584,28 @@ export const List_Address = ({
 
             {auth?.map((item: any, index: number) => (
               <div
-                className="flex justify-between items-center my-5 border-b pb-6"
+                className="flex items-center justify-between pb-6 my-5 border-b"
                 key={index}
               >
-                <div className="py-1 flex items-start gap-4">
+                <div className="flex items-start gap-4 py-1">
                   <div>
                     <h1>
                       <span className="font-bold">{item.fullName}</span>
                       <span className="px-2 text-gray-400">|</span>
-                      <span className="text-gray-400">
-                        {item.phoneNumber}
-                      </span>
+                      <span className="text-gray-400">{item.phoneNumber}</span>
                     </h1>
-                    <p className="text-gray-400 py-2">{item.addressDetails}</p>
+                    <p className="py-2 text-gray-400">{item.addressDetails}</p>
                     <p className="text-gray-400">{item.address}</p>
                     <div className="flex gap-3 mt-3">
-                      {item.checked && <Button className="py-5">Mặc định</Button>}
+                      {item.checked && (
+                        <Button className="py-5">Mặc định</Button>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="">
                   <div className="hidden lg:block">
-                    <div className="flex flex-col gap-2 text-blue-400 py-2">
+                    <div className="flex flex-col gap-2 py-2 text-blue-400">
                       <Button className="w-9 h-9">
                         <EditOutlined />
                       </Button>
@@ -605,11 +617,17 @@ export const List_Address = ({
                         cancelText="Không"
                       >
                         {selectedAddress === item ? (
-                          <Button className="w-9 h-9 !bg-slate-100 cursor-not-allowed" disabled><CheckOutlined /></Button>
+                          <Button
+                            className="w-9 h-9 !bg-slate-100 cursor-not-allowed"
+                            disabled
+                          >
+                            <CheckOutlined />
+                          </Button>
                         ) : (
-                          <Button className="w-9 h-9"><CheckOutlined /></Button>
+                          <Button className="w-9 h-9">
+                            <CheckOutlined />
+                          </Button>
                         )}
-
                       </Popconfirm>
                     </div>
                   </div>
@@ -630,16 +648,13 @@ export const List_Address = ({
                     </svg>
                   </div>
                 </div>
-
               </div>
-
             ))}
-
           </div>
         </div>
         <Button
           onClick={handleAddress}
-          className="hover:bg-slate-100 hover:rounded-full hover:border-2 w-8 h-8 border-0 absolute top-5 right-5 rounded px-2 py-2"
+          className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5"
         >
           <CloseOutlined />
         </Button>
