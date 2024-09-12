@@ -17,9 +17,12 @@ export type FieldType = {
   phone?: string;
   birthDate?: string;
   avatar?: string;
+  vehicle?: string;
 };
 
 const Profile = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const role = user?.user?.role;
   const {
     contextHolder,
     isChanged,
@@ -174,6 +177,17 @@ const Profile = () => {
                 >
                   <Input placeholder="Nhập số điện thoại của bạn" />
                 </Form.Item>
+
+                {role === "courier" && (
+                  <Form.Item<FieldType>
+                    label="Phương tiện"
+                    name="vehicle"
+                    labelCol={{ span: 5 }}
+                    wrapperCol={{ span: 15 }}
+                  >
+                    <Input placeholder="Nhập phương tiện vận chuyển của bạn" />
+                  </Form.Item>
+                )}
 
                 <Form.Item<FieldType>
                   label="Ngày sinh"
