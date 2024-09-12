@@ -5,6 +5,7 @@ import { BellRing, Box, Heart, LogOut, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
 import { SiAwssecretsmanager } from "react-icons/si";
+import { LiaShippingFastSolid } from "react-icons/lia";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -68,6 +69,15 @@ const Sidebar_Profile: React.FC = () => {
             <NavLink to={`/admin`}>Chế độ quản lý</NavLink>,
             "4",
             <SiAwssecretsmanager className="w-5 h-10 bold-icon" />
+          ),
+        ]
+      : []),
+    ...(roleAdmin === "courier"
+      ? [
+          getItem(
+            <NavLink to={`/admin/orders`}>Đơn hàng cần giao</NavLink>,
+            "4",
+            <LiaShippingFastSolid className="w-5 h-10 bold-icon" />
           ),
         ]
       : []),
