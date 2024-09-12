@@ -1,5 +1,6 @@
 import Shipper from "../../models/Shipper/shipper";
 import { StatusCodes } from "http-status-codes";
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
@@ -315,5 +316,283 @@ export const GetShippersByName = async (req, res) => {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message || "Lỗi server",
     });
+  }
+};
+
+//Phần địa chỉ của shipper
+export const add_address = async (req, res) => {
+  const { userId, newAddress, setDefault } = req.body;
+
+  // Kiểm tra thông tin địa chỉ
+  if (
+    !newAddress ||
+    !newAddress.fullName ||
+    !newAddress.phoneNumber ||
+    !newAddress.address
+  ) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ error: "Thông tin địa chỉ không được để trống" });
+  }
+
+  try {
+    // Tìm người dùng
+    const shipper = await Shipper.findById(userId);
+    if (!shipper) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Người dùng không tồn tại" });
+    }
+
+    // Nếu địa chỉ mới được chọn làm mặc định, đặt tất cả các địa chỉ khác thành không phải mặc định
+    if (setDefault) {
+      shipper.address.forEach((address) => {
+        address.checked = false;
+      });
+    }
+
+    // Thêm địa chỉ mới vào mảng địa chỉ và thiết lập làm mặc định nếu cần
+    shipper.address.push({
+      ...newAddress,
+      checked: setDefault, // Đặt địa chỉ mới làm mặc định nếu setDefault là true
+    });
+
+    // Lưu thay đổi
+    const updatedShipper = await shipper.save();
+
+    // Trả về dữ liệu cập nhật
+    return res.status(StatusCodes.OK).json({
+      message: "Đã thêm địa chỉ thành công",
+      address: updatedShipper.address,
+    });
+  } catch (error) {
+    console.error("Lỗi khi thêm địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi thêm địa chỉ" });
+  }
+};
+export const get_address = async (req, res) => {
+  const shipperId = req.params.userId;
+
+  try {
+    // Tìm người dùng
+    const shipper = await Shipper.findById(shipperId);
+    if (!shipper) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
+    }
+
+    // Trả về địa chỉ
+    const address = shipper.address;
+    return res.status(StatusCodes.OK).json({ address });
+  } catch (error) {
+    console.error("Lỗi khi lấy địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi lấy địa chỉ" });
+  }
+};
+
+export const getAddressById = async (req, res) => {
+  const { shipperId, addressId } = req.params;
+
+  if (!shipperId || !mongoose.isValidObjectId(shipperId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID người dùng không hợp lệ" });
+  }
+
+  if (!addressId || !mongoose.isValidObjectId(addressId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID địa chỉ không hợp lệ" });
+  }
+
+  try {
+    // Tìm người dùng theo ID
+    const shipper = await Shipper.findById(shipperId).exec();
+    if (!shipper) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
+    }
+
+    // Tìm địa chỉ theo ID trong mảng địa chỉ
+    const address = shipper.address.id(addressId);
+    if (!address) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy địa chỉ" });
+    }
+
+    // Trả về địa chỉ
+    return res.status(StatusCodes.OK).json({ address });
+  } catch (error) {
+    console.error("Lỗi khi lấy địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi lấy địa chỉ" });
+  }
+};
+
+export const setDefaultAddress = async (req, res) => {
+  const userId = req.params.userId;
+
+  const addressId = req.params.addressId; // ID của địa chỉ cần thiết lập làm mặc định
+
+  try {
+    // Tìm người dùng trong CSDL bằng userId
+    const shipper = await Shipper.findById(userId);
+
+    // Kiểm tra nếu không tìm thấy người dùng
+    if (!shipper) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy người dùng",
+      });
+    }
+
+    // Kiểm tra nếu địa chỉId hợp lệ
+    if (!mongoose.isValidObjectId(addressId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "ID địa chỉ không hợp lệ",
+      });
+    }
+
+    // Đặt tất cả các địa chỉ khác thành không phải mặc định
+    shipper.address.forEach((address) => {
+      address.checked = false;
+    });
+
+    // Tìm địa chỉ cần thiết lập làm mặc định
+    const address = shipper.address.id(addressId);
+
+    // Kiểm tra nếu không tìm thấy địa chỉ
+    if (!address) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy địa chỉ",
+      });
+    }
+
+    // Đặt địa chỉ này thành mặc định
+    address.checked = true;
+
+    // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
+    const updatedUser = await shipper.save();
+
+    return res.status(StatusCodes.OK).json({
+      message: "Đã thiết lập địa chỉ mặc định thành công",
+      address: updatedUser.address.id(addressId),
+    });
+  } catch (error) {
+    console.error("Lỗi khi thiết lập địa chỉ mặc định:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Lỗi khi thiết lập địa chỉ mặc định",
+    });
+  }
+};
+
+export const updateShipperAddress = async (req, res) => {
+  const shipperID = req.params.userId;
+  const addressId = req.params.addressId; // ID của địa chỉ cần cập nhật
+  const updatedAddress = req.body; // Dữ liệu địa chỉ mới
+
+  try {
+    // Tìm người dùng trong CSDL bằng userId
+    const shipper = await Shipper.findById(shipperID);
+
+    // Kiểm tra nếu không tìm thấy người dùng
+    if (!shipper) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy người dùng",
+      });
+    }
+
+    // Kiểm tra nếu địa chỉId hợp lệ
+    if (!mongoose.isValidObjectId(addressId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "ID địa chỉ không hợp lệ",
+      });
+    }
+
+    // Tìm địa chỉ cần cập nhật trong mảng địa chỉ
+    const address = shipper.address.id(addressId);
+
+    // Kiểm tra nếu không tìm thấy địa chỉ
+    if (!address) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không tìm thấy địa chỉ",
+      });
+    }
+
+    // Cập nhật địa chỉ với dữ liệu mới
+    address.set(updatedAddress);
+
+    // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
+    const updatedUser = await shipper.save();
+
+    // Lấy địa chỉ đã được cập nhật từ dữ liệu người dùng đã lưu
+    const updatedAddressData = updatedUser.address.id(addressId);
+
+    return res.status(StatusCodes.OK).json({
+      message: "Đã cập nhật địa chỉ thành công",
+      address: updatedAddressData,
+    });
+  } catch (error) {
+    console.error("Lỗi khi cập nhật địa chỉ:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Lỗi khi cập nhật địa chỉ",
+    });
+  }
+};
+
+export const delete_address = async (req, res) => {
+  const { userId, addressId } = req.params;
+
+  if (!userId || !mongoose.isValidObjectId(userId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID người dùng không hợp lệ" });
+  }
+
+  if (!addressId || !mongoose.isValidObjectId(addressId)) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "ID địa chỉ không hợp lệ" });
+  }
+
+  try {
+    // Tìm người dùng
+    const shipper = await Shipper.findById(userId);
+    if (!shipper) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
+    }
+
+    // Xóa địa chỉ theo ID
+    const addressIndex = shipper.address.findIndex(
+      (address) => address._id.toString() === addressId
+    );
+
+    if (addressIndex === -1) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy địa chỉ" });
+    }
+
+    shipper.address.splice(addressIndex, 1); // Xóa địa chỉ
+
+    // Lưu thay đổi
+    await shipper.save();
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Đã xóa địa chỉ thành công", address: shipper.address });
+  } catch (error) {
+    console.error("Lỗi khi xóa địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi xóa địa chỉ" });
   }
 };
