@@ -29,4 +29,15 @@ Route_Shipper.put("/shippers/:id", updateShipper);
 // Xóa shipper
 Route_Shipper.delete("/shippers/:id", deleteShipper);
 
+//Xác thực email
+Route_Shipper.get("/verify", verifyEmail);
+
+//Address shipper
+Route_Shipper.post("/shippers/add_address", add_address);
+Route_Shipper.get("/shippers/address/:userId", get_address);
+Route_Shipper.get("/shippers/address/:shipperId/:addressId", getAddressById);
+Route_Shipper.put("/shippers/:userId/:addressId", updateShipperAddress);
+Route_Shipper.delete("/shippers/:userId/:addressId", delete_address);
+Route_Shipper.patch("/shippers/:userId/:addressId/default", setDefaultAddress);
+
 export default Route_Shipper;
