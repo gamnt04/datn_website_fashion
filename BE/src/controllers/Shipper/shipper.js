@@ -373,11 +373,11 @@ export const add_address = async (req, res) => {
   }
 };
 export const get_address = async (req, res) => {
-  const shipperId = req.params.userId;
+  const userId = req.params.userId;
 
   try {
     // Tìm người dùng
-    const shipper = await Shipper.findById(shipperId);
+    const shipper = await Shipper.findById(userId);
     if (!shipper) {
       return res
         .status(StatusCodes.NOT_FOUND)

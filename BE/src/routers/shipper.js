@@ -39,7 +39,7 @@ Route_Shipper.get("/verify", verifyEmail);
 
 //Address shipper
 Route_Shipper.post("/shippers/add_address", add_address);
-Route_Shipper.get("/shippers/address/:shipperId", get_address);
+Route_Shipper.get("/shippers/address/:userId", get_address);
 Route_Shipper.get("/shippers/address/:shipperId/:addressId", getAddressById);
 Route_Shipper.put("/shippers/:userId/:addressId", updateShipperAddress);
 Route_Shipper.delete("/shippers/:userId/:addressId", delete_address);
