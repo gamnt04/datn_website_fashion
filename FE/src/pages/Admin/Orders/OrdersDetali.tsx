@@ -10,12 +10,12 @@ import {
   Radio,
   Table,
   Timeline,
-  Upload,
+  Upload
 } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import {
   Mutation_Notification,
-  Query_notification,
+  Query_notification
 } from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
@@ -58,9 +58,8 @@ const OrdersDetali = () => {
 
         await instance.post("/deliver-success", {
           orderId,
-          confirmationImage: imageUrl,
+          confirmationImage: imageUrl
         });
-
         messageApi.success(
           "Đơn hàng đã được đánh dấu là giao hàng thành công."
         );
@@ -88,7 +87,7 @@ const OrdersDetali = () => {
       message: `Người bán đã ${
         dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
       } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
-      different: dataBody?.numberOrder,
+      different: dataBody?.numberOrder
     });
   }
   const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
@@ -103,7 +102,6 @@ const OrdersDetali = () => {
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.numberOrder,
-      
     });
     console.log(dataBody.cancellationReason);
 
@@ -129,31 +127,31 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: message,
+      message: message
     });
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: status,
+        status: status
       });
       messageApi.open({
         type: "success",
         content:
           response.data.status === "4"
             ? "Đơn hàng đã được giao"
-            : "Cập nhật trạng thái đơn hàng thành công!",
+            : "Cập nhật trạng thái đơn hàng thành công!"
       });
       refetch();
     } catch (error) {
       messageApi.open({
         type: "error",
-        content: "Cập nhật trạng thái đơn hàng thất bại!",
+        content: "Cập nhật trạng thái đơn hàng thất bại!"
       });
     }
   };
   const cancellationRequested = data?.cancellationRequested;
   const dataSort = data?.items?.map((item: any) => ({
     key: item._id,
-    ...item,
+    ...item
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
@@ -161,7 +159,7 @@ const OrdersDetali = () => {
         month: "2-digit",
         year: "numeric",
         hour: "2-digit",
-        minute: "2-digit",
+        minute: "2-digit"
       })
     : "";
 
@@ -176,7 +174,7 @@ const OrdersDetali = () => {
           alt=""
           className="w-[80px] h-[80px] object-cover "
         />
-      ),
+      )
     },
     {
       title: "Tên Sản Phẩm",
@@ -191,7 +189,7 @@ const OrdersDetali = () => {
             Loại: {item?.color_item} - {item?.name_size}
           </p>
         </div>
-      ),
+      )
     },
     {
       title: "Giá Sản Phẩm",
@@ -201,10 +199,10 @@ const OrdersDetali = () => {
         <p className="">
           {item?.price_item.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
+      )
     },
     {
       title: "Số Lượng",
@@ -212,7 +210,7 @@ const OrdersDetali = () => {
       key: "quantity",
       render: (_: any, item: any) => (
         <p className="text-center">{item?.quantity}</p>
-      ),
+      )
     },
     {
       title: "Tổng Tiền",
@@ -222,11 +220,11 @@ const OrdersDetali = () => {
         <p>
           {(item?.total_price_item).toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
-    },
+      )
+    }
   ];
   if (!data) return <p>Loading...</p>;
 
@@ -338,7 +336,7 @@ const OrdersDetali = () => {
                 {" "}
                 {data.totalPrice.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND",
+                  currency: "VND"
                 })}{" "}
               </span>
             </p>
@@ -480,14 +478,14 @@ const OrdersDetali = () => {
                 <p className="py-2 text-gray-800">
                   {data?.totalPrice.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
                 <p className="py-2 text-gray-800">0 đ</p>
                 <p className="py-2 text-[#ee4d2d] text-xl">
                   {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
               </div>
@@ -532,7 +530,7 @@ const OrdersDetali = () => {
                       id_item: data?._id,
                       action: "huy",
                       cancellationReason: selectedReason,
-                      numberOrder: data?.orderNumber,
+                      numberOrder: data?.orderNumber
                       // linkUri: items?._id,
                     })
                   }
@@ -557,7 +555,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: true,
                           numberOrder: data?.orderNumber,
-                          action: "xac_nhan",
+                          action: "xac_nhan"
                         })
                       }
                       okText="Xác nhận"
@@ -575,7 +573,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: false,
                           numberOrder: data?.orderNumber,
-                          action: "tu_choi",
+                          action: "tu_choi"
                         })
                       }
                       okText="Từ chối"
@@ -662,7 +660,7 @@ const OrdersDetali = () => {
               name="confirmationImage"
               label="Ảnh Xác Nhận"
               rules={[
-                { required: true, message: "Vui lòng chọn ảnh xác nhận" },
+                { required: true, message: "Vui lòng chọn ảnh xác nhận" }
               ]}
             >
               <Upload
