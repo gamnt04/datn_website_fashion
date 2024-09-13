@@ -26,7 +26,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""}`
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`,
       },
       totalPrice,
     });
@@ -49,7 +51,7 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
-      console.log(i.quantity)
+      console.log(i.quantity);
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
         for (let j of data_attr) {
@@ -59,12 +61,10 @@ export const createOrder = async (req, res) => {
                 if (x.name_size) {
                   if (x.name_size == i.name_size) {
                     if (x.stock_attribute < i.quantity) {
-
                       return res.status(StatusCodes.BAD_REQUEST).json({
                         message: "Sản phẩm không đủ hàng",
                       });
                     } else {
-
                       x.stock_attribute = x.stock_attribute - i.quantity;
                     }
                   }
@@ -162,10 +162,10 @@ export const createOrderPayment = async (req, res) => {
           email: customerInfo.email,
           phone: customerInfo.phone,
           payment: customerInfo.payment,
-          userName: customerInfo.userName
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`
-
+          userName: customerInfo.userName,
+          address: `${customerInfo.address || ""}${
+            customerInfo.addressDetail || ""
+          }`,
         },
         totalPrice,
       });
@@ -706,8 +706,8 @@ export const get10NewOrderToday = async (req, res) => {
     const orderToDay = await Order.find({
       datetime: {
         $gte: startOfday,
-        $lte: endOfday
-      }
+        $lte: endOfday,
+      },
     })
       .sort({ datetime: 1 })
       .limit(10)
@@ -719,7 +719,6 @@ export const get10NewOrderToday = async (req, res) => {
 
     return res.status(StatusCodes.OK).json(orderToDay);
   } catch (error) {
-
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message || "Lỗi server",
     });
@@ -734,8 +733,8 @@ export const deliverSuccess = async (req, res) => {
       return res.status(404).json({ message: "Đơn hàng không tồn tại." });
     }
 
-    order.status = "6"; 
-    order.confirmationImage = confirmationImage; 
+    order.status = "6";
+    order.confirmationImage = confirmationImage;
     await order.save();
 
     res.status(200).json({
@@ -744,6 +743,5 @@ export const deliverSuccess = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
-
   }
 };
