@@ -16,8 +16,7 @@ import {
   getAllOrderByMonthOfYear,
   getTop10ProductBestSale,
   getOrderByNumberOrPhoneNumber,
-  get10OrderNewInDay,
-  confirmDelivery,
+  //get10OrderNewInDay,
   deliverSuccess,
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
@@ -34,7 +33,7 @@ router.get("/orders/top_10_products_best_sale", getTop10ProductBestSale);
 router.get("/orders/FilterNumber/:orderNumber", getOrderByNumber);
 router.get("/orders/get_order_user/:userId", getOneOrderUser);
 router.get("/orders/:id", getOrderById);
-router.get("/orders/get_10_order_in_day", get10OrderNewInDay);
+//router.get("/orders/get_10_order_in_day", get10OrderNewInDay);
 router.patch("/orders/:id", updateOrderStatus);
 router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
