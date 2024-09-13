@@ -4,6 +4,8 @@ import Cart from "../../models/Cart/cart";
 import Attributes from "../../models/attribute/attribute";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
+import SendCancellationMail from "../SendMail/HuyMail";
+import SendDeliveryConfirmationMail from "../SendMail/ThanhCongMail";
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
   if (
@@ -170,10 +172,11 @@ export const createOrderPayment = async (req, res) => {
         totalPrice,
       });
       await SendMail(customerInfo.email, order);
-      await Cart.findOneAndDelete({ userId: userId });
+
+      // Trả về giỏ hàng đã cập nhật
       return res
         .status(201)
-        .json({ data, message: "Tạo đơn hàng thanh toán online thành công" });
+        .json({ data, updatedCart: dataCart, message: "Tạo đơn hàng thanh toán online thành công" });
     } else {
       return res
         .status(400)
@@ -572,27 +575,24 @@ export async function get_orders_client(req, res) {
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
-  console.log(cancellationReason);
 
   try {
     const order = await Order.findById(id);
     if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy đơn hàng" });
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" });
     }
     if (order.cancellationRequested) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Đơn hàng đã bị hủy" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Đơn hàng đã bị hủy" });
     }
     order.cancellationRequested = true;
     if (cancellationReason) {
-      order.cancellationReason = cancellationReason; // Lưu lý do hủy đơn hàng
-      console.log(order.cancellationReason);
+      order.cancellationReason = cancellationReason;
     }
 
     await order.save();
+    console.log("Lý do hủy đơn hàng:", order.cancellationReason);
+    await SendCancellationMail(order.customerInfo.email, order, order.cancellationReason);
+
     res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng thành công",
       data_status_order: order.cancellationRequested,
@@ -605,13 +605,14 @@ export const userCancelOrder = async (req, res) => {
 export const adminCancelOrder = async (req, res) => {
   const id = req.params.id;
   const { confirm } = req.body;
+
   try {
     const order = await Order.findById(id);
     if (!order) {
-      return res.status(404).send("Không tìm thấy đơn hàng");
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" });
     }
     if (!order.cancellationRequested) {
-      return res.status(400).send("Không có yêu cầu hủy đơn hàng");
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Không có yêu cầu hủy đơn hàng" });
     }
     if (confirm) {
       order.status = "5"; // Canceled
@@ -620,6 +621,7 @@ export const adminCancelOrder = async (req, res) => {
       // Revert product quantities
       const items = order.items;
       for (let i of items) {
+        // Xử lý thay đổi số lượng sản phẩm
         if (i.productId.attributes) {
           const data_attr = await Attributes.find({ id_item: i.productId._id });
           for (let j of data_attr) {
@@ -646,11 +648,16 @@ export const adminCancelOrder = async (req, res) => {
           }
         }
       }
+
+      // Gửi email thông báo hủy đơn hàng
+      // console.log("Lý do hủy đơn hàng:", order.cancellationReason);
+      // await SendCancellationMail(order.customerInfo.email, order, order.cancellationReason);
     } else {
       order.cancellationRequested = false;
     }
+
     await order.save();
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng đã được xác nhận",
       data_status_order: order.cancellationRequested,
     });
@@ -658,6 +665,8 @@ export const adminCancelOrder = async (req, res) => {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
+
+
 export const getOrderByNumber = async (req, res) => {
   try {
     const { orderNumber } = req.params;
@@ -728,20 +737,30 @@ export const deliverSuccess = async (req, res) => {
   try {
     const { orderId, confirmationImage } = req.body;
 
+    // Tìm đơn hàng theo ID
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Đơn hàng không tồn tại." });
     }
 
-    order.status = "6";
+    // Cập nhật trạng thái đơn hàng
+    order.status = "6"; // Giao hàng thành công
     order.confirmationImage = confirmationImage;
+
+    // Lưu thay đổi đơn hàng
     await order.save();
 
+    // Gửi email thông báo giao hàng thành công
+    const customerEmail = order.customerInfo.email;
+    await SendDeliveryConfirmationMail(customerEmail, order);
+
+    // Trả về phản hồi thành công
     res.status(200).json({
-      message: "Đơn hàng đã được đánh dấu là giao hàng thành công.",
+      message: "Đơn hàng đã được đánh dấu là giao hàng thành công và email đã được gửi.",
       order,
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
   }
 };
+

@@ -29,6 +29,8 @@ const Pay = () => {
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
+  const data_sessionStorage = sessionStorage.getItem("item_order");
+  
   useEffect(() => {
     if (!userId) {
       routing('/login')
@@ -36,7 +38,7 @@ const Pay = () => {
     if (item_order_checkked?.length < 1) {
       routing('/login')
     }
-  }, [userId])
+  }, [userId,routing])
   useEffect(() => {
     if (auth && auth?.address) {
       const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
@@ -117,7 +119,7 @@ const Pay = () => {
         sessionStorage.setItem('customerInfo', JSON.stringify({ ...data_form }));
         const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
           orderId: nanoid(24),
-          totalPrice: orderId.totalPrice,
+          totalPrice: totalPrice,
           orderDescription: `Order ${orderId._id}`,
           language: 'vn'
         });
