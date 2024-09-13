@@ -6,8 +6,13 @@ import {
   updateShipper,
   deleteShipper,
   GetShippersByName,
-  handleDeliverySuccess,
-  handleDeliveryFailure,
+  verifyEmail,
+  add_address,
+  get_address,
+  getAddressById,
+  updateShipperAddress,
+  delete_address,
+  setDefaultAddress,
 } from "../controllers/Shipper/shipper";
 
 const Route_Shipper = express.Router(); // Sử dụng Route_Shipper
