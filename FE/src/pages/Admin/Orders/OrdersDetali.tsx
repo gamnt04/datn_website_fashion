@@ -74,23 +74,7 @@ const OrdersDetali = () => {
     }
   };
 
-  // const handleCancelOrder = async () => {
-  //   if (!orderId) {
-  //     console.error("Order ID is missing");
-  //     return;
-  //   }
-
-  //   try {
-  //     await instance.post("/cancel-order", {
-  //       orderId,
-  //       cancellationReason: selectedReason,
-  //     });
-  //     messageApi.success("Đơn hàng đã được hủy thành công.");
-  //   } catch (error) {
-  //     messageApi.error("Hủy đơn hàng thất bại. Vui lòng thử lại.");
-  //     console.error("Failed to cancel order", error);
-  //   }
-  // };
+  
   function yeu_cau(dataBody: {
     id_item: string | number;
     comfirm?: boolean | string;
@@ -119,9 +103,13 @@ const OrdersDetali = () => {
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.numberOrder,
+      
     });
+    console.log(dataBody.cancellationReason);
+
     cancel(dataBody);
   }
+  
   const handleStatusUpdate = async (
     status: number | string,
     code_order?: string | number
