@@ -70,6 +70,7 @@ export const createOrder = async (req, res) => {
                       x.stock_attribute = x.stock_attribute - i.quantity;
                     }
                   }
+                  x.stock_attribute = x.stock_attribute - i.quantity;
                 } else {
                   x.stock_attribute = x.stock_attribute - i.quantity;
                 }
@@ -101,11 +102,7 @@ export const createOrderPayment = async (req, res) => {
   try {
     const requestBody = JSON.parse(JSON.stringify(req.body));
     const { userId, items, customerInfo, totalPrice } = requestBody;
-    console.log("Request body:", requestBody);
-    // Tạo đơn hàng mới
     const data = await Order.create(requestBody);
-    console.log("Order created:", data);
-    // Cập nhật số lượng tồn kho cho các sản phẩm trong đơn hàng
     for (let i of items) {
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
@@ -492,6 +489,10 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
+    if (status == "3") {
+      order.deliveredAt = new Date();
+    }
+
     // if (status === 2) {
     //   const items = order.items;
     //   for (let i of items) {
@@ -579,7 +580,7 @@ export async function get_orders_client(req, res) {
   // }
 
   if (_status) {
-    query.status = _status; // Lọc theo trạng thái đơn hàng
+    query.status = _status;
   }
 
   try {
@@ -607,6 +608,7 @@ export async function get_orders_client(req, res) {
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
+  console.log(cancellationReason);
 
   try {
     const order = await Order.findById(id);
@@ -661,8 +663,6 @@ export const adminCancelOrder = async (req, res) => {
     if (confirm) {
       order.status = "5"; // Canceled
       order.cancelledByAdmin = true;
-
-      // Revert product quantities
       const items = order.items;
       for (let i of items) {
         // Xử lý thay đổi số lượng sản phẩm
@@ -718,7 +718,6 @@ export const getOrderByNumber = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Đơn hàng không tìm thấy!" });
     }
-
     return res.status(200).json({ order });
   } catch (error) {
     console.error("Error fetching order:", error);
@@ -740,7 +739,6 @@ export const getOrderByNumberOrPhoneNumber = async (req, res) => {
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không có đơn hàng nào khớp với tìm kiếm" });
     }
-
     return res.status(StatusCodes.OK).json(orders);
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
