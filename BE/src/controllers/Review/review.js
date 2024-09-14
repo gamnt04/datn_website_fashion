@@ -79,6 +79,9 @@ export const addReviewProduct = async (req, res) => {
       message: "Review added successfully",
       saveReview,
     });
+
+    // Cập nhật trung bình sao của sản phẩm
+    await Products.updateAverageRating(productId);
   } catch (error) {
     console.error("Failed to add review:", error);
     return res.status(500).json({ error: error.message });
@@ -150,6 +153,9 @@ export const updateReviewProduct = async (req, res) => {
     review.updatedAt = Date.now();
     await review.save();
 
+    // Cập nhật trung bình sao của sản phẩm
+    await Products.updateAverageRating(productId);
+
     return res
       .status(StatusCodes.OK)
       .json({ message: "Review updated successfully", review });
@@ -215,6 +221,8 @@ export const deleteReviewProduct = async (req, res) => {
 
     // Xóa review khỏi cơ sở dữ liệu
     await Review.findByIdAndDelete(reviewId);
+
+    await Products.updateAverageRating(productId);
 
     console.log("Review deleted successfully");
     return res

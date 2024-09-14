@@ -9,6 +9,7 @@ import {
   Modal,
   Popconfirm,
   Radio,
+  Rate,
   Spin,
   Upload,
   UploadFile,
@@ -26,17 +27,13 @@ import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai"; // AiFillStar để hiển thị ngôi sao màu vàng
-
 import queryString from "query-string";
 import instance from "../../../configs/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
-type FieldType = {
-  contentReview?: string;
-  rating_review?: number;
-  image_review?: string[];
-};
+import { UploadGallery, UploadImage } from "../../../systems/utils/uploadImage";
+import axios from "axios";
+
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -45,11 +42,15 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+type FieldType = {
+  contentReview?: string;
+  image_review?: string;
+  rating_review?: string;
+};
 
 export default function List_order() {
   //Khai báo
   const [form] = Form.useForm();
-
   const queryClient = useQueryClient();
   const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -75,8 +76,6 @@ export default function List_order() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
-    setFileList(newFileList);
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
@@ -89,11 +88,12 @@ export default function List_order() {
   const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
   const [rating, setRating] = useState<number>(0); // State để lưu giá trị rating
   const [initialContent, setInitialContent] = useState(""); // State để giữ giá trị ban đầu
-
-  //function review
-  const handleRating = (rate: number) => {
-    setRating(rate); // Cập nhật rating khi người dùng click vào sao
-  };
+  const reasons = [
+    "Thay đổi ý định",
+    "Tìm được giá tốt hơn",
+    "Đặt nhầm sản phẩm",
+    "Khác",
+  ];
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -102,13 +102,6 @@ export default function List_order() {
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
   };
-
-  const reasons = [
-    "Thay đổi ý định",
-    "Tìm được giá tốt hơn",
-    "Đặt nhầm sản phẩm",
-    "Khác",
-  ];
 
   // Truy vấn dữ liệu đánh giá dựa trên currentReviewId
   const { data: dataReviewById } = useQuery({
@@ -130,8 +123,8 @@ export default function List_order() {
       image_review: string[];
     }) => {
       const { data } = await instance.post(`/review/${userId}`, {
-        productId: reviewData.productId,
         contentReview: reviewData.contentReview,
+        productId: reviewData.productId,
         orderId: reviewData.orderId,
         rating_review: reviewData.rating_review,
         image_review: reviewData.image_review,
@@ -159,6 +152,8 @@ export default function List_order() {
   useEffect(() => {
     if (dataReviewById) {
       setInitialContent(dataReviewById.review?.contentReview || "");
+      // setInitialImage(dataReviewById.review?.image_review || []);
+      // setInitialRating(dataReviewById.review?.rating_review || 0);
     }
   }, [dataReviewById]);
 
@@ -172,6 +167,40 @@ export default function List_order() {
       setCurrentReviewId(reviewId); // Thiết lập currentReviewId trước khi useQuery chạy
     }
   };
+  const [img, setImg] = useState<any>("");
+  const handleImageChange = (info: any) => {
+    console.log("File List:", info);
+    const files = info?.fileList.map(
+      (file: any) => file?.originFileObj || file
+    );
+    console.log("Files:", files); // Kiểm tra các tệp ảnh được lưu
+    setImg(files);
+  };
+
+  console.log(img);
+
+  const onFinish = async (
+    values: any,
+    index: number,
+    productGroup: any,
+    items: any
+  ) => {
+    console.log(values);
+
+    console.log(img);
+
+    const secure_url = await UploadGallery(img);
+    console.log(secure_url);
+
+    addReview({
+      contentReview: values[`contentReview_${index}`] || "",
+      productId: productGroup.productId,
+      orderId: items?._id,
+      rating_review: values[`rating_review_${index}`] || 0,
+      image_review: secure_url || [],
+    });
+  };
+
   //END FUNCTION  REVIEW
 
   // yeu cau huy don
@@ -216,13 +245,14 @@ export default function List_order() {
       case 3:
         return <span>Đang vận chuyển</span>;
       case 4:
+        return <span>Đã giao hàng</span>
+      case 6:
         return (
           <span className="text-green-500 flex items-center gap-x-2">
-            {" "}
             Hoàn thành
           </span>
         );
-      case 5:
+      case 7:
         return <span className="text-red-500">Đã hủy</span>;
       default:
         return;
@@ -249,6 +279,7 @@ export default function List_order() {
     "Chờ Xác Nhận",
     "Đang Chuẩn Bị Hàng",
     "Đang Vận Chuyển",
+    "Đã Giao Hàng",
     "Hoàn Thành",
     "Đã Hủy",
   ];
@@ -587,36 +618,26 @@ export default function List_order() {
                                       </div>
                                       <div>{productGroup.productName}</div>
                                     </div>
-
                                     <Form
-                                      onFinish={(values) => {
-                                        addReview({
-                                          contentReview:
-                                            values[`contentReview_${index}`] ||
-                                            "",
-                                          productId: productGroup.productId,
-                                          orderId: items?._id,
-                                          rating_review:
-                                            values[`rating_review_${index}`] ||
-                                            0,
-                                          image_review:
-                                            values[`image_review_${index}`] ||
-                                            [],
-                                        });
-                                      }}
-                                      onValuesChange={(
-                                        changedValues,
-                                        allValues
-                                      ) => {
+                                      // form={form}
+                                      onFinish={(values) =>
+                                        onFinish(
+                                          values,
+                                          index,
+                                          productGroup,
+                                          items
+                                        )
+                                      }
+                                      onValuesChange={(changedValues) => {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
                                           changedValues[
-                                            `rating_review_${index}`
+                                          `rating_review_${index}`
                                           ]
                                         ) {
                                           setRating(
                                             changedValues[
-                                              `rating_review_${index}`
+                                            `rating_review_${index}`
                                             ]
                                           );
                                         }
@@ -625,31 +646,40 @@ export default function List_order() {
                                       <Form.Item
                                         name={`rating_review_${index}`}
                                         initialValue={
-                                          review ? review.rating_review : rating
+                                          review
+                                            ? review.rating_review
+                                            : rating[productGroup.productId] ||
+                                              0
                                         }
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message:
+                                              "Vui lòng chọn mức đánh giá!",
+                                          },
+                                        ]}
                                       >
-                                        <div className="flex items-center gap-1 mb-[20px]">
-                                          {[1, 2, 3, 4, 5].map((rate) => (
-                                            <span
-                                              key={rate}
-                                              onClick={() => {
-                                                form.setFieldsValue({
-                                                  [`rating_review_${index}`]:
-                                                    rate, // Cập nhật giá trị vào form
-                                                });
-                                              }}
-                                            >
-                                              {rate <=
-                                              (review
-                                                ? review.rating_review
-                                                : rating) ? (
-                                                <AiFillStar className="text-yellow-400 text-2xl" />
-                                              ) : (
-                                                <AiOutlineStar className="text-yellow-400 text-2xl" />
-                                              )}
-                                            </span>
-                                          ))}
-                                        </div>
+
+                                        <Rate
+                                          allowClear={false}
+                                          disabled={!!review} // Không cho chỉnh sửa nếu đã có đánh giá
+                                          value={
+                                            rating[productGroup.productId] || 0
+                                          }
+                                          onChange={(value) => {
+                                            // Cập nhật giá trị vào form
+                                            form.setFieldsValue({
+                                              [`rating_review_${index}`]: value,
+                                            });
+
+                                            // Đồng bộ với state rating
+                                            setRating((prevRatings) => ({
+                                              ...prevRatings,
+                                              [productGroup.productId]: value,
+                                            }));
+                                          }}
+                                        />
+
                                       </Form.Item>
 
                                       {/* Các phần khác vẫn giữ nguyên */}
@@ -679,7 +709,9 @@ export default function List_order() {
                                         initialValue={
                                           review && review.image_review
                                             ? review.image_review
-                                            : []
+                                            : fileList[
+                                                productGroup.productId
+                                              ]?.map((file) => file.url) || []
                                         }
                                       >
                                         <Upload
@@ -687,6 +719,7 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
+
                                                   (url, idx) => ({
                                                     uid: `${idx}`,
                                                     name: `image_${idx}`,
@@ -694,23 +727,17 @@ export default function List_order() {
                                                     url: url,
                                                   })
                                                 )
-                                              : []
+                                              : fileList[
+                                                  productGroup.productId
+                                                ] || []
+
                                           }
-                                          onChange={({
-                                            fileList: newFileList,
-                                          }) => {
-                                            setFileList(newFileList);
-                                            form.setFieldsValue({
-                                              [`image_review_${index}`]:
-                                                newFileList.map(
-                                                  (file) => file.url
-                                                ),
-                                            });
-                                          }}
+                                          onChange={handleImageChange}
                                           onPreview={handlePreview}
                                           customRequest={async ({
                                             file,
                                             onSuccess,
+                                            onError,
                                           }) => {
                                             const formData = new FormData();
                                             formData.append("file", file);
@@ -731,27 +758,40 @@ export default function List_order() {
                                                   body: formData,
                                                 }
                                               );
+
+                                              if (!response.ok) {
+                                                throw new Error(
+                                                  "Upload failed"
+                                                );
+                                              }
+
                                               const result =
                                                 await response.json();
                                               file.url = result.secure_url;
+
+                                              // Cập nhật fileList sau khi tải lên thành công
+                                              setFileList((prevLists) => ({
+                                                ...prevLists,
+                                                [productGroup.productId]: [
+                                                  ...(prevLists[
+                                                    productGroup.productId
+                                                  ] || []),
+                                                  file,
+                                                ],
+                                              }));
+
                                               onSuccess?.();
-                                              setFileList((prevList) =>
-                                                prevList.map((f) =>
-                                                  f.uid === file.uid ? file : f
-                                                )
-                                              );
                                             } catch (error) {
                                               console.error(
                                                 "Upload error:",
                                                 error
                                               );
+                                              onError?.(error);
                                             }
                                           }}
-                                          showUploadList={{
-                                            showRemoveIcon: false, // Không hiển thị biểu tượng thùng rác
-                                          }}
                                         >
-                                          {fileList.length >= 8 || review
+                                          {fileList[productGroup.productId]
+                                            ?.length >= 8
                                             ? null
                                             : uploadButton}
                                         </Upload>
