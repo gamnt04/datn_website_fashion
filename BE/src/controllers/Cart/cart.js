@@ -148,6 +148,9 @@ export async function handle_status_checked(req, res) {
             i.status_checked = !i.status_checked;
           }
         }
+        else {
+          i.status_checked = !i.status_checked;
+        }
       }
     }
     await data_cart.save();

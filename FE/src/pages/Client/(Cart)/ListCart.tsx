@@ -17,6 +17,8 @@ import {
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import Het_hang from "./_components/het_hang";
+import { toast } from "react-toastify";
+import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 
 interface DataType {
   key: string;
@@ -110,7 +112,6 @@ const ListCart = () => {
         ...product,
       }
   );
-  console.log(dataSort);
 
   const columns: TableProps<DataType>["columns"] = [
     {
@@ -259,9 +260,43 @@ const ListCart = () => {
       },
     },
   ];
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
+  const item_order_checkked = data?.products?.filter((value: any) => value?.status_checked);
+  const item_lon_hon_0 = filter_positive_Stock_Item(item_order_checkked);
+  const totalPrice = item_lon_hon_0?.reduce((a: any, curr: any) => (a + curr?.total_price_item), 0);
   // next order
   function next_order() {
     ScrollTop();
+    // validate stock 
+    for (const i of item_order_checkked) {
+      if (i?.productId?.attributes) {
+        const check_color = i?.productId?.attributes?.values?.find((a: any) => a?.color === i?.color_item);
+        const check_size = check_color?.size?.find((b: any) => (b?.name_size?.trim() ? b?.name_size : undefined) === i?.name_size);
+        if (i?.quantity > check_size?.stock_attribute) {
+          let message: any;
+          if (check_size?.stock_attribute < 1) {
+            message = `Sản phẩm ${i?.productId?.name_product} hiện tại đã hết hàng, 
+            vui lòng xóa khỏi giỏ hàng và chọn sản phẩm khác để thanh toán!`
+          } else {
+            message = `Sản phẩm ${i?.productId?.name_product} hiện tại 
+            chỉ còn ${check_size?.stock_attribute}. Vui lòng giảm số lượng trước khi thanh toán!`
+          }
+          toast.error(message, { autoClose: 1200 });
+          return;
+        }
+      }
+      else if (i?.quantity > i?.productId?.stock) {
+        toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
+          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+        return;
+      }
+    }
     const data_cart = dataSort?.filter(
       (item: any) => item?.status_checked && item
     );
@@ -273,27 +308,13 @@ const ListCart = () => {
         });
         return null
       }
-      const data_order = {
-        id_user: userId,
-        data_order: data_cart,
-        totalPrice: data?.total_price,
-        action: "data_cart",
-        _id: data?._id,
-      };
-      sessionStorage.setItem("item_order", JSON.stringify(data_order));
+      sessionStorage.setItem('item_order', JSON.stringify(data_cart))
       routing("/cart/pay");
     } else {
       routing("/login");
     }
   }
 
-  if (isPending) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
-      </div>
-    );
-  }
 
   if (isError) {
     return <p>{error.message}</p>;
@@ -336,7 +357,7 @@ const ListCart = () => {
                   <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                     <strong>Tổng giá trị đơn hàng</strong>
                     <p className="text-xl font-bold text-yellow-500">
-                      {data?.total_price?.toLocaleString("vi", {
+                      {totalPrice?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}
@@ -359,7 +380,7 @@ const ListCart = () => {
                   <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                     <strong>Cần thanh toán :</strong>
                     <strong>
-                      {data?.total_price?.toLocaleString("vi", {
+                      {totalPrice?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}

@@ -37,13 +37,13 @@ import SearchResults from "../components/common/Client/SearchResults";
 import BlogEdit from "../pages/Admin/Blogs/BlogEdit";
 import ForgotPassword from "../pages/Client/User/ForgotPass";
 import CategoryDetail from "../pages/Admin/Category/CategoryDetail";
-import OrderPay from "../pages/Client/pay/oderPay";
+// import OrderPay from "../pages/Client/pay/oderPay";
 import List_order from "../pages/Client/List_Order/page";
 import Feedback from "../pages/Admin/contact/Feedback";
 import ContactDetail from "../pages/Admin/contact/ContactDetail";
 import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
-import DescriptionProduct from "../pages/Client/[ProductDetail]/DescriptionProduct";
+import VerifyEmail from "../systems/utils/VerifyEmail";
 const RouterComponent = () => {
   return (
     <>
@@ -51,6 +51,7 @@ const RouterComponent = () => {
         <Routes>
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
+            <Route path="/verify" element={<VerifyEmail />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/shops" element={<IndexShops />} />
             <Route path="/test" element={<Test />} />
@@ -58,7 +59,7 @@ const RouterComponent = () => {
             <Route path="/cart" element={<ListCart />} />
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
-            <Route path="/order/pay" element={<OrderPay />} />
+            {/* <Route path="/order/pay" element={<OrderPay />} /> */}
             <Route path="/favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
@@ -104,8 +105,7 @@ const RouterComponent = () => {
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="contact/:id" element={<ContactDetail />} />
             <Route path="feedback/:id" element={<Feedback />} />
-            <Route path="deliveries" element={<CourierTable/>} />
-
+            <Route path="deliveries" element={<CourierTable />} />
             <Route path="blogs" element={<Blog />} />
 
             <Route path="blogs/add_blog" element={<BlogAdd />} />

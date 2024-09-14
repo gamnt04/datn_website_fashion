@@ -7,7 +7,7 @@ import {
   Update_Address,
 } from "../../../components/common/Client/_component/Address";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { Button, message, Popconfirm } from "antd";
 
@@ -16,7 +16,8 @@ const Address = () => {
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, refetch } = List_Auth(userId);
+  const userRole = user?.user?.role;
+  const { data } = List_Auth(userId);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [addressId, setAddressId] = useState<string | null>(null);
@@ -33,8 +34,13 @@ const Address = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await instance.delete(`/auth/${userId}/${id}`);
-      return data;
+      if (userRole === "courier") {
+        const { data } = await instance.delete(`/shippers/${userId}/${id}`);
+        return data;
+      } else {
+        const { data } = await instance.delete(`/auth/${userId}/${id}`);
+        return data;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -57,7 +63,11 @@ const Address = () => {
 
   const { mutate: setDefaultAddress } = useMutation({
     mutationFn: async (addressId: string) => {
-      await instance.patch(`/auth/${userId}/${addressId}/default`);
+      if (userRole === "courier") {
+        await instance.patch(`/shippers/${userId}/${addressId}/default`);
+      } else {
+        await instance.patch(`/auth/${userId}/${addressId}/default`);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["AUTH_KEY"] });
@@ -81,7 +91,7 @@ const Address = () => {
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h1>Địa chỉ của tôi</h1>
           <button
-            className="flex items-center gap-2 bg-black text-white px-3 py-3 rounded-md text-sm"
+            className="flex items-center gap-2 px-3 py-3 text-sm text-white bg-black rounded-md"
             onClick={handleAddress}
           >
             <svg
@@ -106,7 +116,7 @@ const Address = () => {
           {sortedAddresses?.map((address: Auth) => (
             <div
               key={address?._id}
-              className="flex justify-between items-center my-5 border-b pb-6"
+              className="flex items-center justify-between pb-6 my-5 border-b"
             >
               <div className="py-1">
                 <h1>
@@ -129,7 +139,7 @@ const Address = () => {
               </div>
               <div>
                 <div className="hidden lg:block">
-                  <div className="flex gap-2 justify-end text-blue-400 py-2">
+                  <div className="flex justify-end gap-2 py-2 text-blue-400">
                     <a
                       href="#"
                       onClick={() => handleUpdateAddress(address?._id!)}
