@@ -72,16 +72,8 @@ const orderSchema = new mongoose.Schema(
     confirmationImage: { type: String },
     deliveredAt: {
       type: Date,
-      default: null
-    },
-    completedAt: {
-      type: Date,
-      default: null
-    },
-    // datetime: {
-    //   type: Date,
-    //   default: Date.now
-    // }
+      default: Date.now
+    }
   },
   { timestamps: true, versionKey: false }
 );
