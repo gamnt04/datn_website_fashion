@@ -53,7 +53,7 @@ const orderSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["1", "2", "3", "4", "5"],
+      enum: ["1", "2", "3", "4", "5", "6", "7"], //1.chờ xác nhận, 2.Đang chuẩn bị hàng, 3.Đang vận chuyển, 4. Hoàn thành, 5. Hủy, 6. Giao hàng thành công, 7.Giao hàng thất bại
       default: "1"
     },
 
@@ -65,6 +65,11 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    shipperId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Shipper"
+    },
+    confirmationImage: { type: String },
     deliveredAt: {
       type: Date,
       default: null

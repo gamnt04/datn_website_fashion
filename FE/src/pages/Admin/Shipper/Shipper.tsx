@@ -4,16 +4,18 @@ import { Shipper } from "../../../common/interfaces/Shipper";
 import instance from "../../../configs/axios";
 import { Button, Table, Popconfirm, message, Input, Space, Empty } from "antd";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
-import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { Loader } from "lucide-react";
 import AddShipperForm from "./Add_Shipper";
+import Shipper_Detail from "./Shipper_Detail";
+import { GrView } from "react-icons/gr";
 const ShipperList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchName, setSearchName] = useState("");
   const [open, setOpen] = useState(false);
+  const [ShipperId, setShipperId] = useState<string | null>(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["shippers"],
     queryFn: async () => {
@@ -22,18 +24,12 @@ const ShipperList: React.FC = () => {
     },
   });
 
-  const showModal = () => {
-    setOpen(true);
-  };
-  const handleCancel = () => {
-    setOpen(false);
-  };
   const { data: searchData } = useQuery({
     queryKey: ["shippers", searchName],
     queryFn: async () => {
       if (searchName) {
         const response = await instance.post(`/shippers/search`, {
-          name: searchName,
+          fullName: searchName,
         });
         return response.data;
       }
@@ -69,7 +65,16 @@ const ShipperList: React.FC = () => {
       );
     }
   };
-
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const showDrawer = (id: string) => {
+    setShipperId(id);
+    setOpenDrawer(true);
+  };
   const columns = [
     {
       title: "STT",
@@ -88,12 +93,12 @@ const ShipperList: React.FC = () => {
     },
     {
       key: "fullName",
-      title: "Tên ",
+      title: "Họ và tên",
       dataIndex: "fullName",
     },
     {
       key: "vehicle",
-      title: "Xe",
+      title: "Phương tiện vận chuyển",
       dataIndex: "vehicle",
     },
     {
@@ -138,14 +143,12 @@ const ShipperList: React.FC = () => {
       title: "Thao Tác",
       render: (_: any, shipper: Shipper) => (
         <Space>
-          <Button type="primary">
-            <Link to={`${shipper._id}`}>
-              <FaEdit />
-            </Link>
+          <Button type="default" onClick={() => showDrawer(shipper._id)}>
+            <GrView />
           </Button>
           <Popconfirm
-            title="Xóa shipper"
-            description="Bạn có muốn xóa shipper này không?"
+            title="Xóa người giao hàng"
+            description="Bạn có muốn xóa người giao hàng này không?"
             onConfirm={() => handleDelete(shipper._id)}
             okText="Có"
             cancelText="Không"
@@ -172,10 +175,15 @@ const ShipperList: React.FC = () => {
   return (
     <div className="container">
       {contextHolder}
+      <Shipper_Detail
+        shipperId={ShipperId}
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+      />
       <AddShipperForm open={open} onClose={handleCancel} />
       <div className="mx-6">
         <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-2xl font-semibold">Quản Lý Shipper</h1>
+          <h1 className="text-2xl font-semibold">Quản Lý Người Giao Hàng</h1>
 
           <Button
             onClick={showModal}
@@ -190,7 +198,7 @@ const ShipperList: React.FC = () => {
               className="w-[500px]"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
-              placeholder="Nhập tên shipper để tìm kiếm..."
+              placeholder="Nhập tên người giao hàng để tìm kiếm..."
             />
             <Button onClick={onHandleSearch} type="primary">
               Tìm kiếm
