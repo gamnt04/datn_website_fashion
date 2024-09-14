@@ -1,3 +1,4 @@
+import cron from "node-cron";
 import Orders from "../../models/Orders/orders";
 import { StatusCodes } from "http-status-codes";
 
@@ -39,3 +40,23 @@ export async function list_items_order_by_user(req, res) {
     });
   }
 }
+cron.schedule("*/30 * * * * *", async () => {
+  try {
+    const thirtySecondsAgo = new Date();
+    thirtySecondsAgo.setSeconds(thirtySecondsAgo.getSeconds() - 30);
+    const orders = await Orders.updateMany(
+      {
+        status: "4",
+        deliveredAt: { $lte: thirtySecondsAgo },
+        completedAt: null
+      },
+      {
+        status: "6",
+        completedAt: new Date()
+      }
+    );
+    // console.log("Đã cập nhật", orders.nModified, "đơn hàng");
+  } catch (error) {
+    console.error("Lỗi khi cập nhật đơn hàng:", error);
+  }
+});

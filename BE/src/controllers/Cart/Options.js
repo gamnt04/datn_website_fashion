@@ -10,7 +10,7 @@ export const addItemToCart = async (req, res) => {
     color,
     size,
     price_item_attr,
-    stock_item
+    status_checked
   } = req.body;
   try {
     const data_product = await Products.findOne({ _id: productId }).populate(
@@ -20,26 +20,19 @@ export const addItemToCart = async (req, res) => {
       price_item_attr > 0 ? price_item_attr : data_product.price_product;
     let color_item;
     let name_size;
-    let quantity_attr = 0;
-
+    let stock_attribute = 0;
     if (data_product.attributes) {
-      for (let i of data_product.attributes.values) {
-        if (i.color == color) {
-          for (let k of i.size) {
-            if (k.name_size == size) {
-              quantity_attr = k.stock_attribute;
-              color_item = i.color;
-              name_size = k.name_size;
-              break;
-            } else {
-              quantity_attr = k.stock_attribute;
-              color_item = i.color;
-            }
+      const varr = data_product.attributes.values.find(color_attr => color_attr.color === color);
+      if (varr) {
+        for (let i of varr.size) {
+          if (i.name_size === size) {
+            color_item = varr.color;
+            name_size = i.name_size
+            stock_attribute = i.stock_attribute
           }
         }
       }
-    } else { quantity_attr = quantity; }
-
+    }
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({
@@ -51,32 +44,51 @@ export const addItemToCart = async (req, res) => {
     let check_item = false;
     for (let i = 0; i < cart.products.length; i++) {
       if (cart.products[i].productId.toString() === productId) {
-        if (
-          cart.products[i].color_item === color &&
-          cart.products[i].name_size === size
-        ) {
+        if (cart.products[i].color_item === color && cart.products[i].name_size === size) {
           cart.products[i].quantity += quantity;
-          cart.products[i].total_price_item =
-            price_item * cart.products[i].quantity;
+          cart.products[i].total_price_item = price_item * cart.products[i].quantity;
+          if (status_checked) {
+            cart.products[i].status_checked = status_checked;
+          }
+          else {
+            cart.products[i].status_checked = cart.products[i].status_checked;
+          }
           check_item = true;
         }
-        if (cart.products[i].quantity >= stock_item) {
-          cart.products[i].quantity = stock_item;
-          cart.products[i].total_price_item =
-            price_item * cart.products[i].quantity;
+        if (cart.products[i].quantity >= stock_attribute) {
+          cart.products[i].quantity = stock_attribute;
+          cart.products[i].total_price_item = price_item * cart.products[i].quantity;
+          if (status_checked) {
+            cart.products[i].status_checked = status_checked;
+          }
+          else {
+            cart.products[i].status_checked = cart.products[i].status_checked;
+          }
         }
       }
     }
     if (!check_item) {
-      cart.products.push({
-        productId,
-        quantity,
-        price_item,
-        color_item,
-        name_size,
-        quantity_attr,
-        total_price_item: price_item * quantity
-      });
+      if (status_checked) {
+        cart.products.unshift({
+          productId,
+          quantity,
+          price_item,
+          color_item,
+          name_size,
+          status_checked,
+          total_price_item: price_item * quantity
+        });
+      } else {
+        cart.products.push({
+          productId,
+          quantity,
+          price_item,
+          color_item,
+          name_size,
+          status_checked,
+          total_price_item: price_item * quantity
+        });
+      }
     }
     cart.total_price = cart.products.reduce(
       (acc, product) => acc + product.total_price_item,

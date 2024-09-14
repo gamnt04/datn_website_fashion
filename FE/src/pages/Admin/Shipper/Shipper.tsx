@@ -1,38 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Shipper } from "../../../common/interfaces/Shipper";
 import instance from "../../../configs/axios";
-import {
-  Button,
-  Table,
-  Popconfirm,
-  message,
-  Switch,
-  Input,
-  Space
-} from "antd";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Table, Popconfirm, message, Input, Space, Empty } from "antd";
+import { useQuery } from "@tanstack/react-query";
 import { AiOutlinePlus } from "react-icons/ai";
-import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
-
+import { Loader } from "lucide-react";
+import AddShipperForm from "./Add_Shipper";
+import Shipper_Detail from "./Shipper_Detail";
+import { GrView } from "react-icons/gr";
 const ShipperList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchName, setSearchName] = useState("");
+  const [open, setOpen] = useState(false);
+  const [ShipperId, setShipperId] = useState<string | null>(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["shippers"],
     queryFn: async () => {
       const response = await instance.get("/shippers");
       return response.data;
-    }
+    },
   });
 
   const { data: searchData } = useQuery({
     queryKey: ["shippers", searchName],
     queryFn: async () => {
       if (searchName) {
-        const response = await instance.post(`/shippers/search`, { name: searchName });
+        const response = await instance.post(`/shippers/search`, {
+          fullName: searchName,
+        });
         return response.data;
       }
       return [];
@@ -42,7 +40,7 @@ const ShipperList: React.FC = () => {
 
   const dataSource = (searchName ? searchData : data)?.map((shipper: any) => ({
     key: shipper._id,
-    ...shipper
+    ...shipper,
   }));
 
   const onHandleSearch = () => {
@@ -67,66 +65,90 @@ const ShipperList: React.FC = () => {
       );
     }
   };
-
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const showDrawer = (id: string) => {
+    setShipperId(id);
+    setOpenDrawer(true);
+  };
   const columns = [
     {
-      key: "avatar",
-      title: "Avatar",
-      render: () => <img src="https://via.placeholder.com/40" alt="Shipper" style={{ width: 40, height: 40, borderRadius: '50%' }} />
+      title: "STT",
+      render: (_, __, index) => <p>{index + 1}</p>,
     },
     {
-      key: "name",
-      title: "Tên Shipper",
-      dataIndex: "name"
+      key: "avatar",
+      title: "Ảnh",
+      render: (shipper: any) => (
+        <img
+          src={shipper.avatar}
+          alt="Shipper"
+          style={{ width: 40, height: 40, borderRadius: "50%" }}
+        />
+      ),
+    },
+    {
+      key: "fullName",
+      title: "Họ và tên",
+      dataIndex: "fullName",
     },
     {
       key: "vehicle",
-      title: "Xe",
-      dataIndex: "vehicle"
+      title: "Phương tiện vận chuyển",
+      dataIndex: "vehicle",
     },
     {
       key: "phone",
       title: "Số Điện Thoại",
-      dataIndex: "phone"
+      dataIndex: "phone",
     },
-    {
-      key: "store",
-      title: "Cửa Hàng",
-      dataIndex: "store"
-    },
-    {
-        key: "rating",
-        title: "Đánh Giá",
-        dataIndex: "rating",
-        render: (rating: number) => (
-          <div>
-            {Array.from({ length: 5 }, (_, index) => (
-              <span key={index} style={{ color: index < rating ? 'gold' : 'gray' }}>★</span>
-            ))}
-          </div>
-        )
-      },
+    // {
+    //   key: "store",
+    //   title: "Cửa Hàng",
+    //   dataIndex: "store",
+    // },
+    // {
+    //   key: "rating",
+    //   title: "Đánh Giá",
+    //   dataIndex: "rating",
+    //   render: (rating: number) => (
+    //     <div>
+    //       {Array.from({ length: 5 }, (_, index) => (
+    //         <span
+    //           key={index}
+    //           style={{ color: index < rating ? "gold" : "gray" }}
+    //         >
+    //           ★
+    //         </span>
+    //       ))}
+    //     </div>
+    //   ),
+    // },
     {
       key: "status",
       title: "Trạng Thái",
       dataIndex: "status",
       render: (status: string) => (
-        <span style={{ color: status === 'Available' ? 'green' : 'red' }}>{status}</span>
-      )
+        <span style={{ color: status === "Available" ? "green" : "red" }}>
+          {status}
+        </span>
+      ),
     },
     {
       key: "actions",
       title: "Thao Tác",
       render: (_: any, shipper: Shipper) => (
         <Space>
-          <Button type="primary">
-            <Link to={`${shipper._id}`}>
-              <FaEdit />
-            </Link>
+          <Button type="default" onClick={() => showDrawer(shipper._id)}>
+            <GrView />
           </Button>
           <Popconfirm
-            title="Xóa shipper"
-            description="Bạn có muốn xóa shipper này không?"
+            title="Xóa người giao hàng"
+            description="Bạn có muốn xóa người giao hàng này không?"
             onConfirm={() => handleDelete(shipper._id)}
             okText="Có"
             cancelText="Không"
@@ -136,32 +158,47 @@ const ShipperList: React.FC = () => {
             </Button>
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="animate-spin">
+          <Loader />
+        </div>
+      </div>
+    );
   if (isError) return <div>{(error as any).message}</div>;
 
   return (
     <div className="container">
       {contextHolder}
+      <Shipper_Detail
+        shipperId={ShipperId}
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+      />
+      <AddShipperForm open={open} onClose={handleCancel} />
       <div className="mx-6">
-        <div className="flex items-center justify-between mb-5 mt-20">
-          <h1 className="text-2xl font-semibold">Quản Lý Shipper</h1>
-          <Link to="add_shipper">
-            <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
-              <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SHIPPER
-            </Button>
-          </Link>
+        <div className="flex items-center justify-between mt-20 mb-5">
+          <h1 className="text-2xl font-semibold">Quản Lý Người Giao Hàng</h1>
+
+          <Button
+            onClick={showModal}
+            className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]"
+          >
+            <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SHIPPER
+          </Button>
         </div>
-        <div className="mb-2 flex justify-between">
+        <div className="flex justify-between mb-2">
           <div className="flex space-x-5">
             <Input
               className="w-[500px]"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
-              placeholder="Nhập tên shipper để tìm kiếm..."
+              placeholder="Nhập tên người giao hàng để tìm kiếm..."
             />
             <Button onClick={onHandleSearch} type="primary">
               Tìm kiếm
@@ -169,7 +206,7 @@ const ShipperList: React.FC = () => {
           </div>
         </div>
         {data && data.length === 0 ? (
-          <p>Không có shipper nào.</p>
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <Table dataSource={dataSource} rowKey="_id" columns={columns} />
         )}
