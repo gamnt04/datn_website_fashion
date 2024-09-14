@@ -745,8 +745,10 @@ export default function List_order() {
                                                 await response.json();
                                               file.url = result.secure_url;
 
+                                              console.log(result);
+
                                               // Cập nhật fileList sau khi tải lên thành công
-                                              setFileList((prevLists) => ({
+                                              setFileList((prevLists: any) => ({
                                                 ...prevLists,
                                                 [productGroup.productId]: [
                                                   ...(prevLists[
