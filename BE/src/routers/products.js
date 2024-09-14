@@ -7,6 +7,7 @@ import {
   getDetailProductDashBoard,
   getProductById,
   getProductsByName,
+  getProductAverageRating,
 } from "../controllers/Items/Get";
 import {
   deleteProductById,
@@ -28,6 +29,10 @@ Routes_Products.get(
   get_item_dashboard
 );
 Routes_Products.get("/products/:id", getProductById);
+Routes_Products.get(
+  "/products/getProductAverageRating/:id",
+  getProductAverageRating
+);
 Routes_Products.get("/products/dashboard/:id", getDetailProductDashBoard);
 Routes_Products.post("/products/search", getProductsByName);
 
