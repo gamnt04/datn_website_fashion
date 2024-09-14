@@ -9,10 +9,15 @@ import {
   Button,
   Form,
   FormProps,
+  GetProp,
+  Image,
   Input,
+  Modal,
   Popconfirm,
   Spin,
   Upload,
+  UploadFile,
+  UploadProps,
   message,
 } from "antd";
 import { AiFillStar, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
@@ -21,6 +26,7 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 type FieldType = {
   contentReview?: string;
   image_review?: string[]; // Thêm image_review vào FieldType
+  rating_review?: number; // Thêm image_review vào FieldType
 };
 
 const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
@@ -39,14 +45,65 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const queryClient = useQueryClient();
-  const [rating, setRating] = useState({}); // Trạng thái để lưu giá trị rating của các review
+  const [rating, setRating] = useState({});
+  // const [fileList, setFileList] = useState<UploadFile[]>([]);
+  // Trạng thái để lưu giá trị rating của các review
+
+  const [fileList, setFileList] = useState(() => {
+    // Chuyển đổi hình ảnh từ `image_review` thành dạng fileList để hiển thị ảnh trước đó
+    const initialImages = form.getFieldValue("image_review") || [];
+    return initialImages.map((url, index) => ({
+      uid: index.toString(),
+      name: `image-${index}`,
+      url,
+    }));
+  });
 
   const { data, isLoading, isError } = Query_Products(productId);
   console.log(data);
 
   console.log(data.review);
 
+  const getBase64 = (file: FieldType): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const [previewImage, setPreviewImage] = useState(""); // Hình ảnh xem trước
+  const [previewOpen, setPreviewOpen] = useState(false); // Trạng thái hiển thị modal xem trước
+
+  type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  // const handleUploadChange = ({ fileList: newFileList }) => {
+  //   setFileList(newFileList);
+  //   form.setFieldsValue({
+  //     image_review: newFileList.map((file) => file.url || ""),
+  //   });
+  // };
+
   useEffect(() => {
+    const initialFileList = (form.getFieldValue("image_review") || []).map(
+      (url, index) => ({
+        uid: index.toString(),
+        url,
+        name: `image-${index}`, // Có thể thêm tên tùy ý
+        status: "done", // Đánh dấu rằng ảnh đã được tải lên trước đó
+      })
+    );
+
+    setFileList(initialFileList); // Khởi tạo fileList với ảnh từ review trước đó
+
     if (editReviewId && data?.product?.reviews) {
       const review = data.product.reviews.find(
         (r: any) => r._id === editReviewId
@@ -55,6 +112,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         form.setFieldsValue({
           contentReview: review.contentReview,
           image_review: review.image_review || [], // Cập nhật hình ảnh
+          rating_review: review.rating_review || "",
         });
       }
     }
@@ -93,16 +151,18 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       orderId,
       contentReview,
       image_review,
+      rating_review,
     }: {
       reviewId: string;
       productId: string;
       orderId: string;
       contentReview: string;
       image_review?: string[];
+      rating_review: number;
     }) => {
       const { data } = await instance.put(
         `/review/${userId}/${productId}/${reviewId}/${orderId}`,
-        { contentReview, image_review }, // Cập nhật nội dung và hình ảnh
+        { contentReview, image_review, rating_review }, // Cập nhật nội dung và hình ảnh
         {
           headers: {
             "Content-Type": "application/json",
@@ -125,33 +185,71 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     reviewId: string,
     productId: string,
     orderId: string,
-    contentReview: string
+    contentReview: string,
+    image_review?: string[],
+    rating_review: number
   ) => {
     setEditReviewId(reviewId);
-    form.setFieldsValue({ contentReview });
+    form.setFieldsValue({ contentReview, image_review, rating_review });
   };
 
-  const handlePreview = async (file) => {
-    let src = file.url || file.thumbUrl;
+  // const handlePreview = async (file) => {
+  //   let src = file.url || file.thumbUrl;
 
-    if (!src) {
-      src = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
-    }
+  //   if (!src) {
+  //     src = await new Promise((resolve, reject) => {
+  //       const reader = new FileReader();
+  //       reader.readAsDataURL(file.originFileObj);
+  //       reader.onload = () => resolve(reader.result);
+  //       reader.onerror = (error) => reject(error);
+  //     });
+  //   }
 
-    const imgWindow = window.open(src);
-    imgWindow.document.write(`<img src="${src}" style="width: 100%;" />`);
-  };
+  //   const imgWindow = window.open(src);
+  //   imgWindow.document.write(`<img src="${src}" style="width: 100%;" />`);
+  // };
   const uploadButton = (
-    <div>
+    <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
+      <div style={{ marginTop: 8 }}>Thêm ảnh</div>
+    </button>
   );
+
+  const customUploadRequest = async ({ file, onSuccess, onError }) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", PRESET_NAME);
+    formData.append("folder", FOLDER_NAME);
+
+    try {
+      const response = await fetch(api, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const result = await response.json();
+      file.url = result.secure_url; // Cập nhật URL từ server
+      onSuccess?.(result); // Gọi callback khi upload thành công
+
+      form.setFieldsValue({
+        image_review: [
+          ...(form.getFieldValue("image_review") || []),
+          result.secure_url,
+        ],
+      });
+
+      message.success("Tải lên thành công!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      onError?.(error); // Gọi callback khi upload thất bại
+      message.error("Tải lên thất bại!");
+    }
+  };
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
       // Tìm sản phẩm từ data
@@ -175,6 +273,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         productId,
         orderId,
         image_review: values.image_review || [], // Thêm image_review vào payload
+        rating_review: values.rating_review || 0,
       });
     }
   };
@@ -246,7 +345,10 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                           </strong>
                         </div>
                         <div className="flex gap-x-2">
-                          {isOwnReview(review.userId) && (
+                          {isOwnReview(review.userId) &&
+                          editReviewId === review._id ? (
+                            ""
+                          ) : (
                             <>
                               <Popconfirm
                                 title="Xóa đánh giá"
@@ -269,7 +371,9 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                     review._id,
                                     review.productId,
                                     review.orderId,
-                                    review.contentReview
+                                    review.contentReview,
+                                    review.image_review,
+                                    review.rating_review
                                   )
                                 }
                               >
@@ -288,7 +392,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             layout="vertical"
                             initialValues={{
                               contentReview: review.contentReview,
-                              rating_review: review.rating_review,
+                              rating_review: review.rating_review || 0, // Đặt mặc định là 0 nếu không có giá trị
                               image_review: review.image_review,
                             }}
                           >
@@ -306,7 +410,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                     }}
                                   >
                                     {rate <=
-                                    form.getFieldValue("rating_review") ? (
+                                    (form.getFieldValue("rating_review") ||
+                                      review.rating_review) ? (
                                       <AiFillStar className="text-yellow-400 text-2xl" />
                                     ) : (
                                       <AiOutlineStar className="text-yellow-400 text-2xl" />
@@ -315,7 +420,6 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                 ))}
                               </div>
                             </Form.Item>
-
                             {/* Chỉnh sửa nội dung đánh giá */}
                             <Form.Item
                               name="contentReview"
@@ -323,30 +427,24 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             >
                               <Input.TextArea rows={4} />
                             </Form.Item>
-
                             {/* Chỉnh sửa hình ảnh */}
                             <Form.Item name="image_review" label="Hình ảnh">
                               <Upload
                                 listType="picture-card"
-                                fileList={(
-                                  form.getFieldValue("image_review") || []
-                                ).map((url, index) => ({
-                                  uid: index.toString(),
-                                  url,
-                                }))}
-                                onChange={({ fileList }) => {
-                                  form.setFieldsValue({
-                                    image_review: fileList.map(
-                                      (file) => file.url || file.thumbUrl
-                                    ),
-                                  });
+                                fileList={fileList} // Quản lý danh sách file
+                                onChange={({ fileList: newFileList }) => {
+                                  setFileList(newFileList);
                                 }}
-                                onPreview={handlePreview}
-                                customRequest={async ({ file, onSuccess }) => {
+                                onPreview={handlePreview} // Xem trước hình ảnh
+                                customRequest={async ({
+                                  file,
+                                  onSuccess,
+                                  onError,
+                                }) => {
                                   const formData = new FormData();
                                   formData.append("file", file);
-                                  formData.append("upload_preset", PRESET_NAME);
-                                  formData.append("folder", FOLDER_NAME);
+                                  formData.append("upload_preset", PRESET_NAME); // Upload preset
+                                  formData.append("folder", FOLDER_NAME); // Folder
 
                                   try {
                                     const response = await fetch(api, {
@@ -354,27 +452,49 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                       body: formData,
                                     });
                                     const result = await response.json();
+
+                                    // Sau khi upload thành công, cập nhật URL cho file
                                     file.url = result.secure_url;
                                     onSuccess?.();
 
-                                    form.setFieldsValue({
-                                      image_review: [
-                                        ...(form.getFieldValue(
-                                          "image_review"
-                                        ) || []),
-                                        result.secure_url,
-                                      ],
-                                    });
+                                    // Cập nhật fileList mới
+                                    setFileList((prevList) =>
+                                      prevList.map((f) =>
+                                        f.uid === file.uid
+                                          ? { ...f, url: result.secure_url }
+                                          : f
+                                      )
+                                    );
+
+                                    // Cập nhật form mà không thêm URL trùng lặp
+                                    const currentImages =
+                                      form.getFieldValue("image_review") || [];
+                                    if (
+                                      !currentImages.includes(result.secure_url)
+                                    ) {
+                                      form.setFieldsValue({
+                                        image_review: [
+                                          ...currentImages,
+                                          result.secure_url,
+                                        ],
+                                      });
+                                    }
                                   } catch (error) {
                                     console.error("Upload error:", error);
+                                    onError?.(error);
                                   }
                                 }}
                               >
-                                {(form.getFieldValue("image_review") || [])
-                                  .length >= 8
-                                  ? null
-                                  : uploadButton}
+                                {fileList.length >= 8 ? null : uploadButton}
                               </Upload>
+
+                              <Modal
+                                open={previewOpen}
+                                footer={null}
+                                onCancel={() => setPreviewOpen(false)}
+                              >
+                                <Image src={previewImage} />
+                              </Modal>
                             </Form.Item>
 
                             {/* Các nút hành động */}
