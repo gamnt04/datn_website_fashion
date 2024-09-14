@@ -16,6 +16,7 @@ import {
   getAllOrderByMonthOfYear,
   getTop10ProductBestSale,
   getOrderByNumberOrPhoneNumber,
+  get10NewOrderToday,
   //get10OrderNewInDay,
   deliverSuccess,
   addShipperOrder
@@ -41,8 +42,7 @@ router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
 router.post("/orderspayment", createOrderPayment);
 router.post("/orders/search", getOrderByNumberOrPhoneNumber);
-router.post("/deliver-success", deliverSuccess);
-
+router.post("/orders/shipper/:id", addShipperOrder);
 // ---
 router.get("/list_order/:id_user", list_items_order_by_user);
 export default router;
