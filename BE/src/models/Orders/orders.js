@@ -68,6 +68,10 @@ const orderSchema = new mongoose.Schema(
     datetime: {
       type: Date,
       default: Date.now
+    },
+    shipperId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Shipper"
     }
   },
   { timestamps: true, versionKey: false }
