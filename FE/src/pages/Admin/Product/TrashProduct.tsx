@@ -7,6 +7,7 @@ import { FaRecycle } from "react-icons/fa";
 import { Query_Trash_Item } from "../../../common/hooks/Products/Products";
 import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
 import ProductPrice from "./_component/productPrice";
+import Data_Table from "./_component/Data_Table";
 
 const TrashProduct = () => {
   const formatDate = (dateString: any) => {
@@ -98,7 +99,12 @@ const TrashProduct = () => {
   if (isLoading) return <div>Loading...</div>;
   return (
     <div>
-      <Table columns={columns} dataSource={dataSource} />
+      {/* <Table columns={columns} dataSource={dataSource} /> */}
+      <Data_Table dataProps={{
+          dataTable:data,
+          mutate: mutate,
+          action : 'recycle'
+        }} />
     </div>
   );
 };

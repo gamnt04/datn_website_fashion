@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import User from "../../models/Auth/users";
 import { signupSchema } from "../../validations/auth";
 import mongoose from "mongoose";
+import { date } from "joi";
+import Shipper from "../../models/Shipper/shipper";
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -41,21 +43,24 @@ export const Get_All_User_Search = async (req, res) => {
     });
   }
 };
+
 export const GetAuthById = async (req, res) => {
   try {
     const id = req.params.userId;
+
     const user = await User.findById(id);
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "User not found" });
+    if (user) {
+      return res.status(StatusCodes.OK).json(user);
     }
-    if (user._id.toString() !== id) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "User not found" });
+
+    const shipper = await Shipper.findById(id);
+    if (shipper) {
+      return res.status(StatusCodes.OK).json(shipper);
     }
-    return res.status(StatusCodes.OK).json(user);
+
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: "User or Shipper not found" });
   } catch (error) {
     console.error("MongoDB Query Error:", error.message);
     return res
@@ -63,6 +68,7 @@ export const GetAuthById = async (req, res) => {
       .json({ error: "MongoDB Query Error" });
   }
 };
+
 export const GetUsersByEmailOrName = async (req, res) => {
   try {
     const { searchUser } = req.body;
@@ -133,6 +139,7 @@ export const signup = async (req, res) => {
   const { email, password } = req.body;
   const { error } = signupSchema.validate(req.body, { abortEarly: false });
   const existUser = await User.findOne({ email });
+  const existShipper = await Shipper.findOne({ email });
 
   try {
     if (error) {
@@ -143,6 +150,11 @@ export const signup = async (req, res) => {
     }
 
     if (existUser) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        messages: ["Email đã tồn tại"],
+      });
+    }
+    if (existShipper) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         messages: ["Email đã tồn tại"],
       });
@@ -167,31 +179,51 @@ export const signup = async (req, res) => {
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    const user = await User.findOne({ email });
-    // user = { _id: , name: , xxx}
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await Shipper.findOne({ email });
+    }
+
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
         messages: ["Email không tồn tại"],
       });
     }
+
+    // So sánh mật khẩu
     const isMatch = await bcryptjs.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         messages: ["Mật khẩu không chính xác"],
       });
     }
-    const token = jwt.sign({ userId: user._id }, "123456", {
-      expiresIn: "7d",
-    });
+    // const token = jwt.sign({ userId: user._id }, "123456", {
+    //   expiresIn: "7d"
+    // });
     // const accessToken = generateAccessToken(user._id);
     // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
 
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Đăng nhập thành công", user, token });
+    // Tạo token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role || "courier" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Trả về phản hồi với thông tin đăng nhập
+    return res.status(StatusCodes.OK).json({
+      message: "Đăng nhập thành công",
+      user,
+      token,
+    });
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi server" });
   }
 };
 export const logout = async (req, res) => {
@@ -232,7 +264,6 @@ export const refreshToken = async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ error: "Token is blacklisted" });
     }
-
     // Giải mã oldToken để lấy userId
     let decoded;
     try {
@@ -248,7 +279,6 @@ export const refreshToken = async (req, res) => {
           .json({ error: "Invalid token" });
       }
     }
-
     const userId = decoded.userId;
     if (!userId) {
       return res
@@ -405,23 +435,28 @@ export const getAddressById = async (req, res) => {
   }
 
   try {
-    // Tìm người dùng theo ID
     const user = await User.findById(userId).exec();
-    if (!user) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy người dùng" });
+    const shipper = await Shipper.findById(userId).exec();
+
+    let address;
+
+    // Tìm địa chỉ trong bảng User
+    if (user) {
+      address = user.address.id(addressId);
     }
 
-    // Tìm địa chỉ theo ID trong mảng địa chỉ
-    const address = user.address.id(addressId);
+    // Nếu không tìm thấy địa chỉ trong User, tìm trong Shipper
+    if (!address && shipper) {
+      address = shipper.address.id(addressId);
+    }
+
+    // Nếu không tìm thấy trong cả hai bảng
     if (!address) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "Không tìm thấy địa chỉ" });
     }
 
-    // Trả về địa chỉ
     return res.status(StatusCodes.OK).json({ address });
   } catch (error) {
     console.error("Lỗi khi lấy địa chỉ:", error);
@@ -594,10 +629,7 @@ export const updateUser = async (req, res) => {
   const updatedData = req.body;
 
   try {
-    // Tìm người dùng hiện tại
     const user = await User.findById(userId);
-
-    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -630,6 +662,55 @@ export const updateUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+
+export const newAuthIn7Day = async (req, res) => {
+  try {
+    const dayNow = new Date();
+    dayNow.setHours(23, 59, 59, 999);
+    const dayStart = new Date(dayNow);
+    dayStart.setDate(dayStart.getDate() - 6);
+
+    const usersByDate = [];
+
+    for (let i = 0; i < 7; i++) {
+      let currentDay = new Date(dayStart);
+      currentDay.setDate(currentDay.getDate() + i);
+      currentDay.setHours(0, 0, 0, 0);
+      let startOfDay = new Date(currentDay);
+      const usersDate = await User.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: startOfDay,
+              $lt: new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalUser: { $sum: 1 },
+          },
+        },
+      ]);
+
+      usersByDate.push({
+        day: startOfDay.toISOString().slice(0, 10),
+        totalUser: usersDate.length > 0 ? usersDate[0].totalUser : 0,
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      message: "New users in the last 7 days by date",
+      usersByDate,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách người dùng mới:", error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: error.message });

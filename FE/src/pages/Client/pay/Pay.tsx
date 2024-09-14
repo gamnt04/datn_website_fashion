@@ -14,6 +14,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Loader } from "lucide-react";
 import { nanoid } from "nanoid";
+import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
+import { toast } from "react-toastify";
+import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -22,18 +25,20 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
   const { data: auth } = List_Auth(userId);
+  const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
   const data_sessionStorage = sessionStorage.getItem("item_order");
-  let data: any;
-  if (data_sessionStorage) {
-    data = JSON.parse(data_sessionStorage);
-  } else {
-    routing("/profile/list_order");
-  }
-  console.log(data);
-
+  
+  useEffect(() => {
+    if (!userId) {
+      routing('/login')
+    }
+    if (item_order_checkked?.length < 1) {
+      routing('/login')
+    }
+  }, [userId,routing])
   useEffect(() => {
     if (auth && auth?.address) {
       const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
@@ -63,51 +68,64 @@ const Pay = () => {
     setIsOpen(false);
   };
 
+  const item_order_checkked = data?.products?.filter((value: any) => value?.status_checked);
+
+  const totalPrice = item_order_checkked?.reduce((a: any, curr: any) => (a + curr?.total_price_item), 0);
+  const item_lon_hon_0 = filter_positive_Stock_Item(item_order_checkked);
+  const dataSort = item_lon_hon_0?.map((order: any) => {
+    return {
+      key: order.productId._id,
+      ...order
+    }
+  })
   // add order
   const onAddOrder = async (data_form: any) => {
-    console.log(data_form);
-
     if (!data_form.address || data_form?.address.trim() === "") {
-      console.log(data_form.address);
-
       messageApi.open({
         type: "warning",
         content: "Vui lòng chọn địa chỉ!",
       });
       return;
     }
-
+    // validate stock 
+    for (const i of item_order_checkked) {
+      if (i?.productId?.attributes) {
+        const check_color = i?.productId?.attributes?.values?.find((a: any) => a?.color === i?.color_item);
+        const check_size = check_color?.size?.find((b: any) => (b?.name_size?.trim() ? b?.name_size : undefined) === i?.name_size);
+        if (i?.quantity > check_size?.stock_attribute) {
+          toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
+          chỉ còn ${check_size?.stock_attribute}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+          return;
+        }
+      }
+      else if (i?.quantity > i?.productId?.stock) {
+        toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
+          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+        return;
+      }
+    }
     const item_order = {
       userId: userId,
-      items: data?.data_order,
+      items: item_order_checkked,
       customerInfo: {
         ...data_form
       },
-      totalPrice: data?.totalPrice,
+      totalPrice: totalPrice,
       email: user?.user?.email,
     };
-    console.log(item_order);
-
     try {
       if (data_form.payment === "VNPAY") {
-
         const orderId = JSON.parse(sessionStorage.getItem('item_order') as string);
         sessionStorage.setItem('customerInfo', JSON.stringify({ ...data_form }));
-        // Tạo URL thanh toán VNPAY 
         const UrlPayment = await axios.post(`http://localhost:2004/api/v1/create_payment_url`, {
           orderId: nanoid(24),
-          totalPrice: orderId.totalPrice,
+          totalPrice: totalPrice,
           orderDescription: `Order ${orderId._id}`,
           language: 'vn'
         });
-
-        // Lưu thông tin thanh toán trước khi chuyển hướng
         sessionStorage.setItem('item_order', JSON.stringify(item_order));
-
-        // Redirect người dùng đến trang thanh toán
         window.location.href = UrlPayment.data.paymentUrl;
       } else {
-        // Xử lý các phương thức thanh toán khác (như Thanh toán khi nhận hàng) 
         onSubmit(item_order);
       }
     } catch (error) {
@@ -118,12 +136,7 @@ const Pay = () => {
       });
     }
   };
-  const dataSo = data?.data_order.map((order: any) => {
-    return {
-      key: order.productId._id,
-      ...order
-    }
-  })
+
   const columns = [
     {
       title: 'Sản phẩm',
@@ -187,7 +200,7 @@ const Pay = () => {
       ),
     },
   ];
-  if (loadingOrder) {
+  if (loadingOrder || isPending) {
     return (
       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
         <div className="animate-spin">
@@ -269,11 +282,11 @@ const Pay = () => {
               </div>
             </div>
             <div className="border my-4 rounded shadow-sm">
-              <Table columns={columns} dataSource={dataSo} pagination={false} />
+              <Table columns={columns} dataSource={dataSort} pagination={false} />
               <div className="flex items-center justify-end gap-8 p-6">
                 {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                 <p className="text-xl font-bold text-black">
-                  <p>Tổng số tiền: {data?.totalPrice?.toLocaleString("vi", {
+                  <p>Tổng số tiền: {totalPrice?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
                   })}</p>
@@ -300,9 +313,8 @@ const Pay = () => {
                 <div>
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng tiền hàng</p>
-                    {data?.quantity}
                     <p>
-                      {data?.totalPrice?.toLocaleString("vi", {
+                      {totalPrice?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}
@@ -319,7 +331,7 @@ const Pay = () => {
                   <div className="flex justify-between py-3 gap-16">
                     <p>Tổng thanh toán</p>
                     <p className="text-xl font-bold text-black">
-                      {data?.totalPrice?.toLocaleString("vi", {
+                      {totalPrice?.toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
                       })}

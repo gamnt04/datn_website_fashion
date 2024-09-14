@@ -1,12 +1,27 @@
 import { Link, useParams } from "react-router-dom";
 import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
-import { message, Popconfirm, Radio, Table } from "antd";
+import {
+  Button,
+  Form,
+  message,
+  Modal,
+  Popconfirm,
+  Radio,
+  Table,
+  Timeline,
+  Upload,
+} from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
-import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+import {
+  Mutation_Notification,
+  Query_notification,
+} from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { LeftOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { UploadFile } from "antd/es/upload/interface";
+import { UploadImage } from "../../../systems/utils/uploadImage";
 const OrdersDetali = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -14,67 +29,153 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch } = Query_Orders(id);
+  const { data: no } = Query_notification();
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
-  const dispathNotification = Mutation_Notification('Add');
+  const dispathNotification = Mutation_Notification("Add");
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-  function yeu_cau(dataBody: { id_item: string | number, comfirm?: boolean | string, numberOrder?: string | number, action?: string }) {
+  const [orderData, setOrderData] = useState<any>(null);
+  const [isDeliverSuccessModalVisible, setDeliverSuccessModalVisible] =
+    useState(false);
+  const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null); // Để hiển thị ảnh đã chọn
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  // Hàm xử lý khi người dùng chọn file
+  const handleFileChange = ({ fileList }: { fileList: UploadFile<any>[] }) => {
+    // Chỉ cho phép một ảnh duy nhất
+    setFileList(fileList.slice(-1));
+
+    // Lấy URL của ảnh để hiển thị trong preview
+    if (fileList.length > 0) {
+      const file = fileList[0].originFileObj;
+      const previewUrl = URL.createObjectURL(file);
+      setPreviewImage(previewUrl); // Cập nhật ảnh preview
+    } else {
+      setPreviewImage(null);
+    }
+  };
+
+  // Hàm xử lý khi nhấn "Xác Nhận"
+  const handleDeliverSuccess = async () => {
+    if (!orderId) {
+      console.error("Order ID is missing");
+      return;
+    }
+
+    const file = fileList.length > 0 ? fileList[0].originFileObj : null;
+
+    try {
+      // Nếu có file, tải ảnh lên và nhận URL
+      let imageUrl = null;
+      if (file) {
+        imageUrl = await UploadImage(file);
+      }
+
+      // Cập nhật trạng thái đơn hàng thành công
+      await instance.post("/deliver-success", {
+        orderId,
+        confirmationImage: imageUrl,
+      });
+
+      refetch();
+
+      messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
+      setDeliverSuccessModalVisible(false);
+    } catch (error) {
+      messageApi.error("Giao hàng thành công thất bại. Vui lòng thử lại.");
+      console.error("Failed to mark order as delivered", error);
+    }
+  };
+  function yeu_cau(dataBody: {
+    id_item: string | number;
+    comfirm?: boolean | string;
+    numberOrder?: string | number;
+    action?: string;
+  }) {
     mutate(dataBody);
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === 'xac_nhan' ? 'xác nhận' : 'từ chối'} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`
-    })
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      different: dataBody?.numberOrder,
+    });
   }
-  const reasons = [
-    "Hết hàng",
-    "Sai thông tin sản phẩm",
-    "Giá nhập thay đổi",
-  ];
-  function huy_don(dataBody: { id_item: string | number, numberOrder?: string | number, action?: string, cancellationReason?: string; }) {
+  const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
+  function huy_don(dataBody: {
+    id_item: string | number;
+    numberOrder?: string | number;
+    action?: string;
+    cancellationReason?: string;
+  }) {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
-      // different: dataBody?.linkUri,
+      different: dataBody?.numberOrder,
     });
+    console.log(dataBody.cancellationReason);
+
     cancel(dataBody);
   }
-  const handleStatusUpdate = async (status: number | string, code_order?: string | number) => {
+
+  const handleStatusUpdate = async (
+    status: number | string,
+    code_order?: string | number
+  ) => {
     if (!data) return;
-    const message = (status === 2) ? `Người bán đã xác nhận đơn hàng ${code_order}` : (status === 3) ?
-      `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!` :
-      `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`
+    const message =
+      status === 2
+        ? `Người bán đã xác nhận đơn hàng ${code_order}`
+        : status === 3
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 6
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
+        : status === 7
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: message
-    })
+      message: message,
+    });
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: status
+        status: status,
       });
       messageApi.open({
         type: "success",
         content:
           response.data.status === "4"
             ? "Đơn hàng đã được giao"
-            : "Cập nhật trạng thái đơn hàng thành công!"
+            : "Cập nhật trạng thái đơn hàng thành công!",
       });
       refetch();
     } catch (error) {
       messageApi.open({
         type: "error",
-        content: "Cập nhật trạng thái đơn hàng thất bại!"
+        content: "Cập nhật trạng thái đơn hàng thất bại!",
       });
     }
   };
   const cancellationRequested = data?.cancellationRequested;
   const dataSort = data?.items?.map((item: any) => ({
     key: item._id,
-    ...item
+    ...item,
   }));
+  const formattedDate = data?.updatedAt
+    ? new Date(data.updatedAt).toLocaleString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
   const columns = [
     {
       title: "Ảnh Sản Phẩm",
@@ -86,7 +187,7 @@ const OrdersDetali = () => {
           alt=""
           className="w-[80px] h-[80px] object-cover "
         />
-      )
+      ),
     },
     {
       title: "Tên Sản Phẩm",
@@ -101,7 +202,7 @@ const OrdersDetali = () => {
             Loại: {item?.color_item} - {item?.name_size}
           </p>
         </div>
-      )
+      ),
     },
     {
       title: "Giá Sản Phẩm",
@@ -111,10 +212,10 @@ const OrdersDetali = () => {
         <p className="">
           {item?.price_item.toLocaleString("vi", {
             style: "currency",
-            currency: "VND"
+            currency: "VND",
           })}
         </p>
-      )
+      ),
     },
     {
       title: "Số Lượng",
@@ -122,7 +223,7 @@ const OrdersDetali = () => {
       key: "quantity",
       render: (_: any, item: any) => (
         <p className="text-center">{item?.quantity}</p>
-      )
+      ),
     },
     {
       title: "Tổng Tiền",
@@ -132,11 +233,11 @@ const OrdersDetali = () => {
         <p>
           {(item?.total_price_item).toLocaleString("vi", {
             style: "currency",
-            currency: "VND"
+            currency: "VND",
           })}
         </p>
-      )
-    }
+      ),
+    },
   ];
   if (!data) return <p>Loading...</p>;
 
@@ -146,12 +247,84 @@ const OrdersDetali = () => {
       <div className="mx-6">
         {" "}
         <div className="flex items-center justify-between mb-5 mt-20 relative">
-          <Link to="/admin/orders" className="flex items-center gap-2 text-[#1B7EE2]">
+          <Link
+            to="/admin/orders"
+            className="flex items-center gap-2 text-[#1B7EE2]"
+          >
             <LeftOutlined />
             <span>Quay lại</span>
           </Link>
-          <h1 className="text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">Chi Tiết Đơn Hàng</h1>
-
+          <h1 className="text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">
+            Chi Tiết Đơn Hàng
+          </h1>
+        </div>
+        <div className="my-6 shadow rounded bg-white">
+          <div className="p-4 text-black font-semibold">
+            Trạng thái đơn hàng
+          </div>
+          <div>
+            {data?.status == 5 ? (
+              <div className="flex flex-col justify-center items-center gap-7 py-4">
+                <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
+                  Đã hủy
+                </p>
+                {no?.notifications.map((item: any) => {
+                  if (item?.different === data?.orderNumber) {
+                    return <p>Lý do: {item?.message}</p>;
+                  }
+                })}
+              </div>
+            ) : (
+              <>
+                <Timeline mode="alternate">
+                  {data?.status >= 1 && (
+                    <Timeline.Item color="gray">
+                      <p className="ant-typography ant-typography-secondary ant-typography-bold">
+                        Chờ xác nhận {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {data?.status >= 2 && (
+                    <Timeline.Item color="yellow">
+                      <p className="ant-typography ant-typography-warning ant-typography-bold">
+                        Đang chuẩn bị hàng {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {data?.status >= 3 && (
+                    <Timeline.Item color="blue">
+                      <p className="ant-typography ant-typography-primary ant-typography-bold">
+                        Đang vận chuyển {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {/* Hiển thị "Giao hàng thành công" nếu không có trạng thái "Giao hàng thất bại" */}
+                  {data?.status >= 6 && data?.status < 7 && (
+                    <Timeline.Item color="green">
+                      <p className="ant-typography ant-typography-success ant-typography-bold">
+                        Giao hàng thành công {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {/* Hiển thị "Giao hàng thất bại" nếu không có trạng thái "Giao hàng thành công" */}
+                  {data?.status >= 7 && (
+                    <Timeline.Item color="red">
+                      <p className="ant-typography ant-typography-danger ant-typography-bold">
+                        Giao hàng thất bại {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                  {data?.status >= 4 && data?.status < 6 && (
+                    <Timeline.Item color="green">
+                      <p className="ant-typography ant-typography-success ant-typography-bold">
+                        Hoàn thành {formattedDate}
+                      </p>
+                    </Timeline.Item>
+                  )}
+                </Timeline>
+              </>
+            )}
+          </div>
         </div>
         <div className="overflow-x-auto my-6 shadow  rounded">
           <Table columns={columns} dataSource={dataSort} pagination={false} />
@@ -178,14 +351,14 @@ const OrdersDetali = () => {
                 {" "}
                 {data.totalPrice.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND"
+                  currency: "VND",
                 })}{" "}
               </span>
             </p>
           </div>
         </div>
-        <div className="bg-white overflow-x-auto my-6 shadow p-[20px] rounded">
-          <div className=" flex items-center gap-4 my-3 border-b py-3">
+        <div className="bg-white overflow-x-auto my-6 shadow p-4 rounded">
+          <div className=" flex items-center gap-4  border-b pb-4">
             <p className="text-black font-semibold">Phương thức thanh toán</p>
             <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
               {data?.status == 4
@@ -193,9 +366,9 @@ const OrdersDetali = () => {
                 : data?.customerInfo?.payment}
             </p>
           </div>
-          <div className="flex items-center gap-4 border-b py-3">
+          {/* <div className="flex items-center gap-4 border-b py-3">
             <p className="text-black font-semibold w-[20%]">Trạng thái đơn hàng</p>
-            {/* {data?.status == 1 ? (
+            {data?.status == 1 ? (
               <p className="w-auto p-3 border-2 border-gray-500 text-gray-500 rounded">
                 Chờ xác nhận{" "}
               </p>
@@ -217,12 +390,24 @@ const OrdersDetali = () => {
                   Đã hủy
                 </p>
               </div>
-            )} */}
+            )}
             <div className="flex gap-2">
               {data?.status == 5 ? (
-                <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
-                  Đã hủy
-                </p>
+                <div className="flex justify-between items-center gap-7">
+                  <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
+                    Đã hủy
+                  </p>
+                  {no?.notifications.map((item: any) => {
+                    if (item?.different === data?.orderNumber) {
+                      return (
+                        <p>Lý do: {item?.message}</p>
+                      )
+                    }
+                    console.log(item);
+
+                  })
+                  }
+                </div>
               ) : (
                 <>
                   <p
@@ -252,7 +437,7 @@ const OrdersDetali = () => {
                 </>
               )}
             </div>
-          </div>
+          </div> */}
           <div className="flex justify-between my-4">
             <div className="flex gap-6">
               <div className="flex-1">
@@ -308,21 +493,21 @@ const OrdersDetali = () => {
                 <p className="py-2 text-gray-800">
                   {data?.totalPrice.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND"
+                    currency: "VND",
                   })}
                 </p>
                 <p className="py-2 text-gray-800">0 đ</p>
                 <p className="py-2 text-[#ee4d2d] text-xl">
                   {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND"
+                    currency: "VND",
                   })}
                 </p>
               </div>
             </div>
           </div>
           <div className="flex gap-5 justify-center mt-[60px]">
-            {(data.status === "1") && (
+            {data.status === "1" && (
               <>
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
@@ -344,9 +529,7 @@ const OrdersDetali = () => {
                         <p>Chọn lý do hủy:</p>
                         <Radio.Group
                           className="flex flex-col gap-2"
-                          onChange={(e) =>
-                            setSelectedReason(e.target.value)
-                          }
+                          onChange={(e) => setSelectedReason(e.target.value)}
                         >
                           {reasons.map((reason, index) => (
                             <Radio key={index} value={reason}>
@@ -357,13 +540,14 @@ const OrdersDetali = () => {
                       </div>
                     </div>
                   }
-                  onConfirm={() => huy_don({
-                    id_item: data?._id,
-                    action: "huy",
-                    cancellationReason: selectedReason,
-                    numberOrder: data?.orderNumber,
-                    // linkUri: items?._id,
-                  })}
+                  onConfirm={() =>
+                    huy_don({
+                      id_item: data?._id,
+                      action: "huy",
+                      cancellationReason: selectedReason,
+                      numberOrder: data?.orderNumber,
+                    })
+                  }
                   okText="Từ chối"
                   cancelText="Không"
                 >
@@ -380,7 +564,14 @@ const OrdersDetali = () => {
                     <Popconfirm
                       title="Xác nhận hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                      onConfirm={() => yeu_cau({ id_item: data?._id, confirm: true, numberOrder: data?.orderNumber, action: 'xac_nhan' })}
+                      onConfirm={() =>
+                        yeu_cau({
+                          id_item: data?._id,
+                          confirm: true,
+                          numberOrder: data?.orderNumber,
+                          action: "xac_nhan",
+                        })
+                      }
                       okText="Xác nhận"
                       cancelText="Không"
                     >
@@ -392,7 +583,12 @@ const OrdersDetali = () => {
                       title="Từ chối hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
                       onConfirm={() =>
-                        yeu_cau({ id_item: data?._id, confirm: false, numberOrder: data?.orderNumber, action: 'tu_choi' })
+                        yeu_cau({
+                          id_item: data?._id,
+                          confirm: false,
+                          numberOrder: data?.orderNumber,
+                          action: "tu_choi",
+                        })
                       }
                       okText="Từ chối"
                       cancelText="Không"
@@ -418,16 +614,39 @@ const OrdersDetali = () => {
               </>
             )}
             {data.status === "3" && (
-              <Popconfirm
-                title="Xác nhận đơn hàng?"
-                description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                okText="Xác nhận"
-                cancelText="Không"
+              <>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setOrderId(data._id);
+                    setDeliverSuccessModalVisible(true);
+                  }}
+                >
+                  Giao Hàng Thành Công
+                </Button>
+                <Button
+                  type="default"
+                  onClick={() => handleStatusUpdate(7, data.order_number)}
+                >
+                  Giao Hàng Thất Bại
+                </Button>
+              </>
+            )}
+            {data.status === "6" && (
+              <button
+                className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
+                disabled
               >
-                <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
-                  Đang vận chuyển
-                </button>
-              </Popconfirm>
+                Giao hàng thành công
+              </button>
+            )}
+            {data.status === "7" && (
+              <button
+                className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
+                disabled
+              >
+                Giao hàng thất bại
+              </button>
             )}
             {data.status === "4" && (
               <button
@@ -446,6 +665,48 @@ const OrdersDetali = () => {
               </button>
             )}
           </div>
+          <Modal
+            title="Xác Nhận Giao Hàng Thành Công"
+            visible={isDeliverSuccessModalVisible}
+            onOk={handleDeliverSuccess}
+            onCancel={() => setDeliverSuccessModalVisible(false)}
+          >
+            <Form.Item
+              name="confirmationImage"
+              label="Ảnh Xác Nhận"
+              rules={[
+                { required: true, message: "Vui lòng chọn ảnh xác nhận" },
+              ]}
+            >
+              <Upload
+                listType="picture"
+                beforeUpload={() => false} // Không tự động upload
+                onChange={handleFileChange}
+                fileList={fileList}
+                maxCount={1} // Chỉ cho phép chọn 1 ảnh
+                accept="image/*"
+                showUploadList={false} // Không hiển thị tên file đã chọn
+              >
+                <Button icon={<UploadOutlined />}>Tải Ảnh Lên</Button>
+              </Upload>
+
+              {/* Hiển thị ảnh preview nếu có */}
+              {previewImage && (
+                <div style={{ marginTop: 16 }}>
+                  <img
+                    src={previewImage}
+                    alt="Ảnh Xác Nhận"
+                    style={{
+                      width: "40%",
+                      maxHeight: 200,
+                      objectFit: "cover",
+                      border: "1px solid black",
+                    }}
+                  />
+                </div>
+              )}
+            </Form.Item>
+          </Modal>
         </div>
       </div>
     </>

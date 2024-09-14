@@ -1,5 +1,7 @@
+import { message } from "antd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  getNewUserIn7Day,
   getUserByUsername,
   list_Auth,
   list_Auth_By_Id,
@@ -47,4 +49,18 @@ export const useSearchUserByUsername = (searchName) => {
     enabled: !!searchName
   });
   return { data, ...rest };
+};
+export const useGetNewUserIn7Day = () => {
+  const { data, error, isError, ...rest } = useQuery({
+    queryKey: ["NewUserIn7Day"],
+    queryFn: async () => {
+      try {
+        const response = await getNewUserIn7Day();
+        return response;
+      } catch (error) {
+        throw new Error((error as any).message);
+      }
+    }
+  });
+  return { data, error, isError, ...rest };
 };

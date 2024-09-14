@@ -5,9 +5,7 @@ export const createNotification = async (req, res) => {
     try {
         const { userId, message, different } = req.body;
         let { receiver_id } = req.body;
-
         const user = await User.findOne({ email: receiver_id });
-
         if (user) {
             receiver_id = user._id
         }
@@ -15,7 +13,7 @@ export const createNotification = async (req, res) => {
             userId,
             receiver_id,
             message,
-            different
+            different,
         });
         await notification.save();
         res.status(201).json({ message: "Tạo thành công", notification });
@@ -32,7 +30,15 @@ export const getNotificationByUser = async (req, res) => {
                 message: 'No User'
             })
         }
-        const notifications = await Notification.find({ receiver_id }).populate('userId');
+        const notifications = await Notification.find({ receiver_id }).sort({ datetime: -1 }).populate('userId');
+        res.status(200).json({ notifications });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi rồi đại ca ơi" });
+    }
+}
+export const getAllNotification = async (req, res) => {
+    try {
+        const notifications = await Notification.find()
         res.status(200).json({ notifications });
     } catch (error) {
         res.status(500).json({ message: "Lỗi rồi đại ca ơi" });

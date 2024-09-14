@@ -138,7 +138,7 @@ const ChartRevenueWeekly: React.FC = () => {
   }, [orderByDayOfWeekData]);
 
   return (
-    <div className="  col-span-6 rounded-sm border border-stroke bg-white p-7.5 w-[560px] h-[560px]  ">
+    <div className="col-span-4 rounded-sm border border-stroke bg-white p-7.5 w-[560px] h-[560px]  ">
       <div className="mx-6 mt-6 mb-2 justify-between gap-4 sm:flex">
         <div className="w-full">
           <h4 className="text-xl font-semibold text-black dark:text-white">

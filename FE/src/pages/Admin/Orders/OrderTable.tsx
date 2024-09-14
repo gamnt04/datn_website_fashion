@@ -5,14 +5,14 @@ import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
-  const formatDate = (datetime: any) => {
-    if (!datetime) return "";
-    const date = new Date(datetime);
+  const formatDate = (createdAt: any) => {
+    if (!createdAt) return "";
+    const date = new Date(createdAt);
     return date.toLocaleDateString();
   };
   const dataSort = orders?.map((order: any) => ({
     key: order._id,
-    ...order
+    ...order,
   }));
   const createFilters = (order: IOrder[]) => {
     return order
@@ -23,7 +23,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       )
       .map((orderNumber: string) => ({
         text: orderNumber,
-        value: orderNumber
+        value: orderNumber,
       }));
   };
   const columns: ColumnType<IOrder>[] = [
@@ -42,19 +42,19 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       sortDirections: ["ascend", "descend"] as SortOrder[],
       render: (_: any, order: any) => (
         <p className="font-bold">{order?.orderNumber}</p>
-      )
+      ),
     },
     {
       title: "Người Mua",
       dataIndex: "userName",
       key: "userName",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>
+      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>,
     },
     {
       title: "Số Điện Thoại",
       dataIndex: "phone",
       key: "phone",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>
+      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>,
     },
     // {
     //   title: "Email",
@@ -66,13 +66,13 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       title: "Ngày Đặt",
       dataIndex: "datetime",
       key: "datetime",
-      render: (_: any, order: any) => <p>{formatDate(order?.datetime)}</p>
+      render: (_: any, order: any) => <p>{formatDate(order?.createdAt)}</p>,
     },
     {
       title: "Hình Thức",
       dataIndex: "payment",
       key: "payment",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>
+      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>,
     },
     {
       title: "Trạng Thái",
@@ -95,12 +95,16 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
               <p className="text-blue-500">Đang vận chuyển</p>
             ) : order?.status == 4 ? (
               <p className="text-green-600">Đã giao hàng</p>
+            ) : order?.status == 6 ? (
+              <p className="text-green-600">Giao hàng thành công</p>
+            ) : order?.status == 7 ? (
+              <p className="text-red-600">Giao hàng thất bại</p>
             ) : (
               <p className="text-red-600">Đã hủy</p>
             )}
           </>
         );
-      }
+      },
     },
     {
       dataIndex: "action",
@@ -114,8 +118,8 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
             </span>
           </Link>
         </>
-      )
-    }
+      ),
+    },
   ];
 
   return (
