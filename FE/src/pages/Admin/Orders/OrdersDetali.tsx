@@ -73,7 +73,7 @@ const OrdersDetali = () => {
     }
   };
 
-  
+
   function yeu_cau(dataBody: {
     id_item: string | number;
     comfirm?: boolean | string;
@@ -84,9 +84,8 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.numberOrder
     });
   }
@@ -107,7 +106,7 @@ const OrdersDetali = () => {
 
     cancel(dataBody);
   }
-  
+
   const handleStatusUpdate = async (
     status: number | string,
     code_order?: string | number
@@ -117,12 +116,12 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 6
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
-        : status === 7
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 6
+            ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
+            : status === 7
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -155,14 +154,13 @@ const OrdersDetali = () => {
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    })
     : "";
-
   const columns = [
     {
       title: "Ảnh Sản Phẩm",
