@@ -46,12 +46,12 @@ cron.schedule("*/30 * * * * *", async () => {
     thirtySecondsAgo.setSeconds(thirtySecondsAgo.getSeconds() - 30);
     const orders = await Orders.updateMany(
       {
-        status: "3",
+        status: "4",
         deliveredAt: { $lte: thirtySecondsAgo },
         completedAt: null
       },
       {
-        status: "4",
+        status: "6",
         completedAt: new Date()
       }
     );
