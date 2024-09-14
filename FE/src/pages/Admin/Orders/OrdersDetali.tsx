@@ -10,16 +10,16 @@ import {
   Radio,
   Table,
   Timeline,
-  Upload
+  Upload,
 } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import {
   Mutation_Notification,
-  Query_notification
+  Query_notification,
 } from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadFile } from "antd/es/upload/interface";
 import { UploadImage } from "../../../systems/utils/uploadImage";
 const OrdersDetali = () => {
@@ -35,15 +35,29 @@ const OrdersDetali = () => {
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
+  const [orderData, setOrderData] = useState<any>(null);
   const [isDeliverSuccessModalVisible, setDeliverSuccessModalVisible] =
     useState(false);
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null); // Để hiển thị ảnh đã chọn
   const [orderId, setOrderId] = useState<string | null>(null);
 
+  // Hàm xử lý khi người dùng chọn file
   const handleFileChange = ({ fileList }: { fileList: UploadFile<any>[] }) => {
-    setFileList(fileList);
+    // Chỉ cho phép một ảnh duy nhất
+    setFileList(fileList.slice(-1));
+
+    // Lấy URL của ảnh để hiển thị trong preview
+    if (fileList.length > 0) {
+      const file = fileList[0].originFileObj;
+      const previewUrl = URL.createObjectURL(file);
+      setPreviewImage(previewUrl); // Cập nhật ảnh preview
+    } else {
+      setPreviewImage(null);
+    }
   };
 
+  // Hàm xử lý khi nhấn "Xác Nhận"
   const handleDeliverSuccess = async () => {
     if (!orderId) {
       console.error("Order ID is missing");
@@ -52,28 +66,28 @@ const OrdersDetali = () => {
 
     const file = fileList.length > 0 ? fileList[0].originFileObj : null;
 
-    if (file) {
-      try {
-        const imageUrl = await UploadImage(file);
-
-        await instance.post("/deliver-success", {
-          orderId,
-          confirmationImage: imageUrl
-        });
-        messageApi.success(
-          "Đơn hàng đã được đánh dấu là giao hàng thành công."
-        );
-        setDeliverSuccessModalVisible(false);
-      } catch (error) {
-        messageApi.error("Giao hàng thành công thất bại. Vui lòng thử lại.");
-        console.error("Failed to mark order as delivered", error);
+    try {
+      // Nếu có file, tải ảnh lên và nhận URL
+      let imageUrl = null;
+      if (file) {
+        imageUrl = await UploadImage(file);
       }
-    } else {
-      messageApi.error("Vui lòng chọn ảnh xác nhận.");
+
+      // Cập nhật trạng thái đơn hàng thành công
+      await instance.post("/deliver-success", {
+        orderId,
+        confirmationImage: imageUrl,
+      });
+
+      refetch();
+
+      messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
+      setDeliverSuccessModalVisible(false);
+    } catch (error) {
+      messageApi.error("Giao hàng thành công thất bại. Vui lòng thử lại.");
+      console.error("Failed to mark order as delivered", error);
     }
   };
-
-  
   function yeu_cau(dataBody: {
     id_item: string | number;
     comfirm?: boolean | string;
@@ -87,7 +101,7 @@ const OrdersDetali = () => {
       message: `Người bán đã ${
         dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
       } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
-      different: dataBody?.numberOrder
+      different: dataBody?.numberOrder,
     });
   }
   const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
@@ -107,7 +121,7 @@ const OrdersDetali = () => {
 
     cancel(dataBody);
   }
-  
+
   const handleStatusUpdate = async (
     status: number | string,
     code_order?: string | number
@@ -127,31 +141,31 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: message
+      message: message,
     });
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: status
+        status: status,
       });
       messageApi.open({
         type: "success",
         content:
           response.data.status === "4"
             ? "Đơn hàng đã được giao"
-            : "Cập nhật trạng thái đơn hàng thành công!"
+            : "Cập nhật trạng thái đơn hàng thành công!",
       });
       refetch();
     } catch (error) {
       messageApi.open({
         type: "error",
-        content: "Cập nhật trạng thái đơn hàng thất bại!"
+        content: "Cập nhật trạng thái đơn hàng thất bại!",
       });
     }
   };
   const cancellationRequested = data?.cancellationRequested;
   const dataSort = data?.items?.map((item: any) => ({
     key: item._id,
-    ...item
+    ...item,
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
@@ -159,7 +173,7 @@ const OrdersDetali = () => {
         month: "2-digit",
         year: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       })
     : "";
 
@@ -174,7 +188,7 @@ const OrdersDetali = () => {
           alt=""
           className="w-[80px] h-[80px] object-cover "
         />
-      )
+      ),
     },
     {
       title: "Tên Sản Phẩm",
@@ -189,7 +203,7 @@ const OrdersDetali = () => {
             Loại: {item?.color_item} - {item?.name_size}
           </p>
         </div>
-      )
+      ),
     },
     {
       title: "Giá Sản Phẩm",
@@ -199,10 +213,10 @@ const OrdersDetali = () => {
         <p className="">
           {item?.price_item.toLocaleString("vi", {
             style: "currency",
-            currency: "VND"
+            currency: "VND",
           })}
         </p>
-      )
+      ),
     },
     {
       title: "Số Lượng",
@@ -210,7 +224,7 @@ const OrdersDetali = () => {
       key: "quantity",
       render: (_: any, item: any) => (
         <p className="text-center">{item?.quantity}</p>
-      )
+      ),
     },
     {
       title: "Tổng Tiền",
@@ -220,11 +234,11 @@ const OrdersDetali = () => {
         <p>
           {(item?.total_price_item).toLocaleString("vi", {
             style: "currency",
-            currency: "VND"
+            currency: "VND",
           })}
         </p>
-      )
-    }
+      ),
+    },
   ];
   if (!data) return <p>Loading...</p>;
 
@@ -285,13 +299,15 @@ const OrdersDetali = () => {
                       </p>
                     </Timeline.Item>
                   )}
-                  {data?.status >= 6 && (
+                  {/* Hiển thị "Giao hàng thành công" nếu không có trạng thái "Giao hàng thất bại" */}
+                  {data?.status >= 6 && data?.status < 7 && (
                     <Timeline.Item color="green">
                       <p className="ant-typography ant-typography-success ant-typography-bold">
                         Giao hàng thành công {formattedDate}
                       </p>
                     </Timeline.Item>
                   )}
+                  {/* Hiển thị "Giao hàng thất bại" nếu không có trạng thái "Giao hàng thành công" */}
                   {data?.status >= 7 && (
                     <Timeline.Item color="red">
                       <p className="ant-typography ant-typography-danger ant-typography-bold">
@@ -336,7 +352,7 @@ const OrdersDetali = () => {
                 {" "}
                 {data.totalPrice.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND"
+                  currency: "VND",
                 })}{" "}
               </span>
             </p>
@@ -478,14 +494,14 @@ const OrdersDetali = () => {
                 <p className="py-2 text-gray-800">
                   {data?.totalPrice.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND"
+                    currency: "VND",
                   })}
                 </p>
                 <p className="py-2 text-gray-800">0 đ</p>
                 <p className="py-2 text-[#ee4d2d] text-xl">
                   {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND"
+                    currency: "VND",
                   })}
                 </p>
               </div>
@@ -530,8 +546,7 @@ const OrdersDetali = () => {
                       id_item: data?._id,
                       action: "huy",
                       cancellationReason: selectedReason,
-                      numberOrder: data?.orderNumber
-                      // linkUri: items?._id,
+                      numberOrder: data?.orderNumber,
                     })
                   }
                   okText="Từ chối"
@@ -555,7 +570,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: true,
                           numberOrder: data?.orderNumber,
-                          action: "xac_nhan"
+                          action: "xac_nhan",
                         })
                       }
                       okText="Xác nhận"
@@ -573,7 +588,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: false,
                           numberOrder: data?.orderNumber,
-                          action: "tu_choi"
+                          action: "tu_choi",
                         })
                       }
                       okText="Từ chối"
@@ -588,7 +603,7 @@ const OrdersDetali = () => {
                   <Popconfirm
                     title="Xác nhận đơn hàng?"
                     description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                    onConfirm={() => handleStatusUpdate(6, data?.orderNumber)}
+                    onConfirm={() => handleStatusUpdate(3, data?.orderNumber)}
                     okText="Xác nhận"
                     cancelText="Không"
                   >
@@ -600,21 +615,6 @@ const OrdersDetali = () => {
               </>
             )}
             {data.status === "3" && (
-              <Popconfirm
-                title="Xác nhận đơn hàng?"
-                description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                okText="Xác nhận"
-                cancelText="Không"
-              >
-                <button
-                  className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed"
-                  disabled
-                >
-                  Đang vận chuyển
-                </button>
-              </Popconfirm>
-            )}
-            {data.status === "6" && (
               <>
                 <Button
                   type="primary"
@@ -632,6 +632,22 @@ const OrdersDetali = () => {
                   Giao Hàng Thất Bại
                 </Button>
               </>
+            )}
+            {data.status === "6" && (
+              <button
+                className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
+                disabled
+              >
+                Giao hàng thành công
+              </button>
+            )}
+            {data.status === "7" && (
+              <button
+                className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
+                disabled
+              >
+                Giao hàng thất bại
+              </button>
             )}
             {data.status === "4" && (
               <button
@@ -660,18 +676,36 @@ const OrdersDetali = () => {
               name="confirmationImage"
               label="Ảnh Xác Nhận"
               rules={[
-                { required: true, message: "Vui lòng chọn ảnh xác nhận" }
+                { required: true, message: "Vui lòng chọn ảnh xác nhận" },
               ]}
             >
               <Upload
                 listType="picture"
-                beforeUpload={() => false}
+                beforeUpload={() => false} // Không tự động upload
                 onChange={handleFileChange}
                 fileList={fileList}
+                maxCount={1} // Chỉ cho phép chọn 1 ảnh
                 accept="image/*"
+                showUploadList={false} // Không hiển thị tên file đã chọn
               >
                 <Button icon={<UploadOutlined />}>Tải Ảnh Lên</Button>
               </Upload>
+
+              {/* Hiển thị ảnh preview nếu có */}
+              {previewImage && (
+                <div style={{ marginTop: 16 }}>
+                  <img
+                    src={previewImage}
+                    alt="Ảnh Xác Nhận"
+                    style={{
+                      width: "40%",
+                      maxHeight: 200,
+                      objectFit: "cover",
+                      border: "1px solid black",
+                    }}
+                  />
+                </div>
+              )}
             </Form.Item>
           </Modal>
         </div>

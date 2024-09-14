@@ -27,10 +27,12 @@ export interface IOrder {
   discount: number;
   totalPrice: number;
   status?:
-  | "Chờ xác nhận"
-  | "Đang chuẩn bị hàng"
-  | "Đang vận chuyển"
-  | "Đã giao hàng"
-  | "Đã hủy";
+    | "Chờ xác nhận"
+    | "Đang chuẩn bị hàng"
+    | "Đang vận chuyển"
+    | "Đã giao hàng"
+    | "Đã hủy"
+    | "Giao hàng thành công"
+    | "Giao hàng thất bại";
   datetime?: Date;
 }
