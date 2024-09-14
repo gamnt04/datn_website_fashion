@@ -245,13 +245,14 @@ export default function List_order() {
       case 3:
         return <span>Đang vận chuyển</span>;
       case 4:
+        return <span>Đã giao hàng</span>
+      case 6:
         return (
           <span className="text-green-500 flex items-center gap-x-2">
-            {" "}
             Hoàn thành
           </span>
         );
-      case 5:
+      case 7:
         return <span className="text-red-500">Đã hủy</span>;
       default:
         return;
@@ -278,6 +279,7 @@ export default function List_order() {
     "Chờ Xác Nhận",
     "Đang Chuẩn Bị Hàng",
     "Đang Vận Chuyển",
+    "Đã Giao Hàng",
     "Hoàn Thành",
     "Đã Hủy",
   ];
@@ -630,12 +632,12 @@ export default function List_order() {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
                                           changedValues[
-                                            `rating_review_${index}`
+                                          `rating_review_${index}`
                                           ]
                                         ) {
                                           setRating(
                                             changedValues[
-                                              `rating_review_${index}`
+                                            `rating_review_${index}`
                                             ]
                                           );
                                         }
@@ -657,6 +659,7 @@ export default function List_order() {
                                           },
                                         ]}
                                       >
+
                                         <Rate
                                           allowClear={false}
                                           disabled={!!review} // Không cho chỉnh sửa nếu đã có đánh giá
@@ -676,6 +679,7 @@ export default function List_order() {
                                             }));
                                           }}
                                         />
+
                                       </Form.Item>
 
                                       {/* Các phần khác vẫn giữ nguyên */}
@@ -715,6 +719,7 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
+
                                                   (url, idx) => ({
                                                     uid: `${idx}`,
                                                     name: `image_${idx}`,
@@ -725,6 +730,7 @@ export default function List_order() {
                                               : fileList[
                                                   productGroup.productId
                                                 ] || []
+
                                           }
                                           onChange={handleImageChange}
                                           onPreview={handlePreview}

@@ -78,7 +78,7 @@ const OrdersDetali = () => {
         orderId,
         confirmationImage: imageUrl,
       });
-
+      handleStatusUpdate(4, data?.orderNumber)
       refetch();
 
       messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
@@ -98,9 +98,8 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.numberOrder,
     });
   }
@@ -131,12 +130,12 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 6
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
-        : status === 7
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
+            : status === 7
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -169,12 +168,12 @@ const OrdersDetali = () => {
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
     : "";
   const columns = [
     {
@@ -263,7 +262,7 @@ const OrdersDetali = () => {
             Trạng thái đơn hàng
           </div>
           <div>
-            {data?.status == 5 ? (
+            {data?.status == 7 ? (
               <div className="flex flex-col justify-center items-center gap-7 py-4">
                 <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
                   Đã hủy
@@ -299,7 +298,7 @@ const OrdersDetali = () => {
                     </Timeline.Item>
                   )}
                   {/* Hiển thị "Giao hàng thành công" nếu không có trạng thái "Giao hàng thất bại" */}
-                  {data?.status >= 6 && data?.status < 7 && (
+                  {data?.status >= 4 && data?.status < 7 && (
                     <Timeline.Item color="green">
                       <p className="ant-typography ant-typography-success ant-typography-bold">
                         Giao hàng thành công {formattedDate}
@@ -307,14 +306,14 @@ const OrdersDetali = () => {
                     </Timeline.Item>
                   )}
                   {/* Hiển thị "Giao hàng thất bại" nếu không có trạng thái "Giao hàng thành công" */}
-                  {data?.status >= 7 && (
+                  {data?.status >= 5 && (
                     <Timeline.Item color="red">
                       <p className="ant-typography ant-typography-danger ant-typography-bold">
                         Giao hàng thất bại {formattedDate}
                       </p>
                     </Timeline.Item>
                   )}
-                  {data?.status >= 4 && data?.status < 6 && (
+                  {data?.status >= 6 && (
                     <Timeline.Item color="green">
                       <p className="ant-typography ant-typography-success ant-typography-bold">
                         Hoàn thành {formattedDate}
@@ -626,13 +625,13 @@ const OrdersDetali = () => {
                 </Button>
                 <Button
                   type="default"
-                  onClick={() => handleStatusUpdate(7, data.order_number)}
+                  onClick={() => handleStatusUpdate(5, data.order_number)}
                 >
                   Giao Hàng Thất Bại
                 </Button>
               </>
             )}
-            {data.status === "6" && (
+            {data.status === "4" && (
               <button
                 className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
                 disabled
@@ -640,7 +639,7 @@ const OrdersDetali = () => {
                 Giao hàng thành công
               </button>
             )}
-            {data.status === "7" && (
+            {data.status === "5" && (
               <button
                 className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
                 disabled
@@ -648,7 +647,7 @@ const OrdersDetali = () => {
                 Giao hàng thất bại
               </button>
             )}
-            {data.status === "4" && (
+            {data.status === "6" && (
               <button
                 className="w-auto p-3 bg-green-600 rounded text-white cursor-not-allowed"
                 disabled
@@ -656,7 +655,7 @@ const OrdersDetali = () => {
                 Đã hoàn thành
               </button>
             )}
-            {data.status === "5" && (
+            {data.status === "7" && (
               <button
                 className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
                 disabled
@@ -670,6 +669,7 @@ const OrdersDetali = () => {
             visible={isDeliverSuccessModalVisible}
             onOk={handleDeliverSuccess}
             onCancel={() => setDeliverSuccessModalVisible(false)}
+
           >
             <Form.Item
               name="confirmationImage"
