@@ -78,7 +78,6 @@ const OrdersDetali = () => {
     ...item
   }));
   const formattedDate = data?.updatedAt ? new Date(data.updatedAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-
   const columns = [
     {
       title: "Ảnh Sản Phẩm",

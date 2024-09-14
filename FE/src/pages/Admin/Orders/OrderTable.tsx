@@ -5,9 +5,9 @@ import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
-  const formatDate = (datetime: any) => {
-    if (!datetime) return "";
-    const date = new Date(datetime);
+  const formatDate = (createdAt: any) => {
+    if (!createdAt) return "";
+    const date = new Date(createdAt);
     return date.toLocaleDateString();
   };
   const dataSort = orders?.map((order: any) => ({
