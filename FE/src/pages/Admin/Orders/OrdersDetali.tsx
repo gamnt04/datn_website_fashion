@@ -176,7 +176,6 @@ const OrdersDetali = () => {
         minute: "2-digit",
       })
     : "";
-
   const columns = [
     {
       title: "Ảnh Sản Phẩm",
