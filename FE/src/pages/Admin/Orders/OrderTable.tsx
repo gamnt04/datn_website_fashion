@@ -93,11 +93,11 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
               <p className="text-yellow-500">Đang chuẩn bị hàng</p>
             ) : order?.status == 3 ? (
               <p className="text-blue-500">Đang vận chuyển</p>
-            ) : order?.status == 4 ? (
-              <p className="text-green-600">Đã giao hàng</p>
             ) : order?.status == 6 ? (
+              <p className="text-green-600">Đã giao hàng</p>
+            ) : order?.status == 4 ? (
               <p className="text-green-600">Giao hàng thành công</p>
-            ) : order?.status == 7 ? (
+            ) : order?.status == 5 ? (
               <p className="text-red-600">Giao hàng thất bại</p>
             ) : (
               <p className="text-red-600">Đã hủy</p>
