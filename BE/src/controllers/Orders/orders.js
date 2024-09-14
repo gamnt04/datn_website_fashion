@@ -390,7 +390,9 @@ export const getTop10ProductBestSale = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate("reviews"); // Sử dụng populate để lấy thông tin reviews
+    const order = await Order.findById(req.params.id)
+      .populate("reviews")
+      .populate("shipperId"); // Sử dụng populate để lấy thông tin reviews
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -717,6 +719,34 @@ export const get10NewOrderToday = async (req, res) => {
     }
 
     return res.status(StatusCodes.OK).json(orderToDay);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+export const addShipperOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { shipperId } = req.body;
+
+    // Kiểm tra xem đơn hàng có tồn tại không
+    const order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
+    }
+
+    // Cập nhật shipperId cho đơn hàng
+    order.shipperId = shipperId;
+    await order.save();
+
+    // Trả về kết quả sau khi cập nhật thành công
+    return res.status(StatusCodes.OK).json({
+      message: "Shipper has been updated successfully",
+      updatedOrder: order
+    });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)

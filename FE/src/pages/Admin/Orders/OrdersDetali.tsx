@@ -3,10 +3,15 @@ import instance from "../../../configs/axios";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
 import { message, Popconfirm, Radio, Table, Timeline } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
-import { Mutation_Notification, Query_notification } from "../../../_lib/React_Query/Notification/Query";
+import {
+  Mutation_Notification,
+  Query_notification
+} from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { LeftOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useListAllShipper } from "../../../common/hooks/Shipper/querry_shipper";
+import { Mutation_Shipper } from "../../../common/hooks/Shipper/mutation_shipper";
 const OrdersDetali = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -14,45 +19,76 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch } = Query_Orders(id);
-  const { data: no } = Query_notification()
+  const { data: no } = Query_notification();
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
-  const dispathNotification = Mutation_Notification('Add');
+  const { data: shipperData } = useListAllShipper();
+
+  const { mutate: AddShipper } = Mutation_Shipper("ADD");
+  const dispathNotification = Mutation_Notification("Add");
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-  function yeu_cau(dataBody: { id_item: string | number, comfirm?: boolean | string, numberOrder?: string | number, action?: string }) {
+  const handleSelectShipper = (shipperId: string) => {
+    if (!id) return;
+    AddShipper(
+      { orderId: id, shipperId },
+      {
+        onSuccess: () => {
+          messageApi.success("Thêm shipper cho đơn hàng thành công!");
+        },
+        onError: () => {
+          messageApi.error("Thêm shipper thất bại!");
+        }
+      }
+    );
+  };
+  function yeu_cau(dataBody: {
+    id_item: string | number;
+    comfirm?: boolean | string;
+    numberOrder?: string | number;
+    action?: string;
+  }) {
     mutate(dataBody);
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === 'xac_nhan' ? 'xác nhận' : 'từ chối'} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
-      different: dataBody?.numberOrder,
-    })
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      different: dataBody?.numberOrder
+    });
   }
-  const reasons = [
-    "Hết hàng",
-    "Sai thông tin sản phẩm",
-    "Giá nhập thay đổi",
-  ];
-  function huy_don(dataBody: { id_item: string | number, numberOrder?: string | number, action?: string, cancellationReason?: string; }) {
+  const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
+  function huy_don(dataBody: {
+    id_item: string | number;
+    numberOrder?: string | number;
+    action?: string;
+    cancellationReason?: string;
+  }) {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.numberOrder,
+      different: dataBody?.numberOrder
     });
     cancel(dataBody);
   }
-  const handleStatusUpdate = async (status: number | string, code_order?: string | number) => {
+  const handleStatusUpdate = async (
+    status: number | string,
+    code_order?: string | number
+  ) => {
     if (!data) return;
-    const message = (status === 2) ? `Người bán đã xác nhận đơn hàng ${code_order}` : (status === 3) ?
-      `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!` :
-      `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`
+    const message =
+      status === 2
+        ? `Người bán đã xác nhận đơn hàng ${code_order}`
+        : status === 3
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
       message: message
-    })
+    });
     try {
       const response = await instance.patch(`/orders/${id}`, {
         status: status
@@ -77,7 +113,15 @@ const OrdersDetali = () => {
     key: item._id,
     ...item
   }));
-  const formattedDate = data?.updatedAt ? new Date(data.updatedAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  const formattedDate = data?.updatedAt
+    ? new Date(data.updatedAt).toLocaleString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    : "";
 
   const columns = [
     {
@@ -150,17 +194,49 @@ const OrdersDetali = () => {
       <div className="mx-6">
         {" "}
         <div className="flex items-center justify-between mb-5 mt-20 relative">
-          <Link to="/admin/orders" className="flex items-center gap-2 text-[#1B7EE2]">
+          <Link
+            to="/admin/orders"
+            className="flex items-center gap-2 text-[#1B7EE2]"
+          >
             <LeftOutlined />
             <span>Quay lại</span>
           </Link>
-          <h1 className="text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">Chi Tiết Đơn Hàng</h1>
-
+          <h1 className="text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">
+            Chi Tiết Đơn Hàng
+          </h1>
+        </div>
+        <div className="p-4">
+          <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
+          <div className="grid grid-cols-1 gap-4">
+            {shipperData?.map((shipper: any) => (
+              <div
+                key={shipper._id}
+                className="flex items-center bg-white p-4 rounded-lg shadow-md"
+              >
+                <img
+                  src={shipper.avatar}
+                  alt="Shipper Avatar"
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div className="flex-1">
+                  <p className="text-lg font-medium">{shipper.fullName}</p>
+                  <p className="text-sm text-gray-500">{shipper.phone}</p>
+                </div>
+                <button
+                  onClick={() => handleSelectShipper(shipper._id)} // Chọn shipper và gọi hàm xử lý
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
+                  Chọn
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="my-6 shadow rounded bg-white">
-          <div className="p-4 text-black font-semibold">Trạng thái đơn hàng</div>
+          <div className="p-4 text-black font-semibold">
+            Trạng thái đơn hàng
+          </div>
           <div>
-
             {data?.status == 5 ? (
               <div className="flex flex-col justify-center items-center gap-7 py-4">
                 <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
@@ -168,12 +244,9 @@ const OrdersDetali = () => {
                 </p>
                 {no?.notifications.map((item: any) => {
                   if (item?.different === data?.orderNumber) {
-                    return (
-                      <p>Lý do: {item?.message}</p>
-                    )
+                    return <p>Lý do: {item?.message}</p>;
                   }
-                })
-                }
+                })}
               </div>
             ) : (
               <>
@@ -209,7 +282,6 @@ const OrdersDetali = () => {
                 </Timeline>
               </>
             )}
-
           </div>
         </div>
         <div className="overflow-x-auto my-6 shadow  rounded">
@@ -393,7 +465,7 @@ const OrdersDetali = () => {
             </div>
           </div>
           <div className="flex gap-5 justify-center mt-[60px]">
-            {(data.status === "1") && (
+            {data.status === "1" && (
               <>
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
@@ -415,9 +487,7 @@ const OrdersDetali = () => {
                         <p>Chọn lý do hủy:</p>
                         <Radio.Group
                           className="flex flex-col gap-2"
-                          onChange={(e) =>
-                            setSelectedReason(e.target.value)
-                          }
+                          onChange={(e) => setSelectedReason(e.target.value)}
                         >
                           {reasons.map((reason, index) => (
                             <Radio key={index} value={reason}>
@@ -428,13 +498,15 @@ const OrdersDetali = () => {
                       </div>
                     </div>
                   }
-                  onConfirm={() => huy_don({
-                    id_item: data?._id,
-                    action: "huy",
-                    cancellationReason: selectedReason,
-                    numberOrder: data?.orderNumber,
-                    // linkUri: items?._id,
-                  })}
+                  onConfirm={() =>
+                    huy_don({
+                      id_item: data?._id,
+                      action: "huy",
+                      cancellationReason: selectedReason,
+                      numberOrder: data?.orderNumber
+                      // linkUri: items?._id,
+                    })
+                  }
                   okText="Từ chối"
                   cancelText="Không"
                 >
@@ -451,7 +523,14 @@ const OrdersDetali = () => {
                     <Popconfirm
                       title="Xác nhận hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn hủy đơn hàng này?"
-                      onConfirm={() => yeu_cau({ id_item: data?._id, confirm: true, numberOrder: data?.orderNumber, action: 'xac_nhan' })}
+                      onConfirm={() =>
+                        yeu_cau({
+                          id_item: data?._id,
+                          confirm: true,
+                          numberOrder: data?.orderNumber,
+                          action: "xac_nhan"
+                        })
+                      }
                       okText="Xác nhận"
                       cancelText="Không"
                     >
@@ -463,7 +542,12 @@ const OrdersDetali = () => {
                       title="Từ chối hủy đơn hàng?"
                       description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
                       onConfirm={() =>
-                        yeu_cau({ id_item: data?._id, confirm: false, numberOrder: data?.orderNumber, action: 'tu_choi' })
+                        yeu_cau({
+                          id_item: data?._id,
+                          confirm: false,
+                          numberOrder: data?.orderNumber,
+                          action: "tu_choi"
+                        })
                       }
                       okText="Từ chối"
                       cancelText="Không"
@@ -495,7 +579,10 @@ const OrdersDetali = () => {
                 okText="Xác nhận"
                 cancelText="Không"
               >
-                <button className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed" disabled>
+                <button
+                  className="w-auto p-3 bg-gray-300 rounded text-white cursor-not-allowed"
+                  disabled
+                >
                   Đang vận chuyển
                 </button>
               </Popconfirm>
