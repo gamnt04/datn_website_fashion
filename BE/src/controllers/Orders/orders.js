@@ -4,6 +4,8 @@ import Cart from "../../models/Cart/cart";
 import Attributes from "../../models/attribute/attribute";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
+import SendCancellationMail from "../SendMail/HuyMail";
+import SendDeliveryConfirmationMail from "../SendMail/ThanhCongMail";
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
   if (
@@ -50,6 +52,7 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
+      console.log(i.quantity);
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
         for (let j of data_attr) {
@@ -58,6 +61,10 @@ export const createOrder = async (req, res) => {
               for (let x of k.size) {
                 if (x.name_size) {
                   if (x.name_size == i.name_size) {
+                    return res.status(StatusCodes.BAD_REQUEST).json({
+                      message: "Sản phẩm không đủ hàng"
+                    });
+                  } else {
                     x.stock_attribute = x.stock_attribute - i.quantity;
                   }
                 } else {
@@ -115,13 +122,11 @@ export const createOrderPayment = async (req, res) => {
         }
       }
     }
-
     // Lấy giỏ hàng của người dùng
     const dataCart = await Cart.findOne({ userId: userId });
     if (!dataCart) {
       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
     }
-
     // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
     dataCart.products = dataCart.products.filter((i) => {
       const foundItem = items.some(
@@ -155,10 +160,11 @@ export const createOrderPayment = async (req, res) => {
         totalPrice
       });
       await SendMail(customerInfo.email, order);
-      await Cart.findOneAndDelete({ userId: userId });
+
+      // Trả về giỏ hàng đã cập nhật
       return res
         .status(201)
-        .json({ data, message: "Tạo đơn hàng thanh toán online thành công" });
+        .json({ data, updatedCart: dataCart, message: "Tạo đơn hàng thanh toán online thành công" });
     } else {
       return res
         .status(400)
@@ -172,25 +178,33 @@ export const createOrderPayment = async (req, res) => {
   }
 };
 
-export const getAllOrderToday = async (req, res) => {
+export const getAllOrdersToday = async (req, res) => {
   try {
-    const startOfday = new Date();
-    startOfday.setHours(0, 0, 0, 0);
-    const endOfday = new Date();
-    endOfday.setHours(23, 59, 59, 999);
-    const orderToDay = await Order.find({
+    // Lấy thời gian bắt đầu và kết thúc của ngày hôm nay
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Tìm các đơn hàng trong khoảng thời gian từ startOfDay đến endOfDay
+    const ordersToday = await Order.find({
       datetime: {
-        $gte: startOfday,
-        $lte: endOfday
+        $gte: startOfDay,
+        $lte: endOfDay
       }
     }).exec();
-    return res.status(StatusCodes.OK).json(orderToDay);
+
+    // Trả kết quả
+    return res.status(StatusCodes.OK).json(ordersToday);
   } catch (error) {
+    // Xử lý lỗi
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
   }
 };
+
 export const getAllOrderWeek = async (req, res) => {
   try {
     const now = new Date();
@@ -376,7 +390,9 @@ export const getTop10ProductBestSale = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate("reviews"); // Sử dụng populate để lấy thông tin reviews
+    const order = await Order.findById(req.params.id)
+      .populate("reviews") // Populate reviews
+      .populate("shipperId");
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -511,6 +527,30 @@ export const updateOrderStatus = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+export const addShipperOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { shipperId } = req.body;
+    const order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
+    }
+    order.shipperId = shipperId;
+    await order.save();
+    return res.status(StatusCodes.OK).json({
+      message: "Shipper has been add successfully",
+      updatedOrder: order
+    });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
+
 export async function get_orders_client(req, res) {
   const {
     _page = 1,
@@ -561,17 +601,15 @@ export async function get_orders_client(req, res) {
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
+  console.log(cancellationReason);
+
   try {
     const order = await Order.findById(id);
     if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy đơn hàng" });
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" });
     }
     if (order.cancellationRequested) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Đơn hàng đã bị hủy" });
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Đơn hàng đã bị hủy" });
     }
     order.cancellationRequested = true;
     if (cancellationReason) {
@@ -580,6 +618,9 @@ export const userCancelOrder = async (req, res) => {
     }
 
     await order.save();
+    console.log("Lý do hủy đơn hàng:", order.cancellationReason);
+    await SendCancellationMail(order.customerInfo.email, order, order.cancellationReason);
+
     res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng thành công",
       data_status_order: order.cancellationRequested
@@ -592,19 +633,21 @@ export const userCancelOrder = async (req, res) => {
 export const adminCancelOrder = async (req, res) => {
   const id = req.params.id;
   const { confirm } = req.body;
+
   try {
     const order = await Order.findById(id);
     if (!order) {
-      return res.status(404).send("Không tìm thấy đơn hàng");
+      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" });
     }
     if (!order.cancellationRequested) {
-      return res.status(400).send("Không có yêu cầu hủy đơn hàng");
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Không có yêu cầu hủy đơn hàng" });
     }
     if (confirm) {
       order.status = "5"; // Canceled
       order.cancelledByAdmin = true;
       const items = order.items;
       for (let i of items) {
+        // Xử lý thay đổi số lượng sản phẩm
         if (i.productId.attributes) {
           const data_attr = await Attributes.find({ id_item: i.productId._id });
           for (let j of data_attr) {
@@ -631,11 +674,16 @@ export const adminCancelOrder = async (req, res) => {
           }
         }
       }
+
+      // Gửi email thông báo hủy đơn hàng
+      // console.log("Lý do hủy đơn hàng:", order.cancellationReason);
+      // await SendCancellationMail(order.customerInfo.email, order, order.cancellationReason);
     } else {
       order.cancellationRequested = false;
     }
+
     await order.save();
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng đã được xác nhận",
       data_status_order: order.cancellationRequested
     });
@@ -643,6 +691,8 @@ export const adminCancelOrder = async (req, res) => {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
+
+
 export const getOrderByNumber = async (req, res) => {
   try {
     const { orderNumber } = req.params;
@@ -702,8 +752,41 @@ export const get10NewOrderToday = async (req, res) => {
 
     return res.status(StatusCodes.OK).json(orderToDay);
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Lỗi server"
+    });
   }
 };
+export const deliverSuccess = async (req, res) => {
+  try {
+    const { orderId, confirmationImage } = req.body;
+
+    // Tìm đơn hàng theo ID
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Đơn hàng không tồn tại." });
+    }
+
+    // Cập nhật trạng thái đơn hàng
+    order.status = "6"; // Giao hàng thành công
+    order.confirmationImage = confirmationImage;
+
+    // Lưu thay đổi đơn hàng
+    await order.save();
+
+    // Gửi email thông báo giao hàng thành công
+    const customerEmail = order.customerInfo.email;
+    await SendDeliveryConfirmationMail(customerEmail, order);
+
+    // Trả về phản hồi thành công
+    res.status(200).json({
+      message: "Đơn hàng đã được đánh dấu là giao hàng thành công và email đã được gửi.",
+      order
+
+
+    });
+  } catch (error) {
+    res.status(500).json({ name: error.name, message: error.message });
+  }
+};
+
