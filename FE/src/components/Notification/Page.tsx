@@ -5,13 +5,14 @@ import useLocalStorage from "../../common/hooks/Storage/useStorage";
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
-    const data = Query_notification(userId)
+    const { data } = Query_notification(userId)
+
     return (
         <div className="space-y-4 text-sm">
             <strong className="text-lg">Thông báo của bạn</strong>
             {
-                data?.data?.notifications?.length > 0 ?
-                    data?.data?.notifications?.map((item: any) =>
+                data?.notifications?.length > 0 ?
+                    data?.notifications?.map((item: any) =>
                         <details className="group rounded-lg bg-gray-50 p-6 [&_summary::-webkit-details-marker]:hidden" open>
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
                                 <h2 className="font-medium">{item?.userId?.userName}</h2>

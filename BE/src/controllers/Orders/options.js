@@ -1,3 +1,4 @@
+import cron from "node-cron";
 import Orders from "../../models/Orders/orders";
 import { StatusCodes } from "http-status-codes";
 
@@ -15,7 +16,7 @@ export async function list_items_order_by_user(req, res) {
     const options = {
       page: _page,
       limit: _limit,
-      sort: { datetime: -1 },
+      sort: { createdAt: -1 },
       populate: "reviews", // Thêm populate để lấy nội dung reviews
     };
 
@@ -39,3 +40,23 @@ export async function list_items_order_by_user(req, res) {
     });
   }
 }
+cron.schedule("*/30 * * * * *", async () => {
+  try {
+    const thirtySecondsAgo = new Date();
+    thirtySecondsAgo.setSeconds(thirtySecondsAgo.getSeconds() - 30);
+    const orders = await Orders.updateMany(
+      {
+        status: "3",
+        deliveredAt: { $lte: thirtySecondsAgo },
+        completedAt: null
+      },
+      {
+        status: "4",
+        completedAt: new Date()
+      }
+    );
+    // console.log("Đã cập nhật", orders.nModified, "đơn hàng");
+  } catch (error) {
+    console.error("Lỗi khi cập nhật đơn hàng:", error);
+  }
+});

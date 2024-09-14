@@ -1,23 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import OrderTable from "./OrderTable";
 import {
   Query_Orders,
-  useSearchOrdersByNumberOrNumberPhone
+  useSearchOrdersByNumberOrNumberPhone,
 } from "../../../common/hooks/Order/querry_Order";
 import { Button, Input, Select } from "antd";
 const { Option } = Select;
+import useLocalStorage from "../../../common/hooks/Storage/useStorage"; // Đảm bảo import đúng đường dẫn
 
 const OrderList = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchOrder, setSearchOrder] = useState("");
+
+  // Lấy thông tin người dùng từ localStorage
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const userRole = user?.user?.role;
+
+  // Kiểm tra nếu user là shipper thì lấy userId, nếu không thì để undefined
+  const shipperId = userRole === "shipper" ? userId : undefined;
+
+  // Gọi API: Nếu là admin thì lấy tất cả, nếu là shipper thì lọc theo shipperId
   const { data: searchData } =
     useSearchOrdersByNumberOrNumberPhone(searchOrder);
   const { data, isLoading, totalPages } = Query_Orders(
-    undefined,
+    shipperId, // Truyền shipperId nếu có, nếu không sẽ lấy tất cả (admin)
     currentPage,
     statusFilter
   );
+
   const dataSource = searchData ? searchData : data;
 
   const onHandleSearch = () => {
@@ -32,6 +44,10 @@ const OrderList = () => {
   const goToPage = (page) => {
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+    // Có thể thêm logic khác nếu cần khi role thay đổi
+  }, [userRole]);
 
   return (
     <div>
@@ -53,6 +69,7 @@ const OrderList = () => {
               <Option value="3">Đang vận chuyển</Option>
               <Option value="4">Đã giao hàng</Option>
               <Option value="5">Đã hủy</Option>
+             
             </Select>
           </div>
           <div className="flex space-x-5">
