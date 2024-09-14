@@ -65,10 +65,18 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    datetime: {
+    deliveredAt: {
       type: Date,
-      default: Date.now
-    }
+      default: null
+    },
+    completedAt: {
+      type: Date,
+      default: null
+    },
+    // datetime: {
+    //   type: Date,
+    //   default: Date.now
+    // }
   },
   { timestamps: true, versionKey: false }
 );
