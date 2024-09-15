@@ -38,9 +38,16 @@ const useSignIn = (userId?: string) => {
         queryKey: ["AUTH_KEY", userId],
       });
       if (res.status === 200) {
+        const role = res.data.user.role;
         toast.success("Đăng nhập thành công!", { autoClose: 500 });
+        if (role === "admin") {
+          navigate("/admin");
+        } else if (role === "courier") {
+          navigate("/admin/orders");
+        } else {
+          navigate("/");
+        }
         setStatus_api(false);
-        navigate("/");
       } else {
         setStatus_api(true);
       }
