@@ -43,7 +43,7 @@ const AdminLayout: React.FC = () => {
           </Button>,
           <Button type="primary" key="login">
             <Link to="/login">Đăng nhập</Link>
-          </Button>
+          </Button>,
         ]}
       />
     );

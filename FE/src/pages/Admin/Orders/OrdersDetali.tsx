@@ -35,6 +35,8 @@ const OrdersDetali = () => {
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
+
+  const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
   const [orderData, setOrderData] = useState<any>(null);
   const [isDeliverSuccessModalVisible, setDeliverSuccessModalVisible] =
     useState(false);
@@ -78,7 +80,7 @@ const OrdersDetali = () => {
         orderId,
         confirmationImage: imageUrl,
       });
-      handleStatusUpdate(4, data?.orderNumber)
+      handleStatusUpdate(4, data?.orderNumber);
       refetch();
 
       messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
@@ -98,8 +100,9 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.numberOrder,
     });
   }
@@ -120,6 +123,27 @@ const OrdersDetali = () => {
 
     cancel(dataBody);
   }
+  const reason = [
+    "Người nhận không nghe máy",
+    "Hoàn hàng",
+    "Đơn hàng quá 3 ngày",
+  ];
+  function giao_hang_that_bai(dataBody: {
+    id_item: string | number;
+    numberOrder?: string | number;
+    action?: string;
+    cancellationReason?: string;
+  }) {
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: data?.userId,
+      message: `Người giao hàng đã giao hàng đơn hàng  ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
+      different: dataBody?.numberOrder,
+    });
+    console.log(dataBody.cancellationReason);
+
+    failDelivery(dataBody);
+  }
 
   const handleStatusUpdate = async (
     status: number | string,
@@ -130,12 +154,12 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-          : status === 4
-            ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
-            : status === 7
-              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-              : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 4
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
+        : status === 5
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -149,7 +173,7 @@ const OrdersDetali = () => {
       messageApi.open({
         type: "success",
         content:
-          response.data.status === "4"
+          response.data.status === "6"
             ? "Đơn hàng đã được giao"
             : "Cập nhật trạng thái đơn hàng thành công!",
       });
@@ -168,12 +192,12 @@ const OrdersDetali = () => {
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     : "";
   const columns = [
     {
@@ -273,6 +297,17 @@ const OrdersDetali = () => {
                   }
                 })}
               </div>
+            ) : data?.status == 5 ? (
+              <div className="flex flex-col justify-center items-center gap-7 py-4">
+                <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
+                  Giao Hàng thất bại
+                </p>
+                {no?.notifications.map((item: any) => {
+                  if (item?.different === data?.orderNumber) {
+                    return <p>Lý do: {item?.message}</p>;
+                  }
+                })}
+              </div>
             ) : (
               <>
                 <Timeline mode="alternate">
@@ -298,7 +333,7 @@ const OrdersDetali = () => {
                     </Timeline.Item>
                   )}
                   {/* Hiển thị "Giao hàng thành công" nếu không có trạng thái "Giao hàng thất bại" */}
-                  {data?.status >= 4 && data?.status < 7 && (
+                  {data?.status >= 4 && data?.status < 5 && (
                     <Timeline.Item color="green">
                       <p className="ant-typography ant-typography-success ant-typography-bold">
                         Giao hàng thành công {formattedDate}
@@ -306,14 +341,14 @@ const OrdersDetali = () => {
                     </Timeline.Item>
                   )}
                   {/* Hiển thị "Giao hàng thất bại" nếu không có trạng thái "Giao hàng thành công" */}
-                  {data?.status >= 5 && (
+                  {/* {data?.status >= 5 && (
                     <Timeline.Item color="red">
                       <p className="ant-typography ant-typography-danger ant-typography-bold">
                         Giao hàng thất bại {formattedDate}
                       </p>
                     </Timeline.Item>
-                  )}
-                  {data?.status >= 6 && (
+                  )} */}
+                  {data?.status >= 6 && data?.status < 4 && (
                     <Timeline.Item color="green">
                       <p className="ant-typography ant-typography-success ant-typography-bold">
                         Hoàn thành {formattedDate}
@@ -615,6 +650,7 @@ const OrdersDetali = () => {
             {data.status === "3" && (
               <>
                 <Button
+                  className="w-52 bg-blue-500 rounded text-white"
                   type="primary"
                   onClick={() => {
                     setOrderId(data._id);
@@ -623,12 +659,44 @@ const OrdersDetali = () => {
                 >
                   Giao Hàng Thành Công
                 </Button>
-                <Button
-                  type="default"
-                  onClick={() => handleStatusUpdate(5, data.order_number)}
+
+                <Popconfirm
+                  title="Xác nhận giao hàng thất bại?"
+                  description={
+                    <div>
+                      <p>
+                        Bạn có chắc chắn muốn xác nhận đơn hàng này thất bại ko?
+                      </p>
+                      <div>
+                        <p>Chọn lý do giao hàng thất bại:</p>
+                        <Radio.Group
+                          className="flex flex-col gap-2"
+                          onChange={(e) => setSelectedReason(e.target.value)}
+                        >
+                          {reason.map((reason, index) => (
+                            <Radio key={index} value={reason}>
+                              {reason}
+                            </Radio>
+                          ))}
+                        </Radio.Group>
+                      </div>
+                    </div>
+                  }
+                  onConfirm={() =>
+                    giao_hang_that_bai({
+                      id_item: data?._id,
+                      action: "huy",
+                      cancellationReason: selectedReason,
+                      numberOrder: data?.orderNumber,
+                    })
+                  }
+                  okText="Xác Nhận"
+                  cancelText="Không"
                 >
-                  Giao Hàng Thất Bại
-                </Button>
+                  <button className="w-52 bg-red-500 rounded text-white">
+                    Giao Hàng Thất Bại
+                  </button>
+                </Popconfirm>
               </>
             )}
             {data.status === "4" && (
@@ -669,7 +737,6 @@ const OrdersDetali = () => {
             visible={isDeliverSuccessModalVisible}
             onOk={handleDeliverSuccess}
             onCancel={() => setDeliverSuccessModalVisible(false)}
-
           >
             <Form.Item
               name="confirmationImage"
