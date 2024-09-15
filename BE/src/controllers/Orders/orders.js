@@ -6,6 +6,26 @@ import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 import SendCancellationMail from "../SendMail/HuyMail";
 import SendDeliveryConfirmationMail from "../SendMail/ThanhCongMail";
+
+// Middleware xác thực
+import jwt from "jsonwebtoken";
+
+export const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
+  if (!token) {
+    return res.status(401).json({ message: "Chưa cung cấp token" });
+  }
+
+  jwt.verify(token, "123456", (err, decoded) => {
+    if (err) {
+      console.error("Lỗi xác thực token:", err.message);
+      return res.status(401).json({ message: "Token không hợp lệ" });
+    }
+    req.user = decoded; // Lưu thông tin người dùng vào req.user
+    next();
+  });
+};
+
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
   if (
@@ -28,8 +48,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`,
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`,
       },
       totalPrice,
     });
@@ -157,8 +178,9 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`,
+          address: `${customerInfo.address || ""}${
+            customerInfo.addressDetail || ""
+          }`,
         },
         totalPrice,
       });
@@ -476,24 +498,18 @@ export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status, total_price } = req.body;
     const order = await Order.findById(id);
-
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
     }
-    console.log(status);
-
-    if (order.status === "4" || order.status === "6") {
-      console.log("Order is completed or cancelled");
-
+    if (order.status === "6" || order.status === "7") {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
-    if (status == "4") {
-      console.log(status);
+    if (status == "3") {
       order.deliveredAt = new Date();
     }
 
@@ -574,7 +590,7 @@ export async function get_orders_client(req, res) {
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { datetime: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
   };
 
   const query = {};
@@ -608,7 +624,52 @@ export async function get_orders_client(req, res) {
     });
   }
 }
+// export const get_orders_client = async (req, res) => {
+//   const {
+//     _page = 1,
+//     _limit = 7,
+//     _sort = "",
+//     _search = "",
+//     _status = "",
+//   } = req.query;
 
+//   const options = {
+//     page: _page,
+//     limit: _limit,
+//     sort: _sort ? { [_sort]: 1 } : { datetime: -1 },
+//   };
+
+//   const query = {};
+
+//   if (_status) {
+//     query.status = _status;
+//   }
+
+//   try {
+//     const { role, _id } = req.user;
+
+//     let data;
+//     if (role === "admin") {
+//       data = await Order.paginate(query, options);
+//     } else if (role === "courier") {
+//       query.shipperId = _id;
+//       data = await Order.paginate(query, options);
+//     }
+
+//     if (!data || data.docs.length < 1) {
+//       return res.status(404).json({ message: "Không có dữ liệu!" });
+//     }
+
+//     return res.status(200).json({
+//       message: "Hoàn thành!",
+//       data: data.docs,
+//       totalDocs: data.totalDocs,
+//       totalPages: data.totalPages,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message || "Lỗi server!" });
+//   }
+// };
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
@@ -665,7 +726,7 @@ export const adminCancelOrder = async (req, res) => {
         .json({ message: "Không có yêu cầu hủy đơn hàng" });
     }
     if (confirm) {
-      order.status = "5"; // Canceled
+      order.status = "7"; // Canceled
       order.cancelledByAdmin = true;
       const items = order.items;
       for (let i of items) {
@@ -797,5 +858,68 @@ export const deliverSuccess = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
+  }
+};
+export const adminFailDelivery = async (req, res) => {
+  const id = req.params.id;
+  const { failureReason } = req.body; // Lấy lý do từ request body
+
+  try {
+    const order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy đơn hàng" });
+    }
+
+    // Kiểm tra nếu đơn hàng đã hoàn thành hoặc bị hủy thì không cho phép cập nhật giao hàng thất bại
+    if (order.status === "completed" || order.status === "5") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message:
+          "Không thể cập nhật trạng thái thất bại cho đơn hàng đã hoàn thành hoặc bị hủy",
+      });
+    }
+
+    // Cập nhật trạng thái thành 'Giao hàng thất bại'
+    order.status = "5"; // Giao hàng thất bại
+    order.failureReason = failureReason; // Lưu lý do giao hàng thất bại
+
+    const items = order.items;
+    for (let i of items) {
+      // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
+      if (i.productId.attributes) {
+        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        for (let j of data_attr) {
+          for (let k of j.values) {
+            if (k.color == i.color_item) {
+              for (let x of k.size) {
+                if (x.name_size) {
+                  if (x.name_size == i.name_size) {
+                    x.stock_attribute = x.stock_attribute + i.quantity;
+                  }
+                } else {
+                  x.stock_attribute = x.stock_attribute + i.quantity;
+                }
+              }
+            }
+          }
+          await j.save();
+        }
+      } else {
+        const data_items = await Products.find({ _id: i.productId._id });
+        for (let a of data_items) {
+          a.stock_product = a.stock_product + i.quantity;
+          await a.save();
+        }
+      }
+    }
+
+    await order.save();
+    res.status(StatusCodes.OK).json({
+      message: "Đơn hàng đã được cập nhật trạng thái giao hàng thất bại",
+      failureReason: order.failureReason,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };

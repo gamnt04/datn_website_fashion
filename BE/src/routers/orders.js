@@ -18,7 +18,8 @@ import {
   getOrderByNumberOrPhoneNumber,
   //get10OrderNewInDay,
   deliverSuccess,
-  addShipperOrder
+  addShipperOrder,
+  adminFailDelivery,
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 
@@ -42,7 +43,7 @@ router.post("/orders/:id/cancel", userCancelOrder);
 router.post("/orderspayment", createOrderPayment);
 router.post("/orders/search", getOrderByNumberOrPhoneNumber);
 router.post("/deliver-success", deliverSuccess);
-
+router.post("/orders/:id/fail-delivery", adminFailDelivery); 
 // ---
 router.get("/list_order/:id_user", list_items_order_by_user);
 export default router;
