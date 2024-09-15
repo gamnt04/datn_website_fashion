@@ -14,7 +14,8 @@ import {
   getAddressById,
   setDefaultAddress,
   GetUsersByEmailOrName,
-  newAuthIn7Day
+  newAuthIn7Day,
+  checkRole,
 } from "../controllers/Auth/auth";
 import { forgotPassword } from "../controllers/Auth/ForgotPass";
 const Routes_auth = express.Router();
@@ -28,7 +29,7 @@ Routes_auth.get("/auths/search", Get_All_User_Search);
 Routes_auth.get("/auths/new_auth_in_7_day", newAuthIn7Day);
 
 // Routes_auth.put("/auth/${userId}/avatar", updateUserAvatar);
-Routes_auth.get("/auths", GetAllUser);
+Routes_auth.get("/auths", checkRole(["admin"]), GetAllUser);
 Routes_auth.get("/auths/search", Get_All_User_Search);
 Routes_auth.post("/auth/add_address", add_address);
 Routes_auth.get("/auth/address/:userId", get_address);

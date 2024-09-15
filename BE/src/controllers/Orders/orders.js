@@ -418,7 +418,7 @@ export const getTop10ProductBestSale = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
-      .populate("reviews") // Populate reviews
+      .populate("reviews")
       .populate("shipperId");
     if (!order) {
       return res
@@ -555,29 +555,6 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-export const addShipperOrder = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { shipperId } = req.body;
-    const order = await Order.findById(id);
-    if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Order not found" });
-    }
-    order.shipperId = shipperId;
-    await order.save();
-    return res.status(StatusCodes.OK).json({
-      message: "Shipper has been add successfully",
-      updatedOrder: order,
-    });
-  } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
-  }
-};
-
 export async function get_orders_client(req, res) {
   const {
     _page = 1,
@@ -590,7 +567,7 @@ export async function get_orders_client(req, res) {
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { datetime: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
   };
 
   const query = {};
@@ -858,6 +835,34 @@ export const deliverSuccess = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
+  }
+};
+export const addShipperOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { shipperId } = req.body;
+
+    // Kiểm tra xem đơn hàng có tồn tại không
+    const order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
+    }
+
+    // Cập nhật shipperId cho đơn hàng
+    order.shipperId = shipperId;
+    await order.save();
+
+    // Trả về kết quả sau khi cập nhật thành công
+    return res.status(StatusCodes.OK).json({
+      message: "Shipper has been updated successfully",
+      updatedOrder: order,
+    });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 export const adminFailDelivery = async (req, res) => {

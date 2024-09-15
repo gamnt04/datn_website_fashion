@@ -8,6 +8,7 @@ import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuer
 import { IProduct } from "../../../common/interfaces/Product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const CategoryDetail: React.FC = () => {
   const queryClient = useQueryClient();
@@ -155,31 +156,33 @@ const CategoryDetail: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 20 }}>
-      <div className="flex items-center justify-between mb-10 mt-10">
-        <h1 className="text-2xl font-semibold">
-          Sản phẩm trong danh mục: {categoryName}
-        </h1>
-        <Button type="primary">
-          <Link to={"/admin/category"}>
-            <BackwardFilled />
-            Quay lại
-          </Link>
-        </Button>
-      </div>
-      {products && products.length > 0 ? (
-        <Table
-          dataSource={products}
-          columns={columns}
-          rowKey={(record) => record._id}
-          pagination={false}
-        />
-      ) : (
-        <div style={{ textAlign: "center", marginTop: 50 }}>
-          Không có sản phẩm nào trong danh mục này.
+    <CheckAuths roles={["admin"]}>
+      <div style={{ padding: 20 }}>
+        <div className="flex items-center justify-between mt-10 mb-10">
+          <h1 className="text-2xl font-semibold">
+            Sản phẩm trong danh mục: {categoryName}
+          </h1>
+          <Button type="primary">
+            <Link to={"/admin/category"}>
+              <BackwardFilled />
+              Quay lại
+            </Link>
+          </Button>
         </div>
-      )}
-    </div>
+        {products && products.length > 0 ? (
+          <Table
+            dataSource={products}
+            columns={columns}
+            rowKey={(record) => record._id}
+            pagination={false}
+          />
+        ) : (
+          <div style={{ textAlign: "center", marginTop: 50 }}>
+            Không có sản phẩm nào trong danh mục này.
+          </div>
+        )}
+      </div>
+    </CheckAuths>
   );
 };
 

@@ -93,41 +93,35 @@ export const GetUsersByEmailOrName = async (req, res) => {
       .json({ message: error.message || "Lỗi máy chủ!" });
   }
 };
-//checkquyeenf
 
-export const isAuthenticated = async (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "Vui lòng đăng nhập để tiếp tục.",
-    });
-  }
-
-  try {
-    const decoded = jwt.verify(token, "123456");
-    const user = await User.findById(decoded.userId);
-    if (!user) {
+// Kiểm tra quyền truy cập theo role (Middleware)
+export const checkRole = (roles) => {
+  return (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Người dùng không tồn tại.",
+        message: "Vui lòng đăng nhập để tiếp tục.",
       });
     }
-    req.user = user;
-    next();
-  } catch (error) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "Token không hợp lệ hoặc đã hết hạn.",
-    });
-  }
-};
-export const isAdmin = (req, res, next) => {
-  if (req.user.role !== "admin") {
-    return res.status(StatusCodes.FORBIDDEN).json({
-      message: "Bạn không có quyền truy cập tài nguyên này.",
-    });
-  }
-  next();
-};
 
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+
+      if (!roles.includes(req.user.role)) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          message: "Bạn không có quyền truy cập vào tài nguyên này.",
+        });
+      }
+
+      next();
+    } catch (error) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        message: "Token không hợp lệ hoặc đã hết hạn.",
+      });
+    }
+  };
+};
 ///
 const generateRefreshToken = (userId) => {
   return jwt.sign({ userId }, "123456", { expiresIn: "7d" });

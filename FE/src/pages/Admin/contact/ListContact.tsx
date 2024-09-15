@@ -6,12 +6,12 @@ import {
 import { format } from "date-fns";
 import { IContact } from "../../../common/interfaces/Contact";
 import Loading from "../../../components/base/Loading/Loading";
-import { Button, Input, Select, Table } from "antd";
+import { Button, Input, Table } from "antd";
 import { useState } from "react";
-import { render } from "react-dom";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const ListContact = () => {
-  const { contacts, isLoading, error } = useContacts();
+  const { contacts, isLoading, error, isError } = useContacts();
 
   const navigate = useNavigate();
   const [searchContact, setSearchContact] = useState("");
@@ -52,8 +52,7 @@ const ListContact = () => {
       key: "content",
       render: (_: any, contact: IContact) => (
         <p className="text-red-600">{contact.content}</p>
-      )
-
+      ),
     },
     {
       title: "  Ngày Tạo",
@@ -95,52 +94,53 @@ const ListContact = () => {
     return <Loading />;
   }
 
-  if (error) {
-    return <div>Đã xảy ra lỗi khi lấy dữ liệu: {error.message}</div>;
+  if (isError) {
+    return <div>Đã xảy ra lỗi khi lấy dữ liệu: {error?.message}</div>;
   }
 
   return (
+    <CheckAuths roles={["admin"]}>
+      <div className="mx-6">
+        <div className="flex items-center justify-between mt-20 mb-5">
+          <h1 className="text-2xl font-semibold">Quản Lý Liên Hệ</h1>{" "}
+        </div>
 
-    <div className="mx-6">
-      <div className="flex items-center justify-between mt-20 mb-5">
-        <h1 className="text-2xl font-semibold">Quản Lý Liên Hệ</h1>{" "}
-      </div>
-
-      <div className="flex justify-between mb-2">
-        <div className="space-x-5">
-          {/* <Select
+        <div className="flex justify-between mb-2">
+          <div className="space-x-5">
+            {/* <Select
             // value={statusFilter}
             // onChange={handleStatusChange}
             className="w-[200px] h-[40px]"
             placeholder="Lọc thời gian tạo"
           ></Select> */}
+          </div>
+          <div className="flex space-x-5">
+            <Input
+              className="w-[500px]"
+              value={searchContact}
+              onChange={(e) => setSearchContact(e.target.value)}
+              placeholder="nhâp tên hoặc email của khách hàng liên hệ ..."
+            />
+            <Button type="primary" onClick={onHandleSearch}>
+              Tìm kiếm
+            </Button>
+          </div>
         </div>
-        <div className="flex space-x-5">
-          <Input
-            className="w-[500px]"
-            value={searchContact}
-            onChange={(e) => setSearchContact(e.target.value)}
-            placeholder="nhâp tên hoặc email của khách hàng liên hệ ..."
-          />
-          <Button type="primary" onClick={onHandleSearch}>
-            Tìm kiếm
-          </Button>
-        </div>
-      </div>
 
-      {contacts.length > 0 ? (
-        <Table columns={columns} dataSource={dataSource} pagination={false} />
-      ) : (
-        <tr>
-          <td
-            colSpan={6}
-            className="px-4 py-4 text-sm text-center text-gray-500"
-          >
-            Không có dữ liệu
-          </td>
-        </tr>
-      )}
-    </div>
+        {contacts.length > 0 ? (
+          <Table columns={columns} dataSource={dataSource} pagination={false} />
+        ) : (
+          <tr>
+            <td
+              colSpan={6}
+              className="px-4 py-4 text-sm text-center text-gray-500"
+            >
+              Không có dữ liệu
+            </td>
+          </tr>
+        )}
+      </div>
+    </CheckAuths>
   );
 };
 

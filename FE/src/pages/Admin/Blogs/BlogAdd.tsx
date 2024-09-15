@@ -7,6 +7,10 @@ import { Link, useNavigate } from "react-router-dom";
 import slugify from "react-slugify";
 import LoadingOverlay from "react-loading-overlay-ts";
 import { AiFillBackward } from "react-icons/ai";
+import {
+  CheckAuths,
+  getToken,
+} from "../../../common/hooks/Auth/useAuthorization";
 const BlogAdd = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const editor = useRef(null);
@@ -15,6 +19,7 @@ const BlogAdd = () => {
   const [isLoading, setIsLoading] = useState(false);
   const doc = parser.parseFromString(content, "text/html");
   const navigate = useNavigate();
+  const token = getToken();
 
   const onSubmit = async () => {
     setIsLoading(true);
@@ -36,8 +41,8 @@ const BlogAdd = () => {
 
         const response = await axios.post(api, formData, {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         });
         // console.log(response.data.secure_url);
         return { originalSrc: src, newSrc: response.data.secure_url };
@@ -59,12 +64,13 @@ const BlogAdd = () => {
           {
             content: contentNew,
             slug: slugify(h1Element.textContent),
-            author: user.user.userName
+            author: user.user.userName,
           },
           {
             headers: {
-              "Content-Type": "application/json"
-            }
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         message.success("Tạo mới bài viết thành công");
@@ -84,62 +90,64 @@ const BlogAdd = () => {
       readonly: false,
       placeholder: "Viết Blog ...",
       uploader: {
-        insertImageAsBase64URI: true
-      }
+        insertImageAsBase64URI: true,
+      },
     }),
     []
   );
 
   return (
-    <>
-      <div className="mx-6  ">
-        <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-[26px] font-semibold">Thêm Mới Bài Viết</h1>
-          <Link to="/admin/blogs">
-            <Button type="primary">
-              <AiFillBackward /> Quay lại
-            </Button>
-          </Link>
-        </div>
-        <LoadingOverlay
-          active={isLoading}
-          spinner
-          text="Loading"
-          styles={{
-            overlay: (base) => ({
-              ...base,
-              position: "fixed",
-              width: "100vw",
-              height: "100vh",
-              zIndex: 1000
-            })
-          }}
-        >
-          <JoditEditor
-            className="!text-black"
-            ref={editor}
-            value={content}
-            config={config}
-            // tabIndex={1} // tabIndex of textarea
-            // onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-            onChange={(newContent) => {
-              setContent(newContent);
-            }}
-          />
-          <div>
-            <Button
-              type="primary"
-              className="mt-5"
-              onClick={() => {
-                onSubmit();
-              }}
-            >
-              Tạo mới bài viết
-            </Button>
+    <CheckAuths roles={["admin"]}>
+      <>
+        <div className="mx-6 ">
+          <div className="flex items-center justify-between mt-20 mb-5">
+            <h1 className="text-[26px] font-semibold">Thêm Mới Bài Viết</h1>
+            <Link to="/admin/blogs">
+              <Button type="primary">
+                <AiFillBackward /> Quay lại
+              </Button>
+            </Link>
           </div>
-        </LoadingOverlay>
-      </div>
-    </>
+          <LoadingOverlay
+            active={isLoading}
+            spinner
+            text="Loading"
+            styles={{
+              overlay: (base) => ({
+                ...base,
+                position: "fixed",
+                width: "100vw",
+                height: "100vh",
+                zIndex: 1000,
+              }),
+            }}
+          >
+            <JoditEditor
+              className="!text-black"
+              ref={editor}
+              value={content}
+              config={config}
+              // tabIndex={1} // tabIndex of textarea
+              // onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+              onChange={(newContent) => {
+                setContent(newContent);
+              }}
+            />
+            <div>
+              <Button
+                type="primary"
+                className="mt-5"
+                onClick={() => {
+                  onSubmit();
+                }}
+              >
+                Tạo mới bài viết
+              </Button>
+            </div>
+          </LoadingOverlay>
+        </div>
+      </>
+    </CheckAuths>
   );
 };
 export default BlogAdd;
