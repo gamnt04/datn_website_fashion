@@ -1,7 +1,15 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode"; // Sửa lại thành jwtDecode từ jwt-decode
+import { Result, Button, Spin } from "antd"; // Thêm các thành phần Ant Design
+import { Link } from "react-router-dom"; // Thêm Link từ react-router-dom
 
-export const useAuthorization = (requiredRole) => {
+export const getToken = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.token;
+};
+export const useAuthorization = (requiredRoles: string | string[]) => {
   const [authStatus, setAuthStatus] = useState({
     isAuthorized: false,
     isLoggedIn: false,
@@ -10,9 +18,20 @@ export const useAuthorization = (requiredRole) => {
 
   useEffect(() => {
     const checkAuthorization = () => {
-      const storedUser = localStorage.getItem("user");
+      const user = localStorage.getItem("user");
+      if (!user) {
+        setAuthStatus({
+          isAuthorized: false,
+          isLoggedIn: false,
+          isLoading: false,
+        });
+        return;
+      }
 
-      if (!storedUser || storedUser === "{}") {
+      const parsedUser = JSON.parse(user);
+      const token = parsedUser?.token;
+
+      if (!token) {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
@@ -22,18 +41,18 @@ export const useAuthorization = (requiredRole) => {
       }
 
       try {
-        const user = JSON.parse(storedUser);
-        if (user && user.user) {
-          setAuthStatus({
-            isAuthorized: user.user.role === requiredRole,
-            isLoggedIn: true,
-            isLoading: false,
-          });
-        } else {
-          throw new Error("Invalid user data");
-        }
+        const decoded: any = jwtDecode(token);
+        const isAuthorized = Array.isArray(requiredRoles)
+          ? requiredRoles.includes(decoded?.role)
+          : decoded.role === requiredRoles;
+
+        setAuthStatus({
+          isAuthorized,
+          isLoggedIn: true,
+          isLoading: false,
+        });
       } catch (error) {
-        console.error("Lỗi khi phân tích dữ liệu người dùng:", error);
+        console.error("Lỗi khi phân tích token:", error);
         localStorage.removeItem("user");
         setAuthStatus({
           isAuthorized: false,
@@ -44,7 +63,53 @@ export const useAuthorization = (requiredRole) => {
     };
 
     checkAuthorization();
-  }, [requiredRole]);
+  }, [requiredRoles]);
 
   return authStatus;
+};
+export const CheckAuths = ({ roles, children }: any) => {
+  const { isAuthorized, isLoggedIn, isLoading } = useAuthorization(roles);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <Result
+        status="warning"
+        title="Bạn chưa đăng nhập"
+        subTitle="Vui lòng đăng nhập để tiếp tục hành động"
+        extra={
+          <Button type="primary">
+            <Link to="/login">Đăng nhập</Link>
+          </Button>
+        }
+      />
+    );
+  }
+
+  if (!isAuthorized) {
+    return (
+      <Result
+        className="mt-10"
+        status="403"
+        title="Xin lỗi, bạn không có quyền truy cập vào trang này"
+        subTitle="Đăng nhập bằng tài khoản phù hợp để truy cập trang này"
+        extra={[
+          <Button key="home">
+            <Link to="/">Trở lại trang chủ</Link>
+          </Button>,
+          <Button type="primary" key="login">
+            <Link to="/login">Đăng nhập</Link>
+          </Button>,
+        ]}
+      />
+    );
+  }
+
+  return <>{children}</>;
 };
