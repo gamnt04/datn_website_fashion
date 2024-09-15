@@ -56,6 +56,7 @@ const productSchema = new mongoose.Schema(
         ref: "Review",
       },
     ],
+    averageRating: { type: Number, default: 0 }, // Trường trung bình sao
   },
   { timestamps: true, versionKey: false }
 );
@@ -148,6 +149,38 @@ productSchema.statics.sortByAttributePrice = function (
       $replaceRoot: { newRoot: "$product" },
     },
   ]).exec();
+};
+productSchema.statics.updateAverageRating = async function (productId) {
+  try {
+    const result = await this.aggregate([
+      { $match: { _id: mongoose.Types.ObjectId(productId) } },
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "reviews",
+          foreignField: "_id",
+          as: "reviewDetails",
+        },
+      },
+      { $unwind: "$reviewDetails" },
+      {
+        $group: {
+          _id: "$_id",
+          averageRating: { $avg: "$reviewDetails.rating" },
+        },
+      },
+    ]);
+
+    if (result.length > 0) {
+      await this.findByIdAndUpdate(productId, {
+        averageRating: result[0].averageRating,
+      });
+    } else {
+      await this.findByIdAndUpdate(productId, { averageRating: 0 }); // Không có đánh giá
+    }
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trung bình sao:", error);
+  }
 };
 
 export default mongoose.model("Products", productSchema);

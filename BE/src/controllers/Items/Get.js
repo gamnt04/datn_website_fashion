@@ -239,6 +239,33 @@ export const getProductById = async (req, res) => {
   }
 };
 
+export const getProductAverageRating = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    // Cập nhật trung bình sao trước tiên
+    await Products.updateAverageRating(productId);
+
+    // Sau khi cập nhật, truy vấn lại sản phẩm để lấy giá trị mới
+    const product = await Products.findById(productId).select("averageRating");
+
+    if (!product) {
+      return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+    }
+
+    // Trả về trung bình sao hiện tại của sản phẩm
+    return res.status(200).json({
+      averageRating: product.averageRating,
+      message: `Trung bình sao hiện tại của sản phẩm là: ${product.averageRating}`,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy trung bình sao của sản phẩm:", error);
+    return res.status(500).json({
+      message: "Lỗi khi tính toán trung bình sao",
+      error: error.message,
+    });
+  }
+};
+
 // export const getProductById = async (req, res) => {
 //   try {
 //     const productId = req.params.id;

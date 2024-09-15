@@ -3,25 +3,43 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
+import ReCAPTCHA from "react-google-recaptcha";
+
+// Thay đổi này với site key của bạn từ Google reCAPTCHA
+const RECAPTCHA_SITE_KEY = "6LemiEIqAAAAACdJ4kvmuA99TIM6nYDZAYyjyF_L";
 
 const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false); // Theo dõi trạng thái CAPTCHA
   const navigate = useNavigate();
 
   const onFinish = async (values: { email: string }) => {
+    if (!captchaValue) {
+      message.error("Vui lòng xác thực CAPTCHA!");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Assume you have an endpoint for requesting password reset
-      await axios.post("http://localhost:2004/api/v1/forgot-password", { email: values.email });
+      await axios.post("http://localhost:2004/api/v1/forgot-password", {
+        email: values.email,
+        captcha: captchaValue
+      });
       message.success("Vui lòng kiểm tra email của bạn để đặt lại mật khẩu!");
       setTimeout(() => {
         navigate("/login");
       }, 2000); // Chuyển hướng sau 2 giây
     } catch (error) {
-      message.error("Không tìm thấy email của bạn!");
+      message.error("Có lỗi xảy ra. Vui lòng thử lại!");
     } finally {
       setLoading(false);
     }
+  };
+
+  const onCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value);
+    setCaptchaVerified(!!value); // Cập nhật trạng thái CAPTCHA
   };
 
   return (
@@ -58,11 +76,17 @@ const ForgotPassword = () => {
                   <Input className="h-[50px]" />
                 </Form.Item>
                 <Form.Item>
+                  <ReCAPTCHA
+                    sitekey={RECAPTCHA_SITE_KEY}
+                    onChange={onCaptchaChange}
+                  />
+                </Form.Item>
+                <Form.Item>
                   <Button
                     type="primary"
                     htmlType="submit"
                     className="w-[150px] h-[50px]"
-                    disabled={loading}
+                    disabled={loading || !captchaVerified} // Kích hoạt nút gửi khi CAPTCHA hợp lệ
                   >
                     Gửi yêu cầu
                   </Button>
