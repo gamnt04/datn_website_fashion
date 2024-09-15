@@ -41,6 +41,7 @@ export const get_contact = async (req, res) => {
     });
   }
 };
+
 export const getById_contact = async (req, res) => {
   try {
     const data = await Contact.findById(req.params.id);
