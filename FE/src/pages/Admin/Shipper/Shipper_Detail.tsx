@@ -65,7 +65,10 @@ const Shipper_Detail: React.FC<ShipperDetailProps> = ({
         </Col>
         <Col span={24}>
           <p>
-            <strong>Trạng thái:</strong> {shipperData.status}
+            <strong>Trạng thái:</strong>{" "}
+            {shipperData.status === "Available"
+              ? "Sẵn sàng"
+              : "Không hoạt động"}
           </p>
         </Col>
         <Col span={24}>

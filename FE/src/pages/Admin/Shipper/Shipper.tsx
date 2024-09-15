@@ -135,7 +135,7 @@ const ShipperList: React.FC = () => {
       dataIndex: "status",
       render: (status: string) => (
         <span style={{ color: status === "Available" ? "green" : "red" }}>
-          {status}
+          {status === "Available" ? "Sẵn sàng" : "Không hoạt động"}
         </span>
       ),
     },
