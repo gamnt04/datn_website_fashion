@@ -36,7 +36,6 @@ app.use("/api/v1", Routes_blog);
 app.use("/api/v1", Routes_payments);
 app.use("/api/v1", Routes_review);
 app.use("/api/v1", Route_Shipper);
-
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;
   const responseCode = req.query.vnp_ResponseCode;
