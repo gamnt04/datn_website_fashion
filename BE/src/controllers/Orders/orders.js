@@ -6,6 +6,26 @@ import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 import SendCancellationMail from "../SendMail/HuyMail";
 import SendDeliveryConfirmationMail from "../SendMail/ThanhCongMail";
+
+// Middleware xác thực
+import jwt from "jsonwebtoken";
+
+export const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
+  if (!token) {
+    return res.status(401).json({ message: "Chưa cung cấp token" });
+  }
+
+  jwt.verify(token, "123456", (err, decoded) => {
+    if (err) {
+      console.error("Lỗi xác thực token:", err.message);
+      return res.status(401).json({ message: "Token không hợp lệ" });
+    }
+    req.user = decoded; // Lưu thông tin người dùng vào req.user
+    next();
+  });
+};
+
 export const createOrder = async (req, res) => {
   const { userId, items, customerInfo, email, totalPrice } = req.body;
   if (
@@ -30,9 +50,9 @@ export const createOrder = async (req, res) => {
         userName: customerInfo.userName,
         address: `${customerInfo.address || ""}${
           customerInfo.addressDetail || ""
-        }`
+        }`,
       },
-      totalPrice
+      totalPrice,
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
@@ -64,7 +84,7 @@ export const createOrder = async (req, res) => {
                   if (x.name_size == i.name_size) {
                     if (x.stock_attribute < i.quantity) {
                       return res.status(StatusCodes.BAD_REQUEST).json({
-                        message: "Sản phẩm không đủ hàng"
+                        message: "Sản phẩm không đủ hàng",
                       });
                     } else {
                       x.stock_attribute = x.stock_attribute - i.quantity;
@@ -160,9 +180,9 @@ export const createOrderPayment = async (req, res) => {
           userName: customerInfo.userName,
           address: `${customerInfo.address || ""}${
             customerInfo.addressDetail || ""
-          }`
+          }`,
         },
-        totalPrice
+        totalPrice,
       });
       await SendMail(customerInfo.email, order);
 
@@ -170,7 +190,7 @@ export const createOrderPayment = async (req, res) => {
       return res.status(201).json({
         data,
         updatedCart: dataCart,
-        message: "Tạo đơn hàng thanh toán online thành công"
+        message: "Tạo đơn hàng thanh toán online thành công",
       });
     } else {
       return res
@@ -198,8 +218,8 @@ export const getAllOrdersToday = async (req, res) => {
     const ordersToday = await Order.find({
       datetime: {
         $gte: startOfDay,
-        $lte: endOfDay
-      }
+        $lte: endOfDay,
+      },
     }).exec();
 
     // Trả kết quả
@@ -225,8 +245,8 @@ export const getAllOrderWeek = async (req, res) => {
     const orderOfWeek = await Order.find({
       datetime: {
         $gte: startWeek,
-        $lte: endWeek
-      }
+        $lte: endWeek,
+      },
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfWeek);
   } catch (error) {
@@ -267,30 +287,30 @@ export const getOrderByDayOfWeek = async (req, res) => {
           $match: {
             datetime: {
               $gte: startOfDay,
-              $lt: endOfDay
-            }
-          }
+              $lt: endOfDay,
+            },
+          },
         },
         {
           $group: {
             _id: null,
             totalOrders: { $sum: 1 },
-            totalRevenue: { $sum: "$totalPrice" }
-          }
-        }
+            totalRevenue: { $sum: "$totalPrice" },
+          },
+        },
       ]);
 
       if (orderDay.length > 0) {
         orderByDay.push({
           day: startOfDay.toISOString().slice(0, 10),
           totalOrders: orderDay[0].totalOrders,
-          totalRevenue: orderDay[0].totalRevenue
+          totalRevenue: orderDay[0].totalRevenue,
         });
       } else {
         orderByDay.push({
           day: startOfDay.toISOString().slice(0, 10),
           totalOrders: 0,
-          totalRevenue: 0
+          totalRevenue: 0,
         });
       }
     }
@@ -312,8 +332,8 @@ export const getAllOrderMonth = async (req, res) => {
     const orderOfMonth = await Order.find({
       datetime: {
         $gte: startMonth,
-        $lte: endMonth
-      }
+        $lte: endMonth,
+      },
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfMonth);
   } catch (error) {
@@ -332,28 +352,28 @@ export const getAllOrderByMonthOfYear = async (req, res) => {
         $match: {
           datetime: {
             $gte: new Date(`${currentYear}-01-01T00:00:00.000Z`),
-            $lte: new Date(`${currentYear}-12-31T23:59:59.999Z`)
-          }
-        }
+            $lte: new Date(`${currentYear}-12-31T23:59:59.999Z`),
+          },
+        },
       },
       {
         $group: {
           _id: { $month: "$datetime" },
           totalOrders: { $sum: 1 },
-          totalRevenue: { $sum: "$totalPrice" }
-        }
+          totalRevenue: { $sum: "$totalPrice" },
+        },
       },
       {
-        $sort: { _id: 1 }
+        $sort: { _id: 1 },
       },
       {
         $project: {
           month: "$_id",
           totalOrders: 1,
           totalRevenue: 1,
-          _id: 0
-        }
-      }
+          _id: 0,
+        },
+      },
     ]);
 
     return res.status(StatusCodes.OK).json({ data: ordersByMonth });
@@ -419,14 +439,14 @@ export const getOneOrderUser = async (req, res) => {
     _limit = 20,
     _sort = "",
     _search = "",
-    _status = ""
+    _status = "",
   } = req.query;
 
   const options = {
     page: _page,
     limit: _limit,
     sort: _sort || { createdAt: -1 }, // Sắp xếp theo thời gian tạo nếu không có `_sort`
-    populate: "reviews" // Thêm populate để lấy dữ liệu reviews luôn
+    populate: "reviews", // Thêm populate để lấy dữ liệu reviews luôn
   };
 
   const query = { userId: req.params.userId };
@@ -458,7 +478,7 @@ export const updateOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const order = await Order.findOneAndUpdate({ _id: orderId }, req.body, {
-      new: true
+      new: true,
     });
     if (!order) {
       return res
@@ -478,24 +498,18 @@ export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status, total_price } = req.body;
     const order = await Order.findById(id);
-
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
     }
-    console.log(status);
-
-    if (order.status === "4" || order.status === "6") {
-      console.log("Order is completed or cancelled");
-
+    if (order.status === "6" || order.status === "7") {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
-    if (status == "4") {
-      console.log(status);
+    if (status == "3") {
       order.deliveredAt = new Date();
     }
 
@@ -547,13 +561,13 @@ export async function get_orders_client(req, res) {
     _limit = 7,
     _sort = "",
     _search = "",
-    _status = ""
+    _status = "",
   } = req.query;
 
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 } // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
   };
 
   const query = {};
@@ -571,7 +585,7 @@ export async function get_orders_client(req, res) {
 
     if (!data || data.docs.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có dữ liệu!"
+        message: "Không có dữ liệu!",
       });
     }
 
@@ -579,15 +593,60 @@ export async function get_orders_client(req, res) {
       message: "Hoàn thành!",
       data,
       totalDocs: data.totalDocs, // Tổng số đơn hàng
-      totalPages: data.totalPages // Tổng số trang
+      totalPages: data.totalPages, // Tổng số trang
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server!"
+      message: error.message || "Lỗi server!",
     });
   }
 }
+// export const get_orders_client = async (req, res) => {
+//   const {
+//     _page = 1,
+//     _limit = 7,
+//     _sort = "",
+//     _search = "",
+//     _status = "",
+//   } = req.query;
 
+//   const options = {
+//     page: _page,
+//     limit: _limit,
+//     sort: _sort ? { [_sort]: 1 } : { datetime: -1 },
+//   };
+
+//   const query = {};
+
+//   if (_status) {
+//     query.status = _status;
+//   }
+
+//   try {
+//     const { role, _id } = req.user;
+
+//     let data;
+//     if (role === "admin") {
+//       data = await Order.paginate(query, options);
+//     } else if (role === "courier") {
+//       query.shipperId = _id;
+//       data = await Order.paginate(query, options);
+//     }
+
+//     if (!data || data.docs.length < 1) {
+//       return res.status(404).json({ message: "Không có dữ liệu!" });
+//     }
+
+//     return res.status(200).json({
+//       message: "Hoàn thành!",
+//       data: data.docs,
+//       totalDocs: data.totalDocs,
+//       totalPages: data.totalPages,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message || "Lỗi server!" });
+//   }
+// };
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
@@ -620,7 +679,7 @@ export const userCancelOrder = async (req, res) => {
 
     res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng thành công",
-      data_status_order: order.cancellationRequested
+      data_status_order: order.cancellationRequested,
     });
   } catch (error) {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
@@ -644,7 +703,7 @@ export const adminCancelOrder = async (req, res) => {
         .json({ message: "Không có yêu cầu hủy đơn hàng" });
     }
     if (confirm) {
-      order.status = "5"; // Canceled
+      order.status = "7"; // Canceled
       order.cancelledByAdmin = true;
       const items = order.items;
       for (let i of items) {
@@ -686,7 +745,7 @@ export const adminCancelOrder = async (req, res) => {
     await order.save();
     res.status(StatusCodes.OK).json({
       message: "Yêu cầu hủy đơn hàng đã được xác nhận",
-      data_status_order: order.cancellationRequested
+      data_status_order: order.cancellationRequested,
     });
   } catch (error) {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
@@ -713,8 +772,8 @@ export const getOrderByNumberOrPhoneNumber = async (req, res) => {
     const orders = await Order.find({
       $or: [
         { orderNumber: { $regex: new RegExp(searchOrder, "i") } },
-        { "customerInfo.phone": { $regex: new RegExp(searchOrder, "i") } }
-      ]
+        { "customerInfo.phone": { $regex: new RegExp(searchOrder, "i") } },
+      ],
     }).lean();
 
     if (orders === 0) {
@@ -725,7 +784,7 @@ export const getOrderByNumberOrPhoneNumber = async (req, res) => {
     return res.status(StatusCodes.OK).json(orders);
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server"
+      message: error.message || "Lỗi server",
     });
   }
 };
@@ -739,8 +798,8 @@ export const get10NewOrderToday = async (req, res) => {
     const orderToDay = await Order.find({
       datetime: {
         $gte: startOfday,
-        $lte: endOfday
-      }
+        $lte: endOfday,
+      },
     })
       .sort({ datetime: 1 })
       .limit(10)
@@ -753,7 +812,7 @@ export const get10NewOrderToday = async (req, res) => {
     return res.status(StatusCodes.OK).json(orderToDay);
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server"
+      message: error.message || "Lỗi server",
     });
   }
 };
@@ -772,7 +831,7 @@ export const deliverSuccess = async (req, res) => {
 
     res.status(200).json({
       message: "Đơn hàng đã được đánh dấu là giao hàng thành công.",
-      order
+      order,
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
@@ -798,11 +857,74 @@ export const addShipperOrder = async (req, res) => {
     // Trả về kết quả sau khi cập nhật thành công
     return res.status(StatusCodes.OK).json({
       message: "Shipper has been updated successfully",
-      updatedOrder: order
+      updatedOrder: order,
     });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
+  }
+};
+export const adminFailDelivery = async (req, res) => {
+  const id = req.params.id;
+  const { failureReason } = req.body; // Lấy lý do từ request body
+
+  try {
+    const order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy đơn hàng" });
+    }
+
+    // Kiểm tra nếu đơn hàng đã hoàn thành hoặc bị hủy thì không cho phép cập nhật giao hàng thất bại
+    if (order.status === "completed" || order.status === "5") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message:
+          "Không thể cập nhật trạng thái thất bại cho đơn hàng đã hoàn thành hoặc bị hủy",
+      });
+    }
+
+    // Cập nhật trạng thái thành 'Giao hàng thất bại'
+    order.status = "5"; // Giao hàng thất bại
+    order.failureReason = failureReason; // Lưu lý do giao hàng thất bại
+
+    const items = order.items;
+    for (let i of items) {
+      // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
+      if (i.productId.attributes) {
+        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        for (let j of data_attr) {
+          for (let k of j.values) {
+            if (k.color == i.color_item) {
+              for (let x of k.size) {
+                if (x.name_size) {
+                  if (x.name_size == i.name_size) {
+                    x.stock_attribute = x.stock_attribute + i.quantity;
+                  }
+                } else {
+                  x.stock_attribute = x.stock_attribute + i.quantity;
+                }
+              }
+            }
+          }
+          await j.save();
+        }
+      } else {
+        const data_items = await Products.find({ _id: i.productId._id });
+        for (let a of data_items) {
+          a.stock_product = a.stock_product + i.quantity;
+          await a.save();
+        }
+      }
+    }
+
+    await order.save();
+    res.status(StatusCodes.OK).json({
+      message: "Đơn hàng đã được cập nhật trạng thái giao hàng thất bại",
+      failureReason: order.failureReason,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
