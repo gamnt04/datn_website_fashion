@@ -308,6 +308,7 @@ const ListCart = () => {
         });
         return null
       }
+      sessionStorage.setItem('item_order', JSON.stringify(data_cart))
       routing("/cart/pay");
     } else {
       routing("/login");
