@@ -5,6 +5,7 @@ import instance from "../../../configs/axios";
 import { IContact } from "../../../common/interfaces/Contact";
 import { format } from "date-fns";
 import { BackwardFilled } from "@ant-design/icons";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const ContactDetail = () => {
   const { id } = useParams();
@@ -39,41 +40,41 @@ const ContactDetail = () => {
     {
       title: "Tên",
       dataIndex: "name",
-      key: "name"
+      key: "name",
     },
     {
       title: "Email",
       dataIndex: "email",
-      key: "email"
+      key: "email",
     },
     {
       title: "Nội dung",
       dataIndex: "content",
-      key: "content"
+      key: "content",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text: string) => format(new Date(text), "HH:mm dd/MM/yyyy")
+      render: (text: string) => format(new Date(text), "HH:mm dd/MM/yyyy"),
     },
     {
       title: "Nội dung phản hồi",
       dataIndex: "response_content",
-      key: "response_content"
+      key: "response_content",
     },
     {
       title: "Email phản hồi",
       dataIndex: "responder_email",
-      key: "responder_email"
+      key: "responder_email",
     },
     {
       title: "Ngày phản hồi",
       dataIndex: "response_date",
       key: "response_date",
       render: (text: string) =>
-        text ? format(new Date(text), "HH:mm dd/MM/yyyy") : "Chưa phản hồi"
-    }
+        text ? format(new Date(text), "HH:mm dd/MM/yyyy") : "Chưa phản hồi",
+    },
   ];
 
   const dataSource = contact
@@ -86,30 +87,32 @@ const ContactDetail = () => {
           createdAt: contact.createdAt,
           response_content: contact.response_content || "Chưa phản hồi",
           responder_email: contact.responder_email || "Chưa phản hồi",
-          response_date: contact.response_date || ""
-        }
+          response_date: contact.response_date || "",
+        },
       ]
     : [];
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-10 mt-10">
-        <h1 className="text-2xl font-semibold">Chi Tiết</h1>
-        <Button type="primary">
-          <Link to={"/admin/contact"}>
-            <BackwardFilled />
-            Quay lại
-          </Link>
-        </Button>
+    <CheckAuths roles={["admin"]}>
+      <div className="container p-4 mx-auto">
+        <div className="flex items-center justify-between mt-10 mb-10">
+          <h1 className="text-2xl font-semibold">Chi Tiết</h1>
+          <Button type="primary">
+            <Link to={"/admin/contact"}>
+              <BackwardFilled />
+              Quay lại
+            </Link>
+          </Button>
+        </div>
+        <Table
+          dataSource={dataSource}
+          columns={columns}
+          pagination={false}
+          bordered
+          title={() => "Chi tiết liên hệ"}
+        />
       </div>
-      <Table
-        dataSource={dataSource}
-        columns={columns}
-        pagination={false}
-        bordered
-        title={() => "Chi tiết liên hệ"}
-      />
-    </div>
+    </CheckAuths>
   );
 };
 

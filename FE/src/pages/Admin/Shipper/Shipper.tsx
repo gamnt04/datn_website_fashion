@@ -10,6 +10,7 @@ import { Loader } from "lucide-react";
 import AddShipperForm from "./Add_Shipper";
 import Shipper_Detail from "./Shipper_Detail";
 import { GrView } from "react-icons/gr";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 const ShipperList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchName, setSearchName] = useState("");
@@ -173,45 +174,48 @@ const ShipperList: React.FC = () => {
   if (isError) return <div>{(error as any).message}</div>;
 
   return (
-    <div className="container">
-      {contextHolder}
-      <Shipper_Detail
-        shipperId={ShipperId}
-        open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
-      />
-      <AddShipperForm open={open} onClose={handleCancel} />
-      <div className="mx-6">
-        <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-2xl font-semibold">Quản Lý Người Giao Hàng</h1>
+    <CheckAuths roles={["admin"]}>
+      <div className="container">
+        {contextHolder}
+        <Shipper_Detail
+          shipperId={ShipperId}
+          open={openDrawer}
+          onClose={() => setOpenDrawer(false)}
+        />
+        <AddShipperForm open={open} onClose={handleCancel} />
 
-          <Button
-            onClick={showModal}
-            className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]"
-          >
-            <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SHIPPER
-          </Button>
-        </div>
-        <div className="flex justify-between mb-2">
-          <div className="flex space-x-5">
-            <Input
-              className="w-[500px]"
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              placeholder="Nhập tên người giao hàng để tìm kiếm..."
-            />
-            <Button onClick={onHandleSearch} type="primary">
-              Tìm kiếm
+        <div className="mx-6">
+          <div className="flex items-center justify-between mt-20 mb-5">
+            <h1 className="text-2xl font-semibold">Quản Lý Người Giao Hàng</h1>
+
+            <Button
+              onClick={showModal}
+              className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]"
+            >
+              <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SHIPPER
             </Button>
           </div>
+          <div className="flex justify-between mb-2">
+            <div className="flex space-x-5">
+              <Input
+                className="w-[500px]"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                placeholder="Nhập tên người giao hàng để tìm kiếm..."
+              />
+              <Button onClick={onHandleSearch} type="primary">
+                Tìm kiếm
+              </Button>
+            </div>
+          </div>
+          {data && data.length === 0 ? (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          ) : (
+            <Table dataSource={dataSource} rowKey="_id" columns={columns} />
+          )}
         </div>
-        {data && data.length === 0 ? (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        ) : (
-          <Table dataSource={dataSource} rowKey="_id" columns={columns} />
-        )}
       </div>
-    </div>
+    </CheckAuths>
   );
 };
 

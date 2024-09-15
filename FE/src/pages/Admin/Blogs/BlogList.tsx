@@ -10,7 +10,7 @@ import {
   Input,
   Checkbox,
   Space,
-  Pagination
+  Pagination,
 } from "antd";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -20,6 +20,7 @@ import { useSearchBlogByName } from "../../../common/hooks/Blog/querry_blog";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -31,11 +32,11 @@ const BlogList: React.FC = () => {
     queryFn: async () => {
       const response = await instance.get("/blogs");
       return response.data;
-    }
+    },
   });
   const dataSource = (searchName ? searchData : data)?.map((blog: any) => ({
     key: blog._id,
-    ...blog
+    ...blog,
   }));
   const onHandleSearch = () => {
     setSearchName(searchName.trim());
@@ -77,7 +78,7 @@ const BlogList: React.FC = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    }
+    },
   });
   const handleTogglePublished = async (blog: Blog) => {
     try {
@@ -126,7 +127,7 @@ const BlogList: React.FC = () => {
     {
       key: "checkbox",
       title: <Checkbox />,
-      render: (_: any, cate: ICategory) => <Checkbox />
+      render: (_: any, cate: ICategory) => <Checkbox />,
     },
     {
       key: "imageUrl",
@@ -143,7 +144,7 @@ const BlogList: React.FC = () => {
         ) : (
           <span>Không có ảnh</span>
         );
-      }
+      },
     },
     {
       key: "title",
@@ -151,7 +152,7 @@ const BlogList: React.FC = () => {
       dataIndex: "content",
       render: (content: string) => {
         return <div>{extractH1Content(content)}</div>;
-      }
+      },
     },
     // {
     //   key: "createdAt",
@@ -162,7 +163,7 @@ const BlogList: React.FC = () => {
     {
       key: "author",
       title: "Tác Giả",
-      dataIndex: "author"
+      dataIndex: "author",
     },
     {
       key: "content",
@@ -170,7 +171,7 @@ const BlogList: React.FC = () => {
       dataIndex: "content",
       render: (content: string) => {
         return <div>{renderContentSnippet(content)}</div>;
-      }
+      },
     },
 
     {
@@ -182,7 +183,7 @@ const BlogList: React.FC = () => {
           checked={published}
           onChange={() => handleTogglePublished(record)}
         />
-      )
+      ),
     },
     {
       key: "actions",
@@ -223,31 +224,32 @@ const BlogList: React.FC = () => {
             </Popconfirm>
           </Space>
         </>
-      )
-    }
+      ),
+    },
   ];
 
   if (isLoading) return <div className="">loading...</div>;
   if (isError) return <div className="">{(error as any).message}</div>;
 
   return (
-    <div className="container ">
-      {contextHolder}
-      <div className="mx-6">
-        {" "}
-        <div className="">
-          <div className="flex items-center justify-between mb-5 mt-20">
-            <h1 className="text-2xl font-semibold">Quản Lý Bài Viết</h1>{" "}
-            <Link to="add_blog">
-              <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
-                <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI BÀI VIẾT
-              </Button>
-            </Link>
-          </div>
+    <CheckAuths roles={["admin"]}>
+      <div className="container ">
+        {contextHolder}
+        <div className="mx-6">
+          {" "}
+          <div className="">
+            <div className="flex items-center justify-between mt-20 mb-5">
+              <h1 className="text-2xl font-semibold">Quản Lý Bài Viết</h1>{" "}
+              <Link to="add_blog">
+                <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
+                  <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI BÀI VIẾT
+                </Button>
+              </Link>
+            </div>
 
-          <div className="mb-2 flex justify-between">
-            <div className="space-x-5">
-              {/* <Checkbox className="ml-4" />
+            <div className="flex justify-between mb-2">
+              <div className="space-x-5">
+                {/* <Checkbox className="ml-4" />
               <Button>Chọn tất cả (7)</Button>
               <Popconfirm
                 title="Xóa sản phẩm khỏi giỏ hàng?"
@@ -261,27 +263,28 @@ const BlogList: React.FC = () => {
                   Xóa sản phẩm đã chọn
                 </Button>
               </Popconfirm> */}
-            </div>
-            <div className="flex space-x-5">
-              <Input
-                className="w-[500px]"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                placeholder="nhâp tên sản phẩm để tìm kiếm..."
-              />
-              <Button onClick={onHandleSearch} type="primary">
-                Tìm kiếm
-              </Button>
+              </div>
+              <div className="flex space-x-5">
+                <Input
+                  className="w-[500px]"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  placeholder="nhâp tên sản phẩm để tìm kiếm..."
+                />
+                <Button onClick={onHandleSearch} type="primary">
+                  Tìm kiếm
+                </Button>
+              </div>
             </div>
           </div>
+          {data && data.length === 0 ? (
+            <p>Không có blog nào.</p>
+          ) : (
+            <Table dataSource={dataSource} rowKey="_id" columns={columns} />
+          )}
         </div>
-        {data && data.length === 0 ? (
-          <p>Không có blog nào.</p>
-        ) : (
-          <Table dataSource={dataSource} rowKey="_id" columns={columns} />
-        )}
       </div>
-    </div>
+    </CheckAuths>
   );
 };
 

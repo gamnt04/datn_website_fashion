@@ -33,11 +33,10 @@ export const Query_Detail_Products_Dashboard = (id: string | number) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Product_Key", id],
     queryFn: () => get_detai_items_dashboard(id),
-    enabled: !!id
+    enabled: !!id,
   });
   return { data, ...rest };
 };
-
 
 export const Query_Limit_Items = (limit: number) => {
   const { data, ...rest } = useQuery({
@@ -54,7 +53,7 @@ export function Query_Trash_Item() {
   });
   return { data, ...rest };
 }
-export const useQueryProductsSearch = (searchName : any) => {
+export const useQueryProductsSearch = (searchName: any) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_Products", searchName],
     queryFn: () => getProductsByName(searchName),
