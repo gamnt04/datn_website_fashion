@@ -14,11 +14,12 @@ import {
   delete_address,
   setDefaultAddress,
 } from "../controllers/Shipper/shipper";
+import { checkRole } from "../controllers/Auth/auth";
 
 const Route_Shipper = express.Router(); // Sử dụng Route_Shipper
 
 // Tạo mới shipper
-Route_Shipper.post("/shippers", createShipper);
+Route_Shipper.post("/shippers", checkRole(["admin"]), createShipper);
 
 //Tìm kiếm theo tên Shipper
 Route_Shipper.post("/shippers/search", GetShippersByName);
@@ -26,13 +27,13 @@ Route_Shipper.post("/shippers/search", GetShippersByName);
 Route_Shipper.get("/shippers", getAllShippers);
 
 // Xem chi tiết một shipper
-Route_Shipper.get("/shippers/:id", getShipperById);
+Route_Shipper.get("/shippers/:id", checkRole(["admin"]), getShipperById);
 
 // Cập nhật thông tin shipper
 Route_Shipper.put("/shippers/:id", updateShipper);
 
 // Xóa shipper
-Route_Shipper.delete("/shippers/:id", deleteShipper);
+Route_Shipper.delete("/shippers/:id", checkRole(["admin"]), deleteShipper);
 
 //Xác thực email
 Route_Shipper.get("/verify", verifyEmail);

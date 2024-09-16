@@ -26,6 +26,7 @@ import {
 import { DeleteOutlined } from "@ant-design/icons";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { format } from "date-fns";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
@@ -233,43 +234,45 @@ const List_Category: React.FC = () => {
   };
 
   return (
-    <>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <div className="m-6">
-          <div className="flex items-center justify-between mb-5 mt-20">
-            <h1 className="text-2xl font-semibold">Quản Lý Danh Mục</h1>
-            <UpdateComponent />
-          </div>
-          <div className="mb-2 flex justify-between">
-            <div className="flex space-x-5">
-              <Input
-                className="w-[500px]"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                placeholder="Nhập tên danh mục để tìm kiếm..."
-              />
-              <Button onClick={onHandleSearch} type="primary">
-                Tìm kiếm
-              </Button>
+    <CheckAuths roles={["admin"]}>
+      <>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div className="m-6">
+            <div className="flex items-center justify-between mt-20 mb-5">
+              <h1 className="text-2xl font-semibold">Quản Lý Danh Mục</h1>
+              <UpdateComponent />
+            </div>
+            <div className="flex justify-between mb-2">
+              <div className="flex space-x-5">
+                <Input
+                  className="w-[500px]"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                />
+                <Button onClick={onHandleSearch} type="primary">
+                  Tìm kiếm
+                </Button>
+              </div>
+            </div>
+
+            <Table
+              dataSource={dataSource.slice(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize
+              )}
+              columns={columns}
+              pagination={false}
+            />
+            <div className="flex items-center justify-between mt-4">
+              <Pagination {...paginationProps} />
             </div>
           </div>
-
-          <Table
-            dataSource={dataSource.slice(
-              (currentPage - 1) * pageSize,
-              currentPage * pageSize
-            )}
-            columns={columns}
-            pagination={false}
-          />
-          <div className="flex justify-between items-center mt-4">
-            <Pagination {...paginationProps} />
-          </div>
-        </div>
-      )}
-    </>
+        )}
+      </>
+    </CheckAuths>
   );
 };
 
