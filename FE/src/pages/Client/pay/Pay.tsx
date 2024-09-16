@@ -29,7 +29,6 @@ const Pay = () => {
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
-  const data_sessionStorage = sessionStorage.getItem("item_order");
   
   useEffect(() => {
     if (!userId) {
