@@ -69,7 +69,7 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shipper",
     },
-    confirmationImage: { type: String, required: true },
+    // confirmationImage: { type: String, required: true },
     deliveredAt: {
       type: Date,
       default: null,

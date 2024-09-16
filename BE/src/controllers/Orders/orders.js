@@ -48,9 +48,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`,
       },
       totalPrice,
     });
@@ -73,7 +72,6 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
-      console.log(i.quantity);
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
         for (let j of data_attr) {
@@ -90,7 +88,6 @@ export const createOrder = async (req, res) => {
                       x.stock_attribute = x.stock_attribute - i.quantity;
                     }
                   }
-                  x.stock_attribute = x.stock_attribute - i.quantity;
                 } else {
                   x.stock_attribute = x.stock_attribute - i.quantity;
                 }
@@ -178,9 +175,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`,
         },
         totalPrice,
       });
