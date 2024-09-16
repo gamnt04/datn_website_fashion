@@ -246,6 +246,8 @@ export default function List_order() {
         return <span>Đang vận chuyển</span>;
       case 4:
         return <span>Đã giao hàng</span>
+      case 5:
+        return <span>Giao hàng thất bại</span>
       case 6:
         return (
           <span className="text-green-500 flex items-center gap-x-2">
@@ -280,6 +282,7 @@ export default function List_order() {
     "Đang Chuẩn Bị Hàng",
     "Đang Vận Chuyển",
     "Đã Giao Hàng",
+    "Giao Hàng Thất Bại",
     "Hoàn Thành",
     "Đã Hủy",
   ];
@@ -539,6 +542,21 @@ export default function List_order() {
                     </div>
                   ) : items?.status === "3" ? (
                     <Button
+                      className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
+                      disabled
+                    // onClick={() => (
+                    //   mutate({ id_item: items._id }),
+                    //   dispathNotification?.mutate({
+                    //     userId: userId,
+                    //     receiver_id: userId,
+                    //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                    //   })
+                    // )}
+                    >
+                      Đã Nhận Hàng
+                    </Button>
+                  ) : items?.status === "4" ? (
+                    <Button
                       className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
                       onClick={() => (
                         mutate({ id_item: items._id }),
@@ -551,7 +569,20 @@ export default function List_order() {
                     >
                       Đã Nhận Hàng
                     </Button>
-                  ) : items?.status === "4" ? (
+                  ) : items?.status === "5" ? (
+                    <Popconfirm
+                      title="Mua lại đơn hàng?"
+                      description="Bạn có chắc chắn muốn mua lại không?"
+                      onConfirm={() => addCart(items?._id)}
+                      // onCancel={cancel}
+                      okText="Có "
+                      cancelText="Không"
+                    >
+                      <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
+                        Mua Lại 11111
+                      </Button>
+                    </Popconfirm>
+                  ) : items?.status === "6" ? (
                     <div className="flex gap-3 lg:basis-3/12 w-full">
                       <Button
                         type="default"
@@ -649,7 +680,7 @@ export default function List_order() {
                                           review
                                             ? review.rating_review
                                             : rating[productGroup.productId] ||
-                                              0
+                                            0
                                         }
                                         rules={[
                                           {
@@ -710,8 +741,8 @@ export default function List_order() {
                                           review && review.image_review
                                             ? review.image_review
                                             : fileList[
-                                                productGroup.productId
-                                              ]?.map((file) => file.url) || []
+                                              productGroup.productId
+                                            ]?.map((file) => file.url) || []
                                         }
                                       >
                                         <Upload
@@ -720,16 +751,16 @@ export default function List_order() {
                                             review && review.image_review
                                               ? review.image_review.map(
 
-                                                  (url, idx) => ({
-                                                    uid: `${idx}`,
-                                                    name: `image_${idx}`,
-                                                    status: "done",
-                                                    url: url,
-                                                  })
-                                                )
+                                                (url, idx) => ({
+                                                  uid: `${idx}`,
+                                                  name: `image_${idx}`,
+                                                  status: "done",
+                                                  url: url,
+                                                })
+                                              )
                                               : fileList[
-                                                  productGroup.productId
-                                                ] || []
+                                              productGroup.productId
+                                              ] || []
 
                                           }
                                           onChange={handleImageChange}
@@ -863,7 +894,7 @@ export default function List_order() {
                       cancelText="Không"
                     >
                       <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại
+                        Mua Lại222
                       </Button>
                     </Popconfirm>
                   )}
