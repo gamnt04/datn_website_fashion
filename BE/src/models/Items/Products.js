@@ -153,27 +153,27 @@ productSchema.statics.sortByAttributePrice = function (
 productSchema.statics.updateAverageRating = async function (productId) {
   try {
     const result = await this.aggregate([
-      { $match: { _id: mongoose.Types.ObjectId(productId) } },
+      { $match: { _id: new mongoose.Types.ObjectId(productId) } }, // Tìm sản phẩm dựa trên productId
       {
         $lookup: {
-          from: "reviews",
-          localField: "reviews",
-          foreignField: "_id",
-          as: "reviewDetails",
+          from: "reviews", // Từ collection reviews
+          localField: "_id", // productId trong product collection
+          foreignField: "productId", // productId trong review collection
+          as: "reviewDetails", // Gán kết quả vào reviewDetails
         },
       },
-      { $unwind: "$reviewDetails" },
+      { $unwind: "$reviewDetails" }, // Tách từng review ra
       {
         $group: {
-          _id: "$_id",
-          averageRating: { $avg: "$reviewDetails.rating" },
+          _id: "$_id", // Gom nhóm dựa trên _id của sản phẩm
+          averageRating: { $avg: "$reviewDetails.rating_review" }, // Tính trung bình sao
         },
       },
     ]);
 
     if (result.length > 0) {
       await this.findByIdAndUpdate(productId, {
-        averageRating: result[0].averageRating,
+        averageRating: result[0].averageRating, // Cập nhật averageRating
       });
     } else {
       await this.findByIdAndUpdate(productId, { averageRating: 0 }); // Không có đánh giá
