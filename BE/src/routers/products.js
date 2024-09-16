@@ -35,7 +35,6 @@ Routes_Products.get(
 );
 Routes_Products.get("/products/dashboard/:id", getDetailProductDashBoard);
 Routes_Products.post("/products/search", getProductsByName);
-
 //Filter
 Routes_Products.get("/products/filter/product", filterItems);
 Routes_Products.post("/products", createProduct);
