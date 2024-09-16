@@ -7,6 +7,7 @@ import { Dow, Up } from "../../../resources/svg/Icon/Icon";
 import { Convert_Color } from "../../../_lib/Config/Config_Color";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { Rate } from "antd";
 
 interface InforProductProp {
   product: IProduct;
@@ -19,6 +20,8 @@ interface IAttr {
 }
 
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
+  console.log(dataProps);
+
   const navi = useNavigate();
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
@@ -43,15 +46,15 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           color: color,
           size: size,
         };
-        if (action === 'checkout') {
+        if (action === "checkout") {
           item = {
             ...item,
-            status_checked: true
-          }
+            status_checked: true,
+          };
         }
         mutate(item);
-        if (action === 'checkout') {
-          navi('/cart')
+        if (action === "checkout") {
+          navi("/cart");
         }
       } else {
         text_validate();
@@ -109,8 +112,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             for (const k of i.size) {
               k?.name_size == item &&
                 (setQuantity_attr(k?.stock_attribute),
-                  setSize(k.name_size),
-                  set_price_attr(k?.price_attribute));
+                setSize(k.name_size),
+                set_price_attr(k?.price_attribute));
             }
           }
         }
@@ -188,6 +191,18 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           <span className="text-gray-700 font-bold lg:text-3xl mb:text-xl">
             {name_product}
           </span>
+          <span>
+            <Rate
+              allowHalf // Cho phép hiển thị nửa sao
+              allowClear={false}
+              disabled={
+                !!dataProps.products.averageRating ||
+                !dataProps.products.averageRating
+              } // Không cho chỉnh sửa nếu đã có đánh giá
+              value={dataProps.products.averageRating || 0}
+            />
+          </span>
+
           <strong className="lg:text-2xl lg:mt-0 mb:mt-3.5 mb:text-xl lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]"></strong>
           <div className="flex flex-col gap-y-2 justify-between">
             <div className="flex gap-x-2 items-end">
@@ -249,8 +264,9 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 {dataProps?.products?.attributes?.values?.map((item: any) => (
                   <button
                     onClick={() => handle_atrtribute(item?.color, "Color")}
-                    className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
-                      } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
+                    className={`${Convert_Color(item?.color)} ${
+                      color == item?.color ? "after:block" : "after:hidden"
+                    } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
                   ></button>
                 ))}
               </div>
@@ -265,8 +281,9 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                   {arr_size?.map((item: any) => (
                     <button
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
-                      className={`${size == item?.name_size && "bg-black text-white"
-                        } hover:bg-black hover:text-white grid place-items-center`}
+                      className={`${
+                        size == item?.name_size && "bg-black text-white"
+                      } hover:bg-black hover:text-white grid place-items-center`}
                     >
                       {item?.name_size}
                     </button>
@@ -326,7 +343,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             </Button>
             {/* add cart */}
             <Button
-              onClick={() => addCart(_id, 'checkout')}
+              onClick={() => addCart(_id, "checkout")}
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"
             >
               Thanh toán
