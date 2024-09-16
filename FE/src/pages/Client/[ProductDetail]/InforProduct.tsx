@@ -153,14 +153,12 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     }
   }
   let min =
-    dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ??
-    undefined;
+    dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ?? 0;
   let max =
-    dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ??
-    undefined;
+    dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ?? 0;
   if (dataProps?.products?.attributes) {
     const check_attr = new Set();
-    const values_attriutes = dataProps?.products?.attributes?.values?.filter(
+    const values_attributes = dataProps?.products?.attributes?.values?.filter(
       (item: any) => {
         if (check_attr.has(item?.color)) {
           return false;
@@ -170,7 +168,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         }
       }
     );
-    for (const i of values_attriutes) {
+    for (const i of values_attributes) {
       for (const j of i.size) {
         if (j.price_attribute < min) {
           min = j.price_attribute;
