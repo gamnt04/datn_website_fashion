@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from "react-toastify";
 import instance from "../../configs/axios";
+import { getToken } from "../../common/hooks/Auth/useAuthorization";
 
+const token = getToken();
 const baseUri = "http://localhost:2004/api/v1/products";
 
 export async function get_items_client(page?: number) {
@@ -24,14 +26,22 @@ export async function get_items_client(page?: number) {
 export async function get_items_dashboard(page?: number) {
   try {
     let uri = `${baseUri}/dashboard`;
+
     if (page) {
       uri += `?_page=${page}`;
     }
-    const res = await fetch(`${uri}`);
+    const res = await fetch(`${uri}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     if (!res.ok) {
       console.warn("Kiem tra lai server hoac internet !");
+      return res.status;
     }
     const { data } = await res.json();
+
     return data;
   } catch (error) {
     console.log(error || "Loi server!");
@@ -69,7 +79,7 @@ export async function get_detail_items(id: number | string) {
     }
 
     const res = await fetch(`${baseUri}/${id}`);
-    console.log(res)
+    console.log(res);
     if (!res.ok) {
       console.warn("Server trả về trạng thái không thành công:", res.status);
       throw new Error("Không thể lấy sản phẩm");
@@ -91,6 +101,7 @@ export async function add_items_client(items: any) {
       method: "post",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(items.dataBody),
     });
@@ -115,6 +126,7 @@ export async function edit_items_client(product: any) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(product.dataBody),
     });
@@ -143,6 +155,9 @@ export async function remove_items(dataBody: any) {
   try {
     const res = await fetch(`${baseUri}/${dataBody.id_item}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     if (!res.ok) {
       toast.error(`Không thể xóa sản phẩm ${dataBody.id_item}`, {
@@ -163,7 +178,11 @@ export const remove_multiple_products = async (data: {
   productIds: string[];
 }) => {
   try {
-    const response = await instance.post("/products/remove", data);
+    const response = await instance.post("/products/remove", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log(error || "Loi server!");
@@ -175,6 +194,9 @@ export const destroy_delete_Product = async (id: string) => {
       `http://localhost:2004/api/v1/products/destroy/${id}`,
       {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     if (!response.ok) {
@@ -194,6 +216,9 @@ export const restoreProduct = async (item: any) => {
   try {
     const response = await fetch(`${baseUri}/recycle/${item.id_item}`, {
       method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     if (!response.ok) {
       toast.error(`Không thể khôi phục sản phẩm ${item.id_item}`, {
@@ -214,7 +239,11 @@ export const restoreProduct = async (item: any) => {
 
 export async function getDeletedProducts() {
   try {
-    const response = await fetch(`${baseUri}/adminstration/dashboard/trash`);
+    const response = await fetch(`${baseUri}/adminstration/dashboard/trash`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (!response.ok) {
       throw new Error("Không thể lấy danh sách sản phẩm đã xóa");
     }

@@ -68,7 +68,9 @@ export const Add_Order = async (order: any) => {
     return data;
   } catch (error: any) {
     if (error.response) {
-      toast.error("Sản phẩm số lượng không còn đủ trong kho", { autoClose: 500 });
+      toast.error("Sản phẩm số lượng không còn đủ trong kho", {
+        autoClose: 500,
+      });
     }
   }
 };
@@ -136,25 +138,36 @@ export const getTop10ProductSale = async () => {
   }
 };
 
-
 export const Cancel_Order = async (id: any, cancellationReason: any) => {
   try {
-    const { data } = await instance.post(`/orders/${id}/cancel`, { cancellationReason });
-    const message = 'yeu_cau_huy';
+    const { data } = await instance.post(`/orders/${id}/cancel`, {
+      cancellationReason,
+    });
+    const message = "yeu_cau_huy";
     const res = {
       data,
-      message
-    }
+      message,
+    };
     return res;
   } catch (error) {
     console.log(error);
+  }
+};
+export const failDelivery = async (id_item: any, failureReason: any) => {
+  try {
+    const response = await instance.post(`/orders/${id_item}/fail-delivery`, {
+      failureReason, // Chỉ gửi lý do thất bại
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Ghi nhận giao hàng thất bại thất bại");
   }
 };
 
 export const confirmCancelOrder = async ({ id_item, confirm }: any) => {
   try {
     const { data } = await instance.post(`/orders/${id_item}/cancel/confirm`, {
-      confirm
+      confirm,
     });
     return data;
   } catch (error) {
@@ -163,12 +176,15 @@ export const confirmCancelOrder = async ({ id_item, confirm }: any) => {
 };
 export const cancel_product = async (id: any, cancellationReason: any) => {
   try {
-    const { data } = await instance.patch(`/orders/${id}`, { status: "5", cancellationReason })
-    const message = 'huy';
+    const { data } = await instance.patch(`/orders/${id}`, {
+      status: "7",
+      cancellationReason,
+    });
+    const message = "huy";
     const res = {
       data,
-      message
-    }
+      message,
+    };
     console.log(data);
 
     return res;
@@ -177,12 +193,11 @@ export const cancel_product = async (id: any, cancellationReason: any) => {
   }
 };
 
-
 export const complete_product = async (id: any) => {
   console.log(id);
 
   try {
-    const { data } = await instance.patch(`/orders/${id}`, { status: "4" })
+    const { data } = await instance.patch(`/orders/${id}`, { status: "4" });
     return data;
   } catch (error) {
     console.log(error);

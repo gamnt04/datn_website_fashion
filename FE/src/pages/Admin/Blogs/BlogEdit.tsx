@@ -1,24 +1,31 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react';
-import JoditEditor from 'jodit-react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button, message } from 'antd';
-import LoadingOverlay from 'react-loading-overlay-ts';
+import React, { useState, useRef, useMemo, useEffect } from "react";
+import JoditEditor from "jodit-react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, message } from "antd";
+import LoadingOverlay from "react-loading-overlay-ts";
+import {
+  CheckAuths,
+  getToken,
+} from "../../../common/hooks/Auth/useAuthorization";
 
 const BlogEdit = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const editor = useRef(null);
-  const [content, setContent] = useState('');
-  const { id } = useParams(); 
+  const [content, setContent] = useState("");
+  const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [initialContentState, setInitialContentState] = useState('');
-  const navigate = useNavigate(); 
+  const [initialContentState, setInitialContentState] = useState("");
+  const navigate = useNavigate();
+  const token = getToken();
 
   useEffect(() => {
     // Fetch blog content by ID and set it to state
     const fetchBlog = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:2004/api/v1/blogs/${id}`);
+        const { data } = await axios.get(
+          `http://localhost:2004/api/v1/blogs/${id}`
+        );
         setContent(data.content);
         setInitialContentState(data.content); // Set initial content state
       } catch (error) {
@@ -58,8 +65,8 @@ const BlogEdit = () => {
       });
 
       const h1Element = doc.querySelector("h1");
-      if (h1Element === null || h1Element.textContent === '') {
-        message.error('Tiêu đề không được để trống');
+      if (h1Element === null || h1Element.textContent === "") {
+        message.error("Tiêu đề không được để trống");
         setIsLoading(false);
         return;
       }
@@ -70,7 +77,8 @@ const BlogEdit = () => {
         contentNew = contentNew.replace(img.originalSrc, img.newSrc);
       });
 
-      await axios.put(`http://localhost:2004/api/v1/update_blog/${id}`,
+      await axios.put(
+        `http://localhost:2004/api/v1/update_blog/${id}`,
         {
           content: contentNew,
           author: user.user.userName,
@@ -78,11 +86,12 @@ const BlogEdit = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       message.success("Cập nhật blog thành công");
-      navigate('/admin/blogs'); 
+      navigate("/admin/blogs");
     } catch (error) {
       console.error("Error updating blog:", error);
       message.error("Có lỗi xảy ra khi cập nhật bài viết");
@@ -101,8 +110,27 @@ const BlogEdit = () => {
       showXPathInStatusbar: false,
       askBeforePasteHTML: false,
       askBeforePasteFromWord: false,
-      defaultActionOnPaste: 'insert_only_text',
-      buttons: ['bold', 'italic', 'underline', 'strikethrough', 'eraser', 'ul', 'ol', 'outdent', 'indent', 'font', 'fontsize', 'brush', 'paragraph', 'image', 'link', 'align', 'undo', 'redo'],
+      defaultActionOnPaste: "insert_only_text",
+      buttons: [
+        "bold",
+        "italic",
+        "underline",
+        "strikethrough",
+        "eraser",
+        "ul",
+        "ol",
+        "outdent",
+        "indent",
+        "font",
+        "fontsize",
+        "brush",
+        "paragraph",
+        "image",
+        "link",
+        "align",
+        "undo",
+        "redo",
+      ],
       uploader: {
         insertImageAsBase64URI: true,
       },
@@ -111,33 +139,41 @@ const BlogEdit = () => {
   );
 
   return (
-    <LoadingOverlay
-      active={isLoading}
-      spinner
-      text="Loading"
-      styles={{
-        overlay: (base) => ({
-          ...base,
-          position: "fixed",
-          width: "100vw",
-          height: "100vh",
-          zIndex: 1000,
-        }),
-      }}
-    >
-      <JoditEditor
-        className='!text-black mt-20'
-        ref={editor}
-        value={content}
-        config={config}
-        onChange={(newContent) => {
-          setContent(newContent);
+    <CheckAuths roles={["admin"]}>
+      <LoadingOverlay
+        active={isLoading}
+        spinner
+        text="Loading"
+        styles={{
+          overlay: (base) => ({
+            ...base,
+            position: "fixed",
+            width: "100vw",
+            height: "100vh",
+            zIndex: 1000,
+          }),
         }}
-      />
-      <div>
-        <Button type='primary mt-10' onClick={onSubmit} disabled={content === initialContentState}>Cập nhật bài viết</Button>
-      </div>
-    </LoadingOverlay>
+      >
+        <JoditEditor
+          className="!text-black mt-20"
+          ref={editor}
+          value={content}
+          config={config}
+          onChange={(newContent) => {
+            setContent(newContent);
+          }}
+        />
+        <div>
+          <Button
+            type="primary mt-10"
+            onClick={onSubmit}
+            disabled={content === initialContentState}
+          >
+            Cập nhật bài viết
+          </Button>
+        </div>
+      </LoadingOverlay>
+    </CheckAuths>
   );
 };
 

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import instance from "../../../configs/axios";
 import { toast } from "react-toastify";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const Feedback = () => {
   const { id } = useParams();
@@ -93,71 +94,73 @@ const Feedback = () => {
   };
 
   return (
-    <div className="container mx-6">
-      <div className="flex items-center justify-between mb-10 mt-[80px]">
-        <h1 className="text-2xl font-semibold">Phản hồi liên hệ</h1>
+    <CheckAuths roles={["admin"]}>
+      <div className="container mx-6">
+        <div className="flex items-center justify-between mb-10 mt-[80px]">
+          <h1 className="text-2xl font-semibold">Phản hồi liên hệ</h1>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700">
+              Email người yêu cầu
+            </label>
+            <input
+              type="text"
+              value={requestEmail || ""}
+              readOnly
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700">
+              Nội dung yêu cầu
+            </label>
+            <textarea
+              value={Content || ""}
+              readOnly
+              className="w-full p-2 border border-gray-300 rounded"
+              rows={4}
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block mb-2 text-sm font-bold text-gray-700"
+              htmlFor="responseContent"
+            >
+              Nội dung phản hồi
+            </label>
+            <textarea
+              id="responseContent"
+              value={responsemessage}
+              onChange={(e) => setResponsemessage(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              rows={4}
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block mb-2 text-sm font-bold text-gray-700"
+              htmlFor="responderEmail"
+            >
+              Email phản hồi
+            </label>
+            <input
+              id="responderEmail"
+              type="text"
+              value={responderEmail}
+              onChange={(e) => setResponderEmail(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-400"
+          >
+            Gửi phản hồi
+          </button>
+        </form>
       </div>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold text-gray-700">
-            Email người yêu cầu
-          </label>
-          <input
-            type="text"
-            value={requestEmail || ""}
-            readOnly
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold text-gray-700">
-            Nội dung yêu cầu
-          </label>
-          <textarea
-            value={Content || ""}
-            readOnly
-            className="w-full p-2 border border-gray-300 rounded"
-            rows={4}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block mb-2 text-sm font-bold text-gray-700"
-            htmlFor="responseContent"
-          >
-            Nội dung phản hồi
-          </label>
-          <textarea
-            id="responseContent"
-            value={responsemessage}
-            onChange={(e) => setResponsemessage(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            rows={4}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block mb-2 text-sm font-bold text-gray-700"
-            htmlFor="responderEmail"
-          >
-            Email phản hồi
-          </label>
-          <input
-            id="responderEmail"
-            type="text"
-            value={responderEmail}
-            onChange={(e) => setResponderEmail(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-400"
-        >
-          Gửi phản hồi
-        </button>
-      </form>
-    </div>
+    </CheckAuths>
   );
 };
 
