@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 
 const Fres = () => {
   return (
@@ -12,6 +13,7 @@ const Fres = () => {
             chúng tôi.
           </span>
           <Link
+            onClick={ScrollTop}
             to={"shops"}
             className="border-2 mt-5 border-white uppercase px-[30px] py-2 hover:scale-[1.05] cursor-pointer duration-300 "
           >

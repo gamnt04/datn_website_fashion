@@ -6,6 +6,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import MenuShop from "../../../pages/Client/Shop/MenuShop";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import Products from "../Items/Products";
+import ArrangeFilter from "../../../pages/Client/Shop/Filter/ArrangeFilter";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const SearchResults = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<any>("");
-  const itemsPerPage = 1; // Số lượng sản phẩm mỗi trang0
+  const itemsPerPage = 16; // Số lượng sản phẩm mỗi trang
 
   const {
     data: results,
@@ -34,8 +35,6 @@ const SearchResults = () => {
     priceRanges,
     selectedColors,
     selectedSizes,
-    currentPage,
-    itemsPerPage,
     sortOption
   );
 
@@ -69,7 +68,9 @@ const SearchResults = () => {
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
   };
-
+  const handleSortChange = (value: string) => {
+    setSortOption(value);
+  };
   const resetSizeFilter = () => setSelectedSizes([]);
 
   if (isLoading)
@@ -95,90 +96,95 @@ const SearchResults = () => {
           cho "{query}"
         </div>
 
-        <MenuShop
-          onCategorySelect={handleCategorySelect}
-          onPriceChange={handlePriceChange}
-          setSearch={() => {}}
-          setSort={setSortOption}
-          sortOption={sortOption}
-          selectedColors={selectedColors}
-          toggleColor={toggleColor}
-          resetColorFilter={resetColorFilter}
-          onColorChange={handleColorChange}
-          selectedSizes={selectedSizes}
-          toggleSize={toggleSize}
-          resetSizeFilter={resetSizeFilter}
-          onSizeChange={handleSizeChange}
-        />
-
-        {results && results?.data.length > 0 ? (
-          <>
-            <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
-              {results?.data
-                .slice(
-                  (currentPage - 1) * itemsPerPage,
-                  currentPage * itemsPerPage
-                )
-                .map((product: any) => (
-                  <Products key={product._id} items={product} />
-                ))}
-            </div>
-
-            {results.data.length > 0 && (
-              <div className="flex flex-col items-center my-4">
-                <div className="flex items-center mb-4 space-x-4">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    className={`px-4 py-2 border rounded-md ${
-                      currentPage === 1
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                    disabled={currentPage === 1}
-                  >
-                    &#10094; Trang trước
-                  </button>
-                  <span className="text-lg font-semibold">
-                    Trang {currentPage}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                    className={`px-4 py-2 border rounded-md ${
-                      !hasMore
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                    disabled={!hasMore}
-                  >
-                    Trang tiếp theo &#10095;
-                  </button>
+        <div className="xl:grid grid-cols-[21%_76%] justify-between">
+          <MenuShop
+            onCategorySelect={handleCategorySelect}
+            onPriceChange={handlePriceChange}
+            setSearch={() => {}}
+            selectedColors={selectedColors}
+            toggleColor={toggleColor}
+            resetColorFilter={resetColorFilter}
+            onColorChange={handleColorChange}
+            selectedSizes={selectedSizes}
+            toggleSize={toggleSize}
+            resetSizeFilter={resetSizeFilter}
+            onSizeChange={handleSizeChange}
+          />
+          <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
+            <ArrangeFilter
+              sortOption={sortOption}
+              onSortChange={handleSortChange}
+            />
+            {results && results?.data.length > 0 ? (
+              <>
+                <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
+                  {results?.data
+                    .slice(
+                      (currentPage - 1) * itemsPerPage,
+                      currentPage * itemsPerPage
+                    )
+                    .map((product: any) => (
+                      <Products key={product._id} items={product} />
+                    ))}
                 </div>
-                <div className="flex flex-wrap items-center space-x-2">
-                  {totalPages > 1 &&
-                    Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                      (page) => (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className={`px-4 py-2 border rounded-md ${
-                            currentPage === page
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-black hover:bg-gray-300"
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      )
-                    )}
-                </div>
-              </div>
+
+                {results.data.length > itemsPerPage && (
+                  <div className="flex flex-col items-center my-4">
+                    <div className="flex items-center mb-4 space-x-4">
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        className={`px-4 py-2 border rounded-md ${
+                          currentPage === 1
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-blue-500 text-white hover:bg-blue-600"
+                        }`}
+                        disabled={currentPage === 1}
+                      >
+                        &#10094; Trang trước
+                      </button>
+                      <span className="text-lg font-semibold">
+                        Trang {currentPage}
+                      </span>
+                      <button
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                        className={`px-4 py-2 border rounded-md ${
+                          !hasMore
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-blue-500 text-white hover:bg-blue-600"
+                        }`}
+                        disabled={!hasMore}
+                      >
+                        Trang tiếp theo &#10095;
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap items-center space-x-2">
+                      {totalPages > 1 &&
+                        Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                          (page) => (
+                            <button
+                              key={page}
+                              onClick={() => setCurrentPage(page)}
+                              className={`px-4 py-2 border rounded-md ${
+                                currentPage === page
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-gray-200 text-black hover:bg-gray-300"
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          )
+                        )}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <Empty className="my-5" description="Không có sản phẩm nào" />
             )}
-          </>
-        ) : (
-          <Empty className="my-5" description="Không có sản phẩm nào" />
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );
