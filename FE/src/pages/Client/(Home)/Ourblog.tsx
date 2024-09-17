@@ -50,7 +50,7 @@ const Ourblog = () => {
                     key={blog._id}
                     className="relative pb-6 overflow-hidden transition-shadow duration-300 rounded-lg shadow-lg hover:shadow-xl"
                   >
-                    <Link to={`/blogs/${blog.slug}`}>
+                    <Link onClick={ScrollTop} to={`/blogs/${blog.slug}`}>
                       <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover ">
                         <img
                           src={image?.src}
