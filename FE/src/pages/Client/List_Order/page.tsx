@@ -32,7 +32,6 @@ import instance from "../../../configs/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import { UploadGallery, UploadImage } from "../../../systems/utils/uploadImage";
-import axios from "axios";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -42,11 +41,6 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-type FieldType = {
-  contentReview?: string;
-  image_review?: string;
-  rating_review?: string;
-};
 
 export default function List_order() {
   //Khai báo
@@ -225,7 +219,6 @@ export default function List_order() {
     cancellationReason?: string;
     orderNumber?: string | number;
     order?: string | number;
-
   }) {
     dispathNotification?.mutate({
       userId: userId,
@@ -245,7 +238,7 @@ export default function List_order() {
       case 3:
         return <span>Đang vận chuyển</span>;
       case 4:
-        return <span>Đã giao hàng</span>
+        return <span>Đã giao hàng</span>;
       case 6:
         return (
           <span className="text-green-500 flex items-center gap-x-2">
@@ -474,7 +467,8 @@ export default function List_order() {
                     <div className="flex gap-3 lg:basis-3/12 w-full">
                       <Button
                         className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded "
-                        disabled>
+                        disabled
+                      >
                         Đã Nhận Hàng
                       </Button>
                       {items.cancellationRequested === true ? (
@@ -632,12 +626,12 @@ export default function List_order() {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
                                           changedValues[
-                                          `rating_review_${index}`
+                                            `rating_review_${index}`
                                           ]
                                         ) {
                                           setRating(
                                             changedValues[
-                                            `rating_review_${index}`
+                                              `rating_review_${index}`
                                             ]
                                           );
                                         }
@@ -659,7 +653,6 @@ export default function List_order() {
                                           },
                                         ]}
                                       >
-
                                         <Rate
                                           allowClear={false}
                                           disabled={!!review} // Không cho chỉnh sửa nếu đã có đánh giá
@@ -679,7 +672,6 @@ export default function List_order() {
                                             }));
                                           }}
                                         />
-
                                       </Form.Item>
 
                                       {/* Các phần khác vẫn giữ nguyên */}
@@ -719,7 +711,6 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
-
                                                   (url, idx) => ({
                                                     uid: `${idx}`,
                                                     name: `image_${idx}`,
@@ -730,7 +721,6 @@ export default function List_order() {
                                               : fileList[
                                                   productGroup.productId
                                                 ] || []
-
                                           }
                                           onChange={handleImageChange}
                                           onPreview={handlePreview}
