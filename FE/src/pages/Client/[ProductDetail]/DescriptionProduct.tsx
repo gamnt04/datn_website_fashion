@@ -14,6 +14,7 @@ import {
   Input,
   Modal,
   Popconfirm,
+  Rate,
   Spin,
   Upload,
   UploadFile,
@@ -399,25 +400,20 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             {/* Chỉnh sửa rating */}
                             <Form.Item name="rating_review">
                               <div className="flex items-center gap-1 mb-[20px]">
-                                {[1, 2, 3, 4, 5].map((rate) => (
-                                  <span
-                                    key={rate}
-                                    onClick={() => {
-                                      form.setFieldsValue({
-                                        rating_review: rate,
-                                      });
-                                      handleRatingChange(review._id, rate);
-                                    }}
-                                  >
-                                    {rate <=
-                                    (form.getFieldValue("rating_review") ||
-                                      review.rating_review) ? (
-                                      <AiFillStar className="text-yellow-400 text-2xl" />
-                                    ) : (
-                                      <AiOutlineStar className="text-yellow-400 text-2xl" />
-                                    )}
-                                  </span>
-                                ))}
+                                <Rate
+                                  allowHalf={false} // Không cho phép nửa sao nếu không cần
+                                  value={
+                                    form.getFieldValue("rating_review") ||
+                                    review.rating_review
+                                  } // Lấy giá trị rating từ form
+                                  onChange={(rate) => {
+                                    form.setFieldsValue({
+                                      rating_review: rate,
+                                    }); // Cập nhật giá trị rating
+                                    handleRatingChange(review._id, rate); // Gọi hàm xử lý khi người dùng thay đổi rating
+                                  }}
+                                  className="text-yellow-400 text-2xl" // Tùy chỉnh màu sắc với Tailwind
+                                />
                               </div>
                             </Form.Item>
                             {/* Chỉnh sửa nội dung đánh giá */}
@@ -514,7 +510,16 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                         ) : (
                           <div>
                             <div className="flex items-center  mb-[10px]">
-                              {Array.from({ length: 5 }, (_, index) => (
+                              <Rate
+                                allowHalf // Cho phép hiển thị nửa sao
+                                allowClear={false}
+                                disabled={
+                                  !!review.rating_review ||
+                                  !review.rating_review
+                                } // Không cho chỉnh sửa nếu đã có đánh giá
+                                value={review.rating_review || 0}
+                              />
+                              {/* {Array.from({ length: 5 }, (_, index) => (
                                 <span key={index}>
                                   {index <
                                   (rating[review._id] ||
@@ -524,7 +529,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                     <AiOutlineStar className="text-yellow-400 text-2xl" />
                                   )}
                                 </span>
-                              ))}
+                              ))} */}
                             </div>
                             <p className="text-[#1A1E26] text-base">
                               {review.contentReview}
