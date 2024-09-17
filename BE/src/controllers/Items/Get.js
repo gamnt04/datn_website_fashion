@@ -145,11 +145,14 @@ export const getProductById = async (req, res) => {
       if (products.attributes.values) {
         products.attributes.values = products.attributes.values.map((item) => {
           const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
-          return {
-            ...item,
-            size: new_data,
-          };
+          if (new_data.length > 0) {
+            return {
+              ...item,
+              size: new_data,
+            };
+          }
         });
+        products.attributes.values = products.attributes.values.filter(item => item !== undefined);
       }
       await products.save();
     }
@@ -232,7 +235,6 @@ export const getProductById = async (req, res) => {
       review,
     });
   } catch (error) {
-    console.error("Error getting product by ID:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message || "Lỗi server !",
     });

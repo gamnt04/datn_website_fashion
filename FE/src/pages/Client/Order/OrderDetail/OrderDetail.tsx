@@ -31,29 +31,39 @@ const OrderDetail = () => {
               <p className="border-l-2 pl-3">{data?.status == 1 ? "Chờ xác nhận" :
                 data?.status == 2 ? "Đang chuẩn bị hàng" :
                   data?.status == 3 ? "Đang vận chuyển" :
-                    data?.status == 4 ? "Đã giao hàng" : "Đã hủy"}</p>
+                    data?.status == 4 ? "Đã giao hàng" :
+                      data?.status == 5 ? "Giao hàng thất bại" :
+                        data?.status == 6 ? "Hoàn thành" : "Đã hủy"}</p>
             </div>
           </div>
         </div>
         <div className="border-b px-5 py-5 flex justify-center">
-          {getStatusClass(5) ? (
+          {getStatusClass(7) ? (
             <div className="text-center font-bold text-red-500">Đã hủy</div>
           ) : (
             <div className="flex">
               <div className="flex items-center justify-center">
                 <div className={getStatusClass(1)}>Chờ xác nhận</div>
-                <span className={`mx-4 ${getStatusClass(1)}`}>-------</span>
+                <span className={`mx-4 ${getStatusClass(1)}`}>---</span>
               </div>
               <div className="flex items-center whitespace-nowrap">
                 <div className={getStatusClass(2)}>Đang chuẩn bị hàng</div>
-                <span className={`mx-4 ${getStatusClass(2)}`}>-------</span>
+                <span className={`mx-4 ${getStatusClass(2)}`}>---</span>
               </div>
               <div className="flex items-center whitespace-nowrap">
                 <div className={getStatusClass(3)}>Đang vận chuyển</div>
-                <span className={`mx-4 ${getStatusClass(3)}`}>-------</span>
+                <span className={`mx-4 ${getStatusClass(3)}`}>---</span>
               </div>
               <div className="flex items-center whitespace-nowrap">
                 <div className={getStatusClass(4)}>Đã giao hàng</div>
+                <span className={`mx-4 ${getStatusClass(4)}`}>---</span>
+              </div>
+              <div className="flex items-center whitespace-nowrap">
+                <div className={getStatusClass(5)}>Giao hàng thất bại</div>
+                <span className={`mx-4 ${getStatusClass(5)}`}>---</span>
+              </div>
+              <div className="flex items-center whitespace-nowrap">
+                <div className={getStatusClass(6)}>Hoàn thành</div>
               </div>
             </div>
           )}

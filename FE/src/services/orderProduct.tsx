@@ -197,7 +197,7 @@ export const complete_product = async (id: any) => {
   console.log(id);
 
   try {
-    const { data } = await instance.patch(`/orders/${id}`, { status: "4" });
+    const { data } = await instance.patch(`/orders/${id}`, { status: "6" });
     return data;
   } catch (error) {
     console.log(error);

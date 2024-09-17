@@ -885,9 +885,8 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.numberOrder,
     });
   }
@@ -939,12 +938,12 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -977,12 +976,12 @@ const OrdersDetali = () => {
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
     : "";
   const columns = [
     {
@@ -1207,7 +1206,7 @@ const OrdersDetali = () => {
           <div className=" flex items-center gap-4  border-b pb-4">
             <p className="text-black font-semibold">Phương thức thanh toán</p>
             <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
-              {data?.status == 4
+              {data?.status == 6
                 ? "Đã thanh toán khi nhận hàng"
                 : data?.customerInfo?.payment}
             </p>
