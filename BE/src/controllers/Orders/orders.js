@@ -48,8 +48,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`,
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`,
       },
       totalPrice,
     });
@@ -175,8 +176,9 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`,
+          address: `${customerInfo.address || ""}${
+            customerInfo.addressDetail || ""
+          }`,
         },
         totalPrice,
       });
@@ -563,17 +565,23 @@ export async function get_orders_client(req, res) {
   const options = {
     page: _page,
     limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 }, // Sắp xếp theo trường _sort nếu có, mặc định sắp xếp theo ngày tạo mới nhất
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 },
   };
+  const { role, userId } = req.user;
 
+  let orders;
   const query = {};
 
-  // if (_search) {
-  //   query._id = { $regex: _search, $options: 'i' };  // Tìm kiếm theo tên khách hàng
-  // }
+  if (role === "courier") {
+    query.shipperId = userId;
+  }
+
+  if (_search) {
+    query._id = { $regex: _search, $options: "i" };
+  }
 
   if (_status) {
-    query.status = _status;
+    query.status = _status; 
   }
 
   try {
@@ -588,8 +596,8 @@ export async function get_orders_client(req, res) {
     return res.status(StatusCodes.OK).json({
       message: "Hoàn thành!",
       data,
-      totalDocs: data.totalDocs, // Tổng số đơn hàng
-      totalPages: data.totalPages, // Tổng số trang
+      totalDocs: data.totalDocs, 
+      totalPages: data.totalPages,
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -597,52 +605,7 @@ export async function get_orders_client(req, res) {
     });
   }
 }
-// export const get_orders_client = async (req, res) => {
-//   const {
-//     _page = 1,
-//     _limit = 7,
-//     _sort = "",
-//     _search = "",
-//     _status = "",
-//   } = req.query;
 
-//   const options = {
-//     page: _page,
-//     limit: _limit,
-//     sort: _sort ? { [_sort]: 1 } : { datetime: -1 },
-//   };
-
-//   const query = {};
-
-//   if (_status) {
-//     query.status = _status;
-//   }
-
-//   try {
-//     const { role, _id } = req.user;
-
-//     let data;
-//     if (role === "admin") {
-//       data = await Order.paginate(query, options);
-//     } else if (role === "courier") {
-//       query.shipperId = _id;
-//       data = await Order.paginate(query, options);
-//     }
-
-//     if (!data || data.docs.length < 1) {
-//       return res.status(404).json({ message: "Không có dữ liệu!" });
-//     }
-
-//     return res.status(200).json({
-//       message: "Hoàn thành!",
-//       data: data.docs,
-//       totalDocs: data.totalDocs,
-//       totalPages: data.totalPages,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message || "Lỗi server!" });
-//   }
-// };
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
