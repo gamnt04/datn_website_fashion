@@ -1,17 +1,42 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { List_Auth } from "../../../../common/hooks/Auth/querry_Auth";
-
+import { Modal } from "antd";
+import useLogout from "../../../../common/hooks/Auth/Logout";
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const idUser = user?.user?._id;
   const { data, isError, isLoading, error } = List_Auth(idUser);
+  const { mutate } = useLogout();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    mutate();
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   if (isLoading) return <div className="">loading...</div>;
   if (isError) return <div className="">{error.message}</div>;
   return (
     <div>
-      {" "}
+      <Modal
+        title="Bạn có chắc muốn đăng xuất không?"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Đăng xuất"
+        cancelText="Trở lại"
+      >
+        <p>Tài khoản của bạn sẽ được đăng xuất</p>
+      </Modal>
       <Link
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex items-center gap-5"
@@ -24,8 +49,8 @@ const DropdownUser = () => {
           <span className="block text-xs text-[#677381]">{data?.email}</span>
         </span>
 
-        <span className="h-12 w-12 rounded-full ">
-          <img src={data?.avatar} className=" rounded-full" alt="User" />
+        <span className="w-12 h-12 rounded-full ">
+          <img src={data?.avatar} className="rounded-full " alt="User" />
         </span>
 
         <svg
@@ -102,7 +127,10 @@ const DropdownUser = () => {
               </Link>
             </li>
           </ul>
-          <button className="flex items-center text-[#677381] gap-4 px-6 py-4 text-[14px] font-medium duration-300 ease-in-out hover:text-black lg:text-base">
+          <button
+            onClick={showModal}
+            className="flex items-center text-[#677381] gap-4 px-6 py-4 text-[14px] font-medium duration-300 ease-in-out hover:text-black lg:text-base"
+          >
             <svg
               className="fill-[#677381]"
               width="22"
