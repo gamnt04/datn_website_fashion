@@ -108,6 +108,8 @@ export const checkRole = (roles) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
 
+      console.log("User Role:", req.user.role);
+      console.log("Required Roles:", roles);
       if (!roles.includes(req.user.role)) {
         return res.status(StatusCodes.FORBIDDEN).json({
           message: "Bạn không có quyền truy cập vào tài nguyên này.",
