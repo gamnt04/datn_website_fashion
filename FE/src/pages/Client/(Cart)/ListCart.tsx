@@ -13,12 +13,15 @@ import {
   Table,
   TableProps,
   Spin,
+  Button,
 } from "antd";
 import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import Het_hang from "./_components/het_hang";
 import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
+import { TiDelete } from "react-icons/ti";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 interface DataType {
   key: string;
@@ -67,7 +70,7 @@ const ListCart = () => {
     if (data_cart.length === 0) {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
+        content: "Vui lòng chọn sản phẩm để xóa!",
       });
       return;
     }
@@ -245,16 +248,18 @@ const ListCart = () => {
       dataIndex: "action",
       render: (_: any, product: any) => {
         return (
-          <div className="flex justify-center space-x-2 text-red-500">
-            <Popconfirm
-              title="Xóa sản phẩm khỏi giỏ hàng?"
-              description="Bạn có chắc chắn muốn xóa không?"
-              onConfirm={() => remove_item(product)}
-              okText="Có"
-              cancelText="Không"
-            >
-              <DeleteOutlined style={{ fontSize: "24px" }} />
-            </Popconfirm>
+          <div>
+            <Button danger className="w-[50px]">
+              <Popconfirm
+                title="Xóa sản phẩm khỏi giỏ hàng?"
+                description="Bạn có chắc chắn muốn xóa không?"
+                onConfirm={() => remove_item(product)}
+                okText="Có"
+                cancelText="Không"
+              >
+                <FaDeleteLeft style={{ fontSize: "24px" }} />
+              </Popconfirm>
+            </Button>
           </div>
         );
       },
@@ -267,33 +272,45 @@ const ListCart = () => {
       </div>
     );
   }
-  const item_order_checkked = data?.products?.filter((value: any) => value?.status_checked);
+  const item_order_checkked = data?.products?.filter(
+    (value: any) => value?.status_checked
+  );
   const item_lon_hon_0 = filter_positive_Stock_Item(item_order_checkked);
-  const totalPrice = item_lon_hon_0?.reduce((a: any, curr: any) => (a + curr?.total_price_item), 0);
+  const totalPrice = item_lon_hon_0?.reduce(
+    (a: any, curr: any) => a + curr?.total_price_item,
+    0
+  );
   // next order
   function next_order() {
     ScrollTop();
-    // validate stock 
+    // validate stock
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
-        const check_color = i?.productId?.attributes?.values?.find((a: any) => a?.color === i?.color_item);
-        const check_size = check_color?.size?.find((b: any) => (b?.name_size?.trim() ? b?.name_size : undefined) === i?.name_size);
+        const check_color = i?.productId?.attributes?.values?.find(
+          (a: any) => a?.color === i?.color_item
+        );
+        const check_size = check_color?.size?.find(
+          (b: any) =>
+            (b?.name_size?.trim() ? b?.name_size : undefined) === i?.name_size
+        );
         if (i?.quantity > check_size?.stock_attribute) {
           let message: any;
           if (check_size?.stock_attribute < 1) {
             message = `Sản phẩm ${i?.productId?.name_product} hiện tại đã hết hàng, 
-            vui lòng xóa khỏi giỏ hàng và chọn sản phẩm khác để thanh toán!`
+            vui lòng xóa khỏi giỏ hàng và chọn sản phẩm khác để thanh toán!`;
           } else {
             message = `Sản phẩm ${i?.productId?.name_product} hiện tại 
-            chỉ còn ${check_size?.stock_attribute}. Vui lòng giảm số lượng trước khi thanh toán!`
+            chỉ còn ${check_size?.stock_attribute}. Vui lòng giảm số lượng trước khi thanh toán!`;
           }
           toast.error(message, { autoClose: 1200 });
           return;
         }
-      }
-      else if (i?.quantity > i?.productId?.stock) {
-        toast.error(`Sản phẩm ${i?.productId?.name_product} hiện tại 
-          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`, { autoClose: 1200 });
+      } else if (i?.quantity > i?.productId?.stock) {
+        toast.error(
+          `Sản phẩm ${i?.productId?.name_product} hiện tại 
+          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`,
+          { autoClose: 1200 }
+        );
         return;
       }
     }
@@ -306,15 +323,14 @@ const ListCart = () => {
           type: "warning",
           content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
         });
-        return null
+        return null;
       }
-      sessionStorage.setItem('item_order', JSON.stringify(data_cart))
+      sessionStorage.setItem("item_order", JSON.stringify(data_cart));
       routing("/cart/pay");
     } else {
       routing("/login");
     }
   }
-
 
   if (isError) {
     return <p>{error.message}</p>;
@@ -334,16 +350,18 @@ const ListCart = () => {
         <>
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="md:w-[70%] mb:w-full w-full">
-              <Popconfirm
-                className="text-red-500"
-                title="Xóa sản phẩm khỏi giỏ hàng?"
-                description="Bạn có chắc chắn muốn xóa không?"
-                onConfirm={() => handleRemoveMultiple()}
-                okText="Có"
-                cancelText="Không"
-              >
-                <DeleteOutlined style={{ fontSize: "24px" }} />
-              </Popconfirm>
+              <Button danger className="w-[50px]">
+                <Popconfirm
+                  className="text-red-500"
+                  title="Xóa sản phẩm khỏi giỏ hàng?"
+                  description="Bạn có chắc chắn muốn xóa không?"
+                  onConfirm={() => handleRemoveMultiple()}
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <FaDeleteLeft style={{ fontSize: "20px" }} />
+                </Popconfirm>
+              </Button>
               <Table
                 columns={columns}
                 dataSource={dataSort}
