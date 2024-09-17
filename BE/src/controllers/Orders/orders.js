@@ -505,7 +505,7 @@ export const updateOrderStatus = async (req, res) => {
         .json({ error: "Order cannot be updated" });
     }
     order.status = status;
-    if (status == "3") {
+    if (status == "4") {
       order.deliveredAt = new Date();
     }
 
