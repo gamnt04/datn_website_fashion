@@ -6,6 +6,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import MenuShop from "../../../pages/Client/Shop/MenuShop";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import Products from "../Items/Products";
+import ArrangeFilter from "../../../pages/Client/Shop/Filter/ArrangeFilter";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const SearchResults = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<any>("");
-  const itemsPerPage = 1; // Số lượng sản phẩm mỗi trang0
+  const itemsPerPage = 16; // Số lượng sản phẩm mỗi trang
 
   const {
     data: results,
@@ -34,8 +35,6 @@ const SearchResults = () => {
     priceRanges,
     selectedColors,
     selectedSizes,
-    currentPage,
-    itemsPerPage,
     sortOption
   );
 
@@ -69,7 +68,9 @@ const SearchResults = () => {
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
   };
-
+  const handleSortChange = (value: string) => {
+    setSortOption(value);
+  };
   const resetSizeFilter = () => setSelectedSizes([]);
 
   if (isLoading)
@@ -99,8 +100,6 @@ const SearchResults = () => {
           onCategorySelect={handleCategorySelect}
           onPriceChange={handlePriceChange}
           setSearch={() => {}}
-          setSort={setSortOption}
-          sortOption={sortOption}
           selectedColors={selectedColors}
           toggleColor={toggleColor}
           resetColorFilter={resetColorFilter}
@@ -110,7 +109,10 @@ const SearchResults = () => {
           resetSizeFilter={resetSizeFilter}
           onSizeChange={handleSizeChange}
         />
-
+        <ArrangeFilter
+          sortOption={sortOption}
+          onSortChange={handleSortChange}
+        />
         {results && results?.data.length > 0 ? (
           <>
             <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
@@ -124,7 +126,7 @@ const SearchResults = () => {
                 ))}
             </div>
 
-            {results.data.length > 0 && (
+            {results.data.length > itemsPerPage && (
               <div className="flex flex-col items-center my-4">
                 <div className="flex items-center mb-4 space-x-4">
                   <button
