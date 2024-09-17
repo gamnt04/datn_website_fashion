@@ -33,7 +33,9 @@ const useSignIn = (userId?: string) => {
       return await SignIn(formData);
     },
     onSuccess: (res: any) => {
-      //console.log(res?.status);
+      const token = res.data.token;
+
+      localStorage.setItem("token", token);
       queryClient.invalidateQueries({
         queryKey: ["AUTH_KEY", userId],
       });
