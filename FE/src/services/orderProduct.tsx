@@ -12,14 +12,9 @@ const baseUri = "http://localhost:2004/api/v1/orders";
 //     console.log(error);
 //   }
 // };
-export async function get_order_client(
-  page: any,
-  status: any,
-  role: any,
-  userId: any
-) {
+export async function get_order_client(page?: number, status?: string) {
   try {
-    let uri = `${baseUri}`;
+    let uri = baseUri;
     const params = [];
     if (page) {
       params.push(`_page=${page}`);
@@ -27,14 +22,11 @@ export async function get_order_client(
     if (status) {
       params.push(`_status=${status}`);
     }
-    if (role === "courier" && userId) {
-      params.push(`_shipperId=${userId}`);
-    }
 
     if (params.length > 0) {
       uri += `?${params.join("&")}`;
     }
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
     const res = await fetch(uri, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -42,18 +34,12 @@ export async function get_order_client(
     });
 
     if (!res.ok) {
-      console.warn("Kiểm tra lại server hoặc kết nối internet!");
-      return { data: [], totalDocs: 0, totalPages: 0 };
+      console.warn("Kiem tra lai server hoac internet !");
     }
-
     const { data, totalDocs, totalPages } = await res.json();
-
-    console.log("Response Data:", { data, totalDocs, totalPages }); 
-
     return { data: data.docs, totalDocs, totalPages };
   } catch (error) {
-    console.error("Error:", error || "Lỗi server!"); 
-    return { data: [], totalDocs: 0, totalPages: 0 };
+    console.log(error || "Loi server!");
   }
 }
 export const getOrderById = async (id: string) => {

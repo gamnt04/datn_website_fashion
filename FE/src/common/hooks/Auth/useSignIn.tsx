@@ -36,6 +36,7 @@ const useSignIn = (userId?: string) => {
       const token = res.data.token;
 
       localStorage.setItem("token", token);
+      console.log(token);
       queryClient.invalidateQueries({
         queryKey: ["AUTH_KEY", userId],
       });
