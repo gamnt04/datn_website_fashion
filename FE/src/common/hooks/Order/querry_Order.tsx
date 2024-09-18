@@ -25,20 +25,23 @@ export function List_One_Order_User(userId: string) {
 
   return { data, ...rest };
 }
-export const Query_Orders = (id?: string, page?: number, status?: string) => {
-  // Tạo key cho cache dựa trên id, page, và status
+export const Query_Orders = (
+  id?: string,
+  page?: number,
+  status?: string,
+  role?: string,
+  userId?: string
+) => {
   const key = id ? ["Order_Key", id] : ["Order_Key"];
-
   const { data, ...rest } = useQuery({
-    queryKey: [...key, page, status], // Cache key cho query
+    queryKey: [...key, page, status, role, userId],
     queryFn: async () => {
-      // Nếu có id, gọi hàm lấy đơn hàng theo id
-      return id ? getOrderById(id) : get_order_client(page, status);
+      return id
+        ? getOrderById(id)
+        : get_order_client(page, status, role, userId);
     },
-    // Optional: Cấu hình thêm nếu cần
   });
 
-  // Trả về dữ liệu và các thông tin khác từ hook
   return { data: data?.data || data, totalPages: data?.totalPages, ...rest };
 };
 export const useOrdersOfDay = () => {

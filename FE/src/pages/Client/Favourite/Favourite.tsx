@@ -20,7 +20,7 @@ const Favourite = () => {
     if (!userId) {
       messageApi.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!!"
+        content: "Hãy đăng nhập tài khoản của bạn !!!",
       });
     } else {
       RemoveFavouriteProduct(
@@ -29,15 +29,15 @@ const Favourite = () => {
           onSuccess: () => {
             messageApi.open({
               type: "success",
-              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn"
+              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn",
             });
           },
           onError: () => {
             messageApi.open({
               type: "error",
-              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau"
+              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau",
             });
-          }
+          },
         }
       );
     }
@@ -56,16 +56,21 @@ const Favourite = () => {
         <span className="mx-1 text-gray-500">&#10148;</span>
         Yêu thích
       </div>
-      <div className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[1.5%]  mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%]">
-        {data?.products.length === 0 ? (
-          <div className="">Add product</div>
-        ) : (
-          data?.products?.map((items: IProduct) => {
+
+      {data?.products?.length === 0 ? (
+        <div className="flex justify-center items-center">
+          <img
+            src="../../src/assets/Images/Products/no-data.png"
+            alt="Không có sản phẩm"
+          />
+        </div>
+      ) : (
+        <div className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth grid grid-flow-col auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%] gap-x-[1.5%]">
+          {data?.products?.map((items: IProduct) => {
             let min: number | undefined;
             let max: number | undefined;
 
             if (items?.productId?.attributes?.values) {
-              // Initialize min and max based on the first size's price
               min =
                 items?.productId?.attributes?.values[0]?.size[0]
                   ?.price_attribute;
@@ -73,7 +78,6 @@ const Favourite = () => {
                 items?.productId?.attributes?.values[0]?.size[0]
                   ?.price_attribute;
 
-              // Iterate through all values and sizes to find min and max prices
               items?.productId?.attributes?.values.forEach((value) => {
                 value.size.forEach((size) => {
                   if (size.price_attribute < min!) {
@@ -132,7 +136,7 @@ const Favourite = () => {
                           <span className="text-[#EB2606]">
                             {max?.toLocaleString("vi-VN", {
                               style: "currency",
-                              currency: "VND"
+                              currency: "VND",
                             })}
                           </span>
                         ) : (
@@ -140,14 +144,14 @@ const Favourite = () => {
                             <span className="text-[#EB2606]">
                               {min?.toLocaleString("vi-VN", {
                                 style: "currency",
-                                currency: "VND"
+                                currency: "VND",
                               })}
                             </span>{" "}
                             -{" "}
                             <span className="text-[#EB2606]">
                               {max?.toLocaleString("vi-VN", {
                                 style: "currency",
-                                currency: "VND"
+                                currency: "VND",
                               })}
                             </span>
                           </>
@@ -159,7 +163,7 @@ const Favourite = () => {
                           "vi-VN",
                           {
                             style: "currency",
-                            currency: "VND"
+                            currency: "VND",
                           }
                         )}
                       </span>
@@ -168,9 +172,9 @@ const Favourite = () => {
                 </div>
               </div>
             );
-          })
-        )}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 };
