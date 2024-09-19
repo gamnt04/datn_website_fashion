@@ -46,7 +46,7 @@ const Sidebar_Profile: React.FC = () => {
     getItem("Thông tin tài khoản", "1", <User className="h-5" />, [
       getItem(<NavLink to="/profile">Hồ sơ</NavLink>, "1-1"),
       getItem(<NavLink to="/profile/address">Địa chỉ</NavLink>, "1-2"),
-      getItem(<NavLink to="">Đổi mật khẩu</NavLink>, "1-3"),
+      getItem(<NavLink to="/profile/change-password">Đổi mật khẩu</NavLink>, "1-3"),
     ]),
     // getItem(
     //   <NavLink to="/favourite">Yêu thích</NavLink>,

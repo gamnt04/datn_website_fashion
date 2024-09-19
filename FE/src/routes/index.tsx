@@ -44,6 +44,7 @@ import ContactDetail from "../pages/Admin/contact/ContactDetail";
 import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
 import VerifyEmail from "../systems/utils/VerifyEmail";
+import ChangePassword from "../pages/Client/User/ChangePassword";
 const RouterComponent = () => {
   return (
     <>
@@ -74,6 +75,7 @@ const RouterComponent = () => {
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
+              <Route path="/profile/change-password" element={<ChangePassword />} />
               <Route path="/profile/notification" element={<Notification />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
