@@ -29,6 +29,8 @@ const Form_Item = ({ mode }: any) => {
   const [status_attr, setStatus_Attr] = useState(true);
   let image_item: any;
   const gallery_item: any = [];
+  const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
+
   // hooks
   const {
     onSubmit,
@@ -40,7 +42,7 @@ const Form_Item = ({ mode }: any) => {
     data_one_item,
   } = useHookForm({ mode });
 
-  const { data, refetch } = useCategoryQuery(); 
+  const { data, refetch } = useCategoryQuery();
   const [form] = Form.useForm();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
@@ -111,7 +113,7 @@ const Form_Item = ({ mode }: any) => {
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between -mt-5 mb-5">
+      <div className="flex items-center justify-between mb-5 -mt-5">
         <h1 className="text-[26px] font-semibold">
           {mode ? "Cập nhật sản phẩm" : "Thêm Mới Sản Phẩm"}
         </h1>
@@ -133,7 +135,7 @@ const Form_Item = ({ mode }: any) => {
           <div>
             <div>
               {" "}
-              <label className=" font-medium text-sm">Tên sản phẩm</label>
+              <label className="text-sm font-medium ">Tên sản phẩm</label>
               <Filed_form
                 props={{
                   name_field: "name_product",
@@ -290,7 +292,15 @@ const Form_Item = ({ mode }: any) => {
                                         {...restSizeField}
                                         name={[sizeName, "name_size"]}
                                       >
-                                        <Input className=" mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none " />
+                                        <Select
+                                          className=" mt-2 h-[40px] max-w-[200px] text-[#1C2434] border-gray-600 !outline-none "
+                                          options={sizes.map((size) => ({
+                                            label: size,
+                                            value: size,
+                                          }))}
+                                          placeholder="Chọn kích cỡ"
+                                        />
+                                        {/* <Input className=" mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none " /> */}
                                       </Form.Item>
                                     </div>
                                     <div>
@@ -323,7 +333,7 @@ const Form_Item = ({ mode }: any) => {
                                       />
                                     </div>
                                     <div>
-                                      <label className="font-medium text-sm">
+                                      <label className="text-sm font-medium">
                                         {" "}
                                         Giá :
                                       </label>
