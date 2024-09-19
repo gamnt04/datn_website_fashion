@@ -6,7 +6,6 @@ import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { update } from "../../../../services/category";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
-import { CheckAuths } from "../../../../common/hooks/Auth/useAuthorization";
 
 interface UpdateComponentProps {
   id?: string;
@@ -19,10 +18,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [initialValues, setInitialValues] = useState<ICategory | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null); // Thêm trạng thái xem trước ảnh
-  const [messageContent, setMessageContent] = React.useState("");
-  const [messageType, setMessageType] = React.useState<"success" | "error">(
-    "success"
-  );
+
   const {
     register,
     handleSubmit,
@@ -42,18 +38,13 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       return data;
     },
     onSuccess: () => {
-      setMessageContent("Cập nhật danh mục thành công!");
-      setMessageType("success");
       setShowMessage(true);
       queryClient.invalidateQueries({
         queryKey: ["CATEGORY_KEY"],
       });
     },
     onError: (error: any) => {
-      setMessageContent("Tên danh mục đã tồn tại");
-      setMessageType("error");
-      setShowMessage(true);
-      console.error("Lỗi khi gửi yêu cầu: ", error);
+      setErrorMessage(error.message || "Đã có lỗi xảy ra");
     },
   });
 
@@ -136,94 +127,92 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   }, [showMessage]);
 
   return (
-    <CheckAuths roles={["admin"]}>
-      <div>
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
-        <Message
-          message={messageContent}
-          timeout={3000}
-          openMessage={showMessage}
-          type={messageType}
-        />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-12">
-            <div className="pb-12 border-b border-gray-900/10">
-              <h2 className="text-2xl font-semibold leading-7 text-center text-gray-900">
-                Sửa danh mục
-              </h2>
-              <div className="grid justify-center grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="flex justify-center sm:col-span-6">
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Tên danh mục
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <Input
-                          type="text"
-                          placeholder="Nhập tên danh mục..."
-                          {...register("name_category", { required: true })}
-                        />
-                      </div>
-                      {errors.name_category && (
-                        <p className="text-red-600">
-                          Vui lòng không được để trống
-                        </p>
-                      )}
+    <div>
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      <Message
+        message={"Sửa danh mục thành công !"}
+        timeout={3000}
+        openMessage={showMessage}
+        type={"success"}
+      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-12">
+          <div className="border-b border-gray-900/10 pb-12">
+            <h2 className="text-2xl font-semibold leading-7 text-gray-900 text-center">
+              Sửa danh mục
+            </h2>
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 justify-center">
+              <div className="sm:col-span-6 flex justify-center">
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Tên danh mục
+                  </label>
+                  <div className="mt-2">
+                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                      <Input
+                        type="text"
+                        placeholder="Nhập tên danh mục..."
+                        {...register("name_category", { required: true })}
+                      />
                     </div>
-                    <label
-                      htmlFor="image_category"
-                      className="block mt-4 text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Hình ảnh danh mục
-                    </label>
-                    <div className="flex items-center mt-2">
-                      <div className="relative flex items-center">
-                        <div
-                          className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${
-                            imagePreview ? "block" : "block"
-                          }`}
-                        >
-                          <span className="text-3xl text-gray-500">+</span>
-                        </div>
-                        {imagePreview && (
-                          <img
-                            src={imagePreview}
-                            alt="Image Preview"
-                            className="object-cover w-32 h-32 border border-gray-300 rounded-lg"
-                          />
-                        )}
-                        <Input
-                          type="file"
-                          {...register("image_category")}
-                          className="absolute inset-0 opacity-0 cursor-pointer"
-                        />
+                    {errors.name_category && (
+                      <p className="text-red-600">
+                        Vui lòng không được để trống
+                      </p>
+                    )}
+                  </div>
+                  <label
+                    htmlFor="image_category"
+                    className="block text-sm font-medium leading-6 text-gray-900 mt-4"
+                  >
+                    Hình ảnh danh mục
+                  </label>
+                  <div className="mt-2 flex items-center">
+                    <div className="relative flex items-center">
+                      <div
+                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${
+                          imagePreview ? "block" : "block"
+                        }`}
+                      >
+                        <span className="text-3xl text-gray-500">+</span>
                       </div>
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Image Preview"
+                          className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
+                        />
+                      )}
+                      <Input
+                        type="file"
+                        {...register("image_category")}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-center mt-6 gap-x-6">
-              <button
-                type="submit"
-                disabled={!isFormModified()}
-                className={`rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${
-                  isFormModified()
-                    ? "bg-indigo-600 text-white hover:bg-indigo-500"
-                    : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                }`}
-              >
-                Xác nhận
-              </button>
-            </div>
           </div>
-        </form>
-      </div>
-    </CheckAuths>
+          <div className="mt-6 flex items-center justify-center gap-x-6">
+            <button
+              type="submit"
+              disabled={!isFormModified()}
+              className={`rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${
+                isFormModified()
+                  ? "bg-indigo-600 text-white hover:bg-indigo-500"
+                  : "bg-gray-300 text-gray-600 cursor-not-allowed"
+              }`}
+            >
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 };
 
