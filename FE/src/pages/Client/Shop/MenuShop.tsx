@@ -52,7 +52,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
     <div className="hidden lg:block w-full  flex flex-col my-10 ">
       <div className="flex items-center justify-center space-x-4 mb-7 mt-3">
         <AiOutlineFilter className="text-3xl" />
-        <h1 className="text-3xl">Bộ Lọc Sản Phẩm</h1>
+        <h1 className="text-xl">Bộ Lọc Sản Phẩm</h1>
       </div>
       <div className="w-full bg-gray-50">
         <CategoryFilter
