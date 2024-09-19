@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Plug, X } from "lucide-react";
+import { X } from "lucide-react";
 import CreateComponent from "./Create";
 import { Button } from "antd";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -31,7 +31,7 @@ export default function CategoryCreate() {
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
           <div
-            className="absolute top-2 right-2 cursor-pointer"
+            className="absolute cursor-pointer top-2 right-2"
             onClick={handleClose}
           >
             <X />
