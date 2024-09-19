@@ -3,6 +3,7 @@ import instance from "../../../configs/axios";
 import { ProductResponse } from "../../../common/interfaces/Product";
 import { useQuery } from "@tanstack/react-query";
 
+// Hàm fetch data từ API backend
 const fetchFilteredProducts = async (
   query: string,
   cate_id: string[],
@@ -15,8 +16,9 @@ const fetchFilteredProducts = async (
 ) => {
   const endpoint = "/products/filter/Product";
 
+  // Xây dựng các tham số cho yêu cầu
   const params: { [key: string]: any } = {
-    _search: query,
+    _search: query || undefined,
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
     price_ranges:
       price_ranges.length > 0 ? JSON.stringify(price_ranges) : undefined,
@@ -27,11 +29,13 @@ const fetchFilteredProducts = async (
     _sort: sortOption,
   };
 
+  // Xoá các giá trị undefined khỏi params
   Object.keys(params).forEach(
     (key) => params[key] === undefined && delete params[key]
   );
 
   try {
+    // Thực hiện gọi API
     const response = await instance.get<ProductResponse>(endpoint, { params });
     return response.data;
   } catch (error: unknown) {
@@ -44,6 +48,7 @@ const fetchFilteredProducts = async (
   }
 };
 
+// Hook sử dụng React Query để fetch dữ liệu
 export const useFilteredProducts = (
   query: string,
   cate_id: string[],
@@ -54,6 +59,7 @@ export const useFilteredProducts = (
   limit: number = 20,
   sortOption: string = ""
 ) => {
+  // Tạo queryKey để caching
   const queryKey = [
     "products",
     query,
@@ -66,6 +72,7 @@ export const useFilteredProducts = (
     sortOption,
   ];
 
+  // Sử dụng React Query để gọi API và lưu trữ kết quả
   const { data, error, isLoading, isError } = useQuery<
     ProductResponse,
     AxiosError
@@ -82,6 +89,7 @@ export const useFilteredProducts = (
         limit,
         sortOption
       ),
+    // Optionally, you can specify `staleTime`, `cacheTime`, etc., based on your needs
   });
 
   return { data, error, isLoading, isError };
