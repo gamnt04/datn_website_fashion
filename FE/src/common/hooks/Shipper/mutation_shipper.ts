@@ -30,7 +30,6 @@ export const Mutation_Shipper = (action: Actions) => {
       queryClient.invalidateQueries({
         queryKey: ["List_orders"]
       });
-      navigate("/orders");
     },
     onError: (error) => {
       console.log("Error occurred:", error);

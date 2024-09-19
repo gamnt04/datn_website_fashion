@@ -814,8 +814,9 @@ const OrdersDetali = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const { mutate: AddShipper } = Mutation_Shipper("ADD");
   const { data: shipperData } = useListAllShipper();
-
+  const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
   const handleSelectShipper = (shipperId: string) => {
+    setSelectedShipper(shipperId);
     if (!id) return;
     AddShipper(
       { orderId: id, shipperId },
@@ -1066,7 +1067,7 @@ const OrdersDetali = () => {
             Chi Tiết Đơn Hàng
           </h1>
         </div>
-        {data?.status === 2 ? (
+        {data?.status == 2 ? (
           <div className="p-4">
             <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
             <div className="grid grid-cols-1 gap-4">
@@ -1086,33 +1087,33 @@ const OrdersDetali = () => {
                   </div>
                   <button
                     onClick={() => handleSelectShipper(shipper._id)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
+                      selectedShipper === shipper._id ? "bg-green-500" : ""
+                    }`}
                   >
-                    Chọn
+                    {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
                 </div>
               ))}
             </div>
           </div>
         ) : (
-          data?.status >= 3 && (
+          data?.status >= 2 && (
             <div className="p-4">
               <h2 className="text-xl font-semibold mb-4">Thông tin Shipper</h2>
               <div className="flex items-center bg-white p-4 rounded-lg shadow-md">
                 <img
-                  // src={selectedShipper?.avatar} // Avatar của shipper đã chọn
+                  src={data?.shipperId?.avatar}
                   alt="Shipper Avatar"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
                 <div className="flex-1">
                   <p className="text-lg font-medium">
-                    {/* {selectedShipper?.fullName} */}
-                  </p>{" "}
-                  {/* Tên Shipper đã chọn */}
+                    {data?.shipperId?.fullName}
+                  </p>
                   <p className="text-sm text-gray-500">
-                    {/* {selectedShipper?.phone} */}
-                  </p>{" "}
-                  {/* Số điện thoại */}
+                    {data?.shipperId?.phone}
+                  </p>
                 </div>
               </div>
             </div>
@@ -1473,7 +1474,15 @@ const OrdersDetali = () => {
                   <Popconfirm
                     title="Xác nhận đơn hàng?"
                     description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                    onConfirm={() => handleStatusUpdate(3, data?.orderNumber)}
+                    onConfirm={() => {
+                      if (!selectedShipper) {
+                        messageApi.error(
+                          "Vui lòng chọn shipper trước khi xác nhận!"
+                        );
+                        return;
+                      }
+                      handleStatusUpdate(3, data?.orderNumber); // Xác nhận khi đã có shipper
+                    }}
                     okText="Xác nhận"
                     cancelText="Không"
                   >
