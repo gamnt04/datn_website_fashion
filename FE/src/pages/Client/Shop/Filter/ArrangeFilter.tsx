@@ -9,8 +9,8 @@ const sortOptions = [
   { value: "", label: "Mặc Định" },
   { value: "newest", label: "Mới Nhất" },
   { value: "oldest", label: "Cũ Nhất" },
-  { value: "price_attribute:asc", label: "Giá thấp" },
-  { value: "price_attribute:desc", label: "Giá cao" },
+  { value: "price_attribute:asc", label: "Giá thấp" }, // Sắp xếp theo giá thấp
+  { value: "price_attribute:desc", label: "Giá cao" }, // Sắp xếp theo giá cao
 ];
 
 const ArrangeFilter: React.FC<ArrangeFilterProps> = ({
@@ -22,8 +22,8 @@ const ArrangeFilter: React.FC<ArrangeFilterProps> = ({
   };
 
   return (
-    <div className="border mt-10 p-2  bg-[#F9F9F9] ">
-      <div className="flex items-center   px-4 text-gray-900">
+    <div className="border mt-10 p-2 bg-[#F9F9F9]">
+      <div className="flex items-center px-4 text-gray-900">
         <strong className="mr-6 text-lg font-semibold">Sắp Xếp :</strong>
         <ul className="flex space-x-4">
           {sortOptions.map((option) => (
