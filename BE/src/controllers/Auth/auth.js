@@ -204,8 +204,8 @@ export const signin = async (req, res) => {
 
     // Tạo token
     const token = jwt.sign(
-      { userId: user._id, role: user.role || "courier" },
-      process.env.JWT_SECRET,
+      { userId: user._id, role: user.role || "courier" }, 
+      process.env.JWT_SECRET || "secretkey",
       { expiresIn: "7d" }
     );
 
