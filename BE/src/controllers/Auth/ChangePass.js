@@ -50,9 +50,6 @@ export const changePassword = async (req, res) => {
         res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
     }
 };
-import bcrypt from 'bcryptjs';
-import User from '../../models/Auth/users'; 
-import jwt from 'jsonwebtoken';
 
 
 export const authenticateTokengdf = (req, res, next) => {
@@ -132,9 +129,6 @@ export const changePasswordd = async (req, res) => {
         res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
     }
 };
-import bcrypt from 'bcryptjs';
-import User from '../../models/Auth/users'; 
-import jwt from 'jsonwebtoken';
 
 
 export const authenticateTokengd = (req, res, next) => {
@@ -209,9 +203,7 @@ export const changePasswordhj = async (req, res) => {
 
     }
 };
-import bcrypt from 'bcryptjs';
-import User from '../../models/Auth/users'; 
-import jwt from 'jsonwebtoken';
+
 
 
 export const authenticateTokenddg = (req, res, next) => {
@@ -261,9 +253,7 @@ export const changePasswordf = async (req, res) => {
         res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
     }
 };
-import bcrypt from 'bcryptjs';
-import User from '../../models/Auth/users'; 
-import jwt from 'jsonwebtoken';
+
 
 
 export const authenticateTokeng = (req, res, next) => {
@@ -314,9 +304,7 @@ export const changePasswordn = async (req, res) => {
         res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
     }
 };
-import bcrypt from 'bcryptjs';
-import User from '../../models/Auth/users'; 
-import jwt from 'jsonwebtoken';
+
 
 
 export const authenticateTokennnn = (req, res, next) => {
@@ -566,6 +554,6 @@ export const changePassworddd = async (req, res) => {
         res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
         console.error(error);
         res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
-        
+
     }
 };
