@@ -777,12 +777,12 @@ import {
   Radio,
   Table,
   Timeline,
-  Upload,
+  Upload
 } from "antd";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import {
   Mutation_Notification,
-  Query_notification,
+  Query_notification
 } from "../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
@@ -814,8 +814,9 @@ const OrdersDetali = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const { mutate: AddShipper } = Mutation_Shipper("ADD");
   const { data: shipperData } = useListAllShipper();
-
+  const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
   const handleSelectShipper = (shipperId: string) => {
+    setSelectedShipper(shipperId);
     if (!id) return;
     AddShipper(
       { orderId: id, shipperId },
@@ -825,7 +826,7 @@ const OrdersDetali = () => {
         },
         onError: () => {
           messageApi.error("Thêm shipper thất bại!");
-        },
+        }
       }
     );
   };
@@ -863,7 +864,7 @@ const OrdersDetali = () => {
       // Cập nhật trạng thái đơn hàng thành công
       await instance.post("/deliver-success", {
         orderId,
-        confirmationImage: imageUrl,
+        confirmationImage: imageUrl
       });
       handleStatusUpdate(4, data?.orderNumber);
       refetch();
@@ -885,9 +886,10 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
-      different: dataBody?.numberOrder,
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      different: dataBody?.numberOrder
     });
   }
   const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
@@ -901,7 +903,7 @@ const OrdersDetali = () => {
       userId: userId,
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.numberOrder,
+      different: dataBody?.numberOrder
     });
     console.log(dataBody.cancellationReason);
 
@@ -910,7 +912,7 @@ const OrdersDetali = () => {
   const reason = [
     "Người nhận không nghe máy",
     "Hoàn hàng",
-    "Đơn hàng quá 3 ngày",
+    "Đơn hàng quá 3 ngày"
   ];
   function giao_hang_that_bai(dataBody: {
     id_item: string | number;
@@ -922,7 +924,7 @@ const OrdersDetali = () => {
       userId: userId,
       receiver_id: data?.userId,
       message: `Người giao hàng đã giao hàng đơn hàng  ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.numberOrder,
+      different: dataBody?.numberOrder
     });
     console.log(dataBody.cancellationReason);
 
@@ -938,50 +940,50 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-          : status === 4
-            ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
-            : status === 5
-              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-              : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 4
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
+        : status === 5
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: message,
+      message: message
     });
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: status,
+        status: status
       });
       messageApi.open({
         type: "success",
         content:
           response.data.status === "6"
             ? "Đơn hàng đã được giao"
-            : "Cập nhật trạng thái đơn hàng thành công!",
+            : "Cập nhật trạng thái đơn hàng thành công!"
       });
       refetch();
     } catch (error) {
       messageApi.open({
         type: "error",
-        content: "Cập nhật trạng thái đơn hàng thất bại!",
+        content: "Cập nhật trạng thái đơn hàng thất bại!"
       });
     }
   };
   const cancellationRequested = data?.cancellationRequested;
   const dataSort = data?.items?.map((item: any) => ({
     key: item._id,
-    ...item,
+    ...item
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
     : "";
   const columns = [
     {
@@ -994,7 +996,7 @@ const OrdersDetali = () => {
           alt=""
           className="w-[80px] h-[80px] object-cover "
         />
-      ),
+      )
     },
     {
       title: "Tên Sản Phẩm",
@@ -1009,7 +1011,7 @@ const OrdersDetali = () => {
             Loại: {item?.color_item} - {item?.name_size}
           </p>
         </div>
-      ),
+      )
     },
     {
       title: "Giá Sản Phẩm",
@@ -1019,10 +1021,10 @@ const OrdersDetali = () => {
         <p className="">
           {item?.price_item.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
+      )
     },
     {
       title: "Số Lượng",
@@ -1030,7 +1032,7 @@ const OrdersDetali = () => {
       key: "quantity",
       render: (_: any, item: any) => (
         <p className="text-center">{item?.quantity}</p>
-      ),
+      )
     },
     {
       title: "Tổng Tiền",
@@ -1040,11 +1042,11 @@ const OrdersDetali = () => {
         <p>
           {(item?.total_price_item).toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
-    },
+      )
+    }
   ];
   if (!data) return <p>Loading...</p>;
 
@@ -1065,33 +1067,58 @@ const OrdersDetali = () => {
             Chi Tiết Đơn Hàng
           </h1>
         </div>
-        <div className="p-4">
-          <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
-          <div className="grid grid-cols-1 gap-4">
-            {shipperData?.map((shipper: any) => (
-              <div
-                key={shipper._id}
-                className="flex items-center bg-white p-4 rounded-lg shadow-md"
-              >
+        {data?.status == 2 ? (
+          <div className="p-4">
+            <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
+            <div className="grid grid-cols-1 gap-4">
+              {shipperData?.map((shipper: any) => (
+                <div
+                  key={shipper._id}
+                  className="flex items-center bg-white p-4 rounded-lg shadow-md"
+                >
+                  <img
+                    src={shipper.avatar}
+                    alt="Shipper Avatar"
+                    className="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                  <div className="flex-1">
+                    <p className="text-lg font-medium">{shipper.fullName}</p>
+                    <p className="text-sm text-gray-500">{shipper.phone}</p>
+                  </div>
+                  <button
+                    onClick={() => handleSelectShipper(shipper._id)}
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
+                      selectedShipper === shipper._id ? "bg-green-500" : ""
+                    }`}
+                  >
+                    {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          data?.status >= 2 && (
+            <div className="p-4">
+              <h2 className="text-xl font-semibold mb-4">Thông tin Shipper</h2>
+              <div className="flex items-center bg-white p-4 rounded-lg shadow-md">
                 <img
-                  src={shipper.avatar}
+                  src={data?.shipperId?.avatar}
                   alt="Shipper Avatar"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
                 <div className="flex-1">
-                  <p className="text-lg font-medium">{shipper.fullName}</p>
-                  <p className="text-sm text-gray-500">{shipper.phone}</p>
+                  <p className="text-lg font-medium">
+                    {data?.shipperId?.fullName}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {data?.shipperId?.phone}
+                  </p>
                 </div>
-                <button
-                  onClick={() => handleSelectShipper(shipper._id)} // Chọn shipper và gọi hàm xử lý
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                >
-                  Chọn
-                </button>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          )
+        )}
         <div className="my-6 shadow rounded bg-white">
           <div className="p-4 text-black font-semibold">
             Trạng thái đơn hàng
@@ -1196,7 +1223,7 @@ const OrdersDetali = () => {
                 {" "}
                 {data.totalPrice.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND",
+                  currency: "VND"
                 })}{" "}
               </span>
             </p>
@@ -1338,14 +1365,14 @@ const OrdersDetali = () => {
                 <p className="py-2 text-gray-800">
                   {data?.totalPrice.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
                 <p className="py-2 text-gray-800">0 đ</p>
                 <p className="py-2 text-[#ee4d2d] text-xl">
                   {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
               </div>
@@ -1390,7 +1417,7 @@ const OrdersDetali = () => {
                       id_item: data?._id,
                       action: "huy",
                       cancellationReason: selectedReason,
-                      numberOrder: data?.orderNumber,
+                      numberOrder: data?.orderNumber
                     })
                   }
                   okText="Từ chối"
@@ -1414,7 +1441,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: true,
                           numberOrder: data?.orderNumber,
-                          action: "xac_nhan",
+                          action: "xac_nhan"
                         })
                       }
                       okText="Xác nhận"
@@ -1432,7 +1459,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: false,
                           numberOrder: data?.orderNumber,
-                          action: "tu_choi",
+                          action: "tu_choi"
                         })
                       }
                       okText="Từ chối"
@@ -1447,7 +1474,15 @@ const OrdersDetali = () => {
                   <Popconfirm
                     title="Xác nhận đơn hàng?"
                     description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                    onConfirm={() => handleStatusUpdate(3, data?.orderNumber)}
+                    onConfirm={() => {
+                      if (!selectedShipper) {
+                        messageApi.error(
+                          "Vui lòng chọn shipper trước khi xác nhận!"
+                        );
+                        return;
+                      }
+                      handleStatusUpdate(3, data?.orderNumber); // Xác nhận khi đã có shipper
+                    }}
                     okText="Xác nhận"
                     cancelText="Không"
                   >
@@ -1498,7 +1533,7 @@ const OrdersDetali = () => {
                       id_item: data?._id,
                       action: "huy",
                       cancellationReason: selectedReason,
-                      numberOrder: data?.orderNumber,
+                      numberOrder: data?.orderNumber
                     })
                   }
                   okText="Xác Nhận"
@@ -1553,7 +1588,7 @@ const OrdersDetali = () => {
               name="confirmationImage"
               label="Ảnh Xác Nhận"
               rules={[
-                { required: true, message: "Vui lòng chọn ảnh xác nhận" },
+                { required: true, message: "Vui lòng chọn ảnh xác nhận" }
               ]}
             >
               <Upload
@@ -1578,7 +1613,7 @@ const OrdersDetali = () => {
                       width: "40%",
                       maxHeight: 200,
                       objectFit: "cover",
-                      border: "1px solid black",
+                      border: "1px solid black"
                     }}
                   />
                 </div>
