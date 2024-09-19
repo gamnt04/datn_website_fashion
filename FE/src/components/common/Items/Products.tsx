@@ -58,12 +58,12 @@ const Products = ({ items }: any) => {
       message.open({
         type: "warning",
         content:
-          "Hãy đăng nhập tài khoản của bạn để có thể thêm được sản phẩm yêu thích !!!"
+          "Hãy đăng nhập tài khoản của bạn để có thể thêm được sản phẩm yêu thích !!!",
       });
     } else {
       message.open({
         type: "success",
-        content: "Đã thêm sản phẩm vào danh mục yêu thích của bạn"
+        content: "Đã thêm sản phẩm vào danh mục yêu thích của bạn",
       });
       AddFavouriteProduct({ userId, productId });
     }
@@ -72,7 +72,7 @@ const Products = ({ items }: any) => {
   const handleRemoveFromFavorites = (productId: any) => {
     message.open({
       type: "success",
-      content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn"
+      content: "Đã Xóa sản phẩm khỏi danh mục yêu thích của bạn",
     });
     RemoveFavouriteProduct({ userId, productId });
   };
@@ -99,18 +99,22 @@ const Products = ({ items }: any) => {
       className="flex flex-col justify-between w-full gap-y-5"
       key={items._id}
     >
-      <div className="relative w-full group">
+      <div className="relative  w-full  border-gray-200 border rounded-xl group">
         <Link
           onClick={ScrollTop}
           to={`/shops/${items._id}`}
           className="h-full cursor-pointer"
         >
-          <img
-            className="w-full h-[250px] lg:h-[400px] object-cover bg-[#f3f3f3]"
-            loading="lazy"
-            src={items.image_product}
-            alt={items.name_product}
-          />
+          <div className="relative overflow-hidden border border-gray-300 rounded-t-xl group">
+            <div className="w-full h-[250px] lg:h-[400px] relative">
+              <img
+                className="w-full h-full object-cover rounded-t-xl bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform group-hover:scale-110"
+                loading="lazy"
+                src={items.image_product}
+                alt={items.name_product}
+              />
+            </div>
+          </div>
         </Link>
         {/* hover show icon cart */}
         <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
@@ -147,7 +151,7 @@ const Products = ({ items }: any) => {
             </button> */}
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center px-4 py-4 gap-y-2">
+        <div className="flex flex-col items-center justify-center  px-4 py-5  gap-y-2">
           <Link
             onClick={ScrollTop}
             to={`/shops/${items?._id}`}
@@ -170,7 +174,7 @@ const Products = ({ items }: any) => {
                 <span className="text-[#EB2606]">
                   {max?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND"
+                    currency: "VND",
                   })}
                 </span>
               ) : (
@@ -178,14 +182,14 @@ const Products = ({ items }: any) => {
                   <span className="text-[#EB2606]">
                     {min?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND"
+                      currency: "VND",
                     })}
                   </span>{" "}
                   -
                   <span className="text-[#EB2606]">
                     {max?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND"
+                      currency: "VND",
                     })}
                   </span>
                 </>
@@ -195,7 +199,7 @@ const Products = ({ items }: any) => {
             <span className="text-[#EB2606]">
               {items?.price_product?.toLocaleString("vi", {
                 style: "currency",
-                currency: "VND"
+                currency: "VND",
               })}
             </span>
           )}
