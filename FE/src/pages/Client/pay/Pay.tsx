@@ -17,19 +17,24 @@ import { nanoid } from "nanoid";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
+import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 
 const Pay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
+  console.log(user);
+
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
+
   const { data: auth } = List_Auth(userId);
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const { onSubmit, contextHolder, messageApi, isPending: loadingOrder } = Pay_Mutation();
-  
+  const { mutate } = Mutation_Notification('Add');
+
   useEffect(() => {
     if (!userId) {
       routing('/login')
@@ -37,7 +42,7 @@ const Pay = () => {
     if (item_order_checkked?.length < 1) {
       routing('/login')
     }
-  }, [userId,routing])
+  }, [userId, routing])
   useEffect(() => {
     if (auth && auth?.address) {
       const defaultAddress = auth?.address?.find((item: any) => item.checked === true);
@@ -112,6 +117,7 @@ const Pay = () => {
       totalPrice: totalPrice,
       email: user?.user?.email,
     };
+
     try {
       if (data_form.payment === "VNPAY") {
         const orderId = JSON.parse(sessionStorage.getItem('item_order') as string);
@@ -127,6 +133,11 @@ const Pay = () => {
       } else {
         onSubmit(item_order);
       }
+      mutate({
+        userId: userId,
+        receiver_id: "duonghainam03012004@gmail.com",
+        message: `Người dùng ${user?.user?.userName} đã đặt hàng`,
+      });
     } catch (error) {
       console.error("Order Creation Error: ", error);
       messageApi.open({
