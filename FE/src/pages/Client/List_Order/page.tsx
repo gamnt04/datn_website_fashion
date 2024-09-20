@@ -56,6 +56,7 @@ export default function List_order() {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const account = user?.user;
+
   const navi = useNavigate();
   const { mutate: add } = Mutation_Cart("ADD");
   const [paymentPending, setPaymentPending] = useState(false);
@@ -106,8 +107,6 @@ export default function List_order() {
     },
     enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
   });
-  console.log(dataReviewById);
-
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
       contentReview: string;
@@ -267,7 +266,7 @@ export default function List_order() {
     id_user: userId,
     page: 1,
     limit: 20,
-    status: +(status_order || 1),
+    status: +(status_order || 0),
   };
   const menuItems = [
     "Tất Cả",
@@ -449,13 +448,19 @@ export default function List_order() {
                             </div>
                           </div>
                         }
-                        onConfirm={() =>
+                        onConfirm={() => {
+                          if (!selectedReason) {
+                            message.warning("Vui lòng chọn lý do hủy đơn hàng")
+                            return
+                          }
                           huy_don({
                             id_item: items?._id,
                             action: "huy",
                             cancellationReason: selectedReason,
                             orderNumber: items?.orderNumber,
                           })
+                        }
+
                         }
                         // onCancel={cancel}
                         okText="Có "
@@ -538,14 +543,6 @@ export default function List_order() {
                     <Button
                       className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
                       disabled
-                      // onClick={() => (
-                      //   mutate({ id_item: items._id }),
-                      //   dispathNotification?.mutate({
-                      //     userId: userId,
-                      //     receiver_id: userId,
-                      //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                      //   })
-                      // )}
                     >
                       Đã Nhận Hàng
                     </Button>
@@ -556,8 +553,8 @@ export default function List_order() {
                         mutate({ id_item: items._id }),
                         dispathNotification?.mutate({
                           userId: userId,
-                          receiver_id: userId,
-                          message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                          receiver_id: 'duonghainam03012004@gmail.com',
+                          message: `Người dùng ${account?.userName} đã nhận đơn hàng thành công!`,
                         })
                       )}
                     >
@@ -657,12 +654,12 @@ export default function List_order() {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
                                           changedValues[
-                                            `rating_review_${index}`
+                                          `rating_review_${index}`
                                           ]
                                         ) {
                                           setRating(
                                             changedValues[
-                                              `rating_review_${index}`
+                                            `rating_review_${index}`
                                             ]
                                           );
                                         }
@@ -674,7 +671,7 @@ export default function List_order() {
                                           review
                                             ? review.rating_review
                                             : rating[productGroup.productId] ||
-                                              0
+                                            0
                                         }
                                         rules={[
                                           {
@@ -733,8 +730,8 @@ export default function List_order() {
                                           review && review.image_review
                                             ? review.image_review
                                             : fileList[
-                                                productGroup.productId
-                                              ]?.map((file) => file.url) || []
+                                              productGroup.productId
+                                            ]?.map((file) => file.url) || []
                                         }
                                       >
                                         <Upload
@@ -742,16 +739,16 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
-                                                  (url, idx) => ({
-                                                    uid: `${idx}`,
-                                                    name: `image_${idx}`,
-                                                    status: "done",
-                                                    url: url,
-                                                  })
-                                                )
+                                                (url, idx) => ({
+                                                  uid: `${idx}`,
+                                                  name: `image_${idx}`,
+                                                  status: "done",
+                                                  url: url,
+                                                })
+                                              )
                                               : fileList[
-                                                  productGroup.productId
-                                                ] || []
+                                              productGroup.productId
+                                              ] || []
                                           }
                                           onChange={handleImageChange}
                                           onPreview={handlePreview}
@@ -884,7 +881,7 @@ export default function List_order() {
                       cancelText="Không"
                     >
                       <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại222
+                        Mua Lại
                       </Button>
                     </Popconfirm>
                   )}

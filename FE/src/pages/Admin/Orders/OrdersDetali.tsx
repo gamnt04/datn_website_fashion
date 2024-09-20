@@ -794,11 +794,12 @@ import { useListAllShipper } from "../../../common/hooks/Shipper/querry_shipper"
 const OrdersDetali = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
+  const role = user?.user?.role;
   const [messageApi, contextHolder] = message.useMessage();
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch } = Query_Orders(id);
-  const { data: no } = Query_notification();
+  const { data: no } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
   const { mutate: cancel } = useOrderMutations(
@@ -886,9 +887,8 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.numberOrder
     });
   }
@@ -940,12 +940,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thành công!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Đã giao đơn hàng ${code_order} thành công!. Vui lòng ấn đã nhận hàng!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : status === 6
+                ? `Đã giao đơn hàng ${code_order} thành công!`
+                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -978,12 +980,12 @@ const OrdersDetali = () => {
   }));
   const formattedDate = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    })
     : "";
   const columns = [
     {
@@ -1087,9 +1089,8 @@ const OrdersDetali = () => {
                   </div>
                   <button
                     onClick={() => handleSelectShipper(shipper._id)}
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
-                      selectedShipper === shipper._id ? "bg-green-500" : ""
-                    }`}
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                      }`}
                   >
                     {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
@@ -1130,7 +1131,7 @@ const OrdersDetali = () => {
                   Đã hủy
                 </p>
                 {no?.notifications.map((item: any) => {
-                  if (item?.different === data?.orderNumber) {
+                  if (item?.different == data?.orderNumber) {
                     return <p>Lý do: {item?.message}</p>;
                   }
                 })}
@@ -1140,7 +1141,9 @@ const OrdersDetali = () => {
                 <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
                   Giao Hàng thất bại
                 </p>
-                {no?.notifications.map((item: any) => {
+                {no?.notifications?.map((item: any) => {
+                  console.log(item);
+
                   if (item?.different === data?.orderNumber) {
                     return <p>Lý do: {item?.message}</p>;
                   }
@@ -1186,7 +1189,7 @@ const OrdersDetali = () => {
                       </p>
                     </Timeline.Item>
                   )} */}
-                  {data?.status >= 6 && data?.status < 4 && (
+                  {data?.status >= 6 && (
                     <Timeline.Item color="green">
                       <p className="ant-typography ant-typography-success ant-typography-bold">
                         Hoàn thành {formattedDate}
@@ -1412,7 +1415,11 @@ const OrdersDetali = () => {
                       </div>
                     </div>
                   }
-                  onConfirm={() =>
+                  onConfirm={() => {
+                    if (!selectedReason) {
+                      messageApi.warning("Vui lòng chọn lý do hủy!");
+                      return
+                    }
                     huy_don({
                       id_item: data?._id,
                       action: "huy",
@@ -1420,6 +1427,8 @@ const OrdersDetali = () => {
                       numberOrder: data?.orderNumber
                     })
                   }
+                  }
+
                   okText="Từ chối"
                   cancelText="Không"
                 >
