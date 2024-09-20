@@ -9,7 +9,8 @@ const DropdownNotification = () => {
   // console.log(data);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const data = Query_notification(userId)
+  const { data } = Query_notification(userId)
+  console.log(data?.notifications?.length);
 
   // if (isLoading) return <div>Loading...</div>
   return (
@@ -52,7 +53,7 @@ const DropdownNotification = () => {
               </h5>
             </div>
             <ul className="flex max-h-[300px] flex-col overflow-y-auto">
-              {data?.data.notifications?.map((orders: any) => {
+              {data?.notifications?.map((orders: any) => {
                 return (
                   <li key={orders?._id}>
                     <div

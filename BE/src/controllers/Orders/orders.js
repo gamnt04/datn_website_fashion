@@ -48,9 +48,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`,
       },
       totalPrice,
     });
@@ -176,9 +175,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`,
         },
         totalPrice,
       });
@@ -581,7 +579,7 @@ export async function get_orders_client(req, res) {
   }
 
   if (_status) {
-    query.status = _status; 
+    query.status = _status;
   }
 
   try {
@@ -596,7 +594,7 @@ export async function get_orders_client(req, res) {
     return res.status(StatusCodes.OK).json({
       message: "Hoàn thành!",
       data,
-      totalDocs: data.totalDocs, 
+      totalDocs: data.totalDocs,
       totalPages: data.totalPages,
     });
   } catch (error) {

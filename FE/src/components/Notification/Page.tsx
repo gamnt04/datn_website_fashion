@@ -5,7 +5,9 @@ import useLocalStorage from "../../common/hooks/Storage/useStorage";
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
-    const { data } = Query_notification(userId)
+    const role = user?.user?.role;
+
+    const { data } = Query_notification(userId, role);
 
     return (
         <div className="space-y-4 text-sm">
