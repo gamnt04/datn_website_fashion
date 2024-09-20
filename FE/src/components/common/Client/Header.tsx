@@ -11,6 +11,8 @@ import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts
 import { message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import logo from "../../../assets/Images/Logo/logo white.png";
+import { AiOutlineBell } from "react-icons/ai";
+import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
@@ -28,14 +30,13 @@ const Header = () => {
   const ref_login = useRef<HTMLAnchorElement>(null);
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
-
-  // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const account = user?.user?._id;
   const { data: Favouritedata } = useListFavouriteProducts(account);
-
   const { data } = List_Cart(account);
+  const role = user?.user?.role;
+  const { data: notification } = Query_notification(account, role)
   const count_item_cart =
     data?.products?.filter((item: any) => item?.productId) ?? [];
   useEffect(() => {
@@ -44,14 +45,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -270,7 +271,21 @@ const Header = () => {
                 </div>
               </>
             )}
-
+            <Link
+              className="group *:duration-300 relative py-1"
+              onClick={ScrollTop}
+              to='profile/notification'
+            >
+              {notification?.notifications && notification?.notifications?.length > 0 && (
+                <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
+                  {notification?.notifications?.length}
+                </span>
+              )}
+              <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
+                <AiOutlineBell />
+                {/* <MiniCart /> */}
+              </div>
+            </Link>
             {/* option / menu */}
             <div
               onClick={ScrollTop}
