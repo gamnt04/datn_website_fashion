@@ -15,14 +15,12 @@ import Routes_Attribute from "./routers/attribute";
 import Routes_review from "./routers/review";
 import Router_Notification from "./routers/notification";
 import Route_Shipper from "./routers/shipper";
-
+import Routes_voucher from "./routers/voucher";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-
 
 connectDB(process.env.DB_URL);
 
@@ -39,6 +37,7 @@ app.use("/api/v1", Routes_blog);
 app.use("/api/v1", Routes_payments);
 app.use("/api/v1", Routes_review);
 app.use("/api/v1", Route_Shipper);
+app.use("/api/v1", Routes_voucher);
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;
   const responseCode = req.query.vnp_ResponseCode;
