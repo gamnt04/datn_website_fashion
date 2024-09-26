@@ -1,15 +1,14 @@
-import React, { useState, useRef, useMemo, useContext } from "react";
-import JoditEditor from "jodit-react";
-import axios from "axios";
-import parse from "html-react-parser";
 import { Button, message } from "antd";
+import axios from "axios";
+import JoditEditor from "jodit-react";
+import { useMemo, useRef, useState } from "react";
+import { AiFillBackward } from "react-icons/ai";
+import LoadingOverlay from "react-loading-overlay-ts";
 import { Link, useNavigate } from "react-router-dom";
 import slugify from "react-slugify";
-import LoadingOverlay from "react-loading-overlay-ts";
-import { AiFillBackward } from "react-icons/ai";
 import {
   CheckAuths,
-  getToken,
+  getToken
 } from "../../../common/hooks/Auth/useAuthorization";
 const BlogAdd = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -41,8 +40,8 @@ const BlogAdd = () => {
 
         const response = await axios.post(api, formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
-          },
+            "Content-Type": "multipart/form-data"
+          }
         });
         // console.log(response.data.secure_url);
         return { originalSrc: src, newSrc: response.data.secure_url };
@@ -64,13 +63,13 @@ const BlogAdd = () => {
           {
             content: contentNew,
             slug: slugify(h1Element.textContent),
-            author: user.user.userName,
+            author: user.user.userName
           },
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+              Authorization: `Bearer ${token}`
+            }
           }
         );
         message.success("Tạo mới bài viết thành công");
@@ -90,8 +89,8 @@ const BlogAdd = () => {
       readonly: false,
       placeholder: "Viết Blog ...",
       uploader: {
-        insertImageAsBase64URI: true,
-      },
+        insertImageAsBase64URI: true
+      }
     }),
     []
   );
@@ -118,8 +117,8 @@ const BlogAdd = () => {
                 position: "fixed",
                 width: "100vw",
                 height: "100vh",
-                zIndex: 1000,
-              }),
+                zIndex: 1000
+              })
             }}
           >
             <JoditEditor

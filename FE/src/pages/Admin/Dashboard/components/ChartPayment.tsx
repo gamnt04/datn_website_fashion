@@ -1,10 +1,7 @@
 import { ApexOptions } from "apexcharts";
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import {
-  useOrdersOfMonth,
-  useOrdersOfWeek
-} from "../../../../common/hooks/Order/querry_Order";
+import { useOrdersOfMonth } from "../../../../common/hooks/Order/querry_Order";
 
 interface ChartThreeState {
   series: number[];

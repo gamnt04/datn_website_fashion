@@ -12,7 +12,7 @@ export async function list_order(dataClient: any) {
     return error;
   }
 }
-export const GetOrderBuyNumberOrNumberPhone = async (searchOrder) => {
+export const GetOrderBuyNumberOrNumberPhone = async (searchOrder: string) => {
   try {
     const { data } = await instance.post("/orders/search", { searchOrder });
     return data;

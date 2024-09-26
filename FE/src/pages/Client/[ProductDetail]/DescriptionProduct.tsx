@@ -1,10 +1,5 @@
-import { useState, useEffect } from "react";
-import { IProduct } from "../../../common/interfaces/Product";
-import { Query_Products } from "../../../common/hooks/Products/Products";
-import { Link, useParams } from "react-router-dom";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import {
   Button,
   Form,
@@ -19,10 +14,14 @@ import {
   Upload,
   UploadFile,
   UploadProps,
-  message,
+  message
 } from "antd";
-import { AiFillStar, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Query_Products } from "../../../common/hooks/Products/Products";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { IProduct } from "../../../common/interfaces/Product";
+import instance from "../../../configs/axios";
 
 type FieldType = {
   contentReview?: string;
@@ -56,7 +55,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     return initialImages.map((url, index) => ({
       uid: index.toString(),
       name: `image-${index}`,
-      url,
+      url
     }));
   });
 
@@ -99,7 +98,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         uid: index.toString(),
         url,
         name: `image-${index}`, // Có thể thêm tên tùy ý
-        status: "done", // Đánh dấu rằng ảnh đã được tải lên trước đó
+        status: "done" // Đánh dấu rằng ảnh đã được tải lên trước đó
       })
     );
 
@@ -113,7 +112,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         form.setFieldsValue({
           contentReview: review.contentReview,
           image_review: review.image_review || [], // Cập nhật hình ảnh
-          rating_review: review.rating_review || "",
+          rating_review: review.rating_review || ""
         });
       }
     }
@@ -135,13 +134,13 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     },
     onError: () => {
       message.error("Xóa thất bại");
-    },
+    }
   });
 
   const handleRatingChange = (reviewId, rate) => {
     setRating((prevRating) => ({
       ...prevRating,
-      [reviewId]: rate, // Lưu giá trị rating tương ứng với mỗi review
+      [reviewId]: rate // Lưu giá trị rating tương ứng với mỗi review
     }));
   };
 
@@ -152,7 +151,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       orderId,
       contentReview,
       image_review,
-      rating_review,
+      rating_review
     }: {
       reviewId: string;
       productId: string;
@@ -166,8 +165,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         { contentReview, image_review, rating_review }, // Cập nhật nội dung và hình ảnh
         {
           headers: {
-            "Content-Type": "application/json",
-          },
+            "Content-Type": "application/json"
+          }
         }
       );
       return data;
@@ -179,7 +178,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     },
     onError: () => {
       message.error("Cập nhật thất bại");
-    },
+    }
   });
 
   const handleEditClick = (
@@ -225,7 +224,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     try {
       const response = await fetch(api, {
         method: "POST",
-        body: formData,
+        body: formData
       });
 
       if (!response.ok) {
@@ -239,8 +238,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       form.setFieldsValue({
         image_review: [
           ...(form.getFieldValue("image_review") || []),
-          result.secure_url,
-        ],
+          result.secure_url
+        ]
       });
 
       message.success("Tải lên thành công!");
@@ -274,7 +273,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         productId,
         orderId,
         image_review: values.image_review || [], // Thêm image_review vào payload
-        rating_review: values.rating_review || 0,
+        rating_review: values.rating_review || 0
       });
     }
   };
@@ -358,7 +357,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                   deleteReview({
                                     reviewId: review._id,
                                     productId: review.productId,
-                                    orderId: review.orderId,
+                                    orderId: review.orderId
                                   })
                                 }
                                 okText="Có"
@@ -394,7 +393,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             initialValues={{
                               contentReview: review.contentReview,
                               rating_review: review.rating_review || 0, // Đặt mặc định là 0 nếu không có giá trị
-                              image_review: review.image_review,
+                              image_review: review.image_review
                             }}
                           >
                             {/* Chỉnh sửa rating */}
@@ -408,7 +407,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                   } // Lấy giá trị rating từ form
                                   onChange={(rate) => {
                                     form.setFieldsValue({
-                                      rating_review: rate,
+                                      rating_review: rate
                                     }); // Cập nhật giá trị rating
                                     handleRatingChange(review._id, rate); // Gọi hàm xử lý khi người dùng thay đổi rating
                                   }}
@@ -435,7 +434,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                 customRequest={async ({
                                   file,
                                   onSuccess,
-                                  onError,
+                                  onError
                                 }) => {
                                   const formData = new FormData();
                                   formData.append("file", file);
@@ -445,7 +444,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                   try {
                                     const response = await fetch(api, {
                                       method: "POST",
-                                      body: formData,
+                                      body: formData
                                     });
                                     const result = await response.json();
 
@@ -471,8 +470,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                       form.setFieldsValue({
                                         image_review: [
                                           ...currentImages,
-                                          result.secure_url,
-                                        ],
+                                          result.secure_url
+                                        ]
                                       });
                                     }
                                   } catch (error) {
@@ -549,7 +548,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                         width: "100%",
                                         height: "100%",
                                         objectFit: "cover",
-                                        borderRadius: "8px",
+                                        borderRadius: "8px"
                                       }}
                                     />
                                   </div>
