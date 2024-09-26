@@ -1,13 +1,10 @@
-import { CloseOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, Space, Typography } from "antd";
-import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Image, Upload } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { Button, Form, Image, Input, Upload } from "antd";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
-import { IOrder } from "../../../common/interfaces/Orders";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -40,7 +37,7 @@ const Layout_Review = ({ dataProps }: any) => {
               price_item_attr: j?.price_item,
               image: j?.productId?.image_product,
               name: j?.productId?.name_product,
-              _id: orderId,
+              _id: orderId
             });
           }
         }
@@ -119,7 +116,7 @@ const Layout_Review = ({ dataProps }: any) => {
                     visible: previewOpen,
                     onVisibleChange: (visible) => setPreviewOpen(visible),
                     afterOpenChange: (visible) =>
-                      !visible && setPreviewImage(""),
+                      !visible && setPreviewImage("")
                   }}
                   src={previewImage}
                 />

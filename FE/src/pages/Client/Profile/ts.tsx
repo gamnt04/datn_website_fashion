@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import instance from "../../../configs/axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { useNavigate, useRoutes } from "react-router-dom";
+import instance from "../../../configs/axios";
 
 const Profile = () => {
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [user, setUser] = useLocalStorage("user", {});
+  // const [avatarFile, setAvatarFile] = useState(null);
+  // const [user, setUser] = useLocalStorage("user", {});
+  const [user] = useLocalStorage("user", {});
   const [profileInfo, setProfileInfo] = useState({
     userName: "",
     fullName: "",
     email: "",
     phoneNumber: "",
     birthDate: "",
-    avatar: "",
+    avatar: ""
   });
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const Profile = () => {
           email: userData.email || "",
           phoneNumber: userData.phone || "",
           birthDate: userData.birthDate || "",
-          avatar: userData.avatar || "",
+          avatar: userData.avatar || ""
         });
       } else {
         console.error("Không có dữ liệu người dùng trả về từ backend");
@@ -45,7 +46,7 @@ const Profile = () => {
     const { name, value } = e.target;
     setProfileInfo({
       ...profileInfo,
-      [name]: value,
+      [name]: value
     });
   };
   const routing = useNavigate();

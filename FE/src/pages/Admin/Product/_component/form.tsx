@@ -1,15 +1,14 @@
-import { Button, Checkbox, FormProps, Input, Select, Upload } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, FormProps, Select, Upload } from "antd";
+import { Loader } from "lucide-react";
+import { useEffect, useState } from "react";
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { Form } from "antd";
-import { IAttribute } from "../../../../common/interfaces/Product";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { ICategory } from "../../../../common/interfaces/Category";
-import useHookForm from "../../../../common/hooks/form/My_form";
-import { useEffect, useState } from "react";
-import { Loader } from "lucide-react";
-import { Filed_form } from "./filed_form";
 import { useCategoryQuery } from "../../../../common/hooks/Category/useCategoryQuery";
+import useHookForm from "../../../../common/hooks/form/My_form";
+import { ICategory } from "../../../../common/interfaces/Category";
+import { IAttribute } from "../../../../common/interfaces/Product";
+import { Filed_form } from "./filed_form";
 
 type FieldType = {
   name_product: string;
@@ -39,7 +38,7 @@ const Form_Item = ({ mode }: any) => {
     handleImageChange,
     handleGalleryChange,
     loading,
-    data_one_item,
+    data_one_item
   } = useHookForm({ mode });
 
   const { data, refetch } = useCategoryQuery();
@@ -75,8 +74,8 @@ const Form_Item = ({ mode }: any) => {
         status: "done",
         url:
           data_one_item?.data?.product?.image_product &&
-          data_one_item?.data?.product?.image_product,
-      },
+          data_one_item?.data?.product?.image_product
+      }
     ];
     data_one_item?.data?.product?.gallery_product?.map(
       (uri_gallery: string | undefined, index: number) => {
@@ -84,7 +83,7 @@ const Form_Item = ({ mode }: any) => {
           uid: index,
           name: "image.png",
           status: "done",
-          url: uri_gallery && uri_gallery,
+          url: uri_gallery && uri_gallery
         });
       }
     );
@@ -96,8 +95,8 @@ const Form_Item = ({ mode }: any) => {
     ...data_one_item?.data?.product,
     attributes: initialAttributes.map((attr: IAttribute) => ({
       ...attr,
-      size: attr.size || [{}],
-    })),
+      size: attr.size || [{}]
+    }))
   };
 
   const onFormValuesChange = () => {
@@ -143,9 +142,9 @@ const Form_Item = ({ mode }: any) => {
                     {
                       required: true,
                       message: "Tên sản phẩm bắt buộc nhập!",
-                      whitespace: true,
-                    },
-                  ],
+                      whitespace: true
+                    }
+                  ]
                 }}
               />
             </div>
@@ -161,8 +160,8 @@ const Form_Item = ({ mode }: any) => {
                   {
                     required: true,
                     message: "Danh mục sản phẩm bắt buộc chọn!",
-                    whitespace: true,
-                  },
+                    whitespace: true
+                  }
                 ]}
               >
                 <Select
@@ -170,7 +169,7 @@ const Form_Item = ({ mode }: any) => {
                   allowClear
                   options={data?.map((category: ICategory) => ({
                     value: category._id,
-                    label: category.name_category,
+                    label: category.name_category
                   }))}
                 ></Select>
               </Form.Item>
@@ -186,7 +185,7 @@ const Form_Item = ({ mode }: any) => {
                     ruler_field: [
                       {
                         required: true,
-                        message: "Giá sản phẩm bắt buộc nhập!",
+                        message: "Giá sản phẩm bắt buộc nhập!"
                       },
                       {
                         type: "number",
@@ -194,10 +193,10 @@ const Form_Item = ({ mode }: any) => {
                         message: "Giá sản phẩm phải là số dương!",
                         transform(value: number) {
                           return Number(value);
-                        },
-                      },
+                        }
+                      }
                     ],
-                    action: "price",
+                    action: "price"
                   }}
                 />
                 <label className="text-[#1C2434] font-medium text-sm">
@@ -209,7 +208,7 @@ const Form_Item = ({ mode }: any) => {
                     ruler_field: [
                       {
                         required: true,
-                        message: "Số lượng sản phẩm bắt buộc nhập!",
+                        message: "Số lượng sản phẩm bắt buộc nhập!"
                       },
                       {
                         type: "number",
@@ -217,10 +216,10 @@ const Form_Item = ({ mode }: any) => {
                         message: "Số lượng sản phẩm phải là số dương!",
                         transform(value: number) {
                           return Number(value);
-                        },
-                      },
+                        }
+                      }
                     ],
-                    action: "price",
+                    action: "price"
                   }}
                 />
               </>
@@ -232,7 +231,7 @@ const Form_Item = ({ mode }: any) => {
             <Filed_form
               props={{
                 name_field: "description_product",
-                action: "textarea",
+                action: "textarea"
               }}
             />
             <Form.List
@@ -262,10 +261,10 @@ const Form_Item = ({ mode }: any) => {
                             ruler_field: [
                               {
                                 required: true,
-                                message: "Vui lòng nhập màu sắc!",
-                              },
+                                message: "Vui lòng nhập màu sắc!"
+                              }
                             ],
-                            restField: restField,
+                            restField: restField
                           }}
                         />
                         <Form.List name={[name, "size"]} initialValue={[{}]}>
@@ -296,7 +295,7 @@ const Form_Item = ({ mode }: any) => {
                                           className=" mt-2 h-[40px] max-w-[200px] text-[#1C2434] border-gray-600 !outline-none "
                                           options={sizes.map((size) => ({
                                             label: size,
-                                            value: size,
+                                            value: size
                                           }))}
                                           placeholder="Chọn kích cỡ"
                                         />
@@ -311,12 +310,12 @@ const Form_Item = ({ mode }: any) => {
                                         props={{
                                           name_field: [
                                             sizeName,
-                                            "stock_attribute",
+                                            "stock_attribute"
                                           ],
                                           ruler_field: [
                                             {
                                               required: true,
-                                              message: "Số lượng là bắt buộc!",
+                                              message: "Số lượng là bắt buộc!"
                                             },
                                             {
                                               type: "number",
@@ -325,10 +324,10 @@ const Form_Item = ({ mode }: any) => {
                                                 "Số lượng phải là số dương!",
                                               transform(value: number) {
                                                 return Number(value);
-                                              },
-                                            },
+                                              }
+                                            }
                                           ],
-                                          restField: restSizeField,
+                                          restField: restSizeField
                                         }}
                                       />
                                     </div>
@@ -342,13 +341,13 @@ const Form_Item = ({ mode }: any) => {
                                         props={{
                                           name_field: [
                                             sizeName,
-                                            "price_attribute",
+                                            "price_attribute"
                                           ],
                                           ruler_field: [
                                             {
                                               required: true,
                                               message:
-                                                "Giá sản phẩm bắt buộc nhập!",
+                                                "Giá sản phẩm bắt buộc nhập!"
                                             },
                                             {
                                               type: "number",
@@ -357,10 +356,10 @@ const Form_Item = ({ mode }: any) => {
                                                 "Giá sản phẩm phải là số dương!",
                                               transform(value: number) {
                                                 return Number(value);
-                                              },
-                                            },
+                                              }
+                                            }
                                           ],
-                                          restField: restSizeField,
+                                          restField: restSizeField
                                         }}
                                       />
                                     </div>
@@ -418,13 +417,13 @@ const Form_Item = ({ mode }: any) => {
                 <Form.Item<FieldType>
                   name="image_product"
                   initialValue={{
-                    ...data_one_item?.data?.product?.image_product,
+                    ...data_one_item?.data?.product?.image_product
                   }}
                   rules={[
                     {
                       required: true,
-                      message: "Ảnh sản phẩm là bắt buộc!",
-                    },
+                      message: "Ảnh sản phẩm là bắt buộc!"
+                    }
                   ]}
                 >
                   <Upload
@@ -450,8 +449,8 @@ const Form_Item = ({ mode }: any) => {
                   rules={[
                     {
                       required: true,
-                      message: "Bộ sưu tập sản phẩm là bắt buộc!",
-                    },
+                      message: "Bộ sưu tập sản phẩm là bắt buộc!"
+                    }
                   ]}
                 >
                   <Upload

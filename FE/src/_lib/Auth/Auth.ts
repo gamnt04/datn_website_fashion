@@ -11,7 +11,7 @@ export const list_Auth = async () => {
 export const Search_Auth = async (searchQuery: any) => {
   try {
     const { data } = await instance.get(`/auths/search`, {
-      params: { _search: searchQuery },
+      params: { _search: searchQuery }
     });
     return data;
   } catch (error) {
@@ -61,10 +61,10 @@ export async function set_default_address(item: any) {
     return error;
   }
 }
-export const getUserByUsername = async (searchUser) => {
+export const getUserByUsername = async (searchUser: string) => {
   try {
     const { data } = await instance.post("/auth/search", {
-      searchUser,
+      searchUser
     });
     return data;
   } catch (error) {

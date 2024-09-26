@@ -46,7 +46,6 @@
 //     throw error;
 //   }
 // };
-import { IProduct } from "../../common/interfaces/Product";
 import instance from "../../configs/axios";
 
 export const GetAllFavouriteProducts = async (userId: string) => {
