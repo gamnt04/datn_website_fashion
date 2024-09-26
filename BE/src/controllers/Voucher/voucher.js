@@ -36,3 +36,16 @@ export const addVoucher = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const deleteVoucher = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedVoucher = await Voucher.findByIdAndDelete(id);
+    if (!deletedVoucher)
+      return res.status(404).json({ message: "Không tìm thấy mã giảm giá" });
+    res.json({ message: "Xóa mã giảm giá thành công" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
