@@ -1,12 +1,12 @@
-import React, { useState, useRef, useMemo, useEffect } from "react";
-import JoditEditor from "jodit-react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
 import { Button, message } from "antd";
+import axios from "axios";
+import JoditEditor from "jodit-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LoadingOverlay from "react-loading-overlay-ts";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   CheckAuths,
-  getToken,
+  getToken
 } from "../../../common/hooks/Auth/useAuthorization";
 
 const BlogEdit = () => {
@@ -58,8 +58,8 @@ const BlogEdit = () => {
 
         const response = await axios.post(api, formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
-          },
+            "Content-Type": "multipart/form-data"
+          }
         });
         return { originalSrc: src, newSrc: response.data.secure_url };
       });
@@ -81,13 +81,13 @@ const BlogEdit = () => {
         `http://localhost:2004/api/v1/update_blog/${id}`,
         {
           content: contentNew,
-          author: user.user.userName,
+          author: user.user.userName
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       message.success("Cập nhật blog thành công");
@@ -129,11 +129,11 @@ const BlogEdit = () => {
         "link",
         "align",
         "undo",
-        "redo",
+        "redo"
       ],
       uploader: {
-        insertImageAsBase64URI: true,
-      },
+        insertImageAsBase64URI: true
+      }
     }),
     []
   );
@@ -150,8 +150,8 @@ const BlogEdit = () => {
             position: "fixed",
             width: "100vw",
             height: "100vh",
-            zIndex: 1000,
-          }),
+            zIndex: 1000
+          })
         }}
       >
         <JoditEditor
@@ -165,7 +165,7 @@ const BlogEdit = () => {
         />
         <div>
           <Button
-            type="primary mt-10"
+            type="primary"
             onClick={onSubmit}
             disabled={content === initialContentState}
           >

@@ -12,7 +12,7 @@ interface CardDataStatsProps {
 const CardDataStats: React.FC<CardDataStatsProps> = ({
   title,
   total,
-  rate,
+  // rate,
   levelUp,
   levelDown,
   children

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import MenuShop from "./MenuShop";
-import Products_Shop from "./Products";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ArrangeFilter from "./Filter/ArrangeFilter";
+import MenuShop from "./MenuShop";
+import Products_Shop from "./Products";
 
 const IndexShops = () => {
   const navigate = useNavigate();

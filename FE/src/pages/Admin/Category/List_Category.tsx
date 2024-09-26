@@ -1,32 +1,31 @@
-import React, { useState } from "react";
 import {
   Button,
-  message,
-  Popconfirm,
-  Table,
-  Pagination,
-  Switch,
-  Input,
-  Space,
   Checkbox,
+  Input,
+  message,
+  Pagination,
+  Popconfirm,
+  Space,
+  Switch,
+  Table
 } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { ICategory } from "../../../common/interfaces/Category";
-import Loading from "../../../components/base/Loading/Loading";
-import CategoryUpdate from "./update";
-import { ColumnsType } from "antd/es/table";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import UpdateComponent from "./Create";
-import instance from "../../../configs/axios";
+import { ColumnsType } from "antd/es/table";
+import { format } from "date-fns";
+import { FaDeleteLeft } from "react-icons/fa6";
+import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 import {
   useCategoryQuery,
-  useSearchCategoryByName,
+  useSearchCategoryByName
 } from "../../../common/hooks/Category/useCategoryQuery";
-import { DeleteOutlined } from "@ant-design/icons";
-import { FaDeleteLeft } from "react-icons/fa6";
-import { format } from "date-fns";
-import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
+import { ICategory } from "../../../common/interfaces/Category";
+import Loading from "../../../components/base/Loading/Loading";
+import instance from "../../../configs/axios";
+import UpdateComponent from "./Create";
+import CategoryUpdate from "./update";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
@@ -43,7 +42,7 @@ const List_Category: React.FC = () => {
     ? (searchName && searchData ? searchData : data).map(
         (category: ICategory) => ({
           key: category._id,
-          ...category,
+          ...category
         })
       )
     : [];
@@ -67,7 +66,7 @@ const List_Category: React.FC = () => {
     },
     onError: (error) => {
       messageApi.error(error.message || "Xóa danh mục không thành công");
-    },
+    }
   });
 
   const mutation = useMutation({
@@ -89,7 +88,7 @@ const List_Category: React.FC = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    },
+    }
   });
 
   const formatDate = (dateString: any) => {
@@ -119,7 +118,7 @@ const List_Category: React.FC = () => {
     {
       key: "checkbox",
       title: <Checkbox />,
-      render: (_: any, cate: ICategory) => <Checkbox />,
+      render: (_: any, cate: ICategory) => <Checkbox />
     },
     {
       key: "image_category",
@@ -130,7 +129,7 @@ const List_Category: React.FC = () => {
           alt={record.name_category}
           style={{ width: 80, height: 80, objectFit: "cover" }}
         />
-      ),
+      )
     },
     {
       key: "name_category",
@@ -152,19 +151,19 @@ const List_Category: React.FC = () => {
         >
           {text}
         </a>
-      ),
+      )
     },
     {
       key: "createdAt",
       title: "Ngày Tạo",
       dataIndex: "createdAt",
-      render: (_: any, product: ICategory) => formatDate(product.createdAt),
+      render: (_: any, product: ICategory) => formatDate(product.createdAt)
     },
     {
       key: "updatedAt",
       title: "Ngày Sửa",
       dataIndex: "updatedAt",
-      render: (_: any, product: ICategory) => formatDate(product.updatedAt),
+      render: (_: any, product: ICategory) => formatDate(product.updatedAt)
     },
     {
       key: "published",
@@ -175,7 +174,7 @@ const List_Category: React.FC = () => {
           checked={published}
           onChange={() => handleTogglePublished(record)}
         />
-      ),
+      )
     },
     {
       key: "action",
@@ -198,8 +197,8 @@ const List_Category: React.FC = () => {
             </Popconfirm>
           </Space>
         );
-      },
-    },
+      }
+    }
   ];
 
   const onChangePage = (page: number) => {
@@ -230,7 +229,7 @@ const List_Category: React.FC = () => {
       return originalElement;
     },
     onChange: onChangePage,
-    showTotal: (total: number) => `Tổng ${total} mục`,
+    showTotal: (total: number) => `Tổng ${total} mục`
   };
 
   return (
