@@ -28,11 +28,11 @@ const sortProducts = (products: IProduct[], sortOption: string) => {
           new Date(a.updatedAt as string).getTime() -
           new Date(b.updatedAt as string).getTime()
       );
-    case "price_asc":
+    case "price_attribute":
       return [...products].sort(
         (a, b) => (a.price_product ?? 0) - (b.price_product ?? 0)
       );
-    case "price_desc":
+    case "price_attribute:desc":
       return [...products].sort(
         (a, b) => (b.price_product ?? 0) - (a.price_product ?? 0)
       );
