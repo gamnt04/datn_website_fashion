@@ -22,7 +22,7 @@ const ShipperList: React.FC = () => {
     queryFn: async () => {
       const response = await instance.get("/shippers");
       return response.data;
-    },
+    }
   });
 
   const { data: searchData } = useQuery({
@@ -30,18 +30,18 @@ const ShipperList: React.FC = () => {
     queryFn: async () => {
       if (searchName) {
         const response = await instance.post(`/shippers/search`, {
-          fullName: searchName,
+          fullName: searchName
         });
         return response.data;
       }
       return [];
     },
-    enabled: !!searchName, // Chỉ thực hiện query khi có giá trị searchName
+    enabled: !!searchName // Chỉ thực hiện query khi có giá trị searchName
   });
 
   const dataSource = (searchName ? searchData : data)?.map((shipper: any) => ({
     key: shipper._id,
-    ...shipper,
+    ...shipper
   }));
 
   const onHandleSearch = () => {
@@ -79,7 +79,7 @@ const ShipperList: React.FC = () => {
   const columns = [
     {
       title: "STT",
-      render: (_, __, index) => <p>{index + 1}</p>,
+      render: (_: any, __, index) => <p>{index + 1}</p>
     },
     {
       key: "avatar",
@@ -90,22 +90,22 @@ const ShipperList: React.FC = () => {
           alt="Shipper"
           style={{ width: 40, height: 40, borderRadius: "50%" }}
         />
-      ),
+      )
     },
     {
       key: "fullName",
       title: "Họ và tên",
-      dataIndex: "fullName",
+      dataIndex: "fullName"
     },
     {
       key: "vehicle",
       title: "Phương tiện vận chuyển",
-      dataIndex: "vehicle",
+      dataIndex: "vehicle"
     },
     {
       key: "phone",
       title: "Số Điện Thoại",
-      dataIndex: "phone",
+      dataIndex: "phone"
     },
     // {
     //   key: "store",
@@ -137,7 +137,7 @@ const ShipperList: React.FC = () => {
         <span style={{ color: status === "Available" ? "green" : "red" }}>
           {status === "Available" ? "Sẵn sàng" : "Không hoạt động"}
         </span>
-      ),
+      )
     },
     {
       key: "actions",
@@ -159,8 +159,8 @@ const ShipperList: React.FC = () => {
             </Button>
           </Popconfirm>
         </Space>
-      ),
-    },
+      )
+    }
   ];
 
   if (isLoading)

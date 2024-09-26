@@ -13,8 +13,8 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
   sizeOptions,
   selectedSizes,
   toggleSize,
-  resetSizeFilter,
-  onSizeChange,
+  // resetSizeFilter,
+  onSizeChange
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

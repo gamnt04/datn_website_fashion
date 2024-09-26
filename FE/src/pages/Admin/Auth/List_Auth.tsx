@@ -1,18 +1,8 @@
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Button,
-  Image,
-  Skeleton,
-  Spin,
-  Table,
-  Modal,
-  Form,
-  Input,
-  Select,
-} from "antd";
-import { list_Auth } from "../../../_lib/Auth/Auth";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { Button, Form, Image, Input, Modal, Skeleton, Spin, Table } from "antd";
+import { useState } from "react";
+import { list_Auth } from "../../../_lib/Auth/Auth";
 import { useSearchUserByUsername } from "../../../common/hooks/Auth/querry_Auth";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 interface UpdateField {
@@ -31,7 +21,7 @@ const List_Auth = () => {
     queryFn: async () => {
       const data = await list_Auth();
       return data;
-    },
+    }
   });
 
   const onHandleSearch = () => {
@@ -42,7 +32,7 @@ const List_Auth = () => {
     (auth: any) => {
       return {
         key: auth._id,
-        ...auth,
+        ...auth
       };
     }
   );
@@ -63,7 +53,7 @@ const List_Auth = () => {
             height={80}
             className="object-cover"
           />
-        ),
+        )
     },
     {
       title: "Tên Người Dùng",
@@ -74,7 +64,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 150 }} active size="small" />
         ) : (
           auth.userName
-        ),
+        )
     },
     {
       title: "Email",
@@ -85,7 +75,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 200 }} active size="small" />
         ) : (
           auth.email
-        ),
+        )
     },
     {
       title: "Quyền",
@@ -96,7 +86,7 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        ),
+        )
     },
     {
       title: "Cập Nhật Gần Đây",
@@ -108,7 +98,7 @@ const List_Auth = () => {
           return new Date(latestUpdate).toLocaleString(); // Chuyển đổi sang định dạng ngày giờ
         }
         return "Chưa có cập nhật";
-      },
+      }
     },
     {
       title: "Nội Dung Cập Nhật",
@@ -127,7 +117,7 @@ const List_Auth = () => {
         } else {
           return <p className="text-red-500">Chưa có cập nhật</p>;
         }
-      },
+      }
     },
     {
       title: "Quyền",
@@ -138,8 +128,8 @@ const List_Auth = () => {
           <Skeleton.Input style={{ width: 100 }} active size="small" />
         ) : (
           auth.role
-        ),
-    },
+        )
+    }
   ];
 
   const formatDate = (isoString: string) => {

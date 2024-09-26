@@ -41,7 +41,7 @@ const ProfileHook = () => {
         data.birthDate = dayjs(data.birthDate).format("YYYY-MM-DD"); // Chuyển đổi ngày tháng thành định dạng YYYY-MM-DD
       }
       return data;
-    },
+    }
   });
 
   const { mutate } = useMutation({
@@ -57,18 +57,18 @@ const ProfileHook = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["AUTH_KEY"],
+        queryKey: ["AUTH_KEY"]
       });
       messageApi.open({
         type: "success",
-        content: "Cập nhật thông tin thành công",
+        content: "Cập nhật thông tin thành công"
       });
       setIsSaving(false); // Kết thúc lưu
       setIsChanged(false); // Đặt lại trạng thái thay đổi
     },
     onError: () => {
       setIsSaving(false); // Kết thúc lưu nếu có lỗi
-    },
+    }
   });
 
   const handleValuesChange = (changedValues: FieldType) => {
@@ -95,9 +95,9 @@ const ProfileHook = () => {
 
   const handleChange: UploadProps["onChange"] = ({
     fileList: newFileList,
-    file,
+    file
   }) => {
-    const newFile = newFileList[0] || {};
+    // const newFile = newFileList[0] || {};
 
     if (file.status === "done") {
       const url = file.response?.secure_url;
@@ -140,7 +140,7 @@ const ProfileHook = () => {
     handlePreview,
     handleChange,
     setPreviewOpen,
-    setPreviewImage,
+    setPreviewImage
   };
 };
 

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Button, Result, Spin, message } from "antd";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import instance from "../../configs/axios";
-import { Button, Result, Spin, message } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
 
 const VerifyEmail = () => {
   const [loading, setLoading] = useState(false);

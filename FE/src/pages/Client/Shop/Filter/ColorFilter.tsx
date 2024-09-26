@@ -56,8 +56,8 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
   colorOptions,
   selectedColors,
   toggleColor,
-  resetColorFilter,
-  onColorChange,
+  // resetColorFilter,
+  onColorChange
 }) => {
   // Trạng thái để theo dõi xem dropdown có đang mở không
   const [isOpen, setIsOpen] = React.useState(false);

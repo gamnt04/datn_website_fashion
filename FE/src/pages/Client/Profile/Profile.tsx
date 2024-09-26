@@ -2,11 +2,11 @@ import {
   Button,
   DatePicker,
   Form,
-  Input,
   FormProps,
-  Upload,
   Image,
+  Input,
   Spin,
+  Upload
 } from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
@@ -44,10 +44,10 @@ const Profile = () => {
     handlePreview,
     handleChange,
     setPreviewOpen,
-    setPreviewImage,
+    setPreviewImage
   } = ProfileHook();
 
-  const validateBirthDate = (_, value) => {
+  const validateBirthDate = (_: any, value: any) => {
     if (!value) {
       return Promise.resolve(); // Không cần kiểm tra nếu người dùng không nhập ngày
     }
@@ -104,7 +104,7 @@ const Profile = () => {
               data
                 ? {
                     ...data,
-                    birthDate: data.birthDate ? dayjs(data.birthDate) : null,
+                    birthDate: data.birthDate ? dayjs(data.birthDate) : null
                   }
                 : {}
             }
@@ -119,8 +119,8 @@ const Profile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Tên đăng nhập là bắt buộc!",
-                    },
+                      message: "Tên đăng nhập là bắt buộc!"
+                    }
                   ]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
@@ -134,12 +134,12 @@ const Profile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Họ và tên là bắt buộc!",
+                      message: "Họ và tên là bắt buộc!"
                     },
                     {
                       min: 3,
-                      message: "Họ và tên phải lớn hơn 3 ký tự!",
-                    },
+                      message: "Họ và tên phải lớn hơn 3 ký tự!"
+                    }
                   ]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
@@ -155,9 +155,9 @@ const Profile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Email là bắt buộc!",
+                      message: "Email là bắt buộc!"
                     },
-                    { type: "email", message: "Không đúng định dạng Email" },
+                    { type: "email", message: "Không đúng định dạng Email" }
                   ]}
                 >
                   <Input />
@@ -171,8 +171,8 @@ const Profile = () => {
                   rules={[
                     {
                       pattern: /^[0-9]{10,11}$/,
-                      message: "Số điện thoại không hợp lệ!",
-                    },
+                      message: "Số điện thoại không hợp lệ!"
+                    }
                   ]}
                 >
                   <Input placeholder="Nhập số điện thoại của bạn" />
@@ -245,7 +245,7 @@ const Profile = () => {
                         action={api}
                         data={{
                           upload_preset: PRESET_NAME,
-                          folder: FOLDER_NAME,
+                          folder: FOLDER_NAME
                         }}
                         listType="picture-card"
                         fileList={fileList}
@@ -271,7 +271,7 @@ const Profile = () => {
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
                         afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
+                          !visible && setPreviewImage("")
                       }}
                       src={previewImage}
                     />
