@@ -9,6 +9,21 @@ export const getVoucher = async (req, res) => {
   }
 };
 
+export const getVoucherById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const voucher = await Voucher.findById(id);
+
+    if (!voucher) {
+      return res.status(404).json({ message: "Không tìm thấy voucher" });
+    }
+
+    res.status(200).json({ message: "Thành công: ", voucher });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy voucher", error });
+  }
+};
+
 export const addVoucher = async (req, res) => {
   try {
     const newVoucher = new Voucher(req.body);
