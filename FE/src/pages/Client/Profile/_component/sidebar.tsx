@@ -1,11 +1,11 @@
-import React, { useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu, Modal } from "antd";
-import { BellRing, Box, Heart, LogOut, User } from "lucide-react";
+import { BellRing, Box, LogOut, User } from "lucide-react";
+import React, { useState } from "react";
+import { LiaShippingFastSolid } from "react-icons/lia";
+import { SiAwssecretsmanager } from "react-icons/si";
 import { NavLink } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
-import { SiAwssecretsmanager } from "react-icons/si";
-import { LiaShippingFastSolid } from "react-icons/lia";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -19,7 +19,7 @@ function getItem(
     key,
     icon,
     children,
-    label,
+    label
   } as MenuItem;
 }
 
@@ -46,7 +46,10 @@ const Sidebar_Profile: React.FC = () => {
     getItem("Thông tin tài khoản", "1", <User className="h-5" />, [
       getItem(<NavLink to="/profile">Hồ sơ</NavLink>, "1-1"),
       getItem(<NavLink to="/profile/address">Địa chỉ</NavLink>, "1-2"),
-      getItem(<NavLink to="/profile/change-password">Đổi mật khẩu</NavLink>, "1-3"),
+      getItem(
+        <NavLink to="/profile/change-password">Đổi mật khẩu</NavLink>,
+        "1-3"
+      )
     ]),
     // getItem(
     //   <NavLink to="/favourite">Yêu thích</NavLink>,
@@ -69,7 +72,7 @@ const Sidebar_Profile: React.FC = () => {
             <NavLink to={`/admin`}>Chế độ quản lý</NavLink>,
             "4",
             <SiAwssecretsmanager className="w-5 h-10 bold-icon" />
-          ),
+          )
         ]
       : []),
     ...(roleAdmin === "courier"
@@ -78,17 +81,17 @@ const Sidebar_Profile: React.FC = () => {
             <NavLink to={`/admin/orders`}>Đơn hàng cần giao</NavLink>,
             "4",
             <LiaShippingFastSolid className="w-5 h-10 bold-icon" />
-          ),
+          )
         ]
       : []),
     {
-      type: "divider",
+      type: "divider"
     },
     getItem(
       <p onClick={showModal}>Đăng xuất</p>,
       "5",
       <LogOut className="h-5 " />
-    ),
+    )
   ];
 
   const onClick: MenuProps["onClick"] = (e) => {

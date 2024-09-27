@@ -1,27 +1,26 @@
-import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import Dow_btn from "./_components/dow";
-import Up_btn from "./_components/up";
-import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
-import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { Link, useNavigate } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
 import {
+  Button,
   Checkbox,
   Input,
   message,
   Popconfirm,
-  Table,
-  TableProps,
   Spin,
-  Button,
+  Table,
+  TableProps
 } from "antd";
-import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useState, useEffect } from "react";
-import Het_hang from "./_components/het_hang";
+import { useEffect, useState } from "react";
+import { FaDeleteLeft } from "react-icons/fa6";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
-import { TiDelete } from "react-icons/ti";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
+import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import Dow_btn from "./_components/dow";
+import Het_hang from "./_components/het_hang";
+import Up_btn from "./_components/up";
 
 interface DataType {
   key: string;
@@ -51,18 +50,18 @@ const ListCart = () => {
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
-      id: item?._id,
+      id: item?._id
     };
     removeSingle(data_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công",
+      content: "Xóa thành công"
     });
   };
 
   const handleRemoveMultiple = () => {
     const product_item = {
-      userId: userId,
+      userId: userId
     };
     const data_cart = dataSort?.filter(
       (item: any) => item?.status_checked && item
@@ -70,14 +69,14 @@ const ListCart = () => {
     if (data_cart.length === 0) {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn sản phẩm để xóa!",
+        content: "Vui lòng chọn sản phẩm để xóa!"
       });
       return;
     }
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công",
+      content: "Xóa thành công"
     });
   };
 
@@ -86,7 +85,7 @@ const ListCart = () => {
       userId: userId,
       productId: productId,
       color: color,
-      size: size,
+      size: size
     };
     handle_status_checked(item_client);
   };
@@ -101,7 +100,7 @@ const ListCart = () => {
       updateQuantity({
         userId: userId,
         productId: product?._id,
-        quantity: inputValue,
+        quantity: inputValue
       });
     }
 
@@ -112,7 +111,7 @@ const ListCart = () => {
     (product: any) =>
       product?.productId?._id && {
         key: product?.productId?._id,
-        ...product,
+        ...product
       }
   );
 
@@ -133,7 +132,7 @@ const ListCart = () => {
             }
           ></Checkbox>
         );
-      },
+      }
     },
     {
       key: "image",
@@ -149,7 +148,7 @@ const ListCart = () => {
             />
           </Link>
         );
-      },
+      }
     },
     {
       title: "Sản phẩm",
@@ -168,7 +167,7 @@ const ListCart = () => {
             {product?.color_item} - {product?.name_size}
           </p>
         </>
-      ),
+      )
     },
     {
       title: "Đơn giá",
@@ -179,11 +178,11 @@ const ListCart = () => {
           <div className="font-medium">
             {product?.price_item.toLocaleString("vi", {
               style: "currency",
-              currency: "VND",
+              currency: "VND"
             })}
           </div>
         );
-      },
+      }
     },
     {
       key: "quantity",
@@ -197,7 +196,7 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size,
+                size: product?.name_size
               }}
             />
             {editingProductId === product?.productId ? (
@@ -221,12 +220,12 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size,
+                size: product?.name_size
               }}
             />
           </div>
         );
-      },
+      }
     },
     {
       title: <span className="whitespace-nowrap">Tổng tiền</span>,
@@ -237,11 +236,11 @@ const ListCart = () => {
           <div className="font-medium">
             {(product?.total_price_item).toLocaleString("vi", {
               style: "currency",
-              currency: "VND",
+              currency: "VND"
             })}
           </div>
         );
-      },
+      }
     },
     {
       key: "action",
@@ -262,8 +261,8 @@ const ListCart = () => {
             </Button>
           </div>
         );
-      },
-    },
+      }
+    }
   ];
   if (isPending) {
     return (
@@ -321,7 +320,7 @@ const ListCart = () => {
       if (data_cart.length === 0 || data?.total_price < 1) {
         messageApi.open({
           type: "warning",
-          content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
+          content: "Vui lòng chọn sản phẩm trước khi thanh toán!"
         });
         return null;
       }
@@ -377,7 +376,7 @@ const ListCart = () => {
                     <p className="text-xl font-bold text-yellow-500">
                       {totalPrice?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND",
+                        currency: "VND"
                       })}
                     </p>
                   </div>
@@ -400,7 +399,7 @@ const ListCart = () => {
                     <strong>
                       {totalPrice?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND",
+                        currency: "VND"
                       })}
                     </strong>
                   </div>

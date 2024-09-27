@@ -4,27 +4,28 @@ import { useState } from "react";
 
 const ListProducts = () => {
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState("description");
-  const navigate = useNavigate();
+  // const [isVisible, setIsVisible] = useState(false);
+  const [, setIsVisible] = useState(false);
+  // const [activeTab, setActiveTab] = useState("description");
+  // const navigate = useNavigate();
 
-  const handleNavigation = () => {
-    navigate("/products/detailP");
-  };
+  // const handleNavigation = () => {
+  //   navigate("/products/detailP");
+  // };
 
-  const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-  };
+  // const handleTabClick = (tab: any) => {
+  //   setActiveTab(tab);
+  // };
 
   const showOverlay = () => {
     setIsVisible(true);
     document.body.classList.add("overflow-hidden");
   };
 
-  const hideOverlay = () => {
-    setIsVisible(false);
-    document.body.classList.remove("overflow-hidden");
-  };
+  // const hideOverlay = () => {
+  //   setIsVisible(false);
+  //   document.body.classList.remove("overflow-hidden");
+  // };
 
   const toggleDisplay = () => {
     setIsDisplayOpen(!isDisplayOpen);
