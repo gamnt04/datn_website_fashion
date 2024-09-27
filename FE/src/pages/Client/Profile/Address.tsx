@@ -1,15 +1,15 @@
-import { Auth } from "../../../common/interfaces/Auth";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button, message, Popconfirm } from "antd";
+import { useState } from "react";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { Auth } from "../../../common/interfaces/Auth";
 import {
   Add_Address,
-  Update_Address,
+  Update_Address
 } from "../../../components/common/Client/_component/Address";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
-import { Button, message, Popconfirm } from "antd";
 
 const Address = () => {
   const { isLoading, isPending, isError, error } = ProfileHook();
@@ -44,13 +44,13 @@ const Address = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["AUTH_KEY"],
+        queryKey: ["AUTH_KEY"]
       });
       message.success("Xóa địa chỉ thành công");
     },
     onError: () => {
       message.error("Xóa địa chỉ thất bại");
-    },
+    }
   });
 
   const handleDeleteAddress = (id: string, isDefault: boolean) => {
@@ -75,12 +75,12 @@ const Address = () => {
     },
     onError: () => {
       message.error("Thiết lập địa chỉ mặc định thất bại");
-    },
+    }
   });
 
   if (isLoading) return <div>Loading...</div>;
   if (isPending) return <div>Pending...</div>;
-  if (isError) return <div>{error.message}</div>;
+  if (isError) return <div>{error.message as any}</div>;
 
   // Sắp xếp địa chỉ mặc định lên đầu tiên
   const sortedAddresses = data?.address?.sort((a, b) => b.checked - a.checked);
