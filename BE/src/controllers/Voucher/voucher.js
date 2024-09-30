@@ -69,7 +69,7 @@ export const updateVoucher = async (req, res) => {
 };
 
 export const useVoucher = async (req, res) => {
-  const { code_voucher, totalAmount } = req.body;
+  const { code_voucher, totalAmount, userId } = req.body;
 
   try {
     const voucher = await Voucher.findOne({ code_voucher, isActive: true });
