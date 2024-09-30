@@ -14,7 +14,7 @@ const VoucherSchema = new mongoose.Schema(
     },
     discountType: {
       type: String,
-      enum: ["percentage", "fixed"],
+      enum: ["percentage", "fixed"], //select 2 cái ra
       required: true,
     }, //Loại giảm giá % hoặc trừ bao nhiêu tiền
     discountValue: { type: Number, required: true }, // Giá trị giảm giá
@@ -24,7 +24,7 @@ const VoucherSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "User", // Liên kết tới bảng người dùng (User)
       },
-    ],
+    ], //
     startDate: {
       type: Date,
       default: Date.now,
