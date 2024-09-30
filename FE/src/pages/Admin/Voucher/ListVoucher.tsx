@@ -5,6 +5,7 @@ import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { format } from "date-fns";
 import { AiOutlinePlus } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 const ListVoucher = () => {
   const queryClient = useQueryClient();
@@ -117,9 +118,12 @@ const ListVoucher = () => {
         <div className="flex items-center justify-between mt-20 mb-5">
           <h1 className="text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
 
-          <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
-            <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI MÃ GIẢM GIÁ
-          </Button>
+          <Link to={`/admin/voucher/add`}>
+            {" "}
+            <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
+              <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI MÃ GIẢM GIÁ
+            </Button>
+          </Link>
         </div>
 
         {data && data.data.length === 0 ? (
