@@ -10,18 +10,9 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/useSearch";
-<<<<<<< HEAD
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
-=======
-import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Heart, Search, ShoppingCart } from "lucide-react";
-import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
-import { message } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import logo from "../../../assets/Images/Logo/logo white.png";
 import { AiOutlineBell } from "react-icons/ai";
 import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
->>>>>>> 383b071ecc5dafac8a5df1eccd334852f438a9b5
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
@@ -33,7 +24,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
-    searchError
+    searchError,
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -45,7 +36,7 @@ const Header = () => {
   const { data: Favouritedata } = useListFavouriteProducts(account);
   const { data } = List_Cart(account);
   const role = user?.user?.role;
-  const { data: notification } = Query_notification(account, role)
+  const { data: notification } = Query_notification(account, role);
   const count_item_cart =
     data?.products?.filter((item: any) => item?.productId) ?? [];
   useEffect(() => {
@@ -54,14 +45,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-              "animate-[animationScrollYHeader_1s]",
-              "lg:-translate-y-3"
-            ),
+                "animate-[animationScrollYHeader_1s]",
+                "lg:-translate-y-3"
+              ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -96,7 +87,7 @@ const Header = () => {
     if (!account) {
       messageAPI.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!"
+        content: "Hãy đăng nhập tài khoản của bạn !!",
       });
     }
   };
@@ -134,7 +125,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)"
+                : "translateX(-200%)",
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -283,13 +274,14 @@ const Header = () => {
             <Link
               className="group *:duration-300 relative py-1"
               onClick={ScrollTop}
-              to='profile/notification'
+              to="profile/notification"
             >
-              {notification?.notifications && notification?.notifications?.length > 0 && (
-                <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
-                  {notification?.notifications?.length}
-                </span>
-              )}
+              {notification?.notifications &&
+                notification?.notifications?.length > 0 && (
+                  <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
+                    {notification?.notifications?.length}
+                  </span>
+                )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
                 <AiOutlineBell />
                 {/* <MiniCart /> */}
