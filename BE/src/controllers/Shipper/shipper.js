@@ -7,6 +7,7 @@ import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../../models/Auth/users";
+import Order from "../../models/Orders/orders";
 dotenv.config();
 
 const sendEmail = async (fullName, email, token) => {
@@ -282,6 +283,21 @@ export const deleteShipper = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Kiểm tra xem shipper có đang được dùng trong đơn hàng nào không
+    const ordersUsingShipper = await Order.find({ shipperId: id });
+    // Kiểm tra trạng thái của các đơn hàng đang sử dụng shipper
+    const cannotDeleteStatus = ["2", "3"];
+
+    const hasRestrictedOrder = ordersUsingShipper.some((order) =>
+      cannotDeleteStatus.includes(order.status)
+    );
+
+    if (hasRestrictedOrder) {
+      return res.status(400).json({
+        message:
+          "Không thể xóa shipper. Shipper này vẫn đang được chỉ định cho đơn hàng.",
+      });
+    }
     const deletedShipper = await Shipper.findByIdAndDelete(id);
 
     if (!deletedShipper) {
