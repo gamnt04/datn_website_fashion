@@ -45,7 +45,7 @@ import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
 import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
-import List_Voucher from "../pages/Admin/Voucher/List_Voucher";
+import ListVoucher from "../pages/Admin/Voucher/ListVoucher";
 const RouterComponent = () => {
   return (
     <>
@@ -116,7 +116,8 @@ const RouterComponent = () => {
 
             <Route path="blogs/add_blog" element={<BlogAdd />} />
             <Route path="blogs/:id" element={<BlogEdit />} />
-            <Route path="/admin/voucher" element={<List_Voucher />} />
+
+            <Route path="voucher" element={<ListVoucher />} />
           </Route>
         </Routes>
         {/* <ToastContainer /> */}

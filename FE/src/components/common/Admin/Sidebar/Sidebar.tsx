@@ -4,6 +4,7 @@ import {
   Contact,
   LayoutDashboard,
   Shirt,
+  TicketPercent,
   Trash2,
   Truck,
   User2,
@@ -151,36 +152,20 @@ export default function Sidebar_Dashboard() {
           </div>
           <div className="*:px-2">
             <Link
+              to={`/admin/voucher`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <TicketPercent />
+              <span className=" text-[#c4cee3]">Mã giảm giá</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
               to={`/admin/deliveries`}
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
               <Truck />
               <span className=" text-[#c4cee3]">Người giao hàng</span>
-            </Link>
-          </div>
-          <div className="*:px-2">
-            <Link
-              to={`/admin/voucher`}
-              className="flex items-center w-full py-3 text-left gap-x-4"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="2" y="6" width="20" height="12" rx="2" ry="2" />
-                <path d="M2 10h20" />
-                <path d="M2 14h20" />
-                <circle cx="6" cy="12" r="1" />
-                <circle cx="18" cy="12" r="1" />
-              </svg>
-              <span className=" text-[#c4cee3]">Voucher</span>
             </Link>
           </div>
           <div className="*:px-2">
