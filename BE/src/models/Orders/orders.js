@@ -82,6 +82,19 @@ const orderSchema = new mongoose.Schema(
       type: String, // Lý do giao hàng thất bại (nếu có)
       default: null,
     },
+    statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: ["1", "2", "3", "4", "5", "6", "7"],
+          required: true,
+        },
+        updatedAt: {
+          type: Date,
+          default: Date.now,
+        }
+      }
+    ],
     // datetime: {
     //   type: Date,
     //   default: Date.now

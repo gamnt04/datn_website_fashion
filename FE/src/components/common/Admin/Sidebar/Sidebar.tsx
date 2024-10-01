@@ -4,6 +4,7 @@ import {
   Contact,
   LayoutDashboard,
   Shirt,
+  TicketPercent,
   Trash2,
   Truck,
   User2,
@@ -147,6 +148,15 @@ export default function Sidebar_Dashboard() {
             >
               <User2 />
               <span className=" text-[#c4cee3]">Tài khoản</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/voucher`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <TicketPercent />
+              <span className=" text-[#c4cee3]">Mã giảm giá</span>
             </Link>
           </div>
           <div className="*:px-2">
