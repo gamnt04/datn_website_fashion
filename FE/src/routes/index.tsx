@@ -45,6 +45,8 @@ import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
 import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
+import ListVoucher from "../pages/Admin/Voucher/ListVoucher";
+import AddVoucher from "../pages/Admin/Voucher/AddVoucher";
 const RouterComponent = () => {
   return (
     <>
@@ -75,7 +77,10 @@ const RouterComponent = () => {
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
-              <Route path="/profile/change-password" element={<ChangePassword />} />
+              <Route
+                path="/profile/change-password"
+                element={<ChangePassword />}
+              />
               <Route path="/profile/notification" element={<Notification />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
@@ -112,6 +117,9 @@ const RouterComponent = () => {
 
             <Route path="blogs/add_blog" element={<BlogAdd />} />
             <Route path="blogs/:id" element={<BlogEdit />} />
+
+            <Route path="voucher" element={<ListVoucher />} />
+            <Route path="voucher/add" element={<AddVoucher />} />
           </Route>
         </Routes>
         {/* <ToastContainer /> */}
