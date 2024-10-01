@@ -38,7 +38,7 @@ const ListVoucher = () => {
   const columns = [
     {
       title: "STT",
-      render: (_: any, __, index) => <p>{index + 1}</p>,
+      render: (_: any, __: any, index: any) => <p>{index + 1}</p>,
     },
     {
       title: "Tên mã giảm giá",
@@ -100,6 +100,9 @@ const ListVoucher = () => {
               <FaDeleteLeft />
             </Button>
           </Popconfirm>
+          <Button danger>
+            <Link to={`/admin/voucher/${shipper._id}`}>Cập Nhật</Link>
+          </Button>
         </Space>
       ),
     },

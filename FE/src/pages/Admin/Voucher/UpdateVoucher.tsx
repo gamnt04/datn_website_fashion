@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   DatePicker,
@@ -11,9 +11,9 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import moment from "moment";
 type FieldType = {
   name_voucher: string;
   code_voucher: string;
@@ -27,14 +27,23 @@ type FieldType = {
   expirationDate: Date;
 };
 
-const AddVoucher = () => {
+const UpdateVoucher = () => {
+  const { id } = useParams();
+  4;
+  const nav = useNavigate();
+  const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
-  const nav = useNavigate();
+  const { data: voucher, isLoading } = useQuery({
+    queryKey: ["voucher", id],
+    queryFn: () => instance.get(`/voucher/${id}`),
+  });
+  //   console.log(`voucher`, voucher?.data);
+
   const { mutate } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
-        return await instance.post(`/voucher`, formData);
+        return await instance.put(`/voucher/${id}`, formData);
       } catch (error) {
         throw new Error(error as any).message;
       }
@@ -42,12 +51,15 @@ const AddVoucher = () => {
     onSuccess: () => {
       messageApi.open({
         type: "success",
-        content: "Thêm mới mã giảm giá thành công",
+        content: "Cập nhật mã giảm giá thành công",
       });
-      form.resetFields();
+      queryClient.invalidateQueries({
+        queryKey: ["voucher"],
+      });
+
       // Thêm một độ trễ nhỏ để hiển thị thông báo trước khi chuyển trang (tuỳ chọn)
       setTimeout(() => {
-        nav("/"); // Chuyển về trang chủ
+        nav("/admin/voucher"); // Chuyển về trang chủ
       }, 1000); // 1000ms là 1 giây, tuỳ chỉnh theo nhu cầu
     },
     onError: (error) => {
@@ -58,11 +70,11 @@ const AddVoucher = () => {
     },
   });
 
-  const { data, isLoading } = useQuery({
+  const { data: auth } = useQuery({
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
-  console.log(`auths`, data?.data);
+  //   console.log(`auths`, data?.data);
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -78,9 +90,34 @@ const AddVoucher = () => {
     //console.log("Success:", values);
     mutate(values);
   };
+  useEffect(() => {
+    if (voucher?.data?.voucher) {
+      form.setFieldsValue({
+        ...voucher.data.voucher,
+        startDate: moment(voucher.data.voucher.startDate),
+        expirationDate: moment(voucher.data.voucher.expirationDate),
+      });
+    }
+  }, [voucher, form]);
+  const voucherData = voucher?.data?.voucher
+    ? {
+        ...voucher.data.voucher,
+        startDate: voucher.data.voucher.startDate
+          ? moment(voucher.data.voucher.startDate)
+          : null,
+        expirationDate: voucher.data.voucher.expirationDate
+          ? moment(voucher.data.voucher.expirationDate)
+          : null,
+      }
+    : {};
+  console.log("voucher", voucher?.data);
   if (isLoading) return <div>Loading...</div>;
   return (
     <div className="mt-20 ml-10">
+      <h1 className="text-2xl font-semibold">
+        Cập nhât: {voucher?.data.name_voucher}
+      </h1>
+
       {contextHolder}
       <Form
         name="basic"
@@ -88,10 +125,8 @@ const AddVoucher = () => {
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         layout="vertical"
-        initialValues={{ remember: true }}
+        initialValues={voucherData}
         onFinish={onFinish}
-        autoComplete="off"
-        form={form}
       >
         <Form.Item<FieldType>
           label="Tên mã giảm giá"
@@ -174,13 +209,12 @@ const AddVoucher = () => {
             mode="tags"
             style={{ width: "100%" }}
             placeholder="Người dùng"
-            options={data?.data.map((user: any) => ({
+            options={auth?.data.map((user: any) => ({
               value: user._id,
               label: user.userName,
             }))}
           />
         </Form.Item>
-
         <Form.Item<FieldType>
           label="Ngày bắt đầu mã giảm giá"
           name="startDate"
@@ -207,4 +241,4 @@ const AddVoucher = () => {
   );
 };
 
-export default AddVoucher;
+export default UpdateVoucher;
