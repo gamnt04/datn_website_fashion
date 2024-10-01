@@ -81,10 +81,10 @@ export const createShipper = async (req, res) => {
     if (findEmailShipper) {
       return res.status(400).json({ message: "Email đã tồn tại" });
     }
-    const findEmailUser = await User.findOne({ email });
-    if (findEmailUser) {
-      return res.status(400).json({ message: "Email đã tồn tại" });
-    }
+    // const findEmailUser = await User.findOne({ email });
+    // if (findEmailUser) {
+    //   return res.status(400).json({ message: "Email đã tồn tại" });
+    // }
     // Tạo mật khẩu mặc định
     const defaultPassword = randomPassword();
     // Mã hóa mật khẩu
