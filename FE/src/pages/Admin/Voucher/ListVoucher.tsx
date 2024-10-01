@@ -38,7 +38,7 @@ const ListVoucher = () => {
   const columns = [
     {
       title: "STT",
-      render: (_: any, __, index) => <p>{index + 1}</p>,
+      render: (_: any, __: any, index: any) => <p>{index + 1}</p>,
     },
     {
       title: "Tên mã giảm giá",
@@ -87,12 +87,12 @@ const ListVoucher = () => {
     {
       key: "actions",
       title: "Thao Tác",
-      render: (_: any, shipper: IVoucher) => (
+      render: (_: any, voucher: IVoucher) => (
         <Space>
           <Popconfirm
             title="Xóa mã giảm giá"
             description="Bạn có muốn xóa mã giảm giá này không?"
-            onConfirm={() => mutate(shipper._id)}
+            onConfirm={() => mutate(voucher._id)}
             okText="Có"
             cancelText="Không"
           >
@@ -100,6 +100,9 @@ const ListVoucher = () => {
               <FaDeleteLeft />
             </Button>
           </Popconfirm>
+          <Button danger>
+            <Link to={`/admin/voucher/${voucher._id}`}>Cập Nhật</Link>
+          </Button>
         </Space>
       ),
     },
