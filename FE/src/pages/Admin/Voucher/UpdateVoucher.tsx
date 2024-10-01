@@ -38,7 +38,7 @@ const UpdateVoucher = () => {
     queryKey: ["voucher", id],
     queryFn: () => instance.get(`/voucher/${id}`),
   });
-  //   console.log(`voucher`, voucher?.data);
+
 
   const { mutate } = useMutation({
     mutationFn: async (formData: FieldType) => {
@@ -57,10 +57,9 @@ const UpdateVoucher = () => {
         queryKey: ["voucher"],
       });
 
-      // Thêm một độ trễ nhỏ để hiển thị thông báo trước khi chuyển trang (tuỳ chọn)
       setTimeout(() => {
-        nav("/admin/voucher"); // Chuyển về trang chủ
-      }, 1000); // 1000ms là 1 giây, tuỳ chỉnh theo nhu cầu
+        nav("/admin/voucher"); 
+      }, 1000); 
     },
     onError: (error) => {
       messageApi.open({
@@ -74,7 +73,6 @@ const UpdateVoucher = () => {
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
-  //   console.log(`auths`, data?.data);
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -83,11 +81,9 @@ const UpdateVoucher = () => {
         Math.floor(Math.random() * characters.length)
       );
     }
-    // Cập nhật giá trị cho input
     form.setFieldsValue({ code_voucher: randomCode });
   };
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    //console.log("Success:", values);
     mutate(values);
   };
   useEffect(() => {

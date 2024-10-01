@@ -45,10 +45,10 @@ const AddVoucher = () => {
         content: "Thêm mới mã giảm giá thành công",
       });
       form.resetFields();
-      // Thêm một độ trễ nhỏ để hiển thị thông báo trước khi chuyển trang (tuỳ chọn)
+
       setTimeout(() => {
-        nav("/"); // Chuyển về trang chủ
-      }, 1000); // 1000ms là 1 giây, tuỳ chỉnh theo nhu cầu
+        nav("/");
+      }, 1000);
     },
     onError: (error) => {
       messageApi.open({
@@ -71,11 +71,9 @@ const AddVoucher = () => {
         Math.floor(Math.random() * characters.length)
       );
     }
-    // Cập nhật giá trị cho input
     form.setFieldsValue({ code_voucher: randomCode });
   };
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    //console.log("Success:", values);
     mutate(values);
   };
   if (isLoading) return <div>Loading...</div>;
