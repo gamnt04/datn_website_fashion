@@ -39,4 +39,5 @@ export const getAll_Notification = async (role: string) => {
   } catch (error) {
     console.log(error);
   }
-};
+}
+
