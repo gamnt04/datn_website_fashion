@@ -8,7 +8,6 @@ import {
   Popconfirm,
   Radio,
   Table,
-  Timeline,
   Upload
 } from "antd";
 import { UploadFile } from "antd/es/upload/interface";
@@ -65,12 +64,8 @@ const OrdersDetali = () => {
       }
     );
   };
-  // Hàm xử lý khi người dùng chọn file
   const handleFileChange = ({ fileList }: { fileList: UploadFile<any>[] }) => {
-    // Chỉ cho phép một ảnh duy nhất
     setFileList(fileList.slice(-1));
-
-    // Lấy URL của ảnh để hiển thị trong preview
     if (fileList.length > 0) {
       const file = fileList[0].originFileObj;
       const previewUrl = URL.createObjectURL(file);
@@ -79,24 +74,17 @@ const OrdersDetali = () => {
       setPreviewImage(null);
     }
   };
-
-  // Hàm xử lý khi nhấn "Xác Nhận"
   const handleDeliverSuccess = async () => {
     if (!orderId) {
       console.error("Order ID is missing");
       return;
     }
-
     const file = fileList.length > 0 ? fileList[0].originFileObj : null;
-
     try {
-      // Nếu có file, tải ảnh lên và nhận URL
       let imageUrl = null;
       if (file) {
         imageUrl = await UploadImage(file);
       }
-
-      // Cập nhật trạng thái đơn hàng thành công
       await instance.post("/deliver-success", {
         orderId,
         confirmationImage: imageUrl
