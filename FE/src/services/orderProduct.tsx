@@ -12,7 +12,12 @@ const baseUri = "http://localhost:2004/api/v1/orders";
 //     console.log(error);
 //   }
 // };
-export async function get_order_client(page?: number, status?: string) {
+export async function get_order_client(
+  page?: number,
+  status?: string,
+  role?: any,
+  userId?: any
+) {
   try {
     let uri = baseUri;
     const params = [];
@@ -22,7 +27,9 @@ export async function get_order_client(page?: number, status?: string) {
     if (status) {
       params.push(`_status=${status}`);
     }
-
+    if (role === "courier" && userId) {
+      params.push(`_shipperId=${userId}`);
+    }
     if (params.length > 0) {
       uri += `?${params.join("&")}`;
     }
