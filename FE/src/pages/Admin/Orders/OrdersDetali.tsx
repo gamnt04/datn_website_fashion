@@ -671,6 +671,7 @@ const OrdersDetali = () => {
                     setOrderId(data._id);
                     setDeliverSuccessModalVisible(true);
                   }}
+                  disabled={role !== "courier"}
                 >
                   Giao Hàng Thành Công
                 </Button>
@@ -687,6 +688,7 @@ const OrdersDetali = () => {
                         <Radio.Group
                           className="flex flex-col gap-2"
                           onChange={(e) => setSelectedReason(e.target.value)}
+                          disabled={role !== "courier"}
                         >
                           {reason.map((reason, index) => (
                             <Radio key={index} value={reason}>
@@ -697,18 +699,28 @@ const OrdersDetali = () => {
                       </div>
                     </div>
                   }
-                  onConfirm={() =>
-                    giao_hang_that_bai({
-                      id_item: data?._id,
-                      action: "huy",
-                      cancellationReason: selectedReason,
-                      numberOrder: data?.orderNumber,
-                    })
-                  }
+                  onConfirm={() => {
+                    if (role === "courier") {
+                      giao_hang_that_bai({
+                        id_item: data?._id,
+                        action: "huy",
+                        cancellationReason: selectedReason,
+                        numberOrder: data?.orderNumber,
+                      });
+                    }
+                  }}
                   okText="Xác Nhận"
                   cancelText="Không"
+                  disabled={role !== "courier"}
                 >
-                  <button className="w-52 bg-red-500 rounded text-white">
+                  <button
+                    className={`w-52 rounded text-white ${
+                      role !== "courier"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-red-500"
+                    }`}
+                    disabled={role !== "courier"}
+                  >
                     Giao Hàng Thất Bại
                   </button>
                 </Popconfirm>
