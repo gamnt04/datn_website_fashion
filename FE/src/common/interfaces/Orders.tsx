@@ -27,6 +27,8 @@ export interface IOrder {
   cancellationRequested?: boolean;
   discount: number;
   totalPrice: number;
+  discountCode: String;
+  discountAmount: Number;
   status?:
     | "Chờ xác nhận"
     | "Đang chuẩn bị hàng"
