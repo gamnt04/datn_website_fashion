@@ -90,8 +90,8 @@ const Pay = () => {
 
       toast.success(message, { autoClose: 1200 });
     } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message, { autoClose: 1200 });
+      if (error instanceof Error) {
+        toast.error(error.message, { autoClose: 1200 });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
           autoClose: 1200,
@@ -433,20 +433,23 @@ const Pay = () => {
               <div className="flex justify-between px-6 py-6 border-b">
                 <p className="text-xl">Chọn mã giảm giá</p>
 
-                <input
-                  type="text"
-                  placeholder="Nhập mã giảm giá"
-                  className="border p-2 rounded w-1/2"
-                  value={discountCode}
-                  onChange={(e) => setDiscountCode(e.target.value)} // Cập nhật giá trị mã giảm giá
-                />
-                <button
-                  className="px-4 py-2 bg-blue-500 text-white font-bold rounded"
-                  onClick={handleApplyDiscount} // Áp dụng mã giảm giá khi bấm nút
-                  type="button"
-                >
-                  Áp dụng
-                </button>
+                <div>
+                  {" "}
+                  <input
+                    type="text"
+                    placeholder="Nhập mã giảm giá"
+                    className="border p-2 rounded w-1/2"
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)} // Cập nhật giá trị mã giảm giá
+                  />
+                  <button
+                    className="px-4 py-2 bg-blue-500 text-white font-bold rounded"
+                    onClick={handleApplyDiscount} // Áp dụng mã giảm giá khi bấm nút
+                    type="button"
+                  >
+                    Áp dụng
+                  </button>
+                </div>
               </div>
               <div className="flex justify-end py-6 px-6 border-b">
                 <div>
