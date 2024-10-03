@@ -8,8 +8,6 @@ import LoadingProvider, { LoadingContext } from "./pages/Client/Order/Order-All/
 
 const App = () => {
   const { isActive } = useContext(LoadingContext);
-  console.log(isActive);
-  
   return (
     <LoadingProvider> {/* Wrap the App component with the provider */}
       <LoadingOverlay
