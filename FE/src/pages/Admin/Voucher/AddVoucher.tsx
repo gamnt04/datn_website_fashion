@@ -30,7 +30,9 @@ type FieldType = {
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý danh sách người dùng đã chọn
   const nav = useNavigate();
+
   const { mutate } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
@@ -61,7 +63,7 @@ const AddVoucher = () => {
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
-  console.log(`auths`, data?.data);
+
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -70,14 +72,30 @@ const AddVoucher = () => {
         Math.floor(Math.random() * characters.length)
       );
     }
-    // Cập nhật giá trị cho input
     form.setFieldsValue({ code_voucher: randomCode });
   };
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    //console.log("Success:", values);
     mutate(values);
   };
+
+  const handleSelectChange = (value: string[]) => {
+    if (value.includes("all")) {
+      // Khi chọn "Chọn tất cả", hiển thị tất cả người dùng
+      const allUserIds = data?.data.map((user: any) => user._id);
+      setSelectedUsers(allUserIds); // Cập nhật danh sách người dùng đã chọn
+    } else {
+      setSelectedUsers(value); // Cập nhật người dùng được chọn thủ công
+    }
+  };
+
+  // Handle Deselect All Users
+  const handleDeselectAll = () => {
+    setSelectedUsers([]); // Xóa tất cả lựa chọn
+  };
+
   if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="mt-20 ml-10">
       {contextHolder}
@@ -169,27 +187,31 @@ const AddVoucher = () => {
           label="Người sử dụng mã giảm giá"
           name="allowedUsers"
         >
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            placeholder="Người dùng"
-            onChange={(value) => {
-              if (value.length === 0 || value.includes("all")) {
-                // Nếu không chọn ai hoặc chọn "Tất cả", lưu allowedUsers là mảng rỗng
-                form.setFieldsValue({ allowedUsers: [] });
-              } else {
-                // Nếu chọn một số người dùng cụ thể, giữ giá trị đã chọn
-                form.setFieldsValue({ allowedUsers: value });
-              }
-            }}
-            options={[
-              { value: "all", label: "Tất cả" }, // Thêm tùy chọn "Tất cả"
-              ...data?.data.map((user: any) => ({
-                value: user._id,
-                label: user.userName,
-              })),
-            ]}
-          />
+          <div className="flex items-center space-x-2">
+            <Select
+              mode="multiple"
+              style={{ width: "100%" }}
+              placeholder="Người dùng"
+              className=" mt-2"
+              options={[
+                { value: "all", label: "Chọn tất cả người dùng" }, // "Chọn tất cả người dùng"
+                ...data?.data.map((user: any) => ({
+                  value: user._id,
+                  label: user.userName,
+                })),
+              ]}
+              onChange={handleSelectChange}
+              value={selectedUsers} // Sử dụng trạng thái để quản lý danh sách người dùng đã chọn
+            />
+            {/* Nút bỏ chọn tất cả */}
+            <Button
+              onClick={handleDeselectAll}
+              style={{ marginTop: "10px" }}
+              className="absolute left-[400px] top-0 h-7 border-red-400 text-red-400"
+            >
+              X
+            </Button>
+          </div>
         </Form.Item>
 
         <Form.Item<FieldType>
