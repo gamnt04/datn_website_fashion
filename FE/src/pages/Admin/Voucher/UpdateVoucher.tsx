@@ -200,13 +200,25 @@ const UpdateVoucher = () => {
           name="allowedUsers"
         >
           <Select
-            mode="tags"
+            mode="multiple"
             style={{ width: "100%" }}
             placeholder="Người dùng"
-            options={auth?.data.map((user: any) => ({
-              value: user._id,
-              label: user.userName,
-            }))}
+            onChange={(value) => {
+              if (value.length === 0 || value.includes("all")) {
+                // Nếu không chọn ai hoặc chọn "Tất cả", lưu allowedUsers là mảng rỗng
+                form.setFieldsValue({ allowedUsers: [] });
+              } else {
+                // Nếu chọn một số người dùng cụ thể, giữ giá trị đã chọn
+                form.setFieldsValue({ allowedUsers: value });
+              }
+            }}
+            options={[
+              { value: "all", label: "Tất cả" }, // Thêm tùy chọn "Tất cả"
+              ...auth?.data.map((user: any) => ({
+                value: user._id,
+                label: user.userName,
+              })),
+            ]}
           />
         </Form.Item>
         <Form.Item<FieldType>
