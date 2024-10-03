@@ -26,8 +26,6 @@ import instance from "../../../configs/axios";
 const Pay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
-  console.log(user);
-
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
@@ -514,15 +512,13 @@ const Pay = () => {
                       return (
                         <div
                           key={voucher._id}
-                          className={`border rounded p-4 flex-shrink-0 min-w-[200px] flex items-center justify-between ${
-                            selectedVoucher?._id === voucher._id
-                              ? "border-blue-500"
-                              : "border-gray-300"
-                          } ${
-                            !isAllowedUser || !isVoucherAvailable
+                          className={`border rounded p-4 flex-shrink-0 min-w-[200px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
+                            ? "border-blue-500"
+                            : "border-gray-300"
+                            } ${!isAllowedUser || !isVoucherAvailable
                               ? "opacity-50 cursor-not-allowed"
                               : ""
-                          }`} // Thêm opacity và cursor nếu disabled
+                            }`} // Thêm opacity và cursor nếu disabled
                         >
                           <div>
                             <p className="font-bold">{voucher.name_voucher}</p>
@@ -538,11 +534,10 @@ const Pay = () => {
                             </p>
                           </div>
                           <button
-                            className={`ml-4 px-4 py-2 bg-blue-500 text-white font-bold rounded ${
-                              !isAllowedUser || !isVoucherAvailable
-                                ? "bg-gray-300"
-                                : ""
-                            }`} // Đổi màu nút nếu disabled
+                            className={`ml-4 px-4 py-2 bg-blue-500 text-white font-bold rounded ${!isAllowedUser || !isVoucherAvailable
+                              ? "bg-gray-300"
+                              : ""
+                              }`} // Đổi màu nút nếu disabled
                             onClick={(e) => handleApplyVoucher(e, voucher)}
                             disabled={!isAllowedUser || !isVoucherAvailable} // Disable button nếu không hợp lệ hoặc hết số lượng sử dụng
                           >
@@ -580,9 +575,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
