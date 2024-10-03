@@ -29,9 +29,9 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
 
-  const [vouchers, setVouchers] = useState([]); // Lưu trữ danh sách voucher
-  const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false); // State để điều khiển modal
-  const [selectedVoucher, setSelectedVoucher] = useState<any>(null); // Lưu trữ voucher được chọn
+  const [vouchers, setVouchers] = useState([]);
+  const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
 
   const { data: auth } = List_Auth(userId);
   const { data, isPending } = List_Cart(userId);
@@ -48,8 +48,8 @@ const Pay = () => {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const response = await instance.get("/voucher"); // Gọi API lấy voucher từ backend
-        setVouchers(response.data.vouchers); // Lưu danh sách voucher vào state
+        const response = await instance.get("/voucher");
+        setVouchers(response.data.vouchers);
       } catch (error) {
         toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
       }
@@ -82,22 +82,22 @@ const Pay = () => {
     }
   }, [auth, selectedAddress, setValue]);
 
-  const [discountCode, setDiscountCode] = useState<string>(""); // Lưu trữ mã giảm giá
-  const [discountAmount, setDiscountAmount] = useState<number>(0); // Số tiền giảm giá
-  const [finalAmount, setFinalAmount] = useState<number>(0); // Tổng tiền sau khi giảm giá
+  const [discountCode, setDiscountCode] = useState<string>("");
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [finalAmount, setFinalAmount] = useState<number>(0);
 
   const handleApplyDiscount = async () => {
     try {
       const response = await instance.post(`/voucher/use`, {
         code_voucher: discountCode,
         totalAmount: totalPrice,
-        userId: user?.user?._id, // Gửi thông tin người dùng
+        userId: user?.user?._id,
       });
 
       const { discount, finalAmount, message } = response.data;
 
-      setDiscountAmount(discount); // Số tiền giảm giá
-      setFinalAmount(finalAmount); // Tổng tiền sau khi trừ giảm giá
+      setDiscountAmount(discount);
+      setFinalAmount(finalAmount);
 
       toast.success(message, { autoClose: 1200 });
     } catch (error) {
@@ -111,33 +111,31 @@ const Pay = () => {
     }
   };
 
-  // Hàm để mở modal
   const showVoucherModal = () => {
     setIsVoucherModalVisible(true);
   };
 
-  // Hàm để đóng modal
   const handleCancel = () => {
     setIsVoucherModalVisible(false);
   };
 
   const handleApplyVoucher = async (e: React.MouseEvent, voucher: any) => {
-    e.preventDefault(); // Ngăn submit form
+    e.preventDefault();
     try {
       const response = await instance.post(`/voucher/use`, {
-        code_voucher: voucher.code_voucher, // Sử dụng mã voucher từ object
+        code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
-        userId: user?.user?._id, // Thông tin người dùng
+        userId: user?.user?._id,
       });
 
       const { discount, finalAmount, message } = response.data;
 
-      setDiscountAmount(discount); // Số tiền giảm giá
-      setFinalAmount(finalAmount); // Tổng tiền sau khi trừ giảm giá
-      setSelectedVoucher(voucher); // Đánh dấu voucher đã chọn
+      setDiscountAmount(discount);
+      setFinalAmount(finalAmount);
+      setSelectedVoucher(voucher);
 
       toast.success(message, { autoClose: 1200 });
-      setIsVoucherModalVisible(false); // Đóng modal sau khi chọn voucher
+      setIsVoucherModalVisible(false);
     } catch (error) {
       toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", { autoClose: 1200 });
     }
@@ -174,7 +172,7 @@ const Pay = () => {
       ...order,
     };
   });
-  // Sắp xếp các voucher trước khi hiển thị
+
   const sortedVouchers = vouchers.sort((a: any, b: any) => {
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
@@ -183,7 +181,6 @@ const Pay = () => {
       (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
       b.usedCount >= b.quantity_voucher;
 
-    // Voucher bị disabled sẽ được xếp xuống dưới
     if (aDisabled && !bDisabled) return 1;
     if (!aDisabled && bDisabled) return -1;
     return 0;
@@ -498,11 +495,11 @@ const Pay = () => {
                       placeholder="Nhập mã giảm giá"
                       className="border rounded w-full text-center"
                       value={discountCode}
-                      onChange={(e) => setDiscountCode(e.target.value)} // Cập nhật giá trị mã giảm giá từ input
+                      onChange={(e) => setDiscountCode(e.target.value)}
                     />
                     <button
                       className="w-44  bg-blue-500 text-white font-bold rounded ml-2"
-                      onClick={handleApplyDiscount} // Áp dụng mã giảm giá thủ công
+                      onClick={handleApplyDiscount}
                       type="button"
                     >
                       Áp dụng
@@ -518,24 +515,20 @@ const Pay = () => {
                 </div>
               </div>
               {/* Hiển thị danh sách voucher */}
-              {/* Hiển thị danh sách voucher */}
               <div className="max-w-[1440px] w-[95vw] mx-auto">
-                {/* Nút để mở modal */}
-
-                {/* Modal chứa danh sách voucher */}
                 <Modal
                   visible={isVoucherModalVisible}
                   onCancel={handleCancel}
                   footer={null}
                   centered
-                  width={1350} // Điều chỉnh chiều rộng modal
+                  width={1350}
                 >
                   <p className="text-xl mb-5">Tất cả Voucher</p>
                   {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
                       style={{
-                        maxHeight: "600px", // Giới hạn chiều cao modal
+                        maxHeight: "600px",
                       }}
                     >
                       {sortedVouchers.map((voucher: any) => {
