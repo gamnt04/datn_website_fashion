@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   DatePicker,
@@ -11,8 +11,9 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import moment from "moment";
 
 type FieldType = {
   name_voucher: string;
@@ -27,16 +28,22 @@ type FieldType = {
   expirationDate: Date;
 };
 
-const AddVoucher = () => {
+const UpdateVoucher = () => {
+  const { id } = useParams();
+  const nav = useNavigate();
+  const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý danh sách người dùng đã chọn
-  const nav = useNavigate();
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý người dùng đã chọn
+  const { data: voucher, isLoading } = useQuery({
+    queryKey: ["voucher", id],
+    queryFn: () => instance.get(`/voucher/${id}`),
+  });
 
   const { mutate } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
-        return await instance.post(`/voucher`, formData);
+        return await instance.put(`/voucher/${id}`, formData);
       } catch (error) {
         throw new Error(error as any).message;
       }
@@ -44,9 +51,12 @@ const AddVoucher = () => {
     onSuccess: () => {
       messageApi.open({
         type: "success",
-        content: "Thêm mới mã giảm giá thành công",
+        content: "Cập nhật mã giảm giá thành công",
       });
-      form.resetFields();
+      queryClient.invalidateQueries({
+        queryKey: ["voucher"],
+      });
+
       setTimeout(() => {
         nav("/admin/voucher");
       }, 1000);
@@ -59,11 +69,12 @@ const AddVoucher = () => {
     },
   });
 
-  const { data, isLoading } = useQuery({
+  const { data: auth } = useQuery({
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
 
+  // Generate random code for voucher
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -79,25 +90,44 @@ const AddVoucher = () => {
     mutate(values);
   };
 
+  useEffect(() => {
+    if (voucher?.data?.voucher) {
+      form.setFieldsValue({
+        ...voucher.data.voucher,
+        startDate: moment(voucher.data.voucher.startDate),
+        expirationDate: moment(voucher.data.voucher.expirationDate),
+      });
+      setSelectedUsers(voucher.data.voucher.allowedUsers || []); // Set người dùng đã chọn
+    }
+  }, [voucher, form]);
+
+  // Cập nhật người dùng đã chọn khi có thay đổi trong Select
   const handleSelectChange = (value: string[]) => {
     if (value.includes("all")) {
-      // Khi chọn "Chọn tất cả", hiển thị tất cả người dùng
-      const allUserIds = data?.data.map((user: any) => user._id);
-      setSelectedUsers(allUserIds); // Cập nhật danh sách người dùng đã chọn
+      // Nếu chọn "Chọn tất cả", cập nhật với tất cả người dùng
+      const allUserIds = auth?.data.map((user: any) => user._id);
+      setSelectedUsers(allUserIds);
+      form.setFieldsValue({ allowedUsers: allUserIds });
     } else {
-      setSelectedUsers(value); // Cập nhật người dùng được chọn thủ công
+      // Cập nhật lựa chọn người dùng
+      setSelectedUsers(value);
+      form.setFieldsValue({ allowedUsers: value });
     }
   };
 
-  // Handle Deselect All Users
+  // Bỏ chọn tất cả người dùng
   const handleDeselectAll = () => {
-    setSelectedUsers([]); // Xóa tất cả lựa chọn
+    setSelectedUsers([]); // Xóa tất cả người dùng
+    form.setFieldsValue({ allowedUsers: [] });
   };
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="mt-20 ml-10">
+      <h1 className="text-2xl font-semibold">
+        Cập nhât: {voucher?.data.name_voucher}
+      </h1>
       {contextHolder}
       <Form
         name="basic"
@@ -105,9 +135,8 @@ const AddVoucher = () => {
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         layout="vertical"
-        initialValues={{ remember: true }}
+        initialValues={voucher}
         onFinish={onFinish}
-        autoComplete="off"
         form={form}
       >
         <Form.Item<FieldType>
@@ -187,31 +216,24 @@ const AddVoucher = () => {
           label="Người sử dụng mã giảm giá"
           name="allowedUsers"
         >
-          <div className="flex items-center space-x-2">
-            <Select
-              mode="multiple"
-              style={{ width: "100%" }}
-              placeholder="Người dùng"
-              className=" mt-2"
-              options={[
-                { value: "all", label: "Chọn tất cả người dùng" }, // "Chọn tất cả người dùng"
-                ...data?.data.map((user: any) => ({
-                  value: user._id,
-                  label: user.userName,
-                })),
-              ]}
-              onChange={handleSelectChange}
-              value={selectedUsers} // Sử dụng trạng thái để quản lý danh sách người dùng đã chọn
-            />
-            {/* Nút bỏ chọn tất cả */}
-            <Button
-              onClick={handleDeselectAll}
-              style={{ marginTop: "10px" }}
-              className="absolute left-[400px] top-0 h-7 border-red-400 text-red-400"
-            >
-              X
-            </Button>
-          </div>
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            placeholder="Người dùng"
+            options={[
+              { value: "all", label: "Chọn tất cả người dùng" },
+              ...auth?.data.map((user: any) => ({
+                value: user._id,
+                label: user.userName,
+              })),
+            ]}
+            onChange={handleSelectChange}
+            value={selectedUsers}
+          />
+          {/* Nút bỏ chọn tất cả */}
+          <Button onClick={handleDeselectAll} style={{ marginTop: "10px" }}>
+            Bỏ chọn tất cả
+          </Button>
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -232,7 +254,7 @@ const AddVoucher = () => {
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit">
-            Submit
+            Cập nhật
           </Button>
         </Form.Item>
       </Form>
@@ -240,4 +262,4 @@ const AddVoucher = () => {
   );
 };
 
-export default AddVoucher;
+export default UpdateVoucher;

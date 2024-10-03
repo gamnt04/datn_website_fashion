@@ -47,6 +47,8 @@ import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
 import ListVoucher from "../pages/Admin/Voucher/ListVoucher";
 import AddVoucher from "../pages/Admin/Voucher/AddVoucher";
+import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
+import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
 const RouterComponent = () => {
   return (
     <>
@@ -120,6 +122,7 @@ const RouterComponent = () => {
 
             <Route path="voucher" element={<ListVoucher />} />
             <Route path="voucher/add" element={<AddVoucher />} />
+            <Route path="voucher/:id" element={<UpdateVoucher />} />
           </Route>
         </Routes>
         {/* <ToastContainer /> */}
