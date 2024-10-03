@@ -22,12 +22,9 @@ import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Qu
 const Pay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
-  console.log(user);
-
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
-
   const { data: auth } = List_Auth(userId);
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();

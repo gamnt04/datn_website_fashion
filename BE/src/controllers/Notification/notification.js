@@ -54,3 +54,22 @@ export const getAllNotification = async (req, res) => {
         res.status(500).json({ message: "Lỗi rồi đại ca ơi" });
     }
 }
+export const update_notification = async (req, res) => {
+    const { id } = req.params;
+    const { status_notification } = req.body;
+    console.log(status_notification);
+    console.log(id);
+
+
+    try {
+        const data = await Notification.findByIdAndUpdate(id, { status_notification }, { new: true });
+        return res.status(StatusCodes.OK).json({
+            message: 'Cập nhật thành công',
+            data
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Internal Server Error'
+        });
+    }
+}
