@@ -32,6 +32,9 @@ const Pay = () => {
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
 
+  const [vouchers, setVouchers] = useState([]); // Lưu trữ danh sách voucher
+  const [selectedVoucher, setSelectedVoucher] = useState<any>(null); // Lưu trữ voucher được chọn
+
   const { data: auth } = List_Auth(userId);
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
@@ -45,6 +48,18 @@ const Pay = () => {
   const { mutate } = Mutation_Notification("Add");
 
   useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        const response = await instance.get("/voucher"); // Gọi API lấy voucher từ backend
+        setVouchers(response.data.vouchers); // Lưu danh sách voucher vào state
+      } catch (error) {
+        toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
+      }
+    };
+    fetchVouchers();
+  }, []);
+
+  useEffect(() => {
     if (!userId) {
       routing("/login");
     }
@@ -52,6 +67,7 @@ const Pay = () => {
       routing("/login");
     }
   }, [userId, routing]);
+
   useEffect(() => {
     if (auth && auth?.address) {
       const defaultAddress = auth?.address?.find(
@@ -67,15 +83,12 @@ const Pay = () => {
       }
     }
   }, [auth, selectedAddress, setValue]);
+
   const [discountCode, setDiscountCode] = useState<string>(""); // Lưu trữ mã giảm giá
   const [discountAmount, setDiscountAmount] = useState<number>(0); // Số tiền giảm giá
   const [finalAmount, setFinalAmount] = useState<number>(0); // Tổng tiền sau khi giảm giá
-  const handleApplyDiscount = async () => {
-    if (!discountCode) {
-      toast.error("Vui lòng nhập mã giảm giá", { autoClose: 1200 });
-      return;
-    }
 
+  const handleApplyDiscount = async () => {
     try {
       const response = await instance.post(`/voucher/use`, {
         code_voucher: discountCode,
@@ -87,6 +100,34 @@ const Pay = () => {
 
       setDiscountAmount(discount); // Số tiền giảm giá
       setFinalAmount(finalAmount); // Tổng tiền sau khi trừ giảm giá
+
+      toast.success(message, { autoClose: 1200 });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message, { autoClose: 1200 });
+      } else {
+        toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
+          autoClose: 1200,
+        });
+      }
+    }
+  };
+
+  const handleApplyVoucher = async (e: React.MouseEvent, voucher: any) => {
+    e.preventDefault(); // Ngăn submit form
+
+    try {
+      const response = await instance.post(`/voucher/use`, {
+        code_voucher: voucher.code_voucher, // Sử dụng mã voucher từ object
+        totalAmount: totalPrice,
+        userId: user?.user?._id, // Thông tin người dùng
+      });
+
+      const { discount, finalAmount, message } = response.data;
+
+      setDiscountAmount(discount); // Số tiền giảm giá
+      setFinalAmount(finalAmount); // Tổng tiền sau khi trừ giảm giá
+      setSelectedVoucher(voucher); // Đánh dấu voucher đã chọn
 
       toast.success(message, { autoClose: 1200 });
     } catch (error) {
@@ -131,6 +172,7 @@ const Pay = () => {
       ...order,
     };
   });
+
   // add order
   const onAddOrder = async (data_form: any) => {
     if (!data_form.address || data_form?.address.trim() === "") {
@@ -140,7 +182,8 @@ const Pay = () => {
       });
       return;
     }
-    // validate stock
+
+    // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
         const check_color = i?.productId?.attributes?.values?.find(
@@ -167,6 +210,7 @@ const Pay = () => {
         return;
       }
     }
+
     const item_order = {
       userId: userId,
       items: item_order_checkked,
@@ -432,24 +476,63 @@ const Pay = () => {
               </div>
               <div className="flex justify-between px-6 py-6 border-b">
                 <p className="text-xl">Chọn mã giảm giá</p>
-
                 <div>
-                  {" "}
                   <input
                     type="text"
                     placeholder="Nhập mã giảm giá"
                     className="border p-2 rounded w-1/2"
                     value={discountCode}
-                    onChange={(e) => setDiscountCode(e.target.value)} // Cập nhật giá trị mã giảm giá
+                    onChange={(e) => setDiscountCode(e.target.value)} // Cập nhật giá trị mã giảm giá từ input
                   />
                   <button
-                    className="px-4 py-2 bg-blue-500 text-white font-bold rounded"
-                    onClick={handleApplyDiscount} // Áp dụng mã giảm giá khi bấm nút
+                    className="px-4 py-2 bg-blue-500 text-white font-bold rounded ml-2"
+                    onClick={handleApplyDiscount} // Áp dụng mã giảm giá thủ công
                     type="button"
                   >
                     Áp dụng
                   </button>
                 </div>
+              </div>
+
+              {/* Hiển thị danh sách voucher */}
+              <div className="px-6 py-6 border-b">
+                <h3 className="text-lg font-bold">Chọn mã voucher</h3>
+
+                {vouchers.length > 0 ? (
+                  <div
+                    className="flex flex-nowrap gap-4 mt-2 overflow-x-auto" // Sử dụng flex-nowrap để đảm bảo các phần tử được hiển thị theo hàng ngang và có thể cuộn
+                    style={{ whiteSpace: "nowrap" }} // Đảm bảo phần tử không bị ngắt dòng
+                  >
+                    {vouchers.map((voucher: any) => (
+                      <div
+                        key={voucher._id}
+                        className={`border rounded p-4 flex-shrink-0 min-w-[200px] flex items-center cursor-pointer ${
+                          selectedVoucher?._id === voucher._id
+                            ? "border-blue-500"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <div>
+                          <p className="font-bold">{voucher.name_voucher}</p>
+                          <p>
+                            Hạn dùng:{" "}
+                            {new Date(
+                              voucher.expirationDate
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <button
+                          className="ml-4 px-4 py-2 bg-blue-500 text-white font-bold rounded"
+                          onClick={(e) => handleApplyVoucher(e, voucher)} // Thêm `e` ở đây để ngăn submit form
+                        >
+                          Sử dụng
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Không có voucher nào khả dụng</p>
+                )}
               </div>
               <div className="flex justify-end py-6 px-6 border-b">
                 <div>
