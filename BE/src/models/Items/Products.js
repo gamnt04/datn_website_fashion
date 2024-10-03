@@ -41,7 +41,7 @@ const productSchema = new mongoose.Schema(
     stock: Number,
     attributes: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Attributes",
+      ref: "Variant",
     },
     featured_product: {
       type: Boolean,

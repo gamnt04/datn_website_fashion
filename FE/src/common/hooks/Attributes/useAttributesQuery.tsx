@@ -1,41 +1,35 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import instance from "../../../configs/axios";
+import { useMutationAttribute } from "../../../_lib/React_Query/Attribute/Attribute";
+import useLocalStorage from "../Storage/useStorage";
 
-interface UseAttributesResult {
-  colors: string[];
-  sizes: string[];
-  loading: boolean;
-  error: string | null;
-}
-
-const useAttributes = (): UseAttributesResult => {
-  const [colors, setColors] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchAttributes = async () => {
-      try {
-        const response = await instance.get("/attributes");
-        setColors(response.data.colors);
-        setSizes(response.data.sizes);
-        setLoading(false);
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
-        setLoading(false);
+export default function useHookFormAttribute(mode: string) {
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const { mutate, isLoading, isError, myForm, errors } = useMutationAttribute(mode === 'edit' ? 'Edit' : 'Add');
+  function onSubmit(dataValue) {
+    let dataRequest: any = {
+      id_account: userId,
+      attribute: dataValue?.attribute,
+      category_attribute: dataValue?.category_attribute,
+      symbol_attribute: dataValue?.symbol_attribute,
+    }
+    if (mode === 'edit') {
+      dataRequest = {
+        id_attribute: dataValue?._id,
+        id_account: userId,
+        attribute: dataValue?.attribute,
+        category_attribute: dataValue?.category_attribute,
+        symbol_attribute: dataValue?.symbol_attribute,
       }
-    };
-
-    fetchAttributes();
-  }, []);
-
-  return { colors, sizes, loading, error };
-};
-
-export default useAttributes;
+      mutate(dataRequest)
+    } else {
+      mutate(dataRequest)
+    }
+  }
+  return {
+    onSubmit,
+    myForm,
+    errors,
+    isLoading,
+    isError
+  }
+}

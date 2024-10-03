@@ -4,6 +4,7 @@ import {
   Contact,
   LayoutDashboard,
   Shirt,
+  TicketPercent,
   Trash2,
   Truck,
   User2,
@@ -82,7 +83,7 @@ export default function Sidebar_Dashboard() {
                   Danh sách sản phẩm
                 </NavLink>
                 <NavLink
-                  to="/admin/products/attribute-catalog"
+                  to="/admin/products/attribute"
                   className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
                 >
                   Thuộc tính sản phẩm
@@ -151,6 +152,15 @@ export default function Sidebar_Dashboard() {
             >
               <User2 />
               <span className=" text-[#c4cee3]">Tài khoản</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/voucher`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <TicketPercent />
+              <span className=" text-[#c4cee3]">Mã giảm giá</span>
             </Link>
           </div>
           <div className="*:px-2">

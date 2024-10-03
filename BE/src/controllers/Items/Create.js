@@ -2,8 +2,8 @@
 import { StatusCodes } from "http-status-codes";
 import Category from "../../models/Items/Category";
 import Products from "../../models/Items/Products";
-import Attributes from '../../models/attribute/attribute';
 import { validate_items } from "../../validations/items";
+import { create_variant } from "../attribute/create";
 
 export const createProduct = async (req, res) => {
   const { category_id } = req.body;
@@ -60,26 +60,9 @@ export const createProduct = async (req, res) => {
     if (dataClient.attributes && dataClient.attributes.length > 0) {
       const convertAttribute = JSON.parse(dataClient.attributes)
       const data = await Products.create(newProductData);
-      const varriant = convertAttribute.map(item => (
-        {
-          color: item.color ? item.color : '',
-          size: item.size.map(data_size => (
-            {
-              name_size: data_size.name_size ? data_size.name_size.toString() : '',
-              stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
-              price_attribute: data_size.price_attribute ? +data_size.price_attribute : 1
-            }
-          )
-          )
-        }
-      ));
-      const data_attr = {
-        id_item: data._id,
-        values: varriant
-      };
-      const new_attr = await Attributes.create(data_attr);
+      const variant = await create_variant(convertAttribute)
       await Products.findByIdAndUpdate(data._id, {
-        $set: { attributes: new_attr._id }
+        $set: { attributes: variant._id }
       })
       return res.status(StatusCodes.CREATED).json({
         message: 'OK',

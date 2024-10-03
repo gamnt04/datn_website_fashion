@@ -1,31 +1,24 @@
-import { required } from "joi";
 import mongoose, { Schema } from "mongoose";
 
 const AttributeSchema = new Schema(
     {
-        id_item: {
+        id_account: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Products'
+            ref: 'User'
         },
-        values: [
-            {
-                color: {
-                    type: String,
-                },
-                size: [
-                    {
-                        name_size: String,
-                        stock_attribute: {
-                            type: Number,
-                            min: 0
-                        },
-                        price_attribute: Number
-
-                    }
-                ],
-            },
-        ],
+        attribute: {
+            type: String,
+            required: true
+        },
+        category_attribute: {
+            type: String,
+            required: true,
+        },
+        symbol_attribute: {
+            type: String,
+            required: true
+        }
     },
     { timestamps: false, versionKey: false }
 );
-export default mongoose.model("Attributes", AttributeSchema);
+export default mongoose.model("Attribute", AttributeSchema);

@@ -87,9 +87,9 @@ export async function get_items_client(req, res) {
     for (const id_data of data.docs) {
       if (id_data.attributes) {
         let total_stock = 0;
-        id_data.attributes.values.map((i) => {
-          i.size.map((l) => {
-            total_stock += l.stock_attribute;
+        id_data.attributes.variants.map((i) => {
+          i.value_variants.map((l) => {
+            total_stock += l.stock_variant;
           });
         });
         id_data.stock_product = total_stock;
@@ -142,17 +142,17 @@ export const getProductById = async (req, res) => {
     const products = await Products.findById(req.params.id);
     if (products?.attributes) {
       await Products?.populate(products, { path: "attributes" });
-      if (products.attributes.values) {
-        products.attributes.values = products.attributes.values.map((item) => {
-          const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
+      if (products.attributes.variants) {
+        products.attributes.variants = products.attributes.variants.map((item) => {
+          const new_data = item.value_variants.filter((attr) => attr.stock_variant > 0);
           if (new_data.length > 0) {
             return {
               ...item,
-              size: new_data,
+             variants: new_data,
             };
           }
         });
-        products.attributes.values = products.attributes.values.filter(
+        products.attributes.variants = products.attributes.variants.filter(
           (item) => item !== undefined
         );
       }

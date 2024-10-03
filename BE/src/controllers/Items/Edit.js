@@ -1,7 +1,8 @@
 import Products from "../../models/Items/Products";
-import Attributes from '../../models/attribute/attribute'
 import { StatusCodes } from "http-status-codes";
+import Variant from "../../models/attribute/variant";
 import { validate_items } from "../../validations/items";
+import { create_variant } from "../attribute/create";
 
 export const updateProductById = async (req, res) => {
   const { name_product, ...body } = req.body;
@@ -13,32 +14,18 @@ export const updateProductById = async (req, res) => {
         message,
       });
     }
-    // const check_name_item = await Products.findOne({ name_product });
-    // if (check_name_item) {
-    //   return res.status(StatusCodes.BAD_REQUEST).json({
-    //     message: "Ten san pham da ton tai",
-    //   });
-    // }
     let convertAttribute;
     if (req.body.attributes) {
       convertAttribute = JSON.parse(req.body.attributes);
     }
     if (convertAttribute) {
-      await Attributes.findOneAndDelete({ id_item: req.params.id });
+      await Variant.findOneAndDelete({ _id: req.body.attributes._id });
       if (!Array.isArray(convertAttribute)) {
         convertAttribute = Object.keys(convertAttribute)
           .filter(key => !['_id', 'id_item', 'varriants', 'createdAt', 'updatedAt'].includes(key))
           .map(key => convertAttribute[key])
       }
-      const varriant = convertAttribute.map(item => ({
-        color: convertAttribute ? item.color : '',
-        size: item.size.map(s => ({
-          name_size: s.name_size ? s.name_size.toString() : '',
-          stock_attribute: s.stock_attribute ? s.stock_attribute : 0,
-          price_attribute: s.price_attribute ? s.price_attribute : 1
-        }))
-      }));
-      const new_attr = await Attributes.create({ id_item: req.params.id, values: varriant });
+      const variant = await create_variant(convertAttribute);
       const dataClient = {
         ...req.body,
         attributes: null
@@ -46,7 +33,7 @@ export const updateProductById = async (req, res) => {
       const product = await Products.findByIdAndUpdate(req.params.id, {
         $set: {
           ...dataClient,
-          attributes: new_attr._id
+          attributes: variant._id
         }
       }, {
         new: true,
