@@ -508,7 +508,10 @@ export const updateOrderStatus = async (req, res) => {
     if (status == "4") {
       order.deliveredAt = new Date();
     }
-
+    order.statusHistory.push({
+      status,
+      time: new Date()
+    });
     // if (status === 2) {
     //   const items = order.items;
     //   for (let i of items) {
