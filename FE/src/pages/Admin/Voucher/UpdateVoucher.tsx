@@ -11,9 +11,10 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+
 type FieldType = {
   name_voucher: string;
   code_voucher: string;
@@ -33,6 +34,7 @@ const UpdateVoucher = () => {
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý người dùng đã chọn
   const { data: voucher, isLoading } = useQuery({
     queryKey: ["voucher", id],
     queryFn: () => instance.get(`/voucher/${id}`),
@@ -71,6 +73,8 @@ const UpdateVoucher = () => {
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
+
+  // Generate random code for voucher
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -81,9 +85,11 @@ const UpdateVoucher = () => {
     }
     form.setFieldsValue({ code_voucher: randomCode });
   };
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     mutate(values);
   };
+
   useEffect(() => {
     if (voucher?.data?.voucher) {
       form.setFieldsValue({
@@ -91,27 +97,37 @@ const UpdateVoucher = () => {
         startDate: moment(voucher.data.voucher.startDate),
         expirationDate: moment(voucher.data.voucher.expirationDate),
       });
+      setSelectedUsers(voucher.data.voucher.allowedUsers || []); // Set người dùng đã chọn
     }
   }, [voucher, form]);
-  const voucherData = voucher?.data?.voucher
-    ? {
-        ...voucher.data.voucher,
-        startDate: voucher.data.voucher.startDate
-          ? moment(voucher.data.voucher.startDate)
-          : null,
-        expirationDate: voucher.data.voucher.expirationDate
-          ? moment(voucher.data.voucher.expirationDate)
-          : null,
-      }
-    : {};
-  console.log("voucher", voucher?.data);
+
+  // Cập nhật người dùng đã chọn khi có thay đổi trong Select
+  const handleSelectChange = (value: string[]) => {
+    if (value.includes("all")) {
+      // Nếu chọn "Chọn tất cả", cập nhật với tất cả người dùng
+      const allUserIds = auth?.data.map((user: any) => user._id);
+      setSelectedUsers(allUserIds);
+      form.setFieldsValue({ allowedUsers: allUserIds });
+    } else {
+      // Cập nhật lựa chọn người dùng
+      setSelectedUsers(value);
+      form.setFieldsValue({ allowedUsers: value });
+    }
+  };
+
+  // Bỏ chọn tất cả người dùng
+  const handleDeselectAll = () => {
+    setSelectedUsers([]); // Xóa tất cả người dùng
+    form.setFieldsValue({ allowedUsers: [] });
+  };
+
   if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="mt-20 ml-10">
       <h1 className="text-2xl font-semibold">
         Cập nhât: {voucher?.data.name_voucher}
       </h1>
-
       {contextHolder}
       <Form
         name="basic"
@@ -119,8 +135,9 @@ const UpdateVoucher = () => {
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
         layout="vertical"
-        initialValues={voucherData}
+        initialValues={voucher}
         onFinish={onFinish}
+        form={form}
       >
         <Form.Item<FieldType>
           label="Tên mã giảm giá"
@@ -203,24 +220,22 @@ const UpdateVoucher = () => {
             mode="multiple"
             style={{ width: "100%" }}
             placeholder="Người dùng"
-            onChange={(value) => {
-              if (value.length === 0 || value.includes("all")) {
-                // Nếu không chọn ai hoặc chọn "Tất cả", lưu allowedUsers là mảng rỗng
-                form.setFieldsValue({ allowedUsers: [] });
-              } else {
-                // Nếu chọn một số người dùng cụ thể, giữ giá trị đã chọn
-                form.setFieldsValue({ allowedUsers: value });
-              }
-            }}
             options={[
-              { value: "all", label: "Tất cả" }, // Thêm tùy chọn "Tất cả"
+              { value: "all", label: "Chọn tất cả người dùng" },
               ...auth?.data.map((user: any) => ({
                 value: user._id,
                 label: user.userName,
               })),
             ]}
+            onChange={handleSelectChange}
+            value={selectedUsers}
           />
+          {/* Nút bỏ chọn tất cả */}
+          <Button onClick={handleDeselectAll} style={{ marginTop: "10px" }}>
+            Bỏ chọn tất cả
+          </Button>
         </Form.Item>
+
         <Form.Item<FieldType>
           label="Ngày bắt đầu mã giảm giá"
           name="startDate"
@@ -239,7 +254,7 @@ const UpdateVoucher = () => {
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit">
-            Submit
+            Cập nhật
           </Button>
         </Form.Item>
       </Form>
