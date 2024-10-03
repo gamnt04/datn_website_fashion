@@ -10,18 +10,9 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/useSearch";
-<<<<<<< HEAD
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
-=======
-import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Heart, Search, ShoppingCart } from "lucide-react";
-import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
-import { message } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import logo from "../../../assets/Images/Logo/logo white.png";
 import { AiOutlineBell } from "react-icons/ai";
 import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
->>>>>>> 383b071ecc5dafac8a5df1eccd334852f438a9b5
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {

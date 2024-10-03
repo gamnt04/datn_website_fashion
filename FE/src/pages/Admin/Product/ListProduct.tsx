@@ -71,7 +71,7 @@ const ListProduct = () => {
         {contextHolder}
 
         <div className="mx-6">
-          <div className="flex items-center justify-between mt-20 mb-5">
+          <div className="flex items-center justify-between mb-5">
             <h1 className="text-2xl font-semibold">Quản Lý Sản Phẩm</h1>{" "}
             <Link to="/admin/products/add">
               <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">

@@ -14,11 +14,11 @@ const AdminLayout: React.FC = () => {
         </div>
 
         {/* Main content */}
-        <div className="flex-1 ml-[250px] bg-[#F1F5F9] flex flex-col">
+        <div className="flex-1 ml-[250px] pl-6 bg-[#F1F5F9] flex flex-col">
           <div className="fixed top-0 left-[250px] w-[calc(100%-200px)] bg-[#171821] text-gray-100 z-10">
             <Header />
           </div>
-          <div className="pt-[20px] flex-1 ">
+          <div className="pt-[100px] flex-1">
             <Outlet />
           </div>
           <div className="py-4 text-center">

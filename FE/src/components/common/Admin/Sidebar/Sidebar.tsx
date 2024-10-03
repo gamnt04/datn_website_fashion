@@ -38,9 +38,8 @@ export default function Sidebar_Dashboard() {
               <LayoutDashboard />
               <span className="text-[#c4cee3]">Bảng điều khiển</span>
               <ChevronDown
-                className={`ml-auto transform ${
-                  expandedSection === "dashboard" ? "rotate-180" : ""
-                }`}
+                className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -69,9 +68,8 @@ export default function Sidebar_Dashboard() {
               <Shirt />
               <span className="text-[#c4cee3]">Sản phẩm</span>
               <ChevronDown
-                className={`ml-auto transform ${
-                  expandedSection === "products" ? "rotate-180" : ""
-                }`}
+                className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -82,6 +80,12 @@ export default function Sidebar_Dashboard() {
                   className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
                 >
                   Danh sách sản phẩm
+                </NavLink>
+                <NavLink
+                  to="/admin/products/attribute-catalog"
+                  className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
+                >
+                  Thuộc tính sản phẩm
                 </NavLink>
                 <NavLink
                   to="/admin/products/add"

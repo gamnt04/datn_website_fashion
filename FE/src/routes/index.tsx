@@ -45,6 +45,7 @@ import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
 import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
+import Attribute_catalog from "../pages/Admin/Attributes_catalog/page";
 const RouterComponent = () => {
   return (
     <>
@@ -95,6 +96,7 @@ const RouterComponent = () => {
             <Route path="products/add" element={<Add_Item />} />
             <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
+            <Route path="products/attribute-catalog" element={<Attribute_catalog />} />
             {/* <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
             <Route path="trash" element={<TrashProduct />} />
