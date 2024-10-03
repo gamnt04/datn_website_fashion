@@ -27,7 +27,15 @@ export const authenticate = (req, res, next) => {
 };
 
 export const createOrder = async (req, res) => {
-  const { userId, items, customerInfo, email, totalPrice } = req.body;
+  const {
+    userId,
+    items,
+    customerInfo,
+    email,
+    totalPrice,
+    discountCode = null,
+    discountAmount = 0,
+  } = req.body;
   if (
     !customerInfo.email ||
     !customerInfo.phone ||
@@ -48,10 +56,13 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`,
+        address: `${customerInfo.address || ""}${
+          customerInfo.addressDetail || ""
+        }`,
       },
       totalPrice,
+      discountCode: discountCode || null, // Lưu mã giảm giá nếu có
+      discountAmount: discountAmount || 0, // Lưu số tiền giảm giá nếu có
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
@@ -175,8 +186,9 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`,
+          address: `${customerInfo.address || ""}${
+            customerInfo.addressDetail || ""
+          }`,
         },
         totalPrice,
       });
@@ -510,7 +522,7 @@ export const updateOrderStatus = async (req, res) => {
     }
     order.statusHistory.push({
       status,
-      time: new Date()
+      time: new Date(),
     });
     // if (status === 2) {
     //   const items = order.items;

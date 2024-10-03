@@ -108,8 +108,8 @@ export const checkRole = (roles) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
 
-      console.log("User Role:", req.user.role);
-      console.log("Required Roles:", roles);
+      // console.log("User Role:", req.user.role);
+      // console.log("Required Roles:", roles);
       if (!roles.includes(req.user.role)) {
         return res.status(StatusCodes.FORBIDDEN).json({
           message: "Bạn không có quyền truy cập vào tài nguyên này.",
@@ -204,7 +204,7 @@ export const signin = async (req, res) => {
 
     // Tạo token
     const token = jwt.sign(
-      { userId: user._id, role: user.role || "courier" }, 
+      { userId: user._id, role: user.role || "courier" },
       process.env.JWT_SECRET || "secretkey",
       { expiresIn: "7d" }
     );
