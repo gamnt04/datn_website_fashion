@@ -22,6 +22,17 @@ export const get_Notification_By_User = async (userId: string | number) => {
     console.log(error);
   }
 };
+
+// export const getAll_Notification = async () => {
+//   try {
+//     const { data } = await instance.get(`/notification`);
+//     console.log(data);
+
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 export const getAll_Notification = async (role: string) => {
   try {
     const { data } = await instance.get(`/notification`, { params: { role } });
