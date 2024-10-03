@@ -493,42 +493,68 @@ const Pay = () => {
                   </button>
                 </div>
               </div>
-
+              {/* Hiển thị danh sách voucher */}
               {/* Hiển thị danh sách voucher */}
               <div className="px-6 py-6 border-b">
                 <h3 className="text-lg font-bold">Chọn mã voucher</h3>
 
                 {vouchers.length > 0 ? (
                   <div
-                    className="flex flex-nowrap gap-4 mt-2 overflow-x-auto" // Sử dụng flex-nowrap để đảm bảo các phần tử được hiển thị theo hàng ngang và có thể cuộn
+                    className="flex flex-nowrap gap-4 mt-2 overflow-x-auto"
                     style={{ whiteSpace: "nowrap" }} // Đảm bảo phần tử không bị ngắt dòng
                   >
-                    {vouchers.map((voucher: any) => (
-                      <div
-                        key={voucher._id}
-                        className={`border rounded p-4 flex-shrink-0 min-w-[200px] flex items-center cursor-pointer ${
-                          selectedVoucher?._id === voucher._id
-                            ? "border-blue-500"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        <div>
-                          <p className="font-bold">{voucher.name_voucher}</p>
-                          <p>
-                            Hạn dùng:{" "}
-                            {new Date(
-                              voucher.expirationDate
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <button
-                          className="ml-4 px-4 py-2 bg-blue-500 text-white font-bold rounded"
-                          onClick={(e) => handleApplyVoucher(e, voucher)} // Thêm `e` ở đây để ngăn submit form
+                    {vouchers.map((voucher: any) => {
+                      const isAllowedUser =
+                        voucher.allowedUsers.length === 0 ||
+                        voucher.allowedUsers.includes(userId); // Kiểm tra nếu allowedUsers rỗng hoặc chứa userId
+
+                      const isVoucherAvailable =
+                        voucher.usedCount < voucher.quantity_voucher; // Kiểm tra nếu usedCount < quantity_voucher
+
+                      return (
+                        <div
+                          key={voucher._id}
+                          className={`border rounded p-4 flex-shrink-0 min-w-[200px] flex items-center justify-between ${
+                            selectedVoucher?._id === voucher._id
+                              ? "border-blue-500"
+                              : "border-gray-300"
+                          } ${
+                            !isAllowedUser || !isVoucherAvailable
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`} // Thêm opacity và cursor nếu disabled
                         >
-                          Sử dụng
-                        </button>
-                      </div>
-                    ))}
+                          <div>
+                            <p className="font-bold">{voucher.name_voucher}</p>
+                            <p>
+                              Hạn dùng:{" "}
+                              {new Date(
+                                voucher.expirationDate
+                              ).toLocaleDateString()}
+                            </p>
+                            <p>
+                              Số lượng còn lại:{" "}
+                              {voucher.quantity_voucher - voucher.usedCount}
+                            </p>
+                          </div>
+                          <button
+                            className={`ml-4 px-4 py-2 bg-blue-500 text-white font-bold rounded ${
+                              !isAllowedUser || !isVoucherAvailable
+                                ? "bg-gray-300"
+                                : ""
+                            }`} // Đổi màu nút nếu disabled
+                            onClick={(e) => handleApplyVoucher(e, voucher)}
+                            disabled={!isAllowedUser || !isVoucherAvailable} // Disable button nếu không hợp lệ hoặc hết số lượng sử dụng
+                          >
+                            {isAllowedUser
+                              ? isVoucherAvailable
+                                ? "Sử dụng"
+                                : "Hết mã"
+                              : "Không hợp lệ"}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <p>Không có voucher nào khả dụng</p>
