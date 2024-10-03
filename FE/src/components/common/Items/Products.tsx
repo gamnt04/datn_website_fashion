@@ -96,10 +96,10 @@ const Products = ({ items }: any) => {
 
   return (
     <div
-      className="flex flex-col justify-between w-full gap-y-5"
+      className="flex  justify-between w-full gap-y-5"
       key={items._id}
     >
-      <div className="relative  w-full  border-gray-200 border rounded-xl group">
+      <div className="relative w-full border-gray-200 border rounded-xl group">
         <Link
           onClick={ScrollTop}
           to={`/shops/${items._id}`}
