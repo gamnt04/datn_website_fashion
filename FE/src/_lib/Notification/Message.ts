@@ -40,4 +40,13 @@ export const getAll_Notification = async (role: string) => {
     console.log(error);
   }
 }
+export const update_Notification = async (id: string | number) => {
+  try {
+    const data = await instance.put(`/notification/${id}`, { status_notification: true });
+    return data;
+  } catch (error) {
+    console.log(error);
+
+  }
+}
 

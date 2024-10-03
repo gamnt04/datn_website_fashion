@@ -113,11 +113,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
-                  className={`px-4 py-2 border rounded-md ${
-                    currentPage === 1
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-2 border rounded-md ${currentPage === 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                    }`}
                   disabled={currentPage === 1}
                 >
                   &#10094; Trang trước
@@ -127,11 +126,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                 </span>
                 <button
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className={`px-4 py-2 border rounded-md ${
-                    !hasMore
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-2 border rounded-md ${!hasMore
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                    }`}
                   disabled={!hasMore}
                 >
                   Trang tiếp theo &#10095;
@@ -144,11 +142,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 border rounded-md ${
-                          currentPage === page
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-black hover:bg-gray-300"
-                        }`}
+                        className={`px-4 py-2 border rounded-md ${currentPage === page
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-black hover:bg-gray-300"
+                          }`}
                       >
                         {page}
                       </button>
