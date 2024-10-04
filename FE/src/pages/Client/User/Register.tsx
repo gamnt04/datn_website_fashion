@@ -1,8 +1,7 @@
-import { Button, Form, FormProps, Input, message, Spin } from "antd";
-import useSignUp from "../../../common/hooks/Auth/useSignUp";
-import { signUpSchema } from "../../../common/validations/auth/SignUp";
-import { Link } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
+import { Button, Form, FormProps, Input, message, Spin } from "antd";
+import { Link } from "react-router-dom";
+import useSignUp from "../../../common/hooks/Auth/useSignUp";
 
 type FieldType = {
   email: string;
@@ -62,13 +61,13 @@ const Register: React.FC = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Tên đăng nhập không được để trống!",
+                        message: "Tên đăng nhập không được để trống!"
                       },
                       { min: 3, message: "UserName phải có ít nhất 3 ký tự" },
                       {
                         max: 30,
-                        message: "UserName không được vượt quá 30 ký tự",
-                      },
+                        message: "UserName không được vượt quá 30 ký tự"
+                      }
                     ]}
                     className="w-full"
                   >
@@ -89,8 +88,8 @@ const Register: React.FC = () => {
                           return Promise.reject(
                             new Error("Email không được chứa ký tự có dấu!")
                           );
-                        },
-                      }),
+                        }
+                      })
                     ]}
                     className="w-[400px]"
                   >
@@ -106,7 +105,7 @@ const Register: React.FC = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Mật khẩu không được để trống!!",
+                        message: "Mật khẩu không được để trống!!"
                       },
                       { min: 6, message: "Mật khẩuphải có ít nhất 6 ký tự" },
                       () => ({
@@ -117,8 +116,8 @@ const Register: React.FC = () => {
                           return Promise.reject(
                             new Error("Mật khẩu không được chứa dấu cách!")
                           );
-                        },
-                      }),
+                        }
+                      })
                     ]}
                     className="w-[400px]"
                   >
@@ -131,7 +130,7 @@ const Register: React.FC = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Bạn phải xác nhận lại mật khẩu",
+                        message: "Bạn phải xác nhận lại mật khẩu"
                       },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
@@ -141,8 +140,8 @@ const Register: React.FC = () => {
                           return Promise.reject(
                             new Error("Mật khẩu xác nhận không khớp!")
                           );
-                        },
-                      }),
+                        }
+                      })
                     ]}
                   >
                     <Input.Password className="h-[50px]" />

@@ -1,9 +1,9 @@
 import { jwtDecode } from "jwt-decode";
 
 // Hàm lấy token từ localStorage
-export const getToken = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return user?.token;
+export const getToken = (): string | null => {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  return user?.token || null;
 };
 
 // Hàm giải mã token JWT
