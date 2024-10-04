@@ -45,6 +45,7 @@ import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
 import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
+import TrackOrder from "../pages/Client/TrackOrder/TrackOrder";
 const RouterComponent = () => {
   return (
     <>
@@ -65,6 +66,7 @@ const RouterComponent = () => {
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
+            <Route path="track-order" element={< TrackOrder />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
