@@ -139,7 +139,7 @@ const AddVoucher = () => {
                 >
                   <Select className="h-10">
                     <Select.Option value="percentage">
-                      Giảm giá theo phần trăm(%)
+                      Giảm giá theo phần trăm (%)
                     </Select.Option>
                     <Select.Option value="fixed">
                       Giảm giá theo số tiền cố định (VND)
@@ -307,7 +307,7 @@ const AddVoucher = () => {
                       mode="multiple"
                       style={{
                         width: "90%",
-                        minHeight: "40px", // Đặt chiều cao cố định để giữ vị trí của biểu tượng mũi tên
+                        minHeight: "40px", // Set a fixed height to maintain the arrow icon's position
                       }}
                       placeholder="Người dùng"
                       className="mt-2"
@@ -320,14 +320,13 @@ const AddVoucher = () => {
                       ]}
                       onChange={handleSelectChange}
                       value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }} // Giới hạn chiều cao dropdown
-                      maxTagCount={4} // Hiển thị tối đa 4 người dùng đã chọn
+                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }} // Limit dropdown height
+                      maxTagCount={4} // Shows up to 5 selected users
                       maxTagPlaceholder={(omittedValues) =>
                         `+${omittedValues.length} người khác`
                       }
                       allowClear
                     />
-                    {/* Ô đếm số lượng người dùng đã chọn */}
                     <span className="ml-2 text-gray-600">
                       Đã chọn: {selectedUsers.length}
                     </span>
