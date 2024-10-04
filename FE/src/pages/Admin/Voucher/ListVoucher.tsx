@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
-import { Button, Empty, message, Popconfirm, Space, Table, Drawer } from "antd";
+import {
+  Button,
+  Empty,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  Drawer,
+  Switch,
+} from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { format } from "date-fns";
@@ -31,7 +40,24 @@ const ListVoucher = () => {
       messageAPI.error(error.message);
     },
   });
-
+  const mutation = useMutation({
+    mutationFn: async (category: IVoucher) => {
+      const response = await instance.put(`/voucher/${category._id}`, category);
+      return response.data;
+    },
+    onSuccess: () => {
+      messageAPI.success("Cập nhật Voucher thành công");
+      queryClient.invalidateQueries({ queryKey: ["voucher"] });
+    },
+    onError: (error: unknown) => {
+      console.error("Lỗi khi cập nhật Voucher:", error);
+      messageAPI.error(
+        `Cập nhật Voucher không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
+    },
+  });
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
@@ -45,7 +71,9 @@ const ListVoucher = () => {
     setSelectedVoucher(voucher);
     setOpenDrawer(true);
   };
-
+  const handleTogglePublished = (category: IVoucher) => {
+    mutation.mutate({ ...category, isActive: !category.isActive });
+  };
   const dataSource = data?.data?.vouchers.map((voucher: IVoucher) => ({
     key: voucher._id,
     ...voucher,
@@ -99,6 +127,17 @@ const ListVoucher = () => {
       dataIndex: "expirationDate",
       key: "expirationDate",
       render: (text: string) => formatDate(text),
+    },
+    {
+      key: "isActive",
+      title: "Hiển Thị",
+      dataIndex: "isActive",
+      render: (isActive: boolean, record: IVoucher) => (
+        <Switch
+          checked={isActive}
+          onChange={() => handleTogglePublished(record)}
+        />
+      ),
     },
     {
       key: "actions",

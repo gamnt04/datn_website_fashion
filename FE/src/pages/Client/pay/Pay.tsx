@@ -49,7 +49,13 @@ const Pay = () => {
     const fetchVouchers = async () => {
       try {
         const response = await instance.get("/voucher");
-        setVouchers(response.data.vouchers);
+
+        // Chỉ giữ lại các voucher có isActive = true
+        const activeVouchers = response.data.vouchers.filter(
+          (voucher: any) => voucher.isActive === true
+        );
+
+        setVouchers(activeVouchers);
       } catch (error) {
         toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
       }
@@ -123,7 +129,7 @@ const Pay = () => {
     e.preventDefault();
     try {
       const response = await instance.post(`/voucher/use`, {
-        code_voucher: voucher.code_voucher,
+        code_voucher: voucher.code_voucher, // Mã voucher người dùng chọn
         totalAmount: totalPrice,
         userId: user?.user?._id,
       });
@@ -133,6 +139,9 @@ const Pay = () => {
       setDiscountAmount(discount);
       setFinalAmount(finalAmount);
       setSelectedVoucher(voucher);
+
+      // Lưu mã voucher vào discountCode
+      setDiscountCode(voucher.code_voucher);
 
       toast.success(message, { autoClose: 1200 });
       setIsVoucherModalVisible(false);
