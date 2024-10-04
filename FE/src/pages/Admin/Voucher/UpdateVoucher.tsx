@@ -126,11 +126,11 @@ const UpdateVoucher = () => {
 
   return (
     <div className="mt-20">
-      <div className="border-b border-gray-900/10 pb-12">
-        <h2 className="text-2xl font-semibold leading-7 text-gray-900 ml-16 ">
-          Cập nhật Voucher
+      <div className="pb-12 border-b border-gray-900/10">
+        <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
+          Cập Nhật Mã Giảm Giá
         </h2>
-        <div className=" ml-10 p-6 ">
+        <div className="p-6 ml-10 ">
           {contextHolder}
           <Form
             name="basic"
@@ -146,7 +146,7 @@ const UpdateVoucher = () => {
             {/* Use flexbox to split form into 2 columns */}
             <div className="flex flex-wrap -mx-4">
               {/* Column 1 */}
-              <div className="w-full md:w-1/2 px-4">
+              <div className="w-full px-4 md:w-1/2">
                 <Form.Item<FieldType>
                   label="Tên mã giảm giá"
                   name="name_voucher"
@@ -171,11 +171,15 @@ const UpdateVoucher = () => {
                 >
                   <Select className="h-10">
                     <Select.Option value="percentage">
-                      Percentage (%)
+                      Giảm giá theo phần trăm(%)
                     </Select.Option>
-                    <Select.Option value="fixed">Fixed (VND)</Select.Option>
+                    <Select.Option value="fixed">
+                      {" "}
+                      Giảm giá theo số tiền cố định (VND)
+                    </Select.Option>
                   </Select>
                 </Form.Item>
+
                 <Form.Item<FieldType>
                   label="Điều kiện mã giảm giá"
                   name="minimumSpend"
@@ -183,6 +187,11 @@ const UpdateVoucher = () => {
                     {
                       required: true,
                       message: "Vui lòng nhập điều kiện mã giảm giá!",
+                    },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Số tiền tối thiểu phải lớn hơn 0!",
                     },
                   ]}
                 >
@@ -194,6 +203,16 @@ const UpdateVoucher = () => {
                   name="startDate"
                   rules={[
                     { required: true, message: "Vui lòng nhập ngày bắt đầu!" },
+                    {
+                      validator: (_, value) => {
+                        if (!value || value.isBefore(new Date())) {
+                          return Promise.reject(
+                            new Error("Ngày bắt đầu không được trong quá khứ!")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
                   ]}
                 >
                   <DatePicker showTime className="w-full h-10" />
@@ -209,19 +228,20 @@ const UpdateVoucher = () => {
               </div>
 
               {/* Column 2 */}
-              <div className="w-full md:w-1/2 px-4">
+              <div className="w-full px-4 md:w-1/2">
                 <Form.Item
                   label="Mã giảm giá"
                   name="code_voucher"
                   rules={[
                     { required: true, message: "Vui lòng nhập mã giảm giá!" },
+                    { min: 6, message: "Mã giảm giá phải lớn hơn 5 ký tự!" },
                   ]}
                 >
                   <Input
                     addonAfter={
                       <Button
                         onClick={generateRandomCode}
-                        className="flex items-center justify-center h-full w-12"
+                        className="flex items-center justify-center w-12 h-full"
                         style={{
                           border: "none",
                           backgroundColor: "transparent",
@@ -238,6 +258,7 @@ const UpdateVoucher = () => {
                     className="h-10"
                   />
                 </Form.Item>
+
                 <Form.Item
                   label="Giá trị mã giảm giá"
                   name="discountValue"
@@ -246,24 +267,65 @@ const UpdateVoucher = () => {
                       required: true,
                       message: "Vui lòng nhập giá trị mã giảm giá!",
                     },
+                    {
+                      validator: (_, value) => {
+                        const discountType = form.getFieldValue("discountType");
+                        if (discountType === "fixed") {
+                          if (value && value > 0) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Giá trị tiền phải lớn hơn 0!")
+                          );
+                        } else if (discountType === "percentage") {
+                          if (value && value >= 0 && value <= 100) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Giá trị phần trăm phải từ 0 đến 100!")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
                   ]}
                 >
                   <InputNumber className="w-full h-10" />
                 </Form.Item>
+
                 <Form.Item<FieldType>
                   label="Số lượng mã giảm giá"
                   name="quantity_voucher"
                   rules={[
                     { required: true, message: "Vui lòng nhập số lượng!" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Số lượng phải lớn hơn 0!",
+                    },
                   ]}
                 >
                   <InputNumber className="w-full h-10" />
                 </Form.Item>
+
                 <Form.Item<FieldType>
                   label="Ngày kết thúc mã giảm giá"
                   name="expirationDate"
                   rules={[
                     { required: true, message: "Vui lòng nhập ngày kết thúc!" },
+                    {
+                      validator: (_, value) => {
+                        const startDate = form.getFieldValue("startDate");
+                        if (startDate && value && value.isBefore(startDate)) {
+                          return Promise.reject(
+                            new Error(
+                              "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
                   ]}
                 >
                   <DatePicker showTime className="w-full h-10" />
@@ -298,12 +360,9 @@ const UpdateVoucher = () => {
                       }
                       allowClear
                     />
-                    <Button
-                      onClick={handleDeselectAll}
-                      className=" absolute left-[390px] top-2 ml-2 h-8 border-red-400 text-red-400"
-                    >
-                      X
-                    </Button>
+                    <span className="ml-2 text-gray-600">
+                      Đã chọn: {selectedUsers.length}
+                    </span>
                   </div>
                 </Form.Item>
               </div>
