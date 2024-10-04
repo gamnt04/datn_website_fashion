@@ -9,6 +9,7 @@ import SendDeliveryConfirmationMail from "../SendMail/ThanhCongMail";
 
 // Middleware xác thực
 import jwt from "jsonwebtoken";
+import Voucher from "../../models/Voucher/voucher";
 
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
@@ -117,6 +118,16 @@ export const createOrder = async (req, res) => {
     }
     await order.save();
     await dataCart.save();
+
+    // **Cập nhật usedCount của voucher mà không cần kiểm tra tính hợp lệ**
+    if (discountCode) {
+      const voucher = await Voucher.findOne({ code_voucher: discountCode });
+      if (voucher) {
+        voucher.usedCount += 1; // Tăng số lần sử dụng voucher lên 1
+        await voucher.save();
+      }
+    }
+
     await SendMail(email, order);
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
