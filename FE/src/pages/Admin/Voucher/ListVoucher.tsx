@@ -171,11 +171,10 @@ const ListVoucher = () => {
                 <strong>Mã giảm giá:</strong> {selectedVoucher.code_voucher}
               </p>
               <p>
-                <strong>Số lượng:</strong> {selectedVoucher.quantity_voucher}
-              </p>
-              <p>
                 <strong>Loại mã giảm giá:</strong>{" "}
-                {selectedVoucher.discountType}
+                {selectedVoucher.discountType === "percentage"
+                  ? "Giảm giá theo phần trăm(%)"
+                  : " Giảm giá theo số tiền cố định (VND)"}
               </p>
               <p>
                 <strong>Giá trị mã giảm giá:</strong>{" "}
@@ -186,10 +185,27 @@ const ListVoucher = () => {
                 {selectedVoucher.minimumSpend}
               </p>
               <p>
-                <strong>Loại giảm giá:</strong>{" "}
-                {selectedVoucher.discountType === "percentage"
-                  ? "Theo %"
-                  : "Theo số tiền cố định"}
+                <strong>Số lượng tạo:</strong>{" "}
+                {selectedVoucher.quantity_voucher}
+              </p>
+              <p>
+                <strong>Số lượng đã được sử dụng:</strong>{" "}
+                {selectedVoucher.usedCount}
+              </p>
+              <p>
+                <strong>Số lượng còn lại:</strong>
+                {selectedVoucher.quantity_voucher - selectedVoucher.usedCount}
+              </p>
+              <p>
+                <strong>Thời gian bắt đầu:</strong>{" "}
+                {formatDate(selectedVoucher.startDate)}
+              </p>
+              <p>
+                <strong>Thời gian kết thúc:</strong>{" "}
+                {formatDate(selectedVoucher.expirationDate)}
+              </p>
+              <p>
+                <strong>Mô tả:</strong> {selectedVoucher.description_voucher}
               </p>
               <p>
                 <strong>Người được dùng:</strong>{" "}
@@ -208,21 +224,6 @@ const ListVoucher = () => {
                         </span>
                       ))
                   : "Tất cả"}
-              </p>
-              <p>
-                <strong>Giá trị:</strong> {selectedVoucher.discountValue}
-              </p>
-              <p>
-                <strong>Mô tả:</strong> {selectedVoucher.description_voucher}
-              </p>
-
-              <p>
-                <strong>Thời gian bắt đầu:</strong>{" "}
-                {formatDate(selectedVoucher.startDate)}
-              </p>
-              <p>
-                <strong>Thời gian kết thúc:</strong>{" "}
-                {formatDate(selectedVoucher.expirationDate)}
               </p>
             </div>
           )}
