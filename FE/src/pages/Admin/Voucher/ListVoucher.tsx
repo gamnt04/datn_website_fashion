@@ -105,6 +105,17 @@ const ListVoucher = () => {
       title: "Thao Tác",
       render: (_: any, voucher: IVoucher) => (
         <Space>
+          <Button onClick={() => handleViewDetails(voucher)}>
+            <FaEye />
+          </Button>
+          <Button type="primary">
+            <Link
+              to={`/admin/voucher/${voucher._id}`}
+              className="flex items-center"
+            >
+              <FaEdit />
+            </Link>
+          </Button>
           <Popconfirm
             title="Xóa mã giảm giá"
             description="Bạn có muốn xóa mã giảm giá này không?"
@@ -116,23 +127,6 @@ const ListVoucher = () => {
               <FaDeleteLeft />
             </Button>
           </Popconfirm>
-          <Button
-            style={{
-              border: "2px solid blue", // Viền màu xanh
-              borderRadius: "5px", // Bo góc 8px
-            }}
-            className="hover:bg-yellow-600 text-black font-semibold py-2 px-4"
-          >
-            <Link
-              to={`/admin/voucher/${voucher._id}`}
-              className="flex items-center"
-            >
-              <FaEdit />
-            </Link>
-          </Button>
-          <Button onClick={() => handleViewDetails(voucher)}>
-            <FaEye />
-          </Button>
         </Space>
       ),
     },
