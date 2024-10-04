@@ -1,6 +1,6 @@
+import { Carousel, Image } from "antd";
 import React, { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
-import { Carousel, Image } from "antd";
 
 interface ImageProductProp {
   product: IProduct;

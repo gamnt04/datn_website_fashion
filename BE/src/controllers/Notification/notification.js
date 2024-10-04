@@ -37,10 +37,39 @@ export const getNotificationByUser = async (req, res) => {
     }
 }
 export const getAllNotification = async (req, res) => {
+    const { userId, role } = req.query;
     try {
-        const notifications = await Notification.find()
+        let notifications
+        if (role === 'admin') {
+            notifications = await Notification.find().sort({ datetime: -1 }).populate('userId');
+        } else if (userId) {
+            notifications = await Notification.find({ receiver_id: userId }).sort({ datetime: -1 }).populate('userId');
+        } else {
+            return res.status(StatusCodes.FORBIDDEN).json({
+                message: 'Unauthorized'
+            });
+        }
         res.status(200).json({ notifications });
     } catch (error) {
         res.status(500).json({ message: "Lỗi rồi đại ca ơi" });
+    }
+}
+export const update_notification = async (req, res) => {
+    const { id } = req.params;
+    const { status_notification } = req.body;
+    console.log(status_notification);
+    console.log(id);
+
+
+    try {
+        const data = await Notification.findByIdAndUpdate(id, { status_notification }, { new: true });
+        return res.status(StatusCodes.OK).json({
+            message: 'Cập nhật thành công',
+            data
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Internal Server Error'
+        });
     }
 }

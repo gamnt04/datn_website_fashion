@@ -1,4 +1,3 @@
-import { reduce } from "lodash";
 import instance from "../../configs/axios";
 
 export const list_cart = async (id: string) => {

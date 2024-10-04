@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { HeartIcon } from "../../../resources/svg/Icon/Icon";
-import { useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
+import { HeartIcon } from "../../../resources/svg/Icon/Icon";
+import { useState } from "react";
 
 const ListProducts = () => {
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);

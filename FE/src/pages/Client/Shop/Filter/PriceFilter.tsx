@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from "react";
-import usePriceFilter from "../../../../common/hooks/Products/Filter/usePriceFilter";
+import React, { useCallback, useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
+import usePriceFilter from "../../../../common/hooks/Products/Filter/usePriceFilter";
 
 interface PriceFilterProps {
   onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
 }
 
 const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
-  const { selectedPriceRanges, handlePriceChange, resetPriceFilter } =
-    usePriceFilter();
+  // const { selectedPriceRanges, handlePriceChange, resetPriceFilter } =
+  const { selectedPriceRanges, handlePriceChange } = usePriceFilter();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,15 +42,15 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
       handlePriceChange,
       onPriceChange,
       selectedPriceRanges,
-      isPriceRangeSelected,
+      isPriceRangeSelected
     ]
   );
 
   // Xử lý đặt lại bộ lọc
-  const handleResetClick = useCallback(() => {
-    resetPriceFilter();
-    onPriceChange([]);
-  }, [resetPriceFilter, onPriceChange]);
+  // const handleResetClick = useCallback(() => {
+  //   resetPriceFilter();
+  //   onPriceChange([]);
+  // }, [resetPriceFilter, onPriceChange]);
 
   return (
     <div className="border border-gray-200">

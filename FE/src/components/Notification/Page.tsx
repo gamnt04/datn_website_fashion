@@ -1,51 +1,60 @@
 import { Link } from "react-router-dom";
-import { Query_notification } from "../../_lib/React_Query/Notification/Query"
+import { Mutation_Notification, Query_notification } from "../../_lib/React_Query/Notification/Query"
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
-    const { data } = Query_notification(userId)
-
+    const role = user?.user?.role;
+    const { data } = Query_notification(userId, role);
+    const { mutate } = Mutation_Notification("Send");
     return (
         <div className="space-y-4 text-sm">
             <strong className="text-lg">Thông báo của bạn</strong>
             {
                 data?.notifications?.length > 0 ?
                     data?.notifications?.map((item: any) =>
-                        <details className="group rounded-lg bg-gray-50 p-6 [&_summary::-webkit-details-marker]:hidden" open>
+                        <details onClick={() => mutate(item._id)} className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
-                                <h2 className="font-medium">{item?.userId?.userName}</h2>
+                                <div className="flex gap-4">
+                                    <h2 className="font-medium">{item?.userId?.userName}</h2>
+                                    <span>{item.status_notification === false ? <EyeInvisibleOutlined style={{ fontSize: "18px" }} /> : <EyeOutlined style={{ color: 'orange', fontSize: "18px" }} />}</span>
+                                </div>
                                 <span className="relative size-5 shrink-0">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="absolute inset-0 size-5 opacity-100 group-open:opacity-0"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
+                                    <button >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="absolute inset-0 size-5 opacity-100 group-open:opacity-0"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <button>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="absolute inset-0 size-5 opacity-0 group-open:opacity-100"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                    </button>
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="absolute inset-0 size-5 opacity-0 group-open:opacity-100"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
                                 </span>
                             </summary>
                             <div className="flex items-end justify-between gap-x-10">
@@ -71,6 +80,6 @@ export default function Notification() {
                         <span>Không có thông báo nào!</span>
                     </div>
             }
-        </div>
+        </div >
     )
 }

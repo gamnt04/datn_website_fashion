@@ -1,4 +1,3 @@
-import { message } from "antd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getNewUserIn7Day,
@@ -42,7 +41,7 @@ export function Mutation_address(action: Action) {
   });
   return { mutate, ...rest };
 }
-export const useSearchUserByUsername = (searchName) => {
+export const useSearchUserByUsername = (searchName: string) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_User", searchName],
     queryFn: () => getUserByUsername(searchName),

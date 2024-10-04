@@ -1,29 +1,24 @@
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import {
   Query_Orders,
-  useOrdersOfDay,
-  useOrdersOfMonth,
-  useOrdersOfWeek
+  useOrdersOfDay
 } from "../../../common/hooks/Order/querry_Order";
 import { Query_Products } from "../../../common/hooks/Products/Products";
-import CardDataStats from "./components/CardDataStats";
 import { IOrder } from "../../../common/interfaces/Orders";
-import dayjs from "dayjs";
-import { useQuery } from "@tanstack/react-query";
+import CardDataStats from "./components/CardDataStats";
 import ChartRevenueStatistcs from "./components/ChartRevenueStatistics";
 import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
-import ChartPayment from "./components/ChartPayment";
-import TableTopProducts from "./components/TableTopProducts";
 import ChartUser from "./components/ChartUser";
 import TableOrder from "./components/TableOrder";
+import TableTopProducts from "./components/TableTopProducts";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
   const { data: productData } = Query_Products();
   const { data: orderOfDayData } = useOrdersOfDay();
-  const { data: orderData } = Query_Orders();
+  // const { data: orderData } = Query_Orders();
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND"

@@ -44,19 +44,25 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    discountCode: {
+      type: String, // Thêm trường để lưu mã giảm giá
+      default: null,
+    },
+    discountAmount: {
+      type: Number, // Thêm trường để lưu số tiền giảm giá
+      default: 0,
+    },
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Review",
       },
     ],
-
     status: {
       type: String,
       enum: ["1", "2", "3", "4", "5", "6", "7"], //1.chờ xác nhận, 2.Đang chuẩn bị hàng, 3.Đang vận chuyển, 4. Giao hàng thành công, 5.Giao hàng thất bại, 6. Hoàn thành , 7. Hủy
       default: "1",
     },
-
     cancellationRequested: {
       type: Boolean,
       default: false,
@@ -82,10 +88,19 @@ const orderSchema = new mongoose.Schema(
       type: String, // Lý do giao hàng thất bại (nếu có)
       default: null,
     },
-    // datetime: {
-    //   type: Date,
-    //   default: Date.now
-    // }
+    statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: ["1", "2", "3", "4", "5", "6", "7"],
+          required: true,
+        },
+        updatedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 );

@@ -1,6 +1,6 @@
 import instance from "../../configs/axios";
 
-export const GetBlogsByName = async (searchName) => {
+export const GetBlogsByName = async (searchName: string) => {
   try {
     const { data } = await instance.post("/blogs/search", { searchName });
     return data;

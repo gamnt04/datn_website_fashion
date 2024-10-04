@@ -1,16 +1,26 @@
+// import { LoadingOutlined } from "@ant-design/icons";
+// import { message } from "antd";
+// import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import Nav_Mobile, { Nav_Desktop } from "./Nav";
+// import logo from "../../../assets/Images/Logo/logo white.png";
+// import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
+// import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/useSearch";
+import Nav_Mobile, { Nav_Desktop } from "./Nav";
+
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import logo from "../../../assets/Images/Logo/logo white.png";
+
+import { AiOutlineBell } from "react-icons/ai";
+import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
@@ -28,14 +38,13 @@ const Header = () => {
   const ref_login = useRef<HTMLAnchorElement>(null);
   const [toggle_Menu_Mobile, setToggle_Menu_Mobile] = useState<boolean>(false);
   const toggleFixedHeader = useRef<HTMLDivElement>(null);
-
-  // const { calculateTotalProduct } = useCart();
   const toggleForm = useRef<HTMLFormElement>(null);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const account = user?.user?._id;
   const { data: Favouritedata } = useListFavouriteProducts(account);
-
   const { data } = List_Cart(account);
+  const role = user?.user?.role;
+  const { data: notification } = Query_notification(account, role);
   const count_item_cart =
     data?.products?.filter((item: any) => item?.productId) ?? [];
   useEffect(() => {
@@ -84,7 +93,7 @@ const Header = () => {
   };
   const onlogin = () => {
     if (!account) {
-      message.open({
+      messageAPI.open({
         type: "warning",
         content: "Hãy đăng nhập tài khoản của bạn !!",
       });
@@ -270,7 +279,22 @@ const Header = () => {
                 </div>
               </>
             )}
-
+            <Link
+              className="group *:duration-300 relative py-1"
+              onClick={ScrollTop}
+              to="profile/notification"
+            >
+              {notification?.notifications &&
+                notification?.notifications?.length > 0 && (
+                  <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
+                    {notification?.notifications?.length}
+                  </span>
+                )}
+              <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
+                <AiOutlineBell />
+                {/* <MiniCart /> */}
+              </div>
+            </Link>
             {/* option / menu */}
             <div
               onClick={ScrollTop}

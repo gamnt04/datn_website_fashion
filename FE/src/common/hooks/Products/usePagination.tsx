@@ -18,9 +18,9 @@ interface Pagination {
 
 export function usePagination({
   initialPage = 1,
-  initialLimit = 20,
+  // initialLimit = 20,
   totalItems,
-  itemsPerPage,
+  itemsPerPage
 }: UsePaginationProps): Pagination {
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
 
@@ -54,6 +54,6 @@ export function usePagination({
     itemsPerPage,
     setPage: setCurrentPage,
     nextPage,
-    prevPage,
+    prevPage
   };
 }
