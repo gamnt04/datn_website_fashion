@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 let transporter = nodemailer.createTransport({
@@ -12,11 +13,15 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-async function SendDeliveryConfirmationMail(email, order) {
-  const { _id: orderId, customerInfo, items, totalPrice, deliveryDate } = order;
+async function SendDeliverySuccessMail(email, order) {
+  if (!email || !order) {
+    console.error("Email or order data is missing.");
+    return false;
+  }
+
+  const { _id: orderId, customerInfo, items, totalPrice, updatedAt } = order;
   const { email: customerEmail, phone, userName, address } = customerInfo;
 
-  // Định dạng giá trị tiền tệ
   const formattedTotalPrice = Number(totalPrice).toLocaleString("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -29,7 +34,7 @@ async function SendDeliveryConfirmationMail(email, order) {
       color_item,
       name_size,
       quantity,
-      total_price_item
+      total_price_item,
     } = item;
 
     const formattedPrice = Number(price_item).toLocaleString("vi-VN", {
@@ -48,9 +53,7 @@ async function SendDeliveryConfirmationMail(email, order) {
           <img src="${image_product}" style="width: 100px; height: 100px;" alt="${name_product}" />
           <p>${name_product}</p>
         </td>
-        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-          <div style="padding: 8px; text-align: center;">${color_item}</div>
-        </td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${color_item}</td>
         <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
           <div style="background-color: black; color: white; padding: 5px 10px; border-radius: 5px;">${name_size}</div>
         </td>
@@ -68,13 +71,13 @@ async function SendDeliveryConfirmationMail(email, order) {
         <p>Chào <b>${userName}</b>,</p>
         <p>Chúng tôi vui mừng thông báo rằng đơn hàng #${orderId} của bạn đã được giao thành công.</p>
         
-        <h2 style="color: #333;"><img src="https://img.icons8.com/fluent/48/000000/home.png" style="vertical-align: middle;"/> Thông tin giao hàng</h2>
+        <h2 style="color: #333;">Thông tin giao hàng</h2>
         <p><strong>Địa chỉ giao hàng:</strong> ${address}</p>
         <p><strong>Số điện thoại:</strong> ${phone}</p>
         <p><strong>Email:</strong> ${customerEmail}</p>
         <p><strong>Ngày giao hàng:</strong> ${updatedAt}</p>
 
-        <h2 style="color: #333;"><img src="https://img.icons8.com/fluent/48/000000/shopping-cart.png" style="vertical-align: middle;"/> Chi tiết đơn hàng</h2>
+        <h2 style="color: #333;">Chi tiết đơn hàng</h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
           <thead>
             <tr>
@@ -103,16 +106,18 @@ async function SendDeliveryConfirmationMail(email, order) {
 
   try {
     const info = await transporter.sendMail({
-      from: '"Website Fashion 👻" <no-reply@websitefashion.com>',
+      from: `"Website Fashion" <${process.env.SMTP_USER}>`,
       to: email,
       subject: `Thông báo Giao Hàng Thành Công #${orderId}`,
       text: `Chúng tôi vui mừng thông báo rằng đơn hàng #${orderId} của bạn đã được giao thành công. Tổng tiền: ${formattedTotalPrice}`,
       html: htmlContent,
     });
     console.log("Message sent: %s", info.messageId);
+    return true;
   } catch (error) {
     console.error("Error sending email:", error);
+    return false;
   }
 }
 
-export default SendDeliveryConfirmationMail;
+export default SendDeliverySuccessMail;
