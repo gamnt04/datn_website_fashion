@@ -26,6 +26,7 @@ export const getVoucherById = async (req, res) => {
 
 export const addVoucher = async (req, res) => {
   try {
+    req.body.code_voucher = req.body.code_voucher.toUpperCase();
     const newVoucher = new Voucher(req.body);
     await newVoucher.save();
     res.status(201).json({
@@ -54,6 +55,7 @@ export const updateVoucher = async (req, res) => {
   const { id } = req.params;
 
   try {
+    req.body.code_voucher = req.body.code_voucher.toUpperCase();
     const updatedVoucher = await Voucher.findByIdAndUpdate(id, req.body, {
       new: true,
     });

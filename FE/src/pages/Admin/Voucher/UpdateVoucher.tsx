@@ -116,12 +116,6 @@ const UpdateVoucher = () => {
     }
   };
 
-  // Bỏ chọn tất cả người dùng
-  const handleDeselectAll = () => {
-    setSelectedUsers([]); // Xóa tất cả người dùng
-    form.setFieldsValue({ allowedUsers: [] });
-  };
-
   if (isLoading) return <div>Loading...</div>;
 
   return (
