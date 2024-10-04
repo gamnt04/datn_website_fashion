@@ -303,6 +303,5127 @@ const TrackOrder: React.FC = () => {
             <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
           </Col>
         </Row>
+        {/* <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
+            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+          </Col>
+          <Col span={24}>
+            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
+            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+          </Col>
+        </Row> */}
       </Card>
 
       {/* Thông tin sản phẩm */}
