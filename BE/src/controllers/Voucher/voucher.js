@@ -124,10 +124,6 @@ export const useVoucher = async (req, res) => {
       discount = voucher.discountValue;
     }
 
-    // Tăng số lần sử dụng voucher
-    voucher.usedCount += 1;
-    await voucher.save();
-
     // Trả về kết quả bao gồm giá trị giảm giá và số tiền cuối cùng
     res.json({
       message: "Áp dụng mã giảm giá thành công!",
