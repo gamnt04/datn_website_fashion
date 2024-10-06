@@ -33,6 +33,9 @@ const Pay = () => {
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
 
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [voucherDetails, setVoucherDetails] = useState<any>(null);
+
   const { data: auth } = List_Auth(userId);
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
@@ -50,7 +53,6 @@ const Pay = () => {
       try {
         const response = await instance.get("/voucher");
 
-        // Chỉ giữ lại các voucher có isActive = true
         const activeVouchers = response.data.vouchers.filter(
           (voucher: any) => voucher.isActive === true
         );
@@ -88,10 +90,19 @@ const Pay = () => {
     }
   }, [auth, selectedAddress, setValue]);
 
+  const handleRemoveVoucher = () => {
+    setSelectedVoucher(null);
+    setDiscountAmount(0);
+    setFinalAmount(totalPrice);
+    setSelectedVoucherCode(null);
+    setDiscountCode("");
+  };
   const [discountCode, setDiscountCode] = useState<string>("");
   const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [finalAmount, setFinalAmount] = useState<number>(0);
-
+  const [selectedVoucherCode, setSelectedVoucherCode] = useState<string | null>(
+    null
+  );
   const handleApplyDiscount = async () => {
     try {
       const response = await instance.post(`/voucher/use`, {
@@ -117,6 +128,15 @@ const Pay = () => {
     }
   };
 
+  const showVoucherDetails = (voucher: any) => {
+    setVoucherDetails(voucher);
+    setIsDetailModalVisible(true);
+  };
+
+  const handleCancelDetailsModal = () => {
+    setIsDetailModalVisible(false);
+    setVoucherDetails(null);
+  };
   const showVoucherModal = () => {
     setIsVoucherModalVisible(true);
   };
@@ -129,7 +149,7 @@ const Pay = () => {
     e.preventDefault();
     try {
       const response = await instance.post(`/voucher/use`, {
-        code_voucher: voucher.code_voucher, // Mã voucher người dùng chọn
+        code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
         userId: user?.user?._id,
       });
@@ -139,9 +159,8 @@ const Pay = () => {
       setDiscountAmount(discount);
       setFinalAmount(finalAmount);
       setSelectedVoucher(voucher);
-
-      // Lưu mã voucher vào discountCode
-      setDiscountCode(voucher.code_voucher);
+      setDiscountCode("");
+      setSelectedVoucherCode(voucher.code_voucher);
 
       toast.success(message, { autoClose: 1200 });
       setIsVoucherModalVisible(false);
@@ -196,6 +215,7 @@ const Pay = () => {
   });
   // add order
   const onAddOrder = async (data_form: any) => {
+    const discountCodeToUse = selectedVoucherCode || discountCode;
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
         type: "warning",
@@ -238,7 +258,8 @@ const Pay = () => {
       customerInfo: {
         ...data_form,
       },
-      discountCode: discountCode, // Lưu mã giảm giá
+
+      discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice,
       email: user?.user?.email,
@@ -497,6 +518,7 @@ const Pay = () => {
               </div>
               <div className="flex justify-between px-6 py-6 border-b">
                 <p className="text-xl">Chọn mã giảm giá</p>
+
                 <div>
                   <div className="flex w-full h-10">
                     <input
@@ -506,21 +528,42 @@ const Pay = () => {
                       value={discountCode}
                       onChange={(e) => setDiscountCode(e.target.value)}
                     />
-                    <button
-                      className="w-44  bg-blue-500 text-white font-bold rounded ml-2"
-                      onClick={handleApplyDiscount}
-                      type="button"
-                    >
-                      Áp dụng
-                    </button>
+                    {selectedVoucher ? (
+                      <button
+                        className="w-44 bg-gray-500 text-white font-bold rounded ml-2 cursor-not-allowed"
+                        disabled
+                      >
+                        Đã áp dụng
+                      </button>
+                    ) : (
+                      <button
+                        className="w-44 bg-blue-500 text-white font-bold rounded ml-2"
+                        onClick={handleApplyDiscount}
+                        type="button"
+                      >
+                        Áp dụng
+                      </button>
+                    )}
                   </div>
-                  <Button
-                    type="link"
-                    onClick={showVoucherModal}
-                    className="ml-12"
-                  >
-                    Xem tất cả các voucher
-                  </Button>
+                  <div className="flex">
+                    <Button
+                      type="link"
+                      onClick={showVoucherModal}
+                      className="ml-12 text-lg underline mt-1"
+                    >
+                      Xem tất cả các voucher
+                    </Button>
+                    {(selectedVoucher || discountAmount > 0) && (
+                      <div>
+                        <button
+                          className="text-blue-500 underline mt-2"
+                          onClick={handleRemoveVoucher}
+                        >
+                          Bỏ chọn voucher
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               {/* Hiển thị danh sách voucher */}
@@ -536,18 +579,14 @@ const Pay = () => {
                   {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
-                      style={{
-                        maxHeight: "600px",
-                      }}
+                      style={{ maxHeight: "600px" }}
                     >
                       {sortedVouchers.map((voucher: any) => {
                         const isAllowedUser =
                           voucher.allowedUsers.length === 0 ||
                           voucher.allowedUsers.includes(userId);
-
                         const isVoucherAvailable =
                           voucher.usedCount < voucher.quantity_voucher;
-
                         const isDisabled =
                           !isAllowedUser || !isVoucherAvailable;
 
@@ -576,6 +615,11 @@ const Pay = () => {
                                 Số lượng còn lại:{" "}
                                 {voucher.quantity_voucher - voucher.usedCount}
                               </p>
+                              <Button
+                                onClick={() => showVoucherDetails(voucher)}
+                              >
+                                Xem chi tiết
+                              </Button>
                             </div>
                             <button
                               className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
@@ -596,6 +640,80 @@ const Pay = () => {
                     </div>
                   ) : (
                     <p>Không có voucher nào khả dụng</p>
+                  )}
+                </Modal>
+
+                {/* Modal chi tiết voucher */}
+                <Modal
+                  visible={isDetailModalVisible}
+                  onCancel={handleCancelDetailsModal}
+                  footer={null}
+                  centered
+                  width={600} // Chiều rộng tùy chỉnh
+                >
+                  <h2 className="text-2xl mb-3">Chi tiết voucher</h2>
+                  {voucherDetails && (
+                    <div>
+                      <p>
+                        <strong className="text-lg">Tên mã giảm giá:</strong>{" "}
+                        {voucherDetails.name_voucher}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Mã giảm giá:</strong>{" "}
+                        {voucherDetails.code_voucher}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Loại giảm giá:</strong>{" "}
+                        {voucherDetails.discountType === "percentage"
+                          ? "Giảm giá theo phần trăm(%)"
+                          : " Giảm giá theo số tiền cố định (VND)"}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Giá trị giảm giá:</strong>{" "}
+                        {voucherDetails.discountValue}
+                        {voucherDetails.discountType === "percentage"
+                          ? "%"
+                          : "đ"}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Điều kiện sử dụng:</strong>{" "}
+                        {voucherDetails.minimumSpend
+                          ? `${voucherDetails.minimumSpend.toLocaleString(
+                              "vi-VN"
+                            )} đ`
+                          : "Không có"}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Số lượng còn lại:</strong>{" "}
+                        {voucherDetails.quantity_voucher -
+                          voucherDetails.usedCount}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Thời gian bắt đầu:</strong>{" "}
+                        {new Date(
+                          voucherDetails.startDate
+                        ).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Thời gian kết thúc:</strong>{" "}
+                        {new Date(
+                          voucherDetails.expirationDate
+                        ).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Mô tả:</strong>{" "}
+                        {voucherDetails.description_voucher}
+                      </p>
+
+                      <p>
+                        <strong className="text-lg">
+                          Người dùng được phép:
+                        </strong>{" "}
+                        {voucherDetails.allowedUsers.length > 0
+                          ? "Có giới hạn"
+                          : "Tất cả"}
+                      </p>
+                    </div>
                   )}
                 </Modal>
               </div>
