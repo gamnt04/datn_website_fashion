@@ -151,8 +151,9 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <Input className="h-10" />
+                  <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Loại mã giảm giá"
                   name="discountType"
@@ -163,7 +164,7 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <Select className="h-10">
+                  <Select>
                     <Select.Option value="percentage">
                       Giảm giá theo phần trăm(%)
                     </Select.Option>
@@ -189,7 +190,7 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full" />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -209,7 +210,7 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <DatePicker showTime className="w-full h-10" />
+                  <DatePicker showTime className="w-full" />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -229,6 +230,10 @@ const UpdateVoucher = () => {
                   rules={[
                     { required: true, message: "Vui lòng nhập mã giảm giá!" },
                     { min: 6, message: "Mã giảm giá phải lớn hơn 5 ký tự!" },
+                    {
+                      pattern: /^[A-Z0-9]+$/,
+                      message: "Mã giảm giá chỉ được chứa chữ in hoa và số!",
+                    },
                   ]}
                 >
                   <Input
@@ -249,7 +254,6 @@ const UpdateVoucher = () => {
                         />{" "}
                       </Button>
                     }
-                    className="h-10"
                   />
                 </Form.Item>
 
@@ -284,7 +288,7 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full" />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -299,7 +303,7 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -322,7 +326,7 @@ const UpdateVoucher = () => {
                     },
                   ]}
                 >
-                  <DatePicker showTime className="w-full h-10" />
+                  <DatePicker showTime className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -364,12 +368,8 @@ const UpdateVoucher = () => {
 
             {/* Submit Button */}
             <Form.Item className="h-20">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="w-1/2 h-10 text-xl"
-              >
-                Submit
+              <Button type="primary" htmlType="submit" className="text-xl ">
+                Cập nhật
               </Button>
             </Form.Item>
           </Form>
