@@ -14,6 +14,7 @@ import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
+import { Loader } from "lucide-react";
 type FieldType = {
   name_voucher: string;
   code_voucher: string;
@@ -33,7 +34,7 @@ const AddVoucher = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý danh sách người dùng đã chọn
   const nav = useNavigate();
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
         return await instance.post(`/voucher`, formData);
@@ -76,7 +77,11 @@ const AddVoucher = () => {
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    mutate(values);
+    const formData = {
+      ...values,
+      allowedUsers: selectedUsers, // Gán danh sách người dùng đã chọn vào allowedUsers
+    };
+    mutate(formData);
   };
 
   const handleSelectChange = (value: string[]) => {
@@ -89,11 +94,23 @@ const AddVoucher = () => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   return (
     <div className="mt-20">
       <div className="pb-12 border-b border-gray-900/10">
+        {isPending && (
+          <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+            <div className="animate-spin">
+              <Loader />
+            </div>
+          </div>
+        )}
         <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
           Thêm Mã Giảm Giá
         </h2>
@@ -124,7 +141,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <Input className="h-10" />
+                  <Input />
                 </Form.Item>
 
                 <Form.Item
@@ -137,7 +154,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <Select className="h-10">
+                  <Select className="">
                     <Select.Option value="percentage">
                       Giảm giá theo phần trăm (%)
                     </Select.Option>
@@ -162,7 +179,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -182,7 +199,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <DatePicker showTime className="w-full h-10" />
+                  <DatePicker showTime className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -202,6 +219,10 @@ const AddVoucher = () => {
                   rules={[
                     { required: true, message: "Vui lòng nhập mã giảm giá!" },
                     { min: 6, message: "Mã giảm giá phải lớn hơn 5 ký tự!" },
+                    {
+                      pattern: /^[A-Z0-9]+$/,
+                      message: "Mã giảm giá chỉ được chứa chữ in hoa và số!",
+                    },
                   ]}
                 >
                   <Input
@@ -222,7 +243,6 @@ const AddVoucher = () => {
                         />{" "}
                       </Button>
                     }
-                    className="h-10"
                   />
                 </Form.Item>
 
@@ -257,7 +277,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -272,7 +292,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -295,7 +315,7 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <DatePicker showTime className="w-full h-10" />
+                  <DatePicker showTime className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -337,11 +357,7 @@ const AddVoucher = () => {
 
             {/* Submit Button */}
             <Form.Item className="h-20">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="w-1/2 h-10 text-xl"
-              >
+              <Button type="primary" htmlType="submit" className="text-xl ">
                 Submit
               </Button>
             </Form.Item>
