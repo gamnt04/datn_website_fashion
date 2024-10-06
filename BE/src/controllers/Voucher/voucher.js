@@ -122,6 +122,11 @@ export const useVoucher = async (req, res) => {
     let discount = 0;
     if (voucher.discountType === "percentage") {
       discount = (voucher.discountValue / 100) * totalAmount;
+
+      // Kiểm tra nếu vượt quá số tiền tối đa được giảm
+      if (voucher.maxDiscount && discount > voucher.maxDiscount) {
+        discount = voucher.maxDiscount; // Đặt giá trị giảm giá bằng số tiền tối đa
+      }
     } else {
       discount = voucher.discountValue;
     }
