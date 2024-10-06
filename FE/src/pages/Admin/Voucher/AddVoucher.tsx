@@ -358,7 +358,7 @@ const AddVoucher = () => {
             {/* Submit Button */}
             <Form.Item className="h-20">
               <Button type="primary" htmlType="submit" className="text-xl ">
-                Submit
+                Thêm mới
               </Button>
             </Form.Item>
           </Form>

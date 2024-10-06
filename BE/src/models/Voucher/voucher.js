@@ -32,7 +32,7 @@ const VoucherSchema = new mongoose.Schema(
     }, //Ngày bắt đầu
 
     expirationDate: { type: Date, required: true }, // Ngày hết hạn
-    isActive: { type: Boolean, default: true }, // Voucher còn khả dụng không
+    isActive: { type: Boolean, default: false }, // Voucher còn khả dụng không
   },
   { timestamps: true }
 );
