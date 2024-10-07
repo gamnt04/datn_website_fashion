@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
-import { Button, Empty, message, Popconfirm, Space, Table, Drawer } from "antd";
+import {
+  Button,
+  Empty,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  Drawer,
+  Switch,
+} from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { format } from "date-fns";
@@ -31,7 +40,24 @@ const ListVoucher = () => {
       messageAPI.error(error.message);
     },
   });
-
+  const mutation = useMutation({
+    mutationFn: async (category: IVoucher) => {
+      const response = await instance.put(`/voucher/${category._id}`, category);
+      return response.data;
+    },
+    onSuccess: () => {
+      messageAPI.success("Cập nhật Voucher thành công");
+      queryClient.invalidateQueries({ queryKey: ["voucher"] });
+    },
+    onError: (error: unknown) => {
+      console.error("Lỗi khi cập nhật Voucher:", error);
+      messageAPI.error(
+        `Cập nhật Voucher không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        }`
+      );
+    },
+  });
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
@@ -45,7 +71,9 @@ const ListVoucher = () => {
     setSelectedVoucher(voucher);
     setOpenDrawer(true);
   };
-
+  const handleTogglePublished = (category: IVoucher) => {
+    mutation.mutate({ ...category, isActive: !category.isActive });
+  };
   const dataSource = data?.data?.vouchers.map((voucher: IVoucher) => ({
     key: voucher._id,
     ...voucher,
@@ -101,10 +129,32 @@ const ListVoucher = () => {
       render: (text: string) => formatDate(text),
     },
     {
+      key: "isActive",
+      title: "Hiển Thị",
+      dataIndex: "isActive",
+      render: (isActive: boolean, record: IVoucher) => (
+        <Switch
+          checked={isActive}
+          onChange={() => handleTogglePublished(record)}
+        />
+      ),
+    },
+    {
       key: "actions",
       title: "Thao Tác",
       render: (_: any, voucher: IVoucher) => (
         <Space>
+          <Button onClick={() => handleViewDetails(voucher)}>
+            <FaEye />
+          </Button>
+          <Button type="primary">
+            <Link
+              to={`/admin/voucher/${voucher._id}`}
+              className="flex items-center"
+            >
+              <FaEdit />
+            </Link>
+          </Button>
           <Popconfirm
             title="Xóa mã giảm giá"
             description="Bạn có muốn xóa mã giảm giá này không?"
@@ -116,23 +166,6 @@ const ListVoucher = () => {
               <FaDeleteLeft />
             </Button>
           </Popconfirm>
-          <Button
-            style={{
-              border: "2px solid blue", // Viền màu xanh
-              borderRadius: "5px", // Bo góc 8px
-            }}
-            className="hover:bg-yellow-600 text-black font-semibold py-2 px-4"
-          >
-            <Link
-              to={`/admin/voucher/${voucher._id}`}
-              className="flex items-center"
-            >
-              <FaEdit />
-            </Link>
-          </Button>
-          <Button onClick={() => handleViewDetails(voucher)}>
-            <FaEye />
-          </Button>
         </Space>
       ),
     },
@@ -177,11 +210,10 @@ const ListVoucher = () => {
                 <strong>Mã giảm giá:</strong> {selectedVoucher.code_voucher}
               </p>
               <p>
-                <strong>Số lượng:</strong> {selectedVoucher.quantity_voucher}
-              </p>
-              <p>
                 <strong>Loại mã giảm giá:</strong>{" "}
-                {selectedVoucher.discountType}
+                {selectedVoucher.discountType === "percentage"
+                  ? "Giảm giá theo phần trăm(%)"
+                  : " Giảm giá theo số tiền cố định (VND)"}
               </p>
               <p>
                 <strong>Giá trị mã giảm giá:</strong>{" "}
@@ -192,10 +224,27 @@ const ListVoucher = () => {
                 {selectedVoucher.minimumSpend}
               </p>
               <p>
-                <strong>Loại giảm giá:</strong>{" "}
-                {selectedVoucher.discountType === "percentage"
-                  ? "Theo %"
-                  : "Theo số tiền cố định"}
+                <strong>Số lượng tạo:</strong>{" "}
+                {selectedVoucher.quantity_voucher}
+              </p>
+              <p>
+                <strong>Số lượng đã được sử dụng:</strong>{" "}
+                {selectedVoucher.usedCount}
+              </p>
+              <p>
+                <strong>Số lượng còn lại:</strong>
+                {selectedVoucher.quantity_voucher - selectedVoucher.usedCount}
+              </p>
+              <p>
+                <strong>Thời gian bắt đầu:</strong>{" "}
+                {formatDate(selectedVoucher.startDate)}
+              </p>
+              <p>
+                <strong>Thời gian kết thúc:</strong>{" "}
+                {formatDate(selectedVoucher.expirationDate)}
+              </p>
+              <p>
+                <strong>Mô tả:</strong> {selectedVoucher.description_voucher}
               </p>
               <p>
                 <strong>Người được dùng:</strong>{" "}
@@ -214,21 +263,6 @@ const ListVoucher = () => {
                         </span>
                       ))
                   : "Tất cả"}
-              </p>
-              <p>
-                <strong>Giá trị:</strong> {selectedVoucher.discountValue}
-              </p>
-              <p>
-                <strong>Mô tả:</strong> {selectedVoucher.description_voucher}
-              </p>
-
-              <p>
-                <strong>Thời gian bắt đầu:</strong>{" "}
-                {formatDate(selectedVoucher.startDate)}
-              </p>
-              <p>
-                <strong>Thời gian kết thúc:</strong>{" "}
-                {formatDate(selectedVoucher.expirationDate)}
               </p>
             </div>
           )}

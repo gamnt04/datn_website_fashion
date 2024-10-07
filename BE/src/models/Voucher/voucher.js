@@ -19,6 +19,7 @@ const VoucherSchema = new mongoose.Schema(
     }, //Loại giảm giá % hoặc trừ bao nhiêu tiền
     discountValue: { type: Number, required: true }, // Giá trị giảm giá
     minimumSpend: { type: Number }, // Số tiền tối thiểu để có thể sử dụng được voucher
+    maxDiscount: { type: Number, default: null }, // Số tiền tối đa giảm cho loại percentage
     allowedUsers: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -29,8 +30,9 @@ const VoucherSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     }, //Ngày bắt đầu
+
     expirationDate: { type: Date, required: true }, // Ngày hết hạn
-    isActive: { type: Boolean, default: true }, // Voucher còn khả dụng không
+    isActive: { type: Boolean, default: false }, // Voucher còn khả dụng không
   },
   { timestamps: true }
 );
