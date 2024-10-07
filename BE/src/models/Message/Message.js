@@ -60,16 +60,6 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    senderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
-    receiverId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
     content: { type: String, default: "" },
     attachments: [
       {
@@ -89,7 +79,17 @@ const messageSchema = new mongoose.Schema(
 
 const messageGroupSchema = new mongoose.Schema(
   {
-    messages: [messageSchema]
+    senderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    receiverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    messages: [messageSchema] // Cập nhật thành mảng messages
   },
   { timestamps: true, versionKey: false }
 );
