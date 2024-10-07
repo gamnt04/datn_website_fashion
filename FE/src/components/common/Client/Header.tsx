@@ -32,7 +32,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
-    searchError,
+    searchError
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -95,7 +95,7 @@ const Header = () => {
     if (!account) {
       messageAPI.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!",
+        content: "Hãy đăng nhập tài khoản của bạn !!"
       });
     }
   };
@@ -133,7 +133,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)",
+                : "translateX(-200%)"
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >

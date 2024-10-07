@@ -1,15 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
 import { Link } from "react-router-dom";
-import HTMLReactParser from "html-react-parser/lib/index";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
+import instance from "../../../configs/axios";
 const Blogs = () => {
   const { data } = useQuery({
     queryKey: ["BLOGS"],
     queryFn: async () => {
       const { data } = await instance.get("/blogs");
       return data;
-    },
+    }
   });
 
   // Hàm lọc bài viết đã xuất bản
