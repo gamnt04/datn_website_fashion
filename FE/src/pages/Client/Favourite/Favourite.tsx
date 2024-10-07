@@ -1,11 +1,11 @@
-import { HeartIconRed } from "../../../resources/svg/Icon/Icon";
-import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
-import { IProduct } from "../../../common/interfaces/Product";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-import { Link } from "react-router-dom";
 import { message } from "antd";
+import { Link } from "react-router-dom";
+import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
+import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { IProduct } from "../../../common/interfaces/Product";
+import { HeartIconRed } from "../../../resources/svg/Icon/Icon";
 
 const Favourite = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -20,7 +20,7 @@ const Favourite = () => {
     if (!userId) {
       messageApi.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!!",
+        content: "Hãy đăng nhập tài khoản của bạn !!!"
       });
     } else {
       RemoveFavouriteProduct(
@@ -29,15 +29,15 @@ const Favourite = () => {
           onSuccess: () => {
             messageApi.open({
               type: "success",
-              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn",
+              content: "Đã xóa sản phẩm khỏi danh mục yêu thích của bạn"
             });
           },
           onError: () => {
             messageApi.open({
               type: "error",
-              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau",
+              content: "Xóa sản phẩm yêu thích thất bại, vui lòng thử lại sau"
             });
-          },
+          }
         }
       );
     }
@@ -136,7 +136,7 @@ const Favourite = () => {
                           <span className="text-[#EB2606]">
                             {max?.toLocaleString("vi-VN", {
                               style: "currency",
-                              currency: "VND",
+                              currency: "VND"
                             })}
                           </span>
                         ) : (
@@ -144,14 +144,14 @@ const Favourite = () => {
                             <span className="text-[#EB2606]">
                               {min?.toLocaleString("vi-VN", {
                                 style: "currency",
-                                currency: "VND",
+                                currency: "VND"
                               })}
                             </span>{" "}
                             -{" "}
                             <span className="text-[#EB2606]">
                               {max?.toLocaleString("vi-VN", {
                                 style: "currency",
-                                currency: "VND",
+                                currency: "VND"
                               })}
                             </span>
                           </>
@@ -163,7 +163,7 @@ const Favourite = () => {
                           "vi-VN",
                           {
                             style: "currency",
-                            currency: "VND",
+                            currency: "VND"
                           }
                         )}
                       </span>
