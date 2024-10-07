@@ -24,6 +24,10 @@ const Nav_Mobile = () => {
       path: "/about-us",
       name: "Về chúng tôi",
     },
+    {
+      path: "/track-order",
+      name: "Tra cứu đơn hàng",
+    },
   ];
 
   return (
@@ -70,6 +74,10 @@ export function Nav_Desktop() {
     {
       path: "/about-us",
       name: "Về chúng tôi",
+    },
+    {
+      path: "/track-order",
+      name: "Tra cứu đơn hàng",
     },
   ];
 

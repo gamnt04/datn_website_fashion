@@ -11,5 +11,5 @@ export interface IVoucher {
   allowedUsers: string[];
   startDate: Date;
   expirationDate: Date;
-  isActive: boolean;
+  isActive: unknown | boolean;
 }

@@ -26,6 +26,7 @@ export const getVoucherById = async (req, res) => {
 
 export const addVoucher = async (req, res) => {
   try {
+    req.body.code_voucher = req.body.code_voucher.toUpperCase();
     const newVoucher = new Voucher(req.body);
     await newVoucher.save();
     res.status(201).json({
@@ -54,6 +55,7 @@ export const updateVoucher = async (req, res) => {
   const { id } = req.params;
 
   try {
+    req.body.code_voucher = req.body.code_voucher.toUpperCase();
     const updatedVoucher = await Voucher.findByIdAndUpdate(id, req.body, {
       new: true,
     });
@@ -120,13 +122,14 @@ export const useVoucher = async (req, res) => {
     let discount = 0;
     if (voucher.discountType === "percentage") {
       discount = (voucher.discountValue / 100) * totalAmount;
+
+      // Kiểm tra nếu vượt quá số tiền tối đa được giảm
+      if (voucher.maxDiscount && discount > voucher.maxDiscount) {
+        discount = voucher.maxDiscount; // Đặt giá trị giảm giá bằng số tiền tối đa
+      }
     } else {
       discount = voucher.discountValue;
     }
-
-    // Tăng số lần sử dụng voucher
-    voucher.usedCount += 1;
-    await voucher.save();
 
     // Trả về kết quả bao gồm giá trị giảm giá và số tiền cuối cùng
     res.json({
