@@ -5,6 +5,7 @@ export const add_Notification = async (dataMessage: {
   receiver_id: string | number;
   message: string | number;
   different?: string | number;
+  id_different?: string | number;
 }) => {
   try {
     const res = await instance.post(`/notification`, dataMessage);
@@ -48,6 +49,14 @@ export const update_Notification = async (id: string | number) => {
   } catch (error) {
     console.log(error);
 
+  }
+}
+export const delete_Notification = async (id: string | number) => {
+  try {
+    const data = await instance.delete(`/notification/${id}`);
+    return data;
+  } catch (error) {
+    console.log(error);
   }
 }
 

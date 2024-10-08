@@ -123,10 +123,10 @@ const useForm = ({ mode }: UseFormProps) => {
 
   useEffect(() => {
     if (mode && dataOneItem) {
-      const product = dataOneItem.data.product;
+      const product = dataOneItem?.data?.product;
       if (product) {
-        setImageFile([product.image_product]);
-        setOldGalleryFiles(product.gallery_product);
+        setImageFile([product?.image_product]);
+        setOldGalleryFiles(product?.gallery_product);
       }
     }
   }, [mode, dataOneItem]);

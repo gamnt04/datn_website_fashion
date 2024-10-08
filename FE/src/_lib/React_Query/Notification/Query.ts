@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { add_Notification, get_Notification_By_User, getAll_Notification, update_Notification } from "../../Notification/Message";
+import { add_Notification, delete_Notification, get_Notification_By_User, getAll_Notification, update_Notification } from "../../Notification/Message";
 
 export function Query_notification(userId?: string | number, role?: string) {
     const { data, ...rest } = useQuery({
@@ -27,6 +27,8 @@ export function Mutation_Notification(action: Action) {
                     return await add_Notification(dataBody);
                 case 'Send':
                     return await update_Notification(dataBody);
+                case 'Remove':
+                    return await delete_Notification(dataBody);
                 default: return null;
             }
         },
