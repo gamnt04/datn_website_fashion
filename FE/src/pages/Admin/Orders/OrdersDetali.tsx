@@ -93,7 +93,7 @@ const OrdersDetali = () => {
         orderId,
         confirmationImage: imageUrl,
       });
-      handleStatusUpdate(4, data?.orderNumber);
+      handleStatusUpdate(4, data?.orderNumber, data._id);
       refetch();
 
       messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
@@ -113,10 +113,10 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
-      different: dataBody?.numberOrder,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      different: dataBody?.id_item,
+      id_different: dataBody?.numberOrder,
     });
   }
   const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
@@ -130,7 +130,8 @@ const OrdersDetali = () => {
       userId: userId,
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.numberOrder,
+      different: dataBody?.id_item,
+      id_different: dataBody?.numberOrder,
     });
     console.log(dataBody.cancellationReason);
 
@@ -146,12 +147,14 @@ const OrdersDetali = () => {
     numberOrder?: string | number;
     action?: string;
     cancellationReason?: string;
+    linkUri?: string | number;
   }) {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
       message: `Người giao hàng đã giao hàng đơn hàng  ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.numberOrder,
+      different: dataBody?.id_item,
+      id_different: dataBody?.numberOrder,
     });
     console.log(dataBody.cancellationReason);
 
@@ -160,26 +163,28 @@ const OrdersDetali = () => {
 
   const handleStatusUpdate = async (
     status: number | string,
-    code_order?: string | number
+    code_order?: string | number,
+    id_order?: string | number
   ) => {
     if (!data) return;
     const message =
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order}`
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Đã giao đơn hàng ${code_order} thành công!. Vui lòng ấn đã nhận hàng!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : status === 6
-        ? `Đã giao đơn hàng ${code_order} thành công!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Đã giao đơn hàng ${code_order} thành công!. Vui lòng ấn đã nhận hàng!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : status === 6
+                ? `Đã giao đơn hàng ${code_order} thành công!`
+                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
       message: message,
+      different: id_order,
     });
     try {
       const response = await instance.patch(`/orders/${id}`, {
@@ -307,9 +312,8 @@ const OrdersDetali = () => {
                   </div>
                   <button
                     onClick={() => handleSelectShipper(shipper._id)}
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
-                      selectedShipper === shipper._id ? "bg-green-500" : ""
-                    }`}
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                      }`}
                   >
                     {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
@@ -528,9 +532,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `-${data?.discountAmount?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND",
-                      })}`
+                      style: "currency",
+                      currency: "VND",
+                    })}`
                     : "0đ"}
                 </p>
 
@@ -549,7 +553,7 @@ const OrdersDetali = () => {
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
                   description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                  onConfirm={() => handleStatusUpdate(2, data?.orderNumber)}
+                  onConfirm={() => handleStatusUpdate(2, data?.orderNumber, data._id)}
                   okText="Xác nhận"
                   cancelText="Không"
                 >
@@ -650,7 +654,7 @@ const OrdersDetali = () => {
                         );
                         return;
                       }
-                      handleStatusUpdate(3, data?.orderNumber); // Xác nhận khi đã có shipper
+                      handleStatusUpdate(3, data?.orderNumber, data._id); // Xác nhận khi đã có shipper
                     }}
                     okText="Xác nhận"
                     cancelText="Không"
@@ -706,6 +710,7 @@ const OrdersDetali = () => {
                         action: "huy",
                         cancellationReason: selectedReason,
                         numberOrder: data?.orderNumber,
+                        linkUri: data?._id,
                       });
                     }
                   }}
@@ -714,11 +719,10 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w-52 rounded text-white ${
-                      role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
-                    }`}
+                    className={`w-52 rounded text-white ${role !== "courier"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
+                      }`}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại
