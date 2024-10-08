@@ -264,7 +264,6 @@ const Pay = () => {
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice,
       email: user?.user?.email,
     };
-
     try {
       if (data_form.payment === "VNPAY") {
         const orderId = JSON.parse(
@@ -290,7 +289,7 @@ const Pay = () => {
       }
       mutate({
         userId: userId,
-        receiver_id: "duonghainam03012004@gmail.com",
+        receiver_id: "nguyenvana@gmail.com",
         message: `Người dùng ${user?.user?.userName} đã đặt hàng`,
       });
     } catch (error) {
@@ -593,13 +592,11 @@ const Pay = () => {
                         return (
                           <div
                             key={voucher._id}
-                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                              selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                            } ${
-                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                            }`}
+                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
+                              ? "border-blue-500"
+                              : "border-gray-300"
+                              } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                              }`}
                           >
                             <div>
                               <p className="font-bold text-lg">
@@ -622,9 +619,8 @@ const Pay = () => {
                               </Button>
                             </div>
                             <button
-                              className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                isDisabled ? "bg-gray-300" : ""
-                              }`}
+                              className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                }`}
                               onClick={(e) => handleApplyVoucher(e, voucher)}
                               disabled={isDisabled}
                             >
@@ -679,8 +675,8 @@ const Pay = () => {
                         <strong className="text-lg">Điều kiện sử dụng:</strong>{" "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -737,9 +733,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
