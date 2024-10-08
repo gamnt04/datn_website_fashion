@@ -92,19 +92,29 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-// Hàm lấy tin nhắn theo userId
-export const getMessagesByUserId = async (req, res) => {
+export const getMessagesBetweenUsers = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const { userId1, userId2 } = req.params;
 
-    // Tìm tất cả nhóm tin nhắn mà user là người gửi hoặc người nhận
-    const messages = await MessageGroup.find({
-      $or: [{ senderId: userId }, { receiverId: userId }]
-    }).populate("senderId receiverId"); // Populate để lấy thông tin chi tiết về người gửi/nhận
+    let messageGroups = await MessageGroup.find({
+      $or: [
+        { senderId: userId1, receiverId: userId2 },
+        { senderId: userId2, receiverId: userId1 }
+      ]
+    })
+      .populate("senderId")
+      .populate("receiverId");
 
-    res.status(200).json(messages);
+    messageGroups = messageGroups.map((group) => {
+      group.messages.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+      return group;
+    });
+
+    res.status(200).json(messageGroups);
   } catch (error) {
-    console.error("Lỗi khi lấy tin nhắn:", error);
+    console.error("Lỗi khi lấy tin nhắn giữa hai người dùng:", error);
     res.status(500).json({ message: "Lấy tin nhắn thất bại." });
   }
 };
