@@ -150,7 +150,7 @@ export default function List_order() {
     }
   }, [dataReviewById]);
 
-  const handleOpenReview = (orderId, productId, reviewId) => {
+  const handleOpenReview = (orderId: any, productId: any, reviewId: any) => {
     if (openReviewOrderId === orderId && openReview) {
       setOpenReview(false);
     } else {
@@ -206,7 +206,7 @@ export default function List_order() {
   }) {
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: "duonghainam03012004@gmail.com",
+      receiver_id: "nguyenvana@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã yêu cầu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri
     });
@@ -218,12 +218,15 @@ export default function List_order() {
     cancellationReason?: string;
     orderNumber?: string | number;
     order?: string | number;
+    linkUri?: string | number;
+
   }) {
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: "duonghainam03012004@gmail.com",
+      receiver_id: "nguyenvana@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.orderNumber
+      different: dataBody?.linkUri,
+      id_different: dataBody?.orderNumber
     });
     mutate(dataBody);
   }
@@ -453,7 +456,8 @@ export default function List_order() {
                             id_item: items?._id,
                             action: "huy",
                             cancellationReason: selectedReason,
-                            orderNumber: items?.orderNumber
+                            orderNumber: items?.orderNumber,
+                            linkUri: items?._id
                           })
                         }
                         // onCancel={cancel}
@@ -537,14 +541,14 @@ export default function List_order() {
                     <Button
                       className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
                       disabled
-                      // onClick={() => (
-                      //   mutate({ id_item: items._id }),
-                      //   dispathNotification?.mutate({
-                      //     userId: userId,
-                      //     receiver_id: userId,
-                      //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                      //   })
-                      // )}
+                    // onClick={() => (
+                    //   mutate({ id_item: items._id }),
+                    //   dispathNotification?.mutate({
+                    //     userId: userId,
+                    //     receiver_id: userId,
+                    //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                    //   })
+                    // )}
                     >
                       Đã Nhận Hàng
                     </Button>
@@ -656,12 +660,12 @@ export default function List_order() {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
                                           changedValues[
-                                            `rating_review_${index}`
+                                          `rating_review_${index}`
                                           ]
                                         ) {
                                           setRating(
                                             changedValues[
-                                              `rating_review_${index}`
+                                            `rating_review_${index}`
                                             ]
                                           );
                                         }
@@ -673,7 +677,7 @@ export default function List_order() {
                                           review
                                             ? review.rating_review
                                             : rating[productGroup.productId] ||
-                                              0
+                                            0
                                         }
                                         rules={[
                                           {
@@ -732,8 +736,8 @@ export default function List_order() {
                                           review && review.image_review
                                             ? review.image_review
                                             : fileList[
-                                                productGroup.productId
-                                              ]?.map((file) => file.url) || []
+                                              productGroup.productId
+                                            ]?.map((file) => file.url) || []
                                         }
                                       >
                                         <Upload
@@ -741,16 +745,16 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
-                                                  (url, idx) => ({
-                                                    uid: `${idx}`,
-                                                    name: `image_${idx}`,
-                                                    status: "done",
-                                                    url: url
-                                                  })
-                                                )
+                                                (url, idx) => ({
+                                                  uid: `${idx}`,
+                                                  name: `image_${idx}`,
+                                                  status: "done",
+                                                  url: url
+                                                })
+                                              )
                                               : fileList[
-                                                  productGroup.productId
-                                                ] || []
+                                              productGroup.productId
+                                              ] || []
                                           }
                                           onChange={handleImageChange}
                                           onPreview={handlePreview}
