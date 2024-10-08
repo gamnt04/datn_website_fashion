@@ -17,6 +17,7 @@ const notification_Schema = new mongoose.Schema({
         required: true,
     },
     different: String,
+    id_different: String,
     status_notification: {
         type: Boolean,
         default: false
