@@ -103,7 +103,9 @@ export const useVoucher = async (req, res) => {
 
     // Kiểm tra nếu voucher chưa đến ngày bắt đầu
     if (new Date(voucher.startDate) > new Date()) {
-      return res.status(400).json({ message: "Mã giảm giá chưa được áp dụng" });
+      return res
+        .status(400)
+        .json({ message: "Mã giảm giá chưa sử dụng được hôm nay!" });
     }
 
     // Kiểm tra nếu voucher đã hết hạn
