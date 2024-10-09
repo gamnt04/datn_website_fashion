@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
+  Checkbox,
   DatePicker,
   Form,
   FormProps,
@@ -24,6 +25,7 @@ type FieldType = {
   discountType: string;
   discountValue: number;
   minimumSpend: number;
+  maxDiscount: number;
   allowedUsers: string[];
   startDate: Date;
   expirationDate: Date;
@@ -35,7 +37,9 @@ const UpdateVoucher = () => {
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý người dùng đã chọn
+  const [userType, setUserType] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
   const { data: voucher, isLoading } = useQuery({
     queryKey: ["voucher", id],
     queryFn: () => instance.get(`/voucher/${id}`),
@@ -74,8 +78,11 @@ const UpdateVoucher = () => {
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
+  const { data: shippersData } = useQuery({
+    queryKey: ["shippers"],
+    queryFn: () => instance.get(`/shippers`),
+  });
 
-  // Generate random code for voucher
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -98,23 +105,91 @@ const UpdateVoucher = () => {
         startDate: moment(voucher.data.voucher.startDate),
         expirationDate: moment(voucher.data.voucher.expirationDate),
       });
-      setSelectedUsers(voucher.data.voucher.allowedUsers || []); // Set người dùng đã chọn
-    }
-  }, [voucher, form]);
 
-  // Cập nhật người dùng đã chọn khi có thay đổi trong Select
+      const allowedUsers = voucher.data.voucher.allowedUsers || [];
+      const isUser = allowedUsers.every((id: string) =>
+        auth?.data?.some((user: any) => user._id === id)
+      );
+      const isShipper = allowedUsers.every((id: string) =>
+        shippersData?.data?.some((shipper: any) => shipper._id === id)
+      );
+
+      if (isUser) {
+        setUserType(["user"]);
+      } else if (isShipper) {
+        setUserType(["courier"]);
+      } else {
+        setUserType(["user", "courier"]);
+      }
+      const allowedUsersWithNames = allowedUsers.map((id: string) => {
+        const user = auth?.data?.find((user: any) => user._id === id);
+        if (user) {
+          return { value: user._id, label: user.userName || user.fullName };
+        }
+
+        const shipper = shippersData?.data?.find(
+          (shipper: any) => shipper._id === id
+        );
+        if (shipper) {
+          return {
+            value: shipper._id,
+            label: shipper.fullName || "Shipper không có tên",
+          };
+        }
+
+        return { value: id, label: id };
+      });
+
+      setSelectedUsers(allowedUsersWithNames.map((user: any) => user.value));
+      form.setFieldsValue({
+        allowedUsers: allowedUsersWithNames.map((user: any) => user.label),
+      });
+    }
+  }, [voucher, auth, shippersData, form]);
+
+  const handleUserTypeChange = (checkedValues: string[]) => {
+    setUserType(checkedValues);
+
+    const existingUsers = auth?.data?.filter((user: any) =>
+      selectedUsers.includes(user._id)
+    );
+
+    const existingShippers = shippersData?.data?.filter((shipper: any) =>
+      selectedUsers.includes(shipper._id)
+    );
+
+    const updatedSelectedUsers = [
+      ...(checkedValues.includes("user")
+        ? existingUsers.map((user: any) => user._id)
+        : []),
+      ...(checkedValues.includes("courier")
+        ? existingShippers.map((shipper: any) => shipper._id)
+        : []),
+    ];
+
+    setSelectedUsers(updatedSelectedUsers);
+    form.setFieldsValue({ allowedUsers: updatedSelectedUsers });
+  };
+
   const handleSelectChange = (value: string[]) => {
     if (value.includes("all")) {
-      // Nếu chọn "Chọn tất cả", cập nhật với tất cả người dùng
-      const allUserIds = auth?.data.map((user: any) => user._id);
+      const allUserIds = auth?.data?.map((user: any) => user._id);
       setSelectedUsers(allUserIds);
       form.setFieldsValue({ allowedUsers: allUserIds });
     } else {
-      // Cập nhật lựa chọn người dùng
       setSelectedUsers(value);
       form.setFieldsValue({ allowedUsers: value });
     }
   };
+
+  const filteredData =
+    userType.length === 0
+      ? []
+      : userType.includes("user") && userType.includes("courier")
+      ? [...(auth?.data || []), ...(shippersData?.data || [])]
+      : userType.includes("user")
+      ? auth?.data
+      : shippersData?.data;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -169,7 +244,6 @@ const UpdateVoucher = () => {
                       Giảm giá theo phần trăm(%)
                     </Select.Option>
                     <Select.Option value="fixed">
-                      {" "}
                       Giảm giá theo số tiền cố định (VND)
                     </Select.Option>
                   </Select>
@@ -211,6 +285,28 @@ const UpdateVoucher = () => {
                   ]}
                 >
                   <DatePicker showTime className="w-full" />
+                </Form.Item>
+                <Form.Item<FieldType>
+                  label="Ngày kết thúc mã giảm giá"
+                  name="expirationDate"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập ngày kết thúc!" },
+                    {
+                      validator: (_, value) => {
+                        const startDate = form.getFieldValue("startDate");
+                        if (startDate && value && value.isBefore(startDate)) {
+                          return Promise.reject(
+                            new Error(
+                              "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <DatePicker showTime className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -292,6 +388,23 @@ const UpdateVoucher = () => {
                 </Form.Item>
 
                 <Form.Item<FieldType>
+                  label="Giá trị giảm giá tối đa"
+                  name="maxDiscount"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập giảm giá tối đa!",
+                    },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Giảm giá tối đa phải lớn hơn 0!",
+                    },
+                  ]}
+                >
+                  <InputNumber className="w-full " />
+                </Form.Item>
+                <Form.Item<FieldType>
                   label="Số lượng mã giảm giá"
                   name="quantity_voucher"
                   rules={[
@@ -306,53 +419,36 @@ const UpdateVoucher = () => {
                   <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item<FieldType>
-                  label="Ngày kết thúc mã giảm giá"
-                  name="expirationDate"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập ngày kết thúc!" },
-                    {
-                      validator: (_, value) => {
-                        const startDate = form.getFieldValue("startDate");
-                        if (startDate && value && value.isBefore(startDate)) {
-                          return Promise.reject(
-                            new Error(
-                              "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
-                            )
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <DatePicker showTime className="w-full " />
+                <Form.Item label="Chọn loại người dùng">
+                  <Checkbox.Group
+                    options={[
+                      { label: "Người dùng", value: "user" },
+                      { label: "Shipper", value: "courier" },
+                    ]}
+                    value={userType}
+                    onChange={handleUserTypeChange}
+                  />
                 </Form.Item>
 
-                <Form.Item<FieldType>
-                  label="Người sử dụng mã giảm giá"
-                  name="allowedUsers"
-                >
+                <Form.Item<FieldType> label="Người sử dụng mã giảm giá">
                   <div className="flex items-center">
                     <Select
                       mode="multiple"
                       style={{
                         width: "90%",
-                        minHeight: "40px", // Set a fixed height to maintain the arrow icon's position
+                        minHeight: "40px",
                       }}
-                      placeholder="Người dùng"
+                      placeholder="Chọn người dùng/shipper"
                       className="mt-2"
-                      options={[
-                        { value: "all", label: "Chọn tất cả người dùng" },
-                        ...auth?.data.map((user: any) => ({
-                          value: user._id,
-                          label: user.userName,
-                        })),
-                      ]}
+                      options={filteredData?.map((user: any) => ({
+                        value: user._id,
+                        label:
+                          user.userName || user.fullName || "Tên không có sẵn",
+                      }))}
                       onChange={handleSelectChange}
                       value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }} // Limit dropdown height
-                      maxTagCount={4} // Shows up to 5 selected users
+                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
+                      maxTagCount={4}
                       maxTagPlaceholder={(omittedValues) =>
                         `+${omittedValues.length} người khác`
                       }
@@ -365,8 +461,6 @@ const UpdateVoucher = () => {
                 </Form.Item>
               </div>
             </div>
-
-            {/* Submit Button */}
             <Form.Item className="h-20">
               <Button type="primary" htmlType="submit" className="text-xl ">
                 Cập nhật

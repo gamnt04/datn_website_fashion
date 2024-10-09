@@ -28,6 +28,10 @@ const ListVoucher = () => {
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
   });
+  const { data: shippersData } = useQuery({
+    queryKey: ["shippers"],
+    queryFn: () => instance.get(`/shippers`),
+  });
   const { mutate } = useMutation({
     mutationFn: (id: string) => instance.delete(`voucher/${id}`),
     onSuccess: () => {
@@ -62,11 +66,8 @@ const ListVoucher = () => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
-
-  // State for drawer
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<IVoucher | null>(null);
-  // Open drawer and set selected voucher
   const handleViewDetails = (voucher: IVoucher) => {
     setSelectedVoucher(voucher);
     setOpenDrawer(true);
@@ -193,7 +194,6 @@ const ListVoucher = () => {
           <Table dataSource={dataSource} columns={columns} />
         )}
 
-        {/* Voucher details drawer */}
         <Drawer
           title="Chi tiết mã giảm giá"
           placement="right"
@@ -224,6 +224,9 @@ const ListVoucher = () => {
                 {selectedVoucher.minimumSpend}
               </p>
               <p>
+                <strong>Giá trị tối đa:</strong> {selectedVoucher.maxDiscount}
+              </p>
+              <p>
                 <strong>Số lượng tạo:</strong>{" "}
                 {selectedVoucher.quantity_voucher}
               </p>
@@ -247,16 +250,19 @@ const ListVoucher = () => {
                 <strong>Mô tả:</strong> {selectedVoucher.description_voucher}
               </p>
               <p>
-                <strong>Người được dùng:</strong>{" "}
+                <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
                 selectedVoucher.allowedUsers.length > 0
-                  ? auth?.data
-                      ?.filter((user: any) =>
+                  ? [...(auth?.data || []), ...(shippersData?.data || [])]
+                      .filter((user: any) =>
                         selectedVoucher.allowedUsers.includes(user._id)
-                      ) // Filter users based on allowedUsers IDs
+                      )
                       .map((user: any, index: number) => (
                         <span key={index}>
-                          {user.userName}
+                          {user.userName} {user.fullName}
+                          {user.role === "courier"
+                            ? "( shipper )"
+                            : "( Người dùng )"}
                           {index < selectedVoucher.allowedUsers.length - 1
                             ? ", "
                             : ""}
