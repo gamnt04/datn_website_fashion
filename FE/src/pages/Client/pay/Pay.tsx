@@ -118,7 +118,13 @@ const Pay = () => {
 
       toast.success(message, { autoClose: 1200 });
     } catch (error) {
-      if (error instanceof Error) {
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message, { autoClose: 1200 });
+      } else if (error instanceof Error) {
         toast.error(error.message, { autoClose: 1200 });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
@@ -127,7 +133,6 @@ const Pay = () => {
       }
     }
   };
-
   const showVoucherDetails = (voucher: any) => {
     setVoucherDetails(voucher);
     setIsDetailModalVisible(true);
@@ -165,10 +170,23 @@ const Pay = () => {
       toast.success(message, { autoClose: 1200 });
       setIsVoucherModalVisible(false);
     } catch (error) {
-      toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", { autoClose: 1200 });
+      // Narrow the type of error by checking if it is an instance of AxiosError
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message, { autoClose: 1200 });
+      } else if (error instanceof Error) {
+        // Handle generic JavaScript errors
+        toast.error(error.message, { autoClose: 1200 });
+      } else {
+        toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
+          autoClose: 1200,
+        });
+      }
     }
   };
-
   const handleTAdd = () => {
     setAddress(!address);
     if (isOpen) setIsOpen(false);
@@ -487,7 +505,6 @@ const Pay = () => {
                 pagination={false}
               />
               <div className="flex items-center justify-end gap-8 p-6">
-                {/* <p>Tổng số tiền ( {calculateTotalProduct()} sản phẩm):</p> */}
                 <p className="text-xl font-bold text-black">
                   <p>
                     Tổng số tiền:{" "}
@@ -592,11 +609,13 @@ const Pay = () => {
                         return (
                           <div
                             key={voucher._id}
-                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
-                              ? "border-blue-500"
-                              : "border-gray-300"
-                              } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                              }`}
+                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                              selectedVoucher?._id === voucher._id
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                            } ${
+                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
                           >
                             <div>
                               <p className="font-bold text-lg">
@@ -619,8 +638,9 @@ const Pay = () => {
                               </Button>
                             </div>
                             <button
-                              className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
-                                }`}
+                              className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                isDisabled ? "bg-gray-300" : ""
+                              }`}
                               onClick={(e) => handleApplyVoucher(e, voucher)}
                               disabled={isDisabled}
                             >
@@ -675,8 +695,8 @@ const Pay = () => {
                         <strong className="text-lg">Điều kiện sử dụng:</strong>{" "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                            "vi-VN"
-                          )} đ`
+                              "vi-VN"
+                            )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -733,9 +753,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}`
+                            style: "currency",
+                            currency: "VND",
+                          })}`
                         : "0đ"}
                     </p>
                   </div>
