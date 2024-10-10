@@ -248,7 +248,7 @@ const Header = () => {
               <FaFacebookMessenger />
             </Link>
             {isChatOpen && (
-              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px]">
+              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px] ">
                 <Chat onClose={toggleChat} />
               </div>
             )}
