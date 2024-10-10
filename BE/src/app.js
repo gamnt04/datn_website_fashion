@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
 });
 
 // Lắng nghe cổng
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2004;
 server.listen(PORT, () => {
   console.log(`Server đang chạy trên cổng ${PORT}`);
 });
