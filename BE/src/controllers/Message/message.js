@@ -116,6 +116,7 @@ export const getMessagesBetweenUsers = async (req, res) => {
     res.status(500).json({ message: "Lấy tin nhắn thất bại." });
   }
 };
+
 export const getAllMessages = async (req, res) => {
   try {
     const messageGroups = await MessageGroup.find({})
