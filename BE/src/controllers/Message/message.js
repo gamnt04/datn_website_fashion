@@ -91,7 +91,6 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ message: "Gửi tin nhắn thất bại." });
   }
 };
-
 export const getMessagesBetweenUsers = async (req, res) => {
   try {
     const { userId1, userId2 } = req.params;
@@ -111,10 +110,26 @@ export const getMessagesBetweenUsers = async (req, res) => {
       );
       return group;
     });
-
     res.status(200).json(messageGroups);
   } catch (error) {
     console.error("Lỗi khi lấy tin nhắn giữa hai người dùng:", error);
     res.status(500).json({ message: "Lấy tin nhắn thất bại." });
+  }
+};
+export const getAllMessages = async (req, res) => {
+  try {
+    const messageGroups = await MessageGroup.find({})
+      .populate("senderId")
+      .populate("receiverId");
+    const sortedMessageGroups = messageGroups.map((group) => {
+      group.messages.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+      return group;
+    });
+    res.status(200).json({ data: sortedMessageGroups });
+  } catch (error) {
+    console.error("Lỗi khi lấy tất cả tin nhắn:", error);
+    res.status(500).json({ message: "Lấy tất cả tin nhắn thất bại." });
   }
 };
