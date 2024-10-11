@@ -218,19 +218,24 @@ const Pay = () => {
       ...order,
     };
   });
+  const currentDate = new Date(); // Lấy ngày hiện tại
 
   const sortedVouchers = vouchers.sort((a: any, b: any) => {
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
-      a.usedCount >= a.quantity_voucher;
+      a.usedCount >= a.quantity_voucher ||
+      new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+
     const bDisabled =
       (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
-      b.usedCount >= b.quantity_voucher;
+      b.usedCount >= b.quantity_voucher ||
+      new Date(b.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
 
     if (aDisabled && !bDisabled) return 1;
     if (!aDisabled && bDisabled) return -1;
     return 0;
   });
+
   // add order
   const onAddOrder = async (data_form: any) => {
     const discountCodeToUse = selectedVoucherCode || discountCode;
@@ -603,8 +608,10 @@ const Pay = () => {
                           voucher.allowedUsers.includes(userId);
                         const isVoucherAvailable =
                           voucher.usedCount < voucher.quantity_voucher;
+                        const isExpired =
+                          new Date(voucher.expirationDate) < currentDate;
                         const isDisabled =
-                          !isAllowedUser || !isVoucherAvailable;
+                          !isAllowedUser || !isVoucherAvailable || isExpired;
 
                         return (
                           <div
@@ -618,7 +625,7 @@ const Pay = () => {
                             }`}
                           >
                             <div>
-                              <p className="text-lg font-bold">
+                              <p className="font-bold text-lg">
                                 {voucher.name_voucher}
                               </p>
                               <p>
@@ -628,7 +635,7 @@ const Pay = () => {
                                 ).toLocaleDateString()}
                               </p>
                               <p>
-                                Lượt sử dụng còn lại:{" "}
+                                Số lượng còn lại:{" "}
                                 {voucher.quantity_voucher - voucher.usedCount}
                               </p>
                               <Button
@@ -644,11 +651,13 @@ const Pay = () => {
                               onClick={(e) => handleApplyVoucher(e, voucher)}
                               disabled={isDisabled}
                             >
-                              {isAllowedUser
-                                ? isVoucherAvailable
-                                  ? "Sử dụng"
+                              {isDisabled
+                                ? isExpired
+                                  ? "Đã hết hạn"
+                                  : isVoucherAvailable
+                                  ? "Không hợp lệ"
                                   : "Hết mã"
-                                : "Không hợp lệ"}
+                                : "Sử dụng"}
                             </button>
                           </div>
                         );
