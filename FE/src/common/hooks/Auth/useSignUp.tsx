@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import instance from "../../../configs/axios";
+import { AxiosError } from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { signUpSchema } from "../../validations/auth/SignUp";
-import Joi from "joi";
-import { useState } from "react";
-import { AxiosError } from "axios";
+import instance from "../../../configs/axios";
 
 interface SignUpFormData {
   email: string;
@@ -23,8 +21,8 @@ const useSignUp = () => {
       try {
         const response = await instance.post(`auth/signup`, formData);
         return response;
-      } catch (err) {
-        throw err;
+      } catch (error) {
+        console.log(error);
       }
     },
     onSuccess: (res) => {
@@ -45,7 +43,7 @@ const useSignUp = () => {
         toast.error("Đăng ký thất bại. Vui lòng thử lại.");
         setStatus_api(true);
       }
-    },
+    }
   });
 
   return {
@@ -53,7 +51,7 @@ const useSignUp = () => {
     isError,
     error,
     mutate,
-    status_api,
+    status_api
   };
 };
 

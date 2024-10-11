@@ -12,7 +12,7 @@ export const useCategoryQuery = (id?: string) => {
   return { data, ...rest };
 };
 
-export const useSearchCategoryByName = (searchName) => {
+export const useSearchCategoryByName = (searchName: string) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_Category", searchName],
     queryFn: () => getCategoryByName(searchName),

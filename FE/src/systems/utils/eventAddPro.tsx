@@ -1,8 +1,7 @@
 // utils/handleImageChange.ts
 import { Dispatch, MutableRefObject, SetStateAction } from "react";
 import { UseFormSetValue } from "react-hook-form";
-import { IProduct } from "../../common/interfaces/Product";
-import { IAttribute, ISize } from "../../common/interfaces/Product";
+import { IAttribute, IProduct, ISize } from "../../common/interfaces/Product";
 export const handleImageChange = (
   e: React.ChangeEvent<HTMLInputElement>,
   setImagePreview: Dispatch<SetStateAction<string | null>>,
@@ -109,7 +108,7 @@ export const handleAddAttribute = (
 ) => {
   setAttributes([
     ...attributes,
-    { color: "", size: [{ name_size: "", stock_attribute: 0 }] },
+    { color: "", size: [{ name_size: "", stock_attribute: 0 }] }
   ]);
 };
 

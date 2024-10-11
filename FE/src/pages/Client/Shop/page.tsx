@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import MenuShop from "./MenuShop";
-import Products_Shop from "./Products";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ArrangeFilter from "./Filter/ArrangeFilter";
+import MenuShop from "./MenuShop";
+import Products_Shop from "./Products";
 
 const IndexShops = () => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const IndexShops = () => {
           </Link>
           <span className="mx-1 text-gray-500">&#10148;</span> Tất cả
         </div>
-        <div className="xl:grid grid-cols-[21%_76%] justify-between">
+        <div className="xl:grid grid-cols-[18%_80%] justify-between">
           <MenuShop
             onCategorySelect={handleCategorySelect}
             onPriceChange={handlePriceChange}

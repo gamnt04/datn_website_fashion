@@ -79,7 +79,7 @@ const ShipperList: React.FC = () => {
   const columns = [
     {
       title: "STT",
-      render: (_, __, index) => <p>{index + 1}</p>,
+      render: (_: any, __, index) => <p>{index + 1}</p>,
     },
     {
       key: "avatar",

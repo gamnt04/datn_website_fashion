@@ -123,8 +123,8 @@ export async function get_item_dashboard(req, res) {
       sort: { createdAt: -1 },
     };
     const data = await Products.paginate({}, options);
-    await Products.populate(data.docs, { path: 'category_id' })
-    await Products.populate(data.docs, { path: 'attributes' })
+    await Products.populate(data.docs, { path: "category_id" });
+    await Products.populate(data.docs, { path: "attributes" });
     return res.status(StatusCodes.OK).json({
       message: "OK",
       data,
@@ -141,7 +141,7 @@ export const getProductById = async (req, res) => {
     const productId = req.params.id;
     const products = await Products.findById(req.params.id);
     if (products?.attributes) {
-      await Products?.populate(products, { path: 'attributes' })
+      await Products?.populate(products, { path: "attributes" });
       if (products.attributes.values) {
         products.attributes.values = products.attributes.values.map((item) => {
           const new_data = item.size.filter((attr) => attr.stock_attribute > 0);
@@ -152,7 +152,9 @@ export const getProductById = async (req, res) => {
             };
           }
         });
-        products.attributes.values = products.attributes.values.filter(item => item !== undefined);
+        products.attributes.values = products.attributes.values.filter(
+          (item) => item !== undefined
+        );
       }
       await products.save();
     }
@@ -398,24 +400,6 @@ export async function filterItems(req, res) {
   };
 
   try {
-    // Nếu không có bộ lọc nào, trả về tất cả sản phẩm
-    if (!cate_id && !color && !name_size && !price_ranges && !_search) {
-      const data = await Products.paginate({}, options);
-      await Products.populate(data.docs, { path: "attributes" });
-
-      return res.status(StatusCodes.OK).json({
-        message: "Thành công!",
-        data: data.docs,
-        pagination: {
-          totalItems: data.totalDocs,
-          currentPage: data.page,
-          totalPages: data.totalPages,
-          itemsPerPage: data.limit,
-        },
-      });
-    }
-
-    // Validate and format price ranges
     let formattedPriceRanges = [];
     if (price_ranges) {
       try {
@@ -506,7 +490,6 @@ export async function filterItems(req, res) {
                 value.size.forEach((sizeObj) => {
                   total_stock += sizeObj.stock_attribute;
 
-                  // Kiểm tra xem giá có nằm trong khoảng giá yêu cầu không
                   const priceInRange =
                     formattedPriceRanges.length === 0 ||
                     formattedPriceRanges.some(
@@ -525,19 +508,33 @@ export async function filterItems(req, res) {
         }
 
         if (matched) {
+          // Find the highest price_attribute in attributes for each product
+          item.max_price_attribute = Math.max(
+            ...attr.values.flatMap((value) =>
+              value.size.map((sizeObj) => sizeObj.price_attribute)
+            )
+          );
+
           item.stock_product = total_stock;
           filteredProducts.push(item);
         }
       } else {
         item.stock_product = item.stock;
+        item.max_price_attribute = item.price_product; // Assuming price_product is a fallback
         filteredProducts.push(item);
       }
     }
 
+    // Sorting by highest price_attribute
     if (_sort.includes("price_attribute")) {
       filteredProducts.sort((a, b) => {
         const sortOrder = _sort.split(":")[1] === "desc" ? -1 : 1;
-        return (a.price_product - b.price_product) * sortOrder;
+
+        // Use max_price_attribute for sorting
+        const aMaxPrice = a.max_price_attribute;
+        const bMaxPrice = b.max_price_attribute;
+
+        return (aMaxPrice - bMaxPrice) * sortOrder;
       });
     }
 
@@ -558,6 +555,7 @@ export async function filterItems(req, res) {
       .json({ message: error.message || "Lỗi máy chủ!" });
   }
 }
+
 export const getProductsByName = async (req, res) => {
   try {
     const { searchName } = req.body;

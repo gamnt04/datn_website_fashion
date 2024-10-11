@@ -1,6 +1,5 @@
-import React from "react";
-import Form_Item from "./_component/form";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
+import Form_Item from "./_component/form";
 
 const Add_Item = () => {
   return (
