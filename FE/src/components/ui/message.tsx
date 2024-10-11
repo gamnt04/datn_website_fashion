@@ -4,7 +4,9 @@ import Chat from "../../pages/Client/Chat/Chat";
 
 const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const toggleChat = () => {
+
+  const toggleChat = (event) => {
+    event.stopPropagation(); // Ngăn không để sự kiện lan truyền lên trên, gây đóng popup
     setIsChatOpen(!isChatOpen);
   };
 
@@ -15,11 +17,14 @@ const Message = () => {
           src={message}
           alt="Message Icon"
           className="rounded-full w-full h-full object-cover"
-          onClick={toggleChat}
+          // Xóa onClick ở đây vì sự kiện đã được bao trùm bởi div cha
         />
         {isChatOpen && (
-          <div className="fixed inset-0  flex justify-end pr-[90px] mt-[230px]">
-            <Chat onClose={toggleChat} />
+          <div
+            className="fixed inset-0 flex justify-end pr-[90px] mt-[230px]"
+            onClick={(event) => event.stopPropagation()} // Chặn sự kiện nhấp để không đóng chat
+          >
+            <Chat />
           </div>
         )}
       </div>
