@@ -218,19 +218,24 @@ const Pay = () => {
       ...order,
     };
   });
+  const currentDate = new Date(); // Lấy ngày hiện tại
 
   const sortedVouchers = vouchers.sort((a: any, b: any) => {
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
-      a.usedCount >= a.quantity_voucher;
+      a.usedCount >= a.quantity_voucher ||
+      new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+
     const bDisabled =
       (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
-      b.usedCount >= b.quantity_voucher;
+      b.usedCount >= b.quantity_voucher ||
+      new Date(b.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
 
     if (aDisabled && !bDisabled) return 1;
     if (!aDisabled && bDisabled) return -1;
     return 0;
   });
+
   // add order
   const onAddOrder = async (data_form: any) => {
     const discountCodeToUse = selectedVoucherCode || discountCode;
@@ -336,15 +341,15 @@ const Pay = () => {
       dataIndex: "name_product",
       key: "name_product",
       render: (_: any, order: any) => (
-        <div className="lg:flex lg:items-center gap-10">
+        <div className="gap-10 lg:flex lg:items-center">
           <div>
-            <h1 className="font-bold text-sm lg:text-base">
+            <h1 className="text-sm font-bold lg:text-base">
               {order?.productId?.name_product}
             </h1>
             {/* <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
               Đổi trả miễn phí 15 ngày
             </p> */}
-            <div className="flex justify-between md:hidden mt-2">
+            <div className="flex justify-between mt-2 md:hidden">
               <p className="text-sm lg:text-base">
                 {order?.price_item?.toLocaleString("vi", {
                   style: "currency",
@@ -354,7 +359,7 @@ const Pay = () => {
               <p className="text-sm lg:text-base">x {order?.quantity}</p>
             </div>
           </div>
-          <p className="font-bold w-28 p-0 text-xs lg:text-sm mt-2 lg:mt-0">
+          <p className="p-0 mt-2 text-xs font-bold w-28 lg:text-sm lg:mt-0">
             Loại: {order?.color_item} - {order?.name_size}
           </p>
         </div>
@@ -364,7 +369,7 @@ const Pay = () => {
       dataIndex: "price_product",
       key: "price_product",
       render: (_: any, order: any) => (
-        <p className="hidden lg:block text-sm lg:text-base">
+        <p className="hidden text-sm lg:block lg:text-base">
           {order?.price_item?.toLocaleString("vi", {
             style: "currency",
             currency: "VND",
@@ -376,7 +381,7 @@ const Pay = () => {
       dataIndex: "quantity",
       key: "quantity",
       render: (_: any, order: any) => (
-        <p className="hidden lg:block text-sm lg:text-base">
+        <p className="hidden text-sm lg:block lg:text-base">
           {" "}
           x {order?.quantity}
         </p>
@@ -386,7 +391,7 @@ const Pay = () => {
       dataIndex: "total_price_item",
       key: "total_price_item",
       render: (_: any, order: any) => (
-        <p className="font-bold hidden lg:block text-sm lg:text-base">
+        <p className="hidden text-sm font-bold lg:block lg:text-base">
           {order?.total_price_item?.toLocaleString("vi", {
             style: "currency",
             currency: "VND",
@@ -421,12 +426,12 @@ const Pay = () => {
             </div>
           </div>
           <form onSubmit={handleSubmit(onAddOrder)}>
-            <div className="p-2 lg:py-6 lg:px-6 border rounded shadow-sm">
+            <div className="p-2 border rounded shadow-sm lg:py-6 lg:px-6">
               <div className="flex gap-3">
                 <Address />
                 <p>Địa chỉ nhận hàng</p>
               </div>
-              <div className="flex justify-between lg:justify-normal gap-12 flex-wrap pl-9">
+              <div className="flex flex-wrap justify-between gap-12 lg:justify-normal pl-9">
                 <div className="flex items-center gap-4">
                   {auth?.address.length === 0 ? (
                     "Bạn hay thêm địa chỉ trước khi thanh toán"
@@ -482,7 +487,7 @@ const Pay = () => {
                   {!selectedAddress?.checked === true ? (
                     ""
                   ) : (
-                    <div className="border py-2 px-4 rounded border-black hidden lg:block">
+                    <div className="hidden px-4 py-2 border border-black rounded lg:block">
                       Mặc định
                     </div>
                   )}
@@ -491,14 +496,14 @@ const Pay = () => {
                     onClick={handleAddress}
                   >
                     <span className="hidden lg:block">Thay đổi</span>
-                    <span className="md:hidden block">
+                    <span className="block md:hidden">
                       <Chevron_right />
                     </span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="border my-4 rounded shadow-sm">
+            <div className="my-4 border rounded shadow-sm">
               <Table
                 columns={columns}
                 dataSource={dataSort}
@@ -516,12 +521,12 @@ const Pay = () => {
                 </p>
               </div>
             </div>
-            <div className="border mt-4 mb-8 rounded shadow-sm">
-              <div className="border-b flex justify-between px-6 py-6">
+            <div className="mt-4 mb-8 border rounded shadow-sm">
+              <div className="flex justify-between px-6 py-6 border-b">
                 <p className="text-xl">Phương thức thanh toán</p>
-                <div className="flex gap-8 items-center">
+                <div className="flex items-center gap-8">
                   <select
-                    className="border rounded p-2"
+                    className="p-2 border rounded"
                     {...register("payment", { required: true })}
                   >
                     <option value="Thanh toán khi nhận hàng">
@@ -540,20 +545,20 @@ const Pay = () => {
                     <input
                       type="text"
                       placeholder="Nhập mã giảm giá"
-                      className="border rounded w-full text-center"
+                      className="w-full text-center border rounded"
                       value={discountCode}
                       onChange={(e) => setDiscountCode(e.target.value)}
                     />
                     {selectedVoucher ? (
                       <button
-                        className="w-44 bg-gray-500 text-white font-bold rounded ml-2 cursor-not-allowed"
+                        className="ml-2 font-bold text-white bg-gray-500 rounded cursor-not-allowed w-44"
                         disabled
                       >
                         Đã áp dụng
                       </button>
                     ) : (
                       <button
-                        className="w-44 bg-blue-500 text-white font-bold rounded ml-2"
+                        className="ml-2 font-bold text-white bg-blue-500 rounded w-44"
                         onClick={handleApplyDiscount}
                         type="button"
                       >
@@ -565,14 +570,14 @@ const Pay = () => {
                     <Button
                       type="link"
                       onClick={showVoucherModal}
-                      className="ml-12 text-lg underline mt-1"
+                      className="mt-1 ml-12 text-lg underline"
                     >
                       Xem tất cả các voucher
                     </Button>
                     {(selectedVoucher || discountAmount > 0) && (
                       <div>
                         <button
-                          className="text-blue-500 underline mt-2"
+                          className="mt-2 text-blue-500 underline"
                           onClick={handleRemoveVoucher}
                         >
                           Bỏ chọn voucher
@@ -591,7 +596,7 @@ const Pay = () => {
                   centered
                   width={1350}
                 >
-                  <p className="text-xl mb-5">Tất cả Voucher</p>
+                  <p className="mb-5 text-xl">Tất cả Voucher</p>
                   {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
@@ -603,8 +608,10 @@ const Pay = () => {
                           voucher.allowedUsers.includes(userId);
                         const isVoucherAvailable =
                           voucher.usedCount < voucher.quantity_voucher;
+                        const isExpired =
+                          new Date(voucher.expirationDate) < currentDate;
                         const isDisabled =
-                          !isAllowedUser || !isVoucherAvailable;
+                          !isAllowedUser || !isVoucherAvailable || isExpired;
 
                         return (
                           <div
@@ -644,11 +651,13 @@ const Pay = () => {
                               onClick={(e) => handleApplyVoucher(e, voucher)}
                               disabled={isDisabled}
                             >
-                              {isAllowedUser
-                                ? isVoucherAvailable
-                                  ? "Sử dụng"
+                              {isDisabled
+                                ? isExpired
+                                  ? "Đã hết hạn"
+                                  : isVoucherAvailable
+                                  ? "Không hợp lệ"
                                   : "Hết mã"
-                                : "Không hợp lệ"}
+                                : "Sử dụng"}
                             </button>
                           </div>
                         );
@@ -667,7 +676,7 @@ const Pay = () => {
                   centered
                   width={600} // Chiều rộng tùy chỉnh
                 >
-                  <h2 className="text-2xl mb-3">Chi tiết voucher</h2>
+                  <h2 className="mb-3 text-2xl">Chi tiết mã giảm giá</h2>
                   {voucherDetails && (
                     <div>
                       <p>
@@ -675,24 +684,39 @@ const Pay = () => {
                         {voucherDetails.name_voucher}
                       </p>
                       <p>
-                        <strong className="text-lg">Mã giảm giá:</strong>{" "}
+                        <strong className="text-lg">Hạn sử dụng mã:</strong>{" "}
+                        {new Date(
+                          voucherDetails.startDate
+                        ).toLocaleDateString()}{" "}
+                        -{" "}
+                        {new Date(
+                          voucherDetails.expirationDate
+                        ).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <strong className="text-lg">Mã giảm giá: </strong>
                         {voucherDetails.code_voucher}
                       </p>
                       <p>
-                        <strong className="text-lg">Loại giảm giá:</strong>{" "}
-                        {voucherDetails.discountType === "percentage"
-                          ? "Giảm giá theo phần trăm(%)"
-                          : " Giảm giá theo số tiền cố định (VND)"}
-                      </p>
-                      <p>
-                        <strong className="text-lg">Giá trị giảm giá:</strong>{" "}
+                        <strong className="text-lg">Ưu đãi: </strong>
                         {voucherDetails.discountValue}
                         {voucherDetails.discountType === "percentage"
                           ? "%"
                           : "đ"}
+                        {voucherDetails.maxDiscount && (
+                          <>
+                            {" "}
+                            Giảm tối đa{" "}
+                            {voucherDetails.maxDiscount.toLocaleString(
+                              "vi-VN"
+                            )}{" "}
+                            đ
+                          </>
+                        )}
                       </p>
                       <p>
-                        <strong className="text-lg">Điều kiện sử dụng:</strong>{" "}
+                        <strong className="text-lg">Áp dụng cho: </strong>{" "}
+                        {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
                               "vi-VN"
@@ -700,42 +724,24 @@ const Pay = () => {
                           : "Không có"}
                       </p>
                       <p>
-                        <strong className="text-lg">Số lượng còn lại:</strong>{" "}
+                        <strong className="text-lg">
+                          Lượt sử dụng còn lại:
+                        </strong>{" "}
                         {voucherDetails.quantity_voucher -
                           voucherDetails.usedCount}
                       </p>
-                      <p>
-                        <strong className="text-lg">Thời gian bắt đầu:</strong>{" "}
-                        {new Date(
-                          voucherDetails.startDate
-                        ).toLocaleDateString()}
-                      </p>
-                      <p>
-                        <strong className="text-lg">Thời gian kết thúc:</strong>{" "}
-                        {new Date(
-                          voucherDetails.expirationDate
-                        ).toLocaleDateString()}
-                      </p>
-                      <p>
-                        <strong className="text-lg">Mô tả:</strong>{" "}
-                        {voucherDetails.description_voucher}
-                      </p>
 
                       <p>
-                        <strong className="text-lg">
-                          Người dùng được phép:
-                        </strong>{" "}
-                        {voucherDetails.allowedUsers.length > 0
-                          ? "Có giới hạn"
-                          : "Tất cả"}
+                        <strong className="text-lg">Chi tiết:</strong>{" "}
+                        {voucherDetails.description_voucher}
                       </p>
                     </div>
                   )}
                 </Modal>
               </div>
-              <div className="flex justify-end py-6 px-6 border-b">
+              <div className="flex justify-end px-6 py-6 border-b">
                 <div>
-                  <div className="flex justify-between py-3 gap-16">
+                  <div className="flex justify-between gap-16 py-3">
                     <p>Tổng tiền hàng</p>
                     <p>
                       {totalPrice?.toLocaleString("vi", {
@@ -744,11 +750,11 @@ const Pay = () => {
                       })}
                     </p>
                   </div>
-                  <div className="flex justify-between py-3 gap-16">
+                  <div className="flex justify-between gap-16 py-3">
                     <p>Phí vận chuyển</p>
                     <p>0đ</p>
                   </div>
-                  <div className="flex justify-between py-3 gap-16">
+                  <div className="flex justify-between gap-16 py-3">
                     <p>Voucher giảm giá</p>
                     <p>
                       {discountAmount > 0
@@ -759,7 +765,7 @@ const Pay = () => {
                         : "0đ"}
                     </p>
                   </div>
-                  <div className="border my-4 rounded shadow-sm">
+                  <div className="my-4 border rounded shadow-sm">
                     <div className="flex items-center justify-end gap-8 p-6">
                       <p className="text-xl font-bold text-black">
                         <p>
@@ -777,7 +783,7 @@ const Pay = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end items-center py-6 px-6">
+              <div className="flex items-center justify-end px-6 py-6">
                 {/* <p>
                   Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo{" "}
                   <span className="text-blue-400">Điều khoản</span>

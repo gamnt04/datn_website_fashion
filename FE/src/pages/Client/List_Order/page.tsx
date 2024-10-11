@@ -283,6 +283,52 @@ export default function List_order() {
   ];
 
   const { data, isPending } = Query_Order(dataClient);
+ // Đếm số lượng sản phẩm theo trạng thái
+ const orderStatusCounts = {
+  "Tất Cả": 0,
+  "Chờ Xác Nhận": 0,
+  "Đang Chuẩn Bị Hàng": 0,
+  "Đang Vận Chuyển": 0,
+  "Đã Giao Hàng": 0,
+  "Giao Hàng Thất Bại": 0,
+  "Hoàn Thành": 0,
+  "Đã Hủy": 0,
+};
+
+if (data && data.data && data.data.docs) {
+  data.data.docs.forEach((order) => {
+    const itemCount = order.items.length; // Số lượng sản phẩm trong mỗi đơn hàng
+    orderStatusCounts["Tất Cả"] += itemCount; // Tăng tổng số sản phẩm
+
+    order.items.forEach(() => {
+      switch (+order.status) {
+        case 1:
+          orderStatusCounts["Chờ Xác Nhận"] += itemCount;
+          break;
+        case 2:
+          orderStatusCounts["Đang Chuẩn Bị Hàng"] += itemCount;
+          break;
+        case 3:
+          orderStatusCounts["Đang Vận Chuyển"] += itemCount;
+          break;
+        case 4:
+          orderStatusCounts["Đã Giao Hàng"] += itemCount;
+          break;
+        case 5:
+          orderStatusCounts["Giao Hàng Thất Bại"] += itemCount;
+          break;
+        case 6:
+          orderStatusCounts["Hoàn Thành"] += itemCount;
+          break;
+        case 7:
+          orderStatusCounts["Đã Hủy"] += itemCount;
+          break;
+        default:
+          break;
+      }
+    });
+  });
+}
 
   const addCart = (orderId?: string | number) => {
     if (userId) {
@@ -372,7 +418,7 @@ export default function List_order() {
             className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400`}
             onClick={() => handle_status_order(i)}
           >
-            {menu}
+            {menu} ({orderStatusCounts[menu] !== undefined ? orderStatusCounts[menu] : 0})
           </li>
         ))}
       </ul>

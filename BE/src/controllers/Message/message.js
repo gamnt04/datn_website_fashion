@@ -36,17 +36,17 @@ import MessageGroup from "../../models/Message/Message";
 // };
 export const sendMessage = async (req, res) => {
   try {
-    const { senderId, receiverId, content, attachments, icons } = req.body;
-    const formattedAttachments = Array.isArray(attachments) ? attachments : [];
+    const { senderId, receiverId, content } = req.body;
+    // const formattedAttachments = Array.isArray(attachments) ? attachments : [];
 
     // Tìm nhóm tin nhắn giữa sender và receiver
     let messageGroup1 = await MessageGroup.findOne({
-      $or: [{ senderId, receiverId }]
+      $or: [{ senderId, receiverId }],
     });
     let messageGroup2 = await MessageGroup.findOne({
       $or: [
-        { senderId: receiverId, receiverId: senderId } // Kiểm tra 2 chiều để đảm bảo không tạo nhóm mới nếu đã có nhóm giữa cùng 2 người này
-      ]
+        { senderId: receiverId, receiverId: senderId }, // Kiểm tra 2 chiều để đảm bảo không tạo nhóm mới nếu đã có nhóm giữa cùng 2 người này
+      ],
     });
 
     // Nếu chưa có nhóm tin nhắn, tạo nhóm mới
@@ -54,14 +54,14 @@ export const sendMessage = async (req, res) => {
       messageGroup1 = new MessageGroup({
         senderId,
         receiverId,
-        messages: []
+        messages: [],
       });
     }
     if (!messageGroup2) {
       messageGroup2 = new MessageGroup({
         senderId,
         receiverId,
-        messages: []
+        messages: [],
       });
     }
 
@@ -69,16 +69,16 @@ export const sendMessage = async (req, res) => {
     let savedMessageGroup;
     if (senderId == messageGroup1.senderId) {
       messageGroup1.messages.push({
-        content,
-        attachments: formattedAttachments,
-        icons
+        content: content,
+        // attachments: formattedAttachments,
+        // icons
       });
       savedMessageGroup = await messageGroup1.save();
     } else {
       messageGroup2.messages.push({
-        content,
-        attachments: formattedAttachments,
-        icons
+        content: content,
+        // attachments: formattedAttachments,
+        // icons
       });
       savedMessageGroup = await messageGroup2.save();
     }
@@ -98,8 +98,8 @@ export const getMessagesBetweenUsers = async (req, res) => {
     let messageGroups = await MessageGroup.find({
       $or: [
         { senderId: userId1, receiverId: userId2 },
-        { senderId: userId2, receiverId: userId1 }
-      ]
+        { senderId: userId2, receiverId: userId1 },
+      ],
     })
       .populate("senderId")
       .populate("receiverId");
@@ -116,6 +116,7 @@ export const getMessagesBetweenUsers = async (req, res) => {
     res.status(500).json({ message: "Lấy tin nhắn thất bại." });
   }
 };
+
 export const getAllMessages = async (req, res) => {
   try {
     const messageGroups = await MessageGroup.find({})
