@@ -637,10 +637,14 @@ export const userCancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(id);
     if (!order) {
-      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy đơn hàng" });
     }
     if (order.cancellationRequested) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Đơn hàng đã bị hủy" });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Đơn hàng đã bị hủy" });
     }
 
     order.cancellationRequested = true;
@@ -676,10 +680,14 @@ export const adminCancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(id);
     if (!order) {
-      return res.status(StatusCodes.NOT_FOUND).json({ message: "Không tìm thấy đơn hàng" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy đơn hàng" });
     }
     if (!order.cancellationRequested) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ message: "Không có yêu cầu hủy đơn hàng" });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Không có yêu cầu hủy đơn hàng" });
     }
 
     if (confirm) {
@@ -694,7 +702,11 @@ export const adminCancelOrder = async (req, res) => {
 
       // Send cancellation email
       try {
-        await SendCancellationMail(order.customerInfo.email, order, order.cancellationReason);
+        await SendCancellationMail(
+          order.customerInfo.email,
+          order,
+          order.cancellationReason
+        );
       } catch (emailError) {
         console.error("Lỗi gửi email:", emailError);
         // Optionally, handle the case where the email fails
@@ -801,7 +813,8 @@ export const deliverSuccess = async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Đơn hàng đã được đánh dấu là giao hàng thành công và email đã được gửi.",
+      message:
+        "Đơn hàng đã được đánh dấu là giao hàng thành công và email đã được gửi.",
       order,
     });
   } catch (error) {
@@ -904,12 +917,12 @@ export const adminFailDelivery = async (req, res) => {
 export const getOrdersByPhone = async (req, res) => {
   const { phone } = req.query;
   try {
-    const orders = await Order.find({ 'customerInfo.phone': phone });
+    const orders = await Order.find({ "customerInfo.phone": phone });
     if (!orders.length) {
-      return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
     }
     res.json({ orders });
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi server', error });
+    res.status(500).json({ message: "Lỗi server", error });
   }
 };
