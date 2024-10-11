@@ -15,8 +15,8 @@ const sendEmail = async (fullName, email, token) => {
     service: "gmail",
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+      pass: process.env.SMTP_PASS
+    }
   });
 
   const mailOptions = {
@@ -32,7 +32,7 @@ const sendEmail = async (fullName, email, token) => {
     Để hoàn tất quy trình đăng ký, vui lòng xác nhận tài khoản của bạn bằng cách nhấp vào liên kết bên dưới:
     http://localhost:7899/verify?token=${token}
     
-    Xin chân thành cảm ơn!`,
+    Xin chân thành cảm ơn!`
   };
 
   try {
@@ -57,7 +57,7 @@ const generateToken = (email, role) => {
   const payload = {
     email,
     role,
-    exp: Math.floor(Date.now() / 1000) + 5 * 60, // Token hết hạn sau 5 phút
+    exp: Math.floor(Date.now() / 1000) + 5 * 60 // Token hết hạn sau 5 phút
   };
   return jwt.sign(payload, process.env.JWT_SECRET);
 };
@@ -74,17 +74,16 @@ export const createShipper = async (req, res) => {
       status,
       avatar,
       address,
-      birthDate,
+      birthDate
     } = req.body;
-    // Kiểm tra xem email đã tồn tại chưa
     const findEmailShipper = await Shipper.findOne({ email });
     if (findEmailShipper) {
       return res.status(400).json({ message: "Email đã tồn tại" });
     }
-    // const findEmailUser = await User.findOne({ email });
-    // if (findEmailUser) {
-    //   return res.status(400).json({ message: "Email đã tồn tại" });
-    // }
+    const findEmailUser = await User.findOne({ email });
+    if (findEmailUser) {
+      return res.status(400).json({ message: "Email đã tồn tại" });
+    }
     // Tạo mật khẩu mặc định
     const defaultPassword = randomPassword();
     // Mã hóa mật khẩu
@@ -106,7 +105,7 @@ export const createShipper = async (req, res) => {
       address,
       birthDate,
       token: verificationToken,
-      tokenExpiration: Date.now() + 5 * 60 * 1000,
+      tokenExpiration: Date.now() + 5 * 60 * 1000
     });
 
     // Lưu vào cơ sở dữ liệu
@@ -138,7 +137,7 @@ export const updateShipper = async (req, res) => {
       status,
       avatar,
       address,
-      birthDate,
+      birthDate
     } = req.body;
 
     const findEmailUser = await User.findOne({ email });
@@ -156,7 +155,7 @@ export const updateShipper = async (req, res) => {
         status,
         avatar,
         address,
-        birthDate,
+        birthDate
       },
       { new: true } // Trả về dữ liệu mới sau khi cập nhật
     );
@@ -167,7 +166,7 @@ export const updateShipper = async (req, res) => {
 
     res.status(200).json({
       message: "Cập nhật shipper thành công",
-      shipper: updatedShipper,
+      shipper: updatedShipper
     });
   } catch (error) {
     res
@@ -182,8 +181,8 @@ const sendPasswordEmail = async (fullName, email, password) => {
     service: "gmail",
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+      pass: process.env.SMTP_PASS
+    }
   });
 
   const mailOptions = {
@@ -198,7 +197,7 @@ const sendPasswordEmail = async (fullName, email, password) => {
 
     Vui lòng đăng nhập vào hệ thống với thông tin trên.
 
-    Xin chân thành cảm ơn!`,
+    Xin chân thành cảm ơn!`
   };
 
   try {
@@ -295,7 +294,7 @@ export const deleteShipper = async (req, res) => {
     if (hasRestrictedOrder) {
       return res.status(400).json({
         message:
-          "Không thể xóa shipper. Shipper này vẫn đang được chỉ định cho đơn hàng.",
+          "Không thể xóa shipper. Shipper này vẫn đang được chỉ định cho đơn hàng."
       });
     }
     const deletedShipper = await Shipper.findByIdAndDelete(id);
@@ -317,7 +316,7 @@ export const GetShippersByName = async (req, res) => {
 
     // Tìm kiếm shipper theo trường "name"
     const shippers = await Shipper.find({
-      fullName: { $regex: new RegExp(fullName, "i") }, // Tìm kiếm theo tên
+      fullName: { $regex: new RegExp(fullName, "i") } // Tìm kiếm theo tên
     });
 
     if (shippers.length === 0) {
@@ -330,7 +329,7 @@ export const GetShippersByName = async (req, res) => {
   } catch (error) {
     console.error(error); // Log lỗi để xem chi tiết
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server",
+      message: error.message || "Lỗi server"
     });
   }
 };
@@ -370,7 +369,7 @@ export const add_address = async (req, res) => {
     // Thêm địa chỉ mới vào mảng địa chỉ và thiết lập làm mặc định nếu cần
     shipper.address.push({
       ...newAddress,
-      checked: setDefault, // Đặt địa chỉ mới làm mặc định nếu setDefault là true
+      checked: setDefault // Đặt địa chỉ mới làm mặc định nếu setDefault là true
     });
 
     // Lưu thay đổi
@@ -379,7 +378,7 @@ export const add_address = async (req, res) => {
     // Trả về dữ liệu cập nhật
     return res.status(StatusCodes.OK).json({
       message: "Đã thêm địa chỉ thành công",
-      address: updatedShipper.address,
+      address: updatedShipper.address
     });
   } catch (error) {
     console.error("Lỗi khi thêm địa chỉ:", error);
@@ -465,14 +464,14 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!shipper) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -487,7 +486,7 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -499,12 +498,12 @@ export const setDefaultAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã thiết lập địa chỉ mặc định thành công",
-      address: updatedUser.address.id(addressId),
+      address: updatedUser.address.id(addressId)
     });
   } catch (error) {
     console.error("Lỗi khi thiết lập địa chỉ mặc định:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi thiết lập địa chỉ mặc định",
+      message: "Lỗi khi thiết lập địa chỉ mặc định"
     });
   }
 };
@@ -521,14 +520,14 @@ export const updateShipperAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!shipper) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -538,7 +537,7 @@ export const updateShipperAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -553,12 +552,12 @@ export const updateShipperAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: updatedAddressData,
+      address: updatedAddressData
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ",
+      message: "Lỗi khi cập nhật địa chỉ"
     });
   }
 };
