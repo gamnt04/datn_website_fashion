@@ -26,7 +26,7 @@ const Chat = () => {
               alt={friendInfo?.userName || "Friend"}
             />
             <h2 className="text-li font-semibold pl-2">
-              {friendInfo?.userName || "Friend"}
+              {friendInfo?.userName || "Hỗ trợ khách hàng"}
             </h2>
           </div>
         </div>
