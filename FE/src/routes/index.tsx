@@ -49,7 +49,7 @@ import TrackOrder from "../pages/Client/TrackOrder/TrackOrder";
 import ListVoucher from "../pages/Admin/Voucher/ListVoucher";
 import AddVoucher from "../pages/Admin/Voucher/AddVoucher";
 import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
-import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
+// import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
 import Chat from "../pages/Client/Chat/Chat";
 const RouterComponent = () => {
   return (
