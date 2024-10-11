@@ -1,5 +1,10 @@
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { useState, useEffect } from "react";
+import { IProduct } from "../../../common/interfaces/Product";
+import { Query_Products } from "../../../common/hooks/Products/Products";
+import { Link, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../configs/axios";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import {
   Button,
   Form,
@@ -9,19 +14,14 @@ import {
   Input,
   Modal,
   Popconfirm,
-  Rate,
   Spin,
   Upload,
   UploadFile,
   UploadProps,
-  message
+  message,
 } from "antd";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Query_Products } from "../../../common/hooks/Products/Products";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { IProduct } from "../../../common/interfaces/Product";
-import instance from "../../../configs/axios";
+import { AiFillStar, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
 type FieldType = {
   contentReview?: string;
@@ -55,7 +55,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     return initialImages.map((url, index) => ({
       uid: index.toString(),
       name: `image-${index}`,
-      url
+      url,
     }));
   });
 
@@ -98,7 +98,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         uid: index.toString(),
         url,
         name: `image-${index}`, // Có thể thêm tên tùy ý
-        status: "done" // Đánh dấu rằng ảnh đã được tải lên trước đó
+        status: "done", // Đánh dấu rằng ảnh đã được tải lên trước đó
       })
     );
 
@@ -112,7 +112,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         form.setFieldsValue({
           contentReview: review.contentReview,
           image_review: review.image_review || [], // Cập nhật hình ảnh
-          rating_review: review.rating_review || ""
+          rating_review: review.rating_review || "",
         });
       }
     }
@@ -134,13 +134,13 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     },
     onError: () => {
       message.error("Xóa thất bại");
-    }
+    },
   });
 
   const handleRatingChange = (reviewId, rate) => {
     setRating((prevRating) => ({
       ...prevRating,
-      [reviewId]: rate // Lưu giá trị rating tương ứng với mỗi review
+      [reviewId]: rate, // Lưu giá trị rating tương ứng với mỗi review
     }));
   };
 
@@ -151,7 +151,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       orderId,
       contentReview,
       image_review,
-      rating_review
+      rating_review,
     }: {
       reviewId: string;
       productId: string;
@@ -165,8 +165,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         { contentReview, image_review, rating_review }, // Cập nhật nội dung và hình ảnh
         {
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
       return data;
@@ -178,7 +178,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     },
     onError: () => {
       message.error("Cập nhật thất bại");
-    }
+    },
   });
 
   const handleEditClick = (
@@ -224,7 +224,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     try {
       const response = await fetch(api, {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
@@ -238,8 +238,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       form.setFieldsValue({
         image_review: [
           ...(form.getFieldValue("image_review") || []),
-          result.secure_url
-        ]
+          result.secure_url,
+        ],
       });
 
       message.success("Tải lên thành công!");
@@ -273,7 +273,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
         productId,
         orderId,
         image_review: values.image_review || [], // Thêm image_review vào payload
-        rating_review: values.rating_review || 0
+        rating_review: values.rating_review || 0,
       });
     }
   };
@@ -305,7 +305,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
               toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
             }`}
           >
-            Đánh giá
+            Đánh giá ({data?.review?.length || 0})
           </button>
         </ul>
         <div className={toggleDes ? "block" : "hidden"}>
@@ -345,10 +345,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                           </strong>
                         </div>
                         <div className="flex gap-x-2">
-                          {isOwnReview(review.userId) &&
-                          editReviewId === review._id ? (
-                            ""
-                          ) : (
+                          {isOwnReview(review.userId) && (
                             <>
                               <Popconfirm
                                 title="Xóa đánh giá"
@@ -357,7 +354,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                   deleteReview({
                                     reviewId: review._id,
                                     productId: review.productId,
-                                    orderId: review.orderId
+                                    orderId: review.orderId,
                                   })
                                 }
                                 okText="Có"
@@ -365,20 +362,23 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                               >
                                 <Button danger>Xóa</Button>
                               </Popconfirm>
-                              <Button
-                                onClick={() =>
-                                  handleEditClick(
-                                    review._id,
-                                    review.productId,
-                                    review.orderId,
-                                    review.contentReview,
-                                    review.image_review,
-                                    review.rating_review
-                                  )
-                                }
-                              >
-                                Cập nhật
-                              </Button>
+                              {/* Chỉ hiển thị nút Cập nhật nếu không phải chế độ chỉnh sửa */}
+                              {editReviewId !== review._id && (
+                                <Button
+                                  onClick={() =>
+                                    handleEditClick(
+                                      review._id,
+                                      review.productId,
+                                      review.orderId,
+                                      review.contentReview,
+                                      review.image_review,
+                                      review.rating_review
+                                    )
+                                  }
+                                >
+                                  Cập nhật
+                                </Button>
+                              )}
                             </>
                           )}
                         </div>
@@ -393,26 +393,31 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             initialValues={{
                               contentReview: review.contentReview,
                               rating_review: review.rating_review || 0, // Đặt mặc định là 0 nếu không có giá trị
-                              image_review: review.image_review
+                              image_review: review.image_review,
                             }}
                           >
                             {/* Chỉnh sửa rating */}
                             <Form.Item name="rating_review">
                               <div className="flex items-center gap-1 mb-[20px]">
-                                <Rate
-                                  allowHalf={false} // Không cho phép nửa sao nếu không cần
-                                  value={
-                                    form.getFieldValue("rating_review") ||
-                                    review.rating_review
-                                  } // Lấy giá trị rating từ form
-                                  onChange={(rate) => {
-                                    form.setFieldsValue({
-                                      rating_review: rate
-                                    }); // Cập nhật giá trị rating
-                                    handleRatingChange(review._id, rate); // Gọi hàm xử lý khi người dùng thay đổi rating
-                                  }}
-                                  className="text-yellow-400 text-2xl" // Tùy chỉnh màu sắc với Tailwind
-                                />
+                                {[1, 2, 3, 4, 5].map((rate) => (
+                                  <span
+                                    key={rate}
+                                    onClick={() => {
+                                      form.setFieldsValue({
+                                        rating_review: rate,
+                                      });
+                                      handleRatingChange(review._id, rate);
+                                    }}
+                                  >
+                                    {rate <=
+                                    (form.getFieldValue("rating_review") ||
+                                      review.rating_review) ? (
+                                      <AiFillStar className="text-yellow-400 text-2xl" />
+                                    ) : (
+                                      <AiOutlineStar className="text-yellow-400 text-2xl" />
+                                    )}
+                                  </span>
+                                ))}
                               </div>
                             </Form.Item>
                             {/* Chỉnh sửa nội dung đánh giá */}
@@ -434,7 +439,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                 customRequest={async ({
                                   file,
                                   onSuccess,
-                                  onError
+                                  onError,
                                 }) => {
                                   const formData = new FormData();
                                   formData.append("file", file);
@@ -444,7 +449,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                   try {
                                     const response = await fetch(api, {
                                       method: "POST",
-                                      body: formData
+                                      body: formData,
                                     });
                                     const result = await response.json();
 
@@ -470,8 +475,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                       form.setFieldsValue({
                                         image_review: [
                                           ...currentImages,
-                                          result.secure_url
-                                        ]
+                                          result.secure_url,
+                                        ],
                                       });
                                     }
                                   } catch (error) {
@@ -509,16 +514,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                         ) : (
                           <div>
                             <div className="flex items-center  mb-[10px]">
-                              <Rate
-                                allowHalf // Cho phép hiển thị nửa sao
-                                allowClear={false}
-                                disabled={
-                                  !!review.rating_review ||
-                                  !review.rating_review
-                                } // Không cho chỉnh sửa nếu đã có đánh giá
-                                value={review.rating_review || 0}
-                              />
-                              {/* {Array.from({ length: 5 }, (_, index) => (
+                              {Array.from({ length: 5 }, (_, index) => (
                                 <span key={index}>
                                   {index <
                                   (rating[review._id] ||
@@ -528,7 +524,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                     <AiOutlineStar className="text-yellow-400 text-2xl" />
                                   )}
                                 </span>
-                              ))} */}
+                              ))}
                             </div>
                             <p className="text-[#1A1E26] text-base">
                               {review.contentReview}
@@ -548,7 +544,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                         width: "100%",
                                         height: "100%",
                                         objectFit: "cover",
-                                        borderRadius: "8px"
+                                        borderRadius: "8px",
                                       }}
                                     />
                                   </div>
