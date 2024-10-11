@@ -34,7 +34,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
-    searchError,
+    searchError
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -87,7 +87,6 @@ const Header = () => {
       window.removeEventListener("storage", change_local);
     };
   }, [account]);
-  // toogle menu mobile
 
   const { data: getUser } = List_Auth(account);
   const toggleMenuMobile = () => {
@@ -97,7 +96,7 @@ const Header = () => {
     if (!account) {
       messageAPI.open({
         type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!",
+        content: "Hãy đăng nhập tài khoản của bạn !!"
       });
     }
   };
@@ -140,14 +139,14 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)",
+                : "translateX(-200%)"
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
             <Nav_Mobile />
           </div>
 
-          <div className="flex items-center gap-x-20">
+          <div className="flex items-center gap-x-5">
             {/* logo */}
             <Link
               onClick={ScrollTop}
@@ -241,17 +240,17 @@ const Header = () => {
               )}
             </div>
 
-            <Link
+            {/* <Link
               onClick={toggleChat}
               className="*:w-5 *:h-5 opacity-75 hover:opacity-100 hover:scale-[1.1]"
             >
               <FaFacebookMessenger />
             </Link>
             {isChatOpen && (
-              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px] ">
+              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px]">
                 <Chat onClose={toggleChat} />
               </div>
-            )}
+            )} */}
 
             <Link
               className="group *:duration-300 relative py-1"
