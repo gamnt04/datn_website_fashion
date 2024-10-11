@@ -1,17 +1,15 @@
+import { useMutation } from "@tanstack/react-query";
+import type { FormProps, GetProp, UploadFile, UploadProps } from "antd";
+import { Button, Form, Image, Input, message, Modal, Popconfirm } from "antd";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Mutation_Cart } from "../../../../common/hooks/Cart/mutation_Carts";
+import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { IOrder } from "../../../../common/interfaces/Orders";
 import {
   Car,
-  TotalPrice,
+  TotalPrice
 } from "../../../../components/common/Client/_component/Icons";
-import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
-import { Mutation_Cart } from "../../../../common/hooks/Cart/mutation_Carts";
-import { Button, Form, Input, message, Modal, Popconfirm } from "antd";
-import { useState } from "react";
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
-import { Image, Upload } from "antd";
-import type { FormProps, GetProp, UploadFile, UploadProps } from "antd";
-import { useMutation } from "@tanstack/react-query";
 import instance from "../../../../configs/axios";
 
 type FieldType = {
@@ -77,7 +75,7 @@ const Complete = ({ dataProps }: any) => {
         `/review/${userId}/${reviewData.productId}`, // Chỉnh sửa URL nếu cần
         {
           contentReview: reviewData.contentReview,
-          imagesReview: reviewData.imagesReview,
+          imagesReview: reviewData.imagesReview
         }
       );
       return data;
@@ -89,13 +87,13 @@ const Complete = ({ dataProps }: any) => {
         ...prev,
         [openReviewOrderId!]: new Set([
           ...Array.from(prev[openReviewOrderId!] || []),
-          currentProductId!,
-        ]),
+          currentProductId!
+        ])
       })); // Cập nhật danh sách sản phẩm đã đánh giá trong đơn hàng
     },
     onError: () => {
       message.error("Thêm thất bại");
-    },
+    }
   });
 
   // Định nghĩa useMutation để thêm đánh giá
@@ -123,7 +121,7 @@ const Complete = ({ dataProps }: any) => {
       addReview({
         contentReview: values.contentReview || "",
         productId: currentProductId,
-        imagesReview: fileList.map((file) => file.url as string), // Gửi URL ảnh lên server
+        imagesReview: fileList.map((file) => file.url as string) // Gửi URL ảnh lên server
       });
     }
   };
@@ -145,7 +143,7 @@ const Complete = ({ dataProps }: any) => {
               price_item_attr: j?.price_item,
               image: j?.productId?.image_product,
               name: j?.productId?.name_product,
-              _id: orderId,
+              _id: orderId
             });
           }
         }
@@ -227,7 +225,7 @@ const Complete = ({ dataProps }: any) => {
                           <s className="text-black">₫45.000 </s>
                           {product?.price_item?.toLocaleString("vi", {
                             style: "currency",
-                            currency: "VND",
+                            currency: "VND"
                           })}
                         </p>
                       </div>
@@ -243,7 +241,7 @@ const Complete = ({ dataProps }: any) => {
                       <span className="lg:text-lg text-sm text-[#f68e56]">
                         {item.totalPrice?.toLocaleString("vi", {
                           style: "currency",
-                          currency: "VND",
+                          currency: "VND"
                         })}
                       </span>
                     </p>
@@ -303,8 +301,8 @@ const Complete = ({ dataProps }: any) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: "Vui lòng nhập nội dung đánh giá!",
-                                },
+                                  message: "Vui lòng nhập nội dung đánh giá!"
+                                }
                               ]}
                             >
                               <Input.TextArea

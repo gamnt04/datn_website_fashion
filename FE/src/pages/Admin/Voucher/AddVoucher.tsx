@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Button,
+  Checkbox,
   DatePicker,
   Form,
   FormProps,
@@ -14,6 +15,8 @@ import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
+import { Loader } from "lucide-react";
+
 type FieldType = {
   name_voucher: string;
   code_voucher: string;
@@ -22,6 +25,7 @@ type FieldType = {
   discountType: string;
   discountValue: number;
   minimumSpend: number;
+  maxDiscount: number;
   allowedUsers: string[];
   startDate: Date;
   expirationDate: Date;
@@ -30,10 +34,10 @@ type FieldType = {
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Quản lý danh sách người dùng đã chọn
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const nav = useNavigate();
-
-  const { mutate } = useMutation({
+  const [userType, setUserType] = useState<string[]>(["user"]);
+  const { mutate, isPending } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
         return await instance.post(`/voucher`, formData);
@@ -59,9 +63,14 @@ const AddVoucher = () => {
     },
   });
 
-  const { data, isLoading } = useQuery({
+  const { data: auth, isLoading } = useQuery({
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
+  });
+
+  const { data: shippersData } = useQuery({
+    queryKey: ["shippers"],
+    queryFn: () => instance.get(`/shippers`),
   });
 
   const generateRandomCode = () => {
@@ -76,33 +85,55 @@ const AddVoucher = () => {
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    mutate(values);
+    const formData = {
+      ...values,
+      allowedUsers: selectedUsers,
+    };
+    mutate(formData);
   };
 
   const handleSelectChange = (value: string[]) => {
     if (value.includes("all")) {
-      // Khi chọn "Chọn tất cả", hiển thị tất cả người dùng
-      const allUserIds = data?.data.map((user: any) => user._id);
-      setSelectedUsers(allUserIds); // Cập nhật danh sách người dùng đã chọn
+      const allUserIds = auth?.data.map((user: any) => user._id);
+      setSelectedUsers(allUserIds);
     } else {
-      setSelectedUsers(value); // Cập nhật người dùng được chọn thủ công
+      setSelectedUsers(value);
     }
   };
-
-  // Handle Deselect All Users
-  const handleDeselectAll = () => {
-    setSelectedUsers([]); // Xóa tất cả lựa chọn
+  const handleUserTypeChange = (checkedValues: string[]) => {
+    setUserType(checkedValues);
+    setSelectedUsers([]);
   };
+  const filteredData =
+    userType.length === 0
+      ? []
+      : userType.includes("user") && userType.includes("shipper")
+      ? [...(auth?.data || []), ...(shippersData?.data || [])]
+      : userType.includes("user")
+      ? auth?.data
+      : shippersData?.data;
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   return (
     <div className="mt-20">
-      <div className="border-b border-gray-900/10 pb-12">
-        <h2 className="text-2xl font-semibold leading-7 text-gray-900 ml-16 ">
-          Thêm Voucher
+      <div className="pb-12 border-b border-gray-900/10">
+        {isPending && (
+          <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+            <div className="animate-spin">
+              <Loader />
+            </div>
+          </div>
+        )}
+        <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
+          Thêm Mã Giảm Giá
         </h2>
-        <div className=" ml-10 p-6 ">
+        <div className="p-6 ml-10 ">
           {contextHolder}
           <Form
             name="basic"
@@ -115,10 +146,10 @@ const AddVoucher = () => {
             form={form}
             className="max-w-full"
           >
-            {/* Use flexbox to split form into 2 columns */}
+            {/* Sử dụng flexbox để chia form thành 2 cột */}
             <div className="flex flex-wrap -mx-4">
-              {/* Column 1 */}
-              <div className="w-full md:w-1/2 px-4">
+              {/* Cột 1 */}
+              <div className="w-full px-4 md:w-1/2">
                 <Form.Item<FieldType>
                   label="Tên mã giảm giá"
                   name="name_voucher"
@@ -129,8 +160,9 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <Input className="h-10" />
+                  <Input />
                 </Form.Item>
+
                 <Form.Item
                   label="Loại mã giảm giá"
                   name="discountType"
@@ -141,13 +173,16 @@ const AddVoucher = () => {
                     },
                   ]}
                 >
-                  <Select className="h-10">
+                  <Select className="">
                     <Select.Option value="percentage">
-                      Percentage (%)
+                      Giảm giá theo phần trăm (%)
                     </Select.Option>
-                    <Select.Option value="fixed">Fixed (VND)</Select.Option>
+                    <Select.Option value="fixed">
+                      Giảm giá theo số tiền cố định (VND)
+                    </Select.Option>
                   </Select>
                 </Form.Item>
+
                 <Form.Item<FieldType>
                   label="Điều kiện mã giảm giá"
                   name="minimumSpend"
@@ -156,9 +191,14 @@ const AddVoucher = () => {
                       required: true,
                       message: "Vui lòng nhập điều kiện mã giảm giá!",
                     },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Số tiền tối thiểu phải lớn hơn 0!",
+                    },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -166,9 +206,42 @@ const AddVoucher = () => {
                   name="startDate"
                   rules={[
                     { required: true, message: "Vui lòng nhập ngày bắt đầu!" },
+                    {
+                      validator: (_, value) => {
+                        if (!value || value.isBefore(new Date())) {
+                          return Promise.reject(
+                            new Error("Ngày bắt đầu không được trong quá khứ!")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
                   ]}
                 >
-                  <DatePicker showTime className="w-full h-10" />
+                  <DatePicker showTime className="w-full " />
+                </Form.Item>
+
+                <Form.Item<FieldType>
+                  label="Ngày kết thúc mã giảm giá"
+                  name="expirationDate"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập ngày kết thúc!" },
+                    {
+                      validator: (_, value) => {
+                        const startDate = form.getFieldValue("startDate");
+                        if (startDate && value && value.isBefore(startDate)) {
+                          return Promise.reject(
+                            new Error(
+                              "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                            )
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <DatePicker showTime className="w-full " />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -180,20 +253,25 @@ const AddVoucher = () => {
                 </Form.Item>
               </div>
 
-              {/* Column 2 */}
-              <div className="w-full md:w-1/2 px-4">
+              {/* Cột 2 */}
+              <div className="w-full px-4 md:w-1/2">
                 <Form.Item
                   label="Mã giảm giá"
                   name="code_voucher"
                   rules={[
                     { required: true, message: "Vui lòng nhập mã giảm giá!" },
+                    { min: 6, message: "Mã giảm giá phải lớn hơn 5 ký tự!" },
+                    {
+                      pattern: /^[A-Z0-9]+$/,
+                      message: "Mã giảm giá chỉ được chứa chữ in hoa và số!",
+                    },
                   ]}
                 >
                   <Input
                     addonAfter={
                       <Button
                         onClick={generateRandomCode}
-                        className="flex items-center justify-center h-full w-12"
+                        className="flex items-center justify-center w-12 h-full"
                         style={{
                           border: "none",
                           backgroundColor: "transparent",
@@ -207,9 +285,9 @@ const AddVoucher = () => {
                         />{" "}
                       </Button>
                     }
-                    className="h-10"
                   />
                 </Form.Item>
+
                 <Form.Item
                   label="Giá trị mã giảm giá"
                   name="discountValue"
@@ -218,77 +296,111 @@ const AddVoucher = () => {
                       required: true,
                       message: "Vui lòng nhập giá trị mã giảm giá!",
                     },
+                    {
+                      validator: (_, value) => {
+                        const discountType = form.getFieldValue("discountType");
+                        if (discountType === "fixed") {
+                          if (value && value > 0) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Giá trị tiền phải lớn hơn 0!")
+                          );
+                        } else if (discountType === "percentage") {
+                          if (value && value >= 0 && value <= 100) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Giá trị phần trăm phải từ 0 đến 100!")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
+
+                <Form.Item<FieldType>
+                  label="Giá trị giảm giá tối đa"
+                  name="maxDiscount"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập giảm giá tối đa!",
+                    },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Giảm giá tối đa phải lớn hơn 0!",
+                    },
+                  ]}
+                >
+                  <InputNumber className="w-full " />
+                </Form.Item>
+
                 <Form.Item<FieldType>
                   label="Số lượng mã giảm giá"
                   name="quantity_voucher"
                   rules={[
                     { required: true, message: "Vui lòng nhập số lượng!" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Số lượng phải lớn hơn 0!",
+                    },
                   ]}
                 >
-                  <InputNumber className="w-full h-10" />
-                </Form.Item>
-                <Form.Item<FieldType>
-                  label="Ngày kết thúc mã giảm giá"
-                  name="expirationDate"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập ngày kết thúc!" },
-                  ]}
-                >
-                  <DatePicker showTime className="w-full h-10" />
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item<FieldType>
-                  label="Người sử dụng mã giảm giá"
-                  name="allowedUsers"
-                >
+                <Form.Item label="Chọn loại người dùng">
+                  <Checkbox.Group
+                    options={[
+                      { label: "Người dùng", value: "user" },
+                      { label: "Shipper", value: "courier" },
+                    ]}
+                    defaultValue={["user"]}
+                    onChange={handleUserTypeChange}
+                  />
+                </Form.Item>
+
+                <Form.Item<FieldType> label="Người sử dụng mã giảm giá">
                   <div className="flex items-center">
                     <Select
                       mode="multiple"
                       style={{
                         width: "90%",
-                        minHeight: "40px", // Set a fixed height to maintain the arrow icon's position
+                        minHeight: "40px",
                       }}
-                      placeholder="Người dùng"
+                      placeholder="Chọn người dùng/shipper"
                       className="mt-2"
-                      options={[
-                        { value: "all", label: "Chọn tất cả người dùng" },
-                        ...data?.data.map((user: any) => ({
-                          value: user._id,
-                          label: user.userName,
-                        })),
-                      ]}
+                      options={filteredData?.map((user: any) => ({
+                        value: user._id,
+                        label: user.userName || user.fullName,
+                      }))}
                       onChange={handleSelectChange}
                       value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }} // Limit dropdown height
-                      maxTagCount={4} // Shows up to 5 selected users
+                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
+                      maxTagCount={4}
                       maxTagPlaceholder={(omittedValues) =>
                         `+${omittedValues.length} người khác`
                       }
                       allowClear
                     />
-                    <Button
-                      onClick={handleDeselectAll}
-                      className=" absolute left-[390px] top-2 ml-2 h-8 border-red-400 text-red-400"
-                    >
-                      X
-                    </Button>
+                    <span className="ml-2 text-gray-600">
+                      Đã chọn: {selectedUsers.length}
+                    </span>
                   </div>
                 </Form.Item>
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Nút gửi */}
             <Form.Item className="h-20">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="w-1/2 h-10 text-xl"
-              >
-                Submit
+              <Button type="primary" htmlType="submit" className="text-xl ">
+                Thêm mới
               </Button>
             </Form.Item>
           </Form>

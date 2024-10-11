@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import { Mutation_Notification, Query_notification } from "../../_lib/React_Query/Notification/Query"
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { Popconfirm } from "antd";
 
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
     const userId = user?.user?._id;
     const role = user?.user?.role;
+    const { mutate: remove } = Mutation_Notification("Remove");
     const { data } = Query_notification(userId, role);
     const { mutate } = Mutation_Notification("Send");
     return (
@@ -62,16 +64,33 @@ export default function Notification() {
                                     <p className="mt-4 leading-relaxed text-gray-700">
                                         {item?.message}
                                     </p>
-                                    {
-                                        item?.different &&
-                                        <Link to={`/admin/orders/${item?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
+                                    {role === "admin" ? (item?.different && <Link to={`/admin/orders/${item?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
+                                        Chi tiết
+                                    </Link>
+                                    ) : (
+                                        <Link to={`/profile/order/${item?.different}`} className="mt-4 leading-relaxed text-sky-500 underline">
                                             Chi tiết
                                         </Link>
-                                    }
+                                    )}
+
                                 </div>
-                                <p className="mt-4 leading-relaxed text-gray-700">
-                                    {item?.createdAt?.slice(0, 10)}
-                                </p>
+
+                                <div className="flex items-center gap-4">
+
+                                    <p className="leading-relaxed text-gray-700">
+                                        {item?.createdAt?.slice(0, 10)}
+                                    </p>
+                                    |
+                                    <Popconfirm
+                                        title="Delete the task"
+                                        description="Are you sure to delete this task?"
+                                        onConfirm={() => remove(item._id)}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
+                                        <DeleteOutlined />
+                                    </Popconfirm>
+                                </div>
                             </div>
                         </details>
                     )
