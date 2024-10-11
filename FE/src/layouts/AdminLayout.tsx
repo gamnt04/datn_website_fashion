@@ -3,6 +3,7 @@ import Sidebar_Dashboard from "../components/common/Admin/Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
 import Header from "../components/common/Admin/Header/Header";
 import { CheckAuths } from "../common/hooks/Auth/useAuthorization";
+import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
 
 const AdminLayout: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const AdminLayout: React.FC = () => {
           <div className="pt-[20px] flex-1 ">
             <Outlet />
           </div>
+          <MessAdmin />
           <div className="py-4 text-center">
             Copyright by ©{new Date().getFullYear()} Created by DATN
           </div>
