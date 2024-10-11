@@ -1,11 +1,7 @@
 import { ApexOptions } from "apexcharts";
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import {
-  useOrdersByDayOfWeek,
-  useOrdersOfWeek
-} from "../../../../common/hooks/Order/querry_Order";
-import { IOrder } from "../../../../common/interfaces/Orders";
+import { useOrdersByDayOfWeek } from "../../../../common/hooks/Order/querry_Order";
 
 const options: ApexOptions = {
   colors: ["#3C50E0", "#80CAEE"],

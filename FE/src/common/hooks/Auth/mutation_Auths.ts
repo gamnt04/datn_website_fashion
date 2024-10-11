@@ -1,12 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SignIn, SignOut, SignUp } from "../../../_lib/Auth/Auth";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { SignIn, SignOut, SignUp } from "../../../_lib/Auth/Auth";
 import useLocalStorage from "../Storage/useStorage";
 
 type Actions = "SIGNIN" | "SIGNUP" | "SIGNOUT";
 
 export const Mutation_Auth = (action: Actions) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [, setUser] = useLocalStorage("user", {});
 

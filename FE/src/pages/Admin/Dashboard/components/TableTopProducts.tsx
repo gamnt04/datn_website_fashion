@@ -1,4 +1,3 @@
-import { Button } from "antd";
 import { useTop10ProductBestSale } from "../../../../common/hooks/Order/querry_Order";
 
 const TableTopProducts = () => {
@@ -8,7 +7,7 @@ const TableTopProducts = () => {
     error
   } = useTop10ProductBestSale();
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND"
@@ -30,7 +29,7 @@ const TableTopProducts = () => {
       </h4>
 
       <div className="flex flex-col w-full space-y-5 my-6">
-        {top10ProductBestSale.map((product, index) => (
+        {top10ProductBestSale.map((product: any, index: number) => (
           <div className="flex space-x-8 items-center relative ">
             <div className="relative">
               <img

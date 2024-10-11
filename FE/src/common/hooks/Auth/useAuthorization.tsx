@@ -5,15 +5,15 @@ import { jwtDecode } from "jwt-decode"; // Sửa lại thành jwtDecode từ jwt
 import { Result, Button, Spin } from "antd"; // Thêm các thành phần Ant Design
 import { Link } from "react-router-dom"; // Thêm Link từ react-router-dom
 
-export const getToken = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return user?.token;
+export const getToken = (): string | null => {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  return user?.token || null; // Ensure it returns null if token is undefined
 };
 export const useAuthorization = (requiredRoles: string | string[]) => {
   const [authStatus, setAuthStatus] = useState({
     isAuthorized: false,
     isLoggedIn: false,
-    isLoading: true,
+    isLoading: true
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
-          isLoading: false,
+          isLoading: false
         });
         return;
       }
@@ -35,7 +35,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
-          isLoading: false,
+          isLoading: false
         });
         return;
       }
@@ -49,7 +49,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized,
           isLoggedIn: true,
-          isLoading: false,
+          isLoading: false
         });
       } catch (error) {
         console.error("Lỗi khi phân tích token:", error);
@@ -57,7 +57,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
-          isLoading: false,
+          isLoading: false
         });
       }
     };
@@ -105,7 +105,7 @@ export const CheckAuths = ({ roles, children }: any) => {
           </Button>,
           <Button type="primary" key="login">
             <Link to="/login">Đăng nhập</Link>
-          </Button>,
+          </Button>
         ]}
       />
     );

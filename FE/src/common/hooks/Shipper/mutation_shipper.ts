@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import useLocalStorage from "../Storage/useStorage";
+// import { useNavigate } from "react-router-dom";
+// import useLocalStorage from "../Storage/useStorage";
 import { addShipperOrder } from "../../../_lib/Shipper/shipper";
 
 type Actions = "ADD";
 
 export const Mutation_Shipper = (action: Actions) => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const [, setUser] = useLocalStorage("user", {});
+  // const navigate = useNavigate();
+  // const [, setUser] = useLocalStorage("user", {});
 
   const { mutate, ...rest } = useMutation({
     mutationFn: async ({
@@ -30,7 +30,6 @@ export const Mutation_Shipper = (action: Actions) => {
       queryClient.invalidateQueries({
         queryKey: ["List_orders"]
       });
-      navigate("/orders");
     },
     onError: (error) => {
       console.log("Error occurred:", error);

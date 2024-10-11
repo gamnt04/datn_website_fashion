@@ -9,6 +9,7 @@ import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
 
 // Middleware xác thực
 import jwt from "jsonwebtoken";
+import Voucher from "../../models/Voucher/voucher";
 
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
@@ -27,7 +28,15 @@ export const authenticate = (req, res, next) => {
 };
 
 export const createOrder = async (req, res) => {
-  const { userId, items, customerInfo, email, totalPrice } = req.body;
+  const {
+    userId,
+    items,
+    customerInfo,
+    email,
+    totalPrice,
+    discountCode = null,
+    discountAmount = 0,
+  } = req.body;
   if (
     !customerInfo.email ||
     !customerInfo.phone ||
@@ -53,6 +62,8 @@ export const createOrder = async (req, res) => {
         }`,
       },
       totalPrice,
+      discountCode: discountCode || null, // Lưu mã giảm giá nếu có
+      discountAmount: discountAmount || 0, // Lưu số tiền giảm giá nếu có
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
@@ -107,6 +118,16 @@ export const createOrder = async (req, res) => {
     }
     await order.save();
     await dataCart.save();
+
+    // **Cập nhật usedCount của voucher mà không cần kiểm tra tính hợp lệ**
+    if (discountCode) {
+      const voucher = await Voucher.findOne({ code_voucher: discountCode });
+      if (voucher) {
+        voucher.usedCount += 1; // Tăng số lần sử dụng voucher lên 1
+        await voucher.save();
+      }
+    }
+
     await SendMail(email, order);
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
@@ -510,7 +531,10 @@ export const updateOrderStatus = async (req, res) => {
     if (status == "4") {
       order.deliveredAt = new Date();
     }
-
+    order.statusHistory.push({
+      status,
+      time: new Date(),
+    });
     // if (status === 2) {
     //   const items = order.items;
     //   for (let i of items) {
@@ -581,7 +605,7 @@ export async function get_orders_client(req, res) {
   }
 
   if (_status) {
-    query.status = _status; 
+    query.status = _status;
   }
 
   try {
@@ -596,7 +620,7 @@ export async function get_orders_client(req, res) {
     return res.status(StatusCodes.OK).json({
       message: "Hoàn thành!",
       data,
-      totalDocs: data.totalDocs, 
+      totalDocs: data.totalDocs,
       totalPages: data.totalPages,
     });
   } catch (error) {
