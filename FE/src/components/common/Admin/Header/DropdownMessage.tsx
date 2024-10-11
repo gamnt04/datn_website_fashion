@@ -81,7 +81,7 @@ const DropdownMessage = () => {
                   <li key={senderId._id}>
                     <Link
                       className="flex space-x-3 gap-4.5 border-t border-stroke px-5 py-3 hover:bg-gray-200"
-                      to="/messages"
+                      to={`chatAdmin/${senderId._id}`}
                     >
                       <div className="h-12 w-12">
                         <img
