@@ -87,13 +87,24 @@ const Header = () => {
       window.removeEventListener("storage", change_local);
     };
   }, [account]);
-  // toogle menu mobile
 
   const { data: getUser } = List_Auth(account);
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
   };
+  const onlogin = () => {
+    if (!account) {
+      messageAPI.open({
+        type: "warning",
+        content: "Hãy đăng nhập tài khoản của bạn !!"
+      });
+    }
+  };
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
   return (
     <>
       <div
@@ -135,7 +146,7 @@ const Header = () => {
             <Nav_Mobile />
           </div>
 
-          <div className="flex items-center gap-x-20">
+          <div className="flex items-center gap-x-5">
             {/* logo */}
             <Link
               onClick={ScrollTop}
@@ -228,6 +239,18 @@ const Header = () => {
                 </div>
               )}
             </div>
+
+            {/* <Link
+              onClick={toggleChat}
+              className="*:w-5 *:h-5 opacity-75 hover:opacity-100 hover:scale-[1.1]"
+            >
+              <FaFacebookMessenger />
+            </Link>
+            {isChatOpen && (
+              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px]">
+                <Chat onClose={toggleChat} />
+              </div>
+            )} */}
 
             <Link
               className="group *:duration-300 relative py-1"

@@ -14,6 +14,7 @@ interface SignUpFormData {
 
 const useSignUp = () => {
   const [status_api, setStatus_api] = useState(false);
+  const [inputValue, setInputValue] = useState(""); // State để lưu trữ input
 
   const navigate = useNavigate();
   const { mutate, isPending, isError, error } = useMutation({
@@ -43,7 +44,7 @@ const useSignUp = () => {
         toast.error("Đăng ký thất bại. Vui lòng thử lại.");
         setStatus_api(true);
       }
-    }
+    },
   });
 
   return {
@@ -51,7 +52,7 @@ const useSignUp = () => {
     isError,
     error,
     mutate,
-    status_api
+    status_api,
   };
 };
 

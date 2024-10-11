@@ -1,22 +1,51 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import instance from "../../../../configs/axios";
 
 const DropdownMessage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data, isLoading } = useQuery({
+    queryKey: ["Mess_admin"],
+    queryFn: async () => {
+      const response = await instance.get("/messages");
+      return response.data; // Đảm bảo trả về response.data
+    },
+  });
+
+  // Lọc và gộp tin nhắn
+  const filteredMessages = data?.data?.reduce((acc, receiver) => {
+    const sender = receiver.senderId;
+    const receiverRole = sender.role;
+
+    // Kiểm tra nếu role không phải là admin
+    if (receiverRole !== "admin") {
+      if (!acc[sender._id]) {
+        acc[sender._id] = {
+          senderId: sender,
+          messages: receiver.messages,
+        };
+      } else {
+        acc[sender._id].messages = [
+          ...acc[sender._id].messages,
+          ...receiver.messages,
+        ];
+      }
+    }
+    return acc;
+  }, {});
+
+  const messagesArray = Object.values(filteredMessages || {});
 
   return (
     <div className="relative">
       <li>
         <Link
-          onClick={() => {
-            setDropdownOpen(!dropdownOpen);
-          }}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
           to="#"
           className="relative flex w-[34px] h-[34px] items-center justify-center rounded-full border-[0.5px] bg-[#EFF4FB]"
         >
-          <span
-            className={`absolute -top-0.5 right-0 z-[2] h-2 w-2 rounded-full bg-red-700`}
-          >
+          <span className="absolute -top-0.5 right-0 z-[2] h-2 w-2 rounded-full bg-red-700">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-700 opacity-75"></span>
           </span>
 
@@ -27,9 +56,9 @@ const DropdownMessage = () => {
             viewBox="0 0 24 24"
             fill="none"
             stroke="#677381"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="lucide lucide-bell hover:stroke-[#3C50E0]"
           >
             <rect width="20" height="16" x="2" y="4" rx="2" />
@@ -37,9 +66,7 @@ const DropdownMessage = () => {
           </svg>
         </Link>
         {dropdownOpen && (
-          <div
-            className={`absolute -right-27 mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white right-0 w-[320px]`}
-          >
+          <div className="absolute -right-27 mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white right-0 w-[320px]">
             <div className="px-5 py-3">
               <h5 className="text-[14px] font-semibold text-[#8A99AF]">
                 Tin Nhắn
@@ -47,28 +74,36 @@ const DropdownMessage = () => {
             </div>
 
             <ul className="flex max-h-[300px] flex-col overflow-y-auto">
-              <li>
-                <Link
-                  className="flex space-x-3 gap-4.5 border-t border-stroke px-5 py-3 hover:bg-gray-200"
-                  to="/messages"
-                >
-                  <div className="h-12 w-12  ">
-                    <img
-                      src="https://picsum.photos/300/300"
-                      className="rounded-full"
-                      alt="User"
-                    />
-                  </div>
-
-                  <div className="text-black">
-                    <h6 className="text-sm font-medium ">Mariya Desoja</h6>
-                    <p className="text-sm text-[#8A99AF]">
-                      I like your confidence ....
-                    </p>
-                    <p className="text-xs text-blue-400 ">1 giờ trước</p>
-                  </div>
-                </Link>
-              </li>
+              {isLoading ? (
+                <li className="px-5 py-3">Đang tải...</li>
+              ) : (
+                messagesArray.map(({ senderId, messages }) => (
+                  <li key={senderId._id}>
+                    <Link
+                      className="flex space-x-3 gap-4.5 border-t border-stroke px-5 py-3 hover:bg-gray-200"
+                      to={`chatAdmin/${senderId._id}`}
+                    >
+                      <div className="h-12 w-12">
+                        <img
+                          src={senderId.avatar}
+                          className="rounded-full"
+                          alt="User"
+                        />
+                      </div>
+                      <div className="text-black flex-1">
+                        <h6 className="text-sm font-medium truncate max-w-[200px]">
+                          {senderId.userName || "not found"}
+                        </h6>
+                        <p className="text-sm text-[#8A99AF]">
+                          {messages.slice(-1).map((message) => (
+                            <div key={message._id}>{message.content}</div>
+                          ))}
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
         )}
