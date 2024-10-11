@@ -51,6 +51,7 @@ import AddVoucher from "../pages/Admin/Voucher/AddVoucher";
 import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
 // import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
 import Chat from "../pages/Client/Chat/Chat";
+import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
 const RouterComponent = () => {
   return (
     <>
@@ -72,7 +73,7 @@ const RouterComponent = () => {
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
-            <Route path="track-order" element={< TrackOrder />} />
+            <Route path="track-order" element={<TrackOrder />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
@@ -98,9 +99,12 @@ const RouterComponent = () => {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+
             <Route path="/admin/notification" element={<Notification />} />
             <Route path="category" element={<List_Category />} />
             <Route path="category/products/:id" element={<CategoryDetail />} />
+            <Route path="chatAdmin/:id" element={<MessAdmin />} />
+
             {/* <Route path="test1" element={<Add_Item />} />
             <Route path="test2/:id" element={<Edit_Item />} /> */}
             <Route path="products/add" element={<Add_Item />} />
