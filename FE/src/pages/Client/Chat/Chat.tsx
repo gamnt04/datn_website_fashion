@@ -1,15 +1,20 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input } from "antd";
 import { IoMdSend } from "react-icons/io";
 import clientMessHook from "../../../common/hooks/Messenger/messClient";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+
 const Chat = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const { friendInfo, onFinish, sortedMessages, form } = clientMessHook();
 
   return (
-    <div className="h-[500px] flex justify-center items-center">
+    <div
+      className="h-[500px] flex justify-center items-center"
+      onClick={(event) => event.stopPropagation()} // Chặn sự kiện nhấp để không đóng chat
+    >
       <div className="w-[350px] max-w-md bg-white shadow-lg rounded-[10px] flex flex-col h-full border border-gray-300">
+        {/* Nội dung của Chat */}
         <div className="flex bg-blue-500 text-white pt-1 justify-between items-center h-14 rounded-t-[10px]">
           <div className="flex items-center flex-1 py-2 pl-2">
             <img
