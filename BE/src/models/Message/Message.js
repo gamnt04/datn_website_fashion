@@ -89,7 +89,7 @@ const messageGroupSchema = new mongoose.Schema(
       ref: "User",
       required: true
     },
-    messages: [messageSchema] // Cập nhật thành mảng messages
+    messages: [messageSchema]
   },
   { timestamps: true, versionKey: false }
 );
