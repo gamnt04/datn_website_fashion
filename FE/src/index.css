@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @layer tailwind-base, antd;
 
@@ -13,7 +13,6 @@
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
 }
-
 
 body {
   font-family: "Jost", sans-serif;
@@ -96,3 +95,28 @@ body {
 }
 
 /* third-party libraries CSS */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-y: auto;
+  height: 100%;
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: none;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #e3e3e3;
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #d6d6d6;
+}

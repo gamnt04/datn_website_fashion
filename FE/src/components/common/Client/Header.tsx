@@ -34,7 +34,7 @@ const Header = () => {
     searchRef,
     isLoading,
     handleInputChange,
-    searchError,
+    searchError
   } = useSearch();
   const ref_user = useRef<HTMLAnchorElement>(null);
   const ref_login = useRef<HTMLAnchorElement>(null);
@@ -93,19 +93,7 @@ const Header = () => {
   const toggleMenuMobile = () => {
     setToggle_Menu_Mobile(!toggle_Menu_Mobile);
   };
-  const onlogin = () => {
-    if (!account) {
-      messageAPI.open({
-        type: "warning",
-        content: "Hãy đăng nhập tài khoản của bạn !!",
-      });
-    }
-  };
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
   return (
     <>
       <div
@@ -140,7 +128,7 @@ const Header = () => {
             style={{
               transform: toggle_Menu_Mobile
                 ? "translateX(0%)"
-                : "translateX(-200%)",
+                : "translateX(-200%)"
             }}
             className="lg:hidden fixed w-[40vw] duration-300 z-[-1] py-2 bg-white top-[50px] left-0 rounded"
           >
@@ -240,18 +228,6 @@ const Header = () => {
                 </div>
               )}
             </div>
-
-            <Link
-              onClick={toggleChat}
-              className="*:w-5 *:h-5 opacity-75 hover:opacity-100 hover:scale-[1.1]"
-            >
-              <FaFacebookMessenger />
-            </Link>
-            {isChatOpen && (
-              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px]">
-                <Chat onClose={toggleChat} />
-              </div>
-            )}
 
             <Link
               className="group *:duration-300 relative py-1"
