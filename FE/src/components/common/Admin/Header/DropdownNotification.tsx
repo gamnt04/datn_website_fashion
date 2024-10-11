@@ -9,8 +9,9 @@ const DropdownNotification = () => {
   // console.log(data);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
+  // const role = user?.user?.role;
   const { data } = Query_notification(userId)
-  console.log(data?.notifications?.length);
+  // console.log(data?.notifications?.length);
 
   // if (isLoading) return <div>Loading...</div>
   return (
@@ -63,6 +64,11 @@ const DropdownNotification = () => {
                         <span className="mt-[5px] text-[#8A99AF] mr-4">
                           Lý do:{orders?.message}
                         </span>
+                        {/* {role === "admin" || orders.different === '' ? (
+                          <Link to={`/admin/orders/${orders?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
+                            Chi tiết
+                          </Link>
+                        ) : ('')} */}
                         {
                           orders?.different &&
                           <Link to={`/admin/orders/${orders?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">

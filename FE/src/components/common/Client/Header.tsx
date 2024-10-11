@@ -21,6 +21,8 @@ import logo from "../../../assets/Images/Logo/logo white.png";
 
 import { AiOutlineBell } from "react-icons/ai";
 import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
+import { FaFacebookMessenger } from "react-icons/fa6";
+import Chat from "../../../pages/Client/Chat/Chat";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
@@ -99,6 +101,11 @@ const Header = () => {
       });
     }
   };
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
   return (
     <>
       <div
@@ -162,6 +169,7 @@ const Header = () => {
           {/* options */}
           <nav className="flex items-center justify-between *:mx-3 *:duration-300">
             {/* search */}
+
             <div ref={searchRef} className="relative w-full max-w-xl">
               <form
                 onSubmit={handleSearch}
@@ -232,6 +240,18 @@ const Header = () => {
                 </div>
               )}
             </div>
+
+            <Link
+              onClick={toggleChat}
+              className="*:w-5 *:h-5 opacity-75 hover:opacity-100 hover:scale-[1.1]"
+            >
+              <FaFacebookMessenger />
+            </Link>
+            {isChatOpen && (
+              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px] ">
+                <Chat onClose={toggleChat} />
+              </div>
+            )}
 
             <Link
               className="group *:duration-300 relative py-1"

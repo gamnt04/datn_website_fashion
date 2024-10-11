@@ -712,3 +712,27 @@ export const newAuthIn7Day = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+//Lấy tất cả thông tin ở user và shipper
+export const getUserAndShipper = async (req, res) => {
+  try {
+    // Lấy tất cả người dùng
+    const users = await User.find();
+
+    // Lấy tất cả shipper
+    const shippers = await Shipper.find();
+
+    // Kiểm tra nếu không có người dùng hoặc shipper
+    if (users.length === 0 && shippers.length === 0) {
+      return res.status(404).json({ message: "No Users or Shippers Found" });
+    }
+    const allAccounts = [...users, ...shippers];
+    // Trả về dữ liệu cả hai bảng
+    return res
+      .status(200)
+      .json({ message: "Thành công", allAuth: allAccounts });
+  } catch (error) {
+    console.error("Error getting users and shippers:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
