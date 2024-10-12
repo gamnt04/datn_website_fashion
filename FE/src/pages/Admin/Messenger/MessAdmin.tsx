@@ -12,7 +12,7 @@ const MessAdmin = () => {
   const userId = user?.user?._id;
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
-  const [isVisible, setIsVisible] = useState(true); // State để kiểm soát hiển thị khung chat
+  const [isVisible, setIsVisible] = useState(false); // State để kiểm soát hiển thị khung chat
 
   const { data } = useQuery({
     queryKey: ["Messengers", id],
@@ -62,33 +62,33 @@ const MessAdmin = () => {
   return (
     <>
       {isVisible && (
-        <div className="fixed inset-0 flex justify-end pr-[80px] mt-[220px]">
+        <div className="fixed inset-0 flex justify-end pr-[80px] mt-[250px]">
           <div className="h-[500px] flex justify-center items-center">
             <div className="w-[350px] max-w-md bg-white shadow-lg rounded-[10px] flex flex-col h-full border border-gray-300">
-              <div className="flex bg-blue-500 text-white pt-1 justify-between items-center h-14 rounded-t-[10px]">
-                <div className="flex items-center justify-between py-2 pl-2">
-                  <div className="flex items-center">
-                    <img
-                      className="w-[32px] h-[32px] rounded-full"
-                      src={
-                        friendInfo?.avatarUrl ||
-                        "https://vectorified.com/images/default-avatar-icon-12.png"
-                      }
-                      alt={friendInfo?.userName || "Friend"}
-                    />
-                    <h2 className="text-li font-semibold pl-2">
-                      {friendInfo?.userName || "Friend"}
-                    </h2>
-                  </div>
-                  <div className="flex items-center mr-0">
-                    <IoMdClose
-                      className="cursor-pointer text-[30px]"
-                      onClick={() => setIsVisible(false)} // Ẩn khung chat
-                    />
-                  </div>
+              <div className="flex justify-between items-center bg-blue-500 text-white h-14 rounded-t-[10px] px-0">
+                <div className="flex items-center ml-4">
+                  <img
+                    className="w-[32px] h-[32px] rounded-full"
+                    src={
+                      friendInfo?.avatarUrl ||
+                      "https://vectorified.com/images/default-avatar-icon-12.png"
+                    }
+                    alt={friendInfo?.userName || "Friend"}
+                  />
+                  <h2 className="text-li font-semibold pl-2">
+                    {friendInfo?.userName || "Friend"}
+                  </h2>
+                </div>
+
+                <div className="flex items-center mr-4">
+                  <IoMdClose
+                    className="cursor-pointer text-[30px]"
+                    onClick={() => setIsVisible(false)} // Ẩn khung chat
+                  />
                 </div>
               </div>
 
+              {/* Nội dung tin nhắn */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {sortedMessages?.map((msg, index) => (
                   <div
@@ -112,6 +112,7 @@ const MessAdmin = () => {
                 ))}
               </div>
 
+              {/* Form gửi tin nhắn */}
               <div className="pt-5 pl-3 rounded-b-[10px]">
                 <Form
                   name="basic"
