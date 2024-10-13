@@ -7,11 +7,11 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
-import { EyeDropperIcon } from "@heroicons/react/24/outline";
-import { EyeIcon } from "lucide-react";
+
 
 const Products = ({ items }: any) => {
-  const [messageApi, contentHolder] = message.useMessage();
+  console.log(items);
+
   const [user] = useLocalStorage("user", {});
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,7 +47,7 @@ const Products = ({ items }: any) => {
 
   const checkFavourite = (productId: string) => {
     if (FavoriteData?.products?.length > 0) {
-      return FavoriteData.products.some(
+      return FavoriteData?.products?.some(
         (product: any) => product?.productId?._id === productId
       );
     }
@@ -84,10 +84,10 @@ const Products = ({ items }: any) => {
     max = items?.attributes?.values[0]?.size[0].price_attribute;
     for (let i of items?.attributes?.values) {
       for (let j of i.size) {
-        if (j.price_attribute < min) {
+        if (j?.price_attribute < min) {
           min = j.price_attribute;
         }
-        if (j.price_attribute > max) {
+        if (j?.price_attribute > max) {
           max = j.price_attribute;
         }
       }
@@ -97,12 +97,12 @@ const Products = ({ items }: any) => {
   return (
     <div
       className="flex  justify-between w-full gap-y-5"
-      key={items._id}
+      key={items?._id}
     >
       <div className="relative w-full border-gray-200 border rounded-xl group">
         <Link
           onClick={ScrollTop}
-          to={`/shops/${items._id}`}
+          to={`/shops/${items?._id}`}
           className="h-full cursor-pointer"
         >
           <div className="relative overflow-hidden border border-gray-300 rounded-t-xl group">
@@ -110,8 +110,8 @@ const Products = ({ items }: any) => {
               <img
                 className="w-full h-full object-cover rounded-t-xl bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform group-hover:scale-110"
                 loading="lazy"
-                src={items.image_product}
-                alt={items.name_product}
+                src={items?.image_product}
+                alt={items?.name_product}
               />
             </div>
           </div>

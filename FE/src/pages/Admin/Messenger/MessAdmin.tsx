@@ -45,19 +45,19 @@ const MessAdmin = () => {
       ? data?.[0]?.senderId
       : data?.[0]?.receiverId;
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     mutate(values.content);
   };
 
   const sortedMessages = data
-    ?.flatMap((message) =>
-      message.messages.map((msg) => ({
+    ?.flatMap((message: any) =>
+      message.messages.map((msg: any) => ({
         ...msg,
         senderId: message.senderId,
         receiverId: message.receiverId,
       }))
     )
-    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    .sort((a: number, b: number) => new Date(a.createdAt) - new Date(b.createdAt));
 
   return (
     <>
@@ -90,21 +90,19 @@ const MessAdmin = () => {
 
               {/* Nội dung tin nhắn */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {sortedMessages?.map((msg, index) => (
+                {sortedMessages?.map((msg: any, index: any) => (
                   <div
                     key={index}
-                    className={`flex items-start ${
-                      msg.senderId._id === userId
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
+                    className={`flex items-start ${msg.senderId._id === userId
+                      ? "justify-end"
+                      : "justify-start"
+                      }`}
                   >
                     <div
-                      className={`p-3 rounded-[20px] max-w-xs h-auto ${
-                        msg.senderId._id === userId
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-gray-800"
-                      }`}
+                      className={`p-3 rounded-[20px] max-w-xs h-auto ${msg.senderId._id === userId
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-800"
+                        }`}
                     >
                       {msg.content}
                     </div>
@@ -136,9 +134,9 @@ const MessAdmin = () => {
                   </Form.Item>
                 </Form>
               </div>
-            </div>
-          </div>
-        </div>
+            </div >
+          </div >
+        </div >
       )}
     </>
   );
