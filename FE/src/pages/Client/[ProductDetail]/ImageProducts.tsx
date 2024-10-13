@@ -35,7 +35,7 @@ const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
         <div className=" lg:w-[45%]">
           {gallery_product && gallery_product.length > 0 ? (
             <Carousel arrows draggable className="flex justify-center">
-              {chunks.map((chunk, index) => (
+              {chunks?.map((chunk, index) => (
                 <div key={index} className="flex justify-center">
                   {chunk?.map((item: any, subIndex: any) => (
                     <button
