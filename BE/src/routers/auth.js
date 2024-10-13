@@ -16,9 +16,13 @@ import {
   GetUsersByEmailOrName,
   newAuthIn7Day,
   checkRole,
+  getUserAndShipper,
 } from "../controllers/Auth/auth";
 import { forgotPassword } from "../controllers/Auth/ForgotPass";
-import { authenticateToken, changePassword } from "../controllers/Auth/ChangePass";
+import {
+  authenticateToken,
+  changePassword,
+} from "../controllers/Auth/ChangePass";
 
 const Routes_auth = express.Router();
 Routes_auth.post("/auth/signup", signup);
@@ -40,5 +44,7 @@ Routes_auth.put("/auth/:userId/:addressId", updateUserAddress);
 Routes_auth.delete("/auth/:userId/:addressId", delete_address);
 Routes_auth.patch("/auth/:userId/:addressId/default", setDefaultAddress);
 Routes_auth.post("/forgot-password", forgotPassword);
-Routes_auth.post("/change-password",authenticateToken, changePassword);
+Routes_auth.post("/change-password", authenticateToken, changePassword);
+
+Routes_auth.get("/auths/user-shipper", getUserAndShipper);
 export default Routes_auth;

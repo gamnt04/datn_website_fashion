@@ -45,10 +45,12 @@ import Notification from "../components/Notification/Page";
 import CourierTable from "../pages/Admin/Shipper/Shipper";
 import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
+import TrackOrder from "../pages/Client/TrackOrder/TrackOrder";
 import ListVoucher from "../pages/Admin/Voucher/ListVoucher";
 import AddVoucher from "../pages/Admin/Voucher/AddVoucher";
 import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
-import Attribute from "../pages/Admin/Attributes_catalog/page";
+import Chat from "../pages/Client/Chat/Chat";
+import PageAttribute from "../pages/Admin/Product/attributes-catalog/page";
 const RouterComponent = () => {
   return (
     <>
@@ -57,6 +59,7 @@ const RouterComponent = () => {
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
             <Route path="/verify" element={<VerifyEmail />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/shops" element={<IndexShops />} />
             <Route path="/test" element={<Test />} />
@@ -69,6 +72,7 @@ const RouterComponent = () => {
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
             <Route path="about-us" element={<AboutUS />} />
+            <Route path="track-order" element={< TrackOrder />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* <Route path="products" element={<ListProducts />} /> */}
@@ -100,7 +104,7 @@ const RouterComponent = () => {
             {/* <Route path="test1" element={<Add_Item />} />
             <Route path="test2/:id" element={<Edit_Item />} /> */}
             <Route path="products/add" element={<Add_Item />} />
-            <Route path="products/attribute" element={<Attribute />} />
+            <Route path="products/attribute" element={<PageAttribute />} />
             <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
             {/* <Route path="products/add" element={<AddProduct />} />

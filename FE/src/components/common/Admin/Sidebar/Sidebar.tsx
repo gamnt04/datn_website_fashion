@@ -86,7 +86,7 @@ export default function Sidebar_Dashboard() {
                   to="/admin/products/attribute"
                   className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
                 >
-                  Thuộc tính sản phẩm
+                  Thuộc tính
                 </NavLink>
                 <NavLink
                   to="/admin/products/add"

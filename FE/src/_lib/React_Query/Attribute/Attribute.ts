@@ -1,39 +1,53 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { create_attribute, get_attribute, update_attribute } from "../../Items/Attribute";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { schema_validate_attribute } from "../../Validates/attribute";
+import {
+    update_attribute_catalog, create_attributesCatalog, create_value_attributeCatalog, get_attributeCatalog_by_item,
+    get_attributeCatalog_by_seller, remove_value_varriant_attributeCatalog,
+} from "../../Items/Attribute";
 
-export function useQueryAttribute(id: any) {
+
+export function Get_AttributeCatalog_Items(id_item: any) {
     const { data, ...rest } = useQuery({
-        queryKey: ['key_attribute', id],
-        queryFn: () => get_attribute(id),
-        enabled: !!id
-    });
-    return { data, ...rest }
+        queryKey: ['Attribute_Catalog_Key', id_item],
+        queryFn: async () => id_item && await get_attributeCatalog_by_item(id_item),
+    })
+    return { data, ...rest };
 }
 
-export function useMutationAttribute(action: 'Add' | 'Edit') {
-    const queryClient = useQueryClient();
-    const myForm = useForm({
-        resolver: yupResolver(schema_validate_attribute)
+export function Get_AttributeCatalog_Seller(id_seller: any) {
+    const { data, ...rest } = useQuery({
+        queryKey: ['Attribute_Catalog_Key', id_seller],
+        queryFn: async () => id_seller && await get_attributeCatalog_by_seller(id_seller),
+        enabled: !!id_seller
     })
+    return { data, ...rest };
+}
+
+
+export function Mutation_AttributeCatalog(actions: 'CREATE_or_REMOVE_NAME_VARRIANT' | 'CREATE_VALUE' | 'UPDATE') {
+    const queryClient = useQueryClient();
     const { mutate, ...rest } = useMutation({
-        mutationFn: async (requestData: any) => {
-            switch (action) {
-                case 'Add':
-                    return await create_attribute(requestData);
-                case 'Edit':
-                    return await update_attribute(requestData);
-                default: return;
+        mutationFn: async (value: any) => {
+            switch (actions) {
+                case 'CREATE_or_REMOVE_NAME_VARRIANT':
+                    if (value?.action === 'create_varriant') {
+                        return await create_attributesCatalog(value);
+                    }
+                    return await remove_value_varriant_attributeCatalog(value);
+                case "CREATE_VALUE":
+                    return await create_value_attributeCatalog(value);
+                case "UPDATE":
+                    return await update_attribute_catalog(value)
+                default: return
             }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['key_attribute']
+                queryKey: ['Attribute_Catalog_Key']
             })
         },
-    })
-    const errors = myForm.formState.errors
-    return { mutate, myForm, errors, ...rest }
+        onError: (error) => error
+    });
+
+    return { mutate, ...rest }
 }

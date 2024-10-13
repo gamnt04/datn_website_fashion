@@ -1,9 +1,9 @@
 // services/product.ts
 import { StatusCodes } from "http-status-codes";
-import Category from "../../models/Items/Category";
-import Products from "../../models/Items/Products";
-import { validate_items } from "../../validations/items";
-import { create_variant } from "../attribute/create";
+import Category from "../../models/Items/Category.js";
+import Products from "../../models/Items/Products.js";
+import { validate_items } from "../../validations/items.js";
+import { create_variant } from "../Attribute/create_attribute.js";
 
 export const createProduct = async (req, res) => {
   const { category_id } = req.body;
@@ -57,6 +57,7 @@ export const createProduct = async (req, res) => {
         message,
       });
     }
+    console.log(dataClient.attributes)
     if (dataClient.attributes && dataClient.attributes.length > 0) {
       const convertAttribute = JSON.parse(dataClient.attributes)
       const data = await Products.create(newProductData);

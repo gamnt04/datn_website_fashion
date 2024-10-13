@@ -1,14 +1,16 @@
-import { StatusCodes } from 'http-status-codes';
-import Attribute from '../../models/attribute/attribute';
+import Attribute from "../../models/attribute/attribute.js";
+import { StatusCodes } from "http-status-codes";
 
-export async function get_attribute(req, res) {
+
+export async function get_attribute_catalog(req, res) {
     try {
-        const { id_account } = req.params.id_account;
+        const id_account = req.params.id_account;
+        console.log(id_account)
         if (!id_account) {
             return res.status(StatusCodes.NOT_FOUND).json({
-                message: 'Khong co tai khoan!'
+                message: 'No account!'
             })
-        }
+        };
         const data = await Attribute.find({ id_account });
         return res.status(StatusCodes.OK).json({
             message: 'OK',

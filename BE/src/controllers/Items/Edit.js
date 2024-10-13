@@ -1,8 +1,8 @@
-import Products from "../../models/Items/Products";
+import Products from "../../models/Items/Products.js";
 import { StatusCodes } from "http-status-codes";
-import Variant from "../../models/attribute/variant";
-import { validate_items } from "../../validations/items";
-import { create_variant } from "../attribute/create";
+import Variant from "../../models/attribute/variant.js";
+import { validate_items } from "../../validations/items.js";
+import { create_variant } from "../Attribute/create_attribute.js";
 
 export const updateProductById = async (req, res) => {
   const { name_product, ...body } = req.body;

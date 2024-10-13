@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import User from "../../models/Auth/users";
 export const createNotification = async (req, res) => {
     try {
-        const { userId, message, different } = req.body;
+        const { userId, message, different, id_different } = req.body;
         let { receiver_id } = req.body;
         const user = await User.findOne({ email: receiver_id });
         if (user) {
@@ -14,6 +14,7 @@ export const createNotification = async (req, res) => {
             receiver_id,
             message,
             different,
+            id_different,
         });
         await notification.save();
         res.status(201).json({ message: "Tạo thành công", notification });
@@ -57,15 +58,24 @@ export const getAllNotification = async (req, res) => {
 export const update_notification = async (req, res) => {
     const { id } = req.params;
     const { status_notification } = req.body;
-    console.log(status_notification);
-    console.log(id);
-
-
     try {
         const data = await Notification.findByIdAndUpdate(id, { status_notification }, { new: true });
         return res.status(StatusCodes.OK).json({
             message: 'Cập nhật thành công',
             data
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Internal Server Error'
+        });
+    }
+}
+export const delete_notification = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Notification.findByIdAndDelete(id);
+        return res.status(StatusCodes.OK).json({
+            message: 'Xóa thành công'
         });
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

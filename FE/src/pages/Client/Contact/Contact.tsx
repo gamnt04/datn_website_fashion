@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 
 const ContactForm: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted] = useState(false);
 
   const sendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const ContactForm: React.FC = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
+          progress: undefined
         });
         return;
       }
@@ -31,16 +32,16 @@ const ContactForm: React.FC = () => {
       const data = {
         name: formData.get("name"),
         email: formData.get("email"),
-        content: formData.get("content"),
+        content: formData.get("content")
       };
 
       try {
         const response = await fetch("http://localhost:2004/api/v1/contact", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         });
 
         if (response.ok) {
@@ -60,7 +61,7 @@ const ContactForm: React.FC = () => {
                   closeOnClick: true,
                   pauseOnHover: true,
                   draggable: true,
-                  progress: undefined,
+                  progress: undefined
                 });
                 form.current?.reset();
                 //setIsSubmitted(true); // Disable nút gửi sau khi gửi thành công
@@ -73,7 +74,7 @@ const ContactForm: React.FC = () => {
                   closeOnClick: true,
                   pauseOnHover: true,
                   draggable: true,
-                  progress: undefined,
+                  progress: undefined
                 });
               }
             );
@@ -85,7 +86,7 @@ const ContactForm: React.FC = () => {
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
-            progress: undefined,
+            progress: undefined
           });
         }
       } catch (error) {
@@ -96,7 +97,7 @@ const ContactForm: React.FC = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
+          progress: undefined
         });
       }
     }

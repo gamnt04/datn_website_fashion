@@ -1,7 +1,8 @@
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Form,
-  FormProps,
   GetProp,
   Image,
   Input,
@@ -13,25 +14,23 @@ import {
   Spin,
   Upload,
   UploadFile,
-  UploadProps,
+  UploadProps
 } from "antd";
-import { Query_Order } from "../../../_lib/React_Query/Orders/Query";
-import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import Items_order from "./_Components/items_order";
+import queryString from "query-string";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+import { Query_Order } from "../../../_lib/React_Query/Orders/Query";
+import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
+import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import {
   Car,
-  TotalPrice,
+  TotalPrice
 } from "../../../components/common/Client/_component/Icons";
-import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
-import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import queryString from "query-string";
 import instance from "../../../configs/axios";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
-import { UploadGallery, UploadImage } from "../../../systems/utils/uploadImage";
+import { UploadGallery } from "../../../systems/utils/uploadImage";
+import Items_order from "./_Components/items_order";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -56,7 +55,6 @@ export default function List_order() {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const account = user?.user;
-
   const navi = useNavigate();
   const { mutate: add } = Mutation_Cart("ADD");
   const [paymentPending, setPaymentPending] = useState(false);
@@ -87,7 +85,7 @@ export default function List_order() {
     "Thay đổi ý định",
     "Tìm được giá tốt hơn",
     "Đặt nhầm sản phẩm",
-    "Khác",
+    "Khác"
   ];
 
   const handlePreview = async (file: UploadFile) => {
@@ -105,8 +103,10 @@ export default function List_order() {
       const { data } = await instance.get(`/reviews/${currentReviewId}`);
       return data;
     },
-    enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
+    enabled: !!currentReviewId // Chỉ thực hiện query khi currentReviewId có giá trị
   });
+  console.log(dataReviewById);
+
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
       contentReview: string;
@@ -120,26 +120,26 @@ export default function List_order() {
         productId: reviewData.productId,
         orderId: reviewData.orderId,
         rating_review: reviewData.rating_review,
-        image_review: reviewData.image_review,
+        image_review: reviewData.image_review
       });
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["Order_Key"],
+        queryKey: ["Order_Key"]
       });
       message.success("Gửi đánh giá thành công");
       setReviewedOrders((prev) => ({
         ...prev,
         [openReviewOrderId!]: new Set([
           ...Array.from(prev[openReviewOrderId!] || []),
-          currentProductId!,
-        ]),
+          currentProductId!
+        ])
       }));
     },
     onError: () => {
       message.error("Gửi đánh giá thất bại");
-    },
+    }
   });
   // Cập nhật initialContent khi nhận được dataReviewById
   useEffect(() => {
@@ -150,7 +150,7 @@ export default function List_order() {
     }
   }, [dataReviewById]);
 
-  const handleOpenReview = (orderId, productId, reviewId) => {
+  const handleOpenReview = (orderId: any, productId: any, reviewId: any) => {
     if (openReviewOrderId === orderId && openReview) {
       setOpenReview(false);
     } else {
@@ -190,7 +190,7 @@ export default function List_order() {
       productId: productGroup.productId,
       orderId: items?._id,
       rating_review: values[`rating_review_${index}`] || 0,
-      image_review: secure_url || [],
+      image_review: secure_url || []
     });
   };
 
@@ -206,9 +206,9 @@ export default function List_order() {
   }) {
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: "duonghainam03012004@gmail.com",
+      receiver_id: "nguyenvana@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã yêu cầu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.linkUri,
+      different: dataBody?.linkUri
     });
     mutate(dataBody);
   }
@@ -218,12 +218,15 @@ export default function List_order() {
     cancellationReason?: string;
     orderNumber?: string | number;
     order?: string | number;
+    linkUri?: string | number;
+
   }) {
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: "duonghainam03012004@gmail.com",
+      receiver_id: "nguyenvana@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.orderNumber,
+      different: dataBody?.linkUri,
+      id_different: dataBody?.orderNumber
     });
     mutate(dataBody);
   }
@@ -266,7 +269,7 @@ export default function List_order() {
     id_user: userId,
     page: 1,
     limit: 20,
-    status: +(status_order || 0),
+    status: +(status_order || 1)
   };
   const menuItems = [
     "Tất Cả",
@@ -276,7 +279,7 @@ export default function List_order() {
     "Đã Giao Hàng",
     "Giao Hàng Thất Bại",
     "Hoàn Thành",
-    "Đã Hủy",
+    "Đã Hủy"
   ];
 
   const { data, isPending } = Query_Order(dataClient);
@@ -297,7 +300,7 @@ export default function List_order() {
               price_item_attr: j?.price_item,
               image: j?.productId?.image_product,
               name: j?.productId?.name_product,
-              _id: orderId,
+              _id: orderId
             });
           }
         }
@@ -323,10 +326,10 @@ export default function List_order() {
               userId: getItemOrder.userId,
               items: getItemOrder?.items,
               customerInfo: {
-                ...dataForm,
+                ...dataForm
               },
               totalPrice: Number(parsed.query.vnp_Amount) / 100,
-              status: "2",
+              status: "2"
             });
 
             console.log(response.data);
@@ -410,7 +413,7 @@ export default function List_order() {
                       <span className="lg:text-lg text-sm text-[#f68e56]">
                         {items.totalPrice?.toLocaleString("vi", {
                           style: "currency",
-                          currency: "VND",
+                          currency: "VND"
                         })}
                       </span>
                     </p>
@@ -448,19 +451,14 @@ export default function List_order() {
                             </div>
                           </div>
                         }
-                        onConfirm={() => {
-                          if (!selectedReason) {
-                            message.warning("Vui lòng chọn lý do hủy đơn hàng")
-                            return
-                          }
+                        onConfirm={() =>
                           huy_don({
                             id_item: items?._id,
                             action: "huy",
                             cancellationReason: selectedReason,
                             orderNumber: items?.orderNumber,
+                            linkUri: items?._id
                           })
-                        }
-
                         }
                         // onCancel={cancel}
                         okText="Có "
@@ -523,7 +521,7 @@ export default function List_order() {
                               action: "yeu_cau_huy",
                               cancellationReason: selectedReason,
                               orderNumber: items?.orderNumber,
-                              linkUri: items?._id,
+                              linkUri: items?._id
                             })
                           }
                           // onCancel={cancel}
@@ -543,6 +541,14 @@ export default function List_order() {
                     <Button
                       className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
                       disabled
+                    // onClick={() => (
+                    //   mutate({ id_item: items._id }),
+                    //   dispathNotification?.mutate({
+                    //     userId: userId,
+                    //     receiver_id: userId,
+                    //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                    //   })
+                    // )}
                     >
                       Đã Nhận Hàng
                     </Button>
@@ -553,8 +559,8 @@ export default function List_order() {
                         mutate({ id_item: items._id }),
                         dispathNotification?.mutate({
                           userId: userId,
-                          receiver_id: 'duonghainam03012004@gmail.com',
-                          message: `Người dùng ${account?.userName} đã nhận đơn hàng thành công!`,
+                          receiver_id: userId,
+                          message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`
                         })
                       )}
                     >
@@ -615,7 +621,7 @@ export default function List_order() {
                                     productId: item.productId._id,
                                     productName: item.productId.name_product,
                                     productImage: item.productId.image_product,
-                                    items: [item],
+                                    items: [item]
                                   });
                                 }
                                 return acc;
@@ -677,8 +683,8 @@ export default function List_order() {
                                           {
                                             required: true,
                                             message:
-                                              "Vui lòng chọn mức đánh giá!",
-                                          },
+                                              "Vui lòng chọn mức đánh giá!"
+                                          }
                                         ]}
                                       >
                                         <Rate
@@ -690,13 +696,13 @@ export default function List_order() {
                                           onChange={(value) => {
                                             // Cập nhật giá trị vào form
                                             form.setFieldsValue({
-                                              [`rating_review_${index}`]: value,
+                                              [`rating_review_${index}`]: value
                                             });
 
                                             // Đồng bộ với state rating
                                             setRating((prevRatings) => ({
                                               ...prevRatings,
-                                              [productGroup.productId]: value,
+                                              [productGroup.productId]: value
                                             }));
                                           }}
                                         />
@@ -709,8 +715,8 @@ export default function List_order() {
                                           {
                                             required: true,
                                             message:
-                                              "Vui lòng nhập nội dung đánh giá!",
-                                          },
+                                              "Vui lòng nhập nội dung đánh giá!"
+                                          }
                                         ]}
                                         initialValue={
                                           review ? review.contentReview : ""
@@ -743,7 +749,7 @@ export default function List_order() {
                                                   uid: `${idx}`,
                                                   name: `image_${idx}`,
                                                   status: "done",
-                                                  url: url,
+                                                  url: url
                                                 })
                                               )
                                               : fileList[
@@ -755,7 +761,7 @@ export default function List_order() {
                                           customRequest={async ({
                                             file,
                                             onSuccess,
-                                            onError,
+                                            onError
                                           }) => {
                                             const formData = new FormData();
                                             formData.append("file", file);
@@ -773,7 +779,7 @@ export default function List_order() {
                                                 api,
                                                 {
                                                   method: "POST",
-                                                  body: formData,
+                                                  body: formData
                                                 }
                                               );
 
@@ -794,8 +800,8 @@ export default function List_order() {
                                                   ...(prevLists[
                                                     productGroup.productId
                                                   ] || []),
-                                                  file,
-                                                ],
+                                                  file
+                                                ]
                                               }));
 
                                               onSuccess?.();
@@ -881,7 +887,7 @@ export default function List_order() {
                       cancelText="Không"
                     >
                       <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại
+                        Mua Lại222
                       </Button>
                     </Popconfirm>
                   )}

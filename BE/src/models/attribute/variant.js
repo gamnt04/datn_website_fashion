@@ -4,9 +4,11 @@ const schema_variant = new mongoose.Schema({
     variants: [
         {
             attribute: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Attribute'
+                type: String,
+                required: true,
+                trim: true
             },
+            ui_attribute: String,
             value_variants: [
                 {
                     name_variant: {
