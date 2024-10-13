@@ -83,6 +83,7 @@ export async function get_items_client(req, res) {
     }
 
     const data = await Products.paginate(querry, options);
+
     await Products.populate(data.docs, { path: "attributes" });
     for (const id_data of data.docs) {
       if (id_data.attributes) {
@@ -98,6 +99,8 @@ export async function get_items_client(req, res) {
       }
     }
     data.docs = data.docs.filter((item) => item.stock_product > 0);
+    // console.log(data.docs);
+
     if (!data || data.length < 1) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: "Không có dữ liệu!",

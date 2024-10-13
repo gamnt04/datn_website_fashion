@@ -43,6 +43,8 @@ export const Query_Limit_Items = (limit: number) => {
     queryKey: ["Product_Key", limit],
     queryFn: async () => await get_limit_items(limit),
   });
+  console.log(data);
+
   return { data, ...rest };
 };
 

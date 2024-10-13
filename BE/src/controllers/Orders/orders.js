@@ -57,9 +57,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`,
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
@@ -197,9 +196,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`,
         },
         totalPrice,
       });
@@ -516,6 +514,8 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, total_price } = req.body;
+    console.log("status", req.body);
+
     const order = await Order.findById(id);
     if (!order) {
       return res
@@ -535,6 +535,49 @@ export const updateOrderStatus = async (req, res) => {
       status,
       time: new Date(),
     });
+    if (status === "7") {
+      const items = order.items;
+      for (let i of items) {
+        // Xử lý thay đổi số lượng sản phẩm
+        if (i.productId.attributes) {
+          const data_attr = await Attributes.find({ id_item: i.productId._id });
+          for (let j of data_attr) {
+            for (let k of j.values) {
+              if (k.color == i.color_item) {
+                for (let x of k.size) {
+                  if (x.name_size) {
+                    if (x.name_size == i.name_size) {
+                      x.stock_attribute = x.stock_attribute + i.quantity;
+                    }
+                  } else {
+                    x.stock_attribute = x.stock_attribute + i.quantity;
+                  }
+                }
+              }
+            }
+            await j.save();
+          }
+        } else {
+          const data_items = await Products.find({ _id: i.productId._id });
+          for (let a of data_items) {
+            a.stock_product = a.stock_product + i.quantity;
+            await a.save();
+          }
+        }
+      }
+
+      // Send cancellation email
+      try {
+        await SendCancellationMail(
+          order.customerInfo.email,
+          order,
+          order.cancellationReason
+        );
+      } catch (emailError) {
+        console.error("Lỗi gửi email:", emailError);
+        // Optionally, handle the case where the email fails
+      }
+    }
     // if (status === 2) {
     //   const items = order.items;
     //   for (let i of items) {
@@ -651,7 +694,6 @@ export const userCancelOrder = async (req, res) => {
     if (cancellationReason) {
       order.cancellationReason = cancellationReason;
     }
-
     await order.save();
     console.log("Lý do hủy đơn hàng:", order.cancellationReason);
 
@@ -696,8 +738,32 @@ export const adminCancelOrder = async (req, res) => {
 
       const items = order.items;
       for (let i of items) {
-        // Process stock updates (same as your original logic)
-        // ...
+        // Xử lý thay đổi số lượng sản phẩm
+        if (i.productId.attributes) {
+          const data_attr = await Attributes.find({ id_item: i.productId._id });
+          for (let j of data_attr) {
+            for (let k of j.values) {
+              if (k.color == i.color_item) {
+                for (let x of k.size) {
+                  if (x.name_size) {
+                    if (x.name_size == i.name_size) {
+                      x.stock_attribute = x.stock_attribute + i.quantity;
+                    }
+                  } else {
+                    x.stock_attribute = x.stock_attribute + i.quantity;
+                  }
+                }
+              }
+            }
+            await j.save();
+          }
+        } else {
+          const data_items = await Products.find({ _id: i.productId._id });
+          for (let a of data_items) {
+            a.stock_product = a.stock_product + i.quantity;
+            await a.save();
+          }
+        }
       }
 
       // Send cancellation email
