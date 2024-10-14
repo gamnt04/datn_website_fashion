@@ -1,26 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Select } from 'antd';
-import { Filed_form } from './filed_form';
 import { DeleteOutlined } from '@ant-design/icons';
+import { Filed_form } from './filed_form';
 
-const Filed_bien_the_dua_theo_thuoc_tinh = ({ state_variant_2 }: any) => {
-    const initialAttributes = state_variant_2?.state_variant_2?.map((item: any) => ({
-        color: item?.attribute,
+const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
+    const initialAttributes = props?.state_variant_2?.map((item: any) => ({
+        color: item?.attribute || '',
         size: [],
-    }));
+    })) || [];
+
     return (
-        <Form.List
-            name="attributes"
-            initialValue={initialAttributes}
-        >
-            {(fields) => {
-                console.log(fields)
-                return <>
-                    <div className="text-[#1C2434] font-medium text-sm">
-                        Thuộc tính sản phẩm
-                    </div>
-                    {fields.map(({ key, name, ...restField }: any) => {
-                        return <div key={key}>
+        <Form.List name="attributes" initialValue={initialAttributes}>
+            {(fields, { ...restField }) => (
+                <>
+                    <div className="text-[#1C2434] font-medium text-sm">Biến thể sản phẩm</div>
+                    {fields.map(({ key, name }) => (
+                        <div key={key}>
                             <label
                                 htmlFor=""
                                 className="text-[#1C2434] font-medium text-sm"
@@ -36,7 +31,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ state_variant_2 }: any) => {
                                             message: "Vui lòng nhập màu sắc!"
                                         }
                                     ],
-                                    restField: restField,
+                                    restField: restField
                                 }}
                             />
                             <Form.List name={[name, "size"]} initialValue={[{}]}>
@@ -53,7 +48,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ state_variant_2 }: any) => {
                                             }) => (
                                                 <div
                                                     key={sizeKey}
-                                                    className="flex items-center gap-[13px] mb-2 -mt-2"
+                                                    className="flex items-center gap-[13px] mb-2 mt-16"
                                                 >
                                                     <div>
                                                         <label className="text-[#1C2434] font-medium text-sm">
@@ -63,8 +58,9 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ state_variant_2 }: any) => {
                                                             {...restSizeField}
                                                             name={[sizeName, "name_size"]}
                                                         >
-                                                            <Select className=" mt-2 h-[40px] max-w-[200px] text-[#1C2434] border-gray-600 !outline-none "
-                                                                options={state_variant_2?.sizes.map((size: any) => ({
+                                                            <Select
+                                                                className=" mt-2 h-[40px] max-w-[200px] text-[#1C2434] border-gray-600 !outline-none "
+                                                                options={props?.sizes.map((size: any) => ({
                                                                     label: size,
                                                                     value: size
                                                                 }))}
@@ -145,7 +141,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ state_variant_2 }: any) => {
                                             <Button
                                                 type="primary"
                                                 onClick={() => addSize()}
-                                                className="px-2 "
+                                                className="px-2 mt-8"
                                             >
                                                 Thêm kích cỡ
                                             </Button>
@@ -154,9 +150,9 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ state_variant_2 }: any) => {
                                 )}
                             </Form.List>
                         </div>
-                    })}
+                    ))}
                 </>
-            }}
+            )}
         </Form.List>
     );
 };

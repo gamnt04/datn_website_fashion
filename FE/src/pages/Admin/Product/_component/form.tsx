@@ -49,8 +49,7 @@ const Form_Item = ({ mode }: any) => {
   const [statusOptions, setStatusOptions] = useState<any>('');
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    console.log(values)
-    // onSubmit(values);
+    onSubmit(values);
   };
 
   useEffect(() => {
@@ -132,7 +131,7 @@ const Form_Item = ({ mode }: any) => {
         name="basic"
         layout="vertical"
         onFinish={onFinish}
-        initialValues={initialValues}
+        initialValues={mode && initialValues}
         onValuesChange={onFormValuesChange}
       >
         <div className="grid grid-cols-[60%,40%] gap-8">
@@ -210,65 +209,64 @@ const Form_Item = ({ mode }: any) => {
               </section>
               {/* --- */}
               {
-                mode ? 
-                <Bien_the_trang_update props={{
-                  data_one_item :data_one_item?.data?.product?.attributes?.values,
-                  sizes
-                }}/> :
-                (statusOptions === 'no-variant') && <div className='grid grid-cols-[auto_90%] text-gray-800 items-center'>
-                  <>
-                    <label className="text-[#1C2434] font-medium text-sm whitespace-nowrap">
-                      Giá sản phẩm
-                    </label>
-                    <Filed_form
-                      props={{
-                        name_field: "price_product",
-                        ruler_field: [
-                          {
-                            required: true,
-                            message: "Giá sản phẩm bắt buộc nhập!"
-                          },
-                          {
-                            type: "number",
-                            min: 0,
-                            message: "Giá sản phẩm phải là số dương!",
-                            transform(value: number) {
-                              return Number(value);
+                mode ?
+                  <Bien_the_trang_update props={{
+                    data_one_item: data_one_item?.data?.product?.attributes?.values,
+                    sizes
+                  }} /> :
+                  (statusOptions === 'no-variant') && <div className='grid grid-cols-[auto_90%] text-gray-800 items-center'>
+                    <>
+                      <label className="text-[#1C2434] font-medium text-sm whitespace-nowrap">
+                        Giá sản phẩm
+                      </label>
+                      <Filed_form
+                        props={{
+                          name_field: "price_product",
+                          ruler_field: [
+                            {
+                              required: true,
+                              message: "Giá sản phẩm bắt buộc nhập!"
+                            },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Giá sản phẩm phải là số dương!",
+                              transform(value: number) {
+                                return Number(value);
+                              }
                             }
-                          }
-                        ],
-                        action: "price"
-                      }}
-                    />
-                    <label className="text-[#1C2434] font-medium text-sm whitespace-nowrap mr-4">
-                      Số lượng sản phẩm
-                    </label>
-                    <Filed_form
-                      props={{
-                        name_field: "stock",
-                        ruler_field: [
-                          {
-                            required: true,
-                            message: "Số lượng sản phẩm bắt buộc nhập!"
-                          },
-                          {
-                            type: "number",
-                            min: 0,
-                            message: "Số lượng sản phẩm phải là số dương!",
-                            transform(value: number) {
-                              return Number(value);
+                          ],
+                          action: "price"
+                        }}
+                      />
+                      <label className="text-[#1C2434] font-medium text-sm whitespace-nowrap mr-4">
+                        Số lượng sản phẩm
+                      </label>
+                      <Filed_form
+                        props={{
+                          name_field: "stock",
+                          ruler_field: [
+                            {
+                              required: true,
+                              message: "Số lượng sản phẩm bắt buộc nhập!"
+                            },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Số lượng sản phẩm phải là số dương!",
+                              transform(value: number) {
+                                return Number(value);
+                              }
                             }
-                          }
-                        ],
-                        action: "price"
-                      }}
-                    />
-                  </>
-                </div>}
+                          ],
+                          action: "price"
+                        }}
+                      />
+                    </>
+                  </div>}
               {
                 (statusOptions === 'variant') &&
                 <Form_variant propsData={{
-                  data_one_item,
                   sizes,
                 }} />
               }

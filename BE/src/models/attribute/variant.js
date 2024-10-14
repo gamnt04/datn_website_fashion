@@ -1,35 +1,27 @@
 import mongoose from "mongoose";
 
 const schema_variant = new mongoose.Schema({
-    variants: [
+
+    values: [
         {
-            attribute: {
+            color: {
                 type: String,
                 required: true,
                 trim: true
             },
             ui_attribute: String,
-            value_variants: [
+            size: [
                 {
-                    name_variant: {
-                        type: String,
-                        required: true
-                    },
-                    price_variant: {
+                    name_size: String,
+                    stock_attribute: {
                         type: Number,
-                        min: 0,
-                        default: 0,
-                        required: true
+                        min: 0
                     },
-                    stock_variant: {
-                        type: Number,
-                        min: 0,
-                        default: 0,
-                        required: true
-                    }
+                    price_attribute: Number
+
                 }
-            ]
-        }
-    ]
+            ],
+        },
+    ],
 }, { timeStamps: true, versionKey: false });
 export default mongoose.model('Variant', schema_variant)

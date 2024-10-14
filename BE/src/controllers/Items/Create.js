@@ -57,12 +57,12 @@ export const createProduct = async (req, res) => {
         message,
       });
     }
-    console.log(dataClient.attributes)
     if (dataClient.attributes && dataClient.attributes.length > 0) {
       const convertAttribute = JSON.parse(dataClient.attributes)
       const data = await Products.create(newProductData);
       const variant = await create_variant(convertAttribute)
-      await Products.findByIdAndUpdate(data._id, {
+      console.log(variant)
+      await Products.findByIdAndUpdate({ _id: data._id }, {
         $set: { attributes: variant._id }
       })
       return res.status(StatusCodes.CREATED).json({
@@ -78,7 +78,6 @@ export const createProduct = async (req, res) => {
       })
     }
   } catch (error) {
-    console.error("Error creating product:", error);
     return res.status(500).json({ message: error.message || "Loi server" });
   }
 };

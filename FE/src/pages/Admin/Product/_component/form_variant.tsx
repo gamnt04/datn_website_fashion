@@ -220,7 +220,7 @@ export default function Form_variant({ propsData }: any) {
                     :
                     // tạo biến thể từ thuộc tính
                     (state_variant.toString() === 'tao_bien_the_tu_thuoc_tinh') &&
-                    <Filed_bien_the_dua_theo_thuoc_tinh state_variant_2={{
+                    <Filed_bien_the_dua_theo_thuoc_tinh props={{
                         state_variant_2,
                         sizes: propsData?.sizes
                     }} />

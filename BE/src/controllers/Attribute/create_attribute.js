@@ -34,32 +34,28 @@ export async function create_attribute(req, res) {
 };
 
 
-export async function create_variant(req, res) {
-    try {
-        const { value_variants } = req.body;
-        if (!value_variants || value_variants.length < 1) {
-            return res.status(StatusCodes.NOT_FOUND).json({
-                message: 'Not variants'
-            })
-        };
-        const varriant = value_variants.map(item => (
-            {
-                name_varriant: value_variants ? item.name_varriant : '',
-                value_variants: item.value_variants.map(value =>
-                (
-                    {
-                        name_variant: value.name_variant ? value.name_variant.toString() : '',
-                        stock_variant: value.stock_variant ? value.stock_variant : 0,
-                        price_variant: value.price_variant > 0 && value.price_variant
-                    }
-                )
-                )
-            }
-        ));
-        await Variant.create(varriant);
-    } catch (error) {
-        return res.status(StatusCodes).json({
-            message: error.message
+export async function create_variant(data_variant) {
+    if (!data_variant || data_variant.length < 1) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+            message: 'Not variants'
         })
-    }
+    };
+    const varriant = data_variant.map(item => (
+        {
+            color: data_variant ? item.color : '',
+            size: item.size.map(value =>
+            (
+                {
+                    name_size: value.name_size ? value.name_size.toString() : '',
+                    stock_attribute: value.stock_attribute ? value.stock_attribute : 0,
+                    price_attribute: value.price_attribute ? +value.price_attribute : 1
+                }
+            )
+            )
+        }
+    ));
+    const data = await Variant.create({
+        values: varriant
+    });
+    return data
 }
