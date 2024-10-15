@@ -12,7 +12,7 @@ const clientMessHook = () => {
     queryKey: ["Messengers"],
     queryFn: async () => {
       const response = await instance.get(
-        `/messages/66d35671ae9c6444f583e246/${userId}`
+        `/messages/670df3dee8e737d68b53fa83/${userId}`
       );
       return response.data;
     },
@@ -23,7 +23,7 @@ const clientMessHook = () => {
       const { data } = await instance.post("/message/send", {
         content,
         senderId: `${userId}`,
-        receiverId: "66d35671ae9c6444f583e246",
+        receiverId: "670df3dee8e737d68b53fa83",
       });
       return data;
     },
