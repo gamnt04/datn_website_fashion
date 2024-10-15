@@ -107,14 +107,14 @@ const OrdersDetali = () => {
     id_item: string | number;
     comfirm?: boolean | string;
     numberOrder?: string | number;
+    cancellationReason?: string;
     action?: string;
   }) {
     mutate(dataBody);
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : "từ chối"
-        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : (`Từ Chối:  ${dataBody?.cancellationReason}`)} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
@@ -141,6 +141,10 @@ const OrdersDetali = () => {
     "Người nhận không nghe máy",
     "Hoàn hàng",
     "Đơn hàng quá 3 ngày",
+  ];
+  const reason1 = [
+    "Đơn hàng đã được giao cho đơn vị vận chuyển",
+    "Chúng tôi không thể đồng ý với yêu cầu của bạn",
   ];
   function giao_hang_that_bai(dataBody: {
     id_item: string | number;
@@ -169,11 +173,11 @@ const OrdersDetali = () => {
     if (!data) return;
     const message =
       status === 2
-        ? `Người bán đã xác nhận đơn hàng ${code_order}`
+        ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
           ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
           : status === 4
-            ? `Đã giao đơn hàng ${code_order} thành công!. Vui lòng ấn đã nhận hàng!`
+            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
             : status === 5
               ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
               : status === 6
@@ -187,7 +191,7 @@ const OrdersDetali = () => {
       different: id_order,
     });
     try {
-      const response = await instance.patch(`/orders/${id}`, {
+      const response = await instance.patch(`/ orders / ${id} `, {
         status: status,
       });
       messageApi.open({
@@ -312,8 +316,8 @@ const OrdersDetali = () => {
                   </div>
                   <button
                     onClick={() => handleSelectShipper(shipper._id)}
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
-                      }`}
+                    className={`bg - blue - 500 text - white px - 4 py - 2 rounded - lg hover: bg - blue - 600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                      } `}
                   >
                     {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
@@ -436,26 +440,30 @@ const OrdersDetali = () => {
               ) : (
                 <>
                   <p
-                    className={`w-auto p-3 border-2 ${data?.status >= 1 ? "border-gray-500 text-gray-500 font-bold" : "border-gray-200 text-gray-200"
-                      } rounded`}
+                    className={`w - auto p - 3 border - 2 ${
+      data?.status >= 1 ? "border-gray-500 text-gray-500 font-bold" : "border-gray-200 text-gray-200"
+    } rounded`}
                   >
                     Chờ xác nhận
                   </p>
                   <p
-                    className={`w-auto p-3 border-2 ${data?.status >= 2 ? "border-yellow-500 text-yellow-500 font-bold" : "border-yellow-200 text-yellow-200"
-                      } rounded`}
+                    className={`w - auto p - 3 border - 2 ${
+      data?.status >= 2 ? "border-yellow-500 text-yellow-500 font-bold" : "border-yellow-200 text-yellow-200"
+    } rounded`}
                   >
                     Đang chuẩn bị hàng
                   </p>
                   <p
-                    className={`w-auto p-3 border-2 ${data?.status >= 3 ? "border-blue-500 text-blue-500 font-bold" : "border-blue-200 text-blue-200"
-                      } rounded`}
+                    className={`w - auto p - 3 border - 2 ${
+      data?.status >= 3 ? "border-blue-500 text-blue-500 font-bold" : "border-blue-200 text-blue-200"
+    } rounded`}
                   >
                     Đang vận chuyển
                   </p>
                   <p
-                    className={`w-auto p-3 border-2 ${data?.status >= 4 ? "border-green-600 text-green-600 font-bold" : "border-green-200 text-green-200"
-                      } rounded`}
+                    className={`w - auto p - 3 border - 2 ${
+      data?.status >= 4 ? "border-green-600 text-green-600 font-bold" : "border-green-200 text-green-200"
+    } rounded`}
                   >
                     Đang giao hàng
                   </p>
@@ -531,10 +539,11 @@ const OrdersDetali = () => {
                 <p className="py-2 text-gray-800 ">
                   {" "}
                   {data?.discountAmount
-                    ? `-${data?.discountAmount?.toLocaleString("vi", {
+                    ? `- ${data?.discountAmount?.toLocaleString("vi", {
                       style: "currency",
                       currency: "VND",
-                    })}`
+                    })
+                    } `
                     : "0đ"}
                 </p>
 
@@ -626,15 +635,37 @@ const OrdersDetali = () => {
                     </Popconfirm>
                     <Popconfirm
                       title="Từ chối hủy đơn hàng?"
-                      description="Bạn có chắc chắn muốn từ chối hủy đơn hàng này?"
-                      onConfirm={() =>
+                      description={
+                        <div>
+                          <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                          <div>
+                            <p>Chọn lý do hủy:</p>
+                            <Radio.Group
+                              className="flex flex-col gap-2"
+                              onChange={(e) => setSelectedReason(e.target.value)}
+                            >
+                              {reason1.map((reason, index) => (
+                                <Radio key={index} value={reason}>
+                                  {reason}
+                                </Radio>
+                              ))}
+                            </Radio.Group>
+                          </div>
+                        </div>
+                      }
+                      onConfirm={() => {
+                        if (!selectedReason) {
+                          messageApi.warning("Vui lòng chọn lý do từ chối!");
+                          return;
+                        }
                         yeu_cau({
                           id_item: data?._id,
                           confirm: false,
+                          cancellationReason: selectedReason,
                           numberOrder: data?.orderNumber,
                           action: "tu_choi",
                         })
-                      }
+                      }}
                       okText="Từ chối"
                       cancelText="Không"
                     >
@@ -719,10 +750,10 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w-52 rounded text-white ${role !== "courier"
+                    className={`w - 52 rounded text - white ${role !== "courier"
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-red-500"
-                      }`}
+                      } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại
