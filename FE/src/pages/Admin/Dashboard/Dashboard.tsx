@@ -17,6 +17,7 @@ const MainContent = () => {
   const { data: productData } = Query_Products();
   const { data: orderOfDayData } = useOrdersOfDay();
   // const { data: orderData } = Query_Orders();
+  console.log(orderOfDayData);
 
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
