@@ -25,7 +25,7 @@ const DropdownMessage = () => {
       );
       return response.data;
     },
-    enabled: !!selectedChat // Only fetch when a chat is selected
+    enabled: !!selectedChat, // Only fetch when a chat is selected
   });
 
   const { mutate } = useMutation({
@@ -33,7 +33,7 @@ const DropdownMessage = () => {
       const { data } = await instance.post("/message/send", {
         content,
         senderId: `${userId}`,
-        receiverId: `${selectedChat?.senderId?._id}`
+        receiverId: `${selectedChat?.senderId?._id}`,
       });
       return data;
     },
@@ -43,7 +43,7 @@ const DropdownMessage = () => {
     },
     onError: () => {
       message.error("Gửi tin nhắn thất bại");
-    }
+    },
   });
 
   const onFinish = (values) => {
@@ -55,7 +55,7 @@ const DropdownMessage = () => {
       message.messages.map((msg) => ({
         ...msg,
         senderId: message.senderId,
-        receiverId: message.receiverId
+        receiverId: message.receiverId,
       }))
     )
     .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -65,23 +65,25 @@ const DropdownMessage = () => {
     queryFn: async () => {
       const response = await instance.get("/messages");
       return response.data;
-    }
+    },
   });
 
   const filteredMessages = chatList?.data?.reduce((acc, receiver) => {
     const sender = receiver.senderId;
-    const receiverRole = sender.role;
+    console.log(sender);
+
+    const receiverRole = sender?.role;
 
     if (receiverRole !== "admin") {
-      if (!acc[sender._id]) {
-        acc[sender._id] = {
+      if (!acc[sender?._id]) {
+        acc[sender?._id] = {
           senderId: sender,
-          messages: receiver.messages
+          messages: receiver.messages,
         };
       } else {
-        acc[sender._id].messages = [
-          ...acc[sender._id].messages,
-          ...receiver.messages
+        acc[sender?._id].messages = [
+          ...acc[sender?._id].messages,
+          ...receiver.messages,
         ];
       }
     }
@@ -116,7 +118,6 @@ const DropdownMessage = () => {
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </svg>
       </div>
-
       {isVisible && (
         <div className="absolute -right-27 mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white right-0 w-[320px]">
           <div className="px-5 py-3">
@@ -125,38 +126,42 @@ const DropdownMessage = () => {
             </h5>
           </div>
 
-          <ul className="flex max-h-[300px] flex-col overflow-y-auto">
-            {isLoading ? (
+          {isLoading ? (
+            <ul className="flex max-h-[300px] flex-col overflow-y-auto">
               <li className="px-5 py-3">Đang tải...</li>
-            ) : (
-              messagesArray.map(({ senderId, messages }) => (
+            </ul>
+          ) : messagesArray?.length > 0 ? (
+            <ul className="flex max-h-[300px] flex-col overflow-y-auto">
+              {messagesArray.map(({ senderId, messages }) => (
                 <li
-                  key={senderId._id}
+                  key={senderId?._id}
                   onClick={() => setSelectedChat({ senderId, messages })}
                 >
                   <div className="flex space-x-3 gap-4.5 border-t border-stroke px-5 py-3 hover:bg-gray-200 cursor-pointer">
                     <div className="h-12 w-12">
                       <img
-                        src={senderId.avatar}
+                        src={senderId?.avatar}
                         className="rounded-full"
                         alt="User"
                       />
                     </div>
                     <div className="text-black flex-1">
                       <h6 className="text-sm font-medium truncate max-w-[200px]">
-                        {senderId.userName || "not found"}
+                        {senderId?.userName || "not found"}
                       </h6>
                       <p className="text-sm text-[#8A99AF]">
                         {messages.slice(-1).map((message) => (
-                          <div key={message._id}>{message.content}</div>
+                          <div key={message?._id}>{message?.content}</div>
                         ))}
                       </p>
                     </div>
                   </div>
                 </li>
-              ))
-            )}
-          </ul>
+              ))}
+            </ul>
+          ) : (
+            <div className="px-5 py-3">Không có tin nhắn</div>
+          )}
         </div>
       )}
 
@@ -170,13 +175,13 @@ const DropdownMessage = () => {
                     <img
                       className="w-[32px] h-[32px] rounded-full"
                       src={
-                        selectedChat.senderId.avatar ||
+                        selectedChat?.senderId?.avatar ||
                         "https://vectorified.com/images/default-avatar-icon-12.png"
                       }
-                      alt={selectedChat.senderId.userName || "Friend"}
+                      alt={selectedChat?.senderId?.userName || "Friend"}
                     />
                     <h2 className="text-li font-semibold pl-2">
-                      {selectedChat.senderId.userName || "Friend"}
+                      {selectedChat?.senderId?.userName || "Friend"}
                     </h2>
                   </div>
                   <div className="flex items-center mr-0">
@@ -193,19 +198,19 @@ const DropdownMessage = () => {
                   <div
                     key={index}
                     className={`flex items-start ${
-                      msg.senderId._id === userId
+                      msg?.senderId?._id === userId
                         ? "justify-end"
                         : "justify-start"
                     }`}
                   >
                     <div
                       className={`p-3 rounded-[20px] max-w-xs h-auto ${
-                        msg.senderId._id === userId
+                        msg.senderId?._id === userId
                           ? "bg-blue-500 text-white"
                           : "bg-gray-200 text-gray-800"
                       }`}
                     >
-                      {msg.content}
+                      {msg?.content}
                     </div>
                   </div>
                 ))}
