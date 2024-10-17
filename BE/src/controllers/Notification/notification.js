@@ -31,7 +31,7 @@ export const getNotificationByUser = async (req, res) => {
                 message: 'No User'
             })
         }
-        const notifications = await Notification.find({ receiver_id }).sort({ datetime: -1 }).populate('userId');
+        const notifications = await Notification.find({ receiver_id }).sort({ createdAt: -1 }).populate('userId');
         res.status(200).json({ notifications });
     } catch (error) {
         res.status(500).json({ message: "Lỗi rồi đại ca ơi" });
@@ -42,9 +42,9 @@ export const getAllNotification = async (req, res) => {
     try {
         let notifications
         if (role === 'admin') {
-            notifications = await Notification.find().sort({ datetime: -1 }).populate('userId');
+            notifications = await Notification.find().sort({ createdAt: -1 }).populate('userId');
         } else if (userId) {
-            notifications = await Notification.find({ receiver_id: userId }).sort({ datetime: -1 }).populate('userId');
+            notifications = await Notification.find({ receiver_id: userId }).sort({ createdAt: -1 }).populate('userId');
         } else {
             return res.status(StatusCodes.FORBIDDEN).json({
                 message: 'Unauthorized'

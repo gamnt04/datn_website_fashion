@@ -321,7 +321,7 @@ export const Add_Address = ({ handleAddress }: any) => {
     const data_form: any = {
       userId: userId,
       newAddress: values,
-      setDefault: values.checked, // Gửi thông tin về việc thiết lập địa chỉ làm mặc định
+      setDefault: values.checked,
     };
 
     mutate(data_form);
@@ -381,7 +381,9 @@ export const Add_Address = ({ handleAddress }: any) => {
             />
           </Form.Item>
 
-          <Form.Item name="addressDetails" className="w-full my-3">
+          <Form.Item name="addressDetails" className="w-full my-3"
+            rules={[{ required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }]}
+          >
             <Input
               className="w-full px-2 py-2 border rounded focus:ring-0"
               placeholder="Địa chỉ cụ thể"
