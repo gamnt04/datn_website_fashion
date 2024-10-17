@@ -65,7 +65,7 @@ const OrdersDetali = () => {
   };
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
-      return total + item.price_item * item.quantity; // Nhân giá sản phẩm với số lượng
+      return total + item.price_item * item.quantity;
     }, 0);
   };
   const handleFileChange = ({ fileList }: { fileList: UploadFile<any>[] }) => {
@@ -105,7 +105,7 @@ const OrdersDetali = () => {
   };
   function yeu_cau(dataBody: {
     id_item: string | number;
-    comfirm?: boolean | string;
+    comfirm?: any;
     numberOrder?: string | number;
     cancellationReason?: string;
     action?: string;
@@ -395,82 +395,6 @@ const OrdersDetali = () => {
                 : data?.customerInfo?.payment}
             </p>
           </div>
-          {/* <div className="flex items-center gap-4 border-b py-3">
-            <p className="text-black font-semibold w-[20%]">Trạng thái đơn hàng</p>
-            {data?.status == 1 ? (
-              <p className="w-auto p-3 border-2 border-gray-500 text-gray-500 rounded">
-                Chờ xác nhận{" "}
-              </p>
-            ) : data?.status == 2 ? (
-              <p className="w-auto p-3 border-2 border-yellow-500 text-yellow-500 rounded">
-                Đang chuẩn bị hàng
-              </p>
-            ) : data?.status == 3 ? (
-              <p className="w-auto p-3 border-2 border-blue-500 text-blue-500 rounded">
-                Đang vận chuyển
-              </p>
-            ) : data?.status == 4 ? (
-              <p className="w-auto p-3 border-2 border-green-600 text-green-600 rounded">
-                Đang giao hàng
-              </p>
-            ) : (
-              <div className="flex items-center justify-between w-full">
-                <p className="w-auto p-3 border-2 border-red-600 text-red-600 rounded">
-                  Đã hủy
-                </p>
-              </div>
-            )}
-            <div className="flex gap-2">
-              {data?.status == 5 ? (
-                <div className="flex justify-between items-center gap-7">
-                  <p className="w-auto p-3 border-2 border-red-600 text-red-600 font-bold rounded">
-                    Đã hủy
-                  </p>
-                  {no?.notifications.map((item: any) => {
-                    if (item?.different === data?.orderNumber) {
-                      return (
-                        <p>Lý do: {item?.message}</p>
-                      )
-                    }
-                    console.log(item);
-
-                  })
-                  }
-                </div>
-              ) : (
-                <>
-                  <p
-                    className={`w - auto p - 3 border - 2 ${
-      data?.status >= 1 ? "border-gray-500 text-gray-500 font-bold" : "border-gray-200 text-gray-200"
-    } rounded`}
-                  >
-                    Chờ xác nhận
-                  </p>
-                  <p
-                    className={`w - auto p - 3 border - 2 ${
-      data?.status >= 2 ? "border-yellow-500 text-yellow-500 font-bold" : "border-yellow-200 text-yellow-200"
-    } rounded`}
-                  >
-                    Đang chuẩn bị hàng
-                  </p>
-                  <p
-                    className={`w - auto p - 3 border - 2 ${
-      data?.status >= 3 ? "border-blue-500 text-blue-500 font-bold" : "border-blue-200 text-blue-200"
-    } rounded`}
-                  >
-                    Đang vận chuyển
-                  </p>
-                  <p
-                    className={`w - auto p - 3 border - 2 ${
-      data?.status >= 4 ? "border-green-600 text-green-600 font-bold" : "border-green-200 text-green-200"
-    } rounded`}
-                  >
-                    Đang giao hàng
-                  </p>
-                </>
-              )}
-            </div>
-          </div> */}
           <div className="flex justify-between my-4">
             <div className="flex gap-6">
               <div className="flex-1">
