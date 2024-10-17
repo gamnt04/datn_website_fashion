@@ -191,7 +191,7 @@ const OrdersDetali = () => {
       different: id_order,
     });
     try {
-      const response = await instance.patch(`/ orders / ${id} `, {
+      const response = await instance.patch(`/orders/${id}`, {
         status: status,
       });
       messageApi.open({
