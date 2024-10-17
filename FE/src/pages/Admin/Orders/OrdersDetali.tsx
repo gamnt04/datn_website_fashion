@@ -114,7 +114,11 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan" ? "xác nhận" : (`Từ Chối:  ${dataBody?.cancellationReason}`)} yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan"
+          ? "xác nhận"
+          : `Từ Chối:  ${dataBody?.cancellationReason}`
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
@@ -175,14 +179,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-          : status === 4
-            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-            : status === 5
-              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-              : status === 6
-                ? `Đã giao đơn hàng ${code_order} thành công!`
-                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 4
+        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+        : status === 5
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : status === 6
+        ? `Đã giao đơn hàng ${code_order} thành công!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -191,7 +195,7 @@ const OrdersDetali = () => {
       different: id_order,
     });
     try {
-      const response = await instance.patch(`/ orders / ${id} `, {
+      const response = await instance.patch(`/orders/${id}`, {
         status: status,
       });
       messageApi.open({
@@ -316,8 +320,9 @@ const OrdersDetali = () => {
                   </div>
                   <button
                     onClick={() => handleSelectShipper(shipper._id)}
-                    className={`bg - blue - 500 text - white px - 4 py - 2 rounded - lg hover: bg - blue - 600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
-                      } `}
+                    className={`bg - blue - 500 text - white px - 4 py - 2 rounded - lg hover: bg - blue - 600 ${
+                      selectedShipper === shipper._id ? "bg-green-500" : ""
+                    } `}
                   >
                     {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
@@ -540,10 +545,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })
-                    } `
+                        style: "currency",
+                        currency: "VND",
+                      })} `
                     : "0đ"}
                 </p>
 
@@ -562,7 +566,9 @@ const OrdersDetali = () => {
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
                   description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
-                  onConfirm={() => handleStatusUpdate(2, data?.orderNumber, data._id)}
+                  onConfirm={() =>
+                    handleStatusUpdate(2, data?.orderNumber, data._id)
+                  }
                   okText="Xác nhận"
                   cancelText="Không"
                 >
@@ -642,7 +648,9 @@ const OrdersDetali = () => {
                             <p>Chọn lý do hủy:</p>
                             <Radio.Group
                               className="flex flex-col gap-2"
-                              onChange={(e) => setSelectedReason(e.target.value)}
+                              onChange={(e) =>
+                                setSelectedReason(e.target.value)
+                              }
                             >
                               {reason1.map((reason, index) => (
                                 <Radio key={index} value={reason}>
@@ -664,7 +672,7 @@ const OrdersDetali = () => {
                           cancellationReason: selectedReason,
                           numberOrder: data?.orderNumber,
                           action: "tu_choi",
-                        })
+                        });
                       }}
                       okText="Từ chối"
                       cancelText="Không"
@@ -750,10 +758,11 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${role !== "courier"
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-red-500"
-                      } `}
+                    className={`w - 52 rounded text - white ${
+                      role !== "courier"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-red-500"
+                    } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại

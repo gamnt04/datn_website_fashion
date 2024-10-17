@@ -57,12 +57,14 @@ const MessAdmin = () => {
         receiverId: message.receiverId,
       }))
     )
-    .sort((a: number, b: number) => new Date(a.createdAt) - new Date(b.createdAt));
+    .sort(
+      (a: number, b: number) => new Date(a.createdAt) - new Date(b.createdAt)
+    );
 
   return (
     <>
       {isVisible && (
-        <div className="fixed inset-0 flex justify-end pr-[80px] mt-[250px]">
+        <div className="fixed inset-0 flex justify-end pr-[80px] mt-[290px]">
           <div className="h-[500px] flex justify-center items-center">
             <div className="w-[350px] max-w-md bg-white shadow-lg rounded-[10px] flex flex-col h-full border border-gray-300">
               <div className="flex justify-between items-center bg-blue-500 text-white h-14 rounded-t-[10px] px-0">
@@ -93,16 +95,18 @@ const MessAdmin = () => {
                 {sortedMessages?.map((msg: any, index: any) => (
                   <div
                     key={index}
-                    className={`flex items-start ${msg.senderId._id === userId
-                      ? "justify-end"
-                      : "justify-start"
-                      }`}
+                    className={`flex items-start ${
+                      msg.senderId._id === userId
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
                   >
                     <div
-                      className={`p-3 rounded-[20px] max-w-xs h-auto ${msg.senderId._id === userId
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-gray-800"
-                        }`}
+                      className={`p-3 rounded-[20px] max-w-xs h-auto ${
+                        msg.senderId._id === userId
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-gray-800"
+                      }`}
                     >
                       {msg.content}
                     </div>
@@ -134,9 +138,9 @@ const MessAdmin = () => {
                   </Form.Item>
                 </Form>
               </div>
-            </div >
-          </div >
-        </div >
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

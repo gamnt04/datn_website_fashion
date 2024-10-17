@@ -50,5 +50,5 @@ router.post("/orders/:id/fail-delivery", adminFailDelivery);
 router.post("/orders/shipper/:id", addShipperOrder);
 // ---
 router.get("/list_order/:id_user", list_items_order_by_user);
-router.get('/orders_phone', getOrdersByPhone);
+router.get("/orders_phone", getOrdersByPhone);
 export default router;
