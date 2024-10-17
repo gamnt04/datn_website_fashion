@@ -602,66 +602,70 @@ const Pay = () => {
                       className="flex flex-wrap gap-4 overflow-y-auto"
                       style={{ maxHeight: "600px" }}
                     >
-                      {sortedVouchers.map((voucher: any) => {
-                        const isAllowedUser =
-                          voucher.allowedUsers.length === 0 ||
-                          voucher.allowedUsers.includes(userId);
-                        const isVoucherAvailable =
-                          voucher.usedCount < voucher.quantity_voucher;
-                        const isExpired =
-                          new Date(voucher.expirationDate) < currentDate;
-                        const isDisabled =
-                          !isAllowedUser || !isVoucherAvailable || isExpired;
+                      {sortedVouchers
+                        // Lọc ra những voucher chưa hết hạn và chưa hết số lần sử dụng
+                        .filter((voucher: any) => {
+                          const isVoucherAvailable =
+                            voucher.usedCount < voucher.quantity_voucher;
+                          const isExpired =
+                            new Date(voucher.expirationDate) < currentDate;
 
-                        return (
-                          <div
-                            key={voucher._id}
-                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                              selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                            } ${
-                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                            }`}
-                          >
-                            <div>
-                              <p className="font-bold text-lg">
-                                {voucher.name_voucher}
-                              </p>
-                              <p>
-                                Hạn dùng:{" "}
-                                {new Date(
-                                  voucher.expirationDate
-                                ).toLocaleDateString()}
-                              </p>
-                              <p>
-                                Số lượng còn lại:{" "}
-                                {voucher.quantity_voucher - voucher.usedCount}
-                              </p>
-                              <Button
-                                onClick={() => showVoucherDetails(voucher)}
-                              >
-                                Xem chi tiết
-                              </Button>
-                            </div>
-                            <button
-                              className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                isDisabled ? "bg-gray-300" : ""
+                          // Chỉ giữ lại voucher còn số lượng và chưa hết hạn
+                          return isVoucherAvailable && !isExpired;
+                        })
+                        .map((voucher: any) => {
+                          // Kiểm tra người dùng có được phép sử dụng voucher hay không
+                          const isAllowedUser =
+                            voucher.allowedUsers.length === 0 ||
+                            voucher.allowedUsers.includes(userId);
+
+                          const isDisabled = !isAllowedUser;
+
+                          return (
+                            <div
+                              key={voucher._id}
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
                               }`}
-                              onClick={(e) => handleApplyVoucher(e, voucher)}
-                              disabled={isDisabled}
                             >
-                              {isDisabled
-                                ? isExpired
-                                  ? "Đã hết hạn"
-                                  : isVoucherAvailable
-                                  ? "Không hợp lệ"
-                                  : "Hết mã"
-                                : "Sử dụng"}
-                            </button>
-                          </div>
-                        );
-                      })}
+                              <div>
+                                <p className="font-bold text-lg">
+                                  {voucher.name_voucher}
+                                </p>
+                                <p>
+                                  Hạn dùng:{" "}
+                                  {new Date(
+                                    voucher.expirationDate
+                                  ).toLocaleDateString()}
+                                </p>
+                                <p>
+                                  Số lượng còn lại:{" "}
+                                  {voucher.quantity_voucher - voucher.usedCount}
+                                </p>
+                                <Button
+                                  onClick={() => showVoucherDetails(voucher)}
+                                >
+                                  Xem chi tiết
+                                </Button>
+                              </div>
+                              <button
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
+                                onClick={(e) => handleApplyVoucher(e, voucher)}
+                                disabled={isDisabled} // Disable voucher nếu người dùng không đủ điều kiện
+                              >
+                                {isDisabled ? "Không hợp lệ" : "Sử dụng"}
+                              </button>
+                            </div>
+                          );
+                        })}
                     </div>
                   ) : (
                     <p>Không có voucher nào khả dụng</p>
