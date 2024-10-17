@@ -143,6 +143,7 @@ export const getProductById = async (req, res) => {
   try {
     const productId = req.params.id;
     const products = await Products.findById(req.params.id);
+
     if (products?.attributes) {
       await Products?.populate(products, { path: "attributes" });
       if (products.attributes.values) {
@@ -161,6 +162,7 @@ export const getProductById = async (req, res) => {
       }
       await products.save();
     }
+
     // Kiểm tra tính hợp lệ của ObjectId
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res
@@ -168,7 +170,7 @@ export const getProductById = async (req, res) => {
         .json({ message: "ID sản phẩm không hợp lệ" });
     }
 
-    // Sử dụng aggregate để lấy sản phẩm và đánh giá liên quan
+    // Sử dụng aggregate để lấy sản phẩm và đánh giá liên quan, cùng thông tin user
     const review = await Products.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(productId) } }, // Tìm sản phẩm bằng productId
       {
@@ -180,41 +182,22 @@ export const getProductById = async (req, res) => {
         },
       },
       {
+        $unwind: "$reviews", // Tách từng review ra để thao tác
+      },
+      {
         $lookup: {
           from: "users", // Tên collection chứa người dùng
-          localField: "reviews.user", // Trường trong reviews chứa ID người dùng
+          localField: "reviews.userId", // Trường trong reviews chứa ID người dùng
           foreignField: "_id", // Trường trong users chứa ID người dùng
-          as: "reviewUsers",
+          as: "userDetails",
         },
       },
       {
-        $unwind: {
-          path: "$reviews",
-          preserveNullAndEmptyArrays: true,
-        },
+        $unwind: "$userDetails", // Tách thông tin người dùng ra
       },
       {
         $addFields: {
-          "reviews.userDetails": {
-            $arrayElemAt: [
-              {
-                $filter: {
-                  input: "$reviewUsers",
-                  as: "user",
-                  cond: { $eq: ["$$user._id", "$reviews.user"] },
-                },
-              },
-              0,
-            ],
-          },
-        },
-      },
-      {
-        $addFields: {
-          // Thêm trường userName vào reviews từ userDetails
-          "reviews.userName": {
-            $ifNull: ["$reviews.userDetails.userName", "Unknown"],
-          },
+          "reviews.userName": "$userDetails.userName", // Thêm userName từ userDetails vào reviews
         },
       },
       {
@@ -222,9 +205,8 @@ export const getProductById = async (req, res) => {
           _id: "$_id",
           name: { $first: "$name" },
           description: { $first: "$description" },
-          reviews: { $push: "$reviews" },
+          reviews: { $push: "$reviews" }, // Gom các reviews lại
           attributes: { $first: "$attributes" },
-          // Thêm các trường khác nếu cần
         },
       },
     ]);
