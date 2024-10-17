@@ -31,15 +31,15 @@ export const addReviewProduct = async (req, res) => {
     }
 
     // Kiểm tra hình ảnh
-    if (
-      !image_review ||
-      !Array.isArray(image_review) ||
-      image_review.length === 0
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Ít nhất phải có 1 hình ảnh trong review" });
-    }
+    // if (
+    //   !image_review ||
+    //   !Array.isArray(image_review) ||
+    //   image_review.length === 0
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "Ít nhất phải có 1 hình ảnh trong review" });
+    // }
 
     // Tìm sản phẩm và đơn hàng
     const product = await Products.findById(productId);

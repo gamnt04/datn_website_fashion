@@ -46,11 +46,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   const userId = user?.user?._id;
   const queryClient = useQueryClient();
   const [rating, setRating] = useState({});
-  // const [fileList, setFileList] = useState<UploadFile[]>([]);
-  // Trạng thái để lưu giá trị rating của các review
 
   const [fileList, setFileList] = useState(() => {
-    // Chuyển đổi hình ảnh từ `image_review` thành dạng fileList để hiển thị ảnh trước đó
     const initialImages = form.getFieldValue("image_review") || [];
     return initialImages.map((url, index) => ({
       uid: index.toString(),
@@ -62,7 +59,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   const { data, isLoading, isError } = Query_Products(productId);
   console.log(data);
 
-  console.log(data.review);
+  console.log(data?.review);
 
   const getBase64 = (file: FieldType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -84,13 +81,6 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
   };
-
-  // const handleUploadChange = ({ fileList: newFileList }) => {
-  //   setFileList(newFileList);
-  //   form.setFieldsValue({
-  //     image_review: newFileList.map((file) => file.url || ""),
-  //   });
-  // };
 
   useEffect(() => {
     const initialFileList = (form.getFieldValue("image_review") || []).map(
@@ -193,21 +183,6 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     form.setFieldsValue({ contentReview, image_review, rating_review });
   };
 
-  // const handlePreview = async (file) => {
-  //   let src = file.url || file.thumbUrl;
-
-  //   if (!src) {
-  //     src = await new Promise((resolve, reject) => {
-  //       const reader = new FileReader();
-  //       reader.readAsDataURL(file.originFileObj);
-  //       reader.onload = () => resolve(reader.result);
-  //       reader.onerror = (error) => reject(error);
-  //     });
-  //   }
-
-  //   const imgWindow = window.open(src);
-  //   imgWindow.document.write(`<img src="${src}" style="width: 100%;" />`);
-  // };
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
@@ -215,40 +190,40 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     </button>
   );
 
-  const customUploadRequest = async ({ file, onSuccess, onError }) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", PRESET_NAME);
-    formData.append("folder", FOLDER_NAME);
+  // const customUploadRequest = async ({ file, onSuccess, onError }) => {
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("upload_preset", PRESET_NAME);
+  //   formData.append("folder", FOLDER_NAME);
 
-    try {
-      const response = await fetch(api, {
-        method: "POST",
-        body: formData,
-      });
+  //   try {
+  //     const response = await fetch(api, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Upload failed");
+  //     }
 
-      const result = await response.json();
-      file.url = result.secure_url; // Cập nhật URL từ server
-      onSuccess?.(result); // Gọi callback khi upload thành công
+  //     const result = await response.json();
+  //     file.url = result.secure_url; // Cập nhật URL từ server
+  //     onSuccess?.(result); // Gọi callback khi upload thành công
 
-      form.setFieldsValue({
-        image_review: [
-          ...(form.getFieldValue("image_review") || []),
-          result.secure_url,
-        ],
-      });
+  //     form.setFieldsValue({
+  //       image_review: [
+  //         ...(form.getFieldValue("image_review") || []),
+  //         result.secure_url,
+  //       ],
+  //     });
 
-      message.success("Tải lên thành công!");
-    } catch (error) {
-      console.error("Upload error:", error);
-      onError?.(error); // Gọi callback khi upload thất bại
-      message.error("Tải lên thất bại!");
-    }
-  };
+  //     message.success("Tải lên thành công!");
+  //   } catch (error) {
+  //     console.error("Upload error:", error);
+  //     onError?.(error); // Gọi callback khi upload thất bại
+  //     message.error("Tải lên thất bại!");
+  //   }
+  // };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
@@ -299,15 +274,33 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
           >
             Mô tả
           </button>
-          <button
-            onClick={() => setTogleDes(false)}
-            className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
-              toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
-            }`}
-          >
-            Đánh giá ({data?.review?.length || 0})
-          </button>
+
+          {data && data.review.length > 0 ? (
+            data.review.map((item: any) => (
+              <button
+                key={item._id}
+                onClick={() => setTogleDes(false)}
+                className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
+                  toggleDes
+                    ? ""
+                    : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
+                }`}
+              >
+                Đánh giá ({item.reviews?.length ?? 0})
+              </button>
+            ))
+          ) : (
+            <button
+              onClick={() => setTogleDes(false)}
+              className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
+                toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
+              }`}
+            >
+              Đánh giá (0)
+            </button>
+          )}
         </ul>
+
         <div className={toggleDes ? "block" : "hidden"}>
           <section className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:py-6 mb:pt-[19px]">
             <div
@@ -335,7 +328,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                       <div className="flex items-center justify-between gap-x-4 border-b border-[#F4F4F4] pb-4 mb-4">
                         <div>
                           <strong className="text-base text-[#1A1E26] font-medium">
-                            {review.userId}
+                            {review.userName}
                             <span className="text-sm text-[#9D9EA2] font-light pl-[5px] pr-[5px]">
                               |
                             </span>
@@ -347,21 +340,25 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                         <div className="flex gap-x-2">
                           {isOwnReview(review.userId) && (
                             <>
-                              <Popconfirm
-                                title="Xóa đánh giá"
-                                description="Bạn có chắc chắn muốn xóa đánh giá này?"
-                                onConfirm={() =>
-                                  deleteReview({
-                                    reviewId: review._id,
-                                    productId: review.productId,
-                                    orderId: review.orderId,
-                                  })
-                                }
-                                okText="Có"
-                                cancelText="Không"
-                              >
-                                <Button danger>Xóa</Button>
-                              </Popconfirm>
+                              {editReviewId !== review._id ? (
+                                <Popconfirm
+                                  title="Xóa đánh giá"
+                                  description="Bạn có chắc chắn muốn xóa đánh giá này?"
+                                  onConfirm={() =>
+                                    deleteReview({
+                                      reviewId: review._id,
+                                      productId: review.productId,
+                                      orderId: review.orderId,
+                                    })
+                                  }
+                                  okText="Có"
+                                  cancelText="Không"
+                                >
+                                  <Button danger>Xóa</Button>
+                                </Popconfirm>
+                              ) : (
+                                ""
+                              )}{" "}
                               {/* Chỉ hiển thị nút Cập nhật nếu không phải chế độ chỉnh sửa */}
                               {editReviewId !== review._id && (
                                 <Button
@@ -531,29 +528,25 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             </p>
                             <div className="mt-[20px] flex flex-wrap gap-2">
                               {review.image_review &&
-                              review.image_review.length > 0 ? (
-                                review.image_review.map((imageUrl, index) => (
-                                  <div
-                                    key={index}
-                                    className="relative w-[120px] h-[120px]"
-                                  >
-                                    <img
-                                      src={imageUrl}
-                                      alt={`Review Image ${index + 1}`}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                        borderRadius: "8px",
-                                      }}
-                                    />
-                                  </div>
-                                ))
-                              ) : (
-                                <p className="text-gray-500">
-                                  No images available
-                                </p>
-                              )}
+                              review.image_review.length > 0
+                                ? review.image_review.map((imageUrl, index) => (
+                                    <div
+                                      key={index}
+                                      className="relative w-[120px] h-[120px]"
+                                    >
+                                      <img
+                                        src={imageUrl}
+                                        alt={`Review Image ${index + 1}`}
+                                        style={{
+                                          width: "100%",
+                                          height: "100%",
+                                          objectFit: "cover",
+                                          borderRadius: "8px",
+                                        }}
+                                      />
+                                    </div>
+                                  ))
+                                : ""}
                             </div>
                           </div>
                         )}
