@@ -215,14 +215,25 @@ export default function Sidebar_Dashboard() {
         </>
       )}
       {role === "courier" && (
-        <div className="*:px-2">
-          <Link
-            to={`/admin/orders`}
-            className="flex items-center w-full py-3 text-left gap-x-4"
-          >
-            <Box />
-            <span className=" text-[#c4cee3]">Đơn Hàng</span>
-          </Link>
+        <div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/ShipperDashboard`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <Box />
+              <span className=" text-[#c4cee3]">Tổng đơn hàng</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/orders`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <Box />
+              <span className=" text-[#c4cee3]">Đơn Hàng</span>
+            </Link>
+          </div>
         </div>
       )}
     </aside>

@@ -63,6 +63,9 @@ const OrdersDetali = () => {
       }
     );
   };
+  const availableShippers = shipperData?.filter(
+    (shipper: any) => shipper._id !== data?.shipperId?._id
+  );
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity;
@@ -304,7 +307,7 @@ const OrdersDetali = () => {
           <div className="p-4">
             <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
             <div className="grid grid-cols-1 gap-4">
-              {shipperData?.map((shipper: any) => (
+              {availableShippers?.map((shipper: any) => (
                 <div
                   key={shipper._id}
                   className="flex items-center bg-white p-4 rounded-lg shadow-md"

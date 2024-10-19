@@ -13,6 +13,7 @@ import {
   updateShipperAddress,
   delete_address,
   setDefaultAddress,
+  getDailyShipCount,
 } from "../controllers/Shipper/shipper";
 
 const Route_Shipper = express.Router(); // Sử dụng Route_Shipper
@@ -44,5 +45,11 @@ Route_Shipper.get("/shippers/address/:shipperId/:addressId", getAddressById);
 Route_Shipper.put("/shippers/:userId/:addressId", updateShipperAddress);
 Route_Shipper.delete("/shippers/:userId/:addressId", delete_address);
 Route_Shipper.patch("/shippers/:userId/:addressId/default", setDefaultAddress);
+
+Route_Shipper.get(
+  "/shippers/:shipperId/dailyShipCount/:date",
+
+  getDailyShipCount
+);
 
 export default Route_Shipper;
