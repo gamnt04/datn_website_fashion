@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import logo from "../../../../assets/Images/Logo/logo white.png";
 import { Link, NavLink } from "react-router-dom";
+import DailyOrderSummary from "../../../../pages/Admin/Orders/DailyOrderSummary ";
 
 export default function Sidebar_Dashboard() {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -212,17 +213,35 @@ export default function Sidebar_Dashboard() {
               <span className="text-[#c4cee3]">Thùng rác</span>
             </Link>
           </div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/DailyOrderSummary`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <span className=" text-[#c4cee3]">Tổng số đơn shipper</span>
+            </Link>
+          </div>
         </>
       )}
       {role === "courier" && (
-        <div className="*:px-2">
-          <Link
-            to={`/admin/orders`}
-            className="flex items-center w-full py-3 text-left gap-x-4"
-          >
-            <Box />
-            <span className=" text-[#c4cee3]">Đơn Hàng</span>
-          </Link>
+        <div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/orders`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <Box />
+              <span className=" text-[#c4cee3]">Đơn Hàng</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
+              to={`/admin/DailyOrderSummary`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <span className=" text-[#c4cee3]">Tổng số đơn shipper</span>
+            </Link>
+          </div>
         </div>
       )}
     </aside>
