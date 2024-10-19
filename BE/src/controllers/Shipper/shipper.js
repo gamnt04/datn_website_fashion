@@ -612,3 +612,37 @@ export const delete_address = async (req, res) => {
       .json({ message: "Lỗi khi xóa địa chỉ" });
   }
 };
+export const getDailyShipCount = async (req, res) => {
+  const { shipperId, date } = req.params;
+
+  if (!shipperId || !date) {
+    return res
+      .status(400)
+      .json({ message: "Thiếu thông tin shipperId hoặc ngày." });
+  }
+
+  try {
+    // Chuyển đổi 'date' thành kiểu Date object
+    const dateObj = new Date(date);
+
+    // Tạo khoảng thời gian từ đầu ngày đến cuối ngày
+    const startOfDay = new Date(dateObj.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(dateObj.setHours(23, 59, 59, 999));
+
+    // Đếm số lượng đơn hàng mà shipper đã giao thành công trong ngày
+    const shipCount = await Order.countDocuments({
+      shipperId: shipperId, // ID của shipper
+      status: "4", // Trạng thái "Giao hàng thành công"
+      deliveredAt: {
+        $gte: startOfDay, // Từ đầu ngày
+        $lte: endOfDay, // Đến cuối ngày
+      },
+    });
+
+    // Trả về kết quả
+    return res.status(200).json({ shipCount });
+  } catch (error) {
+    console.error("Error getting daily ship count:", error);
+    return res.status(500).json({ message: "Lỗi hệ thống." });
+  }
+};

@@ -1,11 +1,4 @@
-import mongoose from "mongoose";
-
-// Điều kiện đầu số hợp lệ cho số điện thoại Việt Nam
-const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
-
-const validatePhoneNumber = (phone) => {
-  return phoneRegex.test(phone); // Kiểm tra số điện thoại theo định dạng Việt Nam
-};
+import mongoose from "mongoose"; // Thêm dòng này ở đầu tệp
 
 const ShipperSchema = new mongoose.Schema(
   {
@@ -19,7 +12,7 @@ const ShipperSchema = new mongoose.Schema(
       type: String,
       required: true,
       validate: {
-        validator: validatePhoneNumber, // Kiểm tra số điện thoại
+        validator: validatePhoneNumber,
         message: (props) => `${props.value} không phải là số điện thoại hợp lệ`,
       },
     },
@@ -27,24 +20,20 @@ const ShipperSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      match: [/\S+@\S+\.\S+/, "Email không hợp lệ"], // Kiểm tra định dạng email
+      match: [/\S+@\S+\.\S+/, "Email không hợp lệ"],
     },
     password: {
       type: String,
       required: true,
-    }, // Mật khẩu mặc định
-    plainPassword: {
-      type: String,
     },
     avatar: {
       type: String,
       default: "https://vectorified.com/images/default-avatar-icon-12.png",
-      // default: "../upload/default-avatar.jpeg",
     },
     status: {
       type: String,
       required: true,
-      enum: ["Available", "Offline"], // Trạng thái shipper
+      enum: ["Available", "Offline"],
       default: "Offline",
     },
     vehicle: { type: String },
@@ -67,6 +56,12 @@ const ShipperSchema = new mongoose.Schema(
       enum: ["courier"],
       default: "courier",
     },
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 );
