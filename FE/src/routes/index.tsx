@@ -52,6 +52,7 @@ import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
 // import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
 import Chat from "../pages/Client/Chat/Chat";
 import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
+import DailyOrderSummary from "../pages/Admin/Orders/DailyOrderSummary ";
 const RouterComponent = () => {
   return (
     <>
@@ -114,6 +115,8 @@ const RouterComponent = () => {
             <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
             <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
+            <Route path="DailyOrderSummary" element={<DailyOrderSummary />} />
+
             <Route path="auth" element={<List_Auth />} />
             <Route
               path="/admin/orders/:id/orderDetali"
