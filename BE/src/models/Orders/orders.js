@@ -101,15 +101,6 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
-    originAddress: {
-      type: String,
-      required: true,
-      default: "Tòa nhà FPT", // Đặt giá trị mặc định
-    },
-    destinationAddress: {
-      type: String,
-      required: true,
-    },
   },
   { timestamps: true, versionKey: false }
 );

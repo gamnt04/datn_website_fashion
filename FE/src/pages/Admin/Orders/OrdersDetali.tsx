@@ -49,23 +49,44 @@ const OrdersDetali = () => {
   const { data: shipperData } = useListAllShipper();
   const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
   const handleSelectShipper = (shipperId: string) => {
-    setSelectedShipper(shipperId);
-    if (!id) return;
+    setSelectedShipper(shipperId); 
+    if (!id) return; 
     AddShipper(
-      { orderId: id, shipperId },
+      { orderId: id, shipperId }, 
       {
         onSuccess: () => {
-          messageApi.success("Thêm shipper cho đơn hàng thành công!");
+          messageApi.success("Thêm shipper cho đơn hàng thành công!"); 
+          refetch();
         },
         onError: () => {
-          messageApi.error("Thêm shipper thất bại!");
+          messageApi.error("Thêm shipper thất bại!"); 
         },
       }
     );
   };
-  const availableShippers = shipperData?.filter(
-    (shipper: any) => shipper._id !== data?.shipperId?._id
-  );
+
+  // Kiểm tra dữ liệu shipper
+  if (!shipperData || !shipperData.shippers || !shipperData.orders) {
+    console.log("Dữ liệu shipper chưa sẵn sàng hoặc không hợp lệ.");
+    return <p>Shipper data is not available yet</p>;
+  }
+
+  console.log("Dữ liệu shipper:", shipperData);
+
+  const availableShippers = shipperData.shippers.filter((shipper: any) => {
+    const shipperHasOngoingDelivery = shipperData.orders.some(
+      (order: any) =>
+        order.shipperId._id === shipper._id && order.status === "3"
+    );
+
+    return !shipperHasOngoingDelivery && shipper._id !== data?.shipperId?._id;
+  });
+
+  if (availableShippers.length === 0) {
+    return <p>No available shippers</p>;
+  }
+
+  console.log("Available Shippers:", availableShippers);
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity;
@@ -307,7 +328,7 @@ const OrdersDetali = () => {
           <div className="p-4">
             <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
             <div className="grid grid-cols-1 gap-4">
-              {availableShippers?.map((shipper: any) => (
+              {availableShippers.map((shipper: any) => (
                 <div
                   key={shipper._id}
                   className="flex items-center bg-white p-4 rounded-lg shadow-md"
@@ -322,10 +343,10 @@ const OrdersDetali = () => {
                     <p className="text-sm text-gray-500">{shipper.phone}</p>
                   </div>
                   <button
-                    onClick={() => handleSelectShipper(shipper._id)}
-                    className={`bg - blue - 500 text - white px - 4 py - 2 rounded - lg hover: bg - blue - 600 ${
+                    onClick={() => handleSelectShipper(shipper._id)} // Gọi hàm handleSelectShipper
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
                       selectedShipper === shipper._id ? "bg-green-500" : ""
-                    } `}
+                    }`}
                   >
                     {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
