@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllShipper } from "../../../_lib/Shipper/shipper";
+
 export const useListAllShipper = () => {
-  const { data, ...rest } = useQuery({
+  return useQuery({
     queryKey: ["List_shipper"],
     queryFn: async () => {
-      return await getAllShipper();
-    }
+      const response = await getAllShipper();
+      return response;
+    },
   });
-  return { data, ...rest };
 };
