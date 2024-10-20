@@ -2,37 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Table, Spin, Alert } from "antd";
 import instance from "../../../configs/axios";
 
-// Định nghĩa kiểu dữ liệu cho đơn hàng và địa chỉ
 interface Order {
-  _id: string; // Sử dụng _id làm rowKey
-  fullName: string; // Tên của Shipper
+  _id: string;
+  fullName: string;
   totalOrders: number;
-  orderDetails: { orderNumber: string; address: string }[]; // Danh sách đơn hàng kèm địa chỉ
+  ordersByDate: {
+    date: string;
+    addresses: string[];
+  }[];
 }
 
 const TotalOrders = () => {
-  const [orders, setOrders] = useState<Order[]>([]); // Sử dụng kiểu dữ liệu Order[]
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Kiểu dữ liệu cho lỗi có thể là chuỗi hoặc null
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Gọi API để lấy dữ liệu đơn hàng
     const fetchOrders = async () => {
       try {
         const response = await instance.get("/orders/daily-order-summary");
-        console.log(response.data); // In ra dữ liệu để kiểm tra
+        console.log(response.data);
 
-        // Kiểm tra xem response.data có phải là danh sách shipper (cho admin) hay một đối tượng shipper (cho courier)
         if (Array.isArray(response.data.shippers)) {
-          // Trường hợp admin, dữ liệu là danh sách các shipper
           setOrders(response.data.shippers);
         } else {
-          // Trường hợp shipper, dữ liệu chỉ là một shipper và cần chuyển thành mảng
           setOrders([response.data]);
         }
         setLoading(false);
       } catch (err: any) {
-        setError(err.message || "Có lỗi xảy ra khi tải dữ liệu."); // Lưu lỗi vào state
+        setError(err.message || "Có lỗi xảy ra khi tải dữ liệu.");
         setLoading(false);
       }
     };
@@ -40,33 +38,140 @@ const TotalOrders = () => {
     fetchOrders();
   }, []);
 
-  // Cấu trúc của các cột trong bảng Ant Design
-  const columns = [
+  const columnsTotalOrders = [
     {
-      title: "Tên Shipper",
-      dataIndex: "fullName", // Lấy tên shipper từ `fullName`
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Tên Shipper
+        </div>
+      ),
+      dataIndex: "fullName",
       key: "fullName",
+      align: "center",
     },
     {
-      title: "Tổng số đơn hàng",
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Tổng số đơn hàng
+        </div>
+      ),
       dataIndex: "totalOrders",
       key: "totalOrders",
+      align: "center",
+      render: (totalOrders: number) => (
+        <div style={{ textAlign: "center" }}>{totalOrders}</div>
+      ),
+    },
+  ];
+
+  const columnsAddresses = [
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Tên Shipper
+        </div>
+      ),
+      dataIndex: "fullName",
+      key: "fullName",
+      align: "center",
+      render: (text: string) => <div>{text}</div>,
+    },
+
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Số lượng đơn hàng
+        </div>
+      ),
+      dataIndex: "ordersByDate",
+      key: "orderCount",
+      align: "center",
+      render: (ordersByDate: { date: string; count: number }[]) => (
+        <ul>
+          {ordersByDate.map((detail, index) => (
+            <li
+              key={index}
+              style={{
+                padding: "8px 0",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              Số đơn hàng: {detail.count}
+            </li>
+          ))}
+        </ul>
+      ),
     },
     {
-      title: "Địa chỉ giao hàng",
-      dataIndex: "orderDetails",
-      key: "orderDetails",
-      render: (orderDetails: { orderNumber: string; address: string }[]) => (
-        <ul>
-          {orderDetails.map((detail, index) => (
-            <li key={index}>Địa chỉ: Tòa nhà FPT - {detail.address}</li>
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Ngày giao hàng
+        </div>
+      ),
+      dataIndex: "ordersByDate",
+      key: "ordersByDate",
+      align: "center",
+      render: (ordersByDate: { date: string; addresses: string[] }[]) => (
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          {ordersByDate.map((detail, index) => (
+            <li
+              key={index}
+              style={{
+                padding: "8px 0",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              Ngày: {detail.date}
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Địa chỉ giao hàng
+        </div>
+      ),
+      dataIndex: "ordersByDate",
+      key: "orderAddress",
+      align: "center",
+      render: (ordersByDate: { date: string; addresses: string[] }[]) => (
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          {ordersByDate.map((detail, index) => (
+            <li
+              key={index}
+              style={{
+                padding: "8px 0",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              {detail.addresses.map((address, addrIndex) => (
+                <div key={addrIndex} style={{ padding: "4px 0" }}>
+                  Địa chỉ: {address}
+                </div>
+              ))}
+            </li>
           ))}
         </ul>
       ),
     },
   ];
-
-  // Hiển thị khi đang tải dữ liệu
   if (loading) {
     return (
       <div className="text-center py-4">
@@ -75,7 +180,6 @@ const TotalOrders = () => {
     );
   }
 
-  // Hiển thị thông báo lỗi nếu có lỗi
   if (error) {
     return (
       <Alert
@@ -89,15 +193,27 @@ const TotalOrders = () => {
   }
 
   return (
-    <div className="container mx-auto py-4">
-      <h2 className="text-2xl font-semibold mb-4">
-        Danh sách đơn hàng đã giao
-      </h2>
+    <div className="m-6">
+      <div className="flex items-center justify-between mt-20 mb-5">
+        <h1 className="text-2xl font-semibold">Tổng số đơn hàng của shipper</h1>
+      </div>
       <Table
-        columns={columns} // Cấu trúc cột
-        dataSource={orders} // Dữ liệu nguồn
-        rowKey={(record) => record._id} // Sử dụng _id làm rowKey
-        pagination={{ pageSize: 5 }} // Số dòng mỗi trang
+        columns={columnsTotalOrders}
+        dataSource={orders}
+        rowKey={(record) => record._id}
+        pagination={{ pageSize: 5 }}
+        bordered
+      />
+      <div className="flex items-center justify-between mt-20 mb-5">
+        <h1 className="text-2xl font-semibold">
+          Tổng số đơn hàng của shipper theo từng ngày
+        </h1>
+      </div>
+      <Table
+        columns={columnsAddresses}
+        dataSource={orders}
+        pagination={{ pageSize: 5 }}
+        bordered
       />
     </div>
   );
