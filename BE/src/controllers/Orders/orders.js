@@ -1009,29 +1009,45 @@ export const getOrdersByPhone = async (req, res) => {
 
 export const getTotalOrdersByRole = async (req, res) => {
   try {
-    const user = req.user; // Lấy thông tin người dùng từ middleware xác thực
-
-    // Kiểm tra vai trò của người dùng
+    const user = req.user;
     if (user.role === "admin") {
-      // Admin: Lấy tất cả shipper và đơn hàng đã giao của từng shipper
       const shippers = await Shipper.find();
       const shipperData = await Promise.all(
         shippers.map(async (shipper) => {
           const orders = await Order.find({
             shipperId: shipper._id,
-            status: "6", // Giả sử "6" là trạng thái đã giao thành công
+            status: "6",
           });
 
           if (orders.length > 0) {
-            const orderDetails = orders.map((order) => ({
-              orderNumber: order.orderNumber,
-              address: order.customerInfo.address,
-            }));
+            const ordersByDate = orders.reduce((acc, order) => {
+              const orderDate = new Date(order.deliveredAt)
+                .toISOString()
+                .split("T")[0];
+              if (!acc[orderDate]) {
+                acc[orderDate] = {
+                  count: 1,
+                  addresses: [order.customerInfo.address],
+                };
+              } else {
+                acc[orderDate].count += 1;
+                acc[orderDate].addresses.push(order.customerInfo.address);
+              }
+              return acc;
+            }, {});
+
+            const orderDetails = Object.entries(ordersByDate).map(
+              ([date, details]) => ({
+                date,
+                count: details.count,
+                addresses: details.addresses,
+              })
+            );
 
             return {
-              fullName: shipper.fullName, // Tên của shipper từ database
+              fullName: shipper.fullName,
               totalOrders: orders.length,
-              orderDetails,
+              ordersByDate: orderDetails,
             };
           }
           return null;
@@ -1046,22 +1062,40 @@ export const getTotalOrdersByRole = async (req, res) => {
         shippers: filteredShippers,
       });
     } else if (user.role === "courier") {
-      // Shipper: Lấy thông tin shipper từ database nếu cần
-      const shipperInfo = await Shipper.findById(user.userId); // Lấy thông tin shipper từ database
+      const shipperInfo = await Shipper.findById(user.userId);
       const orders = await Order.find({
         shipperId: user.userId,
         status: "6",
       });
 
-      const orderDetails = orders.map((order) => ({
-        orderNumber: order.orderNumber,
-        address: order.customerInfo.address,
-      }));
+      const ordersByDate = orders.reduce((acc, order) => {
+        const orderDate = new Date(order.deliveredAt)
+          .toISOString()
+          .split("T")[0];
+        if (!acc[orderDate]) {
+          acc[orderDate] = {
+            count: 1,
+            addresses: [order.customerInfo.address],
+          };
+        } else {
+          acc[orderDate].count += 1;
+          acc[orderDate].addresses.push(order.customerInfo.address);
+        }
+        return acc;
+      }, {});
+
+      const orderDetails = Object.entries(ordersByDate).map(
+        ([date, details]) => ({
+          date,
+          count: details.count,
+          addresses: details.addresses,
+        })
+      );
 
       return res.status(200).json({
-        fullName: shipperInfo ? shipperInfo.fullName : user.fullName, // Lấy tên từ database nếu không có trong req.user
+        fullName: shipperInfo ? shipperInfo.fullName : user.fullName,
         totalOrders: orders.length,
-        orderDetails,
+        ordersByDate: orderDetails,
       });
     } else {
       return res.status(403).json({ message: "Không có quyền truy cập" });
