@@ -254,13 +254,15 @@ export default function List_order() {
         return;
     }
   }
-
+  const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
   function handle_status_order(i: number) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set("_page", "1");
     newParams.set("_limit", "10");
     newParams.set("_status", String(i));
     setSearchParams(newParams);
+    
+    setSelectedMenu(i);
   }
   const [searchParamsUri] = useSearchParams();
   const status_order = searchParamsUri.get("_status");
@@ -411,20 +413,26 @@ export default function List_order() {
     <div>
       {contextHolder}
       <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center *:border-b-2 *:cursor-pointer *:border-white justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs">
-        {menuItems.map((menu, i) => (
-          <li
-            key={menu}
-            className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400`}
-            onClick={() => handle_status_order(i)}
-          >
-            {menu} (
-            {orderStatusCounts[menu] !== undefined
-              ? orderStatusCounts[menu]
-              : 0}
-            )
-          </li>
-        ))}
-      </ul>
+  {menuItems.map((menu, i) => (
+    <li
+      key={menu}
+      className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400`}
+      onClick={() => handle_status_order(i)}
+    >
+      {menu} {/* Chỉ hiển thị số lượng khi item được click */}
+      {selectedMenu === i && (
+        <>
+          {" "}
+          (
+          {orderStatusCounts[menu as keyof typeof orderStatusCounts] !== undefined
+            ? orderStatusCounts[menu as keyof typeof orderStatusCounts]
+            : 0}
+          )
+        </>
+      )}
+    </li>
+  ))}
+</ul>
       {!data?.data?.docs || data?.data?.docs?.length === 0 ? (
         <div className="flex justify-center items-center">
           <img
