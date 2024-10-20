@@ -13,11 +13,10 @@ import {
   updateShipperAddress,
   delete_address,
   setDefaultAddress,
-  assignShipperToOrder,
 } from "../controllers/Shipper/shipper";
 
 const Route_Shipper = express.Router(); // Sử dụng Route_Shipper
-Route_Shipper.post("/shippers/assign-shipper", assignShipperToOrder);
+// Route_Shipper.post("/shippers/assign-shipper", assignShipperToOrder);
 
 // Tạo mới shipper
 Route_Shipper.post("/shippers", createShipper);

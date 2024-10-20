@@ -617,41 +617,41 @@ export const delete_address = async (req, res) => {
 };
 
 // // Gán shipper cho một đơn hàng
-export const assignShipperToOrder = async (req, res) => {
-  try {
-    const { orderId, shipperId } = req.body;
+// export const assignShipperToOrder = async (req, res) => {
+//   try {
+//     const { orderId, shipperId } = req.body;
 
-    // Kiểm tra tính hợp lệ của orderId và shipperId
-    if (
-      !mongoose.isValidObjectId(orderId) ||
-      !mongoose.isValidObjectId(shipperId)
-    ) {
-      return res
-        .status(400)
-        .json({ message: "ID đơn hàng hoặc ID shipper không hợp lệ" });
-    }
+//     // Kiểm tra tính hợp lệ của orderId và shipperId
+//     if (
+//       !mongoose.isValidObjectId(orderId) ||
+//       !mongoose.isValidObjectId(shipperId)
+//     ) {
+//       return res
+//         .status(400)
+//         .json({ message: "ID đơn hàng hoặc ID shipper không hợp lệ" });
+//     }
 
-    // Tìm shipper và kiểm tra nếu họ đang có đơn hàng đang giao
-    const shipper = await Shipper.findById(shipperId).populate("orders");
-    const ongoingOrder = shipper.orders.some((order) => order.status === "3");
-    if (ongoingOrder) {
-      return res.status(400).json({ message: "Shipper đang giao hàng khác" });
-    }
+//     // Tìm shipper và kiểm tra nếu họ đang có đơn hàng đang giao
+//     const shipper = await Shipper.findById(shipperId).populate("orders");
+//     const ongoingOrder = shipper.orders.some((order) => order.status === "3");
+//     if (ongoingOrder) {
+//       return res.status(400).json({ message: "Shipper đang giao hàng khác" });
+//     }
 
-    // Tìm đơn hàng
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
-    }
+//     // Tìm đơn hàng
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+//     }
 
-    // Gán shipper cho đơn hàng
-    order.shipperId = shipperId;
-    await order.save();
+//     // Gán shipper cho đơn hàng
+//     order.shipperId = shipperId;
+//     await order.save();
 
-    res.status(200).json({ message: "Đã gán shipper cho đơn hàng", order });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Lỗi khi gán shipper cho đơn hàng", error });
-  }
-};
+//     res.status(200).json({ message: "Đã gán shipper cho đơn hàng", order });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Lỗi khi gán shipper cho đơn hàng", error });
+//   }
+// };

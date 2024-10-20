@@ -95,21 +95,31 @@ export const getMessagesBetweenUsers = async (req, res) => {
   try {
     const { userId1, userId2 } = req.params;
 
+    // Kiểm tra xem userId1 và userId2 có hợp lệ không
+    if (
+      !mongoose.Types.ObjectId.isValid(userId1) ||
+      !mongoose.Types.ObjectId.isValid(userId2)
+    ) {
+      return res.status(400).json({ message: "ID người dùng không hợp lệ." });
+    }
+
+    // Truy vấn để lấy tin nhắn giữa hai người dùng
     let messageGroups = await MessageGroup.find({
       $or: [
-        { senderId: userId1, receiverId: userId2 },
-        { senderId: userId2, receiverId: userId1 },
+        {
+          senderId: mongoose.Types.ObjectId(userId1),
+          receiverId: mongoose.Types.ObjectId(userId2),
+        },
+        {
+          senderId: mongoose.Types.ObjectId(userId2),
+          receiverId: mongoose.Types.ObjectId(userId1),
+        },
       ],
     })
-      .populate("senderId")
-      .populate("receiverId");
+      .populate("senderId", "fullName email") // Populate thông tin người gửi
+      .populate("receiverId", "fullName email") // Populate thông tin người nhận
+      .sort({ "messages.createdAt": 1 }); // Sắp xếp tin nhắn theo thời gian tạo
 
-    messageGroups = messageGroups.map((group) => {
-      group.messages.sort(
-        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-      );
-      return group;
-    });
     res.status(200).json(messageGroups);
   } catch (error) {
     console.error("Lỗi khi lấy tin nhắn giữa hai người dùng:", error);
