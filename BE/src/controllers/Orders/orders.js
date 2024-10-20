@@ -6,7 +6,7 @@ import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 import SendCancellationMail from "../SendMail/HuyMail";
 import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
-import moment from "moment"; // Thư viện để làm việc với thời gian
+import Shipper from "../../models/Shipper/shipper";
 
 // Middleware xác thực
 import jwt from "jsonwebtoken";
@@ -1007,58 +1007,67 @@ export const getOrdersByPhone = async (req, res) => {
   }
 };
 
-export const getDailyOrderCountByShipper = async (req, res) => {
+export const getTotalOrdersByRole = async (req, res) => {
   try {
-    const todayStart = moment().startOf("day").toDate();
-    const todayEnd = moment().endOf("day").toDate();
-    const { user } = req;
-    let matchCondition = {
-      deliveredAt: { $gte: todayStart, $lte: todayEnd },
-      status: "6",
-    };
+    const user = req.user; // Lấy thông tin người dùng từ middleware xác thực
 
-    if (user.role === "courier") {
-      matchCondition.shipperId = user._id;
+    // Kiểm tra vai trò của người dùng
+    if (user.role === "admin") {
+      // Admin: Lấy tất cả shipper và đơn hàng đã giao của từng shipper
+      const shippers = await Shipper.find();
+      const shipperData = await Promise.all(
+        shippers.map(async (shipper) => {
+          const orders = await Order.find({
+            shipperId: shipper._id,
+            status: "6", // Giả sử "6" là trạng thái đã giao thành công
+          });
+
+          if (orders.length > 0) {
+            const orderDetails = orders.map((order) => ({
+              orderNumber: order.orderNumber,
+              address: order.customerInfo.address,
+            }));
+
+            return {
+              fullName: shipper.fullName, // Tên của shipper từ database
+              totalOrders: orders.length,
+              orderDetails,
+            };
+          }
+          return null;
+        })
+      );
+
+      const filteredShippers = shipperData.filter(
+        (shipper) => shipper !== null
+      );
+      return res.status(200).json({
+        message: "Admin - Tổng quan số lượng đơn hàng đã giao của các shipper",
+        shippers: filteredShippers,
+      });
+    } else if (user.role === "courier") {
+      // Shipper: Lấy thông tin shipper từ database nếu cần
+      const shipperInfo = await Shipper.findById(user.userId); // Lấy thông tin shipper từ database
+      const orders = await Order.find({
+        shipperId: user.userId,
+        status: "6",
+      });
+
+      const orderDetails = orders.map((order) => ({
+        orderNumber: order.orderNumber,
+        address: order.customerInfo.address,
+      }));
+
+      return res.status(200).json({
+        fullName: shipperInfo ? shipperInfo.fullName : user.fullName, // Lấy tên từ database nếu không có trong req.user
+        totalOrders: orders.length,
+        orderDetails,
+      });
+    } else {
+      return res.status(403).json({ message: "Không có quyền truy cập" });
     }
-
-    const orders = await Order.aggregate([
-      {
-        $match: matchCondition,
-      },
-      {
-        $group: {
-          _id: "$shipperId",
-          totalOrders: { $sum: 1 },
-          lastDeliveryLocation: { $last: "$customerInfo.address" },
-        },
-      },
-      {
-        $lookup: {
-          from: "shippers",
-          localField: "_id",
-          foreignField: "_id",
-          as: "shipper",
-        },
-      },
-      {
-        $unwind: "$shipper",
-      },
-      {
-        $project: {
-          _id: 0,
-          shipperId: "$shipper._id",
-          fullName: "$shipper.fullName",
-          totalOrders: 1,
-          lastDeliveryLocation: 1,
-        },
-      },
-    ]);
-
-    return res.status(200).json(orders);
   } catch (error) {
-    console.error("Lỗi khi lấy thông tin shipper và đơn hàng:", error);
-    return res
-      .status(500)
-      .json({ message: "Lỗi khi lấy thông tin shipper", error });
+    console.error("Error fetching orders: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };

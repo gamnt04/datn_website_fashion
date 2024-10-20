@@ -107,7 +107,7 @@ export const checkRole = (roles) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded;
-
+      console.log("Decoded User:", req.user);
       // console.log("User Role:", req.user.role);
       // console.log("Required Roles:", roles);
       if (!roles.includes(req.user.role)) {
