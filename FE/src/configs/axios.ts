@@ -9,4 +9,16 @@ const instance = axios.create({
     Authorization: `Bearer ${token}`,
   },
 });
+instance.interceptors.request.use(
+  (config) => {
+    const token = getToken(); // Lấy token mới nhất
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Thêm token vào headers
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 export default instance;
