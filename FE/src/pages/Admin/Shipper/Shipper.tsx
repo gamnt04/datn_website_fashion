@@ -19,10 +19,7 @@ const ShipperList: React.FC = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["shippers"],
-    queryFn: async () => {
-      const response = await instance.get("/shippers");
-      return response.data;
-    },
+    queryFn: () => instance.get("/shippers"),
   });
 
   const { data: searchData } = useQuery({
@@ -36,13 +33,14 @@ const ShipperList: React.FC = () => {
       }
       return [];
     },
-    enabled: !!searchName, // Chỉ thực hiện query khi có giá trị searchName
+    enabled: !!searchName,
   });
-
-  const dataSource = (searchName ? searchData : data)?.map((shipper: any) => ({
-    key: shipper._id,
-    ...shipper,
-  }));
+  const dataSource = (searchName ? searchData : data?.data.shippers)?.map(
+    (shipper: any) => ({
+      key: shipper._id,
+      ...shipper,
+    })
+  );
 
   const onHandleSearch = () => {
     setSearchName(searchName.trim());
@@ -79,7 +77,7 @@ const ShipperList: React.FC = () => {
   const columns = [
     {
       title: "STT",
-      render: (_: any, __, index) => <p>{index + 1}</p>,
+      render: (_: any, __: any, index: any) => <p>{index + 1}</p>,
     },
     {
       key: "avatar",
@@ -107,28 +105,7 @@ const ShipperList: React.FC = () => {
       title: "Số Điện Thoại",
       dataIndex: "phone",
     },
-    // {
-    //   key: "store",
-    //   title: "Cửa Hàng",
-    //   dataIndex: "store",
-    // },
-    // {
-    //   key: "rating",
-    //   title: "Đánh Giá",
-    //   dataIndex: "rating",
-    //   render: (rating: number) => (
-    //     <div>
-    //       {Array.from({ length: 5 }, (_, index) => (
-    //         <span
-    //           key={index}
-    //           style={{ color: index < rating ? "gold" : "gray" }}
-    //         >
-    //           ★
-    //         </span>
-    //       ))}
-    //     </div>
-    //   ),
-    // },
+
     {
       key: "status",
       title: "Trạng Thái",
@@ -208,7 +185,7 @@ const ShipperList: React.FC = () => {
               </Button>
             </div>
           </div>
-          {data && data.length === 0 ? (
+          {data && data?.data.shippers.length === 0 ? (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
           ) : (
             <Table dataSource={dataSource} rowKey="_id" columns={columns} />
