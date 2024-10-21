@@ -53,6 +53,7 @@ import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
 import Chat from "../pages/Client/Chat/Chat";
 import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
 import TotalOrders from "../pages/Admin/Orders/TotalOrders";
+import Chat_bot from "../components/common/ChatBot/test";
 const RouterComponent = () => {
   return (
     <>
@@ -69,6 +70,7 @@ const RouterComponent = () => {
             <Route path="/cart" element={<ListCart />} />
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
+            <Route path="/chat-bot" element={<Chat_bot />} />
             {/* <Route path="/order/pay" element={<OrderPay />} /> */}
             <Route path="/favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
