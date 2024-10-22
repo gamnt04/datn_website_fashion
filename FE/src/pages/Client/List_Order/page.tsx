@@ -31,6 +31,7 @@ import {
 import instance from "../../../configs/axios";
 import { UploadGallery } from "../../../systems/utils/uploadImage";
 import Items_order from "./_Components/items_order";
+import axios from "axios";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -217,17 +218,41 @@ export default function List_order() {
     action?: string;
     cancellationReason?: string;
     orderNumber?: string | number;
-    order?: string | number;
     linkUri?: string | number;
   }) {
+    console.log("Lý do hủy từ frontend:", dataBody?.cancellationReason);
+    // Gửi thông báo đến admin về việc hủy đơn hàng
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: "nguyenvana@gmail.com",
       message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
       id_different: dataBody?.orderNumber,
+      
+      
     });
-    mutate(dataBody);
+  
+    // Gửi yêu cầu hủy đơn hàng lên BE
+    mutate(dataBody, {
+      onSuccess: async (response) => {
+        console.log("Lý do hủy từ backend response:", response.data?.cancellationReason);
+        try {
+          // Gọi API gửi email hủy đơn hàng
+          await axios.post('/api/v1/send-cancellation-email', {
+            email: user?.user?.email, // Email người dùng
+            order: response.data, // Dữ liệu đơn hàng từ BE trả về
+            cancellationReason: response.data?.cancellationReason || dataBody?.cancellationReason, 
+          });
+  
+          console.log('Email hủy đơn đã được gửi thành công!');
+        } catch (error) {
+          console.error('Lỗi khi gửi email:', error);
+        }
+      },
+      onError: (error) => {
+        console.error('Lỗi khi hủy đơn:', error);
+      }
+    });
   }
 
   function status_item(status: string | number) {
@@ -944,7 +969,7 @@ export default function List_order() {
                       cancelText="Không"
                     >
                       <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại222
+                        Mua Lại
                       </Button>
                     </Popconfirm>
                   )}
