@@ -11,6 +11,7 @@ const ClientLayout = () => {
         <Outlet />
       </div>
       <Message />
+      {/* <Chat_bot /> */}
       <Footer />
     </div>
   );

@@ -2,11 +2,12 @@
 import { useState } from "react";
 import message from "../../assets/Images/Logo/logoMessage.jpg";
 import Chat from "../../pages/Client/Chat/Chat";
+import Chat_bot from "../common/ChatBot/test";
 
 const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const toggleChat = (event) => {
+  const toggleChat = (event: any) => {
     if (event) {
       event.stopPropagation();
     }
@@ -38,7 +39,8 @@ const Message = () => {
             className="relative w-[350px] h-[500px] mr-4 mb-24"
             onClick={(event) => event.stopPropagation()}
           >
-            <Chat onClose={toggleChat} />
+            <Chat_bot onClose={toggleChat} />
+            {/* <Chat /> */}
           </div>
         </div>
       )}
