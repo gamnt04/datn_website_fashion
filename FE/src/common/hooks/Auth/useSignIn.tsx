@@ -35,14 +35,20 @@ const useSignIn = (userId?: string) => {
     onSuccess: (res: any) => {
       const token = res.data.token;
 
+      // Lưu token vào localStorage
       localStorage.setItem("token", token);
       console.log(token);
+
+      // Invalidate các query liên quan đến xác thực
       queryClient.invalidateQueries({
         queryKey: ["AUTH_KEY", userId],
       });
+
       if (res.status === 200) {
         const role = res.data.user.role;
         toast.success("Đăng nhập thành công!", { autoClose: 500 });
+
+        // Điều hướng dựa trên vai trò
         if (role === "admin") {
           navigate("/admin");
         } else if (role === "courier") {
