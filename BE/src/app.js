@@ -21,6 +21,7 @@ import http from "http";
 import jwt from "jsonwebtoken";
 import Messages from "./models/Message/Message";
 import Router_Message from "./routers/message";
+import Router_HuyMail from "./routers/sendmail";
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use("/api/v1", Routes_review);
 app.use("/api/v1", Route_Shipper);
 app.use("/api/v1", Routes_voucher);
 app.use("/api/v1", Router_Message);
+app.use('/api/v1', Router_HuyMail);
 // Định nghĩa một số route khác
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;
