@@ -48,17 +48,10 @@ const ShipperSchema = new mongoose.Schema(
       default: "Offline",
     },
     vehicle: { type: String },
+    number_citizen: { type: String },
     token: { type: String },
     tokenExpiration: { type: Date },
-    address: [
-      {
-        fullName: { type: String },
-        phoneNumber: { type: String },
-        address: { type: String },
-        addressDetails: { type: String },
-        checked: { type: Boolean, default: false },
-      },
-    ],
+    address: { type: String },
     birthDate: {
       type: String,
     },
