@@ -1,83 +1,105 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Button } from 'antd';
+import { Button, Spin } from 'antd';
 import { IoMdClose, IoMdSend } from 'react-icons/io';
 
 const Chat_bot = () => {
-    const [messages, setMessages] = useState<any>([]);
-    const [userMessage, setUserMessage] = useState<any>('');
-    const [isVisible, setIsVisible] = useState(false);
+    const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+    const [userMessage, setUserMessage] = useState<string>('');
+    const [isVisible, setIsVisible] = useState<boolean>(true);
+    const [isTyping, setIsTyping] = useState<boolean>(false);
+
     const sendMessage = async () => {
         if (!userMessage) return;
-        const newMessages: any = [...messages, { sender: 'user', text: userMessage }];
+        const newMessages = [...messages, { sender: 'user', text: userMessage }];
         setMessages(newMessages);
         setUserMessage('');
-
+        setIsTyping(true);
         try {
-            const response = await axios.post('http://localhost:2004/api/v1/chat_Bot', { message: userMessage });
-            setMessages([...newMessages, { sender: 'bot', text: response.data.reply }]);
+            const response = await axios.post('http://localhost:2004/api/v1/chat_Bot', {
+                message: userMessage
+            });
+            setIsTyping(false);
+
+            if (response.status === 200 && response.data.reply) {
+                setMessages([...newMessages, { sender: 'bot', text: response.data.reply }]);
+            } else {
+                setMessages([...newMessages, { sender: 'bot', text: "Sorry, I didn't get a valid response." }]);
+            }
         } catch (error) {
+            setIsTyping(false);
             console.error('Error sending message:', error);
+            setMessages([...newMessages, { sender: 'bot', text: 'There was an error processing your request. Please try again later.' }]);
         }
     };
 
     return (
         <>
-
-            <div className="">
-                <div className="h-[500px] flex justify-center items-center p-2">
-                    <div className="w-[350px] max-w-md bg-white shadow-lg rounded-[10px] flex flex-col h-full border border-gray-300">
-                        <div className="relative flex  items-center bg-blue-500 text-white h-14 rounded-t-[10px] px-0">
-                            <div className="flex items-center ml-4">
-                                <img src="https://picsum.photos/40/40" className='rounded-full' alt="" />
+            {isVisible && (
+                <div className="fixed bottom-5 right-5 z-50">
+                    <div className="w-[350px] max-w-md bg-white shadow-2xl rounded-[20px] flex flex-col h-[500px] border border-gray-300">
+                        {/* Header */}
+                        <div className="relative flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white h-14 rounded-t-[20px] px-4">
+                            <div className="flex items-center">
+                                <img src="https://picsum.photos/40/40" className='rounded-full mr-2' alt="Bot Avatar" />
+                                <span className="font-semibold text-lg">Chat Bot</span>
                             </div>
-                            <div className="flex items-center mr-4 absolute right-0">
+                            <div className="absolute right-4 cursor-pointer">
                                 <IoMdClose
-                                    className="cursor-pointer text-[30px]"
+                                    className="text-[30px]"
                                     onClick={() => setIsVisible(false)}
                                 />
                             </div>
                         </div>
 
+                        {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                            {messages.map((message: any, index: any) => (
+                            {messages.map((message, index) => (
                                 <div
                                     key={index}
-                                    className={` px-4 py-2 mb-2 rounded-full max-w-full ${message.sender === 'user'
-                                        ? 'bg-blue-500 text-white self-end text-right '
-                                        : 'bg-gray-300 text-black self-start text-left'
-                                        }`}
+                                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    {message.text}
+                                    <div
+                                        className={`px-4 py-2 rounded max-w-xs ${message.sender === 'user'
+                                            ? 'bg-blue-500 text-white self-end'
+                                            : 'bg-gray-200 text-black self-start'
+                                            }`}
+                                    >
+                                        {message.text}
+                                    </div>
                                 </div>
                             ))}
+                            {isTyping && (
+                                <div className="flex justify-start">
+                                    <div className="px-4 py-2 rounded max-w-xs bg-gray-200 text-black">
+                                        <Spin size="small" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-
-                        <div className="pb-4 px-4" >
-                            <div className='flex items-center gap-4 '>
+                        {/* Input */}
+                        <div className="pb-4 px-4">
+                            <div className='flex items-center gap-4'>
                                 <input
                                     type="text"
                                     value={userMessage}
                                     onChange={(e) => setUserMessage(e.target.value)}
                                     placeholder="Type your message..."
-                                    className='border p-2 w-full rounded outline-none  '
+                                    className='border p-2 w-full rounded outline-none'
                                 />
                                 <Button
                                     type="primary"
                                     onClick={sendMessage}
-                                    className='p-2 bg-blue-500 hover:bg-blue-600 w-20 h-10 rounded'
+                                    className='p-2 bg-blue-500 hover:bg-blue-600 w-14 h-12 rounded-full flex items-center justify-center'
                                 >
-                                    <IoMdSend />
+                                    <IoMdSend className="text-xl" />
                                 </Button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-
-
+            )}
         </>
     );
 };
