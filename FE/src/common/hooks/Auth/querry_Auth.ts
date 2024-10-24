@@ -4,7 +4,7 @@ import {
   getUserByUsername,
   list_Auth,
   list_Auth_By_Id,
-  set_default_address
+  set_default_address,
 } from "../../../_lib/Auth/Auth";
 
 export const List_Auth = (userId: string) => {
@@ -12,7 +12,7 @@ export const List_Auth = (userId: string) => {
     queryKey: userId ? ["AUTH_KEY", userId] : ["AUTH_KEY"],
     queryFn: async () => {
       return userId ? await list_Auth_By_Id(userId) : await list_Auth();
-    }
+    },
   });
 
   return { data, ...rest };
@@ -32,12 +32,12 @@ export function Mutation_address(action: Action) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["AUTH_KEY"]
+        queryKey: ["AUTH_KEY"],
       });
     },
     onError: (error) => {
       return error;
-    }
+    },
   });
   return { mutate, ...rest };
 }
@@ -45,7 +45,7 @@ export const useSearchUserByUsername = (searchName: string) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_User", searchName],
     queryFn: () => getUserByUsername(searchName),
-    enabled: !!searchName
+    enabled: !!searchName,
   });
   return { data, ...rest };
 };
@@ -59,7 +59,7 @@ export const useGetNewUserIn7Day = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, error, isError, ...rest };
 };

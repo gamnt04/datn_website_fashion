@@ -131,7 +131,7 @@ export const updateShipper = async (req, res) => {
     const { id } = req.params;
     const {
       fullName,
-      userName,
+      number_citizen,
       vehicle,
       phone,
       email,
@@ -149,7 +149,7 @@ export const updateShipper = async (req, res) => {
       id,
       {
         fullName,
-        userName,
+        number_citizen,
         vehicle,
         phone,
         email,
@@ -160,7 +160,7 @@ export const updateShipper = async (req, res) => {
       },
       { new: true } // Trả về dữ liệu mới sau khi cập nhật
     );
-
+    console.log(req.body);
     if (!updatedShipper) {
       return res.status(404).json({ message: "Không tìm thấy shipper" });
     }

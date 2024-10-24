@@ -1,6 +1,5 @@
 import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
-import Cart from "../../models/Cart/cart";
 import Attributes from "../../models/attribute/attribute";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
@@ -10,7 +9,6 @@ import moment from "moment"; // Thư viện để làm việc với thời gian
 
 // Middleware xác thực
 import jwt from "jsonwebtoken";
-import Voucher from "../../models/Voucher/voucher";
 
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
@@ -67,23 +65,6 @@ export const createOrder = async (req, res) => {
       discountAmount: discountAmount || 0, // Lưu số tiền giảm giá nếu có
     });
 
-    const dataCart = await Cart.findOne({ userId }).populate("products");
-    if (!dataCart) {
-      console.error("Cart not found for userId:", userId);
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Cart not found" });
-    }
-    dataCart.products = dataCart.products.filter((i) => {
-      return !req.body.items.some((j) => {
-        if (i.productId._id.toString() === j.productId._id.toString()) {
-          if (i.status_checked) {
-            return true;
-          }
-        }
-        return false;
-      });
-    });
     for (let i of items) {
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({ id_item: i.productId._id });
@@ -118,16 +99,6 @@ export const createOrder = async (req, res) => {
       }
     }
     await order.save();
-    await dataCart.save();
-
-    // **Cập nhật usedCount của voucher mà không cần kiểm tra tính hợp lệ**
-    if (discountCode) {
-      const voucher = await Voucher.findOne({ code_voucher: discountCode });
-      if (voucher) {
-        voucher.usedCount += 1; // Tăng số lần sử dụng voucher lên 1
-        await voucher.save();
-      }
-    }
 
     await SendMail(email, order);
     return res.status(StatusCodes.CREATED).json(order);
@@ -166,27 +137,6 @@ export const createOrderPayment = async (req, res) => {
         }
       }
     }
-    // Lấy giỏ hàng của người dùng
-    const dataCart = await Cart.findOne({ userId: userId });
-    if (!dataCart) {
-      return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
-    }
-    // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
-    dataCart.products = dataCart.products.filter((i) => {
-      const foundItem = items.some(
-        (j) =>
-          i.productId._id.toString() === j.productId._id.toString() &&
-          i.color_item === j.color_item &&
-          i.name_size === j.name_size
-      );
-      if (foundItem) {
-        console.log(`Removing product from cart: ${i.productId._id}`);
-      }
-      return !foundItem;
-    });
-
-    // Lưu lại giỏ hàng sau khi cập nhật
-    await dataCart.save();
 
     if (data) {
       // Gửi email xác nhận đơn hàng
@@ -205,13 +155,6 @@ export const createOrderPayment = async (req, res) => {
         totalPrice,
       });
       await SendMail(customerInfo.email, order);
-
-      // Trả về giỏ hàng đã cập nhật
-      return res.status(201).json({
-        data,
-        updatedCart: dataCart,
-        message: "Tạo đơn hàng thanh toán online thành công",
-      });
     } else {
       return res
         .status(400)
@@ -450,9 +393,7 @@ export const getTop10ProductBestSale = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
-      .populate("reviews")
-      .populate("shipperId");
+    const order = await Order.findById(req.params.id).populate("shipperId");
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)

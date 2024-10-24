@@ -12,6 +12,6 @@ export default defineConfig({
     },
   },
   server: {
-    port: 7899, // Thay đổi cổng tại đây
+    port: 2004, // Thay đổi cổng tại đây
   },
 });

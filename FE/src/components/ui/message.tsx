@@ -1,7 +1,7 @@
 // Component Message.jsx
 import { useState } from "react";
 import message from "../../assets/Images/Logo/logoMessage.jpg";
-import Chat from "../../pages/Client/Chat/Chat";
+// import Chat from "../../pages/Client/Chat/Chat";
 
 const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -38,7 +38,7 @@ const Message = () => {
             className="relative w-[350px] h-[500px] mr-4 mb-24"
             onClick={(event) => event.stopPropagation()}
           >
-            <Chat onClose={toggleChat} />
+            {/* <Chat onClose={toggleChat} /> */}
           </div>
         </div>
       )}

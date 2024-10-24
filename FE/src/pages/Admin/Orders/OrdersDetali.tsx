@@ -314,7 +314,7 @@ const OrdersDetali = () => {
         {" "}
         <div className="flex items-center justify-between mb-5 mt-20 relative">
           <Link
-            to="/admin/orders"
+            to="/courier/orders"
             className="flex items-center gap-2 text-[#1B7EE2]"
           >
             <LeftOutlined />

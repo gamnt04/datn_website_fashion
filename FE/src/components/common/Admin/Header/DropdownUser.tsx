@@ -1,15 +1,34 @@
-import { Modal } from "antd";
+import { Button, Form, FormProps, Input, message, Modal } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
 import { List_Auth } from "../../../../common/hooks/Auth/querry_Auth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import instance from "../../../../configs/axios";
+import Infor from "./Infor";
+type FieldType = {
+  fullName?: string;
+  number_citizen?: string;
+  phone?: string;
+  vehicle?: string;
+  address?: string;
+  email?: string;
+};
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const idUser = user?.user?._id;
   const { data, isError, isLoading, error } = List_Auth(idUser);
+  console.log(data);
+
   const { mutate } = useLogout();
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+
+  const togglePopup = () => {
+    setPopupVisible(!isPopupVisible);
+  };
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -23,6 +42,25 @@ const DropdownUser = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async (values: FieldType) => {
+      const { data } = await instance.put(`/shippers/${idUser}`, values);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["AUTH_KEY", idUser],
+      });
+      message.success("Cập nhật thông tin thành công");
+    },
+  });
+
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    mutation.mutate(values);
+  };
+
   if (isLoading) return <div className="">loading...</div>;
   if (isError) return <div className="">{error.message}</div>;
   return (
@@ -75,9 +113,11 @@ const DropdownUser = () => {
           className={`absolute right-[73px] mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark`}
         >
           <ul className="flex text-[#677381]  flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
+            {/* Hồ sơ */}
             <li>
               <Link
-                to="/profile"
+                to="#"
+                onClick={togglePopup} // Gọi hàm khi người dùng click vào
                 className="flex  items-center gap-4 text-[14px] font-medium duration-300 ease-in-out hover:text-black  lg:text-base"
               >
                 <svg
@@ -101,9 +141,20 @@ const DropdownUser = () => {
               </Link>
             </li>
 
+            {isPopupVisible && (
+              <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                <Infor
+                  onFinish={onFinish}
+                  data={data}
+                  togglePopup={togglePopup}
+                />
+              </div>
+            )}
+
+            {/* settings */}
             <li>
               <Link
-                to="/settings"
+                to="/courier/changePassword"
                 className="flex items-center gap-4 text-[14px] font-medium duration-300 ease-in-out hover:text-black lg:text-base"
               >
                 <svg
@@ -123,10 +174,12 @@ const DropdownUser = () => {
                     fill=""
                   />
                 </svg>
-                Cài Đặt
+                Đổi mật khẩu
               </Link>
             </li>
           </ul>
+
+          {/* Đăng xuất */}
           <button
             onClick={showModal}
             className="flex items-center text-[#677381] gap-4 px-6 py-4 text-[14px] font-medium duration-300 ease-in-out hover:text-black lg:text-base"

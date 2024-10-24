@@ -177,10 +177,10 @@ export const signin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await Shipper.findOne({ email });
-    }
+    let user = await Shipper.findOne({ email });
+    // if (!user) {
+    //   user = await Shipper.findOne({ email });
+    // }
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -196,20 +196,12 @@ export const signin = async (req, res) => {
         messages: ["Mật khẩu không chính xác"],
       });
     }
-    // const token = jwt.sign({ userId: user._id }, "123456", {
-    //   expiresIn: "7d"
-    // });
-    // const accessToken = generateAccessToken(user._id);
-    // const refreshToken = generateRefreshToken(user._id); // Generate refresh token
-
-    // Tạo token
     const token = jwt.sign(
       { userId: user._id, role: user.role || "courier" },
       process.env.JWT_SECRET || "secretkey",
       { expiresIn: "7d" }
     );
 
-    // Trả về phản hồi với thông tin đăng nhập
     return res.status(StatusCodes.OK).json({
       message: "Đăng nhập thành công",
       user,

@@ -9,6 +9,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.custom-bg {
+  background-image: url("https://blogcdn.muaban.net/wp-content/uploads/2022/02/huong-dan-cach-dang-ky-lam-shipper-cho-shopee-1.jpg"); /* Thay 'path-to-your-image.jpg' bằng đường dẫn tới ảnh của bạn */
+  background-size: cover; /* Đảm bảo hình ảnh phủ toàn bộ div */
+  background-position: center; /* Căn giữa hình ảnh */
+}
+
 * {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;

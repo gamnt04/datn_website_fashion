@@ -22,9 +22,9 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:2004/api/v1/forgot-password", {
+      await axios.post("http://localhost:2024/api/v1/forgot-password", {
         email: values.email,
-        captcha: captchaValue
+        captcha: captchaValue,
       });
       message.success("Vui lòng kiểm tra email của bạn để đặt lại mật khẩu!");
       setTimeout(() => {

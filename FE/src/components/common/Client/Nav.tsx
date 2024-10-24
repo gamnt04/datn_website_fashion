@@ -6,27 +6,15 @@ const Nav_Mobile = () => {
   const arr = [
     {
       path: "",
-      name: "Trang chủ",
+      name: "Đăng nhập",
     },
     {
       path: "/shops",
-      name: "Sản phẩm",
+      name: "Tiêu chí lựa chọn",
     },
     {
       path: "/blogs",
-      name: "Bài viết",
-    },
-    {
-      path: "/contact",
-      name: "Liên hệ",
-    },
-    {
-      path: "/about-us",
-      name: "Về chúng tôi",
-    },
-    {
-      path: "/track-order",
-      name: "Tra cứu đơn hàng",
+      name: "Quỳ trình đăng ký",
     },
   ];
 
@@ -53,53 +41,43 @@ const Nav_Mobile = () => {
 export default Nav_Mobile;
 
 // desktop
+// desktop
 export function Nav_Desktop() {
+  const handleScroll = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const arr = [
     {
-      path: "",
-      name: "Trang chủ",
+      path: "/",
+      name: "Đăng nhập",
+      onClick: () => handleScroll("login-section"),
     },
     {
-      path: "/shops",
-      name: "Sản phẩm",
+      path: "/",
+      name: "Tiêu chí lựa chọn",
+      onClick: () => handleScroll("criteria-section"),
     },
     {
-      path: "/blogs",
-      name: "Bài viết",
-    },
-    {
-      path: "/contact",
-      name: "Liên hệ",
-    },
-    {
-      path: "/about-us",
-      name: "Về chúng tôi",
-    },
-    {
-      path: "/track-order",
-      name: "Tra cứu đơn hàng",
+      path: "/",
+      name: "Quy trình đăng ký",
+      onClick: () => handleScroll("procedure-section"),
     },
   ];
 
   return (
-    <nav
-      className="mb:hidden lg:block lg:flex justify-between items-center *:xl:mx-5 *:lg:mx-4 *:font-medium whitespace-nowrap
-         *:capitalize *:relative *:duration-300 *:after:content-[''] *:after:duration-300 *:after:absolute *:after:w-0 *:after:right-1/2 *:after:bottom-[-30%] *:after:h-[2px] *:after:bg-gray-100
-          *:after:rounded-lg *:before:content-[''] *:before:absolute *:before:h-[2px] *:before:right-0 *:before:bg-gray-100  *:before:bottom-[-30%]  *:before:rounded-lg"
-    >
-      {arr?.map((item: { path: string; name: string }) => (
-        <NavLink
-          key={item.path}
-          onClick={ScrollTop}
-          className={({ isActive }) =>
-            isActive
-              ? "opacity-100 before:w-full"
-              : "opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
-          }
-          to={item.path}
+    <nav className="mb:hidden lg:block lg:flex justify-center items-center *:xl:mx-5 *:lg:mx-4 *:font-medium whitespace-nowrap *:capitalize *:relative *:duration-300">
+      {arr?.map((item, index) => (
+        <button
+          key={index}
+          onClick={item.onClick}
+          className="opacity-[0.70] hover:opacity-100 hover:after:w-full hover:after:right-0"
         >
           {item.name}
-        </NavLink>
+        </button>
       ))}
     </nav>
   );

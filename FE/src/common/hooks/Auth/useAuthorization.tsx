@@ -13,7 +13,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
   const [authStatus, setAuthStatus] = useState({
     isAuthorized: false,
     isLoggedIn: false,
-    isLoading: true
+    isLoading: true,
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
-          isLoading: false
+          isLoading: false,
         });
         return;
       }
@@ -35,7 +35,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
-          isLoading: false
+          isLoading: false,
         });
         return;
       }
@@ -49,7 +49,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized,
           isLoggedIn: true,
-          isLoading: false
+          isLoading: false,
         });
       } catch (error) {
         console.error("Lỗi khi phân tích token:", error);
@@ -57,7 +57,7 @@ export const useAuthorization = (requiredRoles: string | string[]) => {
         setAuthStatus({
           isAuthorized: false,
           isLoggedIn: false,
-          isLoading: false
+          isLoading: false,
         });
       }
     };
@@ -85,7 +85,7 @@ export const CheckAuths = ({ roles, children }: any) => {
         subTitle="Vui lòng đăng nhập để tiếp tục hành động"
         extra={
           <Button type="primary">
-            <Link to="/login">Đăng nhập</Link>
+            <Link to="/">Đăng nhập</Link>
           </Button>
         }
       />
@@ -104,8 +104,8 @@ export const CheckAuths = ({ roles, children }: any) => {
             <Link to="/">Trở lại trang chủ</Link>
           </Button>,
           <Button type="primary" key="login">
-            <Link to="/login">Đăng nhập</Link>
-          </Button>
+            <Link to="">Đăng nhập</Link>
+          </Button>,
         ]}
       />
     );

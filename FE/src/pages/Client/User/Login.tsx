@@ -1,13 +1,20 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import useSignIn from "../../../common/hooks/Auth/useSignIn";
-import type { FormProps } from "antd";
 import { Button, Form, Input, Spin } from "antd";
-import { signInSchema } from "../../../common/validations/auth/SignIn";
 import { LoadingOutlined } from "@ant-design/icons";
+import Criteria from "./Criteria";
+import Procedure from "./Procedure";
+import { signInSchema } from "../../../common/validations/auth/SignIn";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [form] = Form.useForm();
+  const location = useLocation();
+
+  const loginRef = useRef<HTMLDivElement | null>(null);
+  const criteriaRef = useRef<HTMLDivElement | null>(null);
+  const procedureRef = useRef<HTMLDivElement | null>(null);
+
   const {
     onSubmit,
     formErrors,
@@ -18,18 +25,32 @@ const Login = () => {
     error,
     status_api,
   } = useSignIn();
-  type FieldType = {
-    email?: string;
-    password?: string;
-  };
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    const email: string = values.email || "";
-    const password: string = values.password || "";
+  useEffect(() => {
+    setFormErrors({}); // Reset form errors on mount
+  }, []);
 
-    const { error } = signInSchema.validate(values, {
-      abortEarly: false,
-    });
+  useEffect(() => {
+    if (location.hash) {
+      const section = location.hash.slice(1); // Get section name
+      const ref =
+        section === "login"
+          ? loginRef
+          : section === "criteria"
+          ? criteriaRef
+          : procedureRef;
+
+      if (ref.current) {
+        ref.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
+
+  const onFinish = (values: { email?: string; password?: string }) => {
+    const email = values.email || "";
+    const password = values.password || "";
+
+    const { error } = signInSchema.validate(values, { abortEarly: false });
     if (error) {
       const errors = error.details.reduce(
         (acc: Record<string, string>, curr) => {
@@ -39,12 +60,12 @@ const Login = () => {
         {}
       );
       setFormErrors(errors);
-      console.log(error);
     } else {
       setFormErrors({});
       onSubmit({ email, password });
     }
   };
+
   const handleForgotPassword = () => {
     navigate("/forgot-password");
   };
@@ -57,74 +78,63 @@ const Login = () => {
     );
   }
 
-  if (isError && error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div>Error: {error.message}</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container flex flex-col mx-auto mt-5 bg-white rounded-lg">
-      <div className="flex justify-center w-full h-full my-auto lg:justify-normal draggable">
-        <div className="flex items-center justify-center w-full ">
-          <div className="flex items-center xl:p-7">
-            <div className="flex flex-col w-full h-full p-6 text-center bg-white border shadow-lg rounded-3xl">
-              <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
-                Đăng nhập
-              </h3>
-              <p className="mb-4 text-gray-600">
-                Nhập email và mật khẩu của bạn
-              </p>
-              <div className="flex items-center mb-3">
-                <hr className="flex-grow border-gray-300" />
-              </div>
-              <Form
-                name="basic"
-                initialValues={{ remember: true }}
-                form={form}
-                onFinish={onFinish}
-                autoComplete="off"
-                layout="vertical"
-                className="space-y-4"
-              >
-                <Form.Item<FieldType>
-                  label="Email"
-                  name="email"
-                  validateStatus={formErrors.email ? "error" : ""}
-                  help={formErrors.email}
-                  className="w-[400px]"
+    <div>
+      <div
+        id="login-section"
+        ref={loginRef}
+        className="container flex flex-col mx-auto h-auto mt-5 bg-white rounded-lg bg-[#DBC5A4]"
+      >
+        <div className="flex justify-center w-full h-auto my-auto lg:justify-normal">
+          <div className="flex ml-[30px] mt-[30px] mb-[30px] w-full">
+            <div className="flex items-center xl:p-7">
+              <div className="flex flex-col w-[400px] h-full p-6 text-center bg-white border shadow-lg rounded-3xl">
+                <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
+                  Đăng nhập
+                </h3>
+                <Form
+                  onFinish={onFinish}
+                  autoComplete="off"
+                  layout="vertical"
+                  className="space-y-4"
                 >
-                  <Input
-                    className="h-[50px]"
-                    onChange={(e) => validateForm("email", e.target.value)}
-                  />
-                </Form.Item>
-
-                <Form.Item<FieldType>
-                  label="Mật khẩu"
-                  name="password"
-                  validateStatus={formErrors.password ? "error" : ""}
-                  help={formErrors.password}
-                >
-                  <Input.Password
-                    className="h-[50px]"
-                    onChange={(e) => validateForm("password", e.target.value)}
-                  />
-                </Form.Item>
-                {status_api && (
-                  <span className="text-red-500">Sai thông tin tài khoản!</span>
-                )}
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="w-[100px] h-[50px]"
+                  <Form.Item
+                    label="Email"
+                    name="email"
+                    validateStatus={formErrors.email ? "error" : ""}
+                    help={formErrors.email}
                   >
-                    Đăng nhập
-                  </Button>
-                </Form.Item>
+                    <Input
+                      className="h-[50px]"
+                      onChange={(e) => validateForm("email", e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Mật khẩu"
+                    name="password"
+                    validateStatus={formErrors.password ? "error" : ""}
+                    help={formErrors.password}
+                  >
+                    <Input.Password
+                      className="h-[50px]"
+                      onChange={(e) => validateForm("password", e.target.value)}
+                    />
+                  </Form.Item>
+                  {status_api && (
+                    <span className="text-red-500">
+                      Sai thông tin tài khoản!
+                    </span>
+                  )}
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="w-[100px] h-[50px]"
+                    >
+                      Đăng nhập
+                    </Button>
+                  </Form.Item>
+                </Form>
                 <p className="text-sm text-gray-600">
                   <span
                     onClick={handleForgotPassword}
@@ -133,21 +143,19 @@ const Login = () => {
                     Quên mật khẩu?
                   </span>
                 </p>
-                <p className="text-sm text-gray-600">
-                  Bạn chưa có tài khoản?{" "}
-                  <Link
-                    to="/login/register"
-                    className="font-bold text-blue-600 hover:underline"
-                  >
-                    Đăng ký tài khoản
-                  </Link>
-                </p>
-              </Form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <hr className="my-10" />
+
+      <div id="criteria-section" ref={criteriaRef}>
+        <Criteria />
+      </div>
+
+      <div id="procedure-section" ref={procedureRef}>
+        <Procedure />
+      </div>
     </div>
   );
 };
