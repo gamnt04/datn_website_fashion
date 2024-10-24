@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
+import { IProduct } from "../../../common/interfaces/Product";
 
 type FieldType = {
   name_voucher: string;
@@ -24,11 +25,14 @@ type FieldType = {
   quantity_voucher: number;
   discountType: string;
   discountValue: number;
+  applyType: string;
+  appliedProducts: string[];
   minimumSpend: number;
   maxDiscount: number;
   allowedUsers: string[];
   startDate: Date;
   expirationDate: Date;
+  limitType: string;
 };
 
 const AddVoucher = () => {
@@ -37,6 +41,11 @@ const AddVoucher = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const nav = useNavigate();
   const [userType, setUserType] = useState<string[]>(["user"]);
+  const [applyType, setApplyType] = useState<string | null>(null);
+  const [discountType, setdiscountType] = useState<string | null>(null);
+  const [limitType, setLimitType] = useState<string | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
@@ -73,6 +82,14 @@ const AddVoucher = () => {
     queryFn: () => instance.get(`/shippers`),
   });
 
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const response = await instance.get(`/products`);
+      return response?.data.data.docs;
+    },
+  });
+
   const generateRandomCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
@@ -88,6 +105,7 @@ const AddVoucher = () => {
     const formData = {
       ...values,
       allowedUsers: selectedUsers,
+      appliedProducts: selectedProducts,
     };
     mutate(formData);
   };
@@ -100,6 +118,16 @@ const AddVoucher = () => {
       setSelectedUsers(value);
     }
   };
+
+  const handleSelectProduct = (value: string[]) => {
+    if (value.includes("all")) {
+      const allProduct = products?.map((product: any) => product._id);
+      setSelectedProducts(allProduct);
+    } else {
+      setSelectedProducts(value);
+    }
+  };
+
   const handleUserTypeChange = (checkedValues: string[]) => {
     setUserType(checkedValues);
     setSelectedUsers([]);
@@ -108,17 +136,23 @@ const AddVoucher = () => {
     userType.length === 0
       ? []
       : userType.includes("user") && userType.includes("shipper")
-      ? [...(auth?.data || []), ...(shippersData?.data || [])]
+      ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
       : userType.includes("user")
       ? auth?.data
-      : shippersData?.data;
+      : shippersData?.data.shippers;
 
-  if (isLoading)
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
+  const onApplyTypeChange = (value: string) => {
+    setApplyType(value);
+  };
+
+  const onLimitTypeChange = (value: string) => {
+    setLimitType(value);
+  };
+  const ondiscountTypeChange = (value: string) => {
+    setdiscountType(value);
+  };
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="mt-20">
@@ -164,98 +198,6 @@ const AddVoucher = () => {
                 </Form.Item>
 
                 <Form.Item
-                  label="Loại mã giảm giá"
-                  name="discountType"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng chọn loại mã giảm giá!",
-                    },
-                  ]}
-                >
-                  <Select className="">
-                    <Select.Option value="percentage">
-                      Giảm giá theo phần trăm (%)
-                    </Select.Option>
-                    <Select.Option value="fixed">
-                      Giảm giá theo số tiền cố định (VND)
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-
-                <Form.Item<FieldType>
-                  label="Điều kiện mã giảm giá"
-                  name="minimumSpend"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập điều kiện mã giảm giá!",
-                    },
-                    {
-                      type: "number",
-                      min: 0,
-                      message: "Số tiền tối thiểu phải lớn hơn 0!",
-                    },
-                  ]}
-                >
-                  <InputNumber className="w-full " />
-                </Form.Item>
-
-                <Form.Item<FieldType>
-                  label="Ngày bắt đầu mã giảm giá"
-                  name="startDate"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập ngày bắt đầu!" },
-                    {
-                      validator: (_, value) => {
-                        if (!value || value.isBefore(new Date())) {
-                          return Promise.reject(
-                            new Error("Ngày bắt đầu không được trong quá khứ!")
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <DatePicker showTime className="w-full " />
-                </Form.Item>
-
-                <Form.Item<FieldType>
-                  label="Ngày kết thúc mã giảm giá"
-                  name="expirationDate"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập ngày kết thúc!" },
-                    {
-                      validator: (_, value) => {
-                        const startDate = form.getFieldValue("startDate");
-                        if (startDate && value && value.isBefore(startDate)) {
-                          return Promise.reject(
-                            new Error(
-                              "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
-                            )
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <DatePicker showTime className="w-full " />
-                </Form.Item>
-
-                <Form.Item<FieldType>
-                  label="Mô tả mã giảm giá"
-                  name="description_voucher"
-                  rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
-                >
-                  <TextArea rows={4} />
-                </Form.Item>
-              </div>
-
-              {/* Cột 2 */}
-              <div className="w-full px-4 md:w-1/2">
-                <Form.Item
                   label="Mã giảm giá"
                   name="code_voucher"
                   rules={[
@@ -286,6 +228,30 @@ const AddVoucher = () => {
                       </Button>
                     }
                   />
+                </Form.Item>
+
+                <Form.Item
+                  label="Loại mã giảm giá"
+                  name="discountType"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn loại mã giảm giá!",
+                    },
+                  ]}
+                >
+                  <Select
+                    value={discountType}
+                    onChange={ondiscountTypeChange}
+                    placeholder="Chọn loại mã giảm giá"
+                  >
+                    <Select.Option value="percentage">
+                      Giảm giá theo phần trăm (%)
+                    </Select.Option>
+                    <Select.Option value="fixed">
+                      Giảm giá theo số tiền cố định (VND)
+                    </Select.Option>
+                  </Select>
                 </Form.Item>
 
                 <Form.Item
@@ -322,38 +288,215 @@ const AddVoucher = () => {
                   <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item<FieldType>
-                  label="Giá trị giảm giá tối đa"
-                  name="maxDiscount"
+                {discountType === "percentage" && (
+                  <Form.Item<FieldType>
+                    label="Giá trị giảm giá tối đa"
+                    name="maxDiscount"
+                    rules={[
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Giảm giá tối đa phải lớn hơn hoặc bằng 0!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      addonAfter={
+                        <div
+                          className="flex items-center justify-center w-12 h-full"
+                          style={{
+                            border: "none",
+                            backgroundColor: "transparent",
+                          }}
+                        >
+                          VND
+                        </div>
+                      }
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                )}
+
+                <Form.Item
+                  label="Áp dụng giảm giá cho"
+                  name="applyType"
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập giảm giá tối đa!",
-                    },
-                    {
-                      type: "number",
-                      min: 1,
-                      message: "Giảm giá tối đa phải lớn hơn 0!",
+                      message: "Vui lòng chọn loại áp dụng!",
                     },
                   ]}
                 >
-                  <InputNumber className="w-full " />
+                  <Select
+                    value={applyType}
+                    onChange={onApplyTypeChange}
+                    placeholder="Chọn loại áp dụng"
+                  >
+                    <Select.Option value="product">Sản phẩm</Select.Option>
+                    <Select.Option value="total">Tổng chi tiêu</Select.Option>
+                  </Select>
                 </Form.Item>
 
+                {/* Hiển thị ô cho thời gian nếu chọn "time" */}
+                {applyType === "product" && (
+                  <Form.Item<FieldType>
+                    label="Sản phẩm giảm giá"
+                    name="appliedProducts"
+                  >
+                    <div className="flex items-center">
+                      <Select
+                        mode="multiple"
+                        style={{
+                          width: "90%",
+                          minHeight: "40px",
+                        }}
+                        placeholder="Sản phẩm "
+                        className="mt-2"
+                        options={[
+                          { value: "all", label: "Chọn tất cả" },
+                          ...(products?.map((product: IProduct) => ({
+                            value: product._id,
+                            label: product.name_product,
+                          })) || []),
+                        ]}
+                        onChange={handleSelectProduct}
+                        value={selectedProducts}
+                        dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
+                        maxTagCount={4}
+                        maxTagPlaceholder={(omittedValues) =>
+                          `+${omittedValues.length} khác`
+                        }
+                        allowClear
+                      />
+                      <span className="ml-2 text-gray-600">
+                        Đã chọn: {selectedProducts.length}
+                      </span>
+                    </div>
+                  </Form.Item>
+                )}
+
+                {/* Hiển thị ô số lượng nếu chọn "quantity" */}
+                {applyType === "total" && (
+                  <Form.Item<FieldType>
+                    label="Số tiền đơn hàng tối thiểu"
+                    name="minimumSpend"
+                    rules={[
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Số tiền tối thiểu phải lớn hơn hoặc bằng 0!",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      addonAfter={
+                        <div
+                          className="flex items-center justify-center w-12 h-full"
+                          style={{
+                            border: "none",
+                            backgroundColor: "transparent",
+                          }}
+                        >
+                          VND
+                        </div>
+                      }
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                )}
+              </div>
+
+              {/* Cột 2 */}
+              <div className="w-full px-4 md:w-1/2">
                 <Form.Item<FieldType>
-                  label="Số lượng mã giảm giá"
-                  name="quantity_voucher"
-                  rules={[
-                    { required: true, message: "Vui lòng nhập số lượng!" },
-                    {
-                      type: "number",
-                      min: 1,
-                      message: "Số lượng phải lớn hơn 0!",
-                    },
-                  ]}
+                  label="Mô tả mã giảm giá"
+                  name="description_voucher"
+                  rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
                 >
-                  <InputNumber className="w-full " />
+                  <TextArea rows={4} />
                 </Form.Item>
+                <Form.Item label="Giới hạn mã giảm giá" name="limitType">
+                  <Select
+                    value={limitType}
+                    onChange={onLimitTypeChange}
+                    placeholder="Chọn giới hạn"
+                  >
+                    <Select.Option>Không có</Select.Option>
+                    <Select.Option value="time">Theo thời gian</Select.Option>
+                    <Select.Option value="quantity">
+                      Theo số lượng
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+
+                {/* Hiển thị ô cho thời gian nếu chọn "time" */}
+                {limitType === "time" && (
+                  <div>
+                    <Form.Item<FieldType>
+                      label="Ngày bắt đầu"
+                      name="startDate"
+                      rules={[
+                        {
+                          validator: (_, value) => {
+                            if (!value || value.isBefore(new Date())) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày bắt đầu không được trong quá khứ!"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker showTime className="w-full " />
+                    </Form.Item>
+
+                    <Form.Item<FieldType>
+                      label="Ngày kết thúc"
+                      name="expirationDate"
+                      rules={[
+                        {
+                          validator: (_, value) => {
+                            const startDate = form.getFieldValue("startDate");
+                            if (
+                              startDate &&
+                              value &&
+                              value.isBefore(startDate)
+                            ) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker showTime className="w-full " />
+                    </Form.Item>
+                  </div>
+                )}
+
+                {/* Hiển thị ô số lượng nếu chọn "quantity" */}
+                {limitType === "quantity" && (
+                  <Form.Item<FieldType>
+                    label="Số lượng mã giảm giá"
+                    name="quantity_voucher"
+                    rules={[
+                      {
+                        type: "number",
+                        min: 1,
+                        message: "Số lượng phải lớn hơn 0!",
+                      },
+                    ]}
+                  >
+                    <InputNumber className="w-full " />
+                  </Form.Item>
+                )}
 
                 <Form.Item label="Chọn loại người dùng">
                   <Checkbox.Group
