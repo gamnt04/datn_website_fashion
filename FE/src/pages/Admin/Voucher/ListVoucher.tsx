@@ -63,6 +63,7 @@ const ListVoucher = () => {
     },
   });
   const formatDate = (dateString: any) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
