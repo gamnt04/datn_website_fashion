@@ -41,7 +41,7 @@ export default function Sidebar_Dashboard() {
           </div>
           <div className="*:px-2">
             <Link
-              to={`/admin/DailyOrderSummary`}
+              to={`/admin/TotalOrders`}
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
               <span className=" text-[#c4cee3]">Tổng số đơn shipper</span>
