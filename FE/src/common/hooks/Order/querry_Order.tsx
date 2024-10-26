@@ -8,11 +8,11 @@ import {
   getOrderOfDay,
   getOrderOfMonth,
   getOrderOfWeek,
-  getTop10ProductSale
+  getTop10ProductSale,
 } from "../../../services/orderProduct";
 import {
   GetNew10OrderInDay,
-  GetOrderBuyNumberOrNumberPhone
+  GetOrderBuyNumberOrNumberPhone,
 } from "../../../_lib/Orders/order";
 
 export function List_One_Order_User(userId: string) {
@@ -20,7 +20,7 @@ export function List_One_Order_User(userId: string) {
     queryKey: ["Order_key", userId],
     queryFn: async () => {
       return await getOneOrderUser(userId);
-    }
+    },
   });
 
   return { data, ...rest };
@@ -42,7 +42,7 @@ export const Query_Orders = (
       return id
         ? getOrderById(id)
         : get_order_client(page, status, role, userId);
-    }
+    },
     // Optional: Cấu hình thêm nếu cần
   });
 
@@ -59,7 +59,7 @@ export const useOrdersOfDay = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -72,7 +72,7 @@ export const useOrdersOfWeek = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -85,7 +85,7 @@ export const useOrdersByDayOfWeek = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -98,7 +98,7 @@ export const useOrdersOfMonth = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -111,7 +111,7 @@ export const useOrdersByMonthOfYear = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -124,7 +124,7 @@ export const useTop10ProductBestSale = () => {
       } catch (error) {
         throw new Error((error as any).message);
       }
-    }
+    },
   });
   return { data, ...rest };
 };
@@ -132,14 +132,14 @@ export const useSearchOrdersByNumberOrNumberPhone = (searchOrder: string) => {
   const { data, ...rest } = useQuery({
     queryKey: ["Search_Order", searchOrder],
     queryFn: () => GetOrderBuyNumberOrNumberPhone(searchOrder),
-    enabled: !!searchOrder
+    enabled: !!searchOrder,
   });
   return { data, ...rest };
 };
 export const use10NewOrderInDay = () => {
   const { data, ...rest } = useQuery({
     queryKey: ["NewOrderInDay"],
-    queryFn: () => GetNew10OrderInDay()
+    queryFn: () => GetNew10OrderInDay(),
   });
   return { data, ...rest };
 };

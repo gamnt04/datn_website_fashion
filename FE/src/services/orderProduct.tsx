@@ -1,23 +1,15 @@
 import instance from "../configs/axios";
 import { toast } from "react-toastify";
-const baseUri = "http://localhost:2004/api/v1/orders";
+const baseUri = "http://localhost:2024/api/v1/orders";
 
-// export const GetAllOrder = async (page: number, status: string = "") => {
-//   try {
-//     const { data } = await instance.get(`/orders?page=${page}&status=${status}`);
-//     console.log(data);
-
-//     return data;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 export async function get_order_client(
   page?: number,
-  status?: string,
-  role?: any,
-  userId?: any
+  status?: number,
+  role?: string,
+  userId?: string
 ) {
+  console.log(status);
+
   try {
     let uri = baseUri;
     const params = [];
@@ -41,14 +33,23 @@ export async function get_order_client(
     });
 
     if (!res.ok) {
-      console.warn("Kiem tra lai server hoac internet !");
+      console.warn("Kiểm tra lại server hoặc kết nối internet!");
+      return; // Dừng xử lý nếu phản hồi không thành công
     }
-    const { data, totalDocs, totalPages } = await res.json();
-    return { data: data.docs, totalDocs, totalPages };
+
+    const jsonResponse = await res.json();
+    if (jsonResponse && jsonResponse.data && jsonResponse.data.docs) {
+      const { data, totalDocs, totalPages } = jsonResponse;
+      return { data: data.docs, totalDocs, totalPages };
+    } else {
+      console.error("Phản hồi từ API không hợp lệ hoặc không có dữ liệu!");
+      return { data: [], totalDocs: 0, totalPages: 0 }; // Trả về giá trị mặc định để tránh lỗi undefined
+    }
   } catch (error) {
-    console.log(error || "Loi server!");
+    console.error("Lỗi server:", error);
   }
 }
+
 export const getOrderById = async (id: string) => {
   try {
     const { data } = await instance.get(`/orders/${id}`);

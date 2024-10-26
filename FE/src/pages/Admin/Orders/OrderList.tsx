@@ -11,8 +11,12 @@ const OrderList = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchOrder, setSearchOrder] = useState("");
-  const { data: searchData } =
-    useSearchOrdersByNumberOrNumberPhone(searchOrder);
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const idUser = user?.user?._id;
+  const { data: searchData } = useSearchOrdersByNumberOrNumberPhone(
+    searchOrder,
+    idUser
+  );
   const { data, isLoading, totalPages } = Query_Orders(
     undefined,
     currentPage,
@@ -48,11 +52,10 @@ const OrderList = () => {
               placeholder="Lọc trạng thái"
             >
               <Option value="">Lọc trạng thái</Option>
-              <Option value="1">Chờ xác nhận</Option>
-              <Option value="2">Đang chuẩn bị hàng</Option>
               <Option value="3">Đang vận chuyển</Option>
-              <Option value="4">Đã giao hàng</Option>
-              <Option value="5">Đã hủy</Option>
+              <Option value="4">Giao hàng thành công</Option>
+              <Option value="5">Giao thất bại</Option>
+              <Option value="6">Hoàn thành</Option>
             </Select>
           </div>
           <div className="flex space-x-5">

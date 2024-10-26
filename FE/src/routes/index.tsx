@@ -28,7 +28,7 @@ import VerifyEmail from "../systems/utils/VerifyEmail";
 import ChangePassword from "../pages/Client/User/ChangePassword";
 import InforShipper from "../pages/Client/User/InforShipper";
 import { Navigate } from "react-router-dom";
-import TotalOrders from "../pages/Admin/Orders/TotalOrders";
+import Salary from "../pages/Admin/Shipper/Salary";
 const RouterComponent = () => {
   const isLoggedIn = () => {
     return localStorage.getItem("token") !== null;
@@ -39,7 +39,6 @@ const RouterComponent = () => {
         <Routes>
           <Route path="/" element={<ClientLayout />}>
             {/* Nếu đã đăng nhập, chuyển hướng đến trang orders */}
-
             <Route index element={<Login />} />
 
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -50,7 +49,6 @@ const RouterComponent = () => {
             <Route path="orders" element={<OrderList />} />
             <Route path="orders/:id/orderDetali" element={<OrdersDetali />} />
             <Route path="changePassword" element={<ChangePassword />} />
-            <Route path="TotalOrders" element={<TotalOrders />} />
           </Route>
         </Routes>
       </Router>

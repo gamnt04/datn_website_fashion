@@ -14,6 +14,8 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     key: order._id,
     ...order,
   }));
+  console.log(dataSort);
+
   const createFilters = (order: IOrder[]) => {
     return order
       .map((order: IOrder) => order.orderNumber)
@@ -94,7 +96,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
             ) : order?.status == 3 ? (
               <p className="text-blue-500">Đang vận chuyển</p>
             ) : order?.status == 6 ? (
-              <p className="text-green-600">Đã giao hàng</p>
+              <p className="text-green-600">Hoàn thành</p>
             ) : order?.status == 4 ? (
               <p className="text-green-600">Giao hàng thành công</p>
             ) : order?.status == 5 ? (
