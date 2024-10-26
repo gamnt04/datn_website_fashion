@@ -24,6 +24,8 @@ const useSearchOrderByNumber = () => {
       const response = await instance.get(
         `/orders/FilterNumber/${orderNumber}`
       );
+      console.log(response);
+
       setOrder(response.data.order);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {

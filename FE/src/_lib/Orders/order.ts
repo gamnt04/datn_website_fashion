@@ -15,6 +15,7 @@ export async function list_order(dataClient: any) {
 export const GetOrderBuyNumberOrNumberPhone = async (searchOrder: string) => {
   try {
     const { data } = await instance.post("/orders/search", { searchOrder });
+
     return data;
   } catch (error) {
     console.log(error);

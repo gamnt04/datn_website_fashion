@@ -17,6 +17,7 @@ import Route_Shipper from "./routers/shipper";
 import { Server } from "socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
+import Route_Salary from "./routers/salary";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use("/api/v1", Router_Contact);
 app.use("/api/v1", Routes_payments);
 
 app.use("/api/v1", Route_Shipper);
+app.use("/api/v1", Route_Salary);
 
 // Định nghĩa một số route khác
 app.get("/profile/allorder", (req, res) => {

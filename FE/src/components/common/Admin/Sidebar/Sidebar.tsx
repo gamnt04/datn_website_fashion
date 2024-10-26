@@ -13,6 +13,7 @@ import { useState } from "react";
 import logo from "../../../../assets/Images/Logo/logo white.png";
 import { Link, NavLink } from "react-router-dom";
 import DailyOrderSummary from "../../../../pages/Admin/Orders/DailyOrderSummary ";
+import { MdAccessAlarm } from "react-icons/md";
 
 export default function Sidebar_Dashboard() {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -37,6 +38,15 @@ export default function Sidebar_Dashboard() {
             >
               <Box />
               <span className=" text-[#c4cee3]">Đơn Hàng</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
+              to={`/courier/orders`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <MdAccessAlarm className="text-2xl" />
+              <span className=" text-[#c4cee3]">Thống kê</span>
             </Link>
           </div>
           <div className="*:px-2">

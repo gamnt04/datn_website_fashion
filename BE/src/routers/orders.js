@@ -51,7 +51,7 @@ router.post("/orders/shipper/:id", addShipperOrder);
 router.post("/orders/:id/cancel/confirm", adminCancelOrder);
 router.post("/orders/:id/cancel", userCancelOrder);
 router.post("/orderspayment", createOrderPayment);
-router.post("/orders/search", getOrderByNumberOrPhoneNumber);
+router.post("/orders/search/:id", getOrderByNumberOrPhoneNumber);
 router.post("/deliver-success", deliverSuccess);
 router.post("/orders/:id/fail-delivery", adminFailDelivery);
 router.post("/orders/shipper/:id", addShipperOrder);
