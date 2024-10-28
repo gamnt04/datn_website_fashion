@@ -42,6 +42,7 @@ export const chatBot = async (req, res) => {
 
     try {
         const foundKeyword = Object.keys(responses).find(keyword => userMessage.includes(keyword));
+        console.log(foundKeyword);
 
         if (foundKeyword) {
             res.status(200).json({ reply: responses[foundKeyword] });
