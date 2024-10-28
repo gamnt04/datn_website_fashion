@@ -15,6 +15,7 @@ const Chat_bot = () => {
         setMessages(newMessages);
         setUserMessage('');
         setIsTyping(true);
+
         try {
             const response = await axios.post('http://localhost:2004/api/v1/chat_Bot', {
                 message: userMessage
@@ -24,21 +25,19 @@ const Chat_bot = () => {
             if (response.status === 200 && response.data.reply) {
                 setMessages([...newMessages, { sender: 'bot', text: response.data.reply }]);
             } else {
-                setMessages([...newMessages, { sender: 'bot', text: "Sorry, I didn't get a valid response." }]);
+                setMessages([...newMessages, { sender: 'bot', text: "Xin lỗi, không nhận được phản hồi hợp lệ." }]);
             }
         } catch (error) {
             setIsTyping(false);
-            console.error('Error sending message:', error);
-            setMessages([...newMessages, { sender: 'bot', text: 'There was an error processing your request. Please try again later.' }]);
+            console.error('Lỗi khi gửi tin nhắn:', error);
+            setMessages([...newMessages, { sender: 'bot', text: 'Có lỗi xảy ra khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.' }]);
         }
     };
-
     return (
         <>
             {isVisible && (
                 <div className="fixed bottom-5 right-5 z-50">
                     <div className="w-[350px] max-w-md bg-white shadow-2xl rounded-[20px] flex flex-col h-[500px] border border-gray-300">
-                        {/* Header */}
                         <div className="relative flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white h-14 rounded-t-[20px] px-4">
                             <div className="flex items-center">
                                 <img src="https://picsum.photos/40/40" className='rounded-full mr-2' alt="Bot Avatar" />
@@ -52,21 +51,27 @@ const Chat_bot = () => {
                             </div>
                         </div>
 
-                        {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
                             {messages.map((message, index) => (
                                 <div
                                     key={index}
                                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div
-                                        className={`px-4 py-2 rounded max-w-xs ${message.sender === 'user'
-                                            ? 'bg-blue-500 text-white self-end'
-                                            : 'bg-gray-200 text-black self-start'
-                                            }`}
-                                    >
-                                        {message.text}
-                                    </div>
+                                    {message.sender === 'bot' && /<\/?[a-z][\s\S]*>/i.test(message.text) ? (
+                                        <div
+                                            className="px-4 py-2 rounded max-w-xs bg-gray-200 text-black"
+                                            dangerouslySetInnerHTML={{ __html: message.text }}
+                                        />
+                                    ) : (
+                                        <div
+                                            className={`px-4 py-2 rounded max-w-xs ${message.sender === 'user'
+                                                ? 'bg-blue-500 text-white self-end'
+                                                : 'bg-gray-200 text-black self-start'
+                                                }`}
+                                        >
+                                            {message.text}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                             {isTyping && (
@@ -78,7 +83,6 @@ const Chat_bot = () => {
                             )}
                         </div>
 
-                        {/* Input */}
                         <div className="pb-4 px-4">
                             <div className='flex items-center gap-4'>
                                 <input
