@@ -8,7 +8,89 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../../models/Auth/users";
 import Order from "../../models/Orders/orders";
+import moment from "moment";
+import { log } from "console";
+import MonthlySummary from "../../models/Orders/month";
+import Salary from "../../models/Shipper/salary";
 dotenv.config();
+
+export const calculateSalaryForMonth = async (req, res) => {
+  const { userId } = req.params; // Lấy userId từ thông tin người dùng
+
+  try {
+    // Lấy thông tin tổng khoảng cách và số đơn hàng từ MonthlySummary
+    const month = moment().format("YYYY-MM");
+    const summary = await MonthlySummary.findOne({ shipperId: userId, month });
+
+    if (!summary) {
+      return res
+        .status(404)
+        .json({ message: "Không có thông tin lương cho tháng này." });
+    }
+
+    // Lấy tổng khoảng cách và tổng số đơn hàng
+    const { totalDistance, totalOrders } = summary;
+    const ratePerKm = 15000; // Tỷ lệ lương theo km
+    const totalSalary = totalDistance * ratePerKm; // Tính lương theo tổng khoảng cách
+    let monthlyBonus = 0;
+
+    // Tính thưởng tháng nếu tổng khoảng cách đạt yêu cầu
+    if (totalDistance >= 150) {
+      monthlyBonus = 500000; // Ví dụ: thưởng 500.000 VND nếu giao đủ 250km
+    }
+
+    const totalPayment = totalSalary + monthlyBonus; // Tính tổng lương cuối cùng
+
+    // Định dạng số tiền với làm tròn
+    const formatCurrency = (amount) => {
+      const roundedAmount = Math.round(amount); // Làm tròn số tiền
+      return (
+        Math.floor(roundedAmount / 1000).toString() +
+        "." +
+        (roundedAmount % 1000).toString().padStart(3, "0")
+      );
+    };
+
+    // Lưu thông tin lương vào cơ sở dữ liệu
+    let salaryRecord = await Salary.findOne({ shipperId: userId, month });
+    if (!salaryRecord) {
+      salaryRecord = new Salary({
+        shipperId: userId,
+        month,
+        totalDistance,
+        totalOrders,
+        ratePerKm,
+        totalSalary,
+        monthlyBonus,
+        totalPayment,
+      });
+    } else {
+      salaryRecord.totalDistance = totalDistance; // Cập nhật tổng khoảng cách
+      salaryRecord.totalOrders = totalOrders; // Cập nhật tổng số đơn hàng
+      salaryRecord.totalSalary = totalSalary; // Cập nhật tổng lương
+      salaryRecord.monthlyBonus = monthlyBonus; // Cập nhật tổng thưởng
+      salaryRecord.totalPayment = totalPayment; // Cập nhật tổng lương cuối cùng
+    }
+
+    await salaryRecord.save(); // Lưu hoặc cập nhật bản ghi lương
+
+    return res.status(200).json({
+      message: "Tính lương thành công!",
+      salaryData: {
+        totalDistance,
+        totalOrders,
+        totalSalary: formatCurrency(totalSalary), // Định dạng tổng lương
+        monthlyBonus: formatCurrency(monthlyBonus), // Định dạng thưởng tháng
+        totalPayment: formatCurrency(totalPayment), // Định dạng tổng lương cuối cùng
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi khi tính lương",
+      error: error.message,
+    });
+  }
+};
 
 const sendEmail = async (fullName, email, token) => {
   const transporter = nodemailer.createTransport({
@@ -139,12 +221,17 @@ export const updateShipper = async (req, res) => {
       avatar,
       address,
       birthDate,
+      bankAccountNumber,
+      bankAccountName,
     } = req.body;
 
+    // Kiểm tra xem email đã tồn tại hay chưa
     const findEmailUser = await User.findOne({ email });
     if (findEmailUser) {
       return res.status(400).json({ message: "Email đã tồn tại" });
     }
+
+    // Cập nhật thông tin shipper
     const updatedShipper = await Shipper.findByIdAndUpdate(
       id,
       {
@@ -157,10 +244,15 @@ export const updateShipper = async (req, res) => {
         avatar,
         address,
         birthDate,
+        bankAccountNumber, // Cập nhật STK
+        bankAccountName, // Cập nhật tên tài khoản ngân hàng
       },
       { new: true } // Trả về dữ liệu mới sau khi cập nhật
     );
+
     console.log(req.body);
+
+    // Kiểm tra xem shipper có được cập nhật hay không
     if (!updatedShipper) {
       return res.status(404).json({ message: "Không tìm thấy shipper" });
     }

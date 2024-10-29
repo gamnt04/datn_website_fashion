@@ -11,6 +11,8 @@ import * as turf from "@turf/turf";
 
 // Middleware xác thực
 import jwt from "jsonwebtoken";
+import { DailyOrderStats } from "../../models/Orders/daily";
+import MonthlySummary from "../../models/Orders/month";
 
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
@@ -455,10 +457,10 @@ export const getOrderById = async (req, res) => {
 
     const distance = calculateDistance(warehouseCoords, customerCoords);
 
-    return res.status(StatusCodes.OK).json({
-      ...order.toObject(),
-      deliveryDistance: distance.toFixed(2) + " km",
-    });
+    order.deliveryDistance = distance.toFixed(2) + " km";
+    await order.save();
+
+    return res.status(StatusCodes.OK).json(order.toObject());
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -1069,3 +1071,175 @@ export const getDailyOrderCountByShipper = async (req, res) => {
       .json({ message: "Lỗi khi lấy thông tin shipper", error });
   }
 };
+
+export async function get_orders_daily(req, res) {
+  const {
+    _page = 1,
+    _limit = 7,
+    _sort = "",
+    _search = "",
+    _status = "",
+  } = req.query;
+
+  const options = {
+    page: _page,
+    limit: _limit,
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 },
+  };
+  const { role, userId } = req.user;
+
+  let query = {};
+
+  if (role === "courier") {
+    query.shipperId = userId;
+  }
+
+  if (_search) {
+    query._id = { $regex: _search, $options: "i" };
+  }
+
+  if (_status) {
+    query.status = _status;
+  }
+
+  try {
+    const data = await Order.paginate(query, options);
+
+    if (!data || data.docs.length < 1) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không có dữ liệu!",
+      });
+    }
+
+    const ordersByDate = data.docs.reduce((acc, order) => {
+      const date = order.deliveredAt?.toISOString().split("T")[0];
+
+      if (!acc[date]) {
+        acc[date] = { totalDistance: 0, orderCount: 0 };
+      }
+
+      if (order.deliveryDistance) {
+        acc[date].totalDistance += parseFloat(
+          order.deliveryDistance.replace(" km", "")
+        );
+      }
+
+      acc[date].orderCount += 1;
+      return acc;
+    }, {});
+
+    // Lưu dữ liệu vào bảng DailyOrderStats
+    for (const [date, stats] of Object.entries(ordersByDate)) {
+      await DailyOrderStats.findOneAndUpdate(
+        { date, shipperId: userId },
+        {
+          date,
+          shipperId: userId,
+          totalDistance: stats.totalDistance,
+          orderCount: stats.orderCount,
+        },
+        { upsert: true, new: true } // Nếu không tìm thấy thì tạo mới
+      );
+    }
+
+    return res.status(StatusCodes.OK).json({
+      message: "Hoàn thành!",
+      dailyStats: ordersByDate,
+    });
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Lỗi server!",
+    });
+  }
+}
+
+export async function get_orders_month(req, res) {
+  const {
+    _page = 1,
+    _limit = 7,
+    _sort = "",
+    _search = "",
+    _status = "",
+  } = req.query;
+
+  const options = {
+    page: _page,
+    limit: _limit,
+    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 },
+  };
+  const { role, userId } = req.user;
+
+  let orders;
+  const query = {};
+
+  if (role === "courier") {
+    query.shipperId = userId;
+  }
+
+  if (_search) {
+    query._id = { $regex: _search, $options: "i" };
+  }
+
+  if (_status) {
+    query.status = _status;
+  }
+
+  try {
+    const data = await Order.paginate(query, options);
+
+    if (!data || data.docs.length < 1) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không có dữ liệu!",
+      });
+    }
+
+    // Tính toán tổng khoảng cách và tổng số đơn hàng
+    let totalDistance = 0;
+    let totalOrders = data.docs.length; // Tổng số đơn hàng
+
+    for (const order of data.docs) {
+      if (order.deliveryDistance) {
+        // Chuyển đổi giá trị khoảng cách về dạng số
+        const distance = parseFloat(order.deliveryDistance);
+        if (!isNaN(distance)) {
+          totalDistance += distance; // Cộng dồn khoảng cách
+        }
+      }
+    }
+
+    // Tính toán tháng hiện tại
+    const month = moment().format("YYYY-MM");
+
+    // Kiểm tra xem đã có bản ghi cho tháng này chưa
+    let summary = await MonthlySummary.findOne({ shipperId: userId, month });
+
+    if (!summary) {
+      // Nếu chưa có, tạo mới
+      summary = new MonthlySummary({
+        shipperId: userId,
+        month,
+        totalDistance, // Lưu trực tiếp giá trị số
+        totalOrders,
+      });
+    } else {
+      // Cập nhật bản ghi nếu đã có
+      summary.totalDistance += totalDistance; // Cộng dồn khoảng cách
+      summary.totalOrders += totalOrders; // Cộng dồn số đơn hàng
+    }
+
+    await summary.save(); // Lưu bản ghi
+
+    return res.status(StatusCodes.OK).json({
+      message: "Hoàn thành!",
+      data,
+      totalDocs: data.totalDocs,
+      totalPages: data.totalPages,
+      totalDistance: `${totalDistance.toFixed(2)} km`, // Tổng khoảng cách
+      totalOrders: totalOrders, // Tổng số đơn hàng
+    });
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message || "Lỗi server!",
+    });
+  }
+}

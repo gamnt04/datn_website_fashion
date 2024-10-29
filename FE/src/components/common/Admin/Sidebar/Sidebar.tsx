@@ -14,6 +14,8 @@ import logo from "../../../../assets/Images/Logo/logo white.png";
 import { Link, NavLink } from "react-router-dom";
 import DailyOrderSummary from "../../../../pages/Admin/Orders/DailyOrderSummary ";
 import { MdAccessAlarm } from "react-icons/md";
+import { AiFillDollarCircle } from "react-icons/ai";
+import { IoIosStats } from "react-icons/io";
 
 export default function Sidebar_Dashboard() {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -42,19 +44,29 @@ export default function Sidebar_Dashboard() {
           </div>
           <div className="*:px-2">
             <Link
-              to={`/courier/orders`}
+              to={`/courier/orders_history`}
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
               <MdAccessAlarm className="text-2xl" />
-              <span className=" text-[#c4cee3]">Thống kê</span>
+              <span className=" text-[#c4cee3]">Lịch sử giao hàng</span>
             </Link>
           </div>
           <div className="*:px-2">
             <Link
-              to={`/admin/DailyOrderSummary`}
+              to={`/courier/salary_shipper`}
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
-              <span className=" text-[#c4cee3]">Tổng số đơn shipper</span>
+              <AiFillDollarCircle className="text-2xl" />
+              <span className=" text-[#c4cee3]">Lương</span>
+            </Link>
+          </div>
+          <div className="*:px-2">
+            <Link
+              to={`/courier/salary_shipper`}
+              className="flex items-center w-full py-3 text-left gap-x-4"
+            >
+              <IoIosStats className="text-2xl" />
+              <span className=" text-[#c4cee3]">Thống kê đơn hàng</span>
             </Link>
           </div>
         </div>
