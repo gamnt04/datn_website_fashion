@@ -40,6 +40,8 @@ const Infor = ({ onFinish, data, togglePopup }: any) => {
           number_citizen: data?.number_citizen || "",
           vehicle: data?.vehicle || "",
           email: data?.email || "",
+          bankAccountNumber: data?.bankAccountNumber || "",
+          bankAccountName: data?.bankAccountName || "",
         }}
         onValuesChange={onValuesChange}
       >
@@ -61,6 +63,14 @@ const Infor = ({ onFinish, data, togglePopup }: any) => {
 
         <Form.Item name="vehicle" label="Phương tiện di chuyển">
           <Input className="h-[50px]" />
+        </Form.Item>
+
+        <Form.Item name="bankAccountName" label="Tên ngân hàng nhận lương">
+          <Input className="h-[50px]" disabled />
+        </Form.Item>
+
+        <Form.Item name="bankAccountNumber" label="Số tài khoản ngân hàng">
+          <Input className="h-[50px]" disabled />
         </Form.Item>
 
         <Form.Item>

@@ -21,7 +21,9 @@ const InforShipper = () => {
       data.number_citizen &&
       data.phone &&
       data.vehicle &&
-      data.address
+      data.address &&
+      data.bankAccountNumber &&
+      data.bankAccountName
     ) {
       navigate("/courier/orders");
     }
@@ -34,6 +36,8 @@ const InforShipper = () => {
     phone?: string;
     vehicle?: string;
     address?: string;
+    bankAccountNumber?: string;
+    bankAccountName?: string;
   };
 
   const mutation = useMutation({
@@ -69,6 +73,7 @@ const InforShipper = () => {
                 <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                   Thông tin shipper
                 </h3>
+
                 {isLoading ? (
                   <Spin />
                 ) : (
@@ -85,6 +90,8 @@ const InforShipper = () => {
                       number_citizen: data?.number_citizen || "",
                       vehicle: data?.vehicle || "",
                       email: data?.email || "",
+                      bankAccountNumber: data?.bankAccountNumber || "",
+                      bankAccountName: data?.bankAccountName || "",
                     }}
                   >
                     <Form.Item<FieldType>
@@ -130,6 +137,26 @@ const InforShipper = () => {
                     <Form.Item
                       name="vehicle"
                       label="Phương tiện di chuyển"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập thông tin!" },
+                      ]}
+                    >
+                      <Input className="h-[50px]" />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="bankAccountName"
+                      label="Tên ngân hàng nhận lương(Kèm tên tài khoản)"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập thông tin!" },
+                      ]}
+                    >
+                      <Input className="h-[50px]" />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="bankAccountNumber"
+                      label="Số tài khoản ngân hàng"
                       rules={[
                         { required: true, message: "Vui lòng nhập thông tin!" },
                       ]}

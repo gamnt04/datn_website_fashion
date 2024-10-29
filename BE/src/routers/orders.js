@@ -22,6 +22,8 @@ import {
   addShipperOrder,
   adminFailDelivery,
   getOrdersByPhone,
+  get_orders_daily,
+  get_orders_month,
   getTotalOrdersByRole,
   fetchOrderSuccessFailureStats,
   fetchOrdersThisMonth,
@@ -81,5 +83,7 @@ router.post("/orders/shipper/:id", addShipperOrder);
 // ---
 router.get("/list_order/:id_user", list_items_order_by_user);
 router.get("/orders_phone", getOrdersByPhone);
+router.get("/orders_daily", checkRole(["admin", "courier"]), get_orders_daily);
+router.get("/orders_month", checkRole(["admin", "courier"]), get_orders_month);
 
 export default router;

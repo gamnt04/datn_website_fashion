@@ -37,13 +37,19 @@ const OrderList = () => {
     setCurrentPage(page);
   };
 
+  console.log(dataSource);
+
+  const filteredDataSource =
+    dataSource?.filter((order) => order.status === "3") || [];
+  console.log(filteredDataSource);
+
   return (
     <div>
       <div className="mx-6">
         <div className="flex items-center justify-between mt-20 mb-5">
           <h1 className="text-2xl font-semibold">Quản Lý Đơn Hàng</h1>
         </div>
-        <div className="mb-2 flex justify-between">
+        {/* <div className="mb-2 flex justify-between">
           <div className="space-x-5">
             <Select
               value={statusFilter}
@@ -69,10 +75,16 @@ const OrderList = () => {
               Tìm kiếm
             </Button>
           </div>
-        </div>
-
-        <OrderTable
+        </div> */}
+        {/* <OrderTable
           orders={dataSource}
+          isLoading={isLoading}
+          currentPage={currentPage}
+          goToPage={goToPage}
+          totalPages={totalPages}
+        /> */}
+        <OrderTable
+          orders={filteredDataSource}
           isLoading={isLoading}
           currentPage={currentPage}
           goToPage={goToPage}
