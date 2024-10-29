@@ -1112,3 +1112,206 @@ export const getTotalOrdersByRole = async (req, res) => {
     return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
+export const fetchOrdersToday = async (req, res) => {
+  const user = req.user;
+
+  // Kiểm tra quyền truy cập
+  if (user.role !== "courier") {
+    return res.status(403).json({ message: "Không có quyền truy cập" });
+  }
+
+  try {
+    const targetDate = new Date();
+    const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
+
+    // Lấy danh sách đơn hàng
+    const orders = await Order.find({
+      shipperId: user.userId,
+      status: { $in: [5, 6] }, // Chỉ lấy trạng thái giao hàng thành công (6) hoặc thất bại (5)
+      deliveredAt: { $gte: startOfDay, $lte: endOfDay },
+    })
+      .select("quantity status deliveredAt") // Không chọn customerInfo ở đây
+      .populate("customerInfo", "userName orderName"); // Populate để lấy tên người mua hàng
+
+    return res.status(200).json({
+      message: "Danh sách đơn hàng theo ngày của shipper",
+      date: targetDate.toISOString().split("T")[0],
+      totalOrders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
+
+export const fetchOrdersThisWeek = async (req, res) => {
+  const user = req.user; // Người dùng đã đăng nhập
+
+  // Kiểm tra xem người dùng có vai trò shipper không
+  if (user.role !== "courier") {
+    return res.status(403).json({ message: "Không có quyền truy cập" });
+  }
+
+  try {
+    // Lấy ngày hiện tại
+    const today = new Date();
+
+    // Tính toán ngày bắt đầu tuần (Thứ Hai)
+    const firstDayOfWeek = new Date(today);
+    const dayOfWeek = today.getDay(); // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
+    const daysToSubtract = (dayOfWeek + 6) % 7; // Số ngày cần trừ để đến Thứ Hai
+    firstDayOfWeek.setDate(today.getDate() - daysToSubtract); // Ngày đầu tuần (Thứ Hai)
+    firstDayOfWeek.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
+
+    // Tính toán ngày cuối tuần (Chủ Nhật)
+    const lastDayOfWeek = new Date(firstDayOfWeek);
+    lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6); // Ngày cuối tuần (Chủ Nhật)
+    lastDayOfWeek.setHours(23, 59, 59, 999); // Đặt giờ về 23:59:59
+
+    // Mảng để lưu số lượng đơn hàng cho mỗi ngày trong tuần
+    const ordersPerDay = [];
+
+    // Lặp qua từng ngày trong tuần để tính số lượng đơn hàng
+    for (let i = 0; i < 7; i++) {
+      const dayStart = new Date(firstDayOfWeek);
+      dayStart.setDate(firstDayOfWeek.getDate() + i);
+      dayStart.setHours(0, 0, 0, 0);
+
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      // Đếm số lượng đơn hàng trong ngày
+      const dailyOrdersCount = await Order.countDocuments({
+        shipperId: user.userId, // ID của shipper từ phiên đăng nhập
+        status: { $in: [5, 6] }, // Trạng thái thành công (6) và thất bại (5)
+        deliveredAt: { $gte: dayStart, $lte: dayEnd }, // Kiểm tra thời gian giao hàng trong ngày
+      });
+
+      // Thêm số lượng đơn hàng trong ngày vào mảng
+      ordersPerDay.push(dailyOrdersCount);
+    }
+
+    // Tính tổng số đơn hàng trong tuần
+    const totalOrders = ordersPerDay.reduce((acc, count) => acc + count, 0);
+
+    return res.status(200).json({
+      message:
+        "Tổng số đơn hàng theo tuần của shipper (thành công và thất bại)",
+      weekStart: firstDayOfWeek.toISOString().split("T")[0], // Ngày bắt đầu tuần
+      weekEnd: lastDayOfWeek.toISOString().split("T")[0], // Ngày kết thúc tuần
+      totalOrders,
+      ordersPerDay, // Số lượng đơn hàng theo từng ngày trong tuần
+    });
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
+export const fetchOrdersThisMonth = async (req, res) => {
+  const user = req.user; // Người dùng đã đăng nhập
+
+  // Kiểm tra xem người dùng có vai trò shipper không
+  if (user.role !== "courier") {
+    return res.status(403).json({ message: "Không có quyền truy cập" });
+  }
+
+  try {
+    // Lấy ngày hiện tại
+    const today = new Date();
+
+    // Tính toán ngày bắt đầu tháng
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    firstDayOfMonth.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
+
+    // Tính toán ngày cuối tháng
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    );
+    lastDayOfMonth.setHours(23, 59, 59, 999); // Đặt giờ về 23:59:59
+
+    // Tính tổng số đơn hàng đã giao cho shipper theo tháng (thành công và thất bại)
+    const totalOrders = await Order.countDocuments({
+      shipperId: user.userId,
+      status: { $in: [5, 6] }, // Trạng thái thành công (6) và thất bại (5)
+      deliveredAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
+    });
+
+    // Tính số lượng đơn hàng theo từng tuần
+    const weeksOrders = [];
+    const startDate = new Date(firstDayOfMonth);
+    const endDate = new Date(lastDayOfMonth);
+
+    // Lặp qua từng tuần trong tháng
+    for (
+      let weekStart = startDate;
+      weekStart <= endDate;
+      weekStart.setDate(weekStart.getDate() + 7)
+    ) {
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6); // Ngày kết thúc của tuần
+
+      // Đảm bảo tuần không vượt quá cuối tháng
+      if (weekEnd > endDate) weekEnd.setTime(endDate.getTime());
+
+      // Đếm số đơn hàng trong tuần
+      const weeklyCount = await Order.countDocuments({
+        shipperId: user.userId,
+        status: { $in: [5, 6] },
+        deliveredAt: { $gte: weekStart, $lte: weekEnd },
+      });
+
+      weeksOrders.push({
+        weekStart: weekStart.toISOString().split("T")[0],
+        weekEnd: weekEnd.toISOString().split("T")[0],
+        count: weeklyCount,
+      });
+    }
+
+    return res.status(200).json({
+      message:
+        "Tổng số đơn hàng theo tháng của shipper (thành công và thất bại)",
+      monthStart: firstDayOfMonth.toISOString().split("T")[0],
+      monthEnd: lastDayOfMonth.toISOString().split("T")[0],
+      totalOrders,
+      weeksOrders, // Dữ liệu số lượng đơn hàng theo từng tuần
+    });
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
+export const fetchOrderSuccessFailureStats = async (req, res) => {
+  const user = req.user;
+
+  // Kiểm tra quyền truy cập
+  if (user.role !== "courier") {
+    return res.status(403).json({ message: "Không có quyền truy cập" });
+  }
+
+  try {
+    // Đếm số lượng đơn hàng thành công và thất bại
+    const successCount = await Order.countDocuments({
+      shipperId: user.userId,
+      status: 6, // Trạng thái giao hàng thành công
+    });
+
+    const failureCount = await Order.countDocuments({
+      shipperId: user.userId,
+      status: 5, // Trạng thái giao hàng thất bại
+    });
+
+    return res.status(200).json({
+      message: "Thống kê đơn hàng thành công và thất bại của shipper",
+      successCount,
+      failureCount,
+    });
+  } catch (error) {
+    console.error("Error fetching order stats: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
+

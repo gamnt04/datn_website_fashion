@@ -23,6 +23,10 @@ import {
   adminFailDelivery,
   getOrdersByPhone,
   getTotalOrdersByRole,
+  fetchOrderSuccessFailureStats,
+  fetchOrdersThisMonth,
+  fetchOrdersThisWeek,
+  fetchOrdersToday,
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 import { checkRole } from "../controllers/Auth/auth";
@@ -32,6 +36,26 @@ router.get(
   "/orders/daily-order-summary",
   checkRole(["admin", "courier"]),
   getTotalOrdersByRole
+);
+router.get(
+  "/orders/order_shipper_to_day",
+  checkRole(["courier"]),
+  fetchOrdersToday
+);
+router.get(
+  "/orders/order_shipper_week",
+  checkRole(["courier"]),
+  fetchOrdersThisWeek
+);
+router.get(
+  "/orders/order_shipper_month",
+  checkRole(["courier"]),
+  fetchOrdersThisMonth
+);
+router.get(
+  "/orders/order_success_failure_stats",
+  checkRole(["courier"]),
+  fetchOrderSuccessFailureStats
 );
 router.post("/orders", createOrder);
 router.get("/orders", checkRole(["admin", "courier"]), get_orders_client);
