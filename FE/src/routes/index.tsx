@@ -29,6 +29,7 @@ import ChangePassword from "../pages/Client/User/ChangePassword";
 import InforShipper from "../pages/Client/User/InforShipper";
 import { Navigate } from "react-router-dom";
 import Salary from "../pages/Admin/Shipper/Salary";
+import Dashboard_Shipper from "../pages/Admin/Shipper/Dashboard_Shipper";
 const RouterComponent = () => {
   const isLoggedIn = () => {
     return localStorage.getItem("token") !== null;
@@ -49,7 +50,7 @@ const RouterComponent = () => {
             <Route path="orders" element={<OrderList />} />
             <Route path="orders/:id/orderDetali" element={<OrdersDetali />} />
             <Route path="changePassword" element={<ChangePassword />} />
-            <Route path="salary_shipper" element={<Salary />} />
+            <Route path="dashboard_Shipper" element={<Dashboard_Shipper />} />
           </Route>
         </Routes>
       </Router>
