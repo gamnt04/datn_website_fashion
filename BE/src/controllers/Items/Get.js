@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
-import Attribute from "../../models/attribute/attribute";
+import Attribute from "../../models/attribute/variant";
 import Category from "../../models/Items/Category";
 import mongoose from "mongoose";
 

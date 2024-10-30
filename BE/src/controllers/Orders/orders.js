@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import Order from "../../models/Orders/orders";
 import Cart from "../../models/Cart/cart";
-import Attributes from "../../models/attribute/attribute";
+import Attributes from "../../models/attribute/variant";
 import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 import SendCancellationMail from "../SendMail/HuyMail";

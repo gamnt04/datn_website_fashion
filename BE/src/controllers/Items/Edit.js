@@ -1,5 +1,5 @@
 import Products from "../../models/Items/Products";
-import Attributes from '../../models/attribute/attribute'
+import Attributes from '../../models/attribute/thuoc_tinh'
 import { StatusCodes } from "http-status-codes";
 import { validate_items } from "../../validations/items";
 
