@@ -10,8 +10,14 @@ Chart.register(...registerables);
 const { Text } = Typography;
 
 const OrderStatsWeek = () => {
-  const [totalOrders, setTotalOrders] = useState(0);
-  const [ordersPerDay, setOrdersPerDay] = useState(new Array(7).fill(0));
+  const [totalSuccessfulOrders, setTotalSuccessfulOrders] = useState(0);
+  const [totalFailedOrders, setTotalFailedOrders] = useState(0);
+  const [successfulOrdersPerDay, setSuccessfulOrdersPerDay] = useState(
+    new Array(7).fill(0)
+  );
+  const [failedOrdersPerDay, setFailedOrdersPerDay] = useState(
+    new Array(7).fill(0)
+  );
   const [weekStart, setWeekStart] = useState("");
   const [weekEnd, setWeekEnd] = useState("");
 
@@ -22,14 +28,30 @@ const OrderStatsWeek = () => {
 
         if (
           response.data &&
-          response.data.totalOrders !== undefined &&
-          response.data.ordersPerDay
+          response.data.totalSuccessfulOrders !== undefined &&
+          response.data.totalFailedOrders !== undefined &&
+          response.data.successfulOrdersPerDay &&
+          response.data.failedOrdersPerDay
         ) {
-          const { totalOrders, ordersPerDay, weekStart, weekEnd } =
-            response.data;
-          setTotalOrders(totalOrders);
-          setOrdersPerDay(
-            ordersPerDay.length > 0 ? ordersPerDay : new Array(7).fill(0)
+          const {
+            totalSuccessfulOrders,
+            totalFailedOrders,
+            successfulOrdersPerDay,
+            failedOrdersPerDay,
+            weekStart,
+            weekEnd,
+          } = response.data;
+          setTotalSuccessfulOrders(totalSuccessfulOrders);
+          setTotalFailedOrders(totalFailedOrders);
+          setSuccessfulOrdersPerDay(
+            successfulOrdersPerDay.length > 0
+              ? successfulOrdersPerDay
+              : new Array(7).fill(0)
+          );
+          setFailedOrdersPerDay(
+            failedOrdersPerDay.length > 0
+              ? failedOrdersPerDay
+              : new Array(7).fill(0)
           );
           setWeekStart(weekStart);
           setWeekEnd(weekEnd);
@@ -58,11 +80,20 @@ const OrderStatsWeek = () => {
     ],
     datasets: [
       {
-        label: "Số lượng đơn hàng",
-        data: ordersPerDay,
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
+        label: "Đơn hàng thành công",
+        data: successfulOrdersPerDay,
+        backgroundColor: "rgba(75, 192, 192, 0.6)", // Màu nền cho đơn hàng thành công
+        borderColor: "rgba(75, 192, 192, 1)", // Màu viền cho đơn hàng thành công
+        borderWidth: 2, // Độ dày viền
+        barPercentage: 0.6, // Độ rộng cột
+      },
+      {
+        label: "Đơn hàng thất bại",
+        data: failedOrdersPerDay,
+        backgroundColor: "rgba(255, 99, 132, 0.6)", // Màu nền cho đơn hàng thất bại
+        borderColor: "rgba(255, 99, 132, 1)", // Màu viền cho đơn hàng thất bại
+        borderWidth: 2, // Độ dày viền
+        barPercentage: 0.6, // Độ rộng cột
       },
     ],
   };
@@ -70,7 +101,8 @@ const OrderStatsWeek = () => {
   return (
     <Card className="border border-gray-200 bg-white shadow-lg rounded-lg p-0 mx-auto my-0 w-full h-full">
       <h1 className="text-lg font-semibold text-center p-4">
-        Tổng số đơn hàng trong tuần này: {totalOrders}
+        Tổng số đơn hàng thành công: {totalSuccessfulOrders} | Tổng số đơn hàng
+        thất bại: {totalFailedOrders}
       </h1>
       <div
         className="flex justify-center items-center"
@@ -87,6 +119,9 @@ const OrderStatsWeek = () => {
                 title: {
                   display: true,
                   text: "Số lượng đơn hàng",
+                },
+                ticks: {
+                  stepSize: 1, // Bước nhảy trên trục y
                 },
               },
               x: {

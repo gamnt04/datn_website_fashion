@@ -11,7 +11,10 @@ const { Text } = Typography;
 
 const OrderStatsMonth = () => {
   const [totalOrders, setTotalOrders] = useState(0);
-  const [ordersPerWeek, setOrdersPerWeek] = useState(new Array(5).fill(0));
+  const [successfulOrders, setSuccessfulOrders] = useState(
+    new Array(5).fill(0)
+  );
+  const [failedOrders, setFailedOrders] = useState(new Array(5).fill(0));
   const [monthStart, setMonthStart] = useState("");
   const [monthEnd, setMonthEnd] = useState("");
 
@@ -30,8 +33,14 @@ const OrderStatsMonth = () => {
             response.data;
 
           setTotalOrders(totalOrders);
-          // Trích xuất giá trị count từ weeksOrders
-          setOrdersPerWeek(weeksOrders.map((week: any) => week.count));
+          // Trích xuất giá trị count cho đơn hàng thành công và thất bại từ weeksOrders
+          const successfulCounts = weeksOrders.map(
+            (week:any) => week.successfulCount
+          );
+          const failedCounts = weeksOrders.map((week:any) => week.failedCount);
+
+          setSuccessfulOrders(successfulCounts);
+          setFailedOrders(failedCounts);
           setMonthStart(monthStart);
           setMonthEnd(monthEnd);
         } else {
@@ -51,10 +60,17 @@ const OrderStatsMonth = () => {
     labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4", "Tuần 5"],
     datasets: [
       {
-        label: "Số lượng đơn hàng",
-        data: ordersPerWeek,
+        label: "Đơn hàng thành công",
+        data: successfulOrders,
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Đơn hàng thất bại",
+        data: failedOrders,
+        backgroundColor: "rgba(255, 99, 132, 0.6)", // Màu sắc cho đơn hàng thất bại
+        borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
       },
     ],
