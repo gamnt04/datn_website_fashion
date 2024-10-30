@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   ChevronDown,
@@ -12,7 +13,6 @@ import {
 import { useState } from "react";
 import logo from "../../../../assets/Images/Logo/logo white.png";
 import { Link, NavLink } from "react-router-dom";
-import DailyOrderSummary from "../../../../pages/Admin/Orders/DailyOrderSummary ";
 
 export default function Sidebar_Dashboard() {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -90,6 +90,12 @@ export default function Sidebar_Dashboard() {
                   className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
                 >
                   Thêm mới sản phẩm
+                </NavLink>
+                <NavLink
+                  to="/admin/products/the_loai_thuoc_tinh"
+                  className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
+                >
+                  Thuộc tính sản phẩm
                 </NavLink>
                 <NavLink
                   to="/admin/category"

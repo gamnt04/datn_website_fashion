@@ -1,6 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import ListCart from "../pages/Client/(Cart)/ListCart";
-// import Favourite from "../pages/Client/Favourite/Favourite";
 import FAQ from "../pages/Client/Pages/FAQ/FAQs";
 import AboutUS from "../pages/Client/Pages/About-us/About_us";
 import Delivery from "../pages/Client/Pages/Delivery/Delivery";
@@ -53,6 +52,8 @@ import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
 import Chat from "../pages/Client/Chat/Chat";
 import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
 import DailyOrderSummary from "../pages/Admin/Orders/DailyOrderSummary ";
+import Attribute from "../pages/Admin/(thuoc_tinh)/Attribute/page";
+import The_loai_thuoc_tinh from "../pages/Admin/(thuoc_tinh)/the_loai_thuoc_tinh/page";
 const RouterComponent = () => {
   return (
     <>
@@ -105,10 +106,11 @@ const RouterComponent = () => {
             <Route path="category" element={<List_Category />} />
             <Route path="category/products/:id" element={<CategoryDetail />} />
             <Route path="chatAdmin/:id" element={<MessAdmin />} />
-
             {/* <Route path="test1" element={<Add_Item />} />
             <Route path="test2/:id" element={<Edit_Item />} /> */}
             <Route path="products/add" element={<Add_Item />} />
+            <Route path="products/the_loai_thuoc_tinh" element={<The_loai_thuoc_tinh />} />
+            <Route path="products/attribute-catalog/:id" element={<Attribute />} />
             <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
             {/* <Route path="products/add" element={<AddProduct />} />

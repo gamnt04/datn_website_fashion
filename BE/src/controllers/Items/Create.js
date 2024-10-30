@@ -2,7 +2,7 @@
 import { StatusCodes } from "http-status-codes";
 import Category from "../../models/Items/Category";
 import Products from "../../models/Items/Products";
-import Attributes from '../../models/attribute/attribute';
+import Attributes from '../../models/attribute/variant';
 import { validate_items } from "../../validations/items";
 
 export const createProduct = async (req, res) => {
