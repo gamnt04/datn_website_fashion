@@ -54,6 +54,7 @@ import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
 import DailyOrderSummary from "../pages/Admin/Orders/DailyOrderSummary ";
 import Attribute from "../pages/Admin/(thuoc_tinh)/Attribute/page";
 import The_loai_thuoc_tinh from "../pages/Admin/(thuoc_tinh)/the_loai_thuoc_tinh/page";
+import TotalOrders from "../pages/Admin/Orders/TotalOrders";
 const RouterComponent = () => {
   return (
     <>
@@ -117,7 +118,7 @@ const RouterComponent = () => {
             <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
             <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
-            <Route path="DailyOrderSummary" element={<DailyOrderSummary />} />
+            <Route path="TotalOrders" element={<TotalOrders />} />
 
             <Route path="auth" element={<List_Auth />} />
             <Route

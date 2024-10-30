@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
+import { IProduct } from "../../../common/interfaces/Product";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -103,14 +104,18 @@ const Pay = () => {
   const [selectedVoucherCode, setSelectedVoucherCode] = useState<string | null>(
     null
   );
+
   const handleApplyDiscount = async () => {
     try {
+      const selectedProductIds = item_order_checkked?.map(
+        (item) => item.productId._id
+      );
       const response = await instance.post(`/voucher/use`, {
         code_voucher: discountCode,
         totalAmount: totalPrice,
         userId: user?.user?._id,
+        selectedProducts: selectedProductIds,
       });
-
       const { discount, finalAmount, message } = response.data;
 
       setDiscountAmount(discount);
@@ -133,6 +138,7 @@ const Pay = () => {
       }
     }
   };
+
   const showVoucherDetails = (voucher: any) => {
     setVoucherDetails(voucher);
     setIsDetailModalVisible(true);
@@ -153,10 +159,15 @@ const Pay = () => {
   const handleApplyVoucher = async (e: React.MouseEvent, voucher: any) => {
     e.preventDefault();
     try {
+      const selectedProductIds = item_order_checkked?.map(
+        (item) => item.productId._id
+      );
+
       const response = await instance.post(`/voucher/use`, {
         code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
         userId: user?.user?._id,
+        selectedProducts: selectedProductIds, // Thêm ID sản phẩm vào payload
       });
 
       const { discount, finalAmount, message } = response.data;
@@ -635,7 +646,7 @@ const Pay = () => {
                               }`}
                             >
                               <div>
-                                <p className="font-bold text-lg">
+                                <p className="text-lg font-bold">
                                   {voucher.name_voucher}
                                 </p>
                                 <p>
