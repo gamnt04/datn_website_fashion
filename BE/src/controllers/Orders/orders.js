@@ -1345,7 +1345,8 @@ export const fetchOrdersThisWeek = async (req, res) => {
     lastDayOfWeek.setHours(23, 59, 59, 999); // Đặt giờ về 23:59:59
 
     // Mảng để lưu số lượng đơn hàng cho mỗi ngày trong tuần
-    const ordersPerDay = [];
+    const successfulOrdersPerDay = [];
+    const failedOrdersPerDay = [];
 
     // Lặp qua từng ngày trong tuần để tính số lượng đơn hàng
     for (let i = 0; i < 7; i++) {
@@ -1356,33 +1357,49 @@ export const fetchOrdersThisWeek = async (req, res) => {
       const dayEnd = new Date(dayStart);
       dayEnd.setHours(23, 59, 59, 999);
 
-      // Đếm số lượng đơn hàng trong ngày
-      const dailyOrdersCount = await Order.countDocuments({
+      // Đếm số lượng đơn hàng thành công (status = 6)
+      const successfulOrdersCount = await Order.countDocuments({
         shipperId: user.userId, // ID của shipper từ phiên đăng nhập
-        status: { $in: [5, 6] }, // Trạng thái thành công (6) và thất bại (5)
+        status: 6, // Trạng thái thành công
         deliveredAt: { $gte: dayStart, $lte: dayEnd }, // Kiểm tra thời gian giao hàng trong ngày
       });
+      successfulOrdersPerDay.push(successfulOrdersCount);
 
-      // Thêm số lượng đơn hàng trong ngày vào mảng
-      ordersPerDay.push(dailyOrdersCount);
+      // Đếm số lượng đơn hàng thất bại (status = 5)
+      const failedOrdersCount = await Order.countDocuments({
+        shipperId: user.userId, // ID của shipper từ phiên đăng nhập
+        status: 5, // Trạng thái thất bại
+        deliveredAt: { $gte: dayStart, $lte: dayEnd }, // Kiểm tra thời gian giao hàng trong ngày
+      });
+      failedOrdersPerDay.push(failedOrdersCount);
     }
 
-    // Tính tổng số đơn hàng trong tuần
-    const totalOrders = ordersPerDay.reduce((acc, count) => acc + count, 0);
+    // Tính tổng số đơn hàng thành công và thất bại trong tuần
+    const totalSuccessfulOrders = successfulOrdersPerDay.reduce(
+      (acc, count) => acc + count,
+      0
+    );
+    const totalFailedOrders = failedOrdersPerDay.reduce(
+      (acc, count) => acc + count,
+      0
+    );
 
     return res.status(200).json({
       message:
         "Tổng số đơn hàng theo tuần của shipper (thành công và thất bại)",
       weekStart: firstDayOfWeek.toISOString().split("T")[0], // Ngày bắt đầu tuần
       weekEnd: lastDayOfWeek.toISOString().split("T")[0], // Ngày kết thúc tuần
-      totalOrders,
-      ordersPerDay, // Số lượng đơn hàng theo từng ngày trong tuần
+      totalSuccessfulOrders,
+      totalFailedOrders,
+      successfulOrdersPerDay, // Số lượng đơn hàng thành công theo từng ngày trong tuần
+      failedOrdersPerDay, // Số lượng đơn hàng thất bại theo từng ngày trong tuần
     });
   } catch (error) {
     console.error("Error fetching orders: ", error);
     return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
+
 export const fetchOrdersThisMonth = async (req, res) => {
   const user = req.user; // Người dùng đã đăng nhập
 
@@ -1416,12 +1433,15 @@ export const fetchOrdersThisMonth = async (req, res) => {
 
     // Tính số lượng đơn hàng theo từng tuần
     const weeksOrders = [];
+    const successfulOrdersPerWeek = []; // Mảng để lưu số đơn hàng thành công theo từng tuần
+    const failedOrdersPerWeek = []; // Mảng để lưu số đơn hàng thất bại theo từng tuần
+
     const startDate = new Date(firstDayOfMonth);
     const endDate = new Date(lastDayOfMonth);
 
     // Lặp qua từng tuần trong tháng
     for (
-      let weekStart = startDate;
+      let weekStart = new Date(startDate);
       weekStart <= endDate;
       weekStart.setDate(weekStart.getDate() + 7)
     ) {
@@ -1431,18 +1451,30 @@ export const fetchOrdersThisMonth = async (req, res) => {
       // Đảm bảo tuần không vượt quá cuối tháng
       if (weekEnd > endDate) weekEnd.setTime(endDate.getTime());
 
-      // Đếm số đơn hàng trong tuần
-      const weeklyCount = await Order.countDocuments({
+      // Đếm số đơn hàng thành công trong tuần
+      const successfulCount = await Order.countDocuments({
         shipperId: user.userId,
-        status: { $in: [5, 6] },
+        status: 6, // Trạng thái thành công
         deliveredAt: { $gte: weekStart, $lte: weekEnd },
       });
 
+      // Đếm số đơn hàng thất bại trong tuần
+      const failedCount = await Order.countDocuments({
+        shipperId: user.userId,
+        status: 5, // Trạng thái thất bại
+        deliveredAt: { $gte: weekStart, $lte: weekEnd },
+      });
+
+      // Lưu trữ dữ liệu vào mảng
       weeksOrders.push({
         weekStart: weekStart.toISOString().split("T")[0],
         weekEnd: weekEnd.toISOString().split("T")[0],
-        count: weeklyCount,
+        successfulCount,
+        failedCount,
       });
+
+      successfulOrdersPerWeek.push(successfulCount);
+      failedOrdersPerWeek.push(failedCount);
     }
 
     return res.status(200).json({
@@ -1452,12 +1484,15 @@ export const fetchOrdersThisMonth = async (req, res) => {
       monthEnd: lastDayOfMonth.toISOString().split("T")[0],
       totalOrders,
       weeksOrders, // Dữ liệu số lượng đơn hàng theo từng tuần
+      successfulOrdersPerWeek, // Số đơn hàng thành công theo tuần
+      failedOrdersPerWeek, // Số đơn hàng thất bại theo tuần
     });
   } catch (error) {
     console.error("Error fetching orders: ", error);
     return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
+
 export const fetchOrderSuccessFailureStats = async (req, res) => {
   const user = req.user;
 
