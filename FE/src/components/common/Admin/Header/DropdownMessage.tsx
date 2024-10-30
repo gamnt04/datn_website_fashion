@@ -4,11 +4,9 @@ import { Form, Input, Button, message } from "antd";
 import { IoMdClose, IoMdSend } from "react-icons/io";
 import instance from "../../../../configs/axios";
 // import useLocalStorage from "../../hooks/Storage/useStorage";
-import { useParams } from "react-router-dom";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 
 const DropdownMessage = () => {
-  const { _id } = useParams();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const queryClient = useQueryClient();

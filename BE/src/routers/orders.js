@@ -30,7 +30,7 @@ import { checkRole } from "../controllers/Auth/auth";
 const router = Router();
 router.get(
   "/orders/daily-order-summary",
-  checkRole(["admin", "courier"]),
+  checkRole(["admin"]),
   getTotalOrdersByRole
 );
 

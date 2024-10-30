@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { add_Notification, delete_Notification, get_Notification_By_User, getAll_Notification, update_Notification } from "../../Notification/Message";
 

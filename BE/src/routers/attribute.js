@@ -1,32 +1,21 @@
 import express from "express";
-// import {
-//   createAttribute,
-//   getAttributes,
-//   updateAttribute,
-//   deleteAttribute,
-// } from "../controllers/attribute";
-import {
-  getAllAttributes,
-  getAttributeById,
-} from "../controllers/attribute/attribute";
+import { lay_1_loai_thuoc_tinh, lay_loai_thuoc_tinh, lay_thuoc_tinh, sua_loai_thuoc_tinh, sua_thuoc_tinh, tao_loai_thuoc_tinh, tao_thuoc_tinh, xoa_loai_thuoc_tinh, xoa_thuoc_tinh } from "../controllers/attribute/attribute";
 
-const Routes_Attribute = express.Router();
-//Route tạo mới 1 thuộc tính
-// router.post("/attributes", createAttribute);
+const router_attribute = express.Router();
 
-//Route để thêm giá trị cho thuộc tính đã tồn tại
-// router.post("/attributes/:id/values", createValueAttribute);
+// the loai thuoc tinh
+router_attribute.post('/the_loai_thuoc_tinh/tao_thuoc_tinh', tao_loai_thuoc_tinh);
+router_attribute.get('/the_loai_thuoc_tinh/lay_loai_thuoc_tinh/:id_account', lay_loai_thuoc_tinh);
+router_attribute.get('/the_loai_thuoc_tinh/lay_1_loai_thuoc_tinh/:id_account', lay_1_loai_thuoc_tinh);
+router_attribute.get('/the_loai_thuoc_tinh/xoa_loai_thuoc_tinh/:id', xoa_loai_thuoc_tinh);
+router_attribute.get('/the_loai_thuoc_tinh/sua_loai_thuoc_tinh/:id', sua_loai_thuoc_tinh);
 
-//Route lấy tất cả các thuộc tính
-Routes_Attribute.get("/attributes", getAllAttributes);
+// thuoc tinh
+router_attribute.post('/thuoc_tinh/tao_thuoc_tinh', tao_thuoc_tinh);
+router_attribute.get('/thuoc_tinh/lay_thuoc_tinh/:id_account', lay_thuoc_tinh);
+router_attribute.put('/thuoc_tinh/sua_thuoc_tinh/:id_account', sua_thuoc_tinh);
+router_attribute.delete('/thuoc_tinh/xoa_thuoc_tinh/:id_account', xoa_thuoc_tinh);
 
-//Route lấy 1 thuộc tính theo id
-Routes_Attribute.get("/attributes/:id", getAttributeById);
 
-//Route để xóa 1 thuộc tính
-// router.delete("/attributes/:id", deleteAttribute);
 
-//Route để cập nhật 1 thuộc tính
-// router.put("/attributes/:id", updateAttribute);
-
-export default Routes_Attribute;
+export default router_attribute

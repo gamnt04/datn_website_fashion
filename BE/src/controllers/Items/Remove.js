@@ -1,4 +1,4 @@
-import Attribute from "../../models/attribute/attribute";
+import Attribute from "../../models/attribute/variant";
 import Products from "../../models/Items/Products";
 import { StatusCodes } from "http-status-codes";
 

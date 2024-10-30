@@ -67,7 +67,7 @@ const AddVoucher = () => {
   const filteredData =
     userType.length === 0
       ? []
-      : userType.includes("user") && userType.includes("shipper")
+      : userType.includes("user") && userType.includes("courier")
       ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
       : userType.includes("user")
       ? auth?.data
