@@ -1,0 +1,103 @@
+import React, { useState, useEffect } from "react";
+import { Table, Spin, Alert } from "antd";
+import instance from "../../../configs/axios";
+
+interface Order {
+  _id: string;
+  fullName: string;
+  totalOrders: number;
+}
+
+const TotalOrders = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await instance.get("/orders/daily-order-summary");
+        console.log(response.data);
+
+        if (Array.isArray(response.data.shippers)) {
+          setOrders(response.data.shippers);
+        } else {
+          setOrders([response.data]);
+        }
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message || "Có lỗi xảy ra khi tải dữ liệu.");
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const columnsTotalOrders = [
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Tên Shipper
+        </div>
+      ),
+      dataIndex: "fullName",
+      key: "fullName",
+      align: "center",
+    },
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Tổng số đơn hàng
+        </div>
+      ),
+      dataIndex: "totalOrders",
+      key: "totalOrders",
+      align: "center",
+      render: (totalOrders: number) => (
+        <div style={{ textAlign: "center" }}>{totalOrders}</div>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="text-center py-4">
+        <Spin size="large" /> {/* Loading spinner */}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert
+        message="Error"
+        description={error}
+        type="error"
+        showIcon
+        className="my-4"
+      />
+    );
+  }
+
+  return (
+    <div className="m-6">
+      <div className="flex items-center justify-between mt-20 mb-5">
+        <h1 className="text-2xl font-semibold">Tổng số đơn hàng của shipper</h1>
+      </div>
+      <Table
+        columns={columnsTotalOrders}
+        dataSource={orders}
+        rowKey={(record) => record._id}
+        pagination={{ pageSize: 5 }}
+        bordered
+      />
+    </div>
+  );
+};
+
+export default TotalOrders;

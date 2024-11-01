@@ -22,7 +22,7 @@ import {
   addShipperOrder,
   adminFailDelivery,
   getOrdersByPhone,
-  getDailyOrderCountByShipper,
+  getTotalOrdersByRole,
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 import { checkRole } from "../controllers/Auth/auth";
@@ -30,8 +30,8 @@ import { checkRole } from "../controllers/Auth/auth";
 const router = Router();
 router.get(
   "/orders/daily-order-summary",
-  checkRole(["admin", "courier"]),
-  getDailyOrderCountByShipper
+  checkRole(["admin"]),
+  getTotalOrdersByRole
 );
 
 router.post("/orders", createOrder);

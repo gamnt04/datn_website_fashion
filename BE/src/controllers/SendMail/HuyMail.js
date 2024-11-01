@@ -93,8 +93,6 @@ async function SendCancellationMail(email, order, cancellationReason) {
         
         <p style="font-weight: bold; color: red; text-align: right; margin-top: 20px;">Tổng tiền: ${formattedTotalPrice}</p>
         
-        <p><strong>Lý do hủy:</strong> ${cancellationReason || 'Không có lý do'}</p>
-        
         <p>Chúng tôi xin lỗi về sự bất tiện này. Đơn hàng của bạn không thể được xử lý và sẽ không được giao.</p>
         <p>Nếu bạn có bất kỳ câu hỏi nào hoặc cần hỗ trợ thêm, vui lòng liên hệ với chúng tôi.</p>
         
