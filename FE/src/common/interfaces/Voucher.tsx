@@ -4,13 +4,14 @@ export interface IVoucher {
   code_voucher: string;
   description_voucher: string;
   quantity_voucher: number;
-  usedCount: number;
   discountType: string;
   discountValue: number;
+  applyType: string;
+  appliedProducts: string[];
   minimumSpend: number;
   maxDiscount: number;
   allowedUsers: string[];
   startDate: Date;
   expirationDate: Date;
-  isActive: unknown | boolean;
+  limitType: string;
 }

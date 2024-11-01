@@ -117,7 +117,6 @@ export const useVoucher = async (req, res) => {
       // Kiểm tra nếu áp dụng cho sản phẩm
       if (voucher.appliedProducts.length === 0) {
         // Nếu không có sản phẩm nào trong appliedProducts, cho phép tất cả sản phẩm
-        // Không cần kiểm tra validProducts
       } else {
         // Kiểm tra xem các sản phẩm đã chọn có hợp lệ không
         const validProducts = selectedProducts.filter((productId) =>
