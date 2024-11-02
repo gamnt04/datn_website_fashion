@@ -24,6 +24,7 @@ const ListVoucher = () => {
     queryKey: ["voucher"],
     queryFn: () => instance.get(`/voucher`),
   });
+
   const { data: auth } = useQuery({
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
@@ -32,6 +33,8 @@ const ListVoucher = () => {
     queryKey: ["shippers"],
     queryFn: () => instance.get(`/shippers`),
   });
+  console.log(`auth`, auth);
+  console.log(`shippersData`, shippersData);
   const { mutate } = useMutation({
     mutationFn: (id: string) => instance.delete(`voucher/${id}`),
     onSuccess: () => {
@@ -189,7 +192,7 @@ const ListVoucher = () => {
           </Link>
         </div>
 
-        {data && data.data.length === 0 ? (
+        {data && data.data.vouchers.length === 0 ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <Table dataSource={dataSource} columns={columns} />
@@ -254,7 +257,10 @@ const ListVoucher = () => {
                 <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
                 selectedVoucher.allowedUsers.length > 0
-                  ? [...(auth?.data || []), ...(shippersData?.data || [])]
+                  ? [
+                      ...(auth?.data || []),
+                      ...(shippersData?.data.shippers || []),
+                    ]
                       .filter((user: any) =>
                         selectedVoucher.allowedUsers.includes(user._id)
                       )

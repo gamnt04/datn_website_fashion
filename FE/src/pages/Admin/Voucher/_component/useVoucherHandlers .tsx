@@ -55,11 +55,26 @@ export const useVoucherHandlers = ({
   };
 
   const onApplyTypeChange = (value: string) => {
+    // Reset các trường input khi áp dụng giảm giá thay đổi
+    if (value !== "product") {
+      setSelectedItems([]);
+      form.setFieldsValue({ appliedProducts: [] });
+    }
+    if (value !== "total") {
+      form.setFieldsValue({ minimumSpend: null });
+    }
     setApplyType(value);
   };
 
   const onLimitTypeChange = (value: string[]) => {
     setLimitType(value);
+    // Reset các trường input khi checkbox bị bỏ chọn
+    if (!value.includes("time")) {
+      form.setFieldsValue({ startDate: null, expirationDate: null });
+    }
+    if (!value.includes("quantity")) {
+      form.setFieldsValue({ quantity_voucher: null });
+    }
   };
 
   const ondiscountTypeChange = (value: string) => {
@@ -142,6 +157,8 @@ export const useVoucherHandlers = ({
     setdiscountType,
     setSelectedUsers,
     setApplyType,
+    setSelectedItems,
+
     // Handlers
     generateRandomCode,
     setSearchText,

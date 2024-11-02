@@ -71,7 +71,9 @@ const AddVoucher = () => {
       ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
       : userType.includes("user")
       ? auth?.data
-      : shippersData?.data.shippers;
+      : userType.includes("user")
+      ? shippersData?.data.shippers
+      : [];
 
   const {
     selectedUsers,
@@ -282,11 +284,13 @@ const AddVoucher = () => {
                     placeholder="Chọn loại áp dụng"
                   >
                     <Select.Option value="product">Sản phẩm</Select.Option>
-                    <Select.Option value="total">Tổng chi tiêu</Select.Option>
+                    <Select.Option value="total">
+                      Tổng giá trị đơn hàng
+                    </Select.Option>
                   </Select>
                 </Form.Item>
 
-                {/* Hiển thị ô cho thời gian nếu chọn "time" */}
+                {/* Hiển thị ô cho sản phẩm nếu chọn "product" */}
                 {applyType === "product" && (
                   <Form.Item label="Sản phẩm áp dụng" name="appliedProducts">
                     <Select
@@ -301,7 +305,7 @@ const AddVoucher = () => {
                         </p>
                       }
                       dropdownRender={(menu) => (
-                        <div>
+                        <div className="max-h-[500px] overflow-y-auto">
                           {/* Thêm ô tìm kiếm */}
                           <div style={{ padding: "8px 12px" }}>
                             <Input.Search
@@ -380,7 +384,7 @@ const AddVoucher = () => {
                   </Form.Item>
                 )}
 
-                {/* Hiển thị ô số lượng nếu chọn "quantity" */}
+                {/* Hiển thị ô Tổng giá trị đơn hàng nếu chọn "total" */}
                 {applyType === "total" && (
                   <Form.Item<IVoucher>
                     label="Số tiền đơn hàng tối thiểu"
