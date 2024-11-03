@@ -13,7 +13,7 @@ import {
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
 import { Option } from "antd/es/mentions";
@@ -21,6 +21,7 @@ import useDataVoucher from "./_component/useDataVoucher";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { AiFillBackward } from "react-icons/ai";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -29,6 +30,7 @@ const AddVoucher = () => {
   const nav = useNavigate();
   const [userType, setUserType] = useState<string[]>(["user"]);
   const { auth, shippersData, products, isLoading } = useDataVoucher();
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: IVoucher) => {
       try {
@@ -115,9 +117,14 @@ const AddVoucher = () => {
             </div>
           </div>
         )}
-        <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
-          Thêm Mã Giảm Giá
-        </h2>
+        <div className="flex items-center justify-between mx-16 mt-20 mb-5 ">
+          <h1 className="text-[26px] font-semibold">Thêm Mới Mã Giảm Giá</h1>
+          <Link to="/admin/voucher">
+            <Button type="primary">
+              <AiFillBackward /> Quay lại
+            </Button>
+          </Link>
+        </div>
         <div className="p-6 ml-10 ">
           {contextHolder}
           <Form

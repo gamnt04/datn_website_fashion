@@ -13,7 +13,7 @@ import {
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
 import dayjs from "dayjs";
@@ -21,6 +21,7 @@ import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import useDataVoucher from "./_component/useDataVoucher";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { IVoucher } from "../../../common/interfaces/Voucher";
+import { AiFillBackward } from "react-icons/ai";
 
 const UpdateVoucher = () => {
   const { id } = useParams();
@@ -173,9 +174,14 @@ const UpdateVoucher = () => {
             </div>
           </div>
         )}
-        <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
-          Cập Nhật Mã Giảm Giá
-        </h2>
+        <div className="flex items-center justify-between mx-16 mt-20 mb-5 ">
+          <h1 className="text-[26px] font-semibold">Cập Nhật Mã Giảm Giá</h1>
+          <Link to="/admin/voucher">
+            <Button type="primary">
+              <AiFillBackward /> Quay lại
+            </Button>
+          </Link>
+        </div>
         <div className="p-6 ml-10 ">
           {contextHolder}
           <Form
