@@ -49,11 +49,6 @@ export const useVoucherHandlers = ({
     }
   };
 
-  const handleUserTypeChange = (checkedValues: string[]) => {
-    setUserType(checkedValues);
-    setSelectedUsers([]);
-  };
-
   const onApplyTypeChange = (value: string) => {
     // Reset các trường input khi áp dụng giảm giá thay đổi
     if (value !== "product") {
@@ -163,7 +158,6 @@ export const useVoucherHandlers = ({
     generateRandomCode,
     setSearchText,
     handleSelectChange,
-    handleUserTypeChange,
     onApplyTypeChange,
     onLimitTypeChange,
     ondiscountTypeChange,
