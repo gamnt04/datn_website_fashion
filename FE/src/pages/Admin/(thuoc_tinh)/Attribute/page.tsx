@@ -3,10 +3,11 @@
 import { useParams } from "react-router-dom";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { Dispatch_thuoc_tinh, Lay_the_loai_thuoc_tinh, Lay_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
-import { Button, Form, FormProps, Input } from "antd";
+import { Button, Form, FormProps, Input, Upload } from "antd";
 import { SketchPicker } from 'react-color';
 import { useState } from "react";
 import Table_cpn from "./table_cpn";
+import { PlusOutlined } from "@ant-design/icons";
 
 export default function Attribute() {
   const [user] = useLocalStorage("user", {});
@@ -77,7 +78,21 @@ export default function Attribute() {
                 </div>
               </div>
             }
-
+            {
+              data?.category_attribute === 'ux_image' &&
+              <Upload
+                // defaultFileList={mode && image_item}
+                listType="picture-card"
+                beforeUpload={() => false}
+                // onChange={handleImageChange}
+                className="mt-2"
+                maxCount={1}
+              >
+                <button type="button">
+                  <PlusOutlined />
+                </button>
+              </Upload>
+            }
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit" className="-translate-x-[100px] mt-10">
                 Tạo mới {data?.name_attribute}

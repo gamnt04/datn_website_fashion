@@ -12,7 +12,7 @@ const useDataVoucher = () => {
   });
 
   const {
-    data: shippersData,
+    data: shippers,
     isLoading: shippersLoading,
     error: shippersError,
   } = useQuery({
@@ -48,7 +48,7 @@ const useDataVoucher = () => {
 
   return {
     auth,
-    shippersData,
+    shippers,
     products,
     isLoading,
     errors,

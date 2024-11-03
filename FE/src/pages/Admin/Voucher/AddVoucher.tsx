@@ -13,7 +13,7 @@ import {
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
 import { Option } from "antd/es/mentions";
@@ -21,6 +21,7 @@ import useDataVoucher from "./_component/useDataVoucher";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { AiFillBackward } from "react-icons/ai";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -28,7 +29,8 @@ const AddVoucher = () => {
   const { data: categories } = useCategoryQuery();
   const nav = useNavigate();
   const [userType, setUserType] = useState<string[]>(["user"]);
-  const { auth, shippersData, products, isLoading } = useDataVoucher();
+  const { auth, shippers, products, isLoading } = useDataVoucher();
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: IVoucher) => {
       try {
@@ -65,13 +67,16 @@ const AddVoucher = () => {
   };
 
   const filteredData =
-    userType.length === 0
-      ? []
-      : userType.includes("user") && userType.includes("courier")
-      ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
+    userType.includes("user") && userType.includes("courier")
+      ? [...(auth?.data || []), ...(shippers?.data?.shippers || [])]
       : userType.includes("user")
-      ? auth?.data
-      : shippersData?.data.shippers;
+      ? auth?.data || []
+      : shippers?.data?.shippersData || [];
+
+  const handleUserTypeChange = (value: string[]) => {
+    console.log("Giá trị userType sau khi thay đổi:", value);
+    setUserType(value);
+  };
 
   const {
     selectedUsers,
@@ -84,7 +89,6 @@ const AddVoucher = () => {
     generateRandomCode,
     setSearchText,
     handleSelectChange,
-    handleUserTypeChange,
     onApplyTypeChange,
     onLimitTypeChange,
     ondiscountTypeChange,
@@ -113,9 +117,14 @@ const AddVoucher = () => {
             </div>
           </div>
         )}
-        <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
-          Thêm Mã Giảm Giá
-        </h2>
+        <div className="flex items-center justify-between mx-16 mt-20 mb-5 ">
+          <h1 className="text-[26px] font-semibold">Thêm Mới Mã Giảm Giá</h1>
+          <Link to="/admin/voucher">
+            <Button type="primary">
+              <AiFillBackward /> Quay lại
+            </Button>
+          </Link>
+        </div>
         <div className="p-6 ml-10 ">
           {contextHolder}
           <Form
@@ -282,11 +291,13 @@ const AddVoucher = () => {
                     placeholder="Chọn loại áp dụng"
                   >
                     <Select.Option value="product">Sản phẩm</Select.Option>
-                    <Select.Option value="total">Tổng chi tiêu</Select.Option>
+                    <Select.Option value="total">
+                      Tổng giá trị đơn hàng
+                    </Select.Option>
                   </Select>
                 </Form.Item>
 
-                {/* Hiển thị ô cho thời gian nếu chọn "time" */}
+                {/* Hiển thị ô cho sản phẩm nếu chọn "product" */}
                 {applyType === "product" && (
                   <Form.Item label="Sản phẩm áp dụng" name="appliedProducts">
                     <Select
@@ -301,7 +312,7 @@ const AddVoucher = () => {
                         </p>
                       }
                       dropdownRender={(menu) => (
-                        <div>
+                        <div className="max-h-[500px] overflow-y-auto">
                           {/* Thêm ô tìm kiếm */}
                           <div style={{ padding: "8px 12px" }}>
                             <Input.Search
@@ -380,7 +391,7 @@ const AddVoucher = () => {
                   </Form.Item>
                 )}
 
-                {/* Hiển thị ô số lượng nếu chọn "quantity" */}
+                {/* Hiển thị ô Tổng giá trị đơn hàng nếu chọn "total" */}
                 {applyType === "total" && (
                   <Form.Item<IVoucher>
                     label="Số tiền đơn hàng tối thiểu"
@@ -518,10 +529,13 @@ const AddVoucher = () => {
                       }}
                       placeholder="Chọn người dùng/shipper"
                       className="mt-2"
-                      options={filteredData?.map((user: any) => ({
-                        value: user._id,
-                        label: user.userName || user.fullName,
-                      }))}
+                      options={filteredData?.map((user: any) => {
+                        console.log("Từng user trong options:", user);
+                        return {
+                          value: user._id,
+                          label: user.userName || user.fullName,
+                        };
+                      })}
                       onChange={handleSelectChange}
                       value={selectedUsers}
                       dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}

@@ -72,9 +72,9 @@ export default function The_loai_thuoc_tinh() {
                 onChange={handleChange}
                 options={[
                   { value: '', label: 'Lựa chọn' },
-                  { value: 'ux_color', label: 'UX color' },
+                  { value: 'ux_color', label: 'UX Color' },
                   { value: 'ux_label', label: 'UX Label' },
-                  // { value: 'ux_image', label: 'UX Image' },
+                  { value: 'ux_image', label: 'UX Image' },
                 ]}
               />
               <span ref={ref_the_loai_thuoc_tinh} className="hidden text-red-500">Vui long chon!</span>
