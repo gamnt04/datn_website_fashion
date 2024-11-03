@@ -13,43 +13,26 @@ import {
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
-import { IProduct } from "../../../common/interfaces/Product";
 import dayjs from "dayjs";
-
-type FieldType = {
-  name_voucher: string;
-  code_voucher: string;
-  description_voucher: string;
-  quantity_voucher: number;
-  discountType: string;
-  discountValue: number;
-  applyType: string;
-  appliedProducts: string[];
-  minimumSpend: number;
-  maxDiscount: number;
-  allowedUsers: string[];
-  startDate: Date;
-  expirationDate: Date;
-  limitType: string;
-};
+import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
+import useDataVoucher from "./_component/useDataVoucher";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { IVoucher } from "../../../common/interfaces/Voucher";
+import { AiFillBackward } from "react-icons/ai";
 
 const UpdateVoucher = () => {
   const { id } = useParams();
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const nav = useNavigate();
   const [userType, setUserType] = useState<string[]>(["user"]);
-  const [applyType, setApplyType] = useState<string | null>(null);
-  const [discountType, setdiscountType] = useState<string | null>(null);
-  const [limitType, setLimitType] = useState<string | null>(null);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-
+  const [form] = Form.useForm();
+  const { data: categories } = useCategoryQuery();
+  const { auth, shippersData, products } = useDataVoucher();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (formData: FieldType) => {
+    mutationFn: async (formData: IVoucher) => {
       try {
         return await instance.put(`/voucher/${id}`, formData);
       } catch (error) {
@@ -77,68 +60,64 @@ const UpdateVoucher = () => {
     queryKey: ["vouchers", id],
     queryFn: () => instance.get(`/voucher/${id}`),
   });
-  console.log(`vouchers`, vouchers?.data.voucher);
-
-  const { data: auth } = useQuery({
-    queryKey: ["auths"],
-    queryFn: () => instance.get(`/auths`),
+  const {
+    selectedUsers,
+    applyType,
+    limitType,
+    discountType,
+    selectedItems,
+    selectedCategories,
+    selectAll,
+    setLimitType,
+    setdiscountType,
+    setSelectedUsers,
+    setApplyType,
+    setSelectedItems,
+    generateRandomCode,
+    setSearchText,
+    handleSelectChange,
+    handleUserTypeChange,
+    onApplyTypeChange,
+    onLimitTypeChange,
+    ondiscountTypeChange,
+    handleCheckboxChange,
+    handleSelect,
+    handleCategoryChange,
+    handleSelectAll,
+    filteredProducts,
+    filteredCategories,
+  } = useVoucherHandlers({
+    form,
+    products,
+    categories,
+    auth,
   });
 
-  const { data: shippersData } = useQuery({
-    queryKey: ["shippers"],
-    queryFn: () => instance.get(`/shippers`),
-  });
-
-  const { data: products } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      const response = await instance.get(`/products`);
-      return response?.data.data.docs;
-    },
-  });
-
-  const generateRandomCode = () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let randomCode = "";
-    for (let i = 0; i < 8; i++) {
-      randomCode += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
+  const onFinish: FormProps<IVoucher>["onFinish"] = (values) => {
+    if (!limitType.includes("quantity")) {
+      values.quantity_voucher = 0;
     }
-    form.setFieldsValue({ code_voucher: randomCode });
-  };
+    if (!limitType.includes("time")) {
+      values.startDate = null;
+      values.expirationDate = null;
+    }
+    // Kiểm tra điều kiện cho applyType
+    if (applyType !== "product") {
+      values.appliedProducts = []; // Đặt giá trị trống nếu không áp dụng cho sản phẩm
+    }
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    if (applyType !== "total") {
+      values.minimumSpend = 0; // Đặt giá trị null nếu không áp dụng cho tổng chi tiêu
+    }
     const formData = {
       ...values,
       allowedUsers: selectedUsers,
-      appliedProducts: selectedProducts,
+      appliedProducts: selectedItems,
     };
+    console.log(`formData`, formData);
     mutate(formData);
   };
 
-  const handleSelectChange = (value: string[]) => {
-    if (value.includes("all")) {
-      const allUserIds = auth?.data.map((user: any) => user._id);
-      setSelectedUsers(allUserIds);
-    } else {
-      setSelectedUsers(value);
-    }
-  };
-
-  const handleSelectProduct = (value: string[]) => {
-    if (value.includes("all")) {
-      const allProduct = products?.map((product: any) => product._id);
-      setSelectedProducts(allProduct);
-    } else {
-      setSelectedProducts(value);
-    }
-  };
-
-  const handleUserTypeChange = (checkedValues: string[]) => {
-    setUserType(checkedValues);
-    setSelectedUsers([]);
-  };
   const filteredData =
     userType.length === 0
       ? []
@@ -148,21 +127,11 @@ const UpdateVoucher = () => {
       ? auth?.data
       : shippersData?.data.shippers;
 
-  const onApplyTypeChange = (value: string) => {
-    setApplyType(value);
-  };
-
-  const onLimitTypeChange = (value: string) => {
-    setLimitType(value);
-  };
-  const ondiscountTypeChange = (value: string) => {
-    setdiscountType(value);
-  };
   useEffect(() => {
     if (vouchers?.data?.voucher) {
       const voucherData = vouchers.data.voucher;
 
-      // Set các giá trị mặc định
+      // Set form values
       form.setFieldsValue({
         ...voucherData,
         startDate: voucherData.startDate ? dayjs(voucherData.startDate) : null,
@@ -171,20 +140,28 @@ const UpdateVoucher = () => {
           : null,
       });
 
-      // Set state cho các select
-      setSelectedUsers(voucherData.allowedUsers || []);
-      setSelectedProducts(voucherData.appliedProducts || []);
-      setApplyType(voucherData.applyType);
-      setdiscountType(voucherData.discountType);
-
-      // Xác định limitType dựa trên dữ liệu
-      if (voucherData.startDate && voucherData.expirationDate) {
-        setLimitType("time");
-      } else if (voucherData.quantity_voucher) {
-        setLimitType("quantity");
+      // Đảm bảo hiển thị ô input khi appliedProducts rỗng
+      if (voucherData.applyType === "product") {
+        setApplyType("product");
+        setSelectedItems(voucherData.appliedProducts || []);
+      } else {
+        setApplyType("total");
       }
+
+      // Set limit type checkboxes
+      const limitTypes = [];
+      if (voucherData.startDate && voucherData.expirationDate) {
+        limitTypes.push("time");
+      }
+      if (voucherData.quantity_voucher) {
+        limitTypes.push("quantity");
+      }
+      setLimitType(limitTypes);
+      setSelectedUsers(voucherData.allowedUsers || []);
+      setdiscountType(voucherData.discountType);
     }
   }, [vouchers?.data?.voucher]);
+
   if (isLoading) return <Loader />;
 
   return (
@@ -197,9 +174,14 @@ const UpdateVoucher = () => {
             </div>
           </div>
         )}
-        <h2 className="ml-16 text-2xl font-semibold leading-7 text-gray-900 ">
-          Cập Nhật Mã Giảm Giá
-        </h2>
+        <div className="flex items-center justify-between mx-16 mt-20 mb-5 ">
+          <h1 className="text-[26px] font-semibold">Cập Nhật Mã Giảm Giá</h1>
+          <Link to="/admin/voucher">
+            <Button type="primary">
+              <AiFillBackward /> Quay lại
+            </Button>
+          </Link>
+        </div>
         <div className="p-6 ml-10 ">
           {contextHolder}
           <Form
@@ -216,7 +198,7 @@ const UpdateVoucher = () => {
             <div className="flex flex-wrap -mx-4">
               {/* Cột 1 */}
               <div className="w-full px-4 md:w-1/2">
-                <Form.Item<FieldType>
+                <Form.Item<IVoucher>
                   label="Tên mã giảm giá"
                   name="name_voucher"
                   rules={[
@@ -321,7 +303,7 @@ const UpdateVoucher = () => {
                 </Form.Item>
 
                 {discountType === "percentage" && (
-                  <Form.Item<FieldType>
+                  <Form.Item<IVoucher>
                     label="Giá trị giảm giá tối đa"
                     name="maxDiscount"
                     rules={[
@@ -365,51 +347,110 @@ const UpdateVoucher = () => {
                     placeholder="Chọn loại áp dụng"
                   >
                     <Select.Option value="product">Sản phẩm</Select.Option>
-                    <Select.Option value="total">Tổng chi tiêu</Select.Option>
+                    <Select.Option value="total">
+                      Tổng giá trị đơn hàng
+                    </Select.Option>
                   </Select>
                 </Form.Item>
 
-                {/* Hiển thị ô cho thời gian nếu chọn "time" */}
+                {/* Hiển thị ô cho sản phẩm nếu chọn "product" */}
                 {applyType === "product" && (
-                  <Form.Item<FieldType>
-                    label="Sản phẩm giảm giá"
-                    name="appliedProducts"
-                  >
-                    <div className="flex items-center">
-                      <Select
-                        mode="multiple"
-                        style={{
-                          width: "90%",
-                          minHeight: "40px",
-                        }}
-                        placeholder="Sản phẩm "
-                        className="mt-2"
-                        options={[
-                          { value: "all", label: "Chọn tất cả" },
-                          ...(products?.map((product: IProduct) => ({
-                            value: product._id,
-                            label: product.name_product,
-                          })) || []),
-                        ]}
-                        onChange={handleSelectProduct}
-                        value={selectedProducts}
-                        dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
-                        maxTagCount={4}
-                        maxTagPlaceholder={(omittedValues) =>
-                          `+${omittedValues.length} khác`
-                        }
-                        allowClear
-                      />
-                      <span className="ml-2 text-gray-600">
-                        Đã chọn: {selectedProducts.length}
-                      </span>
-                    </div>
+                  <Form.Item label="Sản phẩm áp dụng" name="appliedProducts">
+                    <Select
+                      mode="multiple"
+                      placeholder="Chọn sản phẩm áp dụng"
+                      value={[]}
+                      tagRender={() => null}
+                      onChange={handleSelect}
+                      style={{ width: "100%" }}
+                      suffixIcon={
+                        <p className="text-black">
+                          Đã chọn: {selectedItems.length}
+                        </p>
+                      }
+                      dropdownRender={(menu: any) => (
+                        <div className="max-h-[500px] overflow-y-auto">
+                          {/* Thêm ô tìm kiếm */}
+                          <div style={{ padding: "8px 12px" }}>
+                            <Input.Search
+                              placeholder="Tìm kiếm sản phẩm..."
+                              onChange={(e) => setSearchText(e.target.value)}
+                              style={{ marginBottom: 8 }}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              padding: "8px 12px",
+                              borderBottom: "1px solid #f0f0f0",
+                            }}
+                          >
+                            <Checkbox
+                              checked={selectAll}
+                              onChange={(e) =>
+                                handleSelectAll(e.target.checked)
+                              }
+                            >
+                              Chọn tất cả
+                            </Checkbox>
+                          </div>
+                          {/* Sử dụng filteredCategories thay vì visibleCategories */}
+                          {filteredCategories.map((category) => (
+                            <div
+                              key={category._id}
+                              style={{ padding: "8px 0" }}
+                            >
+                              <div style={{ paddingLeft: "12px" }}>
+                                <Checkbox
+                                  checked={selectedCategories.includes(
+                                    category._id
+                                  )}
+                                  onChange={() =>
+                                    handleCategoryChange(category._id)
+                                  }
+                                >
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {category.name_category}
+                                  </span>
+                                </Checkbox>
+                              </div>
+                              <div style={{ paddingLeft: "24px" }}>
+                                {filteredProducts
+                                  .filter(
+                                    (product) =>
+                                      product.category_id === category._id
+                                  )
+                                  .map((product) => (
+                                    <Checkbox
+                                      key={product._id}
+                                      value={product._id}
+                                      checked={selectedItems.includes(
+                                        product._id
+                                      )}
+                                      onChange={() =>
+                                        handleCheckboxChange(product._id)
+                                      }
+                                    >
+                                      {product.name_product}
+                                    </Checkbox>
+                                  ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    >
+                      {/* {selectedItems.map((id) => (
+                        <Option key={id} value={id}>
+                          {products?.find((p) => p._id === id)?.name_product}
+                        </Option>
+                      ))} */}
+                    </Select>
                   </Form.Item>
                 )}
 
-                {/* Hiển thị ô số lượng nếu chọn "quantity" */}
+                {/* Hiển thị ô Tổng giá trị đơn hàng nếu chọn "total" */}
                 {applyType === "total" && (
-                  <Form.Item<FieldType>
+                  <Form.Item<IVoucher>
                     label="Số tiền đơn hàng tối thiểu"
                     name="minimumSpend"
                     rules={[
@@ -440,31 +481,27 @@ const UpdateVoucher = () => {
 
               {/* Cột 2 */}
               <div className="w-full px-4 md:w-1/2">
-                <Form.Item<FieldType>
+                <Form.Item<IVoucher>
                   label="Mô tả mã giảm giá"
                   name="description_voucher"
                   rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
                 >
                   <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Giới hạn mã giảm giá" name="limitType">
-                  <Select
+                <Form.Item label="Giới hạn mã giảm giá">
+                  <Checkbox.Group
                     value={limitType}
+                    options={[
+                      { label: "Giới hạn thời gian", value: "time" },
+                      { label: "Giới hạn số lượng", value: "quantity" },
+                    ]}
                     onChange={onLimitTypeChange}
-                    placeholder="Chọn giới hạn"
-                  >
-                    <Select.Option>Không có</Select.Option>
-                    <Select.Option value="time">Theo thời gian</Select.Option>
-                    <Select.Option value="quantity">
-                      Theo số lượng
-                    </Select.Option>
-                  </Select>
+                  />
                 </Form.Item>
-
-                {/* Hiển thị ô cho thời gian nếu chọn "time" */}
-                {limitType === "time" && (
+                {/* Hiển thị ô thời gian nếu chọn "Giới hạn thời gian" */}
+                {limitType.includes("time") && (
                   <div>
-                    <Form.Item<FieldType>
+                    <Form.Item<IVoucher>
                       label="Ngày bắt đầu"
                       name="startDate"
                       rules={[
@@ -482,14 +519,10 @@ const UpdateVoucher = () => {
                         },
                       ]}
                     >
-                      <DatePicker
-                        format="YYYY-MM-DD HH:mm:ss"
-                        showTime
-                        className="w-full "
-                      />
+                      <DatePicker showTime className="w-full " />
                     </Form.Item>
 
-                    <Form.Item<FieldType>
+                    <Form.Item<IVoucher>
                       label="Ngày kết thúc"
                       name="expirationDate"
                       rules={[
@@ -512,18 +545,14 @@ const UpdateVoucher = () => {
                         },
                       ]}
                     >
-                      <DatePicker
-                        format="YYYY-MM-DD HH:mm:ss"
-                        showTime
-                        className="w-full "
-                      />
+                      <DatePicker showTime className="w-full " />
                     </Form.Item>
                   </div>
                 )}
 
-                {/* Hiển thị ô số lượng nếu chọn "quantity" */}
-                {limitType === "quantity" && (
-                  <Form.Item<FieldType>
+                {/* Hiển thị ô số lượng nếu chọn "Giới hạn số lượng" */}
+                {limitType.includes("quantity") && (
+                  <Form.Item<IVoucher>
                     label="Số lượng mã giảm giá"
                     name="quantity_voucher"
                     rules={[
@@ -549,7 +578,7 @@ const UpdateVoucher = () => {
                   />
                 </Form.Item>
 
-                <Form.Item<FieldType> label="Người sử dụng mã giảm giá">
+                <Form.Item<IVoucher> label="Người sử dụng mã giảm giá">
                   <div className="flex items-center">
                     <Select
                       mode="multiple"
