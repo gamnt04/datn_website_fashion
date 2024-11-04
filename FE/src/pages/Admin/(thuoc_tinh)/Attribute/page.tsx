@@ -3,15 +3,19 @@
 import { useParams } from "react-router-dom";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { Dispatch_thuoc_tinh, Lay_the_loai_thuoc_tinh, Lay_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
-import { Button, Form, FormProps, Input } from "antd";
+import { Button, Form, FormProps, Input, Upload } from "antd";
 import { SketchPicker } from 'react-color';
 import { useState } from "react";
 import Table_cpn from "./table_cpn";
+import { PlusOutlined } from "@ant-design/icons";
+import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { Loader } from "lucide-react";
 
 export default function Attribute() {
   const [user] = useLocalStorage("user", {});
   const { id } = useParams();
   const [symbol, setSymbol] = useState<string>('');
+  const [imageFile, setImageFile] = useState<File[]>([]);
   const { data, isPending, isError } = Lay_the_loai_thuoc_tinh({
     id_thuoc_tinh: id,
     id_account: user?.user?._id
@@ -21,18 +25,36 @@ export default function Attribute() {
     id_account: user?.user?._id,
     category_attribute: data?.category_attribute
   });
+  const [loadingUpload, setLoadingUpload] = useState<boolean>(false)
   if (isPending || loading || loading_2) return <span>Loading...</span>
   if (isError) return <span>Error...</span>
-  const onFinish: FormProps<any>['onFinish'] = (values) => {
-    const data_request = {
-      ten_thuoc_tinh: values?.ten_thuoc_tinh,
-      the_loai_thuoc_tinh: data?.category_attribute,
-      id_account: user?.user?._id,
-      symbol_thuoc_tinh: symbol
-    }
-    mutate(data_request)
+  const handleImageChange = (imageItem: any) => {
+    const files =
+      imageItem?.fileList?.map((file: any) => file.originFileObj) || [];
+    setImageFile(files);
   };
-
+  const onFinish: FormProps<any>['onFinish'] = async (values) => {
+    if (data?.category_attribute === 'ux_image') {
+      setLoadingUpload(true)
+      const imageUrl = await UploadImage(imageFile[0]);
+      const data_request = {
+        ten_thuoc_tinh: values?.ten_thuoc_tinh,
+        the_loai_thuoc_tinh: data?.category_attribute,
+        id_account: user?.user?._id,
+        symbol_thuoc_tinh: imageUrl
+      }
+      setLoadingUpload(false)
+      mutate(data_request);
+    } else {
+      const data_request = {
+        ten_thuoc_tinh: values?.ten_thuoc_tinh,
+        the_loai_thuoc_tinh: data?.category_attribute,
+        id_account: user?.user?._id,
+        symbol_thuoc_tinh: symbol
+      }
+      mutate(data_request);
+    }
+  };
 
   const onFinishFailed: FormProps<any>['onFinishFailed'] = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -42,8 +64,14 @@ export default function Attribute() {
   }
   return (
     <div className="px-10">
+      {(isPending || loading || loadingUpload) && (
+        <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+          <div className="animate-spin">
+            <Loader />
+          </div>
+        </div>
+      )}
       <strong>Sản phẩm {data?.name_attribute}</strong>
-
       <section className="grid grid-cols-[35%_60%] justify-between">
         {/* cot trai */}
         <div className="mt-10">
@@ -77,7 +105,20 @@ export default function Attribute() {
                 </div>
               </div>
             }
-
+            {
+              data?.category_attribute === 'ux_image' &&
+              <Upload
+                listType="picture-card"
+                beforeUpload={() => false}
+                onChange={handleImageChange}
+                className="mt-2"
+                maxCount={1}
+              >
+                <button type="button">
+                  <PlusOutlined />
+                </button>
+              </Upload>
+            }
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit" className="-translate-x-[100px] mt-10">
                 Tạo mới {data?.name_attribute}

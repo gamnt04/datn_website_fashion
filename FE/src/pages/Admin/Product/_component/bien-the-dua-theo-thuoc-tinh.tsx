@@ -16,6 +16,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
     console.log(props)
     const initialAttributes = data?.map((item: any) => ({
         color: item?.ten_thuoc_tinh || '',
+        symbol: item?.symbol_thuoc_tinh,
         size: [],
     })) || [];
 
@@ -26,12 +27,6 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                     <div className="text-[#1C2434] font-medium text-sm">Biến thể sản phẩm</div>
                     {fields.map(({ key, name }) => (
                         <div key={key}>
-                            <label
-                                htmlFor=""
-                                className="text-[#1C2434] font-medium text-sm"
-                            >
-                                Màu :
-                            </label>
                             <Filed_form
                                 props={{
                                     name_field: [name, "color"],
@@ -44,6 +39,20 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                     restField: restField
                                 }}
                             />
+                            <div className='invisible mb-[-15%]'>
+                                <Filed_form
+                                    props={{
+                                        name_field: [name, "symbol"],
+                                        ruler_field: [
+                                            {
+                                                required: true,
+                                                message: "Vui lòng nhập màu sắc!"
+                                            }
+                                        ],
+                                        restField: restField
+                                    }}
+                                />
+                            </div>
                             <Form.List name={[name, "size"]} initialValue={[{}]}>
                                 {(
                                     sizeFields,
