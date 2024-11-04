@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useCategoryMutation from "../../../../common/hooks/Category/useCategoryMutation";
 import { ICategory } from "../../../../common/interfaces/Category";

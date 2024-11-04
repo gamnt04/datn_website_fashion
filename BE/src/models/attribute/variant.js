@@ -7,6 +7,7 @@ const AttributeSchema = new Schema(
                 color: {
                     type: String,
                 },
+                symbol: String,
                 size: [
                     {
                         name_size: String,

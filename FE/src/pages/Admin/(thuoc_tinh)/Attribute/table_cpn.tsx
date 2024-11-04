@@ -34,9 +34,11 @@ const Table_cpnt = ({ data_props }: any) => {
                             <tr key={index} className='border border-gray-400 *:p-2 text-gray-700'>
                                 {
                                     value?.symbol_thuoc_tinh ?
-                                        <td><div style={{
-                                            backgroundColor: value?.symbol_thuoc_tinh
-                                        }} className={`w-6 h-6 rounded border`}></div></td> :
+                                        value?.the_loai_thuoc_tinh === 'ux_image' ?
+                                            <img width={60} height={60} src={value?.symbol_thuoc_tinh} /> :
+                                            <td><div style={{
+                                                backgroundColor: value?.symbol_thuoc_tinh
+                                            }} className={`w-6 h-6 rounded border`}></div></td> :
                                         <div></div>
                                 }
 
