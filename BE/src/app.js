@@ -11,7 +11,6 @@ import Routes_Favorites from "./routers/favoriteProducts";
 import Routes_Carts from "./routers/cart";
 import Router_Contact from "./routers/contact";
 import Routes_payments from "./routers/OnlineCheckoutRoutes";
-import Routes_Attribute from "./routers/attribute";
 import Routes_review from "./routers/review";
 import Router_Notification from "./routers/notification";
 import Route_Shipper from "./routers/shipper";
@@ -21,6 +20,7 @@ import http from "http";
 import jwt from "jsonwebtoken";
 import Messages from "./models/Message/Message";
 import Router_Message from "./routers/message";
+import router_attribute from "./routers/attribute";
 import Router_HuyMail from "./routers/sendmail";
 import Router_coze from "./routers/coze";
 
@@ -35,7 +35,6 @@ connectDB(process.env.DB_URL);
 
 // Định nghĩa các routes
 app.use("/api/v1", Routes_Products);
-app.use("/api/v1", Routes_Attribute);
 app.use("/api/v1", Routes_categories);
 app.use("/api/v1", Routes_orders);
 app.use("/api/v1", Routes_Carts);
@@ -49,8 +48,15 @@ app.use("/api/v1", Routes_review);
 app.use("/api/v1", Route_Shipper);
 app.use("/api/v1", Routes_voucher);
 app.use("/api/v1", Router_Message);
+<<<<<<< HEAD
 app.use("/api/v1", Router_HuyMail);
 app.use("/api/v1", Router_coze);
+=======
+app.use("/api/v1", router_attribute);
+
+
+app.use('/api/v1', Router_HuyMail);
+>>>>>>> c74be6578ce1ec93b76ea9ed0b5eb72c5a4643de
 // Định nghĩa một số route khác
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;

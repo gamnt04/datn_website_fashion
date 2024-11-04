@@ -7,10 +7,12 @@ export interface IVoucher {
   usedCount: number;
   discountType: string;
   discountValue: number;
+  applyType: string;
+  appliedProducts: string[];
   minimumSpend: number;
   maxDiscount: number;
   allowedUsers: string[];
-  startDate: Date;
-  expirationDate: Date;
-  isActive: unknown | boolean;
+  startDate: Date | null;
+  expirationDate: Date | null;
+  limitType: string;
 }

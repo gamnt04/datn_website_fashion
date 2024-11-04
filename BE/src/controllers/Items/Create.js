@@ -2,7 +2,7 @@
 import { StatusCodes } from "http-status-codes";
 import Category from "../../models/Items/Category";
 import Products from "../../models/Items/Products";
-import Attributes from '../../models/attribute/attribute';
+import Attributes from '../../models/attribute/variant';
 import { validate_items } from "../../validations/items";
 
 export const createProduct = async (req, res) => {
@@ -63,6 +63,7 @@ export const createProduct = async (req, res) => {
       const varriant = convertAttribute.map(item => (
         {
           color: item.color ? item.color : '',
+          symbol: item.symbol ? item.symbol : '',
           size: item.size.map(data_size => (
             {
               name_size: data_size.name_size ? data_size.name_size.toString() : '',

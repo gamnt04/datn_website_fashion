@@ -19,7 +19,7 @@ const AdminLayout: React.FC = () => {
           <div className="fixed top-0 left-[250px] w-[calc(100%-200px)] bg-[#171821] text-gray-100 z-10">
             <Header />
           </div>
-          <div className="pt-[20px] flex-1 ">
+          <div className="pt-[20px] flex-1 mt-16">
             <Outlet />
           </div>
           <MessAdmin />
