@@ -22,6 +22,7 @@ import jwt from "jsonwebtoken";
 import Messages from "./models/Message/Message";
 import Router_Message from "./routers/message";
 import Router_HuyMail from "./routers/sendmail";
+import Router_coze from "./routers/coze";
 
 dotenv.config();
 
@@ -48,7 +49,8 @@ app.use("/api/v1", Routes_review);
 app.use("/api/v1", Route_Shipper);
 app.use("/api/v1", Routes_voucher);
 app.use("/api/v1", Router_Message);
-app.use('/api/v1', Router_HuyMail);
+app.use("/api/v1", Router_HuyMail);
+app.use("/api/v1", Router_coze);
 // Định nghĩa một số route khác
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;
@@ -71,8 +73,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:7899",
-    methods: ["GET", "POST"],
-  },
+    methods: ["GET", "POST"]
+  }
 });
 
 // Middleware xác thực JWT cho Socket.IO
@@ -103,7 +105,7 @@ io.on("connection", (socket) => {
       const message = new Messages({
         senderId: socket.user.userId,
         receiverId,
-        content,
+        content
       });
 
       await message.save();
