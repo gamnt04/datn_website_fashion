@@ -7,6 +7,8 @@ import SendMail from "../SendMail/SendMail";
 import SendCancellationMail from "../SendMail/HuyMail";
 import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
 import Shipper from "../../models/Shipper/shipper";
+import fetch from "node-fetch";
+import * as turf from "@turf/turf";
 
 // Middleware xác thực
 import jwt from "jsonwebtoken";
@@ -225,25 +227,6 @@ export const createOrderPayment = async (req, res) => {
   }
 };
 
-// export const getAllOrdersToday = async (req, res) => {
-//   try {
-//     const startOfDay = new Date();
-//     startOfDay.setHours(0, 0, 0, 0);
-//     const endOfDay = new Date();
-//     endOfDay.setHours(23, 59, 59, 999);
-//     const ordersToday = await Order.find({
-//       datetime: {
-//         $gte: startOfDay,
-//         $lte: endOfDay
-//       }
-//     }).exec();
-//     return res.status(StatusCodes.OK).json(ordersToday);
-//   } catch (error) {
-//     return res
-//       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-//       .json({ error: error.message });
-//   }
-// };
 export const getAllOrdersToday = async (req, res) => {
   try {
     const startOfDay = new Date();
@@ -448,17 +431,72 @@ export const getTop10ProductBestSale = async (req, res) => {
   }
 };
 
+const getCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+    address
+  )}&format=json&limit=1`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.length > 0) {
+      console.log(`Tọa độ tìm thấy cho địa chỉ: ${address}`, data[0]);
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+      };
+    } else {
+      console.warn(`Không tìm thấy tọa độ cho địa chỉ: ${address}`);
+      return null;
+    }
+  } catch (error) {
+    console.error("Lỗi khi lấy tọa độ:", error);
+    return null;
+  }
+};
+
+const calculateDistance = (startCoords, destinationCoords) => {
+  const from = turf.point([startCoords.lon, startCoords.lat]);
+  const to = turf.point([destinationCoords.lon, destinationCoords.lat]);
+  const options = { units: "kilometers" };
+  return turf.distance(from, to, options);
+};
+
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
-      .populate("reviews")
-      .populate("shipperId");
+    const order = await Order.findById(req.params.id).populate("shipperId");
+
     if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
     }
-    return res.status(StatusCodes.OK).json(order);
+
+    const warehouseAddress =
+      "FPT Polytechnic, Trịnh Văn Bô, Nam Từ Liêm, Hà Nội";
+
+    const warehouseCoords = await getCoordinates(warehouseAddress);
+    const customerCoords = await getCoordinates(order.customerInfo.address);
+
+    if (!warehouseCoords) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: `Không thể tìm thấy tọa độ của địa chỉ kho: ${warehouseAddress}`,
+      });
+    }
+
+    if (!customerCoords) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: `Không thể tìm thấy tọa độ của địa chỉ người nhận: ${order.customerInfo.address}`,
+      });
+    }
+
+    const distance = calculateDistance(warehouseCoords, customerCoords);
+
+    return res.status(StatusCodes.OK).json({
+      ...order.toObject(),
+      deliveryDistance: distance.toFixed(2) + " km",
+    });
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
