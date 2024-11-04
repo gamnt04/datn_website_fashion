@@ -8,7 +8,6 @@ export async function tao_loai_thuoc_tinh(req, res) {
     const check_ten_loai_thuoc_tinh = await category_attribute.findOne({
       name_attribute: req.body.name_attribute
     });
-    console.log(check_ten_loai_thuoc_tinh)
     if (!req.body.id_account) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         message: 'Khong tim thay tai khoan!'

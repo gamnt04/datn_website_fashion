@@ -10,7 +10,6 @@ const Category_attribute_Schema = new mongoose.Schema(
         category_attribute: {
             type: String,
             required: true,
-            unique: true
         },
         id_account : {
             type : mongoose.Schema.Types.ObjectId,
