@@ -5,7 +5,7 @@ import Products from "../../models/Items/Products";
 import SendMail from "../SendMail/SendMail";
 import SendCancellationMail from "../SendMail/HuyMail";
 import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
-import moment from "moment";
+import moment from "moment-timezone";
 import fetch from "node-fetch";
 import * as turf from "@turf/turf";
 
@@ -1206,28 +1206,39 @@ export async function get_orders_month(req, res) {
   } = req.query;
 
   const options = {
-    page: _page,
-    limit: _limit,
+    page: parseInt(_page, 10),
+    limit: parseInt(_limit, 10),
     sort: _sort ? { [_sort]: 1 } : { createdAt: -1 },
   };
-  const { role, userId } = req.user;
 
-  let orders;
+  const { role, userId } = req.user;
   const query = {};
 
+  // Áp dụng lọc theo vai trò shipper
   if (role === "courier") {
     query.shipperId = userId;
   }
 
+  // Áp dụng lọc tìm kiếm nếu có
   if (_search) {
     query._id = { $regex: _search, $options: "i" };
   }
 
+  // Áp dụng lọc trạng thái đơn hàng nếu có
   if (_status) {
     query.status = _status;
   }
 
+  // Lọc các đơn hàng của tháng hiện tại theo múi giờ Hà Nội
+  const timezone = "Asia/Ho_Chi_Minh";
+  const startOfMonth = moment().tz(timezone).startOf("month").toDate();
+  const endOfMonth = moment().tz(timezone).endOf("month").toDate();
+
+  // Sử dụng `deliveredAt` để lọc đơn hàng
+  query.deliveredAt = { $gte: startOfMonth, $lte: endOfMonth };
+
   try {
+    // Truy vấn các đơn hàng theo điều kiện
     const data = await Order.paginate(query, options);
 
     if (!data || data.docs.length < 1) {
@@ -1238,47 +1249,45 @@ export async function get_orders_month(req, res) {
 
     // Tính toán tổng khoảng cách và tổng số đơn hàng
     let totalDistance = 0;
-    let totalOrders = data.docs.length; // Tổng số đơn hàng
+    let totalOrders = data.docs.length;
 
     for (const order of data.docs) {
       if (order.deliveryDistance) {
-        // Chuyển đổi giá trị khoảng cách về dạng số
         const distance = parseFloat(order.deliveryDistance);
         if (!isNaN(distance)) {
-          totalDistance += distance; // Cộng dồn khoảng cách
+          totalDistance += distance;
         }
       }
     }
 
-    // Tính toán tháng hiện tại
-    const month = moment().format("YYYY-MM");
+    // Xác định tháng hiện tại
+    const month = moment().tz(timezone).format("YYYY-MM");
 
-    // Kiểm tra xem đã có bản ghi cho tháng này chưa
+    // Kiểm tra và cập nhật MonthlySummary mà không cộng dồn thêm
     let summary = await MonthlySummary.findOne({ shipperId: userId, month });
-
     if (!summary) {
-      // Nếu chưa có, tạo mới
       summary = new MonthlySummary({
         shipperId: userId,
         month,
-        totalDistance, // Lưu trực tiếp giá trị số
+        totalDistance,
         totalOrders,
       });
     } else {
-      // Cập nhật bản ghi nếu đã có
-      summary.totalDistance += totalDistance; // Cộng dồn khoảng cách
-      summary.totalOrders += totalOrders; // Cộng dồn số đơn hàng
+      // Cập nhật lại với giá trị tổng mới mà không cộng thêm
+      summary.totalDistance = totalDistance;
+      summary.totalOrders = totalOrders;
     }
 
-    await summary.save(); // Lưu bản ghi
+    await summary.save();
 
+    // Trả về dữ liệu
     return res.status(StatusCodes.OK).json({
       message: "Hoàn thành!",
       data,
       totalDocs: data.totalDocs,
       totalPages: data.totalPages,
-      totalDistance: `${totalDistance.toFixed(2)} km`, // Tổng khoảng cách
-      totalOrders: totalOrders, // Tổng số đơn hàng
+      totalDistance: `${totalDistance.toFixed(2)} km`,
+      totalOrders,
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -1286,6 +1295,7 @@ export async function get_orders_month(req, res) {
     });
   }
 }
+
 export const fetchOrdersToday = async (req, res) => {
   const user = req.user;
 
@@ -1302,11 +1312,11 @@ export const fetchOrdersToday = async (req, res) => {
     // Lấy danh sách đơn hàng
     const orders = await Order.find({
       shipperId: user.userId,
-      status: { $in: [5, 6] }, // Chỉ lấy trạng thái giao hàng thành công (6) hoặc thất bại (5)
+      status: { $in: [4, 5, 6] }, // Chỉ lấy trạng thái giao hàng thành công (6) hoặc thất bại (5)
       deliveredAt: { $gte: startOfDay, $lte: endOfDay },
     })
-      .select("quantity status deliveredAt") // Không chọn customerInfo ở đây
-      .populate("customerInfo", "userName orderName"); // Populate để lấy tên người mua hàng
+      .select("quantity status deliveredAt")
+      .populate("customerInfo", "userName orderName");
 
     return res.status(200).json({
       message: "Danh sách đơn hàng theo ngày của shipper",
