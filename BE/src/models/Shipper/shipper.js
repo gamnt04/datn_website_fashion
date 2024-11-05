@@ -60,6 +60,8 @@ const ShipperSchema = new mongoose.Schema(
       enum: ["courier"],
       default: "courier",
     },
+    bankAccountNumber: { type: String },
+    bankAccountName: { type: String },
   },
   { timestamps: true, versionKey: false }
 );

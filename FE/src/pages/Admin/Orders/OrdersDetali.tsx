@@ -49,17 +49,17 @@ const OrdersDetali = () => {
   const { data: shipperData } = useListAllShipper();
   const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
   const handleSelectShipper = (shipperId: string) => {
-    setSelectedShipper(shipperId); 
-    if (!id) return; 
+    setSelectedShipper(shipperId);
+    if (!id) return;
     AddShipper(
-      { orderId: id, shipperId }, 
+      { orderId: id, shipperId },
       {
         onSuccess: () => {
-          messageApi.success("Thêm shipper cho đơn hàng thành công!"); 
+          messageApi.success("Thêm shipper cho đơn hàng thành công!");
           refetch();
         },
         onError: () => {
-          messageApi.error("Thêm shipper thất bại!"); 
+          messageApi.error("Thêm shipper thất bại!");
         },
       }
     );
@@ -76,10 +76,10 @@ const OrdersDetali = () => {
   const availableShippers = shipperData.shippers.filter((shipper: any) => {
     const shipperHasOngoingDelivery = shipperData.orders.some(
       (order: any) =>
-        order.shipperId._id === shipper._id && order.status === "3"
+        order?.shipperId?._id === shipper?._id && order.status === "3"
     );
 
-    return !shipperHasOngoingDelivery && shipper._id !== data?.shipperId?._id;
+    return !shipperHasOngoingDelivery && shipper?._id !== data?.shipperId?._id;
   });
 
   if (availableShippers.length === 0) {
