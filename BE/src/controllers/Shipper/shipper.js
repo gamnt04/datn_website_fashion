@@ -15,46 +15,40 @@ import Salary from "../../models/Shipper/salary";
 dotenv.config();
 
 export const calculateSalaryForMonth = async (req, res) => {
-  const { userId } = req.params; // Lấy userId từ thông tin người dùng
+  const { userId } = req.params;
 
   try {
-    // Lấy thông tin tổng khoảng cách và số đơn hàng từ MonthlySummary
+    // Lấy thông tin tổng khoảng cách và số đơn hàng từ MonthlySummary cho tháng hiện tại
     const month = moment().format("YYYY-MM");
     const summary = await MonthlySummary.findOne({ shipperId: userId, month });
 
     if (!summary) {
-      return res
-        .status(404)
-        .json({ message: "Không có thông tin lương cho tháng này." });
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không có thông tin lương cho tháng này.",
+      });
     }
 
-    // Lấy tổng khoảng cách và tổng số đơn hàng
     const { totalDistance, totalOrders } = summary;
     const ratePerKm = 15000; // Tỷ lệ lương theo km
-    const totalSalary = totalDistance * ratePerKm; // Tính lương theo tổng khoảng cách
-    let monthlyBonus = 0;
+    const totalSalary = totalDistance * ratePerKm;
 
-    // Tính thưởng tháng nếu tổng khoảng cách đạt yêu cầu
-    if (totalDistance >= 150) {
-      monthlyBonus = 500000; // Ví dụ: thưởng 500.000 VND nếu giao đủ 250km
-    }
+    // Tính thưởng tháng nếu đạt mức 150 km hoặc 150 đơn
+    const monthlyBonus =
+      totalDistance >= 150 || totalOrders >= 150 ? 500000 : 0;
+    const totalPayment = totalSalary + monthlyBonus;
 
-    const totalPayment = totalSalary + monthlyBonus; // Tính tổng lương cuối cùng
-
-    // Định dạng số tiền với làm tròn
+    // Định dạng số tiền
     const formatCurrency = (amount) => {
-      const roundedAmount = Math.round(amount); // Làm tròn số tiền
-      return (
-        Math.floor(roundedAmount / 1000).toString() +
-        "." +
-        (roundedAmount % 1000).toString().padStart(3, "0")
-      );
+      return amount.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      });
     };
 
-    // Lưu thông tin lương vào cơ sở dữ liệu
-    let salaryRecord = await Salary.findOne({ shipperId: userId, month });
-    if (!salaryRecord) {
-      salaryRecord = new Salary({
+    // Kiểm tra và cập nhật Salary trong cơ sở dữ liệu
+    let salaryRecord = await Salary.findOneAndUpdate(
+      { shipperId: userId, month },
+      {
         shipperId: userId,
         month,
         totalDistance,
@@ -63,29 +57,22 @@ export const calculateSalaryForMonth = async (req, res) => {
         totalSalary,
         monthlyBonus,
         totalPayment,
-      });
-    } else {
-      salaryRecord.totalDistance = totalDistance; // Cập nhật tổng khoảng cách
-      salaryRecord.totalOrders = totalOrders; // Cập nhật tổng số đơn hàng
-      salaryRecord.totalSalary = totalSalary; // Cập nhật tổng lương
-      salaryRecord.monthlyBonus = monthlyBonus; // Cập nhật tổng thưởng
-      salaryRecord.totalPayment = totalPayment; // Cập nhật tổng lương cuối cùng
-    }
+      },
+      { new: true, upsert: true }
+    );
 
-    await salaryRecord.save(); // Lưu hoặc cập nhật bản ghi lương
-
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
       message: "Tính lương thành công!",
       salaryData: {
         totalDistance,
         totalOrders,
-        totalSalary: formatCurrency(totalSalary), // Định dạng tổng lương
-        monthlyBonus: formatCurrency(monthlyBonus), // Định dạng thưởng tháng
-        totalPayment: formatCurrency(totalPayment), // Định dạng tổng lương cuối cùng
+        totalSalary: formatCurrency(totalSalary),
+        monthlyBonus: formatCurrency(monthlyBonus),
+        totalPayment: formatCurrency(totalPayment),
       },
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Lỗi khi tính lương",
       error: error.message,
     });

@@ -8,7 +8,7 @@ const monthlySummarySchema = new mongoose.Schema({
   },
   month: {
     type: String,
-    required: true, // Định dạng YYYY-MM
+    required: true,
   },
   totalDistance: {
     type: Number,
@@ -24,7 +24,6 @@ const monthlySummarySchema = new mongoose.Schema({
   },
 });
 
-// Tạo model từ schema
 const MonthlySummary = mongoose.model("MonthlySummary", monthlySummarySchema);
 
 export default MonthlySummary;

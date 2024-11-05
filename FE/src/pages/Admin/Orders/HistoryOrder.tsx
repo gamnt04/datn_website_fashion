@@ -22,6 +22,8 @@ const HistoryOrder = () => {
     currentPage,
     statusFilter
   );
+  console.log(data);
+
   const dataSource = searchData ? searchData : data;
 
   const onHandleSearch = () => {
