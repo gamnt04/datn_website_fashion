@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   ChevronDown,
@@ -89,6 +90,12 @@ export default function Sidebar_Dashboard() {
                   className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
                 >
                   Thêm mới sản phẩm
+                </NavLink>
+                <NavLink
+                  to="/admin/products/the_loai_thuoc_tinh"
+                  className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
+                >
+                  Thuộc tính sản phẩm
                 </NavLink>
                 <NavLink
                   to="/admin/category"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -112,8 +113,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             for (const k of i.size) {
               k?.name_size == item &&
                 (setQuantity_attr(k?.stock_attribute),
-                setSize(k.name_size),
-                set_price_attr(k?.price_attribute));
+                  setSize(k.name_size),
+                  set_price_attr(k?.price_attribute));
             }
           }
         }
@@ -256,16 +257,39 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           <>
             <div>
               <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
-                Color
+                {
+                  dataProps?.products?.attributes?.values[0].symbol ?
+                    dataProps?.products?.attributes?.values[0].symbol[0] === '#' ? 'Color' : 'Hình ảnh' : 'Label'
+                }
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
                 {dataProps?.products?.attributes?.values?.map((item: any) => (
-                  <button
-                    onClick={() => handle_atrtribute(item?.color, "Color")}
-                    className={`${Convert_Color(item?.color)} ${
-                      color == item?.color ? "after:block" : "after:hidden"
-                    } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
-                  ></button>
+                  // <button
+                  //   onClick={() => handle_atrtribute(item?.color, "Color")}
+                  //   className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
+                  //     } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
+                  // ></button>
+                  item?.symbol ?
+                    item?.symbol[0] === '#' ?
+                      <button
+                        onClick={() => handle_atrtribute(item?.color, "Color")}
+                        className={`!bg-[${item?.symbol}] ${color == item?.color ? "after:block" : "after:hidden"
+                          } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 ${(item?.symbol === '#ffffff' || item?.symbol === '#fff') ? 'after:border-black' : 'after:border-white'} after:rotate-[-45deg] grid place-items-center`}
+                      ></button> :
+                      <button
+                        onClick={() => handle_atrtribute(item?.color, "Color")}
+                        className={`${color == item?.color ? "after:block" : "after:hidden"
+                          } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
+                      >
+                        <img src={item?.symbol} alt="" />
+                      </button> :
+                    <button
+                      onClick={() => handle_atrtribute(item?.color, "Color")}
+                      className={`${color == item?.color ? "after:block" : "after:hidden"
+                        } hover:scale-110 after:absolute after:w-4 after:h-2 !rounded-none !w-auto px-1.5 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
+                    >
+                      {item?.color}
+                    </button>
                 ))}
               </div>
             </div>
@@ -279,9 +303,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                   {arr_size?.map((item: any) => (
                     <button
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
-                      className={`${
-                        size == item?.name_size && "bg-black text-white"
-                      } hover:bg-black hover:text-white grid place-items-center`}
+                      className={`${size == item?.name_size && "bg-black text-white"
+                        } hover:bg-black hover:text-white grid place-items-center`}
                     >
                       {item?.name_size}
                     </button>
