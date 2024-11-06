@@ -228,30 +228,32 @@ export default function List_order() {
       message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
       id_different: dataBody?.orderNumber,
-      
-      
     });
-  
+
     // Gửi yêu cầu hủy đơn hàng lên BE
     mutate(dataBody, {
       onSuccess: async (response) => {
-        console.log("Lý do hủy từ backend response:", response.data?.cancellationReason);
+        console.log(
+          "Lý do hủy từ backend response:",
+          response.data?.cancellationReason
+        );
         try {
           // Gọi API gửi email hủy đơn hàng
-          await axios.post('/api/v1/send-cancellation-email', {
+          await axios.post("/api/v1/send-cancellation-email", {
             email: user?.user?.email, // Email người dùng
             order: response.data, // Dữ liệu đơn hàng từ BE trả về
-            cancellationReason: response.data?.cancellationReason || dataBody?.cancellationReason, 
+            cancellationReason:
+              response.data?.cancellationReason || dataBody?.cancellationReason,
           });
-  
-          console.log('Email hủy đơn đã được gửi thành công!');
+
+          console.log("Email hủy đơn đã được gửi thành công!");
         } catch (error) {
-          console.error('Lỗi khi gửi email:', error);
+          console.error("Lỗi khi gửi email:", error);
         }
       },
       onError: (error) => {
-        console.error('Lỗi khi hủy đơn:', error);
-      }
+        console.error("Lỗi khi hủy đơn:", error);
+      },
     });
   }
 
@@ -264,7 +266,7 @@ export default function List_order() {
       case 3:
         return <span>Đang vận chuyển</span>;
       case 4:
-        return <span>Đã giao hàng</span>;
+        return <span>Đã giao </span>;
       case 5:
         return <span>Giao hàng thất bại</span>;
       case 6:
@@ -286,7 +288,7 @@ export default function List_order() {
     newParams.set("_limit", "10");
     newParams.set("_status", String(i));
     setSearchParams(newParams);
-    
+
     setSelectedMenu(i);
   }
   const [searchParamsUri] = useSearchParams();
@@ -438,26 +440,27 @@ export default function List_order() {
     <div>
       {contextHolder}
       <ul className="hidden_scroll-x_trendingproducts overflow-x-scroll flex items-center *:border-b-2 *:cursor-pointer *:border-white justify-between gap-3 *:whitespace-nowrap lg:text-sm text-xs">
-  {menuItems.map((menu, i) => (
-    <li
-      key={menu}
-      className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400`}
-      onClick={() => handle_status_order(i)}
-    >
-      {menu} {/* Chỉ hiển thị số lượng khi item được click */}
-      {selectedMenu === i && (
-        <>
-          {" "}
-          (
-          {orderStatusCounts[menu as keyof typeof orderStatusCounts] !== undefined
-            ? orderStatusCounts[menu as keyof typeof orderStatusCounts]
-            : 0}
-          )
-        </>
-      )}
-    </li>
-  ))}
-</ul>
+        {menuItems.map((menu, i) => (
+          <li
+            key={menu}
+            className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400`}
+            onClick={() => handle_status_order(i)}
+          >
+            {menu} {/* Chỉ hiển thị số lượng khi item được click */}
+            {selectedMenu === i && (
+              <>
+                {" "}
+                (
+                {orderStatusCounts[menu as keyof typeof orderStatusCounts] !==
+                undefined
+                  ? orderStatusCounts[menu as keyof typeof orderStatusCounts]
+                  : 0}
+                )
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
       {!data?.data?.docs || data?.data?.docs?.length === 0 ? (
         <div className="flex justify-center items-center">
           <img

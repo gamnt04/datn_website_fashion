@@ -76,10 +76,10 @@ const OrdersDetali = () => {
   const availableShippers = shipperData.shippers.filter((shipper: any) => {
     const shipperHasOngoingDelivery = shipperData.orders.some(
       (order: any) =>
-        order.shipperId?._id === shipper._id && order.status === "3"
+        order?.shipperId?._id === shipper?._id && order.status === "3"
     );
 
-    return !shipperHasOngoingDelivery && shipper._id !== data?.shipperId?._id;
+    return !shipperHasOngoingDelivery && shipper?._id !== data?.shipperId?._id;
   });
 
   if (availableShippers.length === 0) {
@@ -139,8 +139,8 @@ const OrdersDetali = () => {
       userId: userId,
       receiver_id: data?.userId,
       message: `Người bán đã ${dataBody?.action === "xac_nhan"
-          ? "xác nhận"
-          : `Từ Chối:  ${dataBody?.cancellationReason}`
+        ? "xác nhận"
+        : `Từ Chối:  ${dataBody?.cancellationReason}`
         } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
@@ -705,8 +705,8 @@ const OrdersDetali = () => {
                 >
                   <button
                     className={`w - 52 rounded text - white ${role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
                       } `}
                     disabled={role !== "courier"}
                   >
