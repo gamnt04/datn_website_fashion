@@ -55,14 +55,14 @@ const Header = () => {
         if (toggleFixedHeader.current && toggleForm.current) {
           window.scrollY > 100
             ? (toggleFixedHeader.current.classList.add(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.add("scale-0"))
             : (toggleFixedHeader.current.classList.remove(
-                "animate-[animationScrollYHeader_1s]",
-                "lg:-translate-y-3"
-              ),
+              "animate-[animationScrollYHeader_1s]",
+              "lg:-translate-y-3"
+            ),
               toggleForm.current.classList.remove("scale-0"));
         }
       });
@@ -304,16 +304,16 @@ const Header = () => {
               to="profile/notification"
             >
               {notification?.notifications &&
-                notification?.notifications?.length > 0 && (
+                notification?.notifications.filter((noti: any) => !noti.status_notification).length > 0 && (
                   <span className="absolute bg-red-500 px-1.5 text-white text-xs py-[1px] rounded-xl -top-0.5 -right-2 z-10">
-                    {notification?.notifications?.length}
+                    {notification?.notifications.filter((noti: any) => !noti.status_notification).length}
                   </span>
                 )}
               <div className="group-hover:scale-110 opacity-75 hover:opacity-100 *:w-5 *:h-5 relative z-0">
                 <AiOutlineBell />
-                {/* <MiniCart /> */}
               </div>
             </Link>
+
             {/* option / menu */}
             <div
               onClick={ScrollTop}
