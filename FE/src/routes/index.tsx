@@ -51,7 +51,6 @@ import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
 // import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
 import Chat from "../pages/Client/Chat/Chat";
 import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
-import DailyOrderSummary from "../pages/Admin/Orders/DailyOrderSummary ";
 import Attribute from "../pages/Admin/(thuoc_tinh)/Attribute/page";
 import The_loai_thuoc_tinh from "../pages/Admin/(thuoc_tinh)/the_loai_thuoc_tinh/page";
 import TotalOrders from "../pages/Admin/Orders/TotalOrders";
@@ -110,8 +109,14 @@ const RouterComponent = () => {
             {/* <Route path="test1" element={<Add_Item />} />
             <Route path="test2/:id" element={<Edit_Item />} /> */}
             <Route path="products/add" element={<Add_Item />} />
-            <Route path="products/the_loai_thuoc_tinh" element={<The_loai_thuoc_tinh />} />
-            <Route path="products/attribute-catalog/:id" element={<Attribute />} />
+            <Route
+              path="products/the_loai_thuoc_tinh"
+              element={<The_loai_thuoc_tinh />}
+            />
+            <Route
+              path="products/attribute-catalog/:id"
+              element={<Attribute />}
+            />
             <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
             {/* <Route path="products/add" element={<AddProduct />} />

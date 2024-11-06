@@ -1049,28 +1049,47 @@ export const getTotalOrdersByRole = async (req, res) => {
   try {
     const user = req.user;
 
-    // Check if the user has an admin role
+    // Kiểm tra nếu người dùng có vai trò admin
     if (user.role === "admin") {
-      // Find all shippers
+      // Lấy tất cả shipper
       const shippers = await Shipper.find();
 
-      // Calculate the total delivered orders for each shipper
+      // Lấy tháng và năm hiện tại
+      const currentMonth = new Date().getMonth(); // tháng 0-11
+      const currentYear = new Date().getFullYear();
+
+      // Tính tổng số đơn hàng thành công và thất bại cho từng shipper theo tháng
       const shipperData = await Promise.all(
         shippers.map(async (shipper) => {
-          const totalOrders = await Order.countDocuments({
+          // Tạo ngày đầu tháng và cuối tháng
+          const startOfMonth = new Date(currentYear, currentMonth, 1);
+          const endOfMonth = new Date(currentYear, currentMonth + 1, 1);
+
+          // Đếm số đơn hàng thành công trong tháng
+          const successfulOrders = await Order.countDocuments({
             shipperId: shipper._id,
-            status: "6",
+            status: "6", // Trạng thái thành công
+            createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+          });
+
+          // Đếm số đơn hàng thất bại trong tháng
+          const failedOrders = await Order.countDocuments({
+            shipperId: shipper._id,
+            status: "5", // Trạng thái thất bại
+            createdAt: { $gte: startOfMonth, $lt: endOfMonth },
           });
 
           return {
             fullName: shipper.fullName,
-            totalOrders,
+            successfulOrders,
+            failedOrders,
           };
         })
       );
 
       return res.status(200).json({
-        message: "Admin - Tổng số đơn hàng đã giao của từng shipper",
+        message:
+          "Admin - Tổng số đơn hàng thành công và thất bại của từng shipper trong tháng",
         shippers: shipperData,
       });
     } else {
@@ -1079,118 +1098,5 @@ export const getTotalOrdersByRole = async (req, res) => {
   } catch (error) {
     console.error("Error fetching orders: ", error);
     return res.status(500).json({ message: "Lỗi máy chủ" });
-  }
-};
-export const getShipperOrdersStats = async (req, res) => {
-  try {
-    // Lấy ngày hiện tại
-    const now = new Date();
-
-    // Tạo các khoảng thời gian để lọc
-    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(now.setHours(23, 59, 59, 999));
-
-    const dayOfWeek = now.getDay();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
-
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    endOfMonth.setHours(23, 59, 59, 999);
-
-    // Thống kê đơn hàng theo ngày, tuần và tháng cho từng shipper
-    const ordersStats = await Order.aggregate([
-      {
-        $group: {
-          _id: {
-            shipper: "$shipperId", // Trường ID của shipper trong model Order
-            date: "$createdAt",
-          },
-          totalOrders: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          shipper: "$_id.shipper",
-          date: "$_id.date",
-          totalOrders: 1,
-          day: {
-            $cond: [
-              {
-                $and: [
-                  { $gte: ["$date", startOfDay] },
-                  { $lte: ["$date", endOfDay] },
-                ],
-              },
-              "$totalOrders",
-              0,
-            ],
-          },
-          week: {
-            $cond: [
-              {
-                $and: [
-                  { $gte: ["$date", startOfWeek] },
-                  { $lte: ["$date", endOfWeek] },
-                ],
-              },
-              "$totalOrders",
-              0,
-            ],
-          },
-          month: {
-            $cond: [
-              {
-                $and: [
-                  { $gte: ["$date", startOfMonth] },
-                  { $lte: ["$date", endOfMonth] },
-                ],
-              },
-              "$totalOrders",
-              0,
-            ],
-          },
-        },
-      },
-      {
-        $group: {
-          _id: "$shipper",
-          dailyOrders: { $sum: "$day" },
-          weeklyOrders: { $sum: "$week" },
-          monthlyOrders: { $sum: "$month" },
-        },
-      },
-      {
-        $lookup: {
-          from: "shippers", // Tên collection Shipper nếu bạn có
-          localField: "_id",
-          foreignField: "_id",
-          as: "shipperInfo",
-        },
-      },
-      {
-        $unwind: "$shipperInfo",
-      },
-      {
-        $project: {
-          _id: 0,
-          shipper: "$shipperInfo.name", // Thay "name" bằng trường tên của shipper
-          dailyOrders: 1,
-          weeklyOrders: 1,
-          monthlyOrders: 1,
-        },
-      },
-    ]);
-
-    return res.status(StatusCodes.OK).json(ordersStats);
-  } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
   }
 };
