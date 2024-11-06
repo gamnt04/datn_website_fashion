@@ -18,6 +18,14 @@ export async function tao_loai_thuoc_tinh(req, res) {
         message: "Loai thuoc tinh da ton tai",
       });
     }
+    const check_the_loai_thuoc_tinh = await category_attribute.findOne({
+      category_attribute: req.body.category_attribute
+    });
+    if (check_the_loai_thuoc_tinh) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: 'Loai thuoc tinh da ton tai'
+      })
+    }
     await category_attribute.create(req.body);
     return res.status(StatusCodes.CREATED).json({
       message: "OK",

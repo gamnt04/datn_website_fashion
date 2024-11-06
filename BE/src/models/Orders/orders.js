@@ -101,6 +101,7 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
+    deliveryDistance: { type: String, default: null },
   },
   { timestamps: true, versionKey: false }
 );

@@ -59,7 +59,13 @@ export const update_notification = async (req, res) => {
     const { id } = req.params;
     const { status_notification } = req.body;
     try {
-        const data = await Notification.findByIdAndUpdate(id, { status_notification }, { new: true });
+        let data;
+        if (id) {
+            data = await Notification.findByIdAndUpdate(id, { status_notification }, { new: true });
+        } else {
+            data = await Notification.updateMany({}, { status_notification }, { new: true });
+
+        }
         return res.status(StatusCodes.OK).json({
             message: 'Cập nhật thành công',
             data

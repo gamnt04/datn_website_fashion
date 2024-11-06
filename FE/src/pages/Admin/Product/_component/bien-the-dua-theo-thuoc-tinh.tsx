@@ -7,19 +7,17 @@ import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 
 const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
     const [user] = useLocalStorage('user', '');
+    console.log(props?.category_attribute)
     const { data, isPending } = Lay_thuoc_tinh({
         id_account: user?.user?._id,
         category_attribute: props?.category_attribute
     });
-    console.log(data)
     if (isPending) return <span>Loading...</span>
-    console.log(props)
     const initialAttributes = data?.map((item: any) => ({
         color: item?.ten_thuoc_tinh || '',
         symbol: item?.symbol_thuoc_tinh,
         size: [],
     })) || [];
-
     return (
         <Form.List name="attributes" initialValue={initialAttributes}>
             {(fields, { ...restField }) => (

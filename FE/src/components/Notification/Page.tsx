@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Mutation_Notification, Query_notification } from "../../_lib/React_Query/Notification/Query"
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
 import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { Popconfirm } from "antd";
+import { Button, Popconfirm } from "antd";
 
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
@@ -11,9 +11,13 @@ export default function Notification() {
     const { mutate: remove } = Mutation_Notification("Remove");
     const { data } = Query_notification(userId, role);
     const { mutate } = Mutation_Notification("Send");
+    const allSend = data?.notifications?.every((item: any) => item.status_notification === true);
     return (
         <div className="space-y-4 text-sm">
-            <strong className="text-lg">Thông báo của bạn</strong>
+            <div className="flex justify-between">
+                <strong className="text-lg">Thông báo của bạn</strong>
+                <Button onClick={() => mutate(undefined)} disabled={allSend} className="ml-4" type="primary">Đọc tất cả</Button>
+            </div>
             {
                 data?.notifications?.length > 0 ?
                     data?.notifications?.map((item: any) =>
@@ -74,16 +78,14 @@ export default function Notification() {
                                     )}
 
                                 </div>
-
                                 <div className="flex items-center gap-4">
-
                                     <p className="leading-relaxed text-gray-700">
                                         {item?.createdAt?.slice(0, 10)}
                                     </p>
                                     |
                                     <Popconfirm
-                                        title="Delete the task"
-                                        description="Are you sure to delete this task?"
+                                        title="Xóa thông báo "
+                                        description="Bạn có chắc chắn muốn xóa thông báo này không?"
                                         onConfirm={() => remove(item._id)}
                                         okText="Yes"
                                         cancelText="No"
