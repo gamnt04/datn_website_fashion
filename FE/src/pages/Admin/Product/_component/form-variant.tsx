@@ -18,6 +18,15 @@ export default function Form_variant({ propsData }: any) {
         id_account: user?.user?._id
     })
     if (loading) return <span>Loading...</span>
+    const initialAttributes = (
+        [
+            {
+                color: '',
+                symbol: '',
+                size: [],
+            }
+        ]
+    );
     return (
         <div>
             <div className='w-[40%] *:bg-white *:z-[10] ml-10 *:rounded'>
@@ -28,7 +37,7 @@ export default function Form_variant({ propsData }: any) {
                     <SelectContent className='bg-white z-[10]'>
                         <SelectGroup>
                             <SelectItem value="tao_bien_the_tu_thuoc_tinh">Tạo biến thể từ các thuộc tính</SelectItem>
-                            <SelectItem value="them_moi_bien_the">Thêm biến thể</SelectItem>
+                            <SelectItem value="them_moi_bien_the">Tạo mới biến thể biến thể</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </SelectShadcn>
@@ -37,21 +46,18 @@ export default function Form_variant({ propsData }: any) {
                 (state_variant.toString() === 'them_moi_bien_the') ?
                     <div className='flex flex-col text-gray-800 gap-y-2'>
                         <Form.List
-                            name="attributes"
+                            name="new_attributes"
+                            initialValue={initialAttributes}
                         >
                             {(fields, { add, remove }) => {
                                 return (
                                     <>
-                                        <div className="text-[#1C2434] font-medium text-sm">
-                                            Thuộc tính sản phẩm
-                                        </div>
                                         {fields.map(({ key, name, ...restField }) => (
                                             <div key={key}>
                                                 <label
                                                     htmlFor=""
-                                                    className="text-[#1C2434] font-medium text-sm"
-                                                >
-                                                    Màu :
+                                                    className="text-[#1C2434] font-medium text-sm">
+                                                    Thuộc tính :
                                                 </label>
                                                 <Filed_form
                                                     props={{
@@ -71,6 +77,7 @@ export default function Form_variant({ propsData }: any) {
                                                         { add: addSize, remove: removeSize }
                                                     ) => (
                                                         <>
+                                                        <div className='mb-3'>Giá trị</div>
                                                             {sizeFields.map(
                                                                 ({
                                                                     key: sizeKey,
