@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, Typography, message, Row, Col, Table, Tag, Image, Space, Modal, Divider } from 'antd';
 import { SearchOutlined, ShoppingOutlined, UserOutlined, DollarOutlined, CalendarOutlined, HomeOutlined, EyeOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -55,6 +55,14 @@ const TrackOrder: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem('user');
+    if (userInfo) {
+      setIsLoggedIn(true);  // Nếu có userInfo trong localStorage thì đã đăng nhập
+    }
+  }, []);
 
   const onFinish = async (values: { phone: string }) => {
     setLoading(true);
@@ -200,40 +208,42 @@ const TrackOrder: React.FC = () => {
   </Form>
 </Card>
 
-<Card
-  style={{
-    marginBottom: '20px',
-    padding: '20px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
-    backgroundColor: '#f9f9f9',
-  }}
->
-  <Image
-    src="https://hoanghamobile.com/Content/web/content-icon/icon-youknow.png"
-    width={170} // Increased width for a larger image
-    style={{ marginRight: '20px' }} // Add margin for spacing
-  />
-  <Text
-    style={{
-      flex: 1,
-      textAlign: 'center',
-      margin: '0 10px',
-      fontSize: '16px', // Increased font size
-      color: '#333', // Darker text color for better readability
-    }}
-  >
-    ĐĂNG NHẬP SẼ GIÚP BẠN QUẢN LÝ ĐƠN HÀNG CỦA MÌNH VÀ TRẢI NGHIỆM WEBSITE TỐT HƠN
-  </Text>
-  <Link to="/login">
-  <Button type="primary" style={{ borderRadius: '8px', padding: '10px 20px' }}>
-    Đăng Nhập
-  </Button>
-  </Link>
-</Card>
+{!isLoggedIn && (
+        <Card
+          style={{
+            marginBottom: '20px',
+            padding: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            backgroundColor: '#f9f9f9',
+          }}
+        >
+          <Image
+            src="https://hoanghamobile.com/Content/web/content-icon/icon-youknow.png"
+            width={170}
+            style={{ marginRight: '20px' }}
+          />
+          <Text
+            style={{
+              flex: 1,
+              textAlign: 'center',
+              margin: '0 10px',
+              fontSize: '16px',
+              color: '#333',
+            }}
+          >
+            ĐĂNG NHẬP SẼ GIÚP BẠN QUẢN LÝ ĐƠN HÀNG CỦA MÌNH VÀ TRẢI NGHIỆM WEBSITE TỐT HƠN
+          </Text>
+          <Link to="/login">
+            <Button type="primary" style={{ borderRadius: '8px', padding: '10px 20px' }}>
+              Đăng Nhập
+            </Button>
+          </Link>
+        </Card>
+      )}
 
 
       {/* Hiển thị danh sách các đơn hàng nếu có nhiều đơn hàng */}
