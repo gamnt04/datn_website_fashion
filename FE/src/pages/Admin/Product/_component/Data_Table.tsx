@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Checkbox, Popconfirm, Space } from "antd";
 import { ChevronUp } from "lucide-react";
 import { format } from "date-fns";

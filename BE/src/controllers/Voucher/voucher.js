@@ -71,7 +71,7 @@ export const updateVoucher = async (req, res) => {
 };
 
 export const useVoucher = async (req, res) => {
-  const { code_voucher, totalAmount, userId } = req.body;
+  const { code_voucher, totalAmount, userId, selectedProducts } = req.body;
 
   try {
     // Tìm mã giảm giá theo code và kiểm tra xem nó còn hoạt động không
@@ -113,11 +113,29 @@ export const useVoucher = async (req, res) => {
       return res.status(400).json({ message: "Mã giảm giá đã hết hạn" });
     }
 
-    // Kiểm tra điều kiện số tiền tối thiểu
-    if (totalAmount < voucher.minimumSpend) {
-      return res.status(400).json({
-        message: `Bạn cần chi tiêu tối thiểu ${voucher.minimumSpend} để sử dụng mã giảm giá này`,
-      });
+    if (voucher.applyType === "product") {
+      // Kiểm tra nếu áp dụng cho sản phẩm
+      if (voucher.appliedProducts.length === 0) {
+        // Nếu không có sản phẩm nào trong appliedProducts, cho phép tất cả sản phẩm
+      } else {
+        // Kiểm tra xem các sản phẩm đã chọn có hợp lệ không
+        const validProducts = selectedProducts.filter((productId) =>
+          voucher.appliedProducts.includes(productId)
+        );
+
+        if (validProducts.length === 0) {
+          return res
+            .status(400)
+            .json({ message: "Mã giảm giá không áp dụng cho sản phẩm này" });
+        }
+      }
+    } else if (voucher.applyType === "total") {
+      // Kiểm tra nếu áp dụng cho tổng số tiền
+      if (totalAmount < voucher.minimumSpend) {
+        return res.status(400).json({
+          message: `Số tiền tối thiểu để sử dụng mã giảm giá này là ${voucher.minimumSpend}`,
+        });
+      }
     }
 
     // Tính giá trị giảm giá dựa trên loại mã giảm giá
@@ -136,6 +154,7 @@ export const useVoucher = async (req, res) => {
     // Trả về kết quả bao gồm giá trị giảm giá và số tiền cuối cùng
     res.json({
       message: "Áp dụng mã giảm giá thành công!",
+      totalAmount,
       discount,
       finalAmount: totalAmount - discount,
     });

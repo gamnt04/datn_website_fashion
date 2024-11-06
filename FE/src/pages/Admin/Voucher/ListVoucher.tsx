@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import {
@@ -17,6 +18,8 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
+import { Loader } from "lucide-react";
+import useDataVoucher from "./_component/useDataVoucher";
 const ListVoucher = () => {
   const queryClient = useQueryClient();
   const [messageAPI, contextHolder] = message.useMessage();
@@ -24,6 +27,18 @@ const ListVoucher = () => {
     queryKey: ["voucher"],
     queryFn: () => instance.get(`/voucher`),
   });
+  const { products } = useDataVoucher();
+
+  // Hàm tìm tên sản phẩm dựa trên ID
+  const getProductNames = (productIds: string[]) => {
+    if (!products) return productIds.join(", ");
+    return productIds
+      .map((id) => {
+        const product = products.find((prod: any) => prod._id === id);
+        return product ? product.name_product : id;
+      })
+      .join(", ");
+  };
   const { data: auth } = useQuery({
     queryKey: ["auths"],
     queryFn: () => instance.get(`/auths`),
@@ -32,6 +47,7 @@ const ListVoucher = () => {
     queryKey: ["shippers"],
     queryFn: () => instance.get(`/shippers`),
   });
+
   const { mutate } = useMutation({
     mutationFn: (id: string) => instance.delete(`voucher/${id}`),
     onSuccess: () => {
@@ -63,6 +79,7 @@ const ListVoucher = () => {
     },
   });
   const formatDate = (dateString: any) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
@@ -172,7 +189,7 @@ const ListVoucher = () => {
     },
   ];
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loader />;
   return (
     <div className="container">
       {contextHolder}
@@ -188,7 +205,7 @@ const ListVoucher = () => {
           </Link>
         </div>
 
-        {data && data.data.length === 0 ? (
+        {data && data.data.vouchers.length === 0 ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           <Table dataSource={dataSource} columns={columns} />
@@ -199,7 +216,7 @@ const ListVoucher = () => {
           placement="right"
           onClose={() => setOpenDrawer(false)}
           open={openDrawer}
-          width={400}
+          width={600}
         >
           {selectedVoucher && (
             <div>
@@ -209,6 +226,7 @@ const ListVoucher = () => {
               <p>
                 <strong>Mã giảm giá:</strong> {selectedVoucher.code_voucher}
               </p>
+              <hr className="my-3" />
               <p>
                 <strong>Loại mã giảm giá:</strong>{" "}
                 {selectedVoucher.discountType === "percentage"
@@ -220,32 +238,38 @@ const ListVoucher = () => {
                 {selectedVoucher.discountValue}
               </p>
               <p>
-                <strong>Điều kiện mã giảm giá:</strong>{" "}
-                {selectedVoucher.minimumSpend}
+                <strong>Giá trị giảm giá tối đa:</strong>{" "}
+                {selectedVoucher.maxDiscount}
+              </p>
+              <hr className="my-3" />
+              <p>
+                <strong>Áp dụng giảm giá cho:</strong>{" "}
+                {selectedVoucher.applyType === "product"
+                  ? "Sản phẩm"
+                  : "Tổng giá trị đơn hàng"}
               </p>
               <p>
-                <strong>Giá trị tối đa:</strong> {selectedVoucher.maxDiscount}
+                <strong>Sản phẩm áp dụng: </strong>{" "}
+                {getProductNames(selectedVoucher.appliedProducts)}
+              </p>
+              <p>
+                <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
+                {selectedVoucher.minimumSpend} VND
+              </p>
+              <hr className="my-3" />
+              <p>
+                <strong>Giới hạn mã giảm giá: </strong>
               </p>
               <p>
                 <strong>Số lượng tạo:</strong>{" "}
                 {selectedVoucher.quantity_voucher}
               </p>
               <p>
-                <strong>Số lượng đã được sử dụng:</strong>{" "}
-                {selectedVoucher.usedCount}
-              </p>
-              <p>
-                <strong>Số lượng còn lại:</strong>
-                {selectedVoucher.quantity_voucher - selectedVoucher.usedCount}
-              </p>
-              <p>
-                <strong>Thời gian bắt đầu:</strong>{" "}
-                {formatDate(selectedVoucher.startDate)}
-              </p>
-              <p>
-                <strong>Thời gian kết thúc:</strong>{" "}
+                <strong>Thời gian: </strong>{" "}
+                {formatDate(selectedVoucher.startDate)} -{" "}
                 {formatDate(selectedVoucher.expirationDate)}
               </p>
+              <hr className="my-3" />
               <p>
                 <strong>Mô tả:</strong> {selectedVoucher.description_voucher}
               </p>
@@ -253,7 +277,10 @@ const ListVoucher = () => {
                 <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
                 selectedVoucher.allowedUsers.length > 0
-                  ? [...(auth?.data || []), ...(shippersData?.data || [])]
+                  ? [
+                      ...(auth?.data || []),
+                      ...(shippersData?.data.shippers || []),
+                    ]
                       .filter((user: any) =>
                         selectedVoucher.allowedUsers.includes(user._id)
                       )
@@ -269,6 +296,15 @@ const ListVoucher = () => {
                         </span>
                       ))
                   : "Tất cả"}
+              </p>
+              <hr className="my-3" />
+              <p>
+                <strong>Số lượng còn lại:</strong>
+                {selectedVoucher.quantity_voucher - selectedVoucher.usedCount}
+              </p>
+              <p>
+                <strong>Số lượng đã được sử dụng:</strong>{" "}
+                {selectedVoucher.usedCount}
               </p>
             </div>
           )}
