@@ -7,7 +7,6 @@ import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 
 const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
     const [user] = useLocalStorage('user', '');
-    console.log(props?.category_attribute)
     const { data, isPending } = Lay_thuoc_tinh({
         id_account: user?.user?._id,
         category_attribute: props?.category_attribute
@@ -19,10 +18,10 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
         size: [],
     })) || [];
     return (
-        <Form.List name="attributes" initialValue={initialAttributes}>
+        <Form.List name={`attributes_${props?.category_attribute}`} initialValue={initialAttributes}>
             {(fields, { ...restField }) => (
-                <>
-                    <div className="text-[#1C2434] font-medium text-sm">Biến thể sản phẩm</div>
+                <div className='mt-4'>
+                    <div className="text-[#1C2434] font-medium text-sm">Thuộc tính</div>
                     {fields.map(({ key, name }) => (
                         <div key={key}>
                             <Filed_form
@@ -56,7 +55,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                     sizeFields,
                                     { add: addSize, remove: removeSize }
                                 ) => (
-                                    <>
+                                    <div className='mt-14'>
                                         {sizeFields.map(
                                             ({
                                                 key: sizeKey,
@@ -65,7 +64,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                             }) => (
                                                 <div
                                                     key={sizeKey}
-                                                    className="flex items-center gap-[13px] mb-2"
+                                                    className="flex items-center gap-[13px] -mb-10"
                                                 >
                                                     <div>
                                                         <label className="text-[#1C2434] font-medium text-sm">
@@ -163,12 +162,12 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                 Thêm kích cỡ
                                             </Button>
                                         </div>
-                                    </>
+                                    </div>
                                 )}
                             </Form.List>
                         </div>
                     ))}
-                </>
+                </div>
             )}
         </Form.List>
     );
