@@ -9,10 +9,6 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    // slug: {
-    //   type: String,f
-    //   unique: true
-    // },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -20,7 +16,6 @@ const productSchema = new mongoose.Schema(
     price_product: {
       type: Number,
       min: 1,
-      // default: 1,
     },
     image_product: {
       type: String,
@@ -56,7 +51,7 @@ const productSchema = new mongoose.Schema(
         ref: "Review",
       },
     ],
-    averageRating: { type: Number, default: 0 }, // Trường trung bình sao
+    averageRating: { type: Number, default: 0 },
   },
   { timestamps: true, versionKey: false }
 );
@@ -67,18 +62,31 @@ productSchema.plugin(mongooseDelete, {
   overrideMethods: "all",
 });
 
-productSchema.statics.filterByAttributePrice = function (
-  priceRanges,
+// Phương thức lọc theo nhiều mức giá, màu sắc và kích thước
+productSchema.statics.filterByAttributes = function (
+  priceRanges = [],
+  colors = [],
+  sizes = [],
   options = {}
 ) {
   const priceConditions = priceRanges.map(({ minPrice, maxPrice }) => ({
-    $match: {
-      "attributes_details.values.size.price_attribute": {
-        $gte: minPrice,
-        $lte: maxPrice,
-      },
+    "attributes_details.values.size.price_attribute": {
+      $gte: minPrice,
+      $lte: maxPrice,
     },
   }));
+
+  const colorConditions = colors.length
+    ? {
+        "attributes_details.values.color": { $in: colors },
+      }
+    : {};
+
+  const sizeConditions = sizes.length
+    ? {
+        "attributes_details.values.size.name_size": { $in: sizes },
+      }
+    : {};
 
   return this.aggregate([
     {
@@ -89,94 +97,62 @@ productSchema.statics.filterByAttributePrice = function (
         as: "attributes_details",
       },
     },
+    { $unwind: "$attributes_details" },
+    { $unwind: "$attributes_details.values" },
+    { $unwind: "$attributes_details.values.size" },
+
+    // Điều kiện lọc theo giá, màu sắc và kích thước
     {
-      $unwind: "$attributes_details",
+      $match: {
+        ...(priceConditions.length && {
+          $or: priceConditions,
+        }),
+        ...colorConditions,
+        ...sizeConditions,
+      },
     },
-    {
-      $unwind: "$attributes_details.values",
-    },
-    {
-      $unwind: "$attributes_details.values.size",
-    },
-    ...priceConditions,
+
+    // Nhóm lại sản phẩm theo `_id` sau khi lọc
     {
       $group: {
         _id: "$_id",
         product: { $first: "$$ROOT" },
       },
     },
-    {
-      $replaceRoot: { newRoot: "$product" },
-    },
+    { $replaceRoot: { newRoot: "$product" } },
   ])
     .option(options)
     .exec();
 };
-productSchema.statics.sortByAttributePrice = function (
-  sortOrder = 1,
-  options = {}
-) {
-  return this.aggregate([
-    {
-      $lookup: {
-        from: "attributes", // Tên collection của Attributes
-        localField: "attributes",
-        foreignField: "_id",
-        as: "attributes_details",
-      },
-    },
-    {
-      $unwind: "$attributes_details",
-    },
-    {
-      $unwind: "$attributes_details.values",
-    },
-    {
-      $unwind: "$attributes_details.values.size",
-    },
-    {
-      $sort: {
-        "attributes_details.values.size.price_attribute": sortOrder,
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        product: { $first: "$$ROOT" }, // Giữ lại thông tin sản phẩm đầu tiên trong nhóm sau khi sắp xếp
-      },
-    },
-    {
-      $replaceRoot: { newRoot: "$product" },
-    },
-  ]).exec();
-};
+
+// Phương thức cập nhật đánh giá trung bình
 productSchema.statics.updateAverageRating = async function (productId) {
   try {
     const result = await this.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(productId) } }, // Tìm sản phẩm dựa trên productId
+      { $match: { _id: new mongoose.Types.ObjectId(productId) } },
       {
         $lookup: {
-          from: "reviews", // Từ collection reviews
-          localField: "_id", // productId trong product collection
-          foreignField: "productId", // productId trong review collection
-          as: "reviewDetails", // Gán kết quả vào reviewDetails
+          from: "reviews",
+          localField: "_id",
+          foreignField: "productId",
+          as: "reviewDetails",
         },
       },
-      { $unwind: "$reviewDetails" }, // Tách từng review ra
+      { $unwind: "$reviewDetails" },
       {
         $group: {
-          _id: "$_id", // Gom nhóm dựa trên _id của sản phẩm
-          averageRating: { $avg: "$reviewDetails.rating_review" }, // Tính trung bình sao
+          _id: "$_id",
+          averageRating: { $avg: "$reviewDetails.rating_review" },
         },
       },
     ]);
 
     if (result.length > 0) {
       await this.findByIdAndUpdate(productId, {
-        averageRating: result[0].averageRating, // Cập nhật averageRating
+        averageRating: result[0].averageRating,
       });
     } else {
-      await this.findByIdAndUpdate(productId, { averageRating: 0 }); // Không có đánh giá
+      await this.findByIdAndUpdate(productId, { averageRating: 0 });
     }
   } catch (error) {
     console.error("Lỗi khi cập nhật trung bình sao:", error);

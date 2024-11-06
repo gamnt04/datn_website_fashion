@@ -371,7 +371,7 @@ export const getDetailProductDashBoard = async (req, res) => {
 };
 
 export async function filterItems(req, res) {
-  const { cate_id, color, name_size, price_ranges, _search } = req.query;
+  const { cate_id, colors, sizes, priceRanges } = req.query; // Lấy các tham số lọc từ query
   const { _page = 1, _limit = 20, _sort = "" } = req.query;
   const page = parseInt(_page, 10) || 1;
   const limit = parseInt(_limit, 10) || 20;
@@ -381,37 +381,16 @@ export async function filterItems(req, res) {
     limit,
     sort: _sort
       ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
-      : { "attributes.values.size.price_attribute": 1 },
+      : {},
   };
 
   try {
-    let formattedPriceRanges = [];
-    if (price_ranges) {
-      try {
-        const priceRangesArray = JSON.parse(price_ranges);
-        if (
-          !Array.isArray(priceRangesArray) ||
-          priceRangesArray.some(
-            (pr) => isNaN(pr.min) || (pr.max !== null && isNaN(pr.max))
-          )
-        ) {
-          return res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({ message: "Invalid price ranges" });
-        }
-        formattedPriceRanges = priceRangesArray.map((pr) => ({
-          minPrice: parseFloat(pr.min),
-          maxPrice: pr.max !== null ? parseFloat(pr.max) : Infinity,
-        }));
-      } catch (e) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({ message: "Invalid JSON format for priceRanges" });
-      }
-    }
-
+    // Lọc các danh mục có `published` là `true`
     const visibleCategories = await Category.find({ published: true }).select(
       "_id"
+    );
+    const visibleCategoryIds = visibleCategories.map((cat) =>
+      cat._id.toString()
     );
 
     if (!visibleCategories || visibleCategories.length === 0) {
@@ -420,117 +399,42 @@ export async function filterItems(req, res) {
       });
     }
 
-    const visibleCategoryIds = visibleCategories.map((cat) =>
-      cat._id.toString()
-    );
-
     const query = { category_id: { $in: visibleCategoryIds } };
 
+    // Nếu có `cate_id` thì lọc theo danh sách `cate_id` nhận được từ request
     if (cate_id) {
       const cateArray = cate_id.split(",").map((id) => id.trim());
       query.category_id = { $in: cateArray };
     }
 
-    const colorArray = color
-      ? color.split(",").map((c) => c.trim().toLowerCase())
+    // Chuyển đổi các tham số lọc màu sắc, kích thước và mức giá thành đối tượng
+    const colorArray = colors
+      ? colors.split(",").map((color) => color.trim())
       : [];
-    const sizeArray = name_size
-      ? name_size.split(",").map((s) => s.trim().toLowerCase())
-      : [];
+    const sizeArray = sizes ? sizes.split(",").map((size) => size.trim()) : [];
+    const priceRangesArray = priceRanges ? JSON.parse(priceRanges) : []; // Giả sử priceRanges được gửi dưới dạng JSON string
 
-    if (_search) {
-      query.$and = [
-        {
-          name_product: { $regex: new RegExp(_search, "i") },
-        },
-      ];
+    // Bổ sung điều kiện lọc theo `sizeArray` nếu có
+    if (sizeArray.length > 0) {
+      query.size = { $in: sizeArray };
     }
 
-    const data = await Products.paginate(query, options);
-    await Products.populate(data.docs, { path: "attributes" });
-
-    let filteredProducts = [];
-
-    for (const item of data.docs) {
-      let total_stock = 0;
-      let matched = false;
-
-      if (item.attributes) {
-        const attr = await Attribute.findOne({ id_item: item._id.toString() });
-
-        if (attr && Array.isArray(attr.values)) {
-          attr.values.forEach((value) => {
-            const colorMatch =
-              colorArray.length === 0 ||
-              colorArray.includes(value.color.toLowerCase());
-            const sizeMatch =
-              sizeArray.length === 0 ||
-              (Array.isArray(value.size) &&
-                value.size.some((sizeObj) =>
-                  sizeArray.includes(sizeObj.name_size.toLowerCase())
-                ));
-
-            if (colorMatch && sizeMatch) {
-              if (Array.isArray(value.size)) {
-                value.size.forEach((sizeObj) => {
-                  total_stock += sizeObj.stock_attribute;
-
-                  const priceInRange =
-                    formattedPriceRanges.length === 0 ||
-                    formattedPriceRanges.some(
-                      (range) =>
-                        sizeObj.price_attribute >= range.minPrice &&
-                        sizeObj.price_attribute <= range.maxPrice
-                    );
-
-                  if (priceInRange) {
-                    matched = true;
-                  }
-                });
-              }
-            }
-          });
-        }
-
-        if (matched) {
-          // Find the highest price_attribute in attributes for each product
-          item.max_price_attribute = Math.max(
-            ...attr.values.flatMap((value) =>
-              value.size.map((sizeObj) => sizeObj.price_attribute)
-            )
-          );
-
-          item.stock_product = total_stock;
-          filteredProducts.push(item);
-        }
-      } else {
-        item.stock_product = item.stock;
-        item.max_price_attribute = item.price_product; // Assuming price_product is a fallback
-        filteredProducts.push(item);
-      }
-    }
-
-    // Sorting by highest price_attribute
-    if (_sort.includes("price_attribute")) {
-      filteredProducts.sort((a, b) => {
-        const sortOrder = _sort.split(":")[1] === "desc" ? -1 : 1;
-
-        // Use max_price_attribute for sorting
-        const aMaxPrice = a.max_price_attribute;
-        const bMaxPrice = b.max_price_attribute;
-
-        return (aMaxPrice - bMaxPrice) * sortOrder;
-      });
-    }
+    // Sử dụng phương thức filterByAttributes để lọc sản phẩm
+    const data = await Products.filterByAttributes(
+      priceRangesArray,
+      colorArray,
+      sizeArray,
+      options
+    );
 
     return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data: filteredProducts,
+      data,
       pagination: {
-        totalItems: filteredProducts.length,
-        currentPage: data.page,
-        totalPages: Math.ceil(filteredProducts.length / data.limit),
-        itemsPerPage: data.limit,
+        totalItems: data.length, // Chỉ định tổng số sản phẩm
+        currentPage: page,
+        totalPages: Math.ceil(data.length / limit),
+        itemsPerPage: limit,
       },
     });
   } catch (error) {

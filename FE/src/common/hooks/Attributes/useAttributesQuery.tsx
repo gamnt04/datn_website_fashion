@@ -18,7 +18,9 @@ const useAttributes = (): UseAttributesResult => {
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
-        const response = await instance.get("/attributes");
+        const response = await instance.get(
+          "/thuoc_tinh/lay_tat_ca_thuoc_tinh"
+        );
         setColors(response.data.colors);
         setSizes(response.data.sizes);
         setLoading(false);
