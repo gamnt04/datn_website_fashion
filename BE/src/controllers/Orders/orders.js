@@ -60,9 +60,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`,
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
@@ -70,6 +69,7 @@ export const createOrder = async (req, res) => {
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
+    console.log("dataCart", dataCart);
     if (!dataCart) {
       console.error("Cart not found for userId:", userId);
       return res
@@ -114,23 +114,20 @@ export const createOrder = async (req, res) => {
       } else {
         const data_items = await Products.find({ _id: i.productId._id });
         for (let a of data_items) {
-          a.stock_product = a.stock_product - i.quantity;
+          a.stock = a.stock - i.quantity;
           await a.save();
         }
       }
     }
     await order.save();
     await dataCart.save();
-
-    // **Cập nhật usedCount của voucher mà không cần kiểm tra tính hợp lệ**
     if (discountCode) {
       const voucher = await Voucher.findOne({ code_voucher: discountCode });
       if (voucher) {
-        voucher.usedCount += 1; // Tăng số lần sử dụng voucher lên 1
+        voucher.usedCount += 1;
         await voucher.save();
       }
     }
-
     await SendMail(email, order);
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
@@ -163,7 +160,7 @@ export const createOrderPayment = async (req, res) => {
       } else {
         const data_items = await Products.find({ _id: i.productId._id });
         for (let a of data_items) {
-          a.stock_product = a.stock_product - i.quantity;
+          a.stock = a.stock - i.quantity;
           await a.save();
         }
       }
@@ -200,9 +197,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`,
         },
         totalPrice,
       });

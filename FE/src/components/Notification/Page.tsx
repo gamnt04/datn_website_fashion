@@ -3,6 +3,7 @@ import { Mutation_Notification, Query_notification } from "../../_lib/React_Quer
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
 import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Popconfirm } from "antd";
+import { useListAllShipper } from "../../common/hooks/Shipper/querry_shipper";
 
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
@@ -10,6 +11,13 @@ export default function Notification() {
     const role = user?.user?.role;
     const { mutate: remove } = Mutation_Notification("Remove");
     const { data } = Query_notification(userId, role);
+    const { data: shipper } = useListAllShipper()
+    let courier: any;
+    let fullName: any
+    shipper?.shippers.map((b: any) => {
+        fullName = b.fullName
+        courier = b.role
+    })
     const { mutate } = Mutation_Notification("Send");
     const allSend = data?.notifications?.every((item: any) => item.status_notification === true);
     return (
@@ -24,7 +32,13 @@ export default function Notification() {
                         <details onClick={() => mutate(item._id)} className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
                                 <div className="flex gap-4">
-                                    <h2 className="font-medium">{item?.userId?.userName}</h2>
+                                    <h2 className="font-medium">
+                                        {item?.userId?.role === "admin"
+                                            ? "Seven"
+                                            : item?.userId?.role === "user"
+                                                ? item?.userId?.userName
+                                                : courier === "courier" ? "Seven" : ''}
+                                    </h2>
                                     <span>{item.status_notification === false ? <EyeInvisibleOutlined style={{ fontSize: "18px" }} /> : <EyeOutlined style={{ color: 'orange', fontSize: "18px" }} />}</span>
                                 </div>
                                 <span className="relative size-5 shrink-0">
