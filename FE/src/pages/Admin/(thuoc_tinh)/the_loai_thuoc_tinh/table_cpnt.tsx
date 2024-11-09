@@ -2,13 +2,21 @@
 import { Link } from 'react-router-dom';
 import { convert_data } from '../data';
 import { Dispatch_the_loai_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
+import { Button, Popconfirm } from 'antd';
+import { useState } from 'react';
+import Modal_cpnt from '../_components/modal_cpnt';
 
 
 const Table_cpnt = ({ data_props }: any) => {
     const { mutate, isPending, isError } = Dispatch_the_loai_thuoc_tinh('REMOVE');
-
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     if (isPending) return <span>Loading...</span>
     if (isError) return <span>Error...</span>
+
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
     return <div>
         <table className='auto border border-gray-400 w-full'>
             <thead className='*:border *:border-gray-400'>
@@ -39,8 +47,17 @@ const Table_cpnt = ({ data_props }: any) => {
                                         {value?.name_attribute}
                                     </Link>
                                     <div className='flex items-center gap-x-2 mt-1 *:text-sm *:duration-200'>
-                                        <button className='text-sky-500 hover:text-sky-700'>Sửa</button>
-                                        <button onClick={() => (window.confirm('Xac nhan xoa the loai thuoc tinh nay') && mutate(value?._id))} className='text-red-500 hover:text-red-700'>Xóa</button>
+                                        <button className='text-sky-500 hover:text-sky-700' onClick={showModal}>Sửa</button>
+                                        {/* <Modal_cpnt props={{isModalOpen, setIsModalOpen, name_attribute : value?.name_attribute}}/> */}
+                                        <Popconfirm
+                                            title="Delete"
+                                            description={`Xác nhận xóa thể loại thuộc tính ${value?.name_attribute}`}
+                                            onConfirm={() => mutate(value?._id)}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <Button className='border-none bg-[#F1F5F9] hover:!bg-[#F1F5F9] hover:!text-red-700 font-medium' danger>Xóa</Button>
+                                        </Popconfirm>
                                     </div>
                                 </td>
                                 <td>{attribute ? attribute.name : value?.category_attribute}</td>
