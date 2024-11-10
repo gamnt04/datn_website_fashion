@@ -5,7 +5,8 @@ import instance from "../../../configs/axios";
 interface Order {
   _id: string;
   fullName: string;
-  totalOrders: number;
+  successfulOrders: number;
+  failedOrders: number;
 }
 
 const TotalOrders = () => {
@@ -52,14 +53,46 @@ const TotalOrders = () => {
         <div
           style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
         >
+          Đơn hàng thành công
+        </div>
+      ),
+      dataIndex: "successfulOrders",
+      key: "successfulOrders",
+      align: "center",
+      render: (successfulOrders: number) => (
+        <div style={{ textAlign: "center" }}>{successfulOrders}</div>
+      ),
+    },
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
+          Đơn hàng thất bại
+        </div>
+      ),
+      dataIndex: "failedOrders",
+      key: "failedOrders",
+      align: "center",
+      render: (failedOrders: number) => (
+        <div style={{ textAlign: "center" }}>{failedOrders}</div>
+      ),
+    },
+    {
+      title: (
+        <div
+          style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center" }}
+        >
           Tổng số đơn hàng
         </div>
       ),
       dataIndex: "totalOrders",
       key: "totalOrders",
       align: "center",
-      render: (totalOrders: number) => (
-        <div style={{ textAlign: "center" }}>{totalOrders}</div>
+      render: (_: any, record: Order) => (
+        <div style={{ textAlign: "center" }}>
+          {record.successfulOrders + record.failedOrders}
+        </div>
       ),
     },
   ];

@@ -51,8 +51,10 @@ const OrderList = () => {
               <Option value="1">Chờ xác nhận</Option>
               <Option value="2">Đang chuẩn bị hàng</Option>
               <Option value="3">Đang vận chuyển</Option>
-              <Option value="4">Đã giao hàng</Option>
-              <Option value="5">Đã hủy</Option>
+              <Option value="4">Giao hàng thành công</Option>
+              <Option value="5">Giao hàng thất bại</Option>
+              <Option value="6">Hoàn thành</Option>
+              <Option value="7">Đã hủy</Option>
             </Select>
           </div>
           <div className="flex space-x-5">

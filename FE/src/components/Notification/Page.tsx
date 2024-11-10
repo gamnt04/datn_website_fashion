@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Mutation_Notification, Query_notification } from "../../_lib/React_Query/Notification/Query"
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
 import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { Popconfirm } from "antd";
+import { Button, Popconfirm } from "antd";
+import { useListAllShipper } from "../../common/hooks/Shipper/querry_shipper";
 
 export default function Notification() {
     const [user] = useLocalStorage("user", {});
@@ -10,17 +11,34 @@ export default function Notification() {
     const role = user?.user?.role;
     const { mutate: remove } = Mutation_Notification("Remove");
     const { data } = Query_notification(userId, role);
+    const { data: shipper } = useListAllShipper()
+    let courier: any;
+    let fullName: any
+    shipper?.shippers.map((b: any) => {
+        fullName = b.fullName
+        courier = b.role
+    })
     const { mutate } = Mutation_Notification("Send");
+    const allSend = data?.notifications?.every((item: any) => item.status_notification === true);
     return (
         <div className="space-y-4 text-sm">
-            <strong className="text-lg">Thông báo của bạn</strong>
+            <div className="flex justify-between">
+                <strong className="text-lg">Thông báo của bạn</strong>
+                <Button onClick={() => mutate(undefined)} disabled={allSend} className="ml-4" type="primary">Đọc tất cả</Button>
+            </div>
             {
                 data?.notifications?.length > 0 ?
                     data?.notifications?.map((item: any) =>
                         <details onClick={() => mutate(item._id)} className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
                                 <div className="flex gap-4">
-                                    <h2 className="font-medium">{item?.userId?.userName}</h2>
+                                    <h2 className="font-medium">
+                                        {item?.userId?.role === "admin"
+                                            ? "Seven"
+                                            : item?.userId?.role === "user"
+                                                ? item?.userId?.userName
+                                                : courier === "courier" ? "Seven" : ''}
+                                    </h2>
                                     <span>{item.status_notification === false ? <EyeInvisibleOutlined style={{ fontSize: "18px" }} /> : <EyeOutlined style={{ color: 'orange', fontSize: "18px" }} />}</span>
                                 </div>
                                 <span className="relative size-5 shrink-0">
@@ -74,16 +92,14 @@ export default function Notification() {
                                     )}
 
                                 </div>
-
                                 <div className="flex items-center gap-4">
-
                                     <p className="leading-relaxed text-gray-700">
                                         {item?.createdAt?.slice(0, 10)}
                                     </p>
                                     |
                                     <Popconfirm
-                                        title="Delete the task"
-                                        description="Are you sure to delete this task?"
+                                        title="Xóa thông báo "
+                                        description="Bạn có chắc chắn muốn xóa thông báo này không?"
                                         onConfirm={() => remove(item._id)}
                                         okText="Yes"
                                         cancelText="No"

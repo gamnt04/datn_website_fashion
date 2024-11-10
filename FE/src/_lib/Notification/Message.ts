@@ -44,8 +44,14 @@ export const getAll_Notification = async (role: string) => {
 }
 export const update_Notification = async (id: string | number) => {
   try {
-    const data = await instance.put(`/notification/${id}`, { status_notification: true });
-    return data;
+    if (id) {
+      const data = await instance.put(`/notification/${id}`, { status_notification: true });
+      return data;
+    } else {
+      const data = await instance.put(`/notification`, { status_notification: true });
+      return data;
+    }
+
   } catch (error) {
     console.log(error);
 

@@ -14,18 +14,18 @@ import { SelectShadcn, SelectTrigger, SelectValue, SelectContent, SelectGroup, S
 import Form_variant from "./form-variant";
 import Bien_the_trang_update from "./bien-the-trang-cap-nhat";
 
-type FieldType = {
-  name_product: string;
-  price_product: number;
-  description_product: string;
-  category_id: string[];
-  image_product: string;
-  gallery_product: string[];
-  stock: number;
-  attributes: IAttribute[];
-  featured_product: boolean;
-  tag_product: string[];
-};
+// type FieldType = {
+//   name_product: string;
+//   price_product: number;
+//   description_product: string;
+//   category_id: string[];
+//   image_product: string;
+//   gallery_product: string[];
+//   stock: number;
+//   attributes: IAttribute[];
+//   featured_product: boolean;
+//   tag_product: string[];
+// };
 
 const Form_Item = ({ mode }: any) => {
   const [check_edit_form, setCheckEditForm] = useState<boolean>(true);
@@ -48,8 +48,22 @@ const Form_Item = ({ mode }: any) => {
   const [form] = Form.useForm();
   const [statusOptions, setStatusOptions] = useState<any>('');
 
-  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    onSubmit(values);
+  const onFinish: FormProps<any>["onFinish"] = (values) => {
+    const attributeNames = [
+      "attributes_ux_image",
+      "attributes_ux_color",
+      "attributes_ux_label",
+      "new_attributes"
+    ];
+    const attributeKey = attributeNames.find((key) => values?.[key]);
+    let data_request = attributeKey
+      ? { ...values, attributes: values[attributeKey] }
+      : values;
+    if (attributeKey) {
+      const { [attributeKey]: _, ...rest } = data_request;
+      data_request = rest;
+    }
+    onSubmit(data_request);
   };
 
   useEffect(() => {
@@ -271,7 +285,7 @@ const Form_Item = ({ mode }: any) => {
                 }} />
               }
             </div>
-            <Form.Item<FieldType>
+            <Form.Item<any>
               name="featured_product"
               valuePropName="checked"
             >
@@ -284,7 +298,7 @@ const Form_Item = ({ mode }: any) => {
                 <label className=" text-[#1C2434] font-medium text-sm">
                   Ảnh sản phẩm
                 </label>
-                <Form.Item<FieldType>
+                <Form.Item<any>
                   name="image_product"
                   initialValue={{
                     ...data_one_item?.data?.product?.image_product
@@ -314,7 +328,7 @@ const Form_Item = ({ mode }: any) => {
                 <label className=" text-[#1C2434] font-medium text-sm">
                   Bộ sưu tập
                 </label>
-                <Form.Item<FieldType>
+                <Form.Item<any>
                   name="gallery_product"
                   rules={[
                     {
