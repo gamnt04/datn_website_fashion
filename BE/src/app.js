@@ -48,15 +48,11 @@ app.use("/api/v1", Routes_review);
 app.use("/api/v1", Route_Shipper);
 app.use("/api/v1", Routes_voucher);
 app.use("/api/v1", Router_Message);
-<<<<<<< HEAD
 app.use("/api/v1", Router_HuyMail);
 app.use("/api/v1", Router_coze);
-=======
 app.use("/api/v1", router_attribute);
 
-
-app.use('/api/v1', Router_HuyMail);
->>>>>>> c74be6578ce1ec93b76ea9ed0b5eb72c5a4643de
+app.use("/api/v1", Router_HuyMail);
 // Định nghĩa một số route khác
 app.get("/profile/allorder", (req, res) => {
   const amount = req.query.vnp_Amount;
