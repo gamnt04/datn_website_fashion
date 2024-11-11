@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, InputNumber } from "antd";
 import { IAttribute } from "../../../../common/interfaces/Product";
 import TextArea from "antd/es/input/TextArea";
