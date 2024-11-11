@@ -19,7 +19,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
     })) || [];
     return (
         <Form.List name={`attributes_${props?.category_attribute}`} initialValue={initialAttributes}>
-            {(fields, { ...restField }) => (
+            {(fields, { remove, ...restField }) => (
                 <div className='mt-4'>
                     <div className="text-[#1C2434] font-medium text-sm">Thuộc tính</div>
                     {fields.map(({ key, name }) => (
@@ -163,9 +163,8 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                 Thêm biến thể
                                             </Button>
                                             {
-                                                sizeFields.length > 1 &&
                                                 <Button
-                                                    onClick={() => removeSize(name)}
+                                                    onClick={() => remove(name)}
                                                     className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
                                                 >
                                                     Xóa biến thể
