@@ -24,28 +24,29 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                     <div className="text-[#1C2434] font-medium text-sm">Thuộc tính</div>
                     {fields.map(({ key, name }) => (
                         <div key={key}>
-                            <Filed_form
-                                props={{
-                                    name_field: [name, "color"],
-                                    ruler_field: [
-                                        {
-                                            required: true,
-                                            message: "Vui lòng nhập màu sắc!"
-                                        }
-                                    ],
-                                    restField: restField
-                                }}
-                            />
-                            <div className='invisible mb-[-15%]'>
+                            <div className='flex gap-x-4'>
                                 <Filed_form
                                     props={{
-                                        name_field: [name, "symbol"],
+                                        name_field: [name, "color"],
                                         ruler_field: [
                                             {
                                                 required: true,
                                                 message: "Vui lòng nhập màu sắc!"
                                             }
                                         ],
+                                        restField: restField
+                                    }}
+                                />
+                                {data?.map((item: any, index: number) =>
+                                    item?.the_loai_thuoc_tinh === 'ux_image' &&
+                                    <div key={index}>
+                                        <img className='rounded' width={50} height={50} src={item?.symbol_thuoc_tinh} />
+                                    </div>)}
+                            </div>
+                            <div className='invisible mb-[-15%]'>
+                                <Filed_form
+                                    props={{
+                                        name_field: [name, "symbol"],
                                         restField: restField
                                     }}
                                 />
@@ -64,7 +65,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                             }) => (
                                                 <div
                                                     key={sizeKey}
-                                                    className="flex items-center gap-[13px] -mb-10"
+                                                    className="flex items-center gap-[13px]"
                                                 >
                                                     <div>
                                                         <label className="text-[#1C2434] font-medium text-sm">
@@ -153,14 +154,23 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                 </div>
                                             )
                                         )}
-                                        <div className="flex items-center gap-4 mb-4">
+                                        <div className="flex items-center gap-4">
                                             <Button
                                                 type="primary"
                                                 onClick={() => addSize()}
-                                                className="px-2 mt-8"
+                                                className="px-2 "
                                             >
-                                                Thêm kích cỡ
+                                                Thêm biến thể
                                             </Button>
+                                            {
+                                                sizeFields.length > 1 &&
+                                                <Button
+                                                    onClick={() => removeSize(name)}
+                                                    className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
+                                                >
+                                                    Xóa biến thể
+                                                </Button>
+                                            }
                                         </div>
                                     </div>
                                 )}

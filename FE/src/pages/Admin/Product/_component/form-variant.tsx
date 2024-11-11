@@ -29,7 +29,7 @@ export default function Form_variant({ propsData }: any) {
     );
     return (
         <div>
-            <div className='w-[40%] *:bg-white *:z-[10] ml-10 *:rounded'>
+            <div className='w-[40%] *:bg-white *:z-[10] *:rounded'>
                 <SelectShadcn onValueChange={(value: any) => setState_variant(value)}>
                     <SelectTrigger className="!h-auto py-2 mt-1">
                         <SelectValue placeholder="Lựa chọn" />
@@ -44,7 +44,7 @@ export default function Form_variant({ propsData }: any) {
             </div>
             {
                 (state_variant.toString() === 'them_moi_bien_the') ?
-                    <div className='flex flex-col text-gray-800 gap-y-2'>
+                    <div className='flex flex-col text-gray-800 gap-y-2 mt-1'>
                         <Form.List
                             name="new_attributes"
                             initialValue={initialAttributes}
@@ -77,7 +77,7 @@ export default function Form_variant({ propsData }: any) {
                                                         { add: addSize, remove: removeSize }
                                                     ) => (
                                                         <>
-                                                        <div className='mb-3'>Giá trị</div>
+                                                            <div className='mb-3'>Giá trị</div>
                                                             {sizeFields.map(
                                                                 ({
                                                                     key: sizeKey,
@@ -180,13 +180,13 @@ export default function Form_variant({ propsData }: any) {
                                                                     onClick={() => addSize()}
                                                                     className="px-2 "
                                                                 >
-                                                                    Thêm kích cỡ
+                                                                    Thêm biến thể
                                                                 </Button>
                                                                 <Button
                                                                     onClick={() => remove(name)}
                                                                     className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
                                                                 >
-                                                                    Xóa thuộc tính
+                                                                    Xóa biến thể
                                                                 </Button>
                                                             </div>
                                                         </>
@@ -211,7 +211,7 @@ export default function Form_variant({ propsData }: any) {
                     (state_variant.toString() === 'tao_bien_the_tu_thuoc_tinh') &&
                     <>
                         <SelectShadcn onValueChange={(value: any) => setStateCategory_attribute(value)}>
-                            <SelectTrigger className="!h-auto py-2 mt-1">
+                            <SelectTrigger className="!h-auto py-2 w-auto rounded -mt-[38px] ml-[350px] ">
                                 <SelectValue placeholder="Lựa chọn" />
                             </SelectTrigger>
                             <SelectContent className='bg-white z-[10]'>
