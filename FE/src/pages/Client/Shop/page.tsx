@@ -13,6 +13,11 @@ const IndexShops = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (search: string) => {
+    setSearchTerm(search); // Handle the search logic here
+  };
 
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
@@ -68,7 +73,7 @@ const IndexShops = () => {
           <MenuShop
             onCategorySelect={handleCategorySelect}
             onPriceChange={handlePriceChange}
-            setSearch={() => {}}
+            setSearch={handleSearch} // Now passing setSearch here
             selectedColors={selectedColors}
             toggleColor={toggleColor}
             resetColorFilter={resetColorFilter}
@@ -84,8 +89,8 @@ const IndexShops = () => {
               onSortChange={handleSortChange}
             />
             <Products_Shop
-              query="" // Add default or dynamic query if needed
-              cate_id={cate_id} // Truyền mảng ID
+              query={searchTerm}
+              cate_id={cate_id}
               price_ranges={priceRanges}
               selectedColors={selectedColors}
               selectedSizes={selectedSizes}

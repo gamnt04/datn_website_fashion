@@ -372,87 +372,184 @@ export const getDetailProductDashBoard = async (req, res) => {
 };
 
 export async function filterItems(req, res) {
-  const { colors, sizes } = req.query; // Lấy màu sắc và kích thước từ query parameters
+  const { cate_id, color, name_size, price_ranges, _search } = req.query;
+  const { _page = 1, _limit = 20, _sort = "" } = req.query;
+  const page = parseInt(_page, 10) || 1;
+  const limit = parseInt(_limit, 10) || 20;
 
-  const colorArray = colors ? colors.split(",") : []; // Tách mảng màu sắc
-  const sizeArray = sizes ? sizes.split(",") : []; // Tách mảng kích thước
-
-  console.log("Color Array:", colorArray);
-  console.log("Size Array:", sizeArray);
-
-  // Xây dựng query cho ThuocTinh (màu sắc theo symbol_thuoc_tinh)
-  const queryThuocTinh = colorArray.length
-    ? { symbol_thuoc_tinh: { $in: colorArray } }
-    : {}; // Nếu không có màu sắc, không lọc theo màu sắc trong ThuocTinh
-
-  // Xây dựng query cho Attributes (màu sắc trong 'values.color' và kích thước)
-  const queryAttributes = colorArray.length
-    ? {
-        "values.color": { $in: colorArray }, // Kiểm tra tên màu trong `values.color`
-      }
-    : {}; // Nếu không có màu sắc, không lọc theo màu sắc trong Attributes
+  const options = {
+    page,
+    limit,
+    sort: _sort
+      ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
+      : { "attributes.values.size.price_attribute": 1 },
+  };
 
   try {
-    // Truy vấn dữ liệu từ collection ThuocTinh
-    const thuocTinhResults = colorArray.length
-      ? await ThuocTinh.find(queryThuocTinh) // Lọc màu sắc trong ThuocTinh nếu có
-      : [];
-    console.log("ThuocTinh Results: ", thuocTinhResults);
+    // Nếu không có bộ lọc nào, trả về tất cả sản phẩm
+    if (!cate_id && !color && !name_size && !price_ranges && !_search) {
+      const data = await Products.paginate({}, options);
+      await Products.populate(data.docs, { path: "attributes" });
 
-    // Truy vấn dữ liệu từ collection Attributes
-    const attributeResults = colorArray.length
-      ? await Attribute.find(queryAttributes) // Lọc màu sắc trong Attributes nếu có
-      : [];
-    console.log("Attribute Results: ", attributeResults);
-
-    // Xây dựng điều kiện lọc sản phẩm từ màu sắc trong `ThuocTinh` và `Attributes`
-    let productQuery = {};
-
-    // Kiểm tra màu sắc theo `symbol_attribute` từ ThuocTinh
-    if (colorArray.length) {
-      const thuocTinhColors = thuocTinhResults.map(
-        (item) => item.symbol_thuoc_tinh
-      );
-      productQuery["values.color"] = { $in: thuocTinhColors }; // Lọc sản phẩm có màu sắc trùng với symbol_thuoc_tinh
-    }
-
-    // Nếu có màu sắc từ Attributes, tìm các sản phẩm có màu trong trường values.color
-    if (colorArray.length) {
-      productQuery["values.color"] = { $in: colorArray }; // Lọc theo `values.color` trong sản phẩm
-    }
-
-    console.log("Product Query:", productQuery);
-
-    // Truy vấn sản phẩm từ collection Products theo các điều kiện lọc
-    const products = await Products.find(productQuery);
-    console.log("Filtered Products:", products);
-
-    // Nếu không có sản phẩm nào, trả về thông báo không tìm thấy
-    if (products.length === 0) {
-      return res.status(404).json({
-        message: "Không tìm thấy sản phẩm phù hợp.",
-        data: [],
+      return res.status(StatusCodes.OK).json({
+        message: "Thành công!",
+        data: data.docs,
         pagination: {
-          totalItems: 0,
-          currentPage: 1,
-          itemsPerPage: 20,
+          totalItems: data.totalDocs,
+          currentPage: data.page,
+          totalPages: data.totalPages,
+          itemsPerPage: data.limit,
         },
       });
     }
 
-    // Trả về kết quả
-    return res.status(200).json({
+    // Validate and format price ranges
+    let formattedPriceRanges = [];
+    if (price_ranges) {
+      try {
+        const priceRangesArray = JSON.parse(price_ranges);
+        if (
+          !Array.isArray(priceRangesArray) ||
+          priceRangesArray.some(
+            (pr) => isNaN(pr.min) || (pr.max !== null && isNaN(pr.max))
+          )
+        ) {
+          return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ message: "Invalid price ranges" });
+        }
+        formattedPriceRanges = priceRangesArray.map((pr) => ({
+          minPrice: parseFloat(pr.min),
+          maxPrice: pr.max !== null ? parseFloat(pr.max) : Infinity,
+        }));
+      } catch (e) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ message: "Invalid JSON format for priceRanges" });
+      }
+    }
+
+    const visibleCategories = await Category.find({ published: true }).select(
+      "_id"
+    );
+
+    if (!visibleCategories || visibleCategories.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Không có Sản Phẩm nào đang được hiển thị!",
+      });
+    }
+
+    const visibleCategoryIds = visibleCategories.map((cat) =>
+      cat._id.toString()
+    );
+
+    const query = { category_id: { $in: visibleCategoryIds } };
+
+    if (cate_id) {
+      const cateArray = cate_id.split(",").map((id) => id.trim());
+      query.category_id = { $in: cateArray };
+    }
+
+    // Xử lý màu sắc (tìm theo kiểu nhập chữ)
+    const colorArray = color
+      ? color.split(",").map((c) => new RegExp(c.trim(), "i")) // Chuyển đổi thành regex để tìm theo kiểu nhập chữ
+      : [];
+
+    // Xử lý kích thước (lọc theo tên kích thước)
+    const sizeArray = name_size
+      ? name_size.split(",").map((s) => s.trim().toLowerCase())
+      : [];
+
+    if (_search) {
+      query.$and = [
+        {
+          name_product: { $regex: new RegExp(_search, "i") },
+        },
+      ];
+    }
+
+    const data = await Products.paginate(query, options);
+    await Products.populate(data.docs, { path: "attributes" });
+
+    let filteredProducts = [];
+
+    // Lọc các sản phẩm theo thuộc tính trong "attributes.values"
+    for (const item of data.docs) {
+      let total_stock = 0;
+      let matched = false;
+
+      if (item.attributes) {
+        const attr = item.attributes;
+
+        if (Array.isArray(attr.values)) {
+          for (const value of attr.values) {
+            // Kiểm tra màu sắc
+            const colorMatch =
+              colorArray.length === 0 ||
+              colorArray.some((regex) => regex.test(value.color)); // Sử dụng regex để kiểm tra màu
+
+            // Kiểm tra kích thước
+            const sizeMatch =
+              sizeArray.length === 0 ||
+              (Array.isArray(value.size) &&
+                value.size.some((sizeObj) =>
+                  sizeArray.includes(sizeObj.name_size.toLowerCase())
+                ));
+
+            if (colorMatch && sizeMatch) {
+              value.size.forEach((sizeObj) => {
+                total_stock += sizeObj.stock_attribute;
+
+                // Kiểm tra giá trong khoảng giá yêu cầu
+                const priceInRange =
+                  formattedPriceRanges.length === 0 ||
+                  formattedPriceRanges.some(
+                    (range) =>
+                      sizeObj.price_attribute >= range.minPrice &&
+                      sizeObj.price_attribute <= range.maxPrice
+                  );
+
+                if (priceInRange) {
+                  matched = true;
+                }
+              });
+            }
+          }
+        }
+
+        if (matched) {
+          item.stock_product = total_stock;
+          filteredProducts.push(item);
+        }
+      } else {
+        item.stock_product = item.stock;
+        filteredProducts.push(item);
+      }
+    }
+
+    // Sắp xếp sản phẩm theo giá (nếu có yêu cầu)
+    if (_sort.includes("price_attribute")) {
+      filteredProducts.sort((a, b) => {
+        const sortOrder = _sort.split(":")[1] === "desc" ? -1 : 1;
+        return (a.price_product - b.price_product) * sortOrder;
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data: products,
+      data: filteredProducts,
       pagination: {
-        totalItems: products.length,
-        currentPage: 1,
-        itemsPerPage: 20,
+        totalItems: filteredProducts.length,
+        currentPage: data.page,
+        totalPages: Math.ceil(filteredProducts.length / data.limit),
+        itemsPerPage: data.limit,
       },
     });
-  } catch (err) {
-    console.error("Error filtering products:", err);
-    return res.status(500).json({ message: "Lỗi server!" });
+  } catch (error) {
+    console.error("Server Error:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message || "Lỗi máy chủ!" });
   }
 }
 

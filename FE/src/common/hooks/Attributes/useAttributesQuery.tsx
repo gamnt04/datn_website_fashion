@@ -21,31 +21,40 @@ const useAttributes = (): UseAttributesResult => {
         const response = await instance.get(
           "/thuoc_tinh/lay_tat_ca_thuoc_tinh"
         );
-        const attributes = response.data;
+        const { attributesData } = response.data; // Truy cập vào thuộc tính `attributesData`
 
-        console.log("Dữ liệu trả về từ API:", attributes); // Kiểm tra dữ liệu trả về
+        console.log("Dữ liệu trả về từ API:", attributesData); // Kiểm tra dữ liệu trả về
 
-        // Kiểm tra nếu dữ liệu trả về là đối tượng và có thuộc tính colors và sizes
-        if (
-          attributes &&
-          attributes.colors &&
-          Array.isArray(attributes.colors) &&
-          attributes.sizes &&
-          Array.isArray(attributes.sizes)
-        ) {
-          const colorAttributes = attributes.colors;
-          const sizeAttributes = attributes.sizes;
+        // Kiểm tra nếu dữ liệu trả về là mảng và có ít nhất một đối tượng
+        if (Array.isArray(attributesData) && attributesData.length > 0) {
+          const colorsSet = new Set<string>(); // Dùng Set để lưu màu sắc duy nhất
+          const sizesSet = new Set<string>(); // Dùng Set để lưu kích thước duy nhất
 
-          // Log để kiểm tra kết quả
-          console.log("Danh sách màu sắc:", colorAttributes);
-          console.log("Danh sách kích thước:", sizeAttributes);
+          // Lặp qua dữ liệu để lấy màu sắc và kích thước
+          attributesData.forEach((attribute: any) => {
+            if (Array.isArray(attribute.values)) {
+              attribute.values.forEach((value: any) => {
+                if (value.color) {
+                  colorsSet.add(value.color); // Thêm màu sắc vào Set
+                }
 
-          // Lưu vào state
-          setColors(colorAttributes);
-          setSizes(sizeAttributes);
+                if (Array.isArray(value.size)) {
+                  value.size.forEach((size: string) => {
+                    sizesSet.add(size); // Thêm kích thước vào Set
+                  });
+                }
+              });
+            }
+          });
+
+          // Chuyển Set thành mảng và lưu vào state
+          setColors(Array.from(colorsSet));
+          setSizes(Array.from(sizesSet));
         } else {
           setError("Dữ liệu trả về không đúng định dạng.");
-          console.error("Dữ liệu không đúng định dạng.");
+          console.error(
+            "Dữ liệu không có thuộc tính attributesData hoặc không phải là mảng."
+          );
         }
 
         setLoading(false);

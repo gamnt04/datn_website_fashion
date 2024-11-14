@@ -62,128 +62,38 @@ productSchema.plugin(mongooseDelete, {
   overrideMethods: "all",
 });
 
-productSchema.statics.filterByColor = function (colors, options = {}) {
-  const colorConditions = colors.map((color) => ({
-    $match: {
-      "attributes_details.values.color": color, // Điều kiện lọc theo màu sắc
-    },
-  }));
+// Phương thức cập nhật đánh giá trung bình
+productSchema.statics.updateAverageRating = async function (productId) {
+  try {
+    const result = await this.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(productId) } },
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "productId",
+          as: "reviewDetails",
+        },
+      },
+      { $unwind: "$reviewDetails" },
+      {
+        $group: {
+          _id: "$_id",
+          averageRating: { $avg: "$reviewDetails.rating_review" },
+        },
+      },
+    ]);
 
-  return this.aggregate([
-    {
-      $lookup: {
-        from: "attributes", // Tên collection của Attributes
-        localField: "attributes",
-        foreignField: "_id",
-        as: "attributes_details",
-      },
-    },
-    {
-      $unwind: "$attributes_details",
-    },
-    {
-      $unwind: "$attributes_details.values",
-    },
-    ...colorConditions,
-    {
-      $group: {
-        _id: "$_id",
-        product: { $first: "$$ROOT" }, // Giữ lại sản phẩm đầu tiên trong nhóm
-      },
-    },
-    {
-      $replaceRoot: { newRoot: "$product" },
-    },
-  ])
-    .option(options)
-    .exec();
-};
-
-// Hàm lọc sản phẩm theo giá trong attributes
-productSchema.statics.filterByAttributePrice = function (
-  priceRanges,
-  options = {}
-) {
-  const priceConditions = priceRanges.map(({ minPrice, maxPrice }) => ({
-    $match: {
-      "attributes_details.values.size.price_attribute": {
-        $gte: minPrice,
-        $lte: maxPrice,
-      },
-    },
-  }));
-
-  return this.aggregate([
-    {
-      $lookup: {
-        from: "attributes",
-        localField: "attributes",
-        foreignField: "_id",
-        as: "attributes_details",
-      },
-    },
-    {
-      $unwind: "$attributes_details",
-    },
-    {
-      $unwind: "$attributes_details.values",
-    },
-    {
-      $unwind: "$attributes_details.values.size",
-    },
-    ...priceConditions,
-    {
-      $group: {
-        _id: "$_id",
-        product: { $first: "$$ROOT" },
-      },
-    },
-    {
-      $replaceRoot: { newRoot: "$product" },
-    },
-  ])
-    .option(options)
-    .exec();
-};
-
-// Hàm sắp xếp sản phẩm theo giá trong attributes
-productSchema.statics.sortByAttributePrice = function (
-  sortOrder = 1,
-  options = {}
-) {
-  return this.aggregate([
-    {
-      $lookup: {
-        from: "attributes",
-        localField: "attributes",
-        foreignField: "_id",
-        as: "attributes_details",
-      },
-    },
-    {
-      $unwind: "$attributes_details",
-    },
-    {
-      $unwind: "$attributes_details.values",
-    },
-    {
-      $unwind: "$attributes_details.values.size",
-    },
-    {
-      $sort: {
-        "attributes_details.values.size.price_attribute": sortOrder,
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        product: { $first: "$$ROOT" },
-      },
-    },
-    {
-      $replaceRoot: { newRoot: "$product" },
-    },
-  ]).exec();
+    if (result.length > 0) {
+      await this.findByIdAndUpdate(productId, {
+        averageRating: result[0].averageRating,
+      });
+    } else {
+      await this.findByIdAndUpdate(productId, { averageRating: 0 });
+    }
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trung bình sao:", error);
+  }
 };
 
 export default mongoose.model("Products", productSchema);

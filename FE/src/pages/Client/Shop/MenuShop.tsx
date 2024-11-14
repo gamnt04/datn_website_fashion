@@ -1,20 +1,19 @@
 import React from "react";
 import CategoryFilter from "./Filter/CategoryFilter";
 import PriceFilter from "./Filter/PriceFilter";
-import ColorFilter from "./Filter/ColorFilter";
+import ColorFilter from "./Filter/ColorFilter"; // Import ColorFilter
 import SizeFilter from "./Filter/SizeFilter";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
-import { AiOutlineFilter } from "react-icons/ai";
 
 interface MenuShopProps {
   onCategorySelect: (ids: string[]) => void;
   onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
-  setSearch: (search: string) => void;
-  selectedColors: string[];
-  toggleColor: (color: string) => void;
-  resetColorFilter: () => void;
-  onColorChange: (colors: string[]) => void;
+  setSearch: (search: string) => void; // Thêm setSearch vào props
+  selectedColors: string[]; // Prop cho selectedColors
+  toggleColor: (color: string) => void; // Prop cho toggleColor
+  resetColorFilter: () => void; // Prop cho resetColorFilter
+  onColorChange: (colors: string[]) => void; // Prop cho onColorChange
   selectedSizes: string[];
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
@@ -24,6 +23,7 @@ interface MenuShopProps {
 const MenuShop: React.FC<MenuShopProps> = ({
   onCategorySelect,
   onPriceChange,
+  setSearch,
   selectedColors,
   toggleColor,
   resetColorFilter,
@@ -34,60 +34,52 @@ const MenuShop: React.FC<MenuShopProps> = ({
   onSizeChange,
 }) => {
   const { data: categoryData } = useCategoryQuery();
-  const {
-    colors: colorOptions,
-    sizes: sizeOptions,
-    loading,
-    error,
-  } = useAttributes(); // Lấy dữ liệu từ useAttributes
-
-  console.log("colorOptions:", colorOptions);
-  console.log("sizeOptions:", sizeOptions);
-
-  // Kiểm tra xem colorOptions và sizeOptions có phải là mảng không
-  const validColorOptions = Array.isArray(colorOptions) ? colorOptions : [];
-  const validSizeOptions = Array.isArray(sizeOptions) ? sizeOptions : [];
+  const { sizes: sizeOptions, loading, error } = useAttributes();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   const handleCategoryChange = (selectedCategories: string[]) => {
-    onCategorySelect(selectedCategories); // Gọi hàm với mảng các ID
+    onCategorySelect(selectedCategories);
   };
-
+  const handleColorSearch = (color: string) => {
+    onColorChange([color]); // Chuyển màu sắc đã tìm kiếm đến onColorChange
+  };
   return (
-    <div className="hidden lg:block w-full flex flex-col my-10 ">
+    <div className="hidden lg:block w-full flex flex-col my-10">
       <div className="space-x-4 mb-7 mt-3">
-        {/* <AiOutlineFilter className="text-3xl" /> */}
         <h1 className="text-2xl">Bộ Lọc Sản Phẩm</h1>
       </div>
+
+      {/* Bộ lọc danh mục */}
       <div className="w-full bg-gray-50">
         <CategoryFilter
           categories={categoryData || []}
-          onCategorySelect={handleCategoryChange} // Truyền vào hàm mới
+          onCategorySelect={handleCategoryChange}
         />
       </div>
 
+      {/* Bộ lọc giá */}
       <div className="w-full bg-gray-50 mt-2">
         <PriceFilter onPriceChange={onPriceChange} />
       </div>
 
+      {/* Bộ lọc màu */}
       <div className="w-full bg-gray-50 mt-2">
         <ColorFilter
-          selectedColors={selectedColors}
-          toggleColor={toggleColor}
-          resetColorFilter={resetColorFilter}
-          onColorChange={onColorChange}
-          colorOptions={validColorOptions} // Truyền validColorOptions vào ColorFilter
+          selectedColor={selectedColors.join(", ")} // Truyền selectedColors vào
+          onColorSearch={handleColorSearch} // Truyền hàm tìm kiếm màu sắc
         />
       </div>
+
+      {/* Bộ lọc kích thước */}
       <div className="w-full bg-gray-50 mt-2">
         <SizeFilter
           selectedSizes={selectedSizes}
           toggleSize={toggleSize}
           resetSizeFilter={resetSizeFilter}
           onSizeChange={onSizeChange}
-          sizeOptions={validSizeOptions} // Truyền validSizeOptions vào SizeFilter
+          sizeOptions={sizeOptions}
         />
       </div>
     </div>

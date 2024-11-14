@@ -157,46 +157,21 @@ export async function tao_thuoc_tinh(req, res) {
 
 export const lay_tat_ca_thuoc_tinh = async (req, res) => {
   try {
-    // Lấy dữ liệu từ model Attribute (AttributeSchema)
-    const attributes = await Attributes.find();
-    const colors = attributes
-      .flatMap((attribute) => attribute.values.map((value) => value.color))
-      .filter(Boolean); // Lọc bỏ giá trị null/undefined
+    // Lấy tất cả dữ liệu của model Attributes
+    const attributesData = await Attributes.find({});
 
-    const sizes = attributes
-      .flatMap((attribute) =>
-        attribute.values.flatMap((value) => value.size.map((s) => s.name_size))
-      )
-      .filter(Boolean); // Lọc bỏ giá trị null/undefined
-
-    // Lấy dữ liệu từ model Thuoc_tinh (schema_thuoc_tinh)
-    const colorAttrs = await thuoc_tinh.find({
-      the_loai_thuoc_tinh: "ux_color",
-    });
-    const sizeAttrs = await thuoc_tinh.find({ the_loai_thuoc_tinh: "ux_size" });
-
-    // Kết hợp tất cả dữ liệu lại và loại bỏ giá trị trùng
-    const combinedColors = [
-      ...new Set([
-        ...colors,
-        ...colorAttrs.map((attr) => attr.symbol_thuoc_tinh),
-      ]),
-    ];
-
-    const combinedSizes = [
-      ...new Set([...sizes, ...sizeAttrs.map((attr) => attr.ten_thuoc_tinh)]),
-    ];
-
-    // Trả về dữ liệu màu sắc và kích thước
-    res.status(200).json({
-      colors: combinedColors,
-      sizes: combinedSizes,
+    // Trả về kết quả dưới dạng JSON
+    return res.status(200).json({
+      attributesData,
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy thuộc tính", error });
+    // Xử lý lỗi và trả về thông báo lỗi với mã trạng thái 500
+    res.status(500).json({
+      message: "Lỗi khi lấy thuộc tính",
+      error: error.message || error, // Cung cấp thông tin lỗi chi tiết hơn nếu có
+    });
   }
 };
-
 export async function lay_thuoc_tinh(req, res) {
   try {
     if (!req.params.id_account) {

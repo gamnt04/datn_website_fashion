@@ -5,35 +5,35 @@ import { useQuery } from "@tanstack/react-query";
 
 // Hàm fetch data từ API backend
 const fetchFilteredProducts = async (
-  cate_id: string[],
-  priceRanges: { min: number; max: number }[],
-  colors: string[],
-  sizes: string[],
-  page: number = 1,
-  limit: number = 20,
-  sortOption: string = ""
+  cate_id: string[], // Các danh mục cần lọc
+  price_ranges: { min: number; max: number }[], // Dải giá cần lọc
+  color: string[], // Màu sắc cần lọc
+  name_size: string[], // Kích thước cần lọc
+  page: number = 1, // Trang
+  limit: number = 20, // Số lượng sản phẩm mỗi trang
+  sortOption: string = "" // Cách thức sắp xếp
 ) => {
-  const endpoint = "/products/filter/Product";
+  const endpoint = "/products/filter/Product"; // Đường dẫn đến API
 
   // Xây dựng các tham số cho yêu cầu
   const params: { [key: string]: any } = {
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
-    priceRanges:
-      priceRanges.length > 0 ? JSON.stringify(priceRanges) : undefined,
-    colors: colors.length > 0 ? colors.join(",") : undefined,
-    sizes: sizes.length > 0 ? sizes.join(",") : undefined,
+    price_ranges:
+      price_ranges.length > 0 ? JSON.stringify(price_ranges) : undefined,
+    color: color.length > 0 ? color.join(",") : undefined, // Dùng color để lọc
+    name_size: name_size.length > 0 ? name_size.join(",") : undefined,
     _page: page,
     _limit: limit,
     _sort: sortOption,
   };
 
-  // Xoá các giá trị undefined khỏi params
+  // Xóa các giá trị undefined khỏi params
   Object.keys(params).forEach(
     (key) => params[key] === undefined && delete params[key]
   );
 
   try {
-    // Thực hiện gọi API
+    // Thực hiện gọi API với tham số `params`
     const response = await instance.get<ProductResponse>(endpoint, { params });
     return response.data;
   } catch (error: unknown) {
@@ -46,23 +46,22 @@ const fetchFilteredProducts = async (
   }
 };
 
-// Hook sử dụng React Query để fetch dữ liệu
 export const useFilteredProducts = (
-  cate_id: string[],
-  priceRanges: { min: number; max: number }[],
-  colors: string[],
-  sizes: string[],
-  page: number = 1,
-  limit: number = 20,
-  sortOption: string = ""
+  cate_id: string[], // Các danh mục lọc
+  price_ranges: { min: number; max: number }[], // Dải giá lọc
+  color: string[], // Màu sắc lọc
+  name_size: string[], // Kích thước lọc
+  page: number = 1, // Trang
+  limit: number = 20, // Số sản phẩm trên mỗi trang
+  sortOption: string = "" // Sắp xếp
 ) => {
   // Tạo queryKey để caching
   const queryKey = [
     "products",
     cate_id,
-    JSON.stringify(priceRanges),
-    colors,
-    sizes,
+    JSON.stringify(price_ranges),
+    color, // Lọc theo màu sắc
+    name_size,
     page,
     limit,
     sortOption,
@@ -77,14 +76,13 @@ export const useFilteredProducts = (
     queryFn: () =>
       fetchFilteredProducts(
         cate_id,
-        priceRanges,
-        colors,
-        sizes,
+        price_ranges,
+        color, // Truyền color thay vì _search
+        name_size,
         page,
         limit,
         sortOption
       ),
-    // Optionally, you can specify `staleTime`, `cacheTime`, etc., based on your needs
   });
 
   return { data, error, isLoading, isError };
