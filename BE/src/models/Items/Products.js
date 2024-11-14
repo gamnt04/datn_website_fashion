@@ -62,69 +62,6 @@ productSchema.plugin(mongooseDelete, {
   overrideMethods: "all",
 });
 
-// Phương thức lọc theo nhiều mức giá, màu sắc và kích thước
-productSchema.statics.filterByAttributes = function (
-  priceRanges = [],
-  colors = [],
-  sizes = [],
-  options = {}
-) {
-  const priceConditions = priceRanges.map(({ minPrice, maxPrice }) => ({
-    "attributes_details.values.size.price_attribute": {
-      $gte: minPrice,
-      $lte: maxPrice,
-    },
-  }));
-
-  const colorConditions = colors.length
-    ? {
-        "attributes_details.values.color": { $in: colors },
-      }
-    : {};
-
-  const sizeConditions = sizes.length
-    ? {
-        "attributes_details.values.size.name_size": { $in: sizes },
-      }
-    : {};
-
-  return this.aggregate([
-    {
-      $lookup: {
-        from: "attributes",
-        localField: "attributes",
-        foreignField: "_id",
-        as: "attributes_details",
-      },
-    },
-    { $unwind: "$attributes_details" },
-    { $unwind: "$attributes_details.values" },
-    { $unwind: "$attributes_details.values.size" },
-
-    // Điều kiện lọc theo giá, màu sắc và kích thước
-    {
-      $match: {
-        ...(priceConditions.length && {
-          $or: priceConditions,
-        }),
-        ...colorConditions,
-        ...sizeConditions,
-      },
-    },
-
-    // Nhóm lại sản phẩm theo `_id` sau khi lọc
-    {
-      $group: {
-        _id: "$_id",
-        product: { $first: "$$ROOT" },
-      },
-    },
-    { $replaceRoot: { newRoot: "$product" } },
-  ])
-    .option(options)
-    .exec();
-};
-
 // Phương thức cập nhật đánh giá trung bình
 productSchema.statics.updateAverageRating = async function (productId) {
   try {
