@@ -5,9 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 
 // Hàm fetch data từ API backend
 const fetchFilteredProducts = async (
-  query: string,
   cate_id: string[],
-  price_ranges: { min: number; max: number }[],
+  priceRanges: { min: number; max: number }[],
   colors: string[],
   sizes: string[],
   page: number = 1,
@@ -18,12 +17,11 @@ const fetchFilteredProducts = async (
 
   // Xây dựng các tham số cho yêu cầu
   const params: { [key: string]: any } = {
-    _search: query || undefined,
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
-    price_ranges:
-      price_ranges.length > 0 ? JSON.stringify(price_ranges) : undefined,
-    color: colors.length > 0 ? colors.join(",") : undefined,
-    name_size: sizes.length > 0 ? sizes.join(",") : undefined,
+    priceRanges:
+      priceRanges.length > 0 ? JSON.stringify(priceRanges) : undefined,
+    colors: colors.length > 0 ? colors.join(",") : undefined,
+    sizes: sizes.length > 0 ? sizes.join(",") : undefined,
     _page: page,
     _limit: limit,
     _sort: sortOption,
@@ -50,9 +48,8 @@ const fetchFilteredProducts = async (
 
 // Hook sử dụng React Query để fetch dữ liệu
 export const useFilteredProducts = (
-  query: string,
   cate_id: string[],
-  price_ranges: { min: number; max: number }[],
+  priceRanges: { min: number; max: number }[],
   colors: string[],
   sizes: string[],
   page: number = 1,
@@ -62,9 +59,8 @@ export const useFilteredProducts = (
   // Tạo queryKey để caching
   const queryKey = [
     "products",
-    query,
     cate_id,
-    JSON.stringify(price_ranges),
+    JSON.stringify(priceRanges),
     colors,
     sizes,
     page,
@@ -80,9 +76,8 @@ export const useFilteredProducts = (
     queryKey,
     queryFn: () =>
       fetchFilteredProducts(
-        query,
         cate_id,
-        price_ranges,
+        priceRanges,
         colors,
         sizes,
         page,

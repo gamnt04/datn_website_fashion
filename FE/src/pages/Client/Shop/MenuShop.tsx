@@ -8,7 +8,7 @@ import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuer
 import { AiOutlineFilter } from "react-icons/ai";
 
 interface MenuShopProps {
-  onCategorySelect: (ids: string[]) => void; // Cập nhật kiểu ở đây
+  onCategorySelect: (ids: string[]) => void;
   onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
   setSearch: (search: string) => void;
   selectedColors: string[];
@@ -39,7 +39,14 @@ const MenuShop: React.FC<MenuShopProps> = ({
     sizes: sizeOptions,
     loading,
     error,
-  } = useAttributes();
+  } = useAttributes(); // Lấy dữ liệu từ useAttributes
+
+  console.log("colorOptions:", colorOptions);
+  console.log("sizeOptions:", sizeOptions);
+
+  // Kiểm tra xem colorOptions và sizeOptions có phải là mảng không
+  const validColorOptions = Array.isArray(colorOptions) ? colorOptions : [];
+  const validSizeOptions = Array.isArray(sizeOptions) ? sizeOptions : [];
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -50,7 +57,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
 
   return (
     <div className="hidden lg:block w-full flex flex-col my-10 ">
-      <div className=" space-x-4 mb-7 mt-3">
+      <div className="space-x-4 mb-7 mt-3">
         {/* <AiOutlineFilter className="text-3xl" /> */}
         <h1 className="text-2xl">Bộ Lọc Sản Phẩm</h1>
       </div>
@@ -71,7 +78,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
           toggleColor={toggleColor}
           resetColorFilter={resetColorFilter}
           onColorChange={onColorChange}
-          colorOptions={colorOptions}
+          colorOptions={validColorOptions} // Truyền validColorOptions vào ColorFilter
         />
       </div>
       <div className="w-full bg-gray-50 mt-2">
@@ -80,7 +87,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
           toggleSize={toggleSize}
           resetSizeFilter={resetSizeFilter}
           onSizeChange={onSizeChange}
-          sizeOptions={sizeOptions}
+          sizeOptions={validSizeOptions} // Truyền validSizeOptions vào SizeFilter
         />
       </div>
     </div>

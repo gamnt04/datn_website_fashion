@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
 import Attribute from "../../models/attribute/variant";
 import Category from "../../models/Items/Category";
+import ThuocTinh from "../../models/attribute/thuoc_tinh";
 import mongoose from "mongoose";
 
 // list all
@@ -371,77 +372,87 @@ export const getDetailProductDashBoard = async (req, res) => {
 };
 
 export async function filterItems(req, res) {
-  const { cate_id, colors, sizes, priceRanges } = req.query; // Lấy các tham số lọc từ query
-  const { _page = 1, _limit = 20, _sort = "" } = req.query;
-  const page = parseInt(_page, 10) || 1;
-  const limit = parseInt(_limit, 10) || 20;
+  const { colors, sizes } = req.query; // Lấy màu sắc và kích thước từ query parameters
 
-  const options = {
-    page,
-    limit,
-    sort: _sort
-      ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
-      : {},
-  };
+  const colorArray = colors ? colors.split(",") : []; // Tách mảng màu sắc
+  const sizeArray = sizes ? sizes.split(",") : []; // Tách mảng kích thước
+
+  console.log("Color Array:", colorArray);
+  console.log("Size Array:", sizeArray);
+
+  // Xây dựng query cho ThuocTinh (màu sắc theo symbol_thuoc_tinh)
+  const queryThuocTinh = colorArray.length
+    ? { symbol_thuoc_tinh: { $in: colorArray } }
+    : {}; // Nếu không có màu sắc, không lọc theo màu sắc trong ThuocTinh
+
+  // Xây dựng query cho Attributes (màu sắc trong 'values.color' và kích thước)
+  const queryAttributes = colorArray.length
+    ? {
+        "values.color": { $in: colorArray }, // Kiểm tra tên màu trong `values.color`
+      }
+    : {}; // Nếu không có màu sắc, không lọc theo màu sắc trong Attributes
 
   try {
-    // Lọc các danh mục có `published` là `true`
-    const visibleCategories = await Category.find({ published: true }).select(
-      "_id"
-    );
-    const visibleCategoryIds = visibleCategories.map((cat) =>
-      cat._id.toString()
-    );
+    // Truy vấn dữ liệu từ collection ThuocTinh
+    const thuocTinhResults = colorArray.length
+      ? await ThuocTinh.find(queryThuocTinh) // Lọc màu sắc trong ThuocTinh nếu có
+      : [];
+    console.log("ThuocTinh Results: ", thuocTinhResults);
 
-    if (!visibleCategories || visibleCategories.length === 0) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có Sản Phẩm nào đang được hiển thị!",
+    // Truy vấn dữ liệu từ collection Attributes
+    const attributeResults = colorArray.length
+      ? await Attribute.find(queryAttributes) // Lọc màu sắc trong Attributes nếu có
+      : [];
+    console.log("Attribute Results: ", attributeResults);
+
+    // Xây dựng điều kiện lọc sản phẩm từ màu sắc trong `ThuocTinh` và `Attributes`
+    let productQuery = {};
+
+    // Kiểm tra màu sắc theo `symbol_attribute` từ ThuocTinh
+    if (colorArray.length) {
+      const thuocTinhColors = thuocTinhResults.map(
+        (item) => item.symbol_thuoc_tinh
+      );
+      productQuery["values.color"] = { $in: thuocTinhColors }; // Lọc sản phẩm có màu sắc trùng với symbol_thuoc_tinh
+    }
+
+    // Nếu có màu sắc từ Attributes, tìm các sản phẩm có màu trong trường values.color
+    if (colorArray.length) {
+      productQuery["values.color"] = { $in: colorArray }; // Lọc theo `values.color` trong sản phẩm
+    }
+
+    console.log("Product Query:", productQuery);
+
+    // Truy vấn sản phẩm từ collection Products theo các điều kiện lọc
+    const products = await Products.find(productQuery);
+    console.log("Filtered Products:", products);
+
+    // Nếu không có sản phẩm nào, trả về thông báo không tìm thấy
+    if (products.length === 0) {
+      return res.status(404).json({
+        message: "Không tìm thấy sản phẩm phù hợp.",
+        data: [],
+        pagination: {
+          totalItems: 0,
+          currentPage: 1,
+          itemsPerPage: 20,
+        },
       });
     }
 
-    const query = { category_id: { $in: visibleCategoryIds } };
-
-    // Nếu có `cate_id` thì lọc theo danh sách `cate_id` nhận được từ request
-    if (cate_id) {
-      const cateArray = cate_id.split(",").map((id) => id.trim());
-      query.category_id = { $in: cateArray };
-    }
-
-    // Chuyển đổi các tham số lọc màu sắc, kích thước và mức giá thành đối tượng
-    const colorArray = colors
-      ? colors.split(",").map((color) => color.trim())
-      : [];
-    const sizeArray = sizes ? sizes.split(",").map((size) => size.trim()) : [];
-    const priceRangesArray = priceRanges ? JSON.parse(priceRanges) : []; // Giả sử priceRanges được gửi dưới dạng JSON string
-
-    // Bổ sung điều kiện lọc theo `sizeArray` nếu có
-    if (sizeArray.length > 0) {
-      query.size = { $in: sizeArray };
-    }
-
-    // Sử dụng phương thức filterByAttributes để lọc sản phẩm
-    const data = await Products.filterByAttributes(
-      priceRangesArray,
-      colorArray,
-      sizeArray,
-      options
-    );
-
-    return res.status(StatusCodes.OK).json({
+    // Trả về kết quả
+    return res.status(200).json({
       message: "Thành công!",
-      data,
+      data: products,
       pagination: {
-        totalItems: data.length, // Chỉ định tổng số sản phẩm
-        currentPage: page,
-        totalPages: Math.ceil(data.length / limit),
-        itemsPerPage: limit,
+        totalItems: products.length,
+        currentPage: 1,
+        itemsPerPage: 20,
       },
     });
-  } catch (error) {
-    console.error("Server Error:", error);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: error.message || "Lỗi máy chủ!" });
+  } catch (err) {
+    console.error("Error filtering products:", err);
+    return res.status(500).json({ message: "Lỗi server!" });
   }
 }
 
