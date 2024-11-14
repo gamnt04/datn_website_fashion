@@ -9,6 +9,7 @@ import { Convert_Color } from "../../../_lib/Config/Config_Color";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Rate } from "antd";
+import useStore from "../../../Stores/useStore";
 
 interface InforProductProp {
   product: IProduct;
@@ -21,8 +22,7 @@ interface IAttr {
 }
 
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
-  console.log(dataProps);
-
+  const { setImg } = useStore();
   const navi = useNavigate();
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
@@ -257,10 +257,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           <>
             <div>
               <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
-                {
-                  dataProps?.products?.attributes?.values[0].symbol ?
-                    dataProps?.products?.attributes?.values[0].symbol[0] === '#' ? 'Color' : 'Hình ảnh' : 'Label'
-                }
+                Loại
               </span>
               <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
                 {dataProps?.products?.attributes?.values?.map((item: any) => (
@@ -277,7 +274,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                           } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 ${(item?.symbol === '#ffffff' || item?.symbol === '#fff') ? 'after:border-black' : 'after:border-white'} after:rotate-[-45deg] grid place-items-center`}
                       ></button> :
                       <button
-                        onClick={() => handle_atrtribute(item?.color, "Color")}
+                        onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
                         className={`${color == item?.color ? "after:block" : "after:hidden"
                           } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
                       >
