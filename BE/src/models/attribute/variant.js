@@ -2,6 +2,10 @@ import mongoose, { Schema } from "mongoose";
 
 const AttributeSchema = new Schema(
     {
+        // id_item: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Products"
+        // },
         values: [
             {
                 color: {

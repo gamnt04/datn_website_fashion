@@ -87,9 +87,15 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
+      console.log("i", i);
+
       if (i.productId.attributes) {
-        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        const data_attr = await Attributes.find();
+        console.log("data_attr", data_attr);
+
         for (let j of data_attr) {
+          console.log("j", j);
+
           for (let k of j.values) {
             if (k.color == i.color_item) {
               for (let x of k.size) {
@@ -144,7 +150,7 @@ export const createOrderPayment = async (req, res) => {
     const data = await Order.create(requestBody);
     for (let i of items) {
       if (i.productId.attributes) {
-        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        const data_attr = await Attributes.find({});
         for (let j of data_attr) {
           for (let k of j.values) {
             if (k.color === i.color_item) {
@@ -590,7 +596,7 @@ export const updateOrderStatus = async (req, res) => {
       for (let i of items) {
         // Xử lý thay đổi số lượng sản phẩm
         if (i.productId.attributes) {
-          const data_attr = await Attributes.find({ id_item: i.productId._id });
+          const data_attr = await Attributes.find({});
           for (let j of data_attr) {
             for (let k of j.values) {
               if (k.color == i.color_item) {
@@ -610,7 +616,7 @@ export const updateOrderStatus = async (req, res) => {
         } else {
           const data_items = await Products.find({ _id: i.productId._id });
           for (let a of data_items) {
-            a.stock_product = a.stock_product + i.quantity;
+            a.stock = a.stock + i.quantity;
             await a.save();
           }
         }
@@ -790,7 +796,7 @@ export const adminCancelOrder = async (req, res) => {
       for (let i of items) {
         // Xử lý thay đổi số lượng sản phẩm
         if (i.productId.attributes) {
-          const data_attr = await Attributes.find({ id_item: i.productId._id });
+          const data_attr = await Attributes.find({});
           for (let j of data_attr) {
             for (let k of j.values) {
               if (k.color == i.color_item) {
@@ -810,7 +816,7 @@ export const adminCancelOrder = async (req, res) => {
         } else {
           const data_items = await Products.find({ _id: i.productId._id });
           for (let a of data_items) {
-            a.stock_product = a.stock_product + i.quantity;
+            a.stock = a.stock + i.quantity;
             await a.save();
           }
         }
@@ -991,7 +997,7 @@ export const adminFailDelivery = async (req, res) => {
     for (let i of items) {
       // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
       if (i.productId.attributes) {
-        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        const data_attr = await Attributes.find({});
         for (let j of data_attr) {
           for (let k of j.values) {
             if (k.color == i.color_item) {
@@ -1011,7 +1017,7 @@ export const adminFailDelivery = async (req, res) => {
       } else {
         const data_items = await Products.find({ _id: i.productId._id });
         for (let a of data_items) {
-          a.stock_product = a.stock_product + i.quantity;
+          a.stock = a.stock + i.quantity;
           await a.save();
         }
       }
