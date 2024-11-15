@@ -1,6 +1,7 @@
 import { Carousel, Image } from "antd";
 import React, { useState } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
+import useStore from "../../../Stores/useStore";
 
 interface ImageProductProp {
   product: IProduct;
@@ -8,6 +9,7 @@ interface ImageProductProp {
 
 const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
   console.log(product);
+  const { img } = useStore();
   const { image_product } = product;
 
   let { gallery_product } = product;

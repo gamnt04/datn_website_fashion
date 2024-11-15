@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -6,59 +6,32 @@ import Products from "../../../components/common/Items/Products";
 import { IProduct } from "../../../common/interfaces/Product";
 
 interface Products_ShopProps {
-  query: string;
+  query: string; // Thêm query vào props
   cate_id: string[];
   price_ranges: { min: number; max: number }[];
-  selectedColors: string[];
   selectedSizes: string[];
+  selectedColors: string[];
   sortOption: string;
 }
-
-const sortProducts = (products: IProduct[], sortOption: string) => {
-  switch (sortOption) {
-    case "newest":
-      return [...products].sort(
-        (a, b) =>
-          new Date(b.updatedAt as string).getTime() -
-          new Date(a.updatedAt as string).getTime()
-      );
-    case "oldest":
-      return [...products].sort(
-        (a, b) =>
-          new Date(a.updatedAt as string).getTime() -
-          new Date(b.updatedAt as string).getTime()
-      );
-    case "price_attribute":
-      return [...products].sort(
-        (a, b) => (a.price_product ?? 0) - (b.price_product ?? 0)
-      );
-    case "price_attribute:desc":
-      return [...products].sort(
-        (a, b) => (b.price_product ?? 0) - (a.price_product ?? 0)
-      );
-    default:
-      return products;
-  }
-};
 
 const Products_Shop: React.FC<Products_ShopProps> = ({
   query,
   cate_id,
   price_ranges,
-  selectedColors,
   selectedSizes,
+  selectedColors,
   sortOption,
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 16;
 
+  // Hook lọc sản phẩm
   const {
     data: productsResponse,
     isLoading,
     isError,
     error,
   } = useFilteredProducts(
-    query,
     cate_id,
     price_ranges,
     selectedColors,
@@ -67,15 +40,6 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     itemsPerPage,
     sortOption
   );
-
-  const [sortedProducts, setSortedProducts] = useState<IProduct[]>([]);
-
-  useEffect(() => {
-    if (productsResponse?.data) {
-      const sorted = sortProducts(productsResponse.data, sortOption);
-      setSortedProducts(sorted);
-    }
-  }, [productsResponse, sortOption]);
 
   if (isLoading) {
     return (
@@ -99,10 +63,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
 
   return (
     <div>
-      {sortedProducts.length ? (
+      {productsResponse?.data?.length ? (
         <>
           <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
-            {sortedProducts.map((item: IProduct) => (
+            {productsResponse.data.map((item: IProduct) => (
               <Products key={item._id} items={item} />
             ))}
           </div>
@@ -113,54 +77,38 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
-                  className={`px-4 py-2 border rounded-md ${currentPage === 1
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
+                  className={`px-4 py-2 border rounded-md ${
+                    currentPage === 1
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-700"
+                  }`}
                   disabled={currentPage === 1}
                 >
-                  &#10094; Trang trước
+                  Previous
                 </button>
-                <span className="text-lg font-semibold">
-                  Trang {currentPage}
+                <span>
+                  Page {currentPage} of {totalPages}
                 </span>
                 <button
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className={`px-4 py-2 border rounded-md ${!hasMore
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  className={`px-4 py-2 border rounded-md ${
+                    !hasMore
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-700"
+                  }`}
                   disabled={!hasMore}
                 >
-                  Trang tiếp theo &#10095;
+                  Next
                 </button>
-              </div>
-              <div className="flex flex-wrap items-center space-x-2">
-                {totalPages > 1 &&
-                  Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 border rounded-md ${currentPage === page
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-black hover:bg-gray-300"
-                          }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
               </div>
             </div>
           )}
         </>
       ) : (
-        <div className="flex items-center justify-center h-screen">
-          <img
-            src="../../src/assets/Images/Products/no-data.png"
-            alt="Không có sản phẩm"
-          />
+        <div className="flex justify-center items-center text-lg py-4">
+          Không có sản phẩm nào
         </div>
       )}
     </div>

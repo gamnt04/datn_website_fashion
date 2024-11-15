@@ -1,5 +1,6 @@
 import category_attribute from "../../models/attribute/category_attribute";
 import thuoc_tinh from "../../models/attribute/thuoc_tinh";
+import Attributes from "../../models/attribute/variant";
 import { StatusCodes } from "http-status-codes";
 
 // the loai thuoc tinh
@@ -19,12 +20,12 @@ export async function tao_loai_thuoc_tinh(req, res) {
       });
     }
     const check_the_loai_thuoc_tinh = await category_attribute.findOne({
-      category_attribute: req.body.category_attribute
+      category_attribute: req.body.category_attribute,
     });
     if (check_the_loai_thuoc_tinh) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: 'Loai thuoc tinh da ton tai'
-      })
+        message: "Loai thuoc tinh da ton tai",
+      });
     }
     await category_attribute.create(req.body);
     return res.status(StatusCodes.CREATED).json({
@@ -156,14 +157,21 @@ export async function tao_thuoc_tinh(req, res) {
 
 export const lay_tat_ca_thuoc_tinh = async (req, res) => {
   try {
-    let attributes;
-    attributes = await thuoc_tinh.find();
-    res.status(200).json(attributes);
+    // Lấy tất cả dữ liệu của model Attributes
+    const attributesData = await Attributes.find({});
+
+    // Trả về kết quả dưới dạng JSON
+    return res.status(200).json({
+      attributesData,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi lấy thuộc tính", error });
+    // Xử lý lỗi và trả về thông báo lỗi với mã trạng thái 500
+    res.status(500).json({
+      message: "Lỗi khi lấy thuộc tính",
+      error: error.message || error, // Cung cấp thông tin lỗi chi tiết hơn nếu có
+    });
   }
 };
-
 export async function lay_thuoc_tinh(req, res) {
   try {
     if (!req.params.id_account) {
