@@ -1,10 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { convert_data } from '../data';
 import { Dispatch_the_loai_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import Edit_thuoc_tinh from './edit';
 
 
 const Table_cpnt = ({ data_props }: any) => {
     const { mutate, isPending, isError } = Dispatch_the_loai_thuoc_tinh('REMOVE');
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const navigate = useNavigate();
+    const showModal = (id: string | number) => {
+        const url_location: any = window.location;
+        const url = new URL(url_location);
+        url.searchParams.set('_id', id.toString());
+        navigate(url.pathname + '?' + url.searchParams.toString());
+        setIsModalOpen(true);
+    };
     if (isPending) return <span>Loading...</span>
     if (isError) return <span>Error...</span>
     return <div>
@@ -47,7 +59,8 @@ const Table_cpnt = ({ data_props }: any) => {
                                         {value?.ten_thuoc_tinh}
                                     </span>
                                     <div className='flex items-center gap-x-2 mt-1 *:text-sm *:duration-200'>
-                                        <button className='text-sky-500 hover:text-sky-700'>Sửa</button>
+                                        <button className='text-sky-500 hover:text-sky-700' onClick={() => showModal(value?._id)}>Sửa</button>
+                                        <Edit_thuoc_tinh props={{ isModalOpen, setIsModalOpen }} />
                                         <button onClick={() => (window.confirm('Xac nhan xoa the loai thuoc tinh nay') && mutate(value?._id))} className='text-red-500 hover:text-red-700'>Xóa</button>
                                     </div>
                                 </td>
