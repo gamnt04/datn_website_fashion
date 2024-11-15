@@ -55,7 +55,7 @@ export async function lay_1_the_loai_thuoc_tinh(data_request: any) {
 export async function xoa_the_loai_thuoc_tinh(data_request: any) {
     try {
         const res = await fetch(`${baseUri}/the_loai_thuoc_tinh/xoa_loai_thuoc_tinh/${data_request}`, {
-            method: 'GET',
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -65,6 +65,22 @@ export async function xoa_the_loai_thuoc_tinh(data_request: any) {
         console.log(error || "Loi server!");
     }
 }
+
+export async function sua_the_loai_thuoc_tinh(data_request: any) {
+    try {
+        const res = await fetch(`${baseUri}/the_loai_thuoc_tinh/sua_loai_thuoc_tinh/${data_request.id_loai_thuoc_tinh}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data_request)
+        });
+        return res
+    } catch (error) {
+        console.log(error || "Loi server!");
+    }
+}
+
 
 // thuoc tinh
 export async function tao_thuoc_tinh(data_request: any) {
@@ -89,6 +105,25 @@ export async function lay_thuoc_tinh(data_request: any) {
             headers: {
                 'Content-Type': 'application/json',
                 'Custome-data-request': JSON.stringify(data_request?.category_attribute)
+            },
+        });
+        if (!res.ok) {
+            return res
+        }
+        const { data } = await res.json();
+        return data
+    } catch (error) {
+        console.log(error || "Loi server!");
+    }
+}
+
+export async function lay_1_thuoc_tinh(data_request: any) {
+    try {
+        const res = await fetch(`${baseUri}/thuoc_tinh/lay_1_thuoc_tinh/${data_request?.id_account}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Custom-Data-Request': JSON.stringify(data_request)
             },
         });
         if (!res.ok) {
