@@ -63,6 +63,7 @@ export const GetMessagesByIdUser = async (req, res) => {
 export const SendMessage = async (req, res) => {
   try {
     const { conversationId, content, user_id } = req.body;
+    console.log(req.body);
 
     const requestData = {
       bot_id: "7428243901473308679",
@@ -78,15 +79,16 @@ export const SendMessage = async (req, res) => {
       ]
     };
 
-    const response = await cozeApi.post(
-      `/v3/chat?conversation_id=${conversationId}`,
-      requestData
-    );
+    const response = await cozeApi.post(`/v3/chat?conversation_id=${conversationId}`, requestData);
+    console.log(response.data);
+
+    const botReply = response?.data?.reply;
 
     res.status(201).json({
       success: true,
       message: "Add message successful",
-      data: response.data
+      userMessage: content,
+      botReply: botReply
     });
   } catch (error) {
     console.error("Error in conversation and message flow:", error.message);
@@ -96,6 +98,7 @@ export const SendMessage = async (req, res) => {
     });
   }
 };
+
 
 export const ReceiveMessage = async (req, res) => {
   try {

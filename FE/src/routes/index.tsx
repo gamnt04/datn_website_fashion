@@ -49,11 +49,12 @@ import ListVoucher from "../pages/Admin/Voucher/ListVoucher";
 import AddVoucher from "../pages/Admin/Voucher/AddVoucher";
 import UpdateVoucher from "../pages/Admin/Voucher/UpdateVoucher";
 // import VoucherDetail from "../pages/Admin/Voucher/VoucherDetail";
-import Chat from "../pages/Client/Chat/Chat";
+// import Chat from "../pages/Client/Chat/Chat";
 import MessAdmin from "../pages/Admin/Messenger/MessAdmin";
 import Attribute from "../pages/Admin/(thuoc_tinh)/Attribute/page";
 import The_loai_thuoc_tinh from "../pages/Admin/(thuoc_tinh)/the_loai_thuoc_tinh/page";
 import TotalOrders from "../pages/Admin/Orders/TotalOrders";
+import ChatBot from "../components/common/Chat_bot/Chat_bot";
 const RouterComponent = () => {
   return (
     <>
@@ -62,7 +63,7 @@ const RouterComponent = () => {
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<IndexHome />} />
             <Route path="/verify" element={<VerifyEmail />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat" element={<ChatBot />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/shops" element={<IndexShops />} />
             <Route path="/test" element={<Test />} />

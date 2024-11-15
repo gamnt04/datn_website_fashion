@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { HeartIcon, HeartIconRed } from "../../../resources/svg/Icon/Icon";
@@ -13,8 +13,8 @@ const Products = ({ items }: any) => {
   console.log(items);
 
   const [user] = useLocalStorage("user", {});
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  // const [selectedProduct, setSelectedProduct] = useState(null);
+  // const [modalOpen, setModalOpen] = useState(false);
   const account = user?.user;
   const userId = account?._id;
   const { data: FavoriteData } = useListFavouriteProducts(userId);
@@ -27,23 +27,23 @@ const Products = ({ items }: any) => {
     return null;
   }
 
-  const handlePreview = async (id: any) => {
-    try {
-      const response = await fetch(
-        `http://localhost:2004/api/v1/products/${id}`
-      );
-      const product = await response.json();
-      setSelectedProduct(product);
-      setModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching product preview:", error);
-    }
-  };
+  // const handlePreview = async (id: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:2004/api/v1/products/${id}`
+  //     );
+  //     const product = await response.json();
+  //     setSelectedProduct(product);
+  //     setModalOpen(true);
+  //   } catch (error) {
+  //     console.error("Error fetching product preview:", error);
+  //   }
+  // };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedProduct(null);
-  };
+  // const handleCloseModal = () => {
+  //   setModalOpen(false);
+  //   setSelectedProduct(null);
+  // };
 
   const checkFavourite = (productId: string) => {
     if (FavoriteData?.products?.length > 0) {
