@@ -14,94 +14,94 @@ const orderSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      required: true
     },
     items: [],
     orderNumber: {
       type: String,
       auto: true,
-      unique: true,
+      unique: true
     },
     customerInfo: {
       userName: {
         type: String,
-        required: true,
+        required: true
       },
       phone: {
         type: String,
-        required: true,
+        required: true
       },
       email: {
         type: String,
-        required: true,
+        required: true
       },
       payment: String,
       city: String,
       address: String,
-      code: String,
+      code: String
     },
     totalPrice: {
       type: Number,
-      required: true,
+      required: true
     },
     discountCode: {
       type: String, // Thêm trường để lưu mã giảm giá
-      default: null,
+      default: null
     },
     discountAmount: {
       type: Number, // Thêm trường để lưu số tiền giảm giá
-      default: 0,
+      default: 0
     },
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
+        ref: "Review"
+      }
     ],
     status: {
       type: String,
       enum: ["1", "2", "3", "4", "5", "6", "7"], //1.chờ xác nhận, 2.Đang chuẩn bị hàng, 3.Đang vận chuyển, 4. Giao hàng thành công, 5.Giao hàng thất bại, 6. Hoàn thành , 7. Hủy
-      default: "1",
+      default: "1"
     },
     cancellationRequested: {
       type: Boolean,
-      default: false,
+      default: false
     },
     cancelledByAdmin: {
       type: Boolean,
-      default: false,
+      default: false
     },
     shipperId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Shipper",
+      ref: "Shipper"
     },
     confirmationImage: String,
     deliveredAt: {
       type: Date,
-      default: null,
+      default: null
     },
     completedAt: {
       type: Date,
-      default: null,
+      default: null
     },
     failureReason: {
       type: String, // Lý do giao hàng thất bại (nếu có)
-      default: null,
+      default: null
     },
     statusHistory: [
       {
         status: {
           type: String,
           enum: ["1", "2", "3", "4", "5", "6", "7"],
-          required: true,
+          required: true
         },
         updatedAt: {
           type: Date,
-          default: Date.now,
-        },
-      },
+          default: Date.now
+        }
+      }
     ],
-    deliveryDistance: { type: String, default: null },
+    deliveryDistance: { type: String, default: null }
   },
   { timestamps: true, versionKey: false }
 );

@@ -11,8 +11,9 @@ const TableOrder = () => {
   const formatDate = (datetime: any) => {
     if (!datetime) return "";
     const date = new Date(datetime);
-    return date.toLocaleDateString("vi-VN"); // Định dạng ngày tháng theo chuẩn Việt Nam
+    return date.toLocaleDateString("vi-VN");
   };
+  console.log("data order one day", dataOrder);
 
   const dataSort = dataOrder?.map((order: any) => ({
     key: order._id,

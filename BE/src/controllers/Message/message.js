@@ -1,82 +1,44 @@
 import MessageGroup from "../../models/Message/Message";
+import mongoose from "mongoose";
 
-// Hàm gửi tin nhắn
-// export const sendMessage = async (req, res) => {
-//   try {
-//     const { senderId, receiverId, content, attachments, icons } = req.body;
-//     const formattedAttachments = Array.isArray(attachments) ? attachments : [];
-
-//     // Tìm nhóm tin nhắn giữa sender và receiver
-//     let messageGroup = await MessageGroup.findOne({
-//       $or: [
-//         { senderId, receiverId },
-//         { senderId: receiverId, receiverId: senderId }  // Kiểm tra 2 chiều để đảm bảo không tạo nhóm mới nếu đã có nhóm giữa cùng 2 người này
-//       ]
-//     });
-
-//     // Nếu chưa có nhóm tin nhắn, tạo nhóm mới
-//     if (!messageGroup) {
-//       messageGroup = new MessageGroup({ senderId, receiverId, messages: [] });
-//     }
-
-//     // Thêm tin nhắn mới vào mảng messages
-//     messageGroup.messages.push({
-//       content,
-//       attachments: formattedAttachments,
-//       icons
-//     });
-
-//     const savedMessageGroup = await messageGroup.save();
-
-//     res.status(200).json({ message: "Gửi tin nhắn thành công", data: savedMessageGroup });
-//   } catch (error) {
-//     console.error("Lỗi khi lưu tin nhắn:", error);
-//     res.status(500).json({ message: "Gửi tin nhắn thất bại." });
-//   }
-// };
 export const sendMessage = async (req, res) => {
   try {
     const { senderId, receiverId, content } = req.body;
-    // const formattedAttachments = Array.isArray(attachments) ? attachments : [];
-
-    // Tìm nhóm tin nhắn giữa sender và receiver
     let messageGroup1 = await MessageGroup.findOne({
-      $or: [{ senderId, receiverId }],
+      $or: [{ senderId, receiverId }]
     });
     let messageGroup2 = await MessageGroup.findOne({
       $or: [
-        { senderId: receiverId, receiverId: senderId }, // Kiểm tra 2 chiều để đảm bảo không tạo nhóm mới nếu đã có nhóm giữa cùng 2 người này
-      ],
+        { senderId: receiverId, receiverId: senderId } // Kiểm tra 2 chiều để đảm bảo không tạo nhóm mới nếu đã có nhóm giữa cùng 2 người này
+      ]
     });
 
-    // Nếu chưa có nhóm tin nhắn, tạo nhóm mới
     if (!messageGroup1) {
       messageGroup1 = new MessageGroup({
         senderId,
         receiverId,
-        messages: [],
+        messages: []
       });
     }
     if (!messageGroup2) {
       messageGroup2 = new MessageGroup({
         senderId,
         receiverId,
-        messages: [],
+        messages: []
       });
     }
 
-    // Thêm tin nhắn mới vào mảng messages
     let savedMessageGroup;
     if (senderId == messageGroup1.senderId) {
       messageGroup1.messages.push({
-        content: content,
+        content: content
         // attachments: formattedAttachments,
         // icons
       });
       savedMessageGroup = await messageGroup1.save();
     } else {
       messageGroup2.messages.push({
-        content: content,
+        content: content
         // attachments: formattedAttachments,
         // icons
       });
@@ -95,7 +57,6 @@ export const getMessagesBetweenUsers = async (req, res) => {
   try {
     const { userId1, userId2 } = req.params;
 
-    // Kiểm tra xem userId1 và userId2 có hợp lệ không
     if (
       !mongoose.Types.ObjectId.isValid(userId1) ||
       !mongoose.Types.ObjectId.isValid(userId2)
@@ -103,18 +64,17 @@ export const getMessagesBetweenUsers = async (req, res) => {
       return res.status(400).json({ message: "ID người dùng không hợp lệ." });
     }
 
-    // Truy vấn để lấy tin nhắn giữa hai người dùng
     let messageGroups = await MessageGroup.find({
       $or: [
         {
           senderId: mongoose.Types.ObjectId(userId1),
-          receiverId: mongoose.Types.ObjectId(userId2),
+          receiverId: mongoose.Types.ObjectId(userId2)
         },
         {
           senderId: mongoose.Types.ObjectId(userId2),
-          receiverId: mongoose.Types.ObjectId(userId1),
-        },
-      ],
+          receiverId: mongoose.Types.ObjectId(userId1)
+        }
+      ]
     })
       .populate("senderId", "fullName email") // Populate thông tin người gửi
       .populate("receiverId", "fullName email") // Populate thông tin người nhận

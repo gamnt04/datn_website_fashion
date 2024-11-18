@@ -3,29 +3,29 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const updatedFieldSchema = new mongoose.Schema({
   field: { type: String },
   time: { type: Date, default: Date.now },
-  value: { type: String },
+  value: { type: String }
 });
 const userSchema = new Schema(
   {
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
     userName: {
       type: String,
       required: true,
       minlength: 3,
-      maxlength: 30,
+      maxlength: 30
     },
     fullName: {
       type: String,
       minlength: 3,
-      maxlength: 30,
+      maxlength: 30
     },
     address: [
       {
@@ -33,28 +33,27 @@ const userSchema = new Schema(
         phoneNumber: { type: String },
         address: { type: String },
         addressDetails: { type: String },
-        checked: { type: Boolean, default: false },
-      },
+        checked: { type: Boolean, default: false }
+      }
     ],
     phone: {
-      type: String,
+      type: String
     },
     role: {
       type: String,
       enum: ["user", "admin", "courier"],
-      default: "user",
+      default: "user"
     },
 
     avatar: {
       type: String,
-      default: "https://vectorified.com/images/default-avatar-icon-12.png",
-      // default: "../upload/default-avatar.jpeg",
+      default: "https://vectorified.com/images/default-avatar-icon-12.png"
     },
 
     birthDate: {
-      type: String,
+      type: String
     },
-    updatedFields: { type: [updatedFieldSchema], default: [] },
+    updatedFields: { type: [updatedFieldSchema], default: [] }
   },
   { timestamps: true, versionKey: false }
 );
