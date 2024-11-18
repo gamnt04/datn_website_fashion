@@ -16,6 +16,7 @@ import {
   GetUsersByEmailOrName,
   newAuthIn7Day,
   getUserAndShipper,
+  googleAuth,
 } from "../controllers/Auth/auth";
 import { forgotPassword } from "../controllers/Auth/ForgotPass";
 import {
@@ -44,6 +45,7 @@ Routes_auth.delete("/auth/:userId/:addressId", delete_address);
 Routes_auth.patch("/auth/:userId/:addressId/default", setDefaultAddress);
 Routes_auth.post("/forgot-password", forgotPassword);
 Routes_auth.post("/change-password", authenticateToken, changePassword);
+Routes_auth.post("/auth/google", googleAuth)
 
 Routes_auth.get("/auths/user-shipper", getUserAndShipper);
 export default Routes_auth;
