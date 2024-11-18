@@ -6,6 +6,13 @@ import { signupSchema } from "../../validations/auth";
 import mongoose from "mongoose";
 import { date } from "joi";
 import Shipper from "../../models/Shipper/shipper";
+import { OAuth2Client } from 'google-auth-library';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -734,5 +741,54 @@ export const getUserAndShipper = async (req, res) => {
   } catch (error) {
     console.error("Error getting users and shippers:", error);
     return res.status(500).json({ error: error.message });
+  }
+};
+// export const googleLogin = passport.authenticate('google', {
+//   scope: ['profile', 'email'],  // Yêu cầu quyền truy cập thông tin profile và email
+// });
+
+// // Hàm callback sau khi người dùng đăng nhập qua Google
+// export const googleCallback = async (req, res) => {
+//   passport.authenticate("google", { failureRedirect: "/" }),
+//   // function (req, res) {
+//   //   res.redirect(`http://localhost:7899/login-success/${req.user?.id}`);
+//   (req, res) => {
+//     res.json(req.user);
+//   }
+//   // }
+// }
+export const googleAuth = async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    // Xác thực token từ phía Google
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Kiểm tra và tạo user nếu chưa tồn tại
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        email,
+        userName: name,
+        avatar: picture,
+      });
+    }
+
+    // Tạo token JWT cho client
+    const accessToken = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.status(200).json({ token: accessToken, user });
+  } catch (error) {
+    res.status(500).json({ message: 'Lỗi xác thực Google', error });
   }
 };

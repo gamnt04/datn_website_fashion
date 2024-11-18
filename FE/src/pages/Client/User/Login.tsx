@@ -4,6 +4,9 @@ import type { FormProps } from "antd";
 import { Button, Form, Input, Spin } from "antd";
 import { signInSchema } from "../../../common/validations/auth/SignIn";
 import { LoadingOutlined } from "@ant-design/icons";
+import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,10 +21,13 @@ const Login = () => {
     error,
     status_api,
   } = useSignIn();
+
   type FieldType = {
     email?: string;
     password?: string;
+    token?: string;
   };
+
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const email: string = values.email || "";
@@ -45,6 +51,36 @@ const Login = () => {
       onSubmit({ email, password });
     }
   };
+  const handleGoogleLogin = async (credentialResponse: any) => {
+    const token = credentialResponse.credential;
+
+    try {
+      const response = await axios.post('http://localhost:2004/api/v1/auth/google', {
+        token,
+      });
+
+      const { token: jwtToken, user } = response.data;
+
+      localStorage.setItem('token', jwtToken);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      toast.success("Đăng nhập thành công!");
+
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Lỗi đăng nhập Google:', error);
+      toast.error("Đăng nhập Google thất bại. Vui lòng thử lại!");
+    }
+  };
+
+  const handleGoogleLoginError = () => {
+    toast.error("Lỗi khi đăng nhập Google. Vui lòng thử lại!");
+  };
+
   const handleForgotPassword = () => {
     navigate("/forgot-password");
   };
@@ -74,9 +110,7 @@ const Login = () => {
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Đăng nhập
               </h3>
-              <p className="mb-4 text-gray-600">
-                Nhập email và mật khẩu của bạn
-              </p>
+              <p className="mb-4 text-gray-600">Nhập email và mật khẩu của bạn</p>
               <div className="flex items-center mb-3">
                 <hr className="flex-grow border-gray-300" />
               </div>
@@ -143,6 +177,12 @@ const Login = () => {
                   </Link>
                 </p>
               </Form>
+              <div className="flex items-center justify-center mt-6">
+              <GoogleLogin
+      onSuccess={handleGoogleLogin}
+      onError={handleGoogleLoginError}
+    />
+              </div>
             </div>
           </div>
         </div>
