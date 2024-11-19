@@ -43,7 +43,6 @@ export async function sua_loai_thuoc_tinh(req, res) {
     const check_ten_loai_thuoc_tinh = await category_attribute.findOne({
       name_attribute: req.body.name_attribute,
     });
-    console.log(check_ten_loai_thuoc_tinh);
     if (!req.body.id_account) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
         message: "Khong tim thay tai khoan!",
@@ -54,7 +53,7 @@ export async function sua_loai_thuoc_tinh(req, res) {
         message: "Loai thuoc tinh da ton tai",
       });
     }
-    await category_attribute.create(req.body);
+    await category_attribute.findByIdAndUpdate(req.params.id, req.body, { new: true });
     return res.status(StatusCodes.CREATED).json({
       message: "OK",
     });
@@ -72,8 +71,12 @@ export async function xoa_loai_thuoc_tinh(req, res) {
         message: "No id",
       });
     }
+    const data = await category_attribute.findOne({ _id: req.params.id });
+    await thuoc_tinh.findOneAndDelete({
+      the_loai_thuoc_tinh: data.category_attribute
+    })
     await category_attribute.findByIdAndDelete(req.params.id);
-    return res.status(StatusCodes.CREATED).json({
+    return res.status(StatusCodes.NO_CONTENT).json({
       message: "OK",
     });
   } catch (error) {
@@ -111,7 +114,6 @@ export async function lay_1_loai_thuoc_tinh(req, res) {
         message: "Khong tim thay tai khoan!",
       });
     }
-    console.log();
     const data = await category_attribute.findOne({
       _id: JSON.parse(req.headers["custom-data-request"]).id_thuoc_tinh,
     });
@@ -193,6 +195,28 @@ export async function lay_thuoc_tinh(req, res) {
     });
   }
 }
+export async function lay_1_thuoc_tinh(req, res) {
+  try {
+    if (!req.params.id_account) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        message: "Khong tim thay tai khoan!",
+      });
+    }
+    const data = await thuoc_tinh.findOne(
+      {
+        _id: JSON.parse(req.headers["custom-data-request"]).id_thuoc_tinh,
+      }
+    );
+    return res.status(StatusCodes.OK).json({
+      data,
+      message: "ok",
+    });
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: error.message,
+    });
+  }
+}
 
 export async function sua_thuoc_tinh(req, res) {
   try {
@@ -202,8 +226,8 @@ export async function sua_thuoc_tinh(req, res) {
       });
     }
     const data = await thuoc_tinh.findOneAndUpdate(
-      { _id: req.body.id_thuoc_tinh },
-      { ten_thuoc_tinh: req.body.ten_thuoc_tinh },
+      { _id: req.body._id },
+      req.body,
       { new: true }
     );
     return res.status(StatusCodes.OK).json({

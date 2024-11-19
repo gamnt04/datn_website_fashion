@@ -102,7 +102,6 @@ const RouterComponent = () => {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-
             <Route path="/admin/notification" element={<Notification />} />
             <Route path="category" element={<List_Category />} />
             <Route path="category/products/:id" element={<CategoryDetail />} />
@@ -125,7 +124,6 @@ const RouterComponent = () => {
             <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="TotalOrders" element={<TotalOrders />} />
-
             <Route path="auth" element={<List_Auth />} />
             <Route
               path="/admin/orders/:id/orderDetali"
@@ -136,10 +134,8 @@ const RouterComponent = () => {
             <Route path="feedback/:id" element={<Feedback />} />
             <Route path="deliveries" element={<CourierTable />} />
             <Route path="blogs" element={<Blog />} />
-
             <Route path="blogs/add_blog" element={<BlogAdd />} />
             <Route path="blogs/:id" element={<BlogEdit />} />
-
             <Route path="voucher" element={<ListVoucher />} />
             <Route path="voucher/add" element={<AddVoucher />} />
             <Route path="voucher/:id" element={<UpdateVoucher />} />

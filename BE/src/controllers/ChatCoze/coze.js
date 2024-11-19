@@ -46,20 +46,6 @@ export const GetMessagesByIdUser = async (req, res) => {
   }
 };
 
-// {
-//   "bot_id": "7431982733301268498",
-//   "user_id": "123456789",
-//   "stream": true,
-//   "auto_save_history":true,
-//   "additional_messages":[
-//       {
-//           "role":"user",
-//           "content":"Shop ơi hôm nay là thứ mấy",
-//           "content_type":"text"
-
-//       }
-//   ]
-// }
 export const SendMessage = async (req, res) => {
   try {
     const { conversationId, content, user_id } = req.body;
@@ -119,3 +105,5 @@ export const ReceiveMessage = async (req, res) => {
     });
   }
 };
+
+//chat coze

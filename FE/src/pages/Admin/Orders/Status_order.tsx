@@ -154,7 +154,7 @@ const Status_order = ({ data_Order, notification }: any) => {
       dot: <CloseCircleOutlined style={{ fontSize: "18px" }} />,
       children: (
         <>
-          Giao hàng thất bại{" "}
+          Đơn hàng bị hủy{" "}
           {data_Order?.statusHistory?.find(
             (history: any) => history.status === "5"
           )?.updatedAt

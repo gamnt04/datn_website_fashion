@@ -1,10 +1,3 @@
-// import { Router } from "express";
-// import { createConversation } from "../controllers/ChatCoze/coze";
-// // import { createAndSendMessage } from "../controllers/ChatCoze/coze";
-// const Router_coze = Router();
-// // Router_coze.post("/send-message", createAndSendMessage);
-// Router_coze.post("/create-conversationId", createConversation);
-// export default Router_coze;
 import { Router } from "express";
 import {
   SendMessage,

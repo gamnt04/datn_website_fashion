@@ -22,7 +22,7 @@ export const GetOrderBuyNumberOrNumberPhone = async (searchOrder: string) => {
 };
 export const GetNew10OrderInDay = async () => {
   try {
-    const { data } = await instance.get("/orders/all_order_day");
+    const { data } = await instance.get("/order/latest-today");
     return data;
   } catch (error) {
     console.log(error);

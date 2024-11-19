@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { convert_data } from '../data';
 import { Dispatch_the_loai_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
 import { Button, Popconfirm } from 'antd';
@@ -10,13 +10,18 @@ import Modal_cpnt from '../_components/modal_cpnt';
 const Table_cpnt = ({ data_props }: any) => {
     const { mutate, isPending, isError } = Dispatch_the_loai_thuoc_tinh('REMOVE');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const navigate = useNavigate();
+
+    const showModal = (id: string | number) => {
+        const url_location: any = window.location;
+        const url = new URL(url_location);
+        url.searchParams.set('_id', id.toString());
+        navigate(url.pathname + '?' + url.searchParams.toString());
+        setIsModalOpen(true);
+    };
     if (isPending) return <span>Loading...</span>
     if (isError) return <span>Error...</span>
 
-
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
     return <div>
         <table className='auto border border-gray-400 w-full'>
             <thead className='*:border *:border-gray-400'>
@@ -47,8 +52,8 @@ const Table_cpnt = ({ data_props }: any) => {
                                         {value?.name_attribute}
                                     </Link>
                                     <div className='flex items-center gap-x-2 mt-1 *:text-sm *:duration-200'>
-                                        <button className='text-sky-500 hover:text-sky-700' onClick={showModal}>Sửa</button>
-                                        {/* <Modal_cpnt props={{isModalOpen, setIsModalOpen, name_attribute : value?.name_attribute}}/> */}
+                                        <button className='text-sky-500 hover:text-sky-700' onClick={() => showModal(value?._id)}>Sửa</button>
+                                        <Modal_cpnt props={{ isModalOpen, setIsModalOpen }} />
                                         <Popconfirm
                                             title="Delete"
                                             description={`Xác nhận xóa thể loại thuộc tính ${value?.name_attribute}`}
