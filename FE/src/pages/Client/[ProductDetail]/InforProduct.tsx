@@ -259,34 +259,34 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
                 Loại
               </span>
-              <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:h-8 *:w-8 *:rounded-[50%] *:border *:duration-300">
-                {dataProps?.products?.attributes?.values?.map((item: any) => (
-                  // <button
-                  //   onClick={() => handle_atrtribute(item?.color, "Color")}
-                  //   className={`${Convert_Color(item?.color)} ${color == item?.color ? "after:block" : "after:hidden"
-                  //     } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
-                  // ></button>
-                  item?.symbol ?
-                    item?.symbol[0] === '#' ?
-                      <button
-                        onClick={() => handle_atrtribute(item?.color, "Color")}
-                        className={`!bg-[${item?.symbol}] ${color == item?.color ? "after:block" : "after:hidden"
-                          } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 ${(item?.symbol === '#ffffff' || item?.symbol === '#fff') ? 'after:border-black' : 'after:border-white'} after:rotate-[-45deg] grid place-items-center`}
-                      ></button> :
-                      <button
-                        onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
-                        className={`${color == item?.color ? "after:block" : "after:hidden"
-                          } hover:scale-110 after:absolute after:w-4 after:h-2 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
-                      >
-                        <img src={item?.symbol} alt="" />
-                      </button> :
-                    <button
-                      onClick={() => handle_atrtribute(item?.color, "Color")}
-                      className={`${color == item?.color ? "after:block" : "after:hidden"
-                        } hover:scale-110 after:absolute after:w-4 after:h-2 !rounded-none !w-auto px-1.5 after:border-l-2 after:border-b-2 after:border-white after:rotate-[-45deg] grid place-items-center`}
-                    >
-                      {item?.color}
-                    </button>
+              <div className="flex flex-wrap items-center gap-4 lg:mt-2 mt-3 lg:pb-0 mb:pb-5 font-medium">
+    {dataProps?.products?.attributes?.values?.map((item: any) => (
+      item?.symbol ? (
+        item?.symbol[0] === '#' ? (
+          <button
+            key={item?.color}
+            onClick={() => handle_atrtribute(item?.color, "Color")}
+            className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} ${item?.symbol === '#ffffff' || item?.symbol === '#fff' ? 'border-black' : 'border-white'} hover:scale-110 transition-transform duration-300`}
+            style={{ backgroundColor: item?.symbol }}
+          ></button>
+        ) : (
+          <button
+            key={item?.color}
+            onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
+            className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
+          >
+            <img src={item?.symbol} alt="" className="w-full h-full object-cover rounded-full" />
+          </button>
+        )
+      ) : (
+        <button
+          key={item?.color}
+          onClick={() => handle_atrtribute(item?.color, "Color")}
+          className={`px-3 py-1 rounded border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
+        >
+          {item?.color}
+        </button>
+      )
                 ))}
               </div>
             </div>
