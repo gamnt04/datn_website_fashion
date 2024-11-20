@@ -56,7 +56,7 @@ const List_Products = () => {
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
       <div className="flex flex-col items-center text-center">
-        <span className="mb-4 text-[42px] font-medium tracking-wide">
+        <span className="mb-4 text-[32px] tracking-wide capitalize">
           Danh sách sản phẩm
         </span>
         <nav className="flex flex-wrap justify-center gap-4 mb-8">
@@ -103,7 +103,7 @@ const List_Products = () => {
             <div className="w-auto">
               <List_item dataProps={propsData} />
               <div
-                className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
+                className="flex items-center justify-center mx-auto py-2 w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
                 onClick={() => {
                   handleViewAll();
                   ScrollTop();

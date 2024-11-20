@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable no-unsafe-optional-chaining */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { HeartIcon, HeartIconRed } from "../../../resources/svg/Icon/Icon";
@@ -13,8 +14,6 @@ const Products = ({ items }: any) => {
   console.log(items);
 
   const [user] = useLocalStorage("user", {});
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const account = user?.user;
   const userId = account?._id;
   const { data: FavoriteData } = useListFavouriteProducts(userId);
@@ -26,25 +25,6 @@ const Products = ({ items }: any) => {
     console.error("Items is undefined or missing _id:", items);
     return null;
   }
-
-  const handlePreview = async (id: any) => {
-    try {
-      const response = await fetch(
-        `http://localhost:2004/api/v1/products/${id}`
-      );
-      const product = await response.json();
-      setSelectedProduct(product);
-      setModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching product preview:", error);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedProduct(null);
-  };
-
   const checkFavourite = (productId: string) => {
     if (FavoriteData?.products?.length > 0) {
       return FavoriteData?.products?.some(
@@ -83,7 +63,7 @@ const Products = ({ items }: any) => {
     min = items?.attributes?.values[0]?.size[0].price_attribute;
     max = items?.attributes?.values[0]?.size[0].price_attribute;
     for (let i of items?.attributes?.values) {
-      for (let j of i.size) {
+      for (let j of i?.size) {
         if (j?.price_attribute < min) {
           min = j.price_attribute;
         }
@@ -96,19 +76,19 @@ const Products = ({ items }: any) => {
 
   return (
     <div
-      className="flex  justify-between w-full gap-y-5"
+      className="flex justify-between w-full gap-y-5"
       key={items?._id}
     >
-      <div className="relative w-full border-gray-200 border rounded-xl group">
+      <div className="relative w-full border-gray-200 border rounded">
         <Link
           onClick={ScrollTop}
           to={`/shops/${items?._id}`}
           className="h-full cursor-pointer"
         >
-          <div className="relative overflow-hidden border border-gray-300 rounded-t-xl group">
+          <div className="relative overflow-hidden border-b border-gray-300 rounded-t">
             <div className="w-full h-[250px] lg:h-[400px] relative">
               <img
-                className="w-full h-full object-cover rounded-t-xl bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform group-hover:scale-110"
+                className="w-full h-full object-cover rounded-t bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform hover:scale-110"
                 loading="lazy"
                 src={items?.image_product}
                 alt={items?.name_product}
@@ -143,35 +123,20 @@ const Products = ({ items }: any) => {
                 <HeartIcon />
               </button>
             )}{" "}
-            {/* <button
-              className="p-2 border-none rounded"
-              onClick={() => handlePreview(items?._id)}
-            >
-              <EyeIcon />
-            </button> */}
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center  px-4 py-5  gap-y-2">
+        <div className="flex flex-col h-[135px] items-center justify-between px-4 py-5 gap-y-3">
           <Link
             onClick={ScrollTop}
             to={`/shops/${items?._id}`}
-            className="text-md text-center font-bold lg:text-[16px] hover:text-black line-clamp-2"
+            className="text-md text-center font-normal lg:text-[16px] leading-7 hover:text-gray-700 line-clamp-2 overflow-ellipsis"
           >
-            {items?.name_product.length > 15
-              ? items?.name_product.slice(0, 50) + "..."
-              : items?.name_product}
+            {items?.name_product}
           </Link>
-          {/* <p className="font-normal text-[16px]">
-            {items?.price_product?.toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            })}
-          </p> */}
-
           {items?.attributes?.values ? (
-            <div className="flex items-center gap-x-1 line-clamp-2">
+            <div className="flex items-center gap-x-2 line-clamp-2 text-lg text-[#EB2606]">
               {min === max ? (
-                <span className="text-[#EB2606]">
+                <span>
                   {max?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
@@ -179,14 +144,14 @@ const Products = ({ items }: any) => {
                 </span>
               ) : (
                 <>
-                  <span className="text-[#EB2606]">
+                  <span>
                     {min?.toLocaleString("vi", {
                       style: "currency",
                       currency: "VND",
                     })}
                   </span>{" "}
                   -
-                  <span className="text-[#EB2606]">
+                  <span>
                     {max?.toLocaleString("vi", {
                       style: "currency",
                       currency: "VND",
@@ -196,7 +161,7 @@ const Products = ({ items }: any) => {
               )}
             </div>
           ) : (
-            <span className="text-[#EB2606]">
+            <span className="text-[#EB2606] text-lg">
               {items?.price_product?.toLocaleString("vi", {
                 style: "currency",
                 currency: "VND",
@@ -204,12 +169,6 @@ const Products = ({ items }: any) => {
             </span>
           )}
         </div>
-
-        {/* {
-          modalOpen && selectedProduct && (
-            <ProductModal product={selectedProduct} onClose={handleCloseModal} />
-          )
-        } */}
       </div>
     </div>
   );

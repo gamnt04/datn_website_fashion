@@ -18,8 +18,6 @@ const Trending_Products = () => {
     visibleCategories.some((category: ICategory) => category._id === product.category_id)
   );
   const sizeListItems = useRef<HTMLDivElement | null>(null);
-  const backItems = useRef<HTMLButtonElement | null>(null);
-  const nextItems = useRef<HTMLButtonElement | null>(null);
   const handleNext = () => {
     if (sizeListItems.current) {
       const offsetWidthListItems = sizeListItems.current.offsetWidth || 0;
@@ -54,7 +52,7 @@ const Trending_Products = () => {
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
       <div className="text-center flex flex-col items-center mb-[30px]">
-        <span className="text-[42px] font-medium tracking-wide ">
+        <span className="text-[32px] tracking-wide capitalize">
           Sản phẩm nổi bật
         </span>
       </div>
@@ -77,7 +75,7 @@ const Trending_Products = () => {
             <div className="mb-[20px]">
               <div
                 ref={sizeListItems}
-                className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[1.5%]  mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%]"
+                className="overflow-x-scroll py-4 px-1 hidden_scroll-x_trendingproducts scroll-smooth listProductsTrendingChild grid grid-flow-col lg:gap-x-[1.5%]  mb:auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%]"
               >
                 {filteredProducts?.map((item: IProduct) => {
                   if (item?.featured_product === true) {
@@ -88,14 +86,12 @@ const Trending_Products = () => {
               {/* back, next page */}
               <div className="flex items-center *:mx-8 justify-center *:duration-300 *:text-lg">
                 <button
-                  ref={backItems}
                   onClick={handlePrevious}
-                  className="opacity-50 cursor-drop hover:scale-[1.3]"
+                  className="cursor-drop hover:scale-[1.3]"
                 >
                   &#10094;
                 </button>
                 <button
-                  ref={nextItems}
                   onClick={handleNext}
                   className="hover:scale-[1.3]"
                 >
@@ -105,7 +101,7 @@ const Trending_Products = () => {
             </div>
           )}
           {/* view all */}
-          <div className="flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
+          <div className="flex items-center justify-center mx-auto py-2 w-[130px] rounded hover:bg-gray-50 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
             {" "}
             <Link
               onClick={ScrollTop}
