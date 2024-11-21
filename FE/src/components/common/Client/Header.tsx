@@ -1,28 +1,19 @@
-// import { LoadingOutlined } from "@ant-design/icons";
-// import { message } from "antd";
-// import { Heart, Search, ShoppingCart } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-// import logo from "../../../assets/Images/Logo/logo white.png";
-// import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
-// import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { IProduct } from "../../../common/interfaces/Product";
 import useSearch from "../../../systems/utils/useSearch";
 import Nav_Mobile, { Nav_Desktop } from "./Nav";
-
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import logo from "../../../assets/Images/Logo/logo white.png";
-
 import { AiOutlineBell } from "react-icons/ai";
 import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
-import { FaFacebookMessenger } from "react-icons/fa6";
-import Chat from "../../../pages/Client/Chat/Chat";
 const Header = () => {
   const [messageAPI, contentHolder] = message.useMessage();
   const {
@@ -99,11 +90,6 @@ const Header = () => {
         content: "Hãy đăng nhập tài khoản của bạn !!"
       });
     }
-  };
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
   };
   return (
     <>
@@ -239,19 +225,6 @@ const Header = () => {
                 </div>
               )}
             </div>
-
-            {/* <Link
-              onClick={toggleChat}
-              className="*:w-5 *:h-5 opacity-75 hover:opacity-100 hover:scale-[1.1]"
-            >
-              <FaFacebookMessenger />
-            </Link>
-            {isChatOpen && (
-              <div className="fixed inset-0  flex justify-end pr-[70px] mt-[220px]">
-                <Chat onClose={toggleChat} />
-              </div>
-            )} */}
-
             <Link
               className="group *:duration-300 relative py-1"
               onClick={ScrollTop}
@@ -323,8 +296,7 @@ const Header = () => {
                 <img
                   src={getUser?.avatar ? getUser?.avatar : ""}
                   alt=""
-                  width={40}
-                  className="w-12 h-8 rounded-full"
+                  className="w-14 h-8 rounded-full"
                 />
               </Link>
               <Link

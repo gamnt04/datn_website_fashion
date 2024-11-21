@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getNewUserIn7Day,
@@ -14,7 +15,6 @@ export const List_Auth = (userId: string) => {
       return userId ? await list_Auth_By_Id(userId) : await list_Auth();
     }
   });
-
   return { data, ...rest };
 };
 
