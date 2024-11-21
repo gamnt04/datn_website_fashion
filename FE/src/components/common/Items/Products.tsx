@@ -1,5 +1,4 @@
-/* eslint-disable no-unsafe-optional-chaining */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { HeartIcon, HeartIconRed } from "../../../resources/svg/Icon/Icon";
@@ -9,10 +8,8 @@ import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProduct
 import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
-
 const Products = ({ items }: any) => {
   console.log(items);
-
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const userId = account?._id;
