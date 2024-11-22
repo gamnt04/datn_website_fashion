@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { Link } from "react-router-dom";
@@ -28,7 +29,7 @@ const Ourblog = () => {
     <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
         <div className="container mx-auto pt-[20px] text-center">
-          <h1 className="text-[42px] font-medium ">Tin tức nổi bật</h1>
+          <h1 className="text-[32px] capitalize font-medium ">Tin tức nổi bật</h1>
         </div>
 
         {isLoading ? (
@@ -86,7 +87,7 @@ const Ourblog = () => {
             <Link
               to={`/blogs`}
               onClick={ScrollTop}
-              className="my-12 flex items-center justify-center mx-auto h-[50px] w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
+              className="my-12 flex items-center justify-center mx-auto py-2 w-[130px] rounded hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white"
             >
               <span className="text-[15px]">Xem tất cả</span>
             </Link>
