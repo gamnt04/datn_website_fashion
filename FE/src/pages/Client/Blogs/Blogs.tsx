@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import instance from "../../../configs/axios";
+
 const Blogs = () => {
   const { data } = useQuery({
     queryKey: ["BLOGS"],
@@ -31,7 +32,7 @@ const Blogs = () => {
         <div className="container mx-auto pt-[20px] text-center">
           <h1 className="text-[30px] font-bold">Tin tức nổi bật</h1>
         </div>
-        <div className="container mx-auto grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
+        <div className="container mx-auto grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6 pt-[20px]">
           {publishedBlogs.map((blog: any) => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(blog.content, "text/html");
@@ -41,25 +42,16 @@ const Blogs = () => {
             return (
               <div
                 key={blog._id}
-                className="overflow-hidden transition-shadow duration-300 border rounded-lg shadow-lg hover:shadow-2xl"
+                className="overflow-hidden transition-shadow duration-300 border rounded-2xl shadow-lg hover:shadow-2xl"
               >
                 <div className="wrapper-image max-w-full max-h-[250px] overflow-hidden object-cover">
                   <img
                     src={image?.src}
-                    // alt={image?.title}
-                    className="object-cover w-full h-full transition-transform duration-300 image_blog hover:scale-105 "
+                    className="object-cover w-full h-full transition-transform duration-300 image_blog hover:scale-105"
                   />
                 </div>
-                {/* <div className="view_blog bg-[#1C1C1C] py-[15px] text-center">
-                  <Link
-                    to={`/blogs/${blog.slug}`}
-                    className="text-white text-[20px] font-semibold"
-                  >
-                    Chi tiết bài viết
-                  </Link>
-                </div> */}
                 <div className="px-4 py-4">
-                  <h2 className="py-[10px] text-[20px] font-semibold">
+                  <h2 className="py-[10px] text-[20px] font-semibold line-clamp-2">
                     <Link
                       onClick={ScrollTop}
                       to={`/blogs/${blog.slug}`}
@@ -69,10 +61,10 @@ const Blogs = () => {
                     </Link>
                   </h2>
                   <div className="flex text-[#7D7D7D] text-sm space-x-4 mb-2">
-                    <p>{new Date(blog.createdAt).toLocaleDateString()}</p>
-                    <p>{blog.author}</p>
+                    <p className="text-ellipsis overflow-hidden whitespace-nowrap">{new Date(blog.createdAt).toLocaleDateString()}</p>
+                    <p className="text-ellipsis overflow-hidden whitespace-nowrap">{blog.author}</p>
                   </div>
-                  <p className="mt-2 text-gray-700">
+                  <p className="mt-2 text-gray-700 line-clamp-4">
                     {String(content?.innerHTML).substring(0, 100)}...
                   </p>
                   <div className="mt-4 text-center">
