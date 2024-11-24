@@ -11,7 +11,7 @@ const Header = () => {
           <div className="flex  items-center gap-5 2xsm:gap-7">
             <ul className="flex items-center gap-5 2xsm:gap-4">
               <DropdownNotification />
-              <DropdownMessage />
+              {/* <DropdownMessage /> */}
             </ul>
 
             <DropdownUser />

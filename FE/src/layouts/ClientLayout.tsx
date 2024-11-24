@@ -10,7 +10,7 @@ const ClientLayout = () => {
       <div>
         <Outlet />
       </div>
-      <Message />
+      {/* <Message /> */}
       <Footer />
     </div>
   );

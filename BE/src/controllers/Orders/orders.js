@@ -9,7 +9,7 @@ import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
 import Shipper from "../../models/Shipper/shipper";
 import fetch from "node-fetch";
 import * as turf from "@turf/turf";
-
+import Notification from "../../models/Notification/notification";
 // Middleware xác thực
 import jwt from "jsonwebtoken";
 import Voucher from "../../models/Voucher/voucher";
@@ -60,9 +60,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
@@ -88,15 +87,9 @@ export const createOrder = async (req, res) => {
       });
     });
     for (let i of items) {
-      console.log("i", i);
-
       if (i.productId.attributes) {
         const data_attr = await Attributes.find();
-        console.log("data_attr", data_attr);
-
         for (let j of data_attr) {
-          console.log("j", j);
-
           for (let k of j.values) {
             if (k.color == i.color_item) {
               for (let x of k.size) {
@@ -136,6 +129,15 @@ export const createOrder = async (req, res) => {
       }
     }
     await SendMail(email, order);
+    const notification = new Notification({
+      userId: userId,
+      receiver_id: userId,
+      message: `Người dùng ${customerInfo.userName} đã đặt hàng`,
+      different: order._id,
+      status_notification: false
+    });
+
+    await notification.save();
     return res.status(StatusCodes.CREATED).json(order);
   } catch (error) {
     console.error("Error:", error);
@@ -204,14 +206,21 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`
         },
         totalPrice
       });
       await SendMail(customerInfo.email, order);
+      const notification = new Notification({
+        userId: userId,
+        receiver_id: userId,
+        message: `Người dùng ${customerInfo.userName} đã đặt hàng`,
+        different: order._id,
+        status_notification: false
+      });
 
+      await notification.save();
       // Trả về giỏ hàng đã cập nhật
       return res.status(201).json({
         data,
