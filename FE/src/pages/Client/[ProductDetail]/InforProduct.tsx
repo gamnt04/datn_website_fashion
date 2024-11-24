@@ -256,37 +256,37 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         {dataProps?.products?.attributes && (
           <>
             <div>
-              <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
+              {/* <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
                 Màu sắc
-              </span>
+              </span> */}
               <div className="flex flex-wrap items-center gap-4 lg:mt-2 mt-3 lg:pb-0 mb:pb-5 font-medium">
-    {dataProps?.products?.attributes?.values?.map((item: any) => (
-      item?.symbol ? (
-        item?.symbol[0] === '#' ? (
-          <button
-            key={item?.color}
-            onClick={() => handle_atrtribute(item?.color, "Color")}
-            className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} ${item?.symbol === '#ffffff' || item?.symbol === '#fff' ? 'border-black' : 'border-white'} hover:scale-110 transition-transform duration-300`}
-            style={{ backgroundColor: item?.symbol }}
-          ></button>
-        ) : (
-          <button
-            key={item?.color}
-            onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
-            className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
-          >
-            <img src={item?.symbol} alt="" className="w-full h-full object-cover rounded-full" />
-          </button>
-        )
-      ) : (
-        <button
-          key={item?.color}
-          onClick={() => handle_atrtribute(item?.color, "Color")}
-          className={`px-3 py-1 rounded border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
-        >
-          {item?.color}
-        </button>
-      )
+                {dataProps?.products?.attributes?.values?.map((item: any) => (
+                  item?.symbol ? (
+                    item?.symbol[0] === '#' ? (
+                      <button
+                        key={item?.color}
+                        onClick={() => handle_atrtribute(item?.color, "Color")}
+                        className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} ${item?.symbol === '#ffffff' || item?.symbol === '#fff' ? 'border-black' : 'border-white'} hover:scale-110 transition-transform duration-300`}
+                        style={{ backgroundColor: item?.symbol }}
+                      ></button>
+                    ) : (
+                      <button
+                        key={item?.color}
+                        onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
+                        className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
+                      >
+                        <img src={item?.symbol} alt="" className="w-full h-full object-cover rounded-full" />
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      key={item?.color}
+                      onClick={() => handle_atrtribute(item?.color, "Color")}
+                      className={`px-3 py-1 rounded border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
+                    >
+                      {item?.color}
+                    </button>
+                  )
                 ))}
               </div>
             </div>
