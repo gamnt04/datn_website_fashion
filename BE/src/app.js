@@ -54,19 +54,19 @@ app.use("/api/v1", router_attribute);
 
 app.use("/api/v1", Router_HuyMail);
 // Định nghĩa một số route khác
-app.get("/profile/allorder", (req, res) => {
-  const amount = req.query.vnp_Amount;
-  const responseCode = req.query.vnp_ResponseCode;
-  const txnRef = req.query.vnp_TxnRef;
-  console.log("Amount: ", amount);
-  console.log("Response Code: ", responseCode);
-  console.log("Transaction Reference: ", txnRef);
-  if (responseCode === "00") {
-    res.send("Giao dịch thành công");
-  } else {
-    res.send("Giao dịch thất bại");
-  }
-});
+// app.get("/profile/allorder", (req, res) => {
+//   const amount = req.query.vnp_Amount;
+//   const responseCode = req.query.vnp_ResponseCode;
+//   const txnRef = req.query.vnp_TxnRef;
+//   console.log("Amount: ", amount);
+//   console.log("Response Code: ", responseCode);
+//   console.log("Transaction Reference: ", txnRef);
+//   if (responseCode === "00") {
+//     res.send("Giao dịch thành công");
+//   } else {
+//     res.send("Giao dịch thất bại");
+//   }
+// });
 
 // Tạo server HTTP
 const server = http.createServer(app);
