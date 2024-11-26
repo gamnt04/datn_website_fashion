@@ -36,6 +36,19 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const { mutate } = Mutation_Cart("ADD");
+
+  useEffect(() => {
+    if (!dataProps?.products?.attributes) {
+      setQuantity_attr(stock);
+    } else {
+      const firstColor = dataProps?.products?.attributes?.values[0];
+      if (firstColor) {
+        setArr_Size(firstColor.size);
+        setColor(firstColor.color);
+      }
+    }
+  }, [dataProps]);
+
   const addCart = (id?: string | number, action?: string) => {
     if (account) {
       if (quantity_attr) {
@@ -64,26 +77,11 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       navi("/login");
     }
   };
+
   function text_validate() {
     ref_validate_attr?.current?.classList.add("block");
     ref_validate_attr?.current?.classList.remove("hidden");
   }
-  useEffect(() => {
-    if (!dataProps?.products?.attributes) {
-      setQuantity_attr(stock);
-    } else {
-      const a: IAttr[] = [];
-      dataProps?.product?.attributes?.values?.map((item: any) => {
-        item?.size?.map((x: any) => {
-          if (x?.stock_attribute > 0) {
-            if (!a.includes(item)) {
-              a.push(item);
-            }
-          }
-        });
-      });
-    }
-  }, [dataProps]);
 
   function handle_atrtribute(item?: any, action?: any) {
     switch (action) {
@@ -123,6 +121,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         return;
     }
   }
+
   function handle_quantity_item(action: any) {
     switch (action) {
       case "dow":
@@ -153,6 +152,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         return;
     }
   }
+
   let min =
     dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ?? 0;
   let max =
@@ -180,8 +180,10 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
     }
   }
+
   const price = price_product * quantity_item;
   const price_item_attr = price_attr * quantity_item;
+
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       <div className="flex flex-col lg:gap-y-2">
@@ -256,41 +258,41 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         {dataProps?.products?.attributes && (
           <>
             <div>
-              <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
+              {/* <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
                 Màu sắc
-              </span>
+              </span> */}
               <div className="flex flex-wrap items-center gap-4 lg:mt-2 mt-3 lg:pb-0 mb:pb-5 font-medium">
-    {dataProps?.products?.attributes?.values?.map((item: any) => (
-      item?.symbol ? (
-        item?.symbol[0] === '#' ? (
-          <button
-            key={item?.color}
-            onClick={() => handle_atrtribute(item?.color, "Color")}
-            className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} ${item?.symbol === '#ffffff' || item?.symbol === '#fff' ? 'border-black' : 'border-white'} hover:scale-110 transition-transform duration-300`}
-            style={{ backgroundColor: item?.symbol }}
-          ></button>
-        ) : (
-          <button
-            key={item?.color}
-            onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
-            className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
-          >
-            <img src={item?.symbol} alt="" className="w-full h-full object-cover rounded-full" />
-          </button>
-        )
-      ) : (
-        <button
-          key={item?.color}
-          onClick={() => handle_atrtribute(item?.color, "Color")}
-          className={`px-3 py-1 rounded border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
-        >
-          {item?.color}
-        </button>
-      )
+                {dataProps?.products?.attributes?.values?.map((item: any) => (
+                  item?.symbol ? (
+                    item?.symbol[0] === '#' ? (
+                      <button
+                        key={item?.color}
+                        onClick={() => handle_atrtribute(item?.color, "Color")}
+                        className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} ${item?.symbol === '#ffffff' || item?.symbol === '#fff' ? 'border-black' : 'border-white'} hover:scale-110 transition-transform duration-300`}
+                        style={{ backgroundColor: item?.symbol }}
+                      ></button>
+                    ) : (
+                      <button
+                        key={item?.color}
+                        onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
+                        className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
+                      >
+                        <img src={item?.symbol} alt="" className="w-full h-full object-cover rounded-full" />
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      key={item?.color}
+                      onClick={() => handle_atrtribute(item?.color, "Color")}
+                      className={`px-3 py-1 rounded border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
+                    >
+                      {item?.color}
+                    </button>
+                  )
                 ))}
               </div>
             </div>
-            {/* row 4   */}
+            {/* row 4 */}
             {arr_size && (
               <div>
                 <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
@@ -299,6 +301,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-3 *:py-1 *:rounded *:border *:border-black *:duration-200">
                   {arr_size?.map((item: any) => (
                     <button
+                      key={item?.name_size}
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
                       className={`${size == item?.name_size && "bg-black text-white"
                         } hover:bg-black hover:text-white grid place-items-center`}
@@ -342,7 +345,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </span>
             </div>
           </div>
-          <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
+          {/* <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
             <span className="text-[#EB2606]">
               {(dataProps?.products?.attributes
@@ -350,8 +353,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 : price
               )?.toLocaleString("vi", { style: "currency", currency: "VND" })}
             </span>
-          </div>
-          <div className="flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
+          </div> */}
+          <div className="mt-5 flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             {/* add cart */}
             <Button
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"

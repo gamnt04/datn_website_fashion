@@ -5,15 +5,9 @@ import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  // const { data, isLoading } = Query_Orders()
-  // console.log(data);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  // const role = user?.user?.role;
   const { data } = Query_notification(userId)
-  // console.log(data?.notifications?.length);
-
-  // if (isLoading) return <div>Loading...</div>
   return (
     <div className="relative">
       <li>

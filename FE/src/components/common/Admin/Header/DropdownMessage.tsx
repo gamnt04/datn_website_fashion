@@ -195,18 +195,16 @@ const DropdownMessage = () => {
                 {sortedMessages?.map((msg, index) => (
                   <div
                     key={index}
-                    className={`flex items-start ${
-                      msg?.senderId?._id === userId
+                    className={`flex items-start ${msg?.senderId?._id === userId
                         ? "justify-end"
                         : "justify-start"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`p-3 rounded-[20px] max-w-xs h-auto ${
-                        msg.senderId?._id === userId
+                      className={`p-3 rounded-[20px] max-w-xs h-auto ${msg.senderId?._id === userId
                           ? "bg-blue-500 text-white"
                           : "bg-gray-200 text-gray-800"
-                      }`}
+                        }`}
                     >
                       {msg?.content}
                     </div>
