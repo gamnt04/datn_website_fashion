@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import instance from "../../configs/axios";
 import { useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
+import ScrollTop from "../../common/hooks/Customers/ScrollTop";
 
 const useSearch = () => {
   const [query, setQuery] = useState("");
@@ -66,6 +67,7 @@ const useSearch = () => {
       return;
     }
     navigate(`/search?keyword=${trimmedQuery}`);
+    ScrollTop();
     setShowSuggestions(false);
     setSearchError(null);
   };
