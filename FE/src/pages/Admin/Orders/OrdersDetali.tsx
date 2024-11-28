@@ -2,10 +2,12 @@ import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
+  Input,
   message,
   Modal,
   Popconfirm,
   Radio,
+  Spin,
   Table,
   Upload,
 } from "antd";
@@ -32,16 +34,15 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch } = Query_Orders(id);
-  console.log(data);
-
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-
-  const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
+  const [isDeliverFailModalVisible, setDeliverFailModalVisible] =
+    useState(false);
+  const [customReason, setCustomReason] = useState("");
   const [isDeliverSuccessModalVisible, setDeliverSuccessModalVisible] =
     useState(false);
   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
@@ -50,6 +51,8 @@ const OrdersDetali = () => {
   const { mutate: AddShipper } = Mutation_Shipper("ADD");
   const { data: shipperData } = useListAllShipper();
   const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const handleSelectShipper = (shipperId: string) => {
     setSelectedShipper(shipperId);
     if (!id) return;
@@ -67,7 +70,6 @@ const OrdersDetali = () => {
     );
   };
 
-  // Kiểm tra dữ liệu shipper
   if (!shipperData || !shipperData.shippers || !shipperData.orders) {
     console.log("Dữ liệu shipper chưa sẵn sàng hoặc không hợp lệ.");
     return <p>Shipper data is not available yet</p>;
@@ -78,15 +80,11 @@ const OrdersDetali = () => {
   const availableShippers = shipperData.shippers.filter((shipper: any) => {
     const shipperHasOngoingDelivery = shipperData.orders.some(
       (order: any) =>
-        order?.shipperId?._id === shipper?._id && order?.status === "3"
+        order?.shipperId?._id === shipper?._id && order.status === "3"
     );
 
     return !shipperHasOngoingDelivery && shipper?._id !== data?.shipperId?._id;
   });
-
-  if (availableShippers.length === 0) {
-    return <p>No available shippers</p>;
-  }
 
   console.log("Available Shippers:", availableShippers);
   const calculateTotalProductPrice = () => {
@@ -99,22 +97,28 @@ const OrdersDetali = () => {
     if (fileList.length > 0) {
       const file = fileList[0].originFileObj;
       const previewUrl = URL.createObjectURL(file);
-      setPreviewImage(previewUrl); // Cập nhật ảnh preview
+      setPreviewImage(previewUrl);
     } else {
       setPreviewImage(null);
     }
   };
   const handleDeliverSuccess = async () => {
+    if (fileList.length === 0) {
+      message.error("Vui lòng chọn ảnh xác nhận!");
+      return;
+    }
     if (!orderId) {
       console.error("Order ID is missing");
       return;
     }
+    setLoading(true);
     const file = fileList.length > 0 ? fileList[0].originFileObj : null;
     try {
       let imageUrl = null;
       if (file) {
         imageUrl = await UploadImage(file);
       }
+      await new Promise((resolve) => setTimeout(resolve, 4000));
       await instance.post("/deliver-success", {
         orderId,
         confirmationImage: imageUrl,
@@ -127,6 +131,8 @@ const OrdersDetali = () => {
     } catch (error) {
       messageApi.error("Giao hàng thành công thất bại. Vui lòng thử lại.");
       console.error("Failed to mark order as delivered", error);
+    } finally {
+      setLoading(false);
     }
   };
   function yeu_cau(dataBody: {
@@ -167,34 +173,36 @@ const OrdersDetali = () => {
 
     cancel(dataBody);
   }
-  const reason = [
-    "Người nhận không nghe máy",
-    "Hoàn hàng",
-    "Đơn hàng quá 3 ngày",
-  ];
+
   const reason1 = [
     "Đơn hàng đã được giao cho đơn vị vận chuyển",
     "Chúng tôi không thể đồng ý với yêu cầu của bạn",
   ];
-  function giao_hang_that_bai(dataBody: {
-    id_item: string | number;
-    numberOrder?: string | number;
-    action?: string;
-    cancellationReason?: string;
-    linkUri?: string | number;
-  }) {
-    dispathNotification?.mutate({
-      userId: userId,
-      receiver_id: data?.userId,
-      message: `Người giao hàng đã giao hàng đơn hàng  ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.id_item,
-      id_different: dataBody?.numberOrder,
-    });
-    console.log(dataBody.cancellationReason);
+  const defaultReasons = [
+    "Người nhận không nghe máy",
+    "Hoàn hàng",
+    "Đơn hàng quá 3 ngày",
+  ];
 
-    failDelivery(dataBody);
-  }
+  const handleFailDelivery = async () => {
+    const reasonToSubmit =
+      selectedReason === "Khác" ? customReason : selectedReason;
+    if (!data?._id || !reasonToSubmit) return;
 
+    try {
+      await instance.post(`/orders/${data._id}/fail-delivery`, {
+        failureReason: reasonToSubmit,
+      });
+
+      message.success("Đơn hàng đã được đánh dấu giao hàng thất bại.");
+      setDeliverFailModalVisible(false);
+      refetch();
+    } catch (error) {
+      message.error(
+        error.response?.data?.message || "Cập nhật giao hàng thất bại."
+      );
+    }
+  };
   const handleStatusUpdate = async (
     status: number | string,
     code_order?: string | number,
@@ -330,30 +338,36 @@ const OrdersDetali = () => {
           <div className="p-4">
             <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
             <div className="grid grid-cols-1 gap-4">
-              {availableShippers.map((shipper: any) => (
-                <div
-                  key={shipper._id}
-                  className="flex items-center bg-white p-4 rounded-lg shadow-md"
-                >
-                  <img
-                    src={shipper.avatar}
-                    alt="Shipper Avatar"
-                    className="w-12 h-12 rounded-full object-cover mr-4"
-                  />
-                  <div className="flex-1">
-                    <p className="text-lg font-medium">{shipper.fullName}</p>
-                    <p className="text-sm text-gray-500">{shipper.phone}</p>
-                  </div>
-                  <button
-                    onClick={() => handleSelectShipper(shipper._id)} // Gọi hàm handleSelectShipper
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
-                      selectedShipper === shipper._id ? "bg-green-500" : ""
-                    }`}
+              {availableShippers.length > 0 ? (
+                availableShippers.map((shipper: any) => (
+                  <div
+                    key={shipper._id}
+                    className="flex items-center bg-white p-4 rounded-lg shadow-md"
                   >
-                    {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
-                  </button>
-                </div>
-              ))}
+                    <img
+                      src={shipper.avatar}
+                      alt="Shipper Avatar"
+                      className="w-12 h-12 rounded-full object-cover mr-4"
+                    />
+                    <div className="flex-1">
+                      <p className="text-lg font-medium">{shipper.fullName}</p>
+                      <p className="text-sm text-gray-500">{shipper.phone}</p>
+                    </div>
+                    <button
+                      onClick={() => handleSelectShipper(shipper._id)} // Gọi hàm handleSelectShipper
+                      className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
+                        selectedShipper === shipper._id ? "bg-green-500" : ""
+                      }`}
+                    >
+                      {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-red-500">
+                  Hiện shipper đang không đủ vui lòng đợi!
+                </p>
+              )}
             </div>
           </div>
         ) : (
@@ -669,55 +683,17 @@ const OrdersDetali = () => {
                   Giao Hàng Thành Công
                 </Button>
 
-                <Popconfirm
-                  title="Xác nhận giao hàng thất bại?"
-                  description={
-                    <div>
-                      <p>
-                        Bạn có chắc chắn muốn xác nhận đơn hàng này thất bại ko?
-                      </p>
-                      <div>
-                        <p>Chọn lý do giao hàng thất bại:</p>
-                        <Radio.Group
-                          className="flex flex-col gap-2"
-                          onChange={(e) => setSelectedReason(e.target.value)}
-                          disabled={role !== "courier"}
-                        >
-                          {reason.map((reason, index) => (
-                            <Radio key={index} value={reason}>
-                              {reason}
-                            </Radio>
-                          ))}
-                        </Radio.Group>
-                      </div>
-                    </div>
-                  }
-                  onConfirm={() => {
-                    if (role === "courier") {
-                      giao_hang_that_bai({
-                        id_item: data?._id,
-                        action: "huy",
-                        cancellationReason: selectedReason,
-                        numberOrder: data?.orderNumber,
-                        linkUri: data?._id,
-                      });
-                    }
-                  }}
-                  okText="Xác Nhận"
-                  cancelText="Không"
+                <button
+                  className={`w-52 rounded text-white ${
+                    role !== "courier"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
+                  }`}
+                  onClick={() => setDeliverFailModalVisible(true)}
                   disabled={role !== "courier"}
                 >
-                  <button
-                    className={`w - 52 rounded text - white ${
-                      role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
-                    } `}
-                    disabled={role !== "courier"}
-                  >
-                    Giao Hàng Thất Bại
-                  </button>
-                </Popconfirm>
+                  Giao Hàng Thất Bại
+                </button>
               </>
             )}
             {data.status === "4" && (
@@ -758,6 +734,9 @@ const OrdersDetali = () => {
             visible={isDeliverSuccessModalVisible}
             onOk={handleDeliverSuccess}
             onCancel={() => setDeliverSuccessModalVisible(false)}
+            okButtonProps={{
+              disabled: loading || fileList.length === 0,
+            }}
           >
             <Form.Item
               name="confirmationImage"
@@ -768,17 +747,16 @@ const OrdersDetali = () => {
             >
               <Upload
                 listType="picture"
-                beforeUpload={() => false} // Không tự động upload
+                beforeUpload={() => false}
                 onChange={handleFileChange}
                 fileList={fileList}
-                maxCount={1} // Chỉ cho phép chọn 1 ảnh
+                maxCount={1}
                 accept="image/*"
-                showUploadList={false} // Không hiển thị tên file đã chọn
+                showUploadList={false}
               >
                 <Button icon={<UploadOutlined />}>Tải Ảnh Lên</Button>
               </Upload>
 
-              {/* Hiển thị ảnh preview nếu có */}
               {previewImage && (
                 <div style={{ marginTop: 16 }}>
                   <img
@@ -794,6 +772,61 @@ const OrdersDetali = () => {
                 </div>
               )}
             </Form.Item>
+            {loading && (
+              <div style={{ textAlign: "center", marginTop: 20 }}>
+                <Spin tip="Đang xử lý..." />
+              </div>
+            )}
+          </Modal>
+          <Modal
+            title="Lý Do Giao Hàng Thất Bại"
+            visible={isDeliverFailModalVisible}
+            onCancel={() => setDeliverFailModalVisible(false)}
+            footer={[
+              <Button
+                key="cancel"
+                onClick={() => setDeliverFailModalVisible(false)}
+              >
+                Hủy
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                onClick={handleFailDelivery}
+                disabled={!selectedReason && !customReason}
+              >
+                Xác Nhận
+              </Button>,
+            ]}
+          >
+            <Form>
+              <Form.Item label="Lý do giao hàng thất bại">
+                <Radio.Group
+                  onChange={(e) => setSelectedReason(e.target.value)}
+                  value={selectedReason}
+                >
+                  {defaultReasons.map((reason) => (
+                    <div className="flex-row">
+                      <Radio key={reason} value={reason}>
+                        {reason}
+                      </Radio>
+                    </div>
+                  ))}
+                  <Radio value="Khác">Khác</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              {selectedReason === "Khác" && (
+                <Form.Item label="Nhập lý do khác">
+                  <Input.TextArea
+                    value={customReason}
+                    onChange={(e) => setCustomReason(e.target.value)}
+                    rows={3}
+                    placeholder="Vui lòng nhập lý do khác"
+                  />
+                </Form.Item>
+              )}
+            </Form>
           </Modal>
         </div>
       </div>

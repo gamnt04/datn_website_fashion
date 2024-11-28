@@ -939,66 +939,39 @@ export const addShipperOrder = async (req, res) => {
   }
 };
 export const adminFailDelivery = async (req, res) => {
-  const id = req.params.id;
-  const { failureReason } = req.body; // Lấy lý do từ request body
+  const { failureReason } = req.body;
+
+  // Validate failure reason
+  if (!failureReason) {
+    return res.status(400).json({ message: "Failure reason is required" });
+  }
 
   try {
-    const order = await Order.findById(id);
+    // Update order status and failure reason
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "5", // Example: Status for failed delivery
+        failureReason,
+        updatedAt: new Date(),
+      },
+      { new: true } // Return the updated order
+    );
+
     if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Không tìm thấy đơn hàng" });
+      return res.status(404).json({ message: "Order not found" });
     }
 
-    // Kiểm tra nếu đơn hàng đã hoàn thành hoặc bị hủy thì không cho phép cập nhật giao hàng thất bại
-    if (order.status === "completed" || order.status === "5") {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message:
-          "Không thể cập nhật trạng thái thất bại cho đơn hàng đã hoàn thành hoặc bị hủy",
-      });
-    }
-
-    // Cập nhật trạng thái thành 'Giao hàng thất bại'
-    order.status = "5"; // Giao hàng thất bại
-    order.failureReason = failureReason; // Lưu lý do giao hàng thất bại
-
-    const items = order.items;
-    for (let i of items) {
-      // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
-      if (i.productId.attributes) {
-        const data_attr = await Attributes.find({ id_item: i.productId._id });
-        for (let j of data_attr) {
-          for (let k of j.values) {
-            if (k.color == i.color_item) {
-              for (let x of k.size) {
-                if (x.name_size) {
-                  if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute + i.quantity;
-                  }
-                } else {
-                  x.stock_attribute = x.stock_attribute + i.quantity;
-                }
-              }
-            }
-          }
-          await j.save();
-        }
-      } else {
-        const data_items = await Products.find({ _id: i.productId._id });
-        for (let a of data_items) {
-          a.stock_product = a.stock_product + i.quantity;
-          await a.save();
-        }
-      }
-    }
-
-    await order.save();
-    res.status(StatusCodes.OK).json({
-      message: "Đơn hàng đã được cập nhật trạng thái giao hàng thất bại",
-      failureReason: order.failureReason,
+    res.json({
+      message: "Order updated successfully with failure reason",
+      order,
     });
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi máy chủ!" });
+    console.error("Error updating order:", error);
+    res.status(500).json({
+      message: "Error updating order",
+      error: error.message,
+    });
   }
 };
 
