@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -31,6 +30,8 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const [price_attr, set_price_attr] = useState(0);
   const [quantity_attr, setQuantity_attr] = useState();
   const [quantity_item, setQuantity_item] = useState<number>(1);
+  const [totalQuantity, setTotalQuantity] = useState<number>(0);
+  const [selectedSizeQuantity, setSelectedSizeQuantity] = useState<number>(0);
   const dataItem = dataProps?.products;
   const { name_product, price_product, _id, stock } = dataItem;
   const [user] = useLocalStorage("user", {});
@@ -40,12 +41,18 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   useEffect(() => {
     if (!dataProps?.products?.attributes) {
       setQuantity_attr(stock);
+      setTotalQuantity(stock);
     } else {
       const firstColor = dataProps?.products?.attributes?.values[0];
       if (firstColor) {
         setArr_Size(firstColor.size);
         setColor(firstColor.color);
       }
+      const total = dataProps?.products?.attributes?.values.reduce(
+        (acc: number, attr: any) => acc + attr.size.reduce((sum: number, size: any) => sum + size.stock_attribute, 0),
+        0
+      );
+      setTotalQuantity(total);
     }
   }, [dataProps]);
 
@@ -109,10 +116,12 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         for (const i of dataProps?.products?.attributes?.values) {
           if (i?.color == color) {
             for (const k of i.size) {
-              k?.name_size == item &&
-                (setQuantity_attr(k?.stock_attribute),
-                  setSize(k.name_size),
-                  set_price_attr(k?.price_attribute));
+              if (k?.name_size == item) {
+                setQuantity_attr(k?.stock_attribute);
+                setSelectedSizeQuantity(k?.stock_attribute);
+                setSize(k.name_size);
+                set_price_attr(k?.price_attribute);
+              }
             }
           }
         }
@@ -187,19 +196,18 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       <div className="flex flex-col lg:gap-y-2">
-        {/* row 1 */}
         <div className="flex flex-col lg:gap-y-2">
           <span className="text-gray-700 font-bold lg:text-3xl mb:text-xl">
             {name_product}
           </span>
           <span>
             <Rate
-              allowHalf // Cho phép hiển thị nửa sao
+              allowHalf
               allowClear={false}
               disabled={
                 !!dataProps.products.averageRating ||
                 !dataProps.products.averageRating
-              } // Không cho chỉnh sửa nếu đã có đánh giá
+              } 
               value={dataProps.products.averageRating || 0}
             />
           </span>
@@ -254,13 +262,9 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             </div>
           </div>
         </div>
-        {/* row 2 */}
         {dataProps?.products?.attributes && (
           <>
             <div>
-              {/* <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
-                Màu sắc
-              </span> */}
               <div className="flex flex-wrap items-center gap-4 lg:mt-2 mt-3 lg:pb-0 mb:pb-5 font-medium">
                 {dataProps?.products?.attributes?.values?.map((item: any) => (
                   item?.symbol ? (
@@ -292,7 +296,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 ))}
               </div>
             </div>
-            {/* row 4 */}
             {arr_size && (
               <div>
                 <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
@@ -314,14 +317,11 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             )}
           </>
         )}
-        {/* row 5 */}
         <div className=" mt-2 *:w-full rounded-xl">
           <span ref={ref_validate_attr} className="hidden text-red-500 text-sm">
             Vui lòng chọn!
           </span>
-          {/* quantity */}
           <div className=" flex lg:flex-row mb:flex-col lg:gap-y-0 gap-y-[17px] gap-x-8 lg:items-center mb:items-start">
-            {/* up , dow quantity */}
             <div className="border lg:py-2.5 lg:pr-6  mb:py-1 mb:pl-2 mb:pr-[18px] *:text-xs flex items-center gap-x-3 rounded-xl">
               <div className="flex items-center *:w-9 *:h-9 gap-x-1 *:grid *:place-items-center">
                 <button onClick={() => handle_quantity_item("dow")}>
@@ -341,7 +341,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 </button>
               </div>
               <span className="text-gray-800 lg:tracking-[0.5px] border-l pl-4 border-black">
-                Còn lại {quantity_attr} sản phẩm
+                Còn lại {selectedSizeQuantity || totalQuantity} sản phẩm
               </span>
             </div>
           </div>
@@ -355,14 +355,12 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
             </span>
           </div> */}
           <div className="mt-5 flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
-            {/* add cart */}
             <Button
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"
               onClick={() => addCart(_id)}
             >
               Thêm vào giỏ
             </Button>
-            {/* add cart */}
             <Button
               onClick={() => addCart(_id, "checkout")}
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"
