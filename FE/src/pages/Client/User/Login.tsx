@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useNavigate } from "react-router-dom";
 import useSignIn from "../../../common/hooks/Auth/useSignIn";
 import type { FormProps } from "antd";
@@ -53,16 +54,18 @@ const Login = () => {
   };
   const handleGoogleLogin = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
-
     try {
       const response = await axios.post('http://localhost:2004/api/v1/auth/google', {
         token,
       });
 
       const { token: jwtToken, user } = response.data;
-
+      const user_data = {
+        user
+      }
+      console.log(user_data)
       localStorage.setItem('token', jwtToken);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user_data));
 
       toast.success("Đăng nhập thành công!");
 
@@ -178,10 +181,10 @@ const Login = () => {
                 </p>
               </Form>
               <div className="flex items-center justify-center mt-6">
-              <GoogleLogin
-      onSuccess={handleGoogleLogin}
-      onError={handleGoogleLoginError}
-    />
+                <GoogleLogin
+                  onSuccess={handleGoogleLogin}
+                  onError={handleGoogleLoginError}
+                />
               </div>
             </div>
           </div>
