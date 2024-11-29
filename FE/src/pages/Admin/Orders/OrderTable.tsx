@@ -114,7 +114,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       title: "Thao Tác  ",
       render: (_: any, orders: any) => (
         <>
-          <Link to={`/courier/orders/${orders._id}/orderDetali`}>
+          <Link to={`/courier/shipper_orders/${orders._id}`}>
             <span className="flex justify-center">
               <Ellipsis_horizontal />
             </span>

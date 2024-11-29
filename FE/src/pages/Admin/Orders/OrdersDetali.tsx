@@ -24,6 +24,7 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import instance from "../../../configs/axios";
 import { UploadImage } from "../../../systems/utils/uploadImage";
 import Status_order from "./Status_order";
+import Mapbox from "../Shipper/Mapbox";
 const OrdersDetali = () => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -32,8 +33,6 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch } = Query_Orders(id);
-  console.log(data);
-
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
@@ -66,29 +65,19 @@ const OrdersDetali = () => {
       }
     );
   };
-
-  // Kiểm tra dữ liệu shipper
   if (!shipperData || !shipperData.shippers || !shipperData.orders) {
-    console.log("Dữ liệu shipper chưa sẵn sàng hoặc không hợp lệ.");
     return <p>Shipper data is not available yet</p>;
   }
-
-  console.log("Dữ liệu shipper:", shipperData);
-
   const availableShippers = shipperData.shippers.filter((shipper: any) => {
     const shipperHasOngoingDelivery = shipperData.orders.some(
       (order: any) =>
         order?.shipperId?._id === shipper?._id && order?.status === "3"
     );
-
     return !shipperHasOngoingDelivery && shipper?._id !== data?.shipperId?._id;
   });
-
   if (availableShippers.length === 0) {
     return <p>No available shippers</p>;
   }
-
-  console.log("Available Shippers:", availableShippers);
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity;
@@ -121,12 +110,10 @@ const OrdersDetali = () => {
       });
       handleStatusUpdate(4, data?.orderNumber, data._id);
       refetch();
-
       messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
       setDeliverSuccessModalVisible(false);
     } catch (error) {
       messageApi.error("Giao hàng thành công thất bại. Vui lòng thử lại.");
-      console.error("Failed to mark order as delivered", error);
     }
   };
   function yeu_cau(dataBody: {
@@ -140,11 +127,10 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan"
-          ? "xác nhận"
-          : `Từ Chối:  ${dataBody?.cancellationReason}`
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan"
+        ? "xác nhận"
+        : `Từ Chối:  ${dataBody?.cancellationReason}`
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
@@ -205,14 +191,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : status === 6
-        ? `Đã giao đơn hàng ${code_order} thành công!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : status === 6
+                ? `Đã giao đơn hàng ${code_order} thành công!`
+                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -346,9 +332,8 @@ const OrdersDetali = () => {
                   </div>
                   <button
                     onClick={() => handleSelectShipper(shipper._id)} // Gọi hàm handleSelectShipper
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${
-                      selectedShipper === shipper._id ? "bg-green-500" : ""
-                    }`}
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                      }`}
                   >
                     {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                   </button>
@@ -378,6 +363,10 @@ const OrdersDetali = () => {
             </div>
           )
         )}
+        <div>
+          <h1>Bản đồ</h1>
+          <Mapbox />
+        </div>
         <div className="my-6 shadow rounded bg-white">
           <div className="p-4 text-black font-semibold">
             Trạng thái đơn hàng
@@ -495,9 +484,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND",
-                      })} `
+                      style: "currency",
+                      currency: "VND",
+                    })} `
                     : "0đ"}
                 </p>
 
@@ -708,11 +697,10 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${
-                      role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
-                    } `}
+                    className={`w - 52 rounded text - white ${role !== "courier"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
+                      } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại

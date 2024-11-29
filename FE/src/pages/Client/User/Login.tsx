@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import useSignIn from "../../../common/hooks/Auth/useSignIn";
 import { Button, Form, Input, Spin } from "antd";
@@ -21,24 +21,22 @@ const Login = () => {
     setFormErrors,
     validateForm,
     isPending,
-    isError,
-    error,
     status_api,
   } = useSignIn();
 
   useEffect(() => {
-    setFormErrors({}); // Reset form errors on mount
+    setFormErrors({});
   }, []);
 
   useEffect(() => {
     if (location.hash) {
-      const section = location.hash.slice(1); // Get section name
+      const section = location.hash.slice(1);
       const ref =
         section === "login"
           ? loginRef
           : section === "criteria"
-          ? criteriaRef
-          : procedureRef;
+            ? criteriaRef
+            : procedureRef;
 
       if (ref.current) {
         ref.current.scrollIntoView({ behavior: "smooth" });
@@ -83,69 +81,63 @@ const Login = () => {
       <div
         id="login-section"
         ref={loginRef}
-        className="container flex flex-col mx-auto h-auto mt-5 bg-white rounded-lg bg-[#DBC5A4]"
+        className="flex items-center justify-center w-full h-screen bg-gray-100"
       >
-        <div className="flex justify-center w-full h-auto my-auto lg:justify-normal">
-          <div className="flex ml-[30px] mt-[30px] mb-[30px] w-full">
-            <div className="flex items-center xl:p-7">
-              <div className="flex flex-col w-[400px] h-full p-6 text-center bg-white border shadow-lg rounded-3xl">
-                <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
-                  Đăng nhập
-                </h3>
-                <Form
-                  onFinish={onFinish}
-                  autoComplete="off"
-                  layout="vertical"
-                  className="space-y-4"
-                >
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    validateStatus={formErrors.email ? "error" : ""}
-                    help={formErrors.email}
-                  >
-                    <Input
-                      className="h-[50px]"
-                      onChange={(e) => validateForm("email", e.target.value)}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Mật khẩu"
-                    name="password"
-                    validateStatus={formErrors.password ? "error" : ""}
-                    help={formErrors.password}
-                  >
-                    <Input.Password
-                      className="h-[50px]"
-                      onChange={(e) => validateForm("password", e.target.value)}
-                    />
-                  </Form.Item>
-                  {status_api && (
-                    <span className="text-red-500">
-                      Sai thông tin tài khoản!
-                    </span>
-                  )}
-                  <Form.Item>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      className="w-[100px] h-[50px]"
-                    >
-                      Đăng nhập
-                    </Button>
-                  </Form.Item>
-                </Form>
-                <p className="text-sm text-gray-600">
-                  <span
-                    onClick={handleForgotPassword}
-                    className="font-bold text-blue-600 cursor-pointer hover:underline"
-                  >
-                    Quên mật khẩu?
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-col w-[400px] h-[400px] p-6 text-center bg-white border shadow-lg rounded-3xl">
+          <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
+            Đăng nhập
+          </h3>
+          <Form
+            onFinish={onFinish}
+            autoComplete="off"
+            layout="vertical"
+            className="space-y-4"
+          >
+            <Form.Item
+              label="Email"
+              name="email"
+              validateStatus={formErrors.email ? "error" : ""}
+              help={formErrors.email}
+            >
+              <Input
+                className="h-[50px]"
+                onChange={(e) => validateForm("email", e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Mật khẩu"
+              name="password"
+              validateStatus={formErrors.password ? "error" : ""}
+              help={formErrors.password}
+            >
+              <Input.Password
+                className="h-[50px]"
+                onChange={(e) => validateForm("password", e.target.value)}
+              />
+            </Form.Item>
+            {status_api && (
+              <span className="text-red-500">
+                Sai thông tin tài khoản!
+              </span>
+            )}
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="w-[100px] h-[50px]"
+              >
+                Đăng nhập
+              </Button>
+            </Form.Item>
+          </Form>
+          <p className="text-sm text-gray-600">
+            <span
+              onClick={handleForgotPassword}
+              className="font-bold text-blue-600 cursor-pointer hover:underline"
+            >
+              Quên mật khẩu?
+            </span>
+          </p>
         </div>
       </div>
 
