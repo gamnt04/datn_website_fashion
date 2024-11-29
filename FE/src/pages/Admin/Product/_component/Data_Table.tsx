@@ -138,7 +138,7 @@ export default function Data_Table({ dataProps }: any) {
                   data?.attributes?.values?.map((item: any) =>
                     item?.size?.map((value: any) => (
                       <div
-                        key={item?._id}
+                        key={value?._id}
                         className="grid border-t duration-200 border-gray-300 gap-x-4 grid-cols-[180px_180px_180px_180px_100px_100px_150px_80px] 
                                                 items-center text-start justify-between py-4"
                       >

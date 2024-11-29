@@ -9,7 +9,6 @@ import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
 const Products = ({ items }: any) => {
-  console.log(items);
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const userId = account?._id;
@@ -19,7 +18,6 @@ const Products = ({ items }: any) => {
     Mutation_FavouriteProduct("REMOVE");
 
   if (!items || !items._id) {
-    console.error("Items is undefined or missing _id:", items);
     return null;
   }
   const checkFavourite = (productId: string) => {
@@ -76,16 +74,16 @@ const Products = ({ items }: any) => {
       className="flex justify-between w-full gap-y-5"
       key={items?._id}
     >
-      <div className="relative w-full border-gray-200 border rounded">
+      <div className="relative w-full border-gray-200 border rounded-xl">
         <Link
           onClick={ScrollTop}
           to={`/shops/${items?._id}`}
           className="h-full cursor-pointer"
         >
-          <div className="relative overflow-hidden border-b border-gray-300 rounded-t">
+          <div className="relative overflow-hidden border-b border-gray-300 rounded-t-xl">
             <div className="w-full h-[250px] lg:h-[400px] relative">
               <img
-                className="w-full h-full object-cover rounded-t bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform hover:scale-110"
+                className="w-full h-full object-cover rounded-t-xl bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform hover:scale-110"
                 loading="lazy"
                 src={items?.image_product}
                 alt={items?.name_product}
@@ -93,7 +91,6 @@ const Products = ({ items }: any) => {
             </div>
           </div>
         </Link>
-        {/* hover show icon cart */}
         <div className="absolute flex flex-col bg-white rounded top-0 pt-1 translate-y-[-100%] right-0 group-hover:translate-y-0 duration-200">
           <div className="absolute top-0 right-0 flex flex-col p-1 rounded">
             {account ? (
@@ -126,7 +123,7 @@ const Products = ({ items }: any) => {
           <Link
             onClick={ScrollTop}
             to={`/shops/${items?._id}`}
-            className="text-md text-center font-normal lg:text-[16px] leading-7 hover:text-gray-700 line-clamp-2 overflow-ellipsis"
+            className="text-md text-center text-black font-normal lg:text-[16px] leading-7 hover:text-gray-700 line-clamp-2 overflow-ellipsis"
           >
             {items?.name_product}
           </Link>

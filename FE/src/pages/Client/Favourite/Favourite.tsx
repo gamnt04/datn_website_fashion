@@ -4,7 +4,6 @@ import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { IProduct } from "../../../common/interfaces/Product";
 import { HeartIconRed } from "../../../resources/svg/Icon/Icon";
 
 const Favourite = () => {
@@ -66,7 +65,7 @@ const Favourite = () => {
         </div>
       ) : (
         <div className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth grid grid-flow-col auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%] gap-x-[1.5%]">
-          {data?.products?.map((items: IProduct) => {
+          {data?.products?.map((items: any) => {
             let min: number | undefined;
             let max: number | undefined;
 
@@ -78,8 +77,8 @@ const Favourite = () => {
                 items?.productId?.attributes?.values[0]?.size[0]
                   ?.price_attribute;
 
-              items?.productId?.attributes?.values.forEach((value) => {
-                value.size.forEach((size) => {
+              items?.productId?.attributes?.values.forEach((value: any) => {
+                value.size.forEach((size: any) => {
                   if (size.price_attribute < min!) {
                     min = size.price_attribute;
                   }
@@ -95,14 +94,14 @@ const Favourite = () => {
                 className="flex flex-col justify-between w-full gap-y-5"
                 key={items?.productId?._id}
               >
-                <div className="relative w-full group">
+                <div className="relative w-full group border rounded-xl">
                   <Link
                     onClick={ScrollTop}
                     to={`/shops/${items?.productId?._id}`}
                     className="h-full cursor-pointer"
                   >
                     <img
-                      className="w-full h-[250px] lg:h-[400px] object-cover bg-[#f3f3f3]"
+                      className="w-full h-[250px] lg:h-[400px] object-cover bg-[#f3f3f3] rounded-t-xl"
                       loading="lazy"
                       src={items?.productId?.image_product}
                       alt={items?.productId?.name_product}

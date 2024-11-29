@@ -8,7 +8,7 @@ const app = express();
 const tmnCode = "N4OAU1DW";
 const secretKey = "F4FX3YXLUF6X6KFACETVIFBRB46YS8IK";
 const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-const returnUrl = "http://localhost:7899/profile/list_order";
+const returnUrl = "http://localhost:2004/api/v1/return";
 
 // Hàm sắp xếp object
 function sortObject(obj) {
@@ -80,15 +80,21 @@ export function returnUrll(req, res, next) {
   vnp_Params = sortObject(vnp_Params);
 
   const signData = qs.stringify(vnp_Params, { encode: false });
-  const hmac = crypto.createHmac("sha512", secretKey);
+  const hmac = crypto.createHmac("sha512", secretKey); 
   const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
 
   if (secureHash === signed) {
     const responseCode = vnp_Params['vnp_ResponseCode'];
-    const isSuccess = responseCode === '00';
 
-    res.redirect(`http://localhost:5173/payment-result?success=${isSuccess}&message=${isSuccess ? 'Payment successful' : 'Payment failed'}`);
+    if (responseCode === '00') {
+      const queryParams = qs.stringify(vnp_Params, { encode: false });
+      res.redirect(`http://localhost:7899/profile/list_order?${queryParams}`);
+    } else if (responseCode === '01') {
+      res.redirect('http://localhost:7899/cart/pay');
+    } else {
+      res.redirect('http://localhost:7899/cart/pay');
+    }
   } else {
-    res.redirect('http://localhost:5173/payment-result?success=false&message=Invalid signature');
+    res.redirect('http://localhost:7899/cart/pay?error=invalid_signature');
   }
 }

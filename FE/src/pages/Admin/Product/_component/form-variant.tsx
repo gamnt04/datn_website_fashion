@@ -174,7 +174,7 @@ export default function Form_variant({ propsData }: any) {
                                                                     </div>
                                                                 )
                                                             )}
-                                                            <div className="flex items-center gap-4 mb-4">
+                                                            <div className="flex flex-col items-start gap-4 mb-4">
                                                                 <Button
                                                                     type="primary"
                                                                     onClick={() => addSize()}
@@ -186,7 +186,7 @@ export default function Form_variant({ propsData }: any) {
                                                                     onClick={() => remove(name)}
                                                                     className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
                                                                 >
-                                                                    Xóa biến thể
+                                                                    Xóa thuộc tính
                                                                 </Button>
                                                             </div>
                                                         </>
@@ -199,7 +199,7 @@ export default function Form_variant({ propsData }: any) {
                                             type="primary"
                                             onClick={() => add()}
                                         >
-                                            Thêm biến thể
+                                            Thêm thuộc tính
                                         </Button>
                                     </>
                                 );

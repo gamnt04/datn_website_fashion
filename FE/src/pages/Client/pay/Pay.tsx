@@ -19,7 +19,7 @@ import { nanoid } from "nanoid";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
-import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+// import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
 import { IProduct } from "../../../common/interfaces/Product";
 
@@ -47,7 +47,7 @@ const Pay = () => {
     messageApi,
     isPending: loadingOrder,
   } = Pay_Mutation();
-  const { mutate } = Mutation_Notification("Add");
+  // const { mutate } = Mutation_Notification("Add");
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -321,11 +321,11 @@ const Pay = () => {
       } else {
         onSubmit(item_order);
       }
-      mutate({
-        userId: userId,
-        receiver_id: "nguyenvana@gmail.com",
-        message: `Người dùng ${user?.user?.userName} đã đặt hàng`,
-      });
+      // mutate({
+      //   userId: userId,
+      //   receiver_id: "nguyenvana@gmail.com",
+      //   message: `Người dùng ${user?.user?.userName} đã đặt hàng`,
+      // });
     } catch (error) {
       console.error("Order Creation Error: ", error);
       messageApi.open({
@@ -635,15 +635,13 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              } ${
-                                isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                                } ${isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -666,9 +664,8 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                  }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled} // Disable voucher nếu người dùng không đủ điều kiện
                               >
@@ -734,8 +731,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -774,9 +771,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>

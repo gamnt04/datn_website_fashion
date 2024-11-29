@@ -11,5 +11,5 @@ import { updateOrderStatus } from "../controllers/Orders/orders";
 // router.post('/vnpay', createPaymentUrl);
 router.post("/create_payment_url", createPaymentUrl);
 router.put("/orders/:id",   updateOrderStatus);
-router.get('/vnpay-return', returnUrll);
+router.get('/return', returnUrll);
 export default router;
