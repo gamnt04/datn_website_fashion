@@ -94,7 +94,7 @@ export const useContacts = () => {
   });
 
   return {
-    contacts: data || [], // Trả về dữ liệu liên hệ hoặc mảng rỗng nếu không có dữ liệu
+    contacts: data || [],
     isLoading,
     isError,
     error,
