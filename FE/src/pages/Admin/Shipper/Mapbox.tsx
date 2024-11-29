@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import axios from 'axios';
 import { Query_Orders } from '../../../common/hooks/Order/querry_Order';
-
 mapboxgl.accessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w';
-
 const Mapbox = ({ id }: any) => {
     const { data } = Query_Orders(id);
     const [customerLocation, setCustomerLocation] = useState<[number, number] | null>(null);
@@ -91,6 +89,7 @@ const Mapbox = ({ id }: any) => {
 
     return (
         <div className="w-full h-screen bg-gray-100 flex flex-col items-center">
+            <h1>fjhsfkl</h1>
             <div ref={mapContainerRef} className="w-full h-full rounded-lg shadow-lg border border-gray-300" />
         </div>
     );
