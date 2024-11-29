@@ -2,17 +2,17 @@ import { useForm } from "react-hook-form";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Button, Modal, Table } from "antd";
+import { Button, Modal, Result, Table } from "antd";
 import { useEffect, useState } from "react";
 import {
   Add_Address,
-  List_Address,
+  List_Address
 } from "../../../components/common/Client/_component/Address";
 import {
   Address,
-  Chevron_right,
+  Chevron_right
 } from "../../../components/common/Client/_component/Icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Loader } from "lucide-react";
 import { nanoid } from "nanoid";
@@ -36,7 +36,8 @@ const Pay = () => {
 
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [voucherDetails, setVoucherDetails] = useState<any>(null);
-
+  const [isOrderSuccessfully, setIsOrderSuccessfully] =
+    useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
@@ -45,7 +46,7 @@ const Pay = () => {
     onSubmit,
     contextHolder,
     messageApi,
-    isPending: loadingOrder,
+    isPending: loadingOrder
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
 
@@ -114,7 +115,7 @@ const Pay = () => {
         code_voucher: discountCode,
         totalAmount: totalPrice,
         userId: user?.user?._id,
-        selectedProducts: selectedProductIds,
+        selectedProducts: selectedProductIds
       });
       const { discount, finalAmount, message } = response.data;
 
@@ -133,7 +134,7 @@ const Pay = () => {
         toast.error(error.message, { autoClose: 1200 });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
-          autoClose: 1200,
+          autoClose: 1200
         });
       }
     }
@@ -167,7 +168,7 @@ const Pay = () => {
         code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
         userId: user?.user?._id,
-        selectedProducts: selectedProductIds, // Thêm ID sản phẩm vào payload
+        selectedProducts: selectedProductIds // Thêm ID sản phẩm vào payload
       });
 
       const { discount, finalAmount, message } = response.data;
@@ -193,7 +194,7 @@ const Pay = () => {
         toast.error(error.message, { autoClose: 1200 });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
-          autoClose: 1200,
+          autoClose: 1200
         });
       }
     }
@@ -226,7 +227,7 @@ const Pay = () => {
   const dataSort = item_lon_hon_0?.map((order: any) => {
     return {
       key: order.productId._id,
-      ...order,
+      ...order
     };
   });
   const currentDate = new Date(); // Lấy ngày hiện tại
@@ -253,7 +254,7 @@ const Pay = () => {
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn địa chỉ!",
+        content: "Vui lòng chọn địa chỉ!"
       });
       return;
     }
@@ -285,18 +286,17 @@ const Pay = () => {
         return;
       }
     }
-
     const item_order = {
       userId: userId,
       items: item_order_checkked,
       customerInfo: {
-        ...data_form,
+        ...data_form
       },
 
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice,
-      email: user?.user?.email,
+      email: user?.user?.email
     };
     try {
       if (data_form.payment === "VNPAY") {
@@ -313,7 +313,7 @@ const Pay = () => {
             orderId: nanoid(24),
             totalPrice: totalPrice,
             orderDescription: `Order ${orderId._id}`,
-            language: "vn",
+            language: "vn"
           }
         );
         sessionStorage.setItem("item_order", JSON.stringify(item_order));
@@ -330,10 +330,12 @@ const Pay = () => {
       console.error("Order Creation Error: ", error);
       messageApi.open({
         type: "error",
-        content: "Lỗi tạo đơn hàng!",
+        content: "Lỗi tạo đơn hàng!"
       });
     }
+    setIsOrderSuccessfully(true);
   };
+  console.log("orderSuccessfully", isOrderSuccessfully);
 
   const columns = [
     {
@@ -346,7 +348,7 @@ const Pay = () => {
           className="w-[70px] lg:w-[100px] lg:h-[100px]"
           alt=""
         />
-      ),
+      )
     },
     {
       dataIndex: "name_product",
@@ -364,7 +366,7 @@ const Pay = () => {
               <p className="text-sm lg:text-base">
                 {order?.price_item?.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND",
+                  currency: "VND"
                 })}
               </p>
               <p className="text-sm lg:text-base">x {order?.quantity}</p>
@@ -374,7 +376,7 @@ const Pay = () => {
             Loại: {order?.color_item} - {order?.name_size}
           </p>
         </div>
-      ),
+      )
     },
     {
       dataIndex: "price_product",
@@ -383,10 +385,10 @@ const Pay = () => {
         <p className="hidden text-sm lg:block lg:text-base">
           {order?.price_item?.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
+      )
     },
     {
       dataIndex: "quantity",
@@ -396,7 +398,7 @@ const Pay = () => {
           {" "}
           x {order?.quantity}
         </p>
-      ),
+      )
     },
     {
       dataIndex: "total_price_item",
@@ -405,11 +407,11 @@ const Pay = () => {
         <p className="hidden text-sm font-bold lg:block lg:text-base">
           {order?.total_price_item?.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
-    },
+      )
+    }
   ];
   if (loadingOrder || isPending) {
     return (
@@ -526,7 +528,7 @@ const Pay = () => {
                     Tổng số tiền:{" "}
                     {totalPrice?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND",
+                      currency: "VND"
                     })}
                   </p>
                 </p>
@@ -635,13 +637,15 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                                } ${isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                                }`}
+                              }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -664,8 +668,9 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
-                                  }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled} // Disable voucher nếu người dùng không đủ điều kiện
                               >
@@ -731,8 +736,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                            "vi-VN"
-                          )} đ`
+                              "vi-VN"
+                            )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -758,7 +763,7 @@ const Pay = () => {
                     <p>
                       {totalPrice?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND",
+                        currency: "VND"
                       })}
                     </p>
                   </div>
@@ -771,9 +776,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}`
+                            style: "currency",
+                            currency: "VND"
+                          })}`
                         : "0đ"}
                     </p>
                   </div>
@@ -787,7 +792,7 @@ const Pay = () => {
                             : totalPrice
                           )?.toLocaleString("vi", {
                             style: "currency",
-                            currency: "VND",
+                            currency: "VND"
                           })}
                         </p>
                       </p>
@@ -818,6 +823,21 @@ const Pay = () => {
               handleAddress={handleAddress}
               selectedAddress={selectedAddress}
             ></List_Address>
+          )}
+          {isOrderSuccessfully && (
+            <Result
+              status="success"
+              title="Successfully Purchased Cloud Server ECS!"
+              subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+              extra={[
+                <Button type="primary" key="console">
+                  Go Console
+                </Button>,
+                <Link to="/profile/list_order">
+                  <Button key="buy">Buy Again</Button>
+                </Link>
+              ]}
+            />
           )}
         </div>
       </div>
