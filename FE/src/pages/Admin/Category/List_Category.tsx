@@ -7,7 +7,7 @@ import {
   Popconfirm,
   Space,
   Switch,
-  Table
+  Table,
 } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,7 @@ import { FaDeleteLeft } from "react-icons/fa6";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 import {
   useCategoryQuery,
-  useSearchCategoryByName
+  useSearchCategoryByName,
 } from "../../../common/hooks/Category/useCategoryQuery";
 import { ICategory } from "../../../common/interfaces/Category";
 import Loading from "../../../components/base/Loading/Loading";
@@ -42,7 +42,7 @@ const List_Category: React.FC = () => {
     ? (searchName && searchData ? searchData : data).map(
         (category: ICategory) => ({
           key: category._id,
-          ...category
+          ...category,
         })
       )
     : [];
@@ -66,7 +66,7 @@ const List_Category: React.FC = () => {
     },
     onError: (error) => {
       messageApi.error(error.message || "Xóa danh mục không thành công");
-    }
+    },
   });
 
   const mutation = useMutation({
@@ -88,7 +88,7 @@ const List_Category: React.FC = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    }
+    },
   });
 
   const formatDate = (dateString: any) => {
@@ -118,7 +118,7 @@ const List_Category: React.FC = () => {
     {
       key: "checkbox",
       title: <Checkbox />,
-      render: (_: any, cate: ICategory) => <Checkbox />
+      render: (_: any, cate: ICategory) => <Checkbox />,
     },
     {
       key: "image_category",
@@ -129,7 +129,7 @@ const List_Category: React.FC = () => {
           alt={record.name_category}
           style={{ width: 80, height: 80, objectFit: "cover" }}
         />
-      )
+      ),
     },
     {
       key: "name_category",
@@ -144,26 +144,38 @@ const List_Category: React.FC = () => {
       sorter: (a: ICategory, b: ICategory) =>
         a.name_category.localeCompare(b.name_category),
       sortDirections: ["ascend", "descend"],
+    },
+    {
+      key: "product_count",
+      title: "Số Lượng Sản Phẩm",
+      dataIndex: "product_count",
       render: (text: string, record: ICategory) => (
         <a
           onClick={() => handleViewProducts(record)}
-          style={{ fontSize: "16px", fontWeight: "inherit" }}
+          style={{
+            fontSize: "16px",
+            fontWeight: "inherit",
+            textAlign: "center",
+            display: "inline-block",
+            width: "100%",
+          }}
         >
           {text}
         </a>
-      )
+      ),
     },
+
     {
       key: "createdAt",
       title: "Ngày Tạo",
       dataIndex: "createdAt",
-      render: (_: any, product: ICategory) => formatDate(product.createdAt)
+      render: (_: any, product: ICategory) => formatDate(product.createdAt),
     },
     {
       key: "updatedAt",
       title: "Ngày Sửa",
       dataIndex: "updatedAt",
-      render: (_: any, product: ICategory) => formatDate(product.updatedAt)
+      render: (_: any, product: ICategory) => formatDate(product.updatedAt),
     },
     {
       key: "published",
@@ -174,7 +186,7 @@ const List_Category: React.FC = () => {
           checked={published}
           onChange={() => handleTogglePublished(record)}
         />
-      )
+      ),
     },
     {
       key: "action",
@@ -185,8 +197,7 @@ const List_Category: React.FC = () => {
             {contextHolder}
             <CategoryUpdate data={data} id={category._id} />
             <Popconfirm
-              title="Xoá danh mục sản phẩm"
-              description="Bạn có muốn xóa danh mục sản phẩm này không ?"
+              title={`Danh mục đang có ${category.product_count} sản phẩm. Bạn có muốn xóa không?`}
               onConfirm={() => deleteCategory(category._id)}
               okText="Có"
               cancelText="Không"
@@ -197,8 +208,8 @@ const List_Category: React.FC = () => {
             </Popconfirm>
           </Space>
         );
-      }
-    }
+      },
+    },
   ];
 
   const onChangePage = (page: number) => {
@@ -229,7 +240,7 @@ const List_Category: React.FC = () => {
       return originalElement;
     },
     onChange: onChangePage,
-    showTotal: (total: number) => `Tổng ${total} mục`
+    showTotal: (total: number) => `Tổng ${total} mục`,
   };
 
   return (
