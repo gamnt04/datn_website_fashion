@@ -1,10 +1,10 @@
-import { Pagination, Table } from "antd";
+import { Table } from "antd";
 import { Link } from "react-router-dom";
 import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
 
-const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
+const OrderTable = ({ orders }: any) => {
   const formatDate = (createdAt: any) => {
     if (!createdAt) return "";
     const date = new Date(createdAt);
@@ -14,8 +14,6 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     key: order._id,
     ...order,
   }));
-  console.log(dataSort);
-
   const createFilters = (order: IOrder[]) => {
     return order
       .map((order: IOrder) => order.orderNumber)
@@ -58,12 +56,6 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       key: "phone",
       render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>,
     },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    //   render: (_: any, order: any) => <p>{order?.customerInfo?.email}</p>
-    // },
     {
       title: "Ngày Đặt",
       dataIndex: "datetime",
@@ -127,14 +119,15 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   return (
     <div className="">
       <Table columns={columns} dataSource={dataSort} pagination={false} />
-      <div className="flex justify-between items-center mt-4">
+      {/* <div className="flex justify-between items-center mt-4">
         <Pagination
           current={currentPage}
           pageSize={10}
           total={totalPages * 10}
           onChange={goToPage}
+          
         />
-      </div>
+      </div> */}
     </div>
   );
 };

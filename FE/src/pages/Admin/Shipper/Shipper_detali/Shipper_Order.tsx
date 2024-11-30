@@ -1,15 +1,17 @@
-import { Button, Card, Divider, Form, message, Modal, Popconfirm, Radio, Upload, UploadFile } from 'antd';
+import { Button, Card, Divider, Form, message, Modal, Popconfirm, Radio, Spin, Upload, UploadFile } from 'antd';
 import Mapbox from '../Mapbox';
 import { Query_Orders } from '../../../../common/hooks/Order/querry_Order';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Status_order from '../../Orders/Status_order';
 import { Mutation_Notification } from '../../../../_lib/React_Query/Notification/Query';
 import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 import instance from '../../../../configs/axios';
 import { useState } from 'react';
 import { UploadImage } from '../../../../systems/utils/uploadImage';
-import { UploadOutlined } from '@ant-design/icons';
+import { LeftOutlined, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { useOrderMutations } from '../../../../common/hooks/Order/mutation_Order';
+import "mapbox-gl/dist/mapbox-gl.css";
+
 
 const Shipper_Order = () => {
     const { id } = useParams();
@@ -18,7 +20,7 @@ const Shipper_Order = () => {
     const role = user?.user?.role;
     const [orderId, setOrderId] = useState<string | null>(null);
     const [messageApi, contextHolder] = message.useMessage();
-    const { data, refetch } = Query_Orders(id);
+    const { data, refetch, isLoading } = Query_Orders(id);
     const dispathNotification = Mutation_Notification("Add");
     const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
     const [selectedReason, setSelectedReason] = useState("");
@@ -126,10 +128,26 @@ const Shipper_Order = () => {
         "Hoàn hàng",
         "Đơn hàng quá 3 ngày",
     ];
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-screen">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>;
+    }
     return (
         <div className="mt-28 mx-5">
             {contextHolder}
-            <h1 className="text-2xl font-bold mb-6 text-center">Chi tiết đơn hàng</h1>
+            <div className="flex items-center justify-between mb-5 mt-20 relative">
+                <Link
+                    to="/courier/orders"
+                    className="flex items-center gap-2 text-[#1B7EE2]"
+                >
+                    <LeftOutlined />
+                    <span>Quay lại</span>
+                </Link>
+                <h1 className="text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">
+                    Chi Tiết Đơn Hàng
+                </h1>
+            </div>
             <div className="flex space-x-6">
                 <div className="w-[63%] h-96">
                     <Mapbox id={id} />
@@ -187,7 +205,7 @@ const Shipper_Order = () => {
                     <Card title="" className="shadow-md mt-5">
                         <div className='flex space-x-2'>
                             <>
-                                {data?.status === '4' ? (
+                                {data?.status === '6' || "4" ? (
                                     <Button
                                         className="w-full bg-green-500 rounded text-white"
                                         type="primary"

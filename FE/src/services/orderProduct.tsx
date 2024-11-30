@@ -8,8 +8,6 @@ export async function get_order_client(
   role?: string,
   userId?: string
 ) {
-  console.log(status);
-
   try {
     let uri = baseUri;
     const params = [];

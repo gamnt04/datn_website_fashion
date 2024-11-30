@@ -3,7 +3,6 @@ import Login from "../pages/Client/User/Login";
 import AdminLayout from "../layouts/AdminLayout";
 import ClientLayout from "../layouts/ClientLayout";
 import OrderList from "../pages/Admin/Orders/OrderList";
-import OrdersDetali from "../pages/Admin/Orders/OrdersDetali";
 import ForgotPassword from "../pages/Client/User/ForgotPass";
 import Notification from "../components/Notification/Page";
 import ChangePassword from "../pages/Client/User/ChangePassword";
@@ -26,7 +25,6 @@ const RouterComponent = () => {
           <Route path="courier" element={<AdminLayout />}>
             <Route path="orders" element={<OrderList />} />
             <Route path="orders_history" element={<HistoryOrder />} />
-            <Route path="orders/:id/orderDetali" element={<OrdersDetali />} />
             <Route path="changePassword" element={<ChangePassword />} />
             <Route path="salary_shipper" element={<Salary />} />
             <Route path="shipper_orders/:id" element={<Shipper_Order />} />

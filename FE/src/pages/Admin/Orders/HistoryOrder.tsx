@@ -24,24 +24,20 @@ const HistoryOrder = () => {
   );
   const dataSource = searchData ? searchData : data;
 
-  const onHandleSearch = () => {
-    setSearchOrder(searchOrder.trim());
-  };
+  // const onHandleSearch = () => {
+  //   setSearchOrder(searchOrder.trim());
+  // };
 
-  const handleStatusChange = (value: string) => {
-    setStatusFilter(value);
-    setCurrentPage(1);
-  };
+  // const handleStatusChange = (value: string) => {
+  //   setStatusFilter(value);
+  //   setCurrentPage(1);
+  // };
 
   const goToPage = (page: any) => {
     setCurrentPage(page);
   };
-
-  console.log(dataSource);
-
   const filteredDataSource =
-    dataSource?.filter((order) => order.status !== "3") || [];
-  console.log(filteredDataSource);
+    dataSource?.filter((order: any) => order.status !== "3") || [];
 
   return (
     <div>
