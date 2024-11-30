@@ -32,6 +32,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     isError,
     error,
   } = useFilteredProducts(
+    query,
     cate_id,
     price_ranges,
     selectedColors,
