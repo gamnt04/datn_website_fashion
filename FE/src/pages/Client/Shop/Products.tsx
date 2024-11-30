@@ -78,11 +78,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
-                  className={`px-4 py-2 border rounded-md ${
-                    currentPage === 1
+                  className={`px-4 py-2 border rounded-md ${currentPage === 1
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-500 text-white hover:bg-blue-700"
-                  }`}
+                    }`}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -94,11 +93,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
-                  className={`px-4 py-2 border rounded-md ${
-                    !hasMore
+                  className={`px-4 py-2 border rounded-md ${!hasMore
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-500 text-white hover:bg-blue-700"
-                  }`}
+                    }`}
                   disabled={!hasMore}
                 >
                   Next

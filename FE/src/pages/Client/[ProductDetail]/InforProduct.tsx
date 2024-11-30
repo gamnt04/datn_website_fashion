@@ -207,7 +207,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               disabled={
                 !!dataProps.products.averageRating ||
                 !dataProps.products.averageRating
-              } 
+              }
               value={dataProps.products.averageRating || 0}
             />
           </span>
@@ -265,6 +265,9 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         {dataProps?.products?.attributes && (
           <>
             <div>
+              <span className="text-lg lg:mt-[1px] mb:mt-3.5 lg:tracking-[-1.2px] font-medium lg:leading-[38.4px]">
+                Màu sắc
+              </span>
               <div className="flex flex-wrap items-center gap-4 lg:mt-2 mt-3 lg:pb-0 mb:pb-5 font-medium">
                 {dataProps?.products?.attributes?.values?.map((item: any) => (
                   item?.symbol ? (

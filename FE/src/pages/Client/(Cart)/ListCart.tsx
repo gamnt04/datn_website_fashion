@@ -38,7 +38,7 @@ const ListCart = () => {
   const { data, isPending, isError, error } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-  const { mutate: handle_status_checked } = Mutation_Cart(
+  const { mutate: handle_status_checked, isPending: loading_btn_checkked } = Mutation_Cart(
     "HANLDE_STATUS_CHECKED"
   );
   const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
@@ -264,13 +264,6 @@ const ListCart = () => {
       }
     }
   ];
-  if (isPending) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
-      </div>
-    );
-  }
   const item_order_checkked = data?.products?.filter(
     (value: any) => value?.status_checked
   );
@@ -336,7 +329,14 @@ const ListCart = () => {
   }
 
   return (
-    <div className="max-w-[1440px] w-[95vw] mx-auto">
+    <div className="max-w-[1440px] w-[95vw] mx-auto relative">
+      {
+        isPending || loading_btn_checkked &&
+        <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+
       <div className="w-[95%] mx-[2.5%] mt-[70px]">
         {contextHolder}
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
