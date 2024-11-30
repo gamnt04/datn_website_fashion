@@ -74,13 +74,31 @@ export const get = async (req, res) => {
     const keyword = req.query.keyword;
     let objWhere = {};
     if (keyword) {
-      objWhere.name = new RegExp(keyword, "i");
+      objWhere.name_category = new RegExp(keyword, "i");
     }
 
-    const data = await Category.find(objWhere);
+    const data = await Category.aggregate([
+      { $match: objWhere },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "category_id",
+          as: "products",
+        },
+      },
+      {
+        $addFields: {
+          product_count: { $size: "$products" },
+        },
+      },
+      { $project: { products: 0 } },
+    ]);
+
     if (!data) {
       throw new Error(`Failed to get categories`);
     }
+
     return res.status(200).json({
       message: "Success",
       data,
@@ -92,6 +110,7 @@ export const get = async (req, res) => {
     });
   }
 };
+
 export const getCategoryByName = async (req, res) => {
   try {
     const { searchName } = req.body;
@@ -127,7 +146,7 @@ export const getById = async (req, res) => {
     });
   }
 };
-export async function getCatogoryById(req, res) {
+export async function getCategoryById(req, res) {
   try {
     const { id } = req.params;
 
@@ -196,28 +215,39 @@ export const update = async (req, res) => {
 export const remove = async (req, res) => {
   try {
     const categoryId = req.params.id;
+
+    const defaultCategoryId = await createDefaultCategory();
+
+    const defaultCategory = await Category.findOne({
+      name_category: "Uncategorized",
+    });
+
+    if (!defaultCategory) {
+      return res
+        .status(404)
+        .json({ message: "Danh mục mặc định không tồn tại" });
+    }
+
     const category = await Category.findByIdAndDelete(categoryId);
 
     if (!category) {
-      return res.status(404).json({
-        message: "Danh mục không tồn tại",
-      });
+      return res.status(404).json({ message: "Danh mục không tồn tại" });
     }
-    await Products.updateMany(
+
+    const updateResult = await Products.updateMany(
       { category_id: categoryId },
-      { $unset: { category_id: "" } }
+      { $set: { category_id: defaultCategoryId } }
     );
 
     return res.status(200).json({
-      message: "Xóa danh mục thành công ",
+      message:
+        "Xóa danh mục thành công và chuyển sản phẩm về danh mục mặc định",
     });
   } catch (error) {
-    return res.status(500).json({
-      name: error.name,
-      message: error.message,
-    });
+    return res.status(500).json({ name: error.name, message: error.message });
   }
 };
+
 export const statistical = async (req, res) => {
   try {
     const categorys = await Category.distinct("category");
@@ -228,5 +258,28 @@ export const statistical = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+const createDefaultCategory = async () => {
+  try {
+    const existingCategory = await Category.findOne({
+      name_category: "Uncategorized",
+    });
+    if (!existingCategory) {
+      const defaultCategory = new Category({
+        name_category: "Uncategorized",
+        slug: "Uncategorized",
+        published: true,
+        image_category: "FE/src/assets/images/tai-xuong.png",
+      });
+      const savedCategory = await defaultCategory.save();
+
+      return savedCategory._id;
+    } else {
+      return existingCategory._id;
+    }
+  } catch (error) {
+    console.error("Lỗi khi tạo danh mục mặc định:", error);
   }
 };

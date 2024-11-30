@@ -81,9 +81,10 @@ const OrdersDetali = () => {
     return !shipperHasOngoingDelivery && shipper?._id !== data?.shipperId?._id;
   });
 
-  if (availableShippers.length === 0) {
-    return <p>No available shippers</p>;
-  }
+
+  // if (availableShippers.length === 0) {
+  //   return <p>No available shippers</p>;
+  // }
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity;
@@ -135,10 +136,11 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan"
-        ? "xác nhận"
-        : `Từ Chối:  ${dataBody?.cancellationReason}`
-        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan"
+          ? "xác nhận"
+          : `Từ Chối:  ${dataBody?.cancellationReason}`
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
@@ -199,14 +201,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-          : status === 4
-            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-            : status === 5
-              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-              : status === 6
-                ? `Đã giao đơn hàng ${code_order} thành công!`
-                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 4
+        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+        : status === 5
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : status === 6
+        ? `Đã giao đơn hàng ${code_order} thành công!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -324,13 +326,13 @@ const OrdersDetali = () => {
             Chi Tiết Đơn Hàng
           </h1>
         </div>
+
         <div className="flex space-x-4 items-center justify-between">
           <div className="w-1/2">
             {data?.status == 2 ? (
               <div className="">
                 <div className="bg-white p-4 rounded shadow">
                   <h2 className="text-center font-semibold mb-4">Chọn Shipper</h2>
-
                   {availableShippers.map((shipper: any) => (
                     <div
                       key={shipper._id}
@@ -355,7 +357,12 @@ const OrdersDetali = () => {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                  ))
+                  : (
+                <p className="text-center text-red-500">
+                  Hiện shipper đang không đủ vui lòng đợi!
+                </p>
+              )}
                 </div>
               </div>
             ) : (
@@ -500,9 +507,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })} `
+                        style: "currency",
+                        currency: "VND",
+                      })} `
                     : "0đ"}
                 </p>
 
@@ -713,10 +720,11 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${role !== "courier"
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-red-500"
-                      } `}
+                    className={`w - 52 rounded text - white ${
+                      role !== "courier"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-red-500"
+                    } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại

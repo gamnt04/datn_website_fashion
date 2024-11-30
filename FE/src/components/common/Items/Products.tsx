@@ -9,7 +9,6 @@ import { message } from "antd";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 
 const Products = ({ items }: any) => {
-  console.log(items);
   const [user] = useLocalStorage("user", {});
   const account = user?.user;
   const userId = account?._id;

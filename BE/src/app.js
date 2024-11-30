@@ -75,8 +75,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:7899",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
 // Middleware xác thực JWT cho Socket.IO
@@ -107,7 +107,7 @@ io.on("connection", (socket) => {
       const message = new Messages({
         senderId: socket.user.userId,
         receiverId,
-        content
+        content,
       });
 
       await message.save();

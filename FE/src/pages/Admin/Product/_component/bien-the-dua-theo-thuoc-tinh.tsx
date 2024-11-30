@@ -154,7 +154,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                 </div>
                                             )
                                         )}
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex flex-col items-start gap-4">
                                             <Button
                                                 type="primary"
                                                 onClick={() => addSize()}
