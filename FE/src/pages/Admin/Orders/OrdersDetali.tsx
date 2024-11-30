@@ -333,41 +333,38 @@ const OrdersDetali = () => {
               <div className="">
                 <div className="bg-white p-4 rounded shadow">
                   <h2 className="text-center font-semibold mb-4">Chọn Shipper</h2>
-                  {availableShippers.map((shipper: any) => (
-                    <div
-                      key={shipper._id}
-                      className="my-4"
-                    >
-                      <div className="flex items-center">
-                        <img
-                          src={shipper.avatar}
-                          alt="Shipper Avatar"
-                          className="w-12 h-12 rounded-full object-cover mr-4"
-                        />
-                        <div className="flex-1">
-                          <p className="text-lg font-medium">{shipper.fullName}</p>
-                          <p className="text-sm text-gray-500">{shipper.phone}</p>
+                  {availableShippers.length > 0 ? (
+                    availableShippers.map((shipper: any) => (
+                      <div key={shipper._id} className="my-4">
+                        <div className="flex items-center">
+                          <img
+                            src={shipper.avatar}
+                            alt="Shipper Avatar"
+                            className="w-12 h-12 rounded-full object-cover mr-4"
+                          />
+                          <div className="flex-1">
+                            <p className="text-lg font-medium">{shipper.fullName}</p>
+                            <p className="text-sm text-gray-500">{shipper.phone}</p>
+                          </div>
+                          <Button
+                            onClick={() => handleSelectShipper(shipper._id)}
+                            className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                              }`}
+                          >
+                            {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
+                          </Button>
                         </div>
-                        <Button
-                          onClick={() => handleSelectShipper(shipper._id)}
-                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
-                            }`}
-                        >
-                          {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
-                        </Button>
                       </div>
-                    </div>
-                  ))
-                  : (
-                <p className="text-center text-red-500">
-                  Hiện shipper đang không đủ vui lòng đợi!
-                </p>
-              )}
+                    ))
+                  ) : (
+                    <p className="text-center text-red-500">
+                      Hiện shipper đang không đủ, vui lòng đợi!
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (
               data?.status >= 2 && (
-
                 <div className=" bg-white p-4 rounded shadow-md">
                   <h2 className=" text-center font-semibold mb-4">Thông tin Shipper</h2>
                   <div className="flex items-center">
@@ -377,12 +374,8 @@ const OrdersDetali = () => {
                       className="w-12 h-12 rounded-full object-cover mr-4"
                     />
                     <div className="flex-1">
-                      <p className="text-lg font-medium">
-                        {data?.shipperId?.fullName}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {data?.shipperId?.phone}
-                      </p>
+                      <p className="text-lg font-medium">{data?.shipperId?.fullName}</p>
+                      <p className="text-sm text-gray-500">{data?.shipperId?.phone}</p>
                     </div>
                   </div>
                 </div>
