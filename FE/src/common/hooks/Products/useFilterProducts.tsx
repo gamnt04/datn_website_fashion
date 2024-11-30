@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 // Hàm fetch data từ API backend
 const fetchFilteredProducts = async (
+  query: string, // Từ khóa tìm kiếm
   cate_id: string[], // Các danh mục cần lọc
   price_ranges: { min: number; max: number }[], // Dải giá cần lọc
   color: string[], // Màu sắc cần lọc
@@ -17,6 +18,7 @@ const fetchFilteredProducts = async (
 
   // Xây dựng các tham số cho yêu cầu
   const params: { [key: string]: any } = {
+    _search: query,
     cate_id: cate_id.length > 0 ? cate_id.join(",") : undefined,
     price_ranges:
       price_ranges.length > 0 ? JSON.stringify(price_ranges) : undefined,
@@ -47,6 +49,7 @@ const fetchFilteredProducts = async (
 };
 
 export const useFilteredProducts = (
+  query: string, // Từ khóa tìm kiếm
   cate_id: string[], // Các danh mục lọc
   price_ranges: { min: number; max: number }[], // Dải giá lọc
   color: string[], // Màu sắc lọc
@@ -58,6 +61,7 @@ export const useFilteredProducts = (
   // Tạo queryKey để caching
   const queryKey = [
     "products",
+    query,
     cate_id,
     JSON.stringify(price_ranges),
     color, // Lọc theo màu sắc
@@ -75,6 +79,7 @@ export const useFilteredProducts = (
     queryKey,
     queryFn: () =>
       fetchFilteredProducts(
+        query,
         cate_id,
         price_ranges,
         color, // Truyền color thay vì _search
