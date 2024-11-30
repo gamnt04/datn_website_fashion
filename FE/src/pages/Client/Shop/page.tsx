@@ -15,10 +15,6 @@ const IndexShops = () => {
   const [sortOption, setSortOption] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearch = (search: string) => {
-    setSearchTerm(search); // Handle the search logic here
-  };
-
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
     navigate(`/shops?category=${id.join(",")}`);
@@ -35,14 +31,6 @@ const IndexShops = () => {
   const handleSizeChange = (sizes: string[]) => {
     setSelectedSizes(sizes);
   };
-
-  const toggleColor = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
-  };
-
-  const resetColorFilter = () => setSelectedColors([]);
 
   const toggleSize = (size: string) => {
     setSelectedSizes((prev) =>
@@ -73,10 +61,7 @@ const IndexShops = () => {
           <MenuShop
             onCategorySelect={handleCategorySelect}
             onPriceChange={handlePriceChange}
-            setSearch={handleSearch} // Now passing setSearch here
             selectedColors={selectedColors}
-            toggleColor={toggleColor}
-            resetColorFilter={resetColorFilter}
             onColorChange={handleColorChange}
             selectedSizes={selectedSizes}
             toggleSize={toggleSize}

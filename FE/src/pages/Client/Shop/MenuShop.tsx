@@ -9,11 +9,8 @@ import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuer
 interface MenuShopProps {
   onCategorySelect: (ids: string[]) => void;
   onPriceChange: (priceRanges: { min: number; max: number }[]) => void;
-  setSearch: (search: string) => void; // Thêm setSearch vào props
-  selectedColors: string[]; // Prop cho selectedColors
-  toggleColor: (color: string) => void; // Prop cho toggleColor
-  resetColorFilter: () => void; // Prop cho resetColorFilter
-  onColorChange: (colors: string[]) => void; // Prop cho onColorChange
+  selectedColors: string[];
+  onColorChange: (colors: string[]) => void;
   selectedSizes: string[];
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
@@ -23,10 +20,7 @@ interface MenuShopProps {
 const MenuShop: React.FC<MenuShopProps> = ({
   onCategorySelect,
   onPriceChange,
-  setSearch,
   selectedColors,
-  toggleColor,
-  resetColorFilter,
   onColorChange,
   selectedSizes,
   toggleSize,
@@ -34,7 +28,8 @@ const MenuShop: React.FC<MenuShopProps> = ({
   onSizeChange,
 }) => {
   const { data: categoryData } = useCategoryQuery();
-  const { sizes: sizeOptions, loading, error } = useAttributes();
+  const { sizes, loading, error } = useAttributes();
+  console.log("lọc size :", sizes);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -79,7 +74,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
           toggleSize={toggleSize}
           resetSizeFilter={resetSizeFilter}
           onSizeChange={onSizeChange}
-          sizeOptions={sizeOptions}
+          sizeOptions={sizes}
         />
       </div>
     </div>
