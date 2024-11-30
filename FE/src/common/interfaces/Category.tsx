@@ -5,6 +5,7 @@ export interface ICategory {
   _id?: string | any;
   slug?: string;
   products?: string[];
+  product_count?: Number;
   createdAt?: string | number;
   updatedAt?: string | number;
 }
