@@ -24,7 +24,7 @@ const AdminLayout: React.FC = () => {
           </div>
           <MessAdmin />
           <div className="py-4 text-center">
-            Copyright by ©{new Date().getFullYear()} Created by DATN
+            Copyright by ©{new Date().getFullYear()} Created by Seven
           </div>
         </div>
       </div>
