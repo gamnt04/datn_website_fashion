@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pagination, Table } from "antd";
 import { Link } from "react-router-dom";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
@@ -108,7 +109,7 @@ const TableOrder = () => {
       key: "action",
       title: "Thao Tác",
       render: (_: any, orders: any) => (
-        <Link to={`/admin/orders/${orders._id}/orderDetali`}>
+        <Link to={`/admin/orders/${orders._id}`}>
           <span className="flex justify-center">
             <Ellipsis_horizontal />
           </span>

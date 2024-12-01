@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Shirt,
   TicketPercent,
-  Trash2,
   Truck,
   User2,
 } from "lucide-react";
@@ -40,9 +39,8 @@ export default function Sidebar_Dashboard() {
               <LayoutDashboard />
               <span className="text-[#c4cee3]">Bảng điều khiển</span>
               <ChevronDown
-                className={`ml-auto transform ${
-                  expandedSection === "dashboard" ? "rotate-180" : ""
-                }`}
+                className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -71,9 +69,8 @@ export default function Sidebar_Dashboard() {
               <Shirt />
               <span className="text-[#c4cee3]">Sản phẩm</span>
               <ChevronDown
-                className={`ml-auto transform ${
-                  expandedSection === "products" ? "rotate-180" : ""
-                }`}
+                className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -102,6 +99,12 @@ export default function Sidebar_Dashboard() {
                   className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
                 >
                   Quản lý danh mục
+                </NavLink>
+                <NavLink
+                  to="/admin/trash"
+                  className="flex items-center px-2 py-3 text-gray-300 hover:text-white"
+                >
+                  Thùng rác
                 </NavLink>
               </div>
             )}
@@ -208,15 +211,6 @@ export default function Sidebar_Dashboard() {
                 <path d="M4 11h6" />
               </svg>
               <span className="text-[#c4cee3]">Bài viết</span>
-            </Link>
-          </div>
-          <div className="*:px-2">
-            <Link
-              to={`/admin/trash`}
-              className="flex items-center w-full py-3 text-left gap-x-4"
-            >
-              <Trash2 />
-              <span className="text-[#c4cee3]">Thùng rác</span>
             </Link>
           </div>
           <div className="*:px-2">
