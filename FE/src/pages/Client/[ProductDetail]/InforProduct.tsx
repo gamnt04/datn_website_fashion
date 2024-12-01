@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { IProduct } from "../../../common/interfaces/Product";
 import { Button } from "../../../components/ui/button";
 import { Dow, Up } from "../../../resources/svg/Icon/Icon";
-import { Convert_Color } from "../../../_lib/Config/Config_Color";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Rate } from "antd";
@@ -14,11 +14,6 @@ interface InforProductProp {
   product: IProduct;
 }
 
-interface IAttr {
-  color?: string | number;
-  size?: any;
-  _id?: string | number;
-}
 
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const { setImg } = useStore();
@@ -189,9 +184,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
     }
   }
-
-  const price = price_product * quantity_item;
-  const price_item_attr = price_attr * quantity_item;
 
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
