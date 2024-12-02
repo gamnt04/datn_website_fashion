@@ -185,7 +185,13 @@ const Address = () => {
           ))}
         </div>
       </div>
-      {isOpen && <Add_Address handleAddress={handleAddress} />}
+      {isOpen && (
+        <Add_Address
+          setIsOpen={setIsOpen}
+          isOpen={isOpen}
+          handleAddress={handleAddress}
+        />
+      )}
       {isOpenUpdate && (
         <Update_Address
           isOpenUpdate={isOpenUpdate}
