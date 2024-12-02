@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from "react-hook-form";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -21,7 +22,7 @@ import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 // import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
-import { IProduct } from "../../../common/interfaces/Product";
+import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -29,11 +30,10 @@ const Pay = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
-
   const [vouchers, setVouchers] = useState([]);
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
-
+  const [phi_van_chuyen, setPhi_van_chuyen] = useState<number>(0)
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [voucherDetails, setVoucherDetails] = useState<any>(null);
 
@@ -90,6 +90,16 @@ const Pay = () => {
       }
     }
   }, [auth, selectedAddress, setValue]);
+  useEffect(() => {
+    (async () => {
+      const dia_chi_nguoi_dung = selectedAddress?.addressDetails - selectedAddress?.address
+      const tong_km = await Tinh_tong_km(dia_chi_nguoi_dung);
+      console.log(tong_km)
+      setPhi_van_chuyen(() => (
+        tong_km ? (Math.ceil(tong_km) / 1000) * 5000 : 0
+      ))
+    })()
+  }, [selectedAddress])
 
   const handleRemoveVoucher = () => {
     setSelectedVoucher(null);
@@ -108,7 +118,7 @@ const Pay = () => {
   const handleApplyDiscount = async () => {
     try {
       const selectedProductIds = item_order_checkked?.map(
-        (item) => item.productId._id
+        (item: any) => item.productId._id
       );
       const response = await instance.post(`/voucher/use`, {
         code_voucher: discountCode,
@@ -160,7 +170,7 @@ const Pay = () => {
     e.preventDefault();
     try {
       const selectedProductIds = item_order_checkked?.map(
-        (item) => item.productId._id
+        (item: any) => item.productId._id
       );
 
       const response = await instance.post(`/voucher/use`, {
@@ -285,18 +295,17 @@ const Pay = () => {
         return;
       }
     }
-
     const item_order = {
       userId: userId,
       items: item_order_checkked,
       customerInfo: {
         ...data_form,
       },
-
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice,
       email: user?.user?.email,
+      delivery_fee: phi_van_chuyen
     };
     try {
       if (data_form.payment === "VNPAY") {
@@ -370,9 +379,10 @@ const Pay = () => {
               <p className="text-sm lg:text-base">x {order?.quantity}</p>
             </div>
           </div>
-          <p className="p-0 mt-2 text-xs font-bold w-28 lg:text-sm lg:mt-0">
-            Loại: {order?.color_item} - {order?.name_size}
-          </p>
+          <div className="flex flex-col p-0 mt-2 text-xs font-bold w-28 lg:text-sm lg:mt-0">
+            Loại:
+            <span className="font-medium whitespace-nowrap">{order?.color_item} - {order?.name_size}</span>
+          </div>
         </div>
       ),
     },
@@ -764,7 +774,10 @@ const Pay = () => {
                   </div>
                   <div className="flex justify-between gap-16 py-3">
                     <p>Phí vận chuyển</p>
-                    <p>0đ</p>
+                    <p>{phi_van_chuyen?.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND",
+                    })}</p>
                   </div>
                   <div className="flex justify-between gap-16 py-3">
                     <p>Voucher giảm giá</p>
@@ -784,7 +797,7 @@ const Pay = () => {
                           Tổng số tiền:{" "}
                           {(finalAmount > 0
                             ? finalAmount
-                            : totalPrice
+                            : (totalPrice + phi_van_chuyen)
                           )?.toLocaleString("vi", {
                             style: "currency",
                             currency: "VND",
