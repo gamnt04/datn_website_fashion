@@ -6,13 +6,12 @@ import { signupSchema } from "../../validations/auth";
 import mongoose from "mongoose";
 import { date } from "joi";
 import Shipper from "../../models/Shipper/shipper";
-import { OAuth2Client } from 'google-auth-library';
-import dotenv from 'dotenv';
+import { OAuth2Client } from "google-auth-library";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 
 export const GetAllUser = async (req, res) => {
   try {
@@ -33,20 +32,20 @@ export const Get_All_User_Search = async (req, res) => {
     if (_search) {
       querry.$and = [
         {
-          userName: { $regex: new RegExp(_search, "i") },
-        },
+          userName: { $regex: new RegExp(_search, "i") }
+        }
       ];
     }
     const user = await User.find(querry);
     console.log(user);
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      user,
+      user
     });
   } catch (error) {
     console.error("Error getting all products:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Loi server !",
+      message: error.message || "Loi server !"
     });
   }
 };
@@ -83,8 +82,8 @@ export const GetUsersByEmailOrName = async (req, res) => {
     const users = await User.find({
       $or: [
         { email: { $regex: new RegExp(searchUser, "i") } },
-        { userName: { $regex: new RegExp(searchUser, "i") } },
-      ],
+        { userName: { $regex: new RegExp(searchUser, "i") } }
+      ]
     });
 
     if (users.length === 0) {
@@ -107,7 +106,7 @@ export const checkRole = (roles) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Vui lòng đăng nhập để tiếp tục.",
+        message: "Vui lòng đăng nhập để tiếp tục."
       });
     }
 
@@ -119,14 +118,14 @@ export const checkRole = (roles) => {
       // console.log("Required Roles:", roles);
       if (!roles.includes(req.user.role)) {
         return res.status(StatusCodes.FORBIDDEN).json({
-          message: "Bạn không có quyền truy cập vào tài nguyên này.",
+          message: "Bạn không có quyền truy cập vào tài nguyên này."
         });
       }
 
       next();
     } catch (error) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Token không hợp lệ hoặc đã hết hạn.",
+        message: "Token không hợp lệ hoặc đã hết hạn."
       });
     }
   };
@@ -148,18 +147,18 @@ export const signup = async (req, res) => {
     if (error) {
       const messages = error.details.map((item) => item.message);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        messages,
+        messages
       });
     }
 
     if (existUser) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Email đã tồn tại"],
+        messages: ["Email đã tồn tại"]
       });
     }
     if (existShipper) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Email đã tồn tại"],
+        messages: ["Email đã tồn tại"]
       });
     }
     // Mã hóa mật khẩu
@@ -170,7 +169,7 @@ export const signup = async (req, res) => {
     const user = await User.create({
       ...req.body,
       password: hashedPassword,
-      role,
+      role
     });
     return res
       .status(StatusCodes.CREATED)
@@ -191,7 +190,7 @@ export const signin = async (req, res) => {
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        messages: ["Email không tồn tại"],
+        messages: ["Email không tồn tại"]
       });
     }
 
@@ -200,7 +199,7 @@ export const signin = async (req, res) => {
 
     if (!isMatch) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        messages: ["Mật khẩu không chính xác"],
+        messages: ["Mật khẩu không chính xác"]
       });
     }
     // const token = jwt.sign({ userId: user._id }, "123456", {
@@ -220,7 +219,7 @@ export const signin = async (req, res) => {
     return res.status(StatusCodes.OK).json({
       message: "Đăng nhập thành công",
       user,
-      token,
+      token
     });
   } catch (error) {
     console.error(`Error finding user with email ${email}:`, error);
@@ -306,56 +305,20 @@ export const isTokenBlacklisted = async (token) => {
   return !!tokenInBlacklist;
 };
 
-// export const add_address = async (req, res) => {
-//   const { userId, newAddress } = req.body;
-
-//   // Kiểm tra thông tin địa chỉ
-//   if (
-//     !newAddress ||
-//     !newAddress.fullName ||
-//     !newAddress.phoneNumber ||
-//     !newAddress.addressDetails ||
-//     !newAddress.address
-//   ) {
-//     return res
-//       .status(StatusCodes.BAD_REQUEST)
-//       .json({ error: "Thông tin địa chỉ không được để trống" });
-//   }
-
-//   try {
-//     // Tìm người dùng
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res
-//         .status(StatusCodes.NOT_FOUND)
-//         .json({ error: "Người dùng không tồn tại" });
-//     }
-
-//     // Cập nhật địa chỉ
-//     user.address = newAddress;
-
-//     // Lưu thay đổi
-//     await user.save();
-//     return res
-//       .status(StatusCodes.OK)
-//       .json({ message: "Đã thêm địa chỉ thành công", address: user.address });
-//   } catch (error) {
-//     console.error("Lỗi khi thêm địa chỉ:", error);
-//     return res
-//       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-//       .json({ message: "Lỗi khi thêm địa chỉ" });
-//   }
-// };
-
 export const add_address = async (req, res) => {
   const { userId, newAddress, setDefault } = req.body;
+  console.log("Received new address:", newAddress); // Debugging line
 
-  // Kiểm tra thông tin địa chỉ
+  // Validate required fields
   if (
     !newAddress ||
     !newAddress.fullName ||
     !newAddress.phoneNumber ||
-    !newAddress.address
+    !newAddress.address ||
+    !newAddress.detailedAddress ||
+    !newAddress.coordinates ||
+    !newAddress.coordinates.lat ||
+    !newAddress.coordinates.lng
   ) {
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -363,7 +326,7 @@ export const add_address = async (req, res) => {
   }
 
   try {
-    // Tìm người dùng
+    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       return res
@@ -371,29 +334,29 @@ export const add_address = async (req, res) => {
         .json({ error: "Người dùng không tồn tại" });
     }
 
-    // Nếu địa chỉ mới được chọn làm mặc định, đặt tất cả các địa chỉ khác thành không phải mặc định
+    // If setting the address as default, reset all other addresses
     if (setDefault) {
       user.address.forEach((address) => {
         address.checked = false;
       });
     }
 
-    // Thêm địa chỉ mới vào mảng địa chỉ và thiết lập làm mặc định nếu cần
+    // Add the new address to the user's address array
     user.address.push({
       ...newAddress,
-      checked: setDefault, // Đặt địa chỉ mới làm mặc định nếu setDefault là true
+      checked: setDefault // Mark as default if setDefault is true
     });
 
-    // Lưu thay đổi
+    // Save the updated user document
     const updatedUser = await user.save();
 
-    // Trả về dữ liệu cập nhật
+    // Return the updated user address list
     return res.status(StatusCodes.OK).json({
       message: "Đã thêm địa chỉ thành công",
-      address: updatedUser.address,
+      address: updatedUser.address
     });
   } catch (error) {
-    console.error("Lỗi khi thêm địa chỉ:", error);
+    console.error("Error while adding address:", error.message); // Enhanced error logging
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Lỗi khi thêm địa chỉ" });
@@ -480,14 +443,14 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -502,7 +465,7 @@ export const setDefaultAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -514,12 +477,12 @@ export const setDefaultAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã thiết lập địa chỉ mặc định thành công",
-      address: updatedUser.address.id(addressId),
+      address: updatedUser.address.id(addressId)
     });
   } catch (error) {
     console.error("Lỗi khi thiết lập địa chỉ mặc định:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi thiết lập địa chỉ mặc định",
+      message: "Lỗi khi thiết lập địa chỉ mặc định"
     });
   }
 };
@@ -536,14 +499,14 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng",
+        message: "Không tìm thấy người dùng"
       });
     }
 
     // Kiểm tra nếu địa chỉId hợp lệ
     if (!mongoose.isValidObjectId(addressId)) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ",
+        message: "ID địa chỉ không hợp lệ"
       });
     }
 
@@ -553,7 +516,7 @@ export const updateUserAddress = async (req, res) => {
     // Kiểm tra nếu không tìm thấy địa chỉ
     if (!address) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ",
+        message: "Không tìm thấy địa chỉ"
       });
     }
 
@@ -568,12 +531,12 @@ export const updateUserAddress = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
       message: "Đã cập nhật địa chỉ thành công",
-      address: updatedAddressData,
+      address: updatedAddressData
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật địa chỉ:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ",
+      message: "Lỗi khi cập nhật địa chỉ"
     });
   }
 };
@@ -645,7 +608,7 @@ export const updateUser = async (req, res) => {
         updatedFields.push({
           field: key,
           value: updatedData[key], // Thêm trường value để lưu giá trị cập nhật
-          time: new Date(),
+          time: new Date()
         });
         user[key] = updatedData[key];
       }
@@ -661,7 +624,7 @@ export const updateUser = async (req, res) => {
     return res.status(StatusCodes.OK).json({
       message: "Cập nhật người dùng thành công",
       updatedFields,
-      user,
+      user
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng:", error);
@@ -690,27 +653,27 @@ export const newAuthIn7Day = async (req, res) => {
           $match: {
             createdAt: {
               $gte: startOfDay,
-              $lt: new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000),
-            },
-          },
+              $lt: new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+            }
+          }
         },
         {
           $group: {
             _id: null,
-            totalUser: { $sum: 1 },
-          },
-        },
+            totalUser: { $sum: 1 }
+          }
+        }
       ]);
 
       usersByDate.push({
         day: startOfDay.toISOString().slice(0, 10),
-        totalUser: usersDate.length > 0 ? usersDate[0].totalUser : 0,
+        totalUser: usersDate.length > 0 ? usersDate[0].totalUser : 0
       });
     }
 
     return res.status(StatusCodes.OK).json({
       message: "New users in the last 7 days by date",
-      usersByDate,
+      usersByDate
     });
   } catch (error) {
     console.error("Lỗi khi lấy danh sách người dùng mới:", error);
@@ -764,7 +727,7 @@ export const googleAuth = async (req, res) => {
     // Xác thực token từ phía Google
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: process.env.GOOGLE_CLIENT_ID
     });
 
     const payload = ticket.getPayload();
@@ -776,7 +739,7 @@ export const googleAuth = async (req, res) => {
       user = await User.create({
         email,
         userName: name,
-        avatar: picture,
+        avatar: picture
       });
     }
 
@@ -784,11 +747,11 @@ export const googleAuth = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: "1d" }
     );
 
     res.status(200).json({ token: accessToken, user });
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi xác thực Google', error });
+    res.status(500).json({ message: "Lỗi xác thực Google", error });
   }
 };
