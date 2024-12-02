@@ -134,21 +134,22 @@ export default function Bien_the_trang_update({props} : any) {
                                     <DeleteOutlined
                                       onClick={() => removeSize(sizeName)}
                                       style={{ fontSize: "20px" }}
+                                      className='text-red-500'
                                     />
                                   </div>
                                 )
                               )}
-                              <div className="flex items-center gap-4 mb-4">
+                              <div className="flex flex-col items-start gap-4 mb-4">
                                 <Button
                                   type="primary"
                                   onClick={() => addSize()}
                                   className="px-2 "
                                 >
-                                  Thêm kích cỡ
+                                  Thêm biến thể
                                 </Button>
                                 <Button
                                   onClick={() => remove(name)}
-                                  className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
+                                  className="px-2 bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
                                 >
                                   Xóa thuộc tính
                                 </Button>
@@ -163,7 +164,7 @@ export default function Bien_the_trang_update({props} : any) {
                       type="primary"
                       onClick={() => add()}
                     >
-                      Thêm options
+                      Thêm thuộc tính
                     </Button>
                   </>
                 );

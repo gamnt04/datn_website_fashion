@@ -7,8 +7,8 @@ interface ArrangeFilterProps {
 
 const sortOptions = [
   { value: "", label: "Mặc Định" },
-  { value: "newest", label: "Mới Nhất" },
-  { value: "oldest", label: "Cũ Nhất" },
+  { value: "createdAt:desc", label: "Mới Nhất" },
+  { value: "createdAt:asc", label: "Cũ Nhất" },
   { value: "price_attribute:asc", label: "Giá thấp" }, // Sắp xếp theo giá thấp
   { value: "price_attribute:desc", label: "Giá cao" }, // Sắp xếp theo giá cao
 ];

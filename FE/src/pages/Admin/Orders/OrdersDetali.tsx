@@ -1,4 +1,4 @@
-import { LeftOutlined, UploadOutlined } from "@ant-design/icons";
+import { LeftOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -6,6 +6,7 @@ import {
   Modal,
   Popconfirm,
   Radio,
+  Spin,
   Table,
   Upload,
 } from "antd";
@@ -31,7 +32,9 @@ const OrdersDetali = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
-  const { data, refetch } = Query_Orders(id);
+  const { data, refetch, isLoading } = Query_Orders(id);
+  console.log(data);
+
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
@@ -67,12 +70,8 @@ const OrdersDetali = () => {
 
   // Kiểm tra dữ liệu shipper
   if (!shipperData || !shipperData.shippers || !shipperData.orders) {
-    console.log("Dữ liệu shipper chưa sẵn sàng hoặc không hợp lệ.");
     return <p>Shipper data is not available yet</p>;
   }
-
-  console.log("Dữ liệu shipper:", shipperData);
-
   const availableShippers = shipperData.shippers.filter((shipper: any) => {
     const shipperHasOngoingDelivery = shipperData.orders.some(
       (order: any) =>
@@ -82,11 +81,10 @@ const OrdersDetali = () => {
     return !shipperHasOngoingDelivery && shipper?._id !== data?.shipperId?._id;
   });
 
-  if (availableShippers.length === 0) {
-    return <p>No available shippers</p>;
-  }
 
-  console.log("Available Shippers:", availableShippers);
+  // if (availableShippers.length === 0) {
+  //   return <p>No available shippers</p>;
+  // }
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity;
@@ -138,10 +136,11 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan"
-        ? "xác nhận"
-        : `Từ Chối:  ${dataBody?.cancellationReason}`
-        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan"
+          ? "xác nhận"
+          : `Từ Chối:  ${dataBody?.cancellationReason}`
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
@@ -202,14 +201,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-          : status === 4
-            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-            : status === 5
-              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-              : status === 6
-                ? `Đã giao đơn hàng ${code_order} thành công!`
-                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 4
+        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+        : status === 5
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : status === 6
+        ? `Đã giao đơn hàng ${code_order} thành công!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -304,7 +303,11 @@ const OrdersDetali = () => {
       ),
     },
   ];
-  if (!data) return <p>Loading...</p>;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
 
   return (
     <>
@@ -323,62 +326,68 @@ const OrdersDetali = () => {
             Chi Tiết Đơn Hàng
           </h1>
         </div>
-        {data?.status == 2 ? (
-          <div className="p-4">
-            <h2 className="text-xl font-semibold mb-4">Chọn Shipper</h2>
-            <div className="grid grid-cols-1 gap-4">
-              {availableShippers.map((shipper: any) => (
-                <div
-                  key={shipper._id}
-                  className="flex items-center bg-white p-4 rounded-lg shadow-md"
-                >
-                  <img
-                    src={shipper.avatar}
-                    alt="Shipper Avatar"
-                    className="w-12 h-12 rounded-full object-cover mr-4"
-                  />
-                  <div className="flex-1">
-                    <p className="text-lg font-medium">{shipper.fullName}</p>
-                    <p className="text-sm text-gray-500">{shipper.phone}</p>
-                  </div>
-                  <button
-                    onClick={() => handleSelectShipper(shipper._id)} // Gọi hàm handleSelectShipper
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
-                      }`}
-                  >
-                    {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          data?.status >= 2 && (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Thông tin Shipper</h2>
-              <div className="flex items-center bg-white p-4 rounded-lg shadow-md">
-                <img
-                  src={data?.shipperId?.avatar}
-                  alt="Shipper Avatar"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
-                <div className="flex-1">
-                  <p className="text-lg font-medium">
-                    {data?.shipperId?.fullName}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {data?.shipperId?.phone}
-                  </p>
+
+        <div className="flex space-x-4 items-center justify-between">
+          <div className="w-1/2">
+            {data?.status == 2 ? (
+              <div className="">
+                <div className="bg-white p-4 rounded shadow">
+                  <h2 className="text-center font-semibold mb-4">Chọn Shipper</h2>
+                  {availableShippers.length > 0 ? (
+                    availableShippers.map((shipper: any) => (
+                      <div key={shipper._id} className="my-4">
+                        <div className="flex items-center">
+                          <img
+                            src={shipper.avatar}
+                            alt="Shipper Avatar"
+                            className="w-12 h-12 rounded-full object-cover mr-4"
+                          />
+                          <div className="flex-1">
+                            <p className="text-lg font-medium">{shipper.fullName}</p>
+                            <p className="text-sm text-gray-500">{shipper.phone}</p>
+                          </div>
+                          <Button
+                            onClick={() => handleSelectShipper(shipper._id)}
+                            className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                              }`}
+                          >
+                            {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-red-500">
+                      Hiện shipper đang không đủ, vui lòng đợi!
+                    </p>
+                  )}
                 </div>
               </div>
-            </div>
-          )
-        )}
-        <div className="my-6 shadow rounded bg-white">
-          <div className="p-4 text-black font-semibold">
-            Trạng thái đơn hàng
+            ) : (
+              data?.status >= 2 && (
+                <div className=" bg-white p-4 rounded shadow-md">
+                  <h2 className=" text-center font-semibold mb-4">Thông tin Shipper</h2>
+                  <div className="flex items-center">
+                    <img
+                      src={data?.shipperId?.avatar}
+                      alt="Shipper Avatar"
+                      className="w-12 h-12 rounded-full object-cover mr-4"
+                    />
+                    <div className="flex-1">
+                      <p className="text-lg font-medium">{data?.shipperId?.fullName}</p>
+                      <p className="text-sm text-gray-500">{data?.shipperId?.phone}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
           </div>
-          <Status_order data_Order={data} notification={notification} />
+          <div className="shadow rounded bg-white w-1/2">
+            <div className="p-4 text-center text-black font-semibold">
+              Trạng thái đơn hàng
+            </div>
+            <Status_order data_Order={data} notification={notification} />
+          </div>
         </div>
         <div className="overflow-x-auto my-6 shadow  rounded">
           <Table columns={columns} dataSource={dataSort} pagination={false} />
@@ -491,9 +500,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })} `
+                        style: "currency",
+                        currency: "VND",
+                      })} `
                     : "0đ"}
                 </p>
 
@@ -507,7 +516,7 @@ const OrdersDetali = () => {
             </div>
           </div>
           <div className="flex gap-5 justify-center mt-[60px]">
-            {data.status === "1" && (
+            {data?.status === "1" && (
               <>
                 <Popconfirm
                   title="Xác nhận đơn hàng?"
@@ -563,7 +572,7 @@ const OrdersDetali = () => {
                 </Popconfirm>
               </>
             )}
-            {data.status === "2" && (
+            {data?.status === "2" && (
               <>
                 {cancellationRequested ? (
                   <>
@@ -651,7 +660,7 @@ const OrdersDetali = () => {
                 )}
               </>
             )}
-            {data.status === "3" && (
+            {data?.status === "3" && (
               <>
                 <Button
                   className="w-52 bg-blue-500 rounded text-white"
@@ -704,10 +713,11 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${role !== "courier"
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-red-500"
-                      } `}
+                    className={`w - 52 rounded text - white ${
+                      role !== "courier"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-red-500"
+                    } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại
@@ -715,7 +725,7 @@ const OrdersDetali = () => {
                 </Popconfirm>
               </>
             )}
-            {data.status === "4" && (
+            {data?.status === "4" && (
               <button
                 className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
                 disabled
@@ -723,7 +733,7 @@ const OrdersDetali = () => {
                 Giao hàng thành công
               </button>
             )}
-            {data.status === "5" && (
+            {data?.status === "5" && (
               <button
                 className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
                 disabled
@@ -731,7 +741,7 @@ const OrdersDetali = () => {
                 Giao hàng thất bại
               </button>
             )}
-            {data.status === "6" && (
+            {data?.status === "6" && (
               <button
                 className="w-auto p-3 bg-green-600 rounded text-white cursor-not-allowed"
                 disabled
@@ -739,7 +749,7 @@ const OrdersDetali = () => {
                 Đã hoàn thành
               </button>
             )}
-            {data.status === "7" && (
+            {data?.status === "7" && (
               <button
                 className="w-auto p-3 bg-gray-500 rounded text-white cursor-not-allowed"
                 disabled

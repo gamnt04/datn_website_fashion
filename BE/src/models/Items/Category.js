@@ -18,6 +18,10 @@ const categorySchema = mongoose.Schema(
       unique: true,
     },
     published: { type: Boolean, default: true },
+    product_count: {
+      type: Number,
+      default: 0, // Số lượng sản phẩm mặc định là 0
+    },
   },
 
   {
@@ -25,4 +29,5 @@ const categorySchema = mongoose.Schema(
     versionKey: false,
   }
 );
+categorySchema.plugin(slug);
 export default mongoose.model("Category", categorySchema);

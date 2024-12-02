@@ -4,7 +4,8 @@ import {
   Query_Orders,
   useSearchOrdersByNumberOrNumberPhone,
 } from "../../../common/hooks/Order/querry_Order";
-import { Button, Input, Select } from "antd";
+import { Button, Input, Select, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
 const OrderList = () => {
@@ -32,7 +33,11 @@ const OrderList = () => {
   const goToPage = (page: any) => {
     setCurrentPage(page);
   };
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div>
       <div className="mx-6">
@@ -72,6 +77,7 @@ const OrderList = () => {
 
         <OrderTable
           orders={dataSource}
+          refetch={Query_Orders}
           isLoading={isLoading}
           currentPage={currentPage}
           goToPage={goToPage}

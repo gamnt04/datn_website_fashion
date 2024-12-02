@@ -53,7 +53,9 @@ export async function sua_loai_thuoc_tinh(req, res) {
         message: "Loai thuoc tinh da ton tai",
       });
     }
-    await category_attribute.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    await category_attribute.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     return res.status(StatusCodes.CREATED).json({
       message: "OK",
     });
@@ -73,8 +75,8 @@ export async function xoa_loai_thuoc_tinh(req, res) {
     }
     const data = await category_attribute.findOne({ _id: req.params.id });
     await thuoc_tinh.findOneAndDelete({
-      the_loai_thuoc_tinh: data.category_attribute
-    })
+      the_loai_thuoc_tinh: data.category_attribute,
+    });
     await category_attribute.findByIdAndDelete(req.params.id);
     return res.status(StatusCodes.NO_CONTENT).json({
       message: "OK",
@@ -156,15 +158,27 @@ export async function tao_thuoc_tinh(req, res) {
     });
   }
 }
-
 export const lay_tat_ca_thuoc_tinh = async (req, res) => {
   try {
-    // Lấy tất cả dữ liệu của model Attributes
-    const attributesData = await Attributes.find({});
+    // Lấy tất cả dữ liệu từ mảng size trong values
+    const attributesData = await Attributes.find({}, "values.size");
 
-    // Trả về kết quả dưới dạng JSON
+    // Lấy tất cả các size từ dữ liệu và loại bỏ size trống
+    const allSizes = attributesData.flatMap((attr) =>
+      attr.values.flatMap(
+        (value) =>
+          value.size
+            .map((size) => size.name_size) // Lấy tên size
+            .filter((size) => size !== "") // Lọc bỏ size trống
+      )
+    );
+
+    // Loại bỏ các kích thước trùng lặp
+    const uniqueSizes = [...new Set(allSizes)];
+
+    // Trả về danh sách các kích thước duy nhất dưới dạng JSON
     return res.status(200).json({
-      attributesData,
+      sizes: uniqueSizes,
     });
   } catch (error) {
     // Xử lý lỗi và trả về thông báo lỗi với mã trạng thái 500
@@ -174,6 +188,7 @@ export const lay_tat_ca_thuoc_tinh = async (req, res) => {
     });
   }
 };
+
 export async function lay_thuoc_tinh(req, res) {
   try {
     if (!req.params.id_account) {
@@ -202,11 +217,9 @@ export async function lay_1_thuoc_tinh(req, res) {
         message: "Khong tim thay tai khoan!",
       });
     }
-    const data = await thuoc_tinh.findOne(
-      {
-        _id: JSON.parse(req.headers["custom-data-request"]).id_thuoc_tinh,
-      }
-    );
+    const data = await thuoc_tinh.findOne({
+      _id: JSON.parse(req.headers["custom-data-request"]).id_thuoc_tinh,
+    });
     return res.status(StatusCodes.OK).json({
       data,
       message: "ok",
