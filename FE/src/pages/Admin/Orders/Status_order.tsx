@@ -10,7 +10,7 @@ import { Timeline } from "antd";
 
 const Status_order = ({ data_Order, notification }: any) => {
   const a = notification?.notifications?.map((item: any) => {
-    if (item?.id_different === data_Order.orderNumber) {
+    if (item?.id_different === data_Order?.orderNumber) {
       return item?.message;
     }
   })

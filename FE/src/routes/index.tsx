@@ -126,7 +126,7 @@ const RouterComponent = () => {
             <Route path="TotalOrders" element={<TotalOrders />} />
             <Route path="auth" element={<List_Auth />} />
             <Route
-              path="/admin/orders/:id/orderDetali"
+              path="/admin/orders/:id"
               element={<OrdersDetali />}
             />
             <Route path="/admin/contact" element={<ListContact />} />

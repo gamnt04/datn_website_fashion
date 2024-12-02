@@ -82,7 +82,7 @@ export default function Notification() {
                                     <p className="mt-4 leading-relaxed text-gray-700">
                                         {item?.message}
                                     </p>
-                                    {role === "admin" ? (item?.different && <Link to={`/admin/orders/${item?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
+                                    {role === "admin" ? (item?.different && <Link to={`/admin/orders/${item?.different}`} className="mt-4 leading-relaxed text-sky-500 underline">
                                         Chi tiết
                                     </Link>
                                     ) : (

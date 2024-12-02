@@ -10,7 +10,7 @@ const BlogDetail = () => {
   const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
   const [title, setTitle] = useState("");
   const [toc, setToc] = useState<any[]>([]); // State for table of contents
-
+  const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -42,8 +42,10 @@ const BlogDetail = () => {
         );
         setToc(tocItems);
 
-      } catch (error) {
-        console.error("Error fetching blog:", error);
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          setDeleted(true); // Nếu bài viết không tồn tại, đặt trạng thái xóa
+        }
       }
     };
 
@@ -61,13 +63,36 @@ const BlogDetail = () => {
 
     fetchBlog();
     fetchRelatedBlogs();
+    
+    const intervalId = setInterval(async () => {
+      try {
+        await axios.get(`http://localhost:2004/api/v1/blogs/detail/${slug}`);
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          setDeleted(true); // Bài viết bị xóa
+          clearInterval(intervalId); // Ngừng polling
+        }
+      }
+    }, 2000); // Kiểm tra mỗi 5 giây
+
+    return () => clearInterval(intervalId);
   }, [slug]);
 
   useEffect(() => {
     console.log("Updated Related Blogs State:", relatedBlogs);
   }, [relatedBlogs]);
 
-  useEffect(() => {},[])
+  if (deleted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold text-red-600">
+          Bài viết này không hiển thị hoặc đã bị xoá bởi quản trị viên.
+        </h1>
+      </div>
+    );
+  }
+
+
   if (!blog) {
     return (
       <div className="flex items-center justify-center min-h-screen">

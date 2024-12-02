@@ -806,9 +806,9 @@ export const List_Address = ({
 
 const { Option } = Select;
 interface IProps {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddress: () => void;
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAddress?: () => void;
 }
 export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
   const [provinces, setProvinces] = useState([]);
