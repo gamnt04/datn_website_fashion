@@ -173,7 +173,16 @@ const TrackOrder: React.FC = () => {
   ];
 
   return (
+    
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded mb-5 mt-5" >
+          <Link to={`/`} className="text-gray-500 hover:text-black ">
+            Trang chủ
+          </Link>
+          <span className="mx-1 text-gray-500">&#10148;</span>
+          Tra cứu đơn hàng 
+        </div>
+      
       {/* Tiêu đề và mô tả */}
       <Card
   style={{
