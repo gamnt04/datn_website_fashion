@@ -21,6 +21,7 @@ const Shipper_Order = () => {
     const [orderId, setOrderId] = useState<string | null>(null);
     const [messageApi, contextHolder] = message.useMessage();
     const { data, refetch, isLoading } = Query_Orders(id);
+
     const dispathNotification = Mutation_Notification("Add");
     const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
     const [selectedReason, setSelectedReason] = useState("");
@@ -162,6 +163,7 @@ const Shipper_Order = () => {
                             <p><strong>Tên người mua:</strong> {data?.customerInfo?.userName}</p>
                             <p><strong>SĐT:</strong> {data?.customerInfo?.phone}</p>
                             <p><strong>Địa chỉ:</strong> {data?.customerInfo?.address}</p>
+                            {/* <p><strong>Thời gian dự kiến</strong>60 phút</p> */}
                             <p><strong>Quãng đường giao:</strong> {data?.deliveryDistance}</p>
                         </div>
                     </Card>

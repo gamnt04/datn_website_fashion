@@ -10,8 +10,11 @@ mapboxgl.accessToken = "pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBia
 const Mapbox = ({ id }: { id: any }) => {
     const { data, isLoading, isError } = Query_Orders(id);
     const [customerLocation, setCustomerLocation] = useState<[number, number] | null>(null);
+    const [estimatedTime, setEstimatedTime] = useState<string | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const shopLocation: [number, number] = [105.7421, 21.0376]; // Tọa độ cửa hàng
+
+    // Lấy tọa độ khách hàng dựa trên địa chỉ
     const getCustomerLocation = async (address: string) => {
         try {
             const response = await axios.get(
@@ -34,11 +37,13 @@ const Mapbox = ({ id }: { id: any }) => {
             console.error("Error getting customer location:", error);
         }
     };
+
     useEffect(() => {
         if (data && data.customerInfo && data.customerInfo.address) {
             getCustomerLocation(data.customerInfo.address);
         }
     }, [data]);
+
     useEffect(() => {
         if (customerLocation) {
             const map = new mapboxgl.Map({
@@ -47,7 +52,6 @@ const Mapbox = ({ id }: { id: any }) => {
                 center: shopLocation,
                 zoom: 14,
             });
-
             new mapboxgl.Marker({ color: "blue" })
                 .setLngLat(shopLocation)
                 .setPopup(new mapboxgl.Popup().setHTML("<h3>Shop Seven</h3>"))
@@ -69,29 +73,35 @@ const Mapbox = ({ id }: { id: any }) => {
                             },
                         }
                     );
-                    const route = response.data.routes[0].geometry;
-                    map.addSource("route", {
-                        type: "geojson",
-                        data: {
-                            type: "Feature",
-                            geometry: route,
-                            properties: {}
-                        },
-                    });
 
-                    map.addLayer({
-                        id: "route",
-                        type: "line",
-                        source: "route",
-                        layout: {
-                            "line-join": "round",
-                            "line-cap": "round",
-                        },
-                        paint: {
-                            "line-color": "#0074d9",
-                            "line-width": 4,
-                        },
-                    });
+                    if (response.data.routes && response.data.routes.length > 0) {
+                        const route = response.data.routes[0].geometry;
+                        const duration = response.data.routes[0].duration;
+                        map.addSource("route", {
+                            type: "geojson",
+                            data: {
+                                type: "Feature",
+                                geometry: route,
+                                properties: {},
+                            },
+                        });
+                        map.addLayer({
+                            id: "route",
+                            type: "line",
+                            source: "route",
+                            layout: {
+                                "line-join": "round",
+                                "line-cap": "round",
+                            },
+                            paint: {
+                                "line-color": "#0074d9",
+                                "line-width": 4,
+                            },
+                        });
+                        const minutes = Math.floor(duration / 60);
+                        const seconds = Math.floor(duration % 60);
+                        setEstimatedTime(`${minutes} phút ${seconds} giây`);
+                    }
                 } catch (error) {
                     console.error("Error fetching route:", error);
                 }
@@ -103,9 +113,11 @@ const Mapbox = ({ id }: { id: any }) => {
     }, [customerLocation]);
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-[200px]">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>;
+        return (
+            <div className="flex justify-center items-center h-[200px]">
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+            </div>
+        );
     }
 
     if (isError || !data) {
@@ -114,7 +126,11 @@ const Mapbox = ({ id }: { id: any }) => {
 
     return (
         <div className="w-full h-screen bg-gray-100 flex flex-col items-center">
-            {/* <h1 className="text-xl font-bold mb-4">Bản đồ từ cửa hàng đến khách hàng</h1> */}
+            {estimatedTime && (
+                <div className="text-lg font-semibold mb-2">
+                    Thời gian dự kiến: {estimatedTime}
+                </div>
+            )}
             <div ref={mapContainerRef} className="w-full h-full rounded-xl" />
         </div>
     );
