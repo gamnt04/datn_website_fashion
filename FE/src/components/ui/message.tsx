@@ -34,7 +34,8 @@ const Message = () => {
   const handleSendMessage = (event: React.FormEvent) => {
     event.preventDefault();
     const newMessage = { role: "user", content: message, content_type: "text" };
-    setDataMessageByRole([newMessage, ...dataMessageByRole]);
+    setDataMessageByRole([...dataMessageByRole, newMessage]);
+
     setMessage("");
     setIsLoadingReply(true);
     SendMessage(

@@ -13,7 +13,7 @@ const userSchema = new Schema(
       unique: true
     },
     password: {
-      type: String,
+      type: String
     },
     userName: {
       type: String,
@@ -28,11 +28,15 @@ const userSchema = new Schema(
     },
     address: [
       {
-        fullName: { type: String },
-        phoneNumber: { type: String },
-        address: { type: String },
-        addressDetails: { type: String },
-        checked: { type: Boolean, default: false }
+        fullName: { type: String, required: true },
+        phoneNumber: { type: String, required: true },
+        address: { type: String, required: true },
+        detailedAddress: { type: String },
+        checked: { type: Boolean, default: false },
+        coordinates: {
+          lat: { type: Number },
+          lng: { type: Number }
+        }
       }
     ],
     phone: {
