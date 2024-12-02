@@ -478,7 +478,7 @@ const Pay = () => {
                                 {selectedAddress?.phoneNumber}
                               </p>
                               <p>
-                                {selectedAddress?.addressDetails +
+                                {selectedAddress?.detailedAddress +
                                   " - " +
                                   selectedAddress?.address}
                               </p>
@@ -498,7 +498,7 @@ const Pay = () => {
                                       {item?.phoneNumber}
                                     </p>
                                     <p>
-                                      {item?.addressDetails +
+                                      {item?.detailedAddress +
                                         " - " +
                                         item?.address}
                                     </p>
@@ -834,7 +834,13 @@ const Pay = () => {
               </div>
             </div>
           </form>
-          {address && <Add_Address handleAddress={handleAddress}></Add_Address>}
+          {address && (
+            <Add_Address
+              isOpen={address}
+              setIsOpen={setAddress}
+              handleAddress={handleAddress}
+            />
+          )}
           {isOpen && (
             <List_Address
               auth={auth.address}
