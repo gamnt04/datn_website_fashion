@@ -8,9 +8,7 @@ export const sendMessage = async (req, res) => {
       $or: [{ senderId, receiverId }]
     });
     let messageGroup2 = await MessageGroup.findOne({
-      $or: [
-        { senderId: receiverId, receiverId: senderId } // Kiểm tra 2 chiều để đảm bảo không tạo nhóm mới nếu đã có nhóm giữa cùng 2 người này
-      ]
+      $or: [{ senderId: receiverId, receiverId: senderId }]
     });
 
     if (!messageGroup1) {
@@ -32,15 +30,11 @@ export const sendMessage = async (req, res) => {
     if (senderId == messageGroup1.senderId) {
       messageGroup1.messages.push({
         content: content
-        // attachments: formattedAttachments,
-        // icons
       });
       savedMessageGroup = await messageGroup1.save();
     } else {
       messageGroup2.messages.push({
         content: content
-        // attachments: formattedAttachments,
-        // icons
       });
       savedMessageGroup = await messageGroup2.save();
     }
@@ -56,7 +50,8 @@ export const sendMessage = async (req, res) => {
 export const getMessagesBetweenUsers = async (req, res) => {
   try {
     const { userId1, userId2 } = req.params;
-
+    console.log("User ID 1:", userId1);
+    console.log("User ID 2:", userId2);
     if (
       !mongoose.Types.ObjectId.isValid(userId1) ||
       !mongoose.Types.ObjectId.isValid(userId2)
@@ -76,9 +71,9 @@ export const getMessagesBetweenUsers = async (req, res) => {
         }
       ]
     })
-      .populate("senderId", "fullName email") // Populate thông tin người gửi
-      .populate("receiverId", "fullName email") // Populate thông tin người nhận
-      .sort({ "messages.createdAt": 1 }); // Sắp xếp tin nhắn theo thời gian tạo
+      .populate("senderId", "fullName email")
+      .populate("receiverId", "fullName email")
+      .sort({ "messages.createdAt": 1 });
 
     res.status(200).json(messageGroups);
   } catch (error) {
