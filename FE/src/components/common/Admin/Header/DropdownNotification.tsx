@@ -1,20 +1,29 @@
-import { useState } from "react";
+
 import { Link } from "react-router-dom";
-import { Query_notification } from "../../../../_lib/React_Query/Notification/Query";
+import { Button, Popconfirm } from "antd";
+import { EyeInvisibleOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Query_notification, Mutation_Notification } from "../../../../_lib/React_Query/Notification/Query";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
+import { useState } from "react";
 
 const DropdownNotification = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data } = Query_notification(userId)
+  const role = user?.user?.role;
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const { mutate: removeNotification } = Mutation_Notification("Remove");
+  const { mutate: markAsRead } = Mutation_Notification("Send");
+  const { data } = Query_notification(userId, role);
+
+  const allRead = data?.notifications?.every((item: any) => item.status_notification === true);
+
   return (
     <div className="relative">
       <li>
-        <Link
-          onClick={() => {
-            setDropdownOpen(!dropdownOpen);
-          }}
+        <Link onClick={() => {
+          setDropdownOpen(!dropdownOpen);
+        }}
           to="#"
           className="relative flex w-[34px] h-[34px] items-center justify-center rounded-full border-[0.5px] bg-[#EFF4FB]"
         >
@@ -39,47 +48,73 @@ const DropdownNotification = () => {
           </svg>
         </Link>
         {dropdownOpen && (
-          <div
-            className={`absolute -right-27 mt-2.5 flex h-90 w-75 flex-col rounded-sm border border-stroke bg-white right-0 w-[320px]`}
-          >
-            <div className="px-5 py-3">
-              <h5 className="text-[14px] font-semibold text-[#8A99AF]">
-                Thông Báo
-              </h5>
+          <div className="absolute right-0 mt-2.5 w-[320px] rounded-sm border border-stroke bg-white">
+            <div className="flex justify-between px-5 py-3">
+              <h5 className="text-[14px] font-semibold text-[#8A99AF]">Thông Báo</h5>
+              <Button
+                onClick={() => markAsRead(undefined)}
+                disabled={allRead}
+                size="small"
+                type="primary"
+              >
+                Đọc tất cả
+              </Button>
             </div>
-            <ul className="flex max-h-[300px] flex-col overflow-y-auto">
-              {data?.notifications?.map((orders: any) => {
-                return (
-                  <li key={orders?._id}>
-                    <div
-                      className="flex flex-col gap-3 border-t border-stroke px-5 py-3 hover:bg-gray-2 "
-                    >
-                      <p className="text-sm text-black">
-                        <span className="mt-[5px] text-[#8A99AF] mr-4">
-                          Lý do:{orders?.message}
-                        </span>
-                        {/* {role === "admin" || orders.different === '' ? (
-                          <Link to={`/admin/orders/${orders?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
-                            Chi tiết
-                          </Link>
-                        ) : ('')} */}
-                        {
-                          orders?.different &&
-                          <Link to={`/admin/orders/${orders?.different}/orderDetali`} className="mt-4 leading-relaxed text-sky-500 underline">
-                            Chi tiết
-                          </Link>
-                        }
-                      </p>
+            <ul className="max-h-[300px] flex-col overflow-y-auto">
+              {data?.notifications?.length > 0 ? (
+                data.notifications.map((item: any) => (
+                  <li key={item._id} className="flex flex-col gap-3 border-t border-stroke px-5 py-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-4">
+                        <h2 className="text-sm font-medium text-black">
+                          {item?.userId?.role === "admin"
+                            ? "Seven"
+                            : item?.userId?.role === "user"
+                              ? item?.userId?.userName
+                              : "Khác"}
+                        </h2>
+                        {item.status_notification ? (
+                          <EyeOutlined style={{ color: "orange", fontSize: "18px" }} />
+                        ) : (
+                          <EyeInvisibleOutlined style={{ fontSize: "18px", color: "black" }} />
+                        )}
+                      </div>
+                      <Popconfirm
+                        title="Xóa thông báo"
+                        onConfirm={() => removeNotification(item._id)}
+                        okText="Yes"
+                        cancelText="No"
+                        className=" text-black"
+                      >
+                        <DeleteOutlined />
+                      </Popconfirm>
                     </div>
+                    <p className="text-sm text-gray-700">{item.message}</p>
+                    <Link
+                      to={
+                        role === "admin"
+                          ? `/admin/orders/${item?.different}`
+                          : `/profile/order/${item?.different}`
+                      }
+                      className="text-sky-500 underline"
+                    >
+                      Chi tiết
+                    </Link>
                   </li>
-                )
-              })}
+                ))
+              ) : (
+                <li className="flex items-center justify-center h-[200px] text-gray-500">
+                  Không có thông báo nào!
+                </li>
+              )}
             </ul>
           </div>
         )}
+
       </li>
     </div>
   );
 };
 
 export default DropdownNotification;
+
