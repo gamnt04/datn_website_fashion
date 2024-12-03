@@ -1,5 +1,10 @@
 import Voucher from "../../models/Voucher/voucher";
 import Products from "../../models/Items/Products";
+import Users from "../../models/Auth/users";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
+
 export const getVoucher = async (req, res) => {
   try {
     const vouchers = await Voucher.find();
@@ -24,16 +29,109 @@ export const getVoucherById = async (req, res) => {
   }
 };
 
+const sendEmail = async (
+  userName,
+  email,
+  code_voucher,
+  startDate,
+  expirationDate
+) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  // Định dạng thời gian
+  const formatDate = (date) =>
+    new Intl.DateTimeFormat("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(new Date(date));
+
+  const formattedStartDate = formatDate(startDate);
+  const formattedExpirationDate = formatDate(expirationDate);
+
+  const mailOptions = {
+    from: process.env.SMTP_USER,
+    to: email,
+    subject: "Mã giảm giá mới dành cho bạn!",
+    text: `Kính gửi ${userName},
+
+Bạn đã nhận được mã giảm giá mới từ chúng tôi:
+Mã giảm giá: ${code_voucher}
+Thời gian sử dụng: ${formattedStartDate} - ${formattedExpirationDate}
+Vui lòng truy cập web và mua sắm để sử dụng mã giảm giá này --> http://localhost:7899/shops
+
+Xin chân thành cảm ơn!`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
 export const addVoucher = async (req, res) => {
   try {
     req.body.code_voucher = req.body.code_voucher.toUpperCase();
+    // Kiểm tra xem mã giảm giá đã tồn tại hay chưa
+    const existingVoucher = await Voucher.findOne({
+      code_voucher: req.body.code_voucher,
+    });
+    if (existingVoucher) {
+      return res.status(400).json({
+        message: "Mã giảm giá đã tồn tại, vui lòng sử dụng mã khác.",
+      });
+    }
     const newVoucher = new Voucher(req.body);
     await newVoucher.save();
+
+    const allowedUsers = req.body.allowedUsers || [];
+
+    if (allowedUsers.length > 0) {
+      // Gửi email cho danh sách người dùng cụ thể
+      for (const userId of allowedUsers) {
+        const user = await Users.findById(userId);
+        if (user) {
+          await sendEmail(
+            user.userName,
+            user.email,
+            newVoucher.code_voucher,
+            newVoucher.startDate,
+            newVoucher.expirationDate
+          );
+        }
+      }
+    } else {
+      // Gửi email cho tất cả người dùng
+      const users = await Users.find();
+      for (const user of users) {
+        await sendEmail(
+          user.userName,
+          user.email,
+          newVoucher.code_voucher,
+          newVoucher.startDate,
+          newVoucher.expirationDate
+        );
+      }
+    }
+
     res.status(201).json({
       message: "Thêm mới mã giảm giá thành công",
       voucher: newVoucher,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Mã giảm giá bị trùng, vui lòng thử mã khác.",
+      });
+    }
+
     res.status(500).json({ error: error.message });
   }
 };

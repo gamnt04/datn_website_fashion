@@ -2,7 +2,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   EditOutlined,
-  PlusOutlined
+  PlusOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -13,7 +13,7 @@ import {
   Input,
   message,
   Popconfirm,
-  Select
+  Select,
 } from "antd";
 import "mapbox-gl/dist/mapbox-gl.css";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
@@ -420,7 +420,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   const [selectedLocation, setSelectedLocation] = useState({
     province: { code: null, name: "" },
     district: { code: null, name: "" },
-    ward: { code: null, name: "" }
+    ward: { code: null, name: "" },
   });
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
 
@@ -432,7 +432,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
         `/auth/address/${userId}/${addressId}`
       );
       return data;
-    }
+    },
   });
 
   // Fetch provinces from API
@@ -453,7 +453,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
         fullName: data.address.fullName,
         phoneNumber: data.address.phoneNumber,
         detailedAddress: data.address.detailedAddress,
-        checked: data.address.checked
+        checked: data.address.checked,
       });
 
       const addressNumbers = data.address.addressNumber || [];
@@ -469,7 +469,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       if (selectedProvince) {
         setSelectedLocation((prev) => ({
           ...prev,
-          province: selectedProvince
+          province: selectedProvince,
         }));
         fetchDetailProvinces(provinceCode); // Fetch quận/huyện cho thành phố đã chọn
       }
@@ -482,7 +482,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
         if (selectedDistrict) {
           setSelectedLocation((prev) => ({
             ...prev,
-            district: selectedDistrict
+            district: selectedDistrict,
           }));
           setWards(selectedDistrict.wards || []); // Lấy phường/xã cho quận/huyện
         }
@@ -494,7 +494,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
         if (selectedWard) {
           setSelectedLocation((prev) => ({
             ...prev,
-            ward: selectedWard
+            ward: selectedWard,
           }));
         }
       }
@@ -502,7 +502,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       // Set coordinates từ dữ liệu đã có
       setCoordinates({
         lat: data.address.coordinates.lat,
-        lng: data.address.coordinates.lng
+        lng: data.address.coordinates.lng,
       });
 
       fetchProvinces();
@@ -528,7 +528,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       setSelectedLocation({
         province: selectedProvince,
         district: { code: null, name: "" },
-        ward: { code: null, name: "" }
+        ward: { code: null, name: "" },
       });
       setDistricts([]);
       setWards([]);
@@ -543,7 +543,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       setSelectedLocation((prev) => ({
         ...prev,
         district: selectedDistrict,
-        ward: { code: null, name: "" }
+        ward: { code: null, name: "" },
       }));
       setWards(selectedDistrict.wards || []);
     }
@@ -555,7 +555,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
     if (selectedWard) {
       setSelectedLocation((prev) => ({
         ...prev,
-        ward: selectedWard
+        ward: selectedWard,
       }));
       const fullAddress = `${selectedWard.name}, ${selectedLocation.district.name}, ${selectedLocation.province.name}`;
       fetchCoordinates(fullAddress);
@@ -592,7 +592,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: coordinates,
-      zoom: 12
+      zoom: 12,
     });
 
     const marker = new mapboxgl.Marker()
@@ -603,7 +603,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       const newCoordinates = e.lngLat;
       setCoordinates({
         lat: newCoordinates.lat,
-        lng: newCoordinates.lng
+        lng: newCoordinates.lng,
       });
       marker.setLngLat([newCoordinates.lng, newCoordinates.lat]);
     });
@@ -627,15 +627,15 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       queryClient.invalidateQueries(["AUTH_KEY", userId]);
       messageApi.open({
         type: "success",
-        content: "Chỉnh sửa địa chỉ thành công"
+        content: "Chỉnh sửa địa chỉ thành công",
       });
     },
     onError: () => {
       messageApi.open({
         type: "error",
-        content: "Chỉnh sửa địa chỉ thất bại!"
+        content: "Chỉnh sửa địa chỉ thất bại!",
       });
-    }
+    },
   });
 
   const onFinish = (values: any) => {
@@ -662,7 +662,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
             className="w-full my-3"
             label="Số điện thoại"
             rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại!" }
+              { required: true, message: "Vui lòng nhập số điện thoại!" },
             ]}
           >
             <Input placeholder="Số điện thoại" />
@@ -673,7 +673,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
               name="province"
               label="Tỉnh/Thành phố"
               rules={[
-                { required: true, message: "Vui lòng chọn tỉnh/thành phố!" }
+                { required: true, message: "Vui lòng chọn tỉnh/thành phố!" },
               ]}
               style={{ flex: 1 }}
             >
@@ -729,7 +729,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
             name="detailedAddress"
             label="Địa chỉ cụ thể"
             rules={[
-              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }
+              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" },
             ]}
           >
             <Input placeholder="Địa chỉ cụ thể" />
@@ -747,9 +747,9 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
             />
           </div>
 
-          <div className="text-center py-3">
+          <div className="py-3 text-center">
             <Button
-              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+              className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700"
               htmlType="submit"
             >
               Cập nhật
@@ -775,7 +775,7 @@ export const List_Address = ({
   handleTAdd,
   handleAddressSelect,
   handleAddress,
-  selectedAddress
+  selectedAddress,
 }: any) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -880,7 +880,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
   const [selectedLocation, setSelectedLocation] = useState({
     province: { code: null, name: "" },
     district: { code: null, name: "" },
-    ward: { code: null, name: "" }
+    ward: { code: null, name: "" },
   });
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
   const [user] = useLocalStorage("user", {});
@@ -905,19 +905,19 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
     onSuccess: () => {
       form.resetFields();
       querryClient.invalidateQueries({
-        queryKey: ["AUTH_KEY"]
+        queryKey: ["AUTH_KEY"],
       });
       messageApi.open({
         type: "success",
-        content: "Thêm địa chỉ thành công"
+        content: "Thêm địa chỉ thành công",
       });
     },
     onError: () => {
       messageApi.open({
         type: "error",
-        content: "Thêm địa chỉ thất bại!"
+        content: "Thêm địa chỉ thất bại!",
       });
-    }
+    },
   });
 
   useEffect(() => {
@@ -950,7 +950,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       setSelectedLocation({
         province: selectedProvince,
         district: { code: null, name: "" },
-        ward: { code: null, name: "" }
+        ward: { code: null, name: "" },
       });
       setDistricts([]);
       setWards([]);
@@ -964,7 +964,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       setSelectedLocation((prev: any) => ({
         ...prev,
         district: selectedDistrict,
-        ward: { code: null, name: "" }
+        ward: { code: null, name: "" },
       }));
       setWards(selectedDistrict.wards || []);
     }
@@ -975,7 +975,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
     if (selectedWard) {
       setSelectedLocation((prev: any) => ({
         ...prev,
-        ward: selectedWard
+        ward: selectedWard,
       }));
       const fullAddress = `${selectedWard.name}, ${selectedLocation.district.name}, ${selectedLocation.province.name}`;
       fetchCoordinates(fullAddress);
@@ -1011,7 +1011,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: coordinates,
-      zoom: 12
+      zoom: 12,
     });
 
     // Tạo Marker
@@ -1024,7 +1024,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       const newCoordinates = e.lngLat;
       setCoordinates({
         lat: newCoordinates.lat,
-        lng: newCoordinates.lng
+        lng: newCoordinates.lng,
       });
 
       // Di chuyển Marker đến vị trí mới
@@ -1064,7 +1064,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
     const fullAddressNumber = [
       selectedLocation.ward.code,
       selectedLocation.district.code,
-      selectedLocation.province.code
+      selectedLocation.province.code,
     ];
     message.success("Địa chỉ đã được lưu!");
     const data_form: any = {
@@ -1077,19 +1077,13 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
         addressNumber: fullAddressNumber,
         coordinates: {
           lat: coordinates.lat,
-          lng: coordinates.lng
-        }
+          lng: coordinates.lng,
+        },
       },
-      setDefault: values.checked
+      setDefault: values.checked,
     };
     console.log("data_form", data_form);
-<<<<<<< HEAD
-    console.log("fullAddressNumber", fullAddressNumber);
-
-    setIsOpen(false);
-=======
     // setIsOpen(false);
->>>>>>> 32afd8a2ce3ee0e6f2a49621e80da5bf522d73d4
     mutate(data_form);
   };
   return (
@@ -1104,7 +1098,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
             label="Họ và tên"
             rules={[
               { required: true, message: "Vui lòng nhập họ và tên!" },
-              { min: 3, message: "Tên phải có ít nhất 3 ký tự!" }
+              { min: 3, message: "Tên phải có ít nhất 3 ký tự!" },
             ]}
             style={{ fontSize: "8px" }}
           >
@@ -1122,8 +1116,8 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
               { required: true, message: "Vui lòng nhập số điện thoại!" },
               {
                 pattern: /^[0-9]{10,11}$/,
-                message: "Số điện thoại không hợp lệ!"
-              }
+                message: "Số điện thoại không hợp lệ!",
+              },
             ]}
           >
             <Input
@@ -1136,7 +1130,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
               name="province"
               label="Tỉnh/Thành phố"
               rules={[
-                { required: true, message: "Vui lòng chọn tỉnh/thành phố!" }
+                { required: true, message: "Vui lòng chọn tỉnh/thành phố!" },
               ]}
               style={{ flex: 1 }}
             >
@@ -1195,7 +1189,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
             className="w-full"
             label="Địa chỉ cụ thể"
             rules={[
-              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }
+              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" },
             ]}
           >
             <Input
@@ -1209,7 +1203,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
                 ref={mapContainerRef}
                 style={{
                   width: "100%",
-                  height: "30vh"
+                  height: "30vh",
                 }}
               />
             </div>
