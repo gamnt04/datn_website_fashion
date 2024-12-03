@@ -97,11 +97,7 @@ const Pay = () => {
       const tong_km = Tinh_tong_km(selectedAddress);
       console.log(tong_km);
       setPhi_van_chuyen(() =>
-<<<<<<< HEAD
         tong_km ? (tong_km > 60 ? 60000 : tong_km * 5000) : 0
-=======
-        tong_km ? ((tong_km > 40) ? 50000 : (tong_km * 5000)) : 0
->>>>>>> main
       );
     })();
   }, [selectedAddress]);
@@ -353,7 +349,6 @@ const Pay = () => {
         content: "Lỗi tạo đơn hàng!",
       });
     }
-
   };
   // console.log("orderSuccessfully", isOrderSuccessfully);
 
