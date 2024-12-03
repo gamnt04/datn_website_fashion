@@ -213,7 +213,7 @@ export const List_Address = ({
                       <span className="px-2 text-gray-400">|</span>
                       <span className="text-gray-400">{item.phoneNumber}</span>
                     </h1>
-                    <p className="py-2 text-gray-400">{item.addressDetails}</p>
+                    <p className="py-2 text-gray-400">{item.detailedAddress}</p>
                     <p className="text-gray-400">{item.address}</p>
                     <div className="flex gap-3 mt-3">
                       {item.checked && (

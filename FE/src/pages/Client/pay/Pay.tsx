@@ -39,6 +39,8 @@ const Pay = () => {
   const [isOrderSuccessfully, setIsOrderSuccessfully] =
     useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
+  console.log(auth);
+
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
@@ -87,16 +89,16 @@ const Pay = () => {
         setValue("userName", address.fullName);
         setValue("phone", address.phoneNumber);
         setValue("email", auth.email);
-        setValue("address", `${address.addressDetails} - ${address.address}`);
+        setValue("address", `${address.detailedAddress} - ${address.address}`);
       }
     }
   }, [auth, selectedAddress, setValue]);
   useEffect(() => {
     (async () => {
       const dia_chi_nguoi_dung =
-        selectedAddress?.addressDetails - selectedAddress?.address;
+        selectedAddress?.detailedAddress - selectedAddress?.address;
       const tong_km = await Tinh_tong_km(dia_chi_nguoi_dung);
-      console.log(tong_km);
+      // console.log(tong_km);
       setPhi_van_chuyen(() =>
         tong_km ? (Math.ceil(tong_km) / 1000) * 5000 : 0
       );
@@ -261,6 +263,8 @@ const Pay = () => {
 
   // add order
   const onAddOrder = async (data_form: any) => {
+    console.log(data_form);
+
     const discountCodeToUse = selectedVoucherCode || discountCode;
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
@@ -301,8 +305,9 @@ const Pay = () => {
       userId: userId,
       items: item_order_checkked,
       customerInfo: {
-        ...data_form
-      },
+        ...data_form,
+      }
+      ,
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice,
@@ -347,7 +352,7 @@ const Pay = () => {
     }
     setIsOrderSuccessfully(true);
   };
-  console.log("orderSuccessfully", isOrderSuccessfully);
+  // console.log("orderSuccessfully", isOrderSuccessfully);
 
   const columns = [
     {
@@ -439,7 +444,7 @@ const Pay = () => {
   }
   return (
     <>
-      <div className="max-w-[1440px] w-[95vw] mx-auto">
+      <div className="max-w-[1440px] w-[95vw] mx-auto ">
         {contextHolder}
         <div className="mt-20">
           <div className="mb-6">
@@ -652,15 +657,13 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              } ${
-                                isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                                } ${isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -683,9 +686,8 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                  }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled} // Disable voucher nếu người dùng không đủ điều kiện
                               >
@@ -751,8 +753,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -796,9 +798,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND"
-                          })}`
+                          style: "currency",
+                          currency: "VND"
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
@@ -851,20 +853,26 @@ const Pay = () => {
             ></List_Address>
           )}
           {isOrderSuccessfully && (
-            <Result
-              status="success"
-              title="Successfully Purchased Cloud Server ECS!"
-              subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
-              extra={[
-                <Button type="primary" key="console">
-                  Go Console
-                </Button>,
-                <Link to="/profile/list_order">
-                  <Button key="buy">Buy Again</Button>
-                </Link>
-              ]}
-            />
+            <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+              <Result
+                status="success"
+                title="Bạn đã đặt hàng thành công!"
+                subTitle=""
+                className="bg-white w-[500px] h-[300px] rounded"
+                extra={[
+                  <>
+                    <Link to="/">
+                      <Button key="buy">Quay lại trang chủ</Button>
+                    </Link>
+                    <Link to="/profile/list_order">
+                      <Button key="buy">Đơn hàng của bạn</Button>
+                    </Link>
+                  </>
+                ]}
+              />
+            </div>
           )}
+
         </div>
       </div>
     </>
