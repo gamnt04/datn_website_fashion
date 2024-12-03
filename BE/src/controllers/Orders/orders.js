@@ -60,9 +60,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.addressDetail || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+          }`,
+        toa_do: customerInfo.toa_do,
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
@@ -152,9 +152,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.addressDetail || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
+            }`,
         },
         totalPrice,
       });
@@ -395,36 +394,30 @@ export const getTop10ProductBestSale = async (req, res) => {
   }
 };
 
-const getCoordinates = async (address) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-    address
-  )}&format=json&limit=1`;
+const calculateDistance = async (coords1, coords2) => {
+  const mapboxAccessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w'; // Thay bằng token của bạn
+
+  const origin = [coords1.lng, coords1.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
+  const destination = [coords2.lng, coords2.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
+
+  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?alternatives=false&geometries=geojson&steps=true&access_token=${mapboxAccessToken}`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.length > 0) {
-      console.log(`Tọa độ tìm thấy cho địa chỉ: ${address}`, data[0]);
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-      };
+    if (data.routes && data.routes.length > 0) {
+      const distanceInMeters = data.routes[0].distance; // Khoảng cách theo đơn vị mét
+      const distanceInKilometers = distanceInMeters / 1000; // Chuyển từ mét sang kilomet
+
+      return distanceInKilometers.toFixed(2); // Trả về khoảng cách ở dạng km
     } else {
-      console.warn(`Không tìm thấy tọa độ cho địa chỉ: ${address}`);
-      return null;
+      throw new Error("Không tìm thấy tuyến đường.");
     }
   } catch (error) {
-    console.error("Lỗi khi lấy tọa độ:", error);
-    return null;
+    console.error("Error calculating distance:", error);
+    throw new Error("Không thể tính toán khoảng cách.");
   }
-};
-
-const calculateDistance = (startCoords, destinationCoords) => {
-  const from = turf.point([startCoords.lon, startCoords.lat]);
-  const to = turf.point([destinationCoords.lon, destinationCoords.lat]);
-  const options = { units: "kilometers" };
-  return turf.distance(from, to, options);
 };
 
 export const getOrderById = async (req, res) => {
@@ -432,41 +425,28 @@ export const getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.id).populate("shipperId");
 
     if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Order not found" });
+      return res.status(StatusCodes.NOT_FOUND).json({ error: "Order not found" });
     }
-
-    const warehouseAddress =
-      "FPT Polytechnic, Trịnh Văn Bô, Nam Từ Liêm, Hà Nội";
-
-    const warehouseCoords = await getCoordinates(warehouseAddress);
-    const customerCoords = await getCoordinates(order.customerInfo.address);
-
-    if (!warehouseCoords) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: `Không thể tìm thấy tọa độ của địa chỉ kho: ${warehouseAddress}`,
-      });
-    }
+    const warehouseCoords = { lat: 21.037956477970923, lng: 105.74689813551527 };  // Tọa độ kho
+    const customerCoords = order.customerInfo.toa_do;
 
     if (!customerCoords) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: `Không thể tìm thấy tọa độ của địa chỉ người nhận: ${order.customerInfo.address}`,
+        error: `Không thể tìm thấy tọa độ của địa chỉ người nhận: ${order.customerInfo.address}`
       });
     }
-
-    const distance = calculateDistance(warehouseCoords, customerCoords);
-
-    order.deliveryDistance = distance.toFixed(2) + " km";
+    const distance = await calculateDistance(warehouseCoords, customerCoords);
+    order.deliveryDistance = distance + "km";
     await order.save();
-
-    return res.status(StatusCodes.OK).json(order.toObject());
+    return res.status(StatusCodes.OK).json({
+      ...order.toObject(),
+      deliveryDistance: distance + "km"
+    });
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
+
 
 export const getOneOrderUser = async (req, res) => {
   const {
@@ -532,7 +512,6 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, total_price } = req.body;
-    console.log("status", req.body);
 
     const order = await Order.findById(id);
     if (!order) {
@@ -713,8 +692,6 @@ export const userCancelOrder = async (req, res) => {
       order.cancellationReason = cancellationReason;
     }
     await order.save();
-    console.log("Lý do hủy đơn hàng:", order.cancellationReason);
-
     // Send email notification
     // try {
     //   await SendCancellationMail(order.customerInfo.email, order, order.cancellationReason);
@@ -827,12 +804,7 @@ export const getOrderByNumber = async (req, res) => {
 export const getOrderByNumberOrPhoneNumber = async (req, res) => {
   try {
     const { searchOrder } = req.body;
-    // const { id } = req.params.id;
-
-    // console.log("Shipper ID:", id);
-
     const orders = await Order.find({
-      // shipperId: id,
       $or: [
         { orderNumber: { $regex: new RegExp(searchOrder, "i") } },
         { "customerInfo.phone": { $regex: new RegExp(searchOrder, "i") } },

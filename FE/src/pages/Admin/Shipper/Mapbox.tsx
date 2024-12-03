@@ -12,7 +12,7 @@ const Mapbox = ({ id }: { id: any }) => {
     const [customerLocation, setCustomerLocation] = useState<[number, number] | null>(null);
     const [estimatedTime, setEstimatedTime] = useState<string | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const shopLocation: [number, number] = [105.7421, 21.0376]; // Tọa độ cửa hàng
+    const shopLocation: [number, number] = [105.74689813551527, 21.037956477970923]; // Tọa độ cửa hàng
 
     useEffect(() => {
         if (data && data.customerInfo && data.customerInfo.toa_do) {
