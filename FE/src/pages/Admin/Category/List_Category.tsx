@@ -288,16 +288,22 @@ const List_Category: React.FC = () => {
           <Loading />
         ) : (
           <div className="m-6">
-            <div className="flex items-center justify-between mb-3">
-              <Input
-                placeholder="Tìm kiếm danh mục"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                onPressEnter={onHandleSearch}
-              />
-              <Button type="primary" onClick={onHandleSearch}>
-                Tìm kiếm
-              </Button>
+            <div className="flex items-center justify-between mt-20 mb-5">
+              <h1 className="text-2xl font-semibold">Quản Lý Danh Mục</h1>
+              <UpdateComponent />
+            </div>
+            <div className="flex justify-between mb-2">
+              <div className="flex space-x-5">
+                <Input
+                  className="w-[500px]"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                />
+                <Button onClick={onHandleSearch} type="primary">
+                  Tìm kiếm
+                </Button>
+              </div>
             </div>
             <Table
               dataSource={dataSource.slice(
