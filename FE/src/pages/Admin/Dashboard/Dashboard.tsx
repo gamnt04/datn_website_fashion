@@ -159,7 +159,7 @@ const MainContent = () => {
           <ChartRevenueWeekly />
           <TableTopProducts />
         </div>
-        <div className="mt-7 flex space-x-7">
+        <div className="mt-7 flex space-x-12 w-[100%]">
           <TableOrder />
         </div>
       </div>

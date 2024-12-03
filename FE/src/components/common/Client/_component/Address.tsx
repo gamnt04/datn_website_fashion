@@ -5,7 +5,6 @@ import {
   PlusOutlined
 } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import "mapbox-gl/dist/mapbox-gl.css";
 import {
   Button,
   Checkbox,
@@ -16,6 +15,7 @@ import {
   Popconfirm,
   Select
 } from "antd";
+import "mapbox-gl/dist/mapbox-gl.css";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import instance from "../../../../configs/axios";
 // import { useNavigate } from "react-router-dom";
@@ -32,6 +32,379 @@ type FieldType = {
   checked: boolean;
   newAddress: string;
 };
+interface IProps {
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAddress?: () => void;
+}
+// export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
+//   const [user] = useLocalStorage("user", {});
+//   const userId = user?.user?._id;
+//   const userRole = user?.user?.role;
+//   const [form] = Form.useForm();
+//   const [messageApi, contextHolder] = message.useMessage();
+//   const queryClient = useQueryClient();
+//   const closeOpenUpdate = () => {
+//     setIsOpenUpdate(false);
+//   };
+//   const [provinces, setProvinces] = useState([]);
+//   const [districts, setDistricts] = useState([]);
+//   const [wards, setWards] = useState([]);
+//   const [selectedLocation, setSelectedLocation] = useState({
+//     province: { code: null, name: "" },
+//     district: { code: null, name: "" },
+//     ward: { code: null, name: "" }
+//   });
+//   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+
+//   // Lấy thông tin địa chỉ người dùng
+//   const { data, isSuccess } = useQuery({
+//     queryKey: ["AUTH_KEY", addressId],
+//     queryFn: async () => {
+//       const { data } = await instance.get(
+//         `/auth/address/${userId}/${addressId}`
+//       );
+//       return data;
+//     }
+//   });
+//   console.log("dataupdate", data);
+//   const fetchProvinces = async () => {
+//     try {
+//       const response = await fetch("https://provinces.open-api.vn/api/p/");
+//       const data = await response.json();
+//       setProvinces(data);
+//     } catch {
+//       message.error("Lỗi khi tải danh sách tỉnh/thành phố.");
+//     }
+//   };
+//   // Cập nhật giá trị của form khi dữ liệu đã được tải
+//   useEffect(() => {
+//     if (isSuccess && data?.address) {
+//       form.setFieldsValue({
+//         fullName: data.address.fullName,
+//         phoneNumber: data.address.phoneNumber,
+//         detailedAddress: data.address.detailedAddress,
+//         checked: data.address.checked
+//       });
+
+//       setProvinces(data.address.addressNumber[0]);
+//       setDistricts(data.address.addressNumber[1]);
+//       setWards(data.address.addressNumber[2]);
+
+//       // Cập nhật selectedLocation
+//       setSelectedLocation({
+//         province: { code: data.address.addressNumber[0], name: "" },
+//         district: { code: data.address.addressNumber[1], name: "" },
+//         ward: { code: data.address.addressNumber[2], name: "" }
+//       });
+
+//       // Cập nhật tọa độ (coordinates)
+//       setCoordinates({
+//         lat: data.address.coordinates.lat,
+//         lng: data.address.coordinates.lng
+//       });
+
+//       // Fetch tên tỉnh/thành phố, quận/huyện, xã/phường từ API nếu cần
+//       fetchProvinces();
+//     }
+//   }, [isSuccess, data, form]);
+//   console.log("provinces", provinces);
+//   console.log("districts", districts);
+//   console.log("wards", wards);
+
+//   const fetchDetailProvinces = async (provinceCode: string) => {
+//     try {
+//       const response = await fetch(
+//         `https://provinces.open-api.vn/api/p/${provinceCode}?depth=3`
+//       );
+//       const data = await response.json();
+//       setDistricts(data.districts || []);
+//     } catch {
+//       message.error("Lỗi khi tải danh sách quận/huyện.");
+//     }
+//   };
+//   const handleProvinceChange = (value: string) => {
+//     const selectedProvince = provinces.find((item) => item.code === value);
+//     if (selectedProvince) {
+//       setSelectedLocation({
+//         province: selectedProvince,
+//         district: { code: null, name: "" },
+//         ward: { code: null, name: "" }
+//       });
+//       setDistricts([]);
+//       setWards([]);
+//       fetchDetailProvinces(value);
+//     }
+//   };
+
+//   const handleDistrictChange = (value: string) => {
+//     const selectedDistrict = districts.find((item) => item.code === value);
+//     if (selectedDistrict) {
+//       setSelectedLocation((prev) => ({
+//         ...prev,
+//         district: selectedDistrict,
+//         ward: { code: null, name: "" }
+//       }));
+//       setWards(selectedDistrict.wards || []);
+//     }
+//   };
+
+//   const handleWardChange = (value: string) => {
+//     const selectedWard = wards.find((item) => item.code === value);
+//     if (selectedWard) {
+//       setSelectedLocation((prev) => ({
+//         ...prev,
+//         ward: selectedWard
+//       }));
+//       const fullAddress = `${selectedWard.name}, ${selectedLocation.district.name}, ${selectedLocation.province.name}`;
+//       fetchCoordinates(fullAddress);
+//     }
+//   };
+
+//   const fetchCoordinates = async (address: string) => {
+//     try {
+//       const response = await fetch(
+//         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+//           address
+//         )}.json?access_token=${mapboxgl.accessToken}`
+//       );
+//       const data = await response.json();
+//       if (data.features?.length) {
+//         const [lng, lat] = data.features[0].center;
+//         setCoordinates({ lat, lng });
+//       } else {
+//         message.error("Không thể tìm thấy tọa độ.");
+//       }
+//     } catch {
+//       message.error("Lỗi khi tìm tọa độ.");
+//     }
+//   };
+
+//   const mapContainerRef = useRef<HTMLDivElement>(null);
+//   useEffect(() => {
+//     if (!mapContainerRef.current || !coordinates.lat || !coordinates.lng)
+//       return;
+
+//     // Khởi tạo bản đồ
+//     const map = new mapboxgl.Map({
+//       container: mapContainerRef.current,
+//       style: "mapbox://styles/mapbox/streets-v11",
+//       center: coordinates,
+//       zoom: 12
+//     });
+
+//     // Tạo Marker
+//     const marker = new mapboxgl.Marker()
+//       .setLngLat([coordinates.lng, coordinates.lat])
+//       .addTo(map);
+
+//     // Cập nhật tọa độ khi click vào bản đồ
+//     map.on("click", (e) => {
+//       const newCoordinates = e.lngLat;
+//       setCoordinates({
+//         lat: newCoordinates.lat,
+//         lng: newCoordinates.lng
+//       });
+
+//       // Di chuyển Marker đến vị trí mới
+//       marker.setLngLat([newCoordinates.lng, newCoordinates.lat]);
+
+//       console.log(
+//         "Tọa độ mới sau khi click:",
+//         newCoordinates.lng,
+//         newCoordinates.lat
+//       );
+//     });
+
+//     return () => {
+//       map.remove();
+//     };
+//   }, [coordinates]);
+//   // Mutation để cập nhật địa chỉ
+//   const { mutate } = useMutation({
+//     mutationFn: async (formData) => {
+//       if (userRole === "courier") {
+//         const { data } = await instance.put(
+//           `/shippers/${userId}/${addressId}`,
+//           formData
+//         );
+
+//         return data;
+//       } else {
+//         const { data } = await instance.put(
+//           `/auth/${userId}/${addressId}`,
+//           formData
+//         );
+//         return data;
+//       }
+//     },
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({
+//         queryKey: ["AUTH_KEY", userId]
+//       });
+//       messageApi.open({
+//         type: "success",
+//         content: "Chỉnh sửa địa chỉ thành công"
+//       });
+//     },
+//     onError: () => {
+//       messageApi.open({
+//         type: "error",
+//         content: "Chỉnh sửa địa chỉ thất bại!"
+//       });
+//     }
+//   });
+
+//   const onFinish: FormProps<FieldType>["onFinish"] = (values: any) => {
+//     mutate(values);
+//   };
+
+//   return (
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+//       {contextHolder}
+//       <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[600px] overflow-y-auto custom-scrollbar">
+//         <h1 className="py-1 font-medium text-center">Cập nhật địa chỉ</h1>
+//         <Form form={form} onFinish={onFinish} layout="vertical">
+//           <Form.Item
+//             name="fullName"
+//             className="w-full my-3"
+//             label="Họ và tên"
+//             rules={[
+//               { required: true, message: "Vui lòng nhập họ và tên!" },
+//               { min: 3, message: "Tên phải có ít nhất 3 ký tự!" }
+//             ]}
+//             style={{ fontSize: "8px" }}
+//           >
+//             <Input
+//               className="w-full px-2 py-2 border rounded focus:ring-0"
+//               placeholder="Họ và tên"
+//             />
+//           </Form.Item>
+
+//           <Form.Item
+//             name="phoneNumber"
+//             className="w-full my-3"
+//             label="Số điện thoại"
+//             rules={[
+//               { required: true, message: "Vui lòng nhập số điện thoại!" },
+//               {
+//                 pattern: /^[0-9]{10,11}$/,
+//                 message: "Số điện thoại không hợp lệ!"
+//               }
+//             ]}
+//           >
+//             <Input
+//               className="w-full px-2 py-2 border rounded focus:ring-0"
+//               placeholder="Số điện thoại"
+//             />
+//           </Form.Item>
+//           <div style={{ display: "flex", gap: "16px" }}>
+//             <Form.Item
+//               name="province"
+//               label="Tỉnh/Thành phố"
+//               rules={[
+//                 { required: true, message: "Vui lòng chọn tỉnh/thành phố!" }
+//               ]}
+//               style={{ flex: 1 }}
+//             >
+//               <Select
+//                 placeholder="Chọn tỉnh/thành phố"
+//                 onChange={handleProvinceChange}
+//               >
+//                 {provinces?.map((province: any) => (
+//                   <Option key={province.code} value={province.code}>
+//                     {province.name}
+//                   </Option>
+//                 ))}
+//               </Select>
+//             </Form.Item>
+
+//             <Form.Item
+//               name="district"
+//               label="Quận/Huyện"
+//               rules={[{ required: true, message: "Vui lòng chọn quận/huyện!" }]}
+//               style={{ flex: 1 }}
+//             >
+//               <Select
+//                 placeholder="Chọn quận/huyện"
+//                 onChange={handleDistrictChange}
+//                 disabled={!districts.length}
+//               >
+//                 {districts?.map((district: any) => (
+//                   <Option key={district.code} value={district.code}>
+//                     {district.name}
+//                   </Option>
+//                 ))}
+//               </Select>
+//             </Form.Item>
+
+//             <Form.Item
+//               name="ward"
+//               label="Xã/Phường"
+//               rules={[{ required: true, message: "Vui lòng chọn xã/phường!" }]}
+//               style={{ flex: 1 }}
+//             >
+//               <Select
+//                 placeholder="Chọn xã/phường"
+//                 onChange={handleWardChange}
+//                 disabled={!wards.length}
+//               >
+//                 {wards?.map((ward: any) => (
+//                   <Option key={ward.code} value={ward.code}>
+//                     {ward.name}
+//                   </Option>
+//                 ))}
+//               </Select>
+//             </Form.Item>
+//           </div>
+//           <Form.Item
+//             name="detailedAddress"
+//             className="w-full"
+//             label="Địa chỉ cụ thể"
+//             rules={[
+//               { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }
+//             ]}
+//           >
+//             <Input
+//               className="w-full px-2 py-2 border rounded focus:ring-0"
+//               placeholder="Địa chỉ cụ thể"
+//             />
+//           </Form.Item>
+//           {coordinates && (
+//             <div className="">
+//               <div
+//                 ref={mapContainerRef}
+//                 style={{
+//                   width: "100%",
+//                   height: "30vh"
+//                 }}
+//               />
+//             </div>
+//           )}
+
+//           <Form.Item
+//             className="flex items-center w-full gap-3 mt-10"
+//             name="checked"
+//             valuePropName="checked"
+//           >
+//             <Checkbox>Đặt làm mặc định</Checkbox>
+//           </Form.Item>
+//           <Form.Item className="flex justify-center">
+//             <Button htmlType="submit" className="h-10 text-white bg-black">
+//               Hoàn Thành
+//             </Button>
+//           </Form.Item>
+//         </Form>
+//         <Button className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5">
+//           <CloseOutlined />
+//         </Button>
+//       </div>
+//     </div>
+//   );
+// };
+
+const { Option } = Select;
+
 export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -39,11 +412,19 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const queryClient = useQueryClient();
-  const closeOpenUpdate = () => {
-    setIsOpenUpdate(false);
-  };
+  const closeOpenUpdate = () => setIsOpenUpdate(false);
 
-  // Lấy thông tin địa chỉ người dùng
+  const [provinces, setProvinces] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [wards, setWards] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState({
+    province: { code: null, name: "" },
+    district: { code: null, name: "" },
+    ward: { code: null, name: "" }
+  });
+  const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+
+  // Fetching user address
   const { data, isSuccess } = useQuery({
     queryKey: ["AUTH_KEY", addressId],
     queryFn: async () => {
@@ -54,35 +435,196 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
     }
   });
 
-  // Cập nhật giá trị của form khi dữ liệu đã được tải
+  // Fetch provinces from API
+  const fetchProvinces = async () => {
+    try {
+      const response = await fetch("https://provinces.open-api.vn/api/p/");
+      const data = await response.json();
+      setProvinces(data);
+    } catch {
+      message.error("Lỗi khi tải danh sách tỉnh/thành phố.");
+    }
+  };
+
+  // Update form values and set locations after data is fetched
   useEffect(() => {
     if (isSuccess && data?.address) {
-      form.setFieldsValue(data.address);
+      form.setFieldsValue({
+        fullName: data.address.fullName,
+        phoneNumber: data.address.phoneNumber,
+        detailedAddress: data.address.detailedAddress,
+        checked: data.address.checked
+      });
+
+      const addressNumbers = data.address.addressNumber || [];
+
+      // Lấy thông tin thành phố
+      const provinceCode = addressNumbers[0]; // Giả sử addressNumber[0] là mã tỉnh/thành phố
+      const districtCode = addressNumbers[1]; // Giả sử addressNumber[1] là mã quận/huyện
+      const wardCode = addressNumbers[2]; // Giả sử addressNumber[2] là mã phường/xã
+
+      const selectedProvince = provinces.find(
+        (item) => item.code === provinceCode
+      );
+      if (selectedProvince) {
+        setSelectedLocation((prev) => ({
+          ...prev,
+          province: selectedProvince
+        }));
+        fetchDetailProvinces(provinceCode); // Fetch quận/huyện cho thành phố đã chọn
+      }
+
+      // Nếu có mã quận/huyện, tìm quận
+      if (districtCode) {
+        const selectedDistrict = districts.find(
+          (item) => item.code === districtCode
+        );
+        if (selectedDistrict) {
+          setSelectedLocation((prev) => ({
+            ...prev,
+            district: selectedDistrict
+          }));
+          setWards(selectedDistrict.wards || []); // Lấy phường/xã cho quận/huyện
+        }
+      }
+
+      // Nếu có mã phường/xã, tìm phường
+      if (wardCode) {
+        const selectedWard = wards.find((item) => item.code === wardCode);
+        if (selectedWard) {
+          setSelectedLocation((prev) => ({
+            ...prev,
+            ward: selectedWard
+          }));
+        }
+      }
+
+      // Set coordinates từ dữ liệu đã có
+      setCoordinates({
+        lat: data.address.coordinates.lat,
+        lng: data.address.coordinates.lng
+      });
+
+      fetchProvinces();
     }
   }, [isSuccess, data, form]);
 
-  // Mutation để cập nhật địa chỉ
+  const fetchDetailProvinces = async (provinceCode: string) => {
+    try {
+      const response = await fetch(
+        `https://provinces.open-api.vn/api/p/${provinceCode}?depth=3`
+      );
+      const data = await response.json();
+      setDistricts(data.districts || []);
+    } catch {
+      message.error("Lỗi khi tải danh sách quận/huyện.");
+    }
+  };
+
+  // Handle province change
+  const handleProvinceChange = (value: string) => {
+    const selectedProvince = provinces.find((item) => item.code === value);
+    if (selectedProvince) {
+      setSelectedLocation({
+        province: selectedProvince,
+        district: { code: null, name: "" },
+        ward: { code: null, name: "" }
+      });
+      setDistricts([]);
+      setWards([]);
+      fetchDetailProvinces(value);
+    }
+  };
+
+  // Handle district change
+  const handleDistrictChange = (value: string) => {
+    const selectedDistrict = districts.find((item) => item.code === value);
+    if (selectedDistrict) {
+      setSelectedLocation((prev) => ({
+        ...prev,
+        district: selectedDistrict,
+        ward: { code: null, name: "" }
+      }));
+      setWards(selectedDistrict.wards || []);
+    }
+  };
+
+  // Handle ward change
+  const handleWardChange = (value: string) => {
+    const selectedWard = wards.find((item) => item.code === value);
+    if (selectedWard) {
+      setSelectedLocation((prev) => ({
+        ...prev,
+        ward: selectedWard
+      }));
+      const fullAddress = `${selectedWard.name}, ${selectedLocation.district.name}, ${selectedLocation.province.name}`;
+      fetchCoordinates(fullAddress);
+    }
+  };
+
+  // Fetch coordinates based on the address
+  const fetchCoordinates = async (address: string) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          address
+        )}.json?access_token=${mapboxgl.accessToken}`
+      );
+      const data = await response.json();
+      if (data.features?.length) {
+        const [lng, lat] = data.features[0].center;
+        setCoordinates({ lat, lng });
+      } else {
+        message.error("Không thể tìm thấy tọa độ.");
+      }
+    } catch {
+      message.error("Lỗi khi tìm tọa độ.");
+    }
+  };
+
+  // Initialize map
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!mapContainerRef.current || !coordinates.lat || !coordinates.lng)
+      return;
+
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: coordinates,
+      zoom: 12
+    });
+
+    const marker = new mapboxgl.Marker()
+      .setLngLat([coordinates.lng, coordinates.lat])
+      .addTo(map);
+
+    map.on("click", (e) => {
+      const newCoordinates = e.lngLat;
+      setCoordinates({
+        lat: newCoordinates.lat,
+        lng: newCoordinates.lng
+      });
+      marker.setLngLat([newCoordinates.lng, newCoordinates.lat]);
+    });
+
+    return () => {
+      map.remove();
+    };
+  }, [coordinates]);
+
+  // Mutation to update address
   const { mutate } = useMutation({
     mutationFn: async (formData) => {
-      if (userRole === "courier") {
-        const { data } = await instance.put(
-          `/shippers/${userId}/${addressId}`,
-          formData
-        );
-
-        return data;
-      } else {
-        const { data } = await instance.put(
-          `/auth/${userId}/${addressId}`,
-          formData
-        );
-        return data;
-      }
+      const url =
+        userRole === "courier"
+          ? `/shippers/${userId}/${addressId}`
+          : `/auth/update_address/${userId}/${addressId}`;
+      const { data } = await instance.put(url, formData);
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["AUTH_KEY", userId]
-      });
+      queryClient.invalidateQueries(["AUTH_KEY", userId]);
       messageApi.open({
         type: "success",
         content: "Chỉnh sửa địa chỉ thành công"
@@ -96,84 +638,133 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
     }
   });
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values: any) => {
+  const onFinish = (values: any) => {
     mutate(values);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[500px]">
-        <h1 className="py-3 font-medium text-center">Chỉnh sửa địa chỉ</h1>
-        {contextHolder}
-        <Form
-          form={form}
-          name="basic"
-          // initialValues={{ ...data?.address }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
+      {contextHolder}
+      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[600px] overflow-y-auto custom-scrollbar">
+        <h1 className="py-1 font-medium text-center">Cập nhật địa chỉ</h1>
+        <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="fullName"
             className="w-full my-3"
-            rules={[
-              { required: true, message: "Họ và Tên không được để trống!" }
-            ]}
+            label="Họ và tên"
+            rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
           >
-            <Input
-              className="w-full px-2 py-2 border rounded focus:ring-0"
-              placeholder="Họ và tên"
-            />
+            <Input placeholder="Họ và tên" />
           </Form.Item>
 
           <Form.Item
             name="phoneNumber"
             className="w-full my-3"
+            label="Số điện thoại"
             rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại!" },
-              {
-                pattern: /^[0-9]{10,11}$/,
-                message: "Số điện thoại không hợp lệ!"
-              }
+              { required: true, message: "Vui lòng nhập số điện thoại!" }
             ]}
           >
-            <Input
-              className="w-full px-2 py-2 border rounded focus:ring-0"
-              placeholder="Số điện thoại"
-            />
+            <Input placeholder="Số điện thoại" />
           </Form.Item>
+
+          <div style={{ display: "flex", gap: "16px" }}>
+            <Form.Item
+              name="province"
+              label="Tỉnh/Thành phố"
+              rules={[
+                { required: true, message: "Vui lòng chọn tỉnh/thành phố!" }
+              ]}
+              style={{ flex: 1 }}
+            >
+              <Select
+                onChange={handleProvinceChange}
+                placeholder="Chọn tỉnh/thành phố"
+              >
+                {provinces?.map((province: any) => (
+                  <Option key={province.code} value={province.code}>
+                    {province.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="district"
+              label="Quận/Huyện"
+              rules={[{ required: true, message: "Vui lòng chọn quận/huyện!" }]}
+              style={{ flex: 1 }}
+            >
+              <Select
+                onChange={handleDistrictChange}
+                placeholder="Chọn quận/huyện"
+              >
+                {districts?.map((district: any) => (
+                  <Option key={district.code} value={district.code}>
+                    {district.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+
+          <div style={{ display: "flex", gap: "16px" }}>
+            <Form.Item
+              name="ward"
+              label="Phường/Xã"
+              rules={[{ required: true, message: "Vui lòng chọn phường/xã!" }]}
+              style={{ flex: 1 }}
+            >
+              <Select onChange={handleWardChange} placeholder="Chọn phường/xã">
+                {wards?.map((ward: any) => (
+                  <Option key={ward.code} value={ward.code}>
+                    {ward.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
 
           <Form.Item
-            name="address"
-            className="w-full my-3"
+            name="detailedAddress"
+            label="Địa chỉ cụ thể"
             rules={[
-              { required: true, message: "Địa chỉ không được để trống!" }
+              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }
             ]}
           >
-            <Input
-              className="w-full px-2 py-2 border rounded focus:ring-0"
-              placeholder="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
-            />
+            <Input placeholder="Địa chỉ cụ thể" />
           </Form.Item>
 
-          <Form.Item name="addressDetails" className="w-full my-3">
-            <Input
-              className="w-full px-2 py-2 border rounded focus:ring-0"
-              placeholder="Địa chỉ cụ thể"
-            />
+          <Form.Item name="checked" valuePropName="checked">
+            <Checkbox>Đặt làm địa chỉ mặc định</Checkbox>
           </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button htmlType="submit" className="h-10 text-white bg-black">
-              Hoàn Thành
+          <div className="map-container">
+            <div
+              className="map-box"
+              ref={mapContainerRef}
+              style={{ height: "300px", width: "100%" }}
+            />
+          </div>
+
+          <div className="text-center py-3">
+            <Button
+              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+              htmlType="submit"
+            >
+              Cập nhật
             </Button>
-          </Form.Item>
+          </div>
+
+          <div className="absolute top-0 right-0 p-3">
+            <Button
+              icon={<CloseOutlined />}
+              onClick={closeOpenUpdate}
+              type="text"
+              style={{ color: "black" }}
+            />
+          </div>
         </Form>
-        <Button
-          onClick={closeOpenUpdate}
-          className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5"
-        >
-          <CloseOutlined />
-        </Button>
       </div>
     </div>
   );
@@ -282,12 +873,6 @@ export const List_Address = ({
   );
 };
 
-const { Option } = Select;
-interface IProps {
-  isOpen?: boolean;
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddress?: () => void;
-}
 export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -418,14 +1003,15 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!mapContainerRef.current || !coordinates.lat || !coordinates.lng) return;
+    if (!mapContainerRef.current || !coordinates.lat || !coordinates.lng)
+      return;
 
     // Khởi tạo bản đồ
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: coordinates,
-      zoom: 12,
+      zoom: 12
     });
 
     // Tạo Marker
@@ -438,20 +1024,23 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       const newCoordinates = e.lngLat;
       setCoordinates({
         lat: newCoordinates.lat,
-        lng: newCoordinates.lng,
+        lng: newCoordinates.lng
       });
 
       // Di chuyển Marker đến vị trí mới
       marker.setLngLat([newCoordinates.lng, newCoordinates.lat]);
 
-      console.log("Tọa độ mới sau khi click:", newCoordinates.lng, newCoordinates.lat);
+      console.log(
+        "Tọa độ mới sau khi click:",
+        newCoordinates.lng,
+        newCoordinates.lat
+      );
     });
 
     return () => {
       map.remove();
     };
   }, [coordinates]);
-
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     // Debug selectedLocation
@@ -472,6 +1061,11 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
     }
 
     const fullAddress = `${selectedLocation.ward.name}, ${selectedLocation.district.name}, ${selectedLocation.province.name}`;
+    const fullAddressNumber = [
+      selectedLocation.ward.code,
+      selectedLocation.district.code,
+      selectedLocation.province.code
+    ];
     message.success("Địa chỉ đã được lưu!");
     const data_form: any = {
       userId: userId,
@@ -480,6 +1074,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
         phoneNumber: values.phoneNumber,
         detailedAddress: values.addressDetails,
         address: fullAddress,
+        addressNumber: fullAddressNumber,
         coordinates: {
           lat: coordinates.lat,
           lng: coordinates.lng
@@ -488,6 +1083,8 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       setDefault: values.checked
     };
     console.log("data_form", data_form);
+    console.log("fullAddressNumber", fullAddressNumber);
+
     setIsOpen(false);
     mutate(data_form);
   };
@@ -496,7 +1093,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       {contextHolder}
       <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[600px] overflow-y-auto custom-scrollbar">
         <h1 className="py-1 font-medium text-center">Địa chỉ mới</h1>
-        <Form onFinish={onFinish} layout="vertical" >
+        <Form onFinish={onFinish} layout="vertical">
           <Form.Item
             name="fullName"
             className="w-full my-3"
@@ -621,13 +1218,11 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
           >
             <Checkbox>Đặt làm mặc định</Checkbox>
           </Form.Item>
-          <Form.Item
-            className="flex justify-center">
+          <Form.Item className="flex justify-center">
             <Button htmlType="submit" className="h-10 text-white bg-black">
               Hoàn Thành
             </Button>
           </Form.Item>
-
         </Form>
         <Button
           onClick={handleAddress}

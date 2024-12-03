@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const messageSchema = new mongoose.Schema(
   {
     content: { type: String, default: "" },
+    role: { type: String, default: "" },
     attachments: [
       {
         url: { type: String, required: false },

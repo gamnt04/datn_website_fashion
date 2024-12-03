@@ -20,19 +20,19 @@ export const SendMessage = async (req, res) => {
       ]
     };
 
-    await cozeApi.post(
+    const response = await cozeApi.post(
       `/v3/chat?conversation_id=${conversationId}`,
       requestData
     );
 
-    const response = await cozeApi.get(
-      `/v1/conversation/message/list?conversation_id=${conversationId}`
-    );
+    // const response = await cozeApi.get(
+    //   `/v1/conversation/message/list?conversation_id=${conversationId}`
+    // );
 
     res.status(201).json({
       success: true,
       message: "Add message successful",
-      data: response?.data?.data[0]
+      data: response?.data
     });
   } catch (error) {
     console.error("Error in conversation and message flow:", error.message);

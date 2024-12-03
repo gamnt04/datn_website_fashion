@@ -22,8 +22,7 @@ const Address = () => {
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [addressId, setAddressId] = useState<string | null>(null);
 
-  const handleUpdateAddress = (id: string) => {
-    setAddressId(id);
+  const handleUpdateAddress = () => {
     setIsOpenUpdate(true);
   };
 
@@ -113,7 +112,7 @@ const Address = () => {
         </div>
         <div className="px-5 py-4">
           <h2 className="py-2">Địa chỉ</h2>
-          {sortedAddresses?.map((address: Auth) => (
+          {sortedAddresses?.map((address: any) => (
             <div
               key={address?._id}
               className="flex items-center justify-between pb-6 my-5 border-b"
@@ -125,7 +124,7 @@ const Address = () => {
                   <span className="text-gray-400">{address?.phoneNumber}</span>
                 </h1>
                 <div className="flex text-gray-400">
-                  <span>{address.addressDetails}</span>
+                  <span>{address.detailedAddress}</span>
                   <span>-</span>
                   <span>{address.address}</span>
                 </div>
@@ -142,7 +141,9 @@ const Address = () => {
                   <div className="flex justify-end gap-2 py-2 text-blue-400">
                     <a
                       href="#"
-                      onClick={() => handleUpdateAddress(address?._id!)}
+                      onClick={() => {
+                        handleUpdateAddress(), setAddressId(address?._id);
+                      }}
                     >
                       Cập nhật
                     </a>
