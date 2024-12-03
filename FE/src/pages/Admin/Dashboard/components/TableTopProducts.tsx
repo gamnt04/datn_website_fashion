@@ -23,19 +23,19 @@ const TableTopProducts = () => {
   }
 
   return (
-    <div className="rounded-sm border border-stroke w-[560px] bg-white px-8 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+    <div className="rounded-sm border border-stroke w-[50%] bg-white px-8 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
         Sản Phẩm Thịnh Hành
       </h4>
 
-      <div className="flex flex-col w-full space-y-5 my-6">
+      <div className="flex flex-col w-full space-y-5 my-6 overflow-y-auto h-[57vh]">
         {top10ProductBestSale.map((product: any, index: number) => (
           <div className="flex space-x-8 items-center relative ">
             <div className="relative">
               <img
                 src={product?.productId?.image_product}
                 alt={product?.productId?.name_product}
-                className="w-[120px] h-[120px] rounded-3xl"
+                className="w-[90px] h-[90px] rounded-3xl"
               />
               <div className="absolute top-1 -right-6 p-2 flex items-center justify-center">
                 <svg
@@ -109,10 +109,10 @@ const TableTopProducts = () => {
               </div>
             </div>
             <div className="">
-              <h3 className="text-[22px] font-bold">
+              <h3 className="text-[20px] font-bold">
                 {" "}
-                {product?.productId?.name_product.length > 25
-                  ? `${product?.productId?.name_product.slice(0, 25)}...`
+                {product?.productId?.name_product.length > 40
+                  ? `${product?.productId?.name_product.slice(0, 40)}...`
                   : product?.productId?.name_product}
               </h3>
               <h5 className="text-lg text-gray-600">

@@ -22,8 +22,7 @@ const Address = () => {
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [addressId, setAddressId] = useState<string | null>(null);
 
-  const handleUpdateAddress = (id: string) => {
-    setAddressId(id);
+  const handleUpdateAddress = () => {
     setIsOpenUpdate(true);
   };
 
@@ -79,14 +78,18 @@ const Address = () => {
   });
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
   if (isError) return <div>{error.message as any}</div>;
 
   // Sắp xếp địa chỉ mặc định lên đầu tiên
-  const sortedAddresses = data?.address?.sort((a: any, b: any) => b.checked - a.checked);
+  const sortedAddresses = data?.address?.sort(
+    (a: any, b: any) => b.checked - a.checked
+  );
 
   return (
     <>
@@ -127,9 +130,9 @@ const Address = () => {
                   <span className="px-2 text-gray-400">|</span>{" "}
                   <span className="text-gray-400">{address?.phoneNumber}</span>
                 </h1>
-                <div className="flex text-gray-400 gap-2">
+                <div className="flex text-gray-400">
                   <span>{address.detailedAddress}</span>
-                  <span> - </span>
+                  <span>-</span>
                   <span>{address.address}</span>
                 </div>
                 {address?.checked && (
@@ -145,7 +148,9 @@ const Address = () => {
                   <div className="flex justify-end gap-2 py-2 text-blue-400">
                     <a
                       href="#"
-                      onClick={() => handleUpdateAddress(address?._id!)}
+                      onClick={() => {
+                        handleUpdateAddress(), setAddressId(address?._id);
+                      }}
                     >
                       Cập nhật
                     </a>

@@ -10,6 +10,39 @@ interface IDataMessageByRole {
   content: string;
   content_type: string;
 }
+// const formatMessageWithProductLink = (message: any) => {
+//   const productIdRegex = /\b([a-f0-9]{24})\b/;
+
+//   const match = message.match(productIdRegex);
+
+//   if (match) {
+//     const productId = match[0];
+//     const productLink = `<a href="http://localhost:7899/shops/${productId}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">Tại đây</a>`;
+//     return message.replace(productId, productLink);
+//   }
+
+//   // Nếu không tìm thấy ID sản phẩm, trả về chuỗi gốc
+//   return message;
+// };
+
+const formatMessageWithProductLink = (message: any) => {
+  if (typeof message !== "string") {
+    console.warn("Message không phải là chuỗi:", message);
+    return "";
+  }
+
+  const productIdRegex = /\b([a-f0-9]{24})\b/;
+  const match = message.match(productIdRegex);
+
+  if (match) {
+    const productId = match[0];
+    const productLink = `<a href="http://localhost:7899/shops/${productId}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">Tại đây</a>`;
+    return message.replace(productId, productLink);
+  }
+
+  // Nếu không tìm thấy ID sản phẩm, trả về chuỗi gốc
+  return message;
+};
 const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [user] = useLocalStorage("user", {});
@@ -122,7 +155,7 @@ const Message = () => {
             style={{
               boxShadow: "rgb(95 95 95) 0px 1px 20px 0px"
             }}
-            className="fixed right-[-7px] bottom-2 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[440px] h-[90vh] z-[100] flex flex-col"
+            className="fixed right-[-7px] bottom-2 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[60vh] h-[90vh] z-[100] flex flex-col"
           >
             <div className="flex items-center justify-between pb-6">
               <div className="flex flex-col space-y-1.5">
@@ -142,63 +175,52 @@ const Message = () => {
               </div>
             </div>
             <div className="pr-4 flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thumb-rounded scrollbar-none">
-              {dataMessageByRole?.map((item: any, index) => (
+              {dataMessageByRole?.map((message: any, index) => (
                 <>
-                  {item.role === "user" && (
-                    <>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px"
+                    }}
+                  >
+                    <div
+                      key={message._id}
+                      style={{
+                        display: "flex",
+                        justifyContent:
+                          message.role === "assistant"
+                            ? "flex-start"
+                            : "flex-end"
+                      }}
+                    >
                       <div
-                        key={index}
-                        className="flex gap-3 my-4 text-gray-600 text-sm flex-1"
+                        style={{
+                          maxWidth: "70%",
+                          padding: "10px",
+                          borderRadius: "10px",
+                          marginTop: "10px",
+                          backgroundColor:
+                            message.role === "assistant"
+                              ? "#f0f0f0"
+                              : "#084c61",
+                          color:
+                            message.role === "assistant" ? "#000" : "white",
+                          textAlign: "left"
+                        }}
                       >
-                        <img
-                          src={getUser?.avatar ? getUser?.avatar : ""}
-                          alt=""
-                          className="w-9 h-9 rounded-full"
-                        />
-                        <p className="leading-relaxed">
-                          <span className="block font-bold text-gray-700">
-                            Bạn
-                          </span>
-                          {item.content}
-                        </p>
+                        <p
+                          className="leading-relaxed max-w-[300px]"
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              message.role === "assistant"
+                                ? formatMessageWithProductLink(message.content)
+                                : message.content
+                          }}
+                        ></p>
                       </div>
-                    </>
-                  )}
-                  {item.role === "assistant" && (
-                    <>
-                      <div
-                        key={index}
-                        className="flex gap-3 my-4 text-gray-600 text-sm flex-1"
-                      >
-                        <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
-                          <div className="rounded-full bg-gray-100 border p-1">
-                            <svg
-                              stroke="none"
-                              fill="black"
-                              strokeWidth="1.5"
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                              height={20}
-                              width={20}
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-                              ></path>
-                            </svg>
-                          </div>
-                        </span>
-                        <p className="leading-relaxed">
-                          <span className="block font-bold text-gray-700">
-                            seven
-                          </span>
-                          {item.content}
-                        </p>
-                      </div>
-                    </>
-                  )}
+                    </div>
+                  </div>
                 </>
               ))}
               {isLoadingReply && (
@@ -231,13 +253,14 @@ const Message = () => {
               )}
               <div ref={messagesEndRef} />
             </div>
+
             <div className="flex items-center pt-4">
               <form
                 onSubmit={handleSendMessage}
                 className="flex items-center gap-2"
               >
                 <input
-                  className="flex h-10 w-[335px] rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
+                  className="flex h-10 w-[48vh] rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
                   placeholder="Nhập tin nhắn ..."
                   disabled={isPending}
                   type="text"
@@ -246,7 +269,11 @@ const Message = () => {
                 />
 
                 <button className="inline-flex items-center justify-center rounded-md text-sm font-medium text-[#f9fafb] disabled:pointer-events-none disabled:opacity-50 bg-black hover:bg-[#111827E6] h-10 px-4 py-2">
-                  {isPending ? <FaSpinner /> : <AiOutlineSend />}
+                  {isPending ? (
+                    <FaSpinner className="animate-spin" />
+                  ) : (
+                    <AiOutlineSend />
+                  )}
                 </button>
               </form>
             </div>
