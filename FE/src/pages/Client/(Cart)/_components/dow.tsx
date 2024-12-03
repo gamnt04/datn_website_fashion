@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 import { Mutation_Cart } from '../../../../common/hooks/Cart/mutation_Carts';
 import Swal from 'sweetalert2'

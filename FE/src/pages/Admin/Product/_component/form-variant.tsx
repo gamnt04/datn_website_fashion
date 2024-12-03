@@ -23,7 +23,13 @@ export default function Form_variant({ propsData }: any) {
             {
                 color: '',
                 symbol: '',
-                size: [],
+                size: [
+                    {
+                        name_size: '',
+                        stock_attribute: 0,
+                        price_attribute: 0
+                    }
+                ],
             }
         ]
     );
@@ -77,7 +83,6 @@ export default function Form_variant({ propsData }: any) {
                                                         { add: addSize, remove: removeSize }
                                                     ) => (
                                                         <>
-                                                            <div className='mb-3'>Giá trị</div>
                                                             {sizeFields.map(
                                                                 ({
                                                                     key: sizeKey,

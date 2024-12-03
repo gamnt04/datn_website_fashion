@@ -309,7 +309,7 @@ const Pay = () => {
       ,
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
-      totalPrice: finalAmount > 0 ? finalAmount : totalPrice,
+      totalPrice: finalAmount > 0 ? finalAmount : totalPrice + phi_van_chuyen,
       email: user?.user?.email,
       // email: user?.user?.email,
       delivery_fee: phi_van_chuyen

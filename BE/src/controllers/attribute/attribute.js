@@ -8,6 +8,7 @@ export async function tao_loai_thuoc_tinh(req, res) {
   try {
     const check_ten_loai_thuoc_tinh = await category_attribute.findOne({
       name_attribute: req.body.name_attribute,
+      id_account: req.body.id_account
     });
     if (!req.body.id_account) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -21,6 +22,7 @@ export async function tao_loai_thuoc_tinh(req, res) {
     }
     const check_the_loai_thuoc_tinh = await category_attribute.findOne({
       category_attribute: req.body.category_attribute,
+      id_account: req.body.id_account
     });
     if (check_the_loai_thuoc_tinh) {
       return res.status(StatusCodes.BAD_REQUEST).json({
@@ -42,6 +44,7 @@ export async function sua_loai_thuoc_tinh(req, res) {
   try {
     const check_ten_loai_thuoc_tinh = await category_attribute.findOne({
       name_attribute: req.body.name_attribute,
+      id_account: req.body.id_account
     });
     if (!req.body.id_account) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -77,11 +80,12 @@ export async function xoa_loai_thuoc_tinh(req, res) {
     await thuoc_tinh.findOneAndDelete({
       the_loai_thuoc_tinh: data.category_attribute,
     });
-    await category_attribute.findByIdAndDelete(req.params.id);
+    await category_attribute.findByIdAndDelete({ _id: req.params.id });
     return res.status(StatusCodes.NO_CONTENT).json({
       message: "OK",
     });
   } catch (error) {
+    console.log(error)
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message,
     });
@@ -256,13 +260,13 @@ export async function sua_thuoc_tinh(req, res) {
 
 export async function xoa_thuoc_tinh(req, res) {
   try {
-    if (!req.params.id_account) {
+    if (!req.params.id) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Khong tim thay tai khoan!",
+        message: "No id!",
       });
     }
     const data = await thuoc_tinh.findOneAndDelete({
-      _id: req.body.id_thuoc_tinh,
+      _id: req.params.id,
     });
     return res.status(StatusCodes.OK).json({
       data,

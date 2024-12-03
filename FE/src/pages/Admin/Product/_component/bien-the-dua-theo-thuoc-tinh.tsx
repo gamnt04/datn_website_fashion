@@ -15,7 +15,13 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
     const initialAttributes = data?.map((item: any) => ({
         color: item?.ten_thuoc_tinh || '',
         symbol: item?.symbol_thuoc_tinh,
-        size: [],
+        size: [
+            {
+                name_size: '',
+                stock_attribute: 0,
+                price_attribute: 0
+            }
+        ],
     })) || [];
     return (
         <Form.List name={`attributes_${props?.category_attribute}`} initialValue={initialAttributes}>
@@ -34,7 +40,8 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                 message: "Vui lòng nhập màu sắc!"
                                             }
                                         ],
-                                        restField: restField
+                                        restField: restField,
+                                        disable: true
                                     }}
                                 />
                                 {data?.map((item: any, index: number) =>
