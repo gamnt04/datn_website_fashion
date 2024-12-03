@@ -97,7 +97,11 @@ const Pay = () => {
       const tong_km = Tinh_tong_km(selectedAddress);
       console.log(tong_km);
       setPhi_van_chuyen(() =>
+<<<<<<< HEAD
         tong_km ? (tong_km > 60 ? 60000 : tong_km * 5000) : 0
+=======
+        tong_km ? ((tong_km > 40) ? 50000 : (tong_km * 5000)) : 0
+>>>>>>> main
       );
     })();
   }, [selectedAddress]);
@@ -320,7 +324,7 @@ const Pay = () => {
         );
         sessionStorage.setItem(
           "customerInfo",
-          JSON.stringify({ ...data_form })
+          JSON.stringify({ ...data_form, toa_do: selectedAddress?.coordinates })
         );
         const UrlPayment = await axios.post(
           `http://localhost:2004/api/v1/create_payment_url`,
@@ -334,6 +338,7 @@ const Pay = () => {
         sessionStorage.setItem("item_order", JSON.stringify(item_order));
         window.location.href = UrlPayment.data.paymentUrl;
       } else {
+        setIsOrderSuccessfully(true);
         onSubmit(item_order);
       }
       // mutate({
@@ -348,7 +353,7 @@ const Pay = () => {
         content: "Lỗi tạo đơn hàng!",
       });
     }
-    setIsOrderSuccessfully(true);
+
   };
   // console.log("orderSuccessfully", isOrderSuccessfully);
 

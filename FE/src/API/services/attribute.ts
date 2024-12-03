@@ -153,12 +153,11 @@ export async function sua_thuoc_tinh(data_request: any) {
 
 export async function xoa_thuoc_tinh(data_request: any) {
     try {
-        const res = await fetch(`${baseUri}/thuoc_tinh/xoa_thuoc_tinh/${data_request?.id_account}`, {
+        const res = await fetch(`${baseUri}/thuoc_tinh/xoa_thuoc_tinh/${data_request}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data_request)
         });
         return res
     } catch (error) {

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import OrderTable from "./OrderTable";
 import {
   Query_Orders,
@@ -9,8 +10,16 @@ import { LoadingOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
 const OrderList = () => {
-  const [statusFilter, setStatusFilter] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Read search params from the URL
+  const queryParams = new URLSearchParams(location.search);
+  const initialStatusFilter = queryParams.get("status") || "";
+  const initialPage = parseInt(queryParams.get("page") || "1", 10);
+
+  const [statusFilter, setStatusFilter] = useState(initialStatusFilter);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [searchOrder, setSearchOrder] = useState("");
   const { data: searchData } =
     useSearchOrdersByNumberOrNumberPhone(searchOrder);
@@ -27,17 +36,30 @@ const OrderList = () => {
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to page 1 when status changes
   };
 
-  const goToPage = (page: any) => {
+  const goToPage = (page: number) => {
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+    // Update URL query params when page or status changes
+    const query = new URLSearchParams();
+    if (statusFilter) query.set("status", statusFilter);
+    query.set("page", currentPage.toString());
+
+    navigate(`?${query.toString()}`, { replace: true });
+  }, [statusFilter, currentPage, navigate]);
+
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
+
   return (
     <div>
       <div className="mx-6">

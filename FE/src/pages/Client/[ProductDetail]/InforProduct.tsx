@@ -274,7 +274,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                     ) : (
                       <button
                         key={item?.color}
-                        onClick={() => (handle_atrtribute(item?.color, "Color"), setImg(item?.symbol))}
+                        onClick={() => (handle_atrtribute(item?.color, "Color"))}
                         className={`w-8 h-8 rounded-full border-2 ${color === item?.color ? "border-black" : "border-gray-300"} hover:scale-110 transition-transform duration-300`}
                       >
                         <img src={item?.symbol} alt="" className="w-full h-full object-cover rounded-full" />
@@ -300,7 +300,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <div className="flex items-center gap-x-4 lg:mt-[2px] mt-[3px] lg:pb-0 mb:pb-[21px] font-medium *:px-3 *:py-1 *:rounded *:border *:border-black *:duration-200">
                   {arr_size?.map((item: any) => (
                     <button
-                      key={item?.name_size}
+                      key={Math.random()}
                       onClick={() => handle_atrtribute(item?.name_size, "Size")}
                       className={`${size == item?.name_size && "bg-black text-white"
                         } hover:bg-black hover:text-white grid place-items-center`}
