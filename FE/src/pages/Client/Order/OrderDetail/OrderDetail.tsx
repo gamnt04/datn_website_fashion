@@ -3,7 +3,6 @@ import { Query_Orders } from "../../../../common/hooks/Order/querry_Order";
 const OrderDetail = () => {
   const { id } = useParams();
   const { data } = Query_Orders(id);
-  console.log(data);
 
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
@@ -52,16 +51,16 @@ const OrderDetail = () => {
                 {data?.status == 1
                   ? "Chờ xác nhận"
                   : data?.status == 2
-                  ? "Đang chuẩn bị hàng"
-                  : data?.status == 3
-                  ? "Đang vận chuyển"
-                  : data?.status == 4
-                  ? "Đã giao hàng"
-                  : data?.status == 5
-                  ? "Giao hàng thất bại"
-                  : data?.status == 6
-                  ? "Hoàn thành"
-                  : "Đã hủy"}
+                    ? "Đang chuẩn bị hàng"
+                    : data?.status == 3
+                      ? "Đang vận chuyển"
+                      : data?.status == 4
+                        ? "Đã giao hàng"
+                        : data?.status == 5
+                          ? "Giao hàng thất bại"
+                          : data?.status == 6
+                            ? "Hoàn thành"
+                            : "Đã hủy"}
               </p>
             </div>
           </div>
@@ -187,16 +186,19 @@ const OrderDetail = () => {
             </div>
             <div className="flex justify-between py-2">
               <p>Phí vận chuyển</p>
-              <p>0đ</p>
+              <p>{data?.delivery_fee?.toLocaleString("vi", {
+                style: "currency",
+                currency: "VND",
+              })}</p>
             </div>
             <div className="flex justify-between py-2">
               <p>Voucher giảm giá</p>
               <p>
                 {data?.discountAmount
                   ? `-${data?.discountAmount?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })}`
+                    style: "currency",
+                    currency: "VND",
+                  })}`
                   : "0đ"}
               </p>
             </div>

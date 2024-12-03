@@ -474,8 +474,12 @@ const OrdersDetali = () => {
                   <span>:</span>
                 </p>
                 <p className="flex justify-between items-center space-x-2 py-2 text-gray-600">
-                  <span className="font-semibold">Phí vận chuyển</span>
+                  <span className="font-semibold">Phí vận chuyển:</span>
                   <span>:</span>
+                  {/* <span>{data?.delivery_fee?.toLocaleString("vi", {
+                    style: "currency",
+                    currency: "VND",
+                  })}</span> */}
                 </p>
                 <p className="flex justify-between items-center space-x-2 py-2 text-gray-600">
                   <span className="font-semibold">Voucher giảm giá</span>
@@ -495,7 +499,10 @@ const OrdersDetali = () => {
                     })}
                   </p>
                 </p>
-                <p className="py-2 text-gray-800 text-left">0 đ</p>
+                <p className="py-2 text-gray-800 text-left">{data?.delivery_fee?.toLocaleString("vi", {
+                  style: "currency",
+                  currency: "VND",
+                })}</p>
                 <p className="py-2 text-gray-800 ">
                   {" "}
                   {data?.discountAmount
