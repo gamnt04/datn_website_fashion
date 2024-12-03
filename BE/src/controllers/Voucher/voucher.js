@@ -1,5 +1,5 @@
 import Voucher from "../../models/Voucher/voucher";
-
+import Products from "../../models/Items/Products";
 export const getVoucher = async (req, res) => {
   try {
     const vouchers = await Voucher.find();
@@ -135,6 +135,23 @@ export const useVoucher = async (req, res) => {
         return res.status(400).json({
           message: `Số tiền tối thiểu để sử dụng mã giảm giá này là ${voucher.minimumSpend}`,
         });
+      }
+    } else if (voucher.applyType === "category") {
+      if (voucher.appliedCategories.length === 0) {
+        // Nếu không có danh mục nào trong appliedCategories, cho phép áp dụng cho tất cả danh mục
+      } else {
+        // Kiểm tra xem các sản phẩm đã chọn có thuộc danh mục hợp lệ không
+        const validProducts = await Products.find({
+          _id: { $in: selectedProducts },
+          category_id: { $in: voucher.appliedCategories },
+        });
+
+        if (validProducts.length === 0) {
+          return res.status(400).json({
+            message:
+              "Mã giảm giá không áp dụng cho sản phẩm thuộc danh mục này",
+          });
+        }
       }
     }
 

@@ -10,6 +10,7 @@ import {
   Table,
   Drawer,
   Switch,
+  Input,
 } from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -23,6 +24,7 @@ import useDataVoucher from "./_component/useDataVoucher";
 const ListVoucher = () => {
   const queryClient = useQueryClient();
   const [messageAPI, contextHolder] = message.useMessage();
+  const [searchText, setSearchText] = useState<string>("");
   const { data, isLoading } = useQuery({
     queryKey: ["voucher"],
     queryFn: () => instance.get(`/voucher`),
@@ -92,11 +94,14 @@ const ListVoucher = () => {
   const handleTogglePublished = (category: IVoucher) => {
     mutation.mutate({ ...category, isActive: !category.isActive });
   };
-  const dataSource = data?.data?.vouchers.map((voucher: IVoucher) => ({
+
+  const dataSource = data?.data?.vouchers?.map((voucher: IVoucher) => ({
     key: voucher._id,
     ...voucher,
   }));
-
+  const filtered = dataSource?.filter((voucher: IVoucher) =>
+    voucher.name_voucher.toLowerCase().includes(searchText.toLowerCase())
+  );
   const columns = [
     {
       title: "STT",
@@ -196,7 +201,20 @@ const ListVoucher = () => {
 
       <div className="mx-6">
         <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
+          <div>
+            {" "}
+            <h1 className="mb-6 text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
+            <div className="flex justify-between mb-2">
+              <div className="flex space-x-5">
+                <Input
+                  className="w-[500px]"
+                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+                <Button type="primary">Tìm kiếm</Button>
+              </div>
+            </div>
+          </div>
 
           <Link to={`/admin/voucher/add`}>
             <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
@@ -208,7 +226,7 @@ const ListVoucher = () => {
         {data && data.data.vouchers.length === 0 ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
-          <Table dataSource={dataSource} columns={columns} />
+          <Table dataSource={filtered} columns={columns} />
         )}
 
         <Drawer
