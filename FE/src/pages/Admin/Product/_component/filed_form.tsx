@@ -34,7 +34,9 @@ export function Filed_form({ props }: any) {
                         /> :
                         <InputNumber className="mt-2 !py-0.5 max-w-[200px] border-gray-600 !outline-none hover:bg-[#F5F7FD] " /> :
                     <Input className={`mt-2 py-2 text-[#1C2434] border-gray-600 hover:bg-[#F5F7FD] active:bg-[#active:bg-[#F5F7FD]] !outline-none
-                         ${Array?.isArray(props?.name_field) && 'max-w-[200px]'}`} />
+                         ${Array?.isArray(props?.name_field) && 'max-w-[200px]'}`}
+                        disabled={props?.disable ? true : false}
+                    />
             }
         </Form.Item>
     )
