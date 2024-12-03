@@ -418,33 +418,40 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!mapContainerRef.current || !coordinates.lat || !coordinates.lng)
-      return;
+    if (!mapContainerRef.current || !coordinates.lat || !coordinates.lng) return;
 
+    // Khởi tạo bản đồ
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: coordinates,
-      zoom: 12
+      zoom: 12,
     });
 
+    // Tạo Marker
+    const marker = new mapboxgl.Marker()
+      .setLngLat([coordinates.lng, coordinates.lat])
+      .addTo(map);
+
+    // Cập nhật tọa độ khi click vào bản đồ
     map.on("click", (e) => {
       const newCoordinates = e.lngLat;
       setCoordinates({
         lat: newCoordinates.lat,
-        lng: newCoordinates.lng
+        lng: newCoordinates.lng,
       });
-      console.log(
-        "Tọa độ mới sau khi click:",
-        newCoordinates.lng,
-        newCoordinates.lat
-      );
+
+      // Di chuyển Marker đến vị trí mới
+      marker.setLngLat([newCoordinates.lng, newCoordinates.lat]);
+
+      console.log("Tọa độ mới sau khi click:", newCoordinates.lng, newCoordinates.lat);
     });
 
     return () => {
       map.remove();
     };
   }, [coordinates]);
+
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     // Debug selectedLocation
@@ -487,9 +494,9 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       {contextHolder}
-      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[600px] h-[400px] overflow-y-auto custom-scrollbar">
+      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[600px] overflow-y-auto custom-scrollbar">
         <h1 className="py-1 font-medium text-center">Địa chỉ mới</h1>
-        <Form onFinish={onFinish} layout="vertical">
+        <Form onFinish={onFinish} layout="vertical" >
           <Form.Item
             name="fullName"
             className="w-full my-3"
@@ -614,12 +621,20 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
           >
             <Checkbox>Đặt làm mặc định</Checkbox>
           </Form.Item>
-          <Form.Item>
+          <Form.Item
+            className="flex justify-center">
             <Button htmlType="submit" className="h-10 text-white bg-black">
               Hoàn Thành
             </Button>
           </Form.Item>
+
         </Form>
+        <Button
+          onClick={handleAddress}
+          className="absolute w-8 h-8 px-2 py-2 border-0 rounded hover:bg-slate-100 hover:rounded-full hover:border-2 top-5 right-5"
+        >
+          <CloseOutlined />
+        </Button>
       </div>
     </div>
   );
