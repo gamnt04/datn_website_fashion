@@ -29,7 +29,6 @@ const MenuShop: React.FC<MenuShopProps> = ({
 }) => {
   const { data: categoryData } = useCategoryQuery();
   const { sizes, loading, error } = useAttributes();
-  console.log("lọc size :", sizes);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -55,13 +54,13 @@ const MenuShop: React.FC<MenuShopProps> = ({
         <PriceFilter onPriceChange={onPriceChange} />
       </div>
 
-      {/* Bộ lọc màu
+      {/* Bộ lọc màu */}
       <div className="w-full bg-gray-50 mt-2 *:rounded">
         <ColorFilter
           selectedColor={selectedColors.join(", ")} // Truyền selectedColors vào
           onColorSearch={handleColorSearch} // Truyền hàm tìm kiếm màu sắc
         />
-      </div> */}
+      </div>
 
       {/* Bộ lọc kích thước */}
       <div className="w-full bg-gray-50 mt-2 *:rounded">

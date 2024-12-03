@@ -22,7 +22,7 @@ export default function Sidebar_Dashboard() {
   };
 
   return (
-    <aside className="mx-auto h-screen w-[230px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3">
+    <aside className="mx-auto h-screen w-[230px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3 hidden_scroll_x overflow-y-auto" >
       <div className="items-center px-2 py-1">
         <Link to={"/"}>
           <img src={logo} alt="" className="w-[242px] h-[45px]" />
@@ -39,8 +39,9 @@ export default function Sidebar_Dashboard() {
               <LayoutDashboard />
               <span className="text-[#c4cee3]">Bảng điều khiển</span>
               <ChevronDown
-                className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
-                  }`}
+                className={`ml-auto transform ${
+                  expandedSection === "dashboard" ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -69,8 +70,9 @@ export default function Sidebar_Dashboard() {
               <Shirt />
               <span className="text-[#c4cee3]">Sản phẩm</span>
               <ChevronDown
-                className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
-                  }`}
+                className={`ml-auto transform ${
+                  expandedSection === "products" ? "rotate-180" : ""
+                }`}
               />
             </button>
 

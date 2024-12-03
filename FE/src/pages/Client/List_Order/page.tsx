@@ -68,6 +68,7 @@ export default function List_order() {
     [orderId: string]: Set<string>;
   }>({});
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const uploadButton = (
@@ -220,8 +221,7 @@ export default function List_order() {
     orderNumber?: string | number;
     linkUri?: string | number;
   }) {
-    console.log("Lý do hủy từ frontend:", dataBody?.cancellationReason);
-    // Gửi thông báo đến admin về việc hủy đơn hàng
+    setIsLoading(true);
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: "nguyenvana@gmail.com",
@@ -229,23 +229,15 @@ export default function List_order() {
       different: dataBody?.linkUri,
       id_different: dataBody?.orderNumber,
     });
-
-    // Gửi yêu cầu hủy đơn hàng lên BE
     mutate(dataBody, {
       onSuccess: async (response) => {
-        console.log(
-          "Lý do hủy từ backend response:",
-          response.data?.cancellationReason
-        );
         try {
-          // Gọi API gửi email hủy đơn hàng
           await axios.post("/api/v1/send-cancellation-email", {
-            email: user?.user?.email, // Email người dùng
-            order: response.data, // Dữ liệu đơn hàng từ BE trả về
+            email: user?.user?.email,
+            order: response.data,
             cancellationReason:
               response.data?.cancellationReason || dataBody?.cancellationReason,
           });
-
           console.log("Email hủy đơn đã được gửi thành công!");
         } catch (error) {
           console.error("Lỗi khi gửi email:", error);
@@ -324,7 +316,7 @@ export default function List_order() {
   };
 
   if (data && data.data && data.data.docs) {
-    data.data.docs.forEach((order) => {
+    data.data.docs.forEach((order: any) => {
       const itemCount = order.items.length; // Số lượng sản phẩm trong mỗi đơn hàng
       orderStatusCounts["Tất Cả"] += itemCount; // Tăng tổng số sản phẩm
 
@@ -549,8 +541,8 @@ export default function List_order() {
                         okText="Có "
                         cancelText="Không"
                       >
-                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
-                          Hủy đơn hàng
+                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none" loading={isLoading}>
+                          {isLoading ? "loading" : "Hủy đơn hàng"}
                         </Button>
                       </Popconfirm>
                     </div>
@@ -638,9 +630,23 @@ export default function List_order() {
                       Đã Nhận Hàng
                     </Button>
                   ) : items?.status === "4" ? (
-                    <Button
-                      className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
-                      onClick={() => (
+                    // <Button
+                    //   className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
+                    //   onClick={() => (
+                    //     mutate({ id_item: items._id }),
+                    //     dispathNotification?.mutate({
+                    //       userId: userId,
+                    //       receiver_id: userId,
+                    //       message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                    //     })
+                    //   )}
+                    // >
+                    //   Đã Nhận Hàng
+                    // </Button>
+                    <Popconfirm
+                      title="Xác nhận đã nhận hàng?"
+                      description="Bạn có chắc chắn muốn xác nhận đã nhận hàng không?"
+                      onConfirm={() => (
                         mutate({ id_item: items._id }),
                         dispathNotification?.mutate({
                           userId: userId,
@@ -648,9 +654,15 @@ export default function List_order() {
                           message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
                         })
                       )}
+                      // onConfirm={() => addCart(items?._id)}
+                      // onCancel={cancel}
+                      okText="Có "
+                      cancelText="Không"
                     >
-                      Đã Nhận Hàng
-                    </Button>
+                      <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
+                        Đã nhận hàng
+                      </Button>
+                    </Popconfirm>
                   ) : items?.status === "5" ? (
                     <Popconfirm
                       title="Mua lại đơn hàng?"
@@ -661,7 +673,7 @@ export default function List_order() {
                       cancelText="Không"
                     >
                       <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại 11111
+                        Mua lại
                       </Button>
                     </Popconfirm>
                   ) : items?.status === "6" ? (

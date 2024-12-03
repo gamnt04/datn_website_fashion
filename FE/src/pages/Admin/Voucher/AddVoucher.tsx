@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation } from "@tanstack/react-query";
 import {
   Button,
@@ -9,6 +10,7 @@ import {
   InputNumber,
   message,
   Select,
+  Spin,
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
@@ -22,6 +24,7 @@ import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { AiFillBackward } from "react-icons/ai";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -62,6 +65,7 @@ const AddVoucher = () => {
       ...values,
       allowedUsers: selectedUsers,
       appliedProducts: selectedItems,
+      appliedCategories: selectedCategories,
     };
     mutate(formData);
   };
@@ -70,8 +74,8 @@ const AddVoucher = () => {
     userType.includes("user") && userType.includes("courier")
       ? [...(auth?.data || []), ...(shippers?.data?.shippers || [])]
       : userType.includes("user")
-      ? auth?.data || []
-      : shippers?.data?.shippersData || [];
+        ? auth?.data || []
+        : shippers?.data?.shippersData || [];
 
   const handleUserTypeChange = (value: string[]) => {
     console.log("Giá trị userType sau khi thay đổi:", value);
@@ -81,7 +85,6 @@ const AddVoucher = () => {
   const {
     selectedUsers,
     applyType,
-    limitType,
     discountType,
     selectedItems,
     selectedCategories,
@@ -90,14 +93,15 @@ const AddVoucher = () => {
     setSearchText,
     handleSelectChange,
     onApplyTypeChange,
-    onLimitTypeChange,
     ondiscountTypeChange,
     handleCheckboxChange,
+    handleCheckboxChangeCate,
     handleSelect,
-    handleCategoryChange,
+    handleSelectCate,
     handleSelectAll,
+    handleSelectAllCate,
     filteredProducts,
-    filteredCategories,
+    filteredCategorys,
   } = useVoucherHandlers({
     form,
     products,
@@ -105,7 +109,13 @@ const AddVoucher = () => {
     auth,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="mt-20">
@@ -291,6 +301,9 @@ const AddVoucher = () => {
                     placeholder="Chọn loại áp dụng"
                   >
                     <Select.Option value="product">Sản phẩm</Select.Option>
+                    <Select.Option value="category">
+                      Danh mục sản phẩm
+                    </Select.Option>
                     <Select.Option value="total">
                       Tổng giá trị đơn hàng
                     </Select.Option>
@@ -336,49 +349,20 @@ const AddVoucher = () => {
                               Chọn tất cả
                             </Checkbox>
                           </div>
-                          {/* Sử dụng filteredCategories thay vì visibleCategories */}
-                          {filteredCategories.map((category) => (
-                            <div
-                              key={category._id}
-                              style={{ padding: "8px 0" }}
-                            >
-                              <div style={{ paddingLeft: "12px" }}>
-                                <Checkbox
-                                  checked={selectedCategories.includes(
-                                    category._id
-                                  )}
-                                  onChange={() =>
-                                    handleCategoryChange(category._id)
-                                  }
-                                >
-                                  <span style={{ fontWeight: "bold" }}>
-                                    {category.name_category}
-                                  </span>
-                                </Checkbox>
-                              </div>
-                              <div style={{ paddingLeft: "24px" }}>
-                                {filteredProducts
-                                  .filter(
-                                    (product) =>
-                                      product.category_id === category._id
-                                  )
-                                  .map((product) => (
-                                    <Checkbox
-                                      key={product._id}
-                                      value={product._id}
-                                      checked={selectedItems.includes(
-                                        product._id
-                                      )}
-                                      onChange={() =>
-                                        handleCheckboxChange(product._id)
-                                      }
-                                    >
-                                      {product.name_product}
-                                    </Checkbox>
-                                  ))}
-                              </div>
-                            </div>
-                          ))}
+                          <div style={{ paddingLeft: "24px" }}>
+                            {filteredProducts.map((product) => (
+                              <Checkbox
+                                key={product._id}
+                                value={product._id}
+                                checked={selectedItems.includes(product._id)}
+                                onChange={() =>
+                                  handleCheckboxChange(product._id)
+                                }
+                              >
+                                {product.name_product}
+                              </Checkbox>
+                            ))}
+                          </div>
                         </div>
                       )}
                     >
@@ -420,6 +404,70 @@ const AddVoucher = () => {
                     />
                   </Form.Item>
                 )}
+
+                {applyType === "category" && (
+                  <Form.Item
+                    label="Danh mục sản phẩm áp dụng"
+                    name="appliedCategories"
+                  >
+                    <Select
+                      mode="multiple"
+                      placeholder="Chọn danh mục sản phẩm áp dụng"
+                      onChange={handleSelectCate}
+                      style={{ width: "100%" }}
+                      suffixIcon={
+                        <p className="text-black">
+                          Đã chọn: {selectedCategories.length}
+                        </p>
+                      }
+                      showSearch={false}
+                      dropdownRender={(menu: any) => (
+                        <div className="max-h-[500px] overflow-y-auto">
+                          {/* Thêm ô tìm kiếm */}
+                          <div style={{ padding: "8px 12px" }}>
+                            <Input.Search
+                              placeholder="Tìm kiếm danh mục..."
+                              onChange={(e) => setSearchText(e.target.value)}
+                              style={{ marginBottom: 8 }}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              padding: "8px 12px",
+                              borderBottom: "1px solid #f0f0f0",
+                            }}
+                          >
+                            <Checkbox
+                              checked={selectAll}
+                              onChange={(e) =>
+                                handleSelectAllCate(e.target.checked)
+                              }
+                            >
+                              Chọn tất cả
+                            </Checkbox>
+                          </div>
+                          {/* Sử dụng filteredCategories thay vì visibleCategories */}
+                          {filteredCategorys.map((category) => (
+                            <div style={{ paddingLeft: "12px" }}>
+                              <Checkbox
+                                key={category._id}
+                                value={category._id}
+                                checked={selectedCategories.includes(
+                                  category._id
+                                )}
+                                onChange={() =>
+                                  handleCheckboxChangeCate(category._id)
+                                }
+                              >
+                                {category.name_category}
+                              </Checkbox>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    ></Select>
+                  </Form.Item>
+                )}
               </div>
 
               {/* Cột 2 */}
@@ -431,83 +479,76 @@ const AddVoucher = () => {
                 >
                   <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Giới hạn mã giảm giá">
-                  <Checkbox.Group
-                    options={[
-                      { label: "Giới hạn thời gian", value: "time" },
-                      { label: "Giới hạn số lượng", value: "quantity" },
-                    ]}
-                    onChange={onLimitTypeChange}
-                  />
-                </Form.Item>
-                {/* Hiển thị ô thời gian nếu chọn "Giới hạn thời gian" */}
-                {limitType.includes("time") && (
-                  <div>
-                    <Form.Item<IVoucher>
-                      label="Ngày bắt đầu"
-                      name="startDate"
-                      rules={[
-                        {
-                          validator: (_, value) => {
-                            if (!value || value.isBefore(new Date())) {
-                              return Promise.reject(
-                                new Error(
-                                  "Ngày bắt đầu không được trong quá khứ!"
-                                )
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker showTime className="w-full " />
-                    </Form.Item>
 
-                    <Form.Item<IVoucher>
-                      label="Ngày kết thúc"
-                      name="expirationDate"
-                      rules={[
-                        {
-                          validator: (_, value) => {
-                            const startDate = form.getFieldValue("startDate");
-                            if (
-                              startDate &&
-                              value &&
-                              value.isBefore(startDate)
-                            ) {
-                              return Promise.reject(
-                                new Error(
-                                  "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
-                                )
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker showTime className="w-full " />
-                    </Form.Item>
-                  </div>
-                )}
-
-                {/* Hiển thị ô số lượng nếu chọn "Giới hạn số lượng" */}
-                {limitType.includes("quantity") && (
+                <div>
                   <Form.Item<IVoucher>
-                    label="Số lượng mã giảm giá"
-                    name="quantity_voucher"
+                    label="Ngày bắt đầu"
+                    name="startDate"
                     rules={[
                       {
-                        type: "number",
-                        min: 1,
-                        message: "Số lượng phải lớn hơn 0!",
+                        required: true,
+                        message: "Vui lòng nhập ngày bắt đầu!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (!value || value.isBefore(new Date())) {
+                            return Promise.reject(
+                              new Error(
+                                "Ngày bắt đầu không được trong quá khứ!"
+                              )
+                            );
+                          }
+                          return Promise.resolve();
+                        },
                       },
                     ]}
                   >
-                    <InputNumber className="w-full " />
+                    <DatePicker showTime className="w-full " />
                   </Form.Item>
-                )}
+
+                  <Form.Item<IVoucher>
+                    label="Ngày kết thúc"
+                    name="expirationDate"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập ngày kết thúc!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          const startDate = form.getFieldValue("startDate");
+                          if (startDate && value && value.isBefore(startDate)) {
+                            return Promise.reject(
+                              new Error(
+                                "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                              )
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <DatePicker showTime className="w-full " />
+                  </Form.Item>
+                </div>
+
+                {/* Hiển thị ô số lượng nếu chọn "Giới hạn số lượng" */}
+
+                <Form.Item<IVoucher>
+                  label="Số lượng mã giảm giá"
+                  name="quantity_voucher"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập số lượng!" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Số lượng phải lớn hơn 0!",
+                    },
+                  ]}
+                >
+                  <InputNumber className="w-full " />
+                </Form.Item>
 
                 <Form.Item label="Chọn loại người dùng">
                   <Checkbox.Group

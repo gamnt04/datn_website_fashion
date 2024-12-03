@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -323,7 +324,11 @@ const ListCart = () => {
       routing("/login");
     }
   }
-
+  if (isPending) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   if (isError) {
     return <p>{error.message}</p>;
   }

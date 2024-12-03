@@ -5,10 +5,10 @@ import {
 } from "../../../common/hooks/Contact/useContacts";
 import { format } from "date-fns";
 import { IContact } from "../../../common/interfaces/Contact";
-import Loading from "../../../components/base/Loading/Loading";
-import { Button, Input, Table } from "antd";
+import { Button, Input, Spin, Table } from "antd";
 import { useState } from "react";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const ListContact = () => {
   const { contacts, isLoading, error, isError } = useContacts();
@@ -18,7 +18,7 @@ const ListContact = () => {
   const { data: searchData } = useSearchContactByNameOrEmail(searchContact);
   const dataSource = (searchContact ? searchData : contacts)?.map(
     (contact: IContact) => ({
-      key: contact._id,
+      key: contact?._id,
       ...contact,
     })
   );
@@ -33,7 +33,7 @@ const ListContact = () => {
       render: (_: any, contact: IContact) => (
         <>
           <button
-            onClick={() => handleViewDetail(contact._id!)}
+            onClick={() => handleViewDetail(contact?._id!)}
             className="text-blue-600 hover:underline"
           >
             {contact.name}
@@ -51,7 +51,7 @@ const ListContact = () => {
       dataIndex: "content",
       key: "content",
       render: (_: any, contact: IContact) => (
-        <p className="text-red-600">{contact.content}</p>
+        <p className="text-red-600">{contact?.content}</p>
       ),
     },
     {
@@ -59,7 +59,7 @@ const ListContact = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (_: any, contact: IContact) => (
-        <>{formatDate(contact.createdAt)}</>
+        <>{formatDate(contact?.createdAt)}</>
       ),
     },
     {
@@ -91,7 +91,11 @@ const ListContact = () => {
     navigate(`/admin/feedback/${id}`);
   };
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
 
   if (isError) {

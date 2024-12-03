@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, message, Spin } from "antd";
 import axios from "axios";
 import JoditEditor from "jodit-react";
 import { useMemo, useRef, useState } from "react";
@@ -10,6 +10,7 @@ import {
   CheckAuths,
   getToken
 } from "../../../common/hooks/Auth/useAuthorization";
+import { LoadingOutlined } from "@ant-design/icons";
 const BlogAdd = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const editor = useRef(null);
@@ -94,7 +95,11 @@ const BlogAdd = () => {
     }),
     []
   );
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <CheckAuths roles={["admin"]}>
       <>

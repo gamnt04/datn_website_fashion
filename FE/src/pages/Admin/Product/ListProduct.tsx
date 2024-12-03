@@ -3,11 +3,11 @@ import {
   Query_Products_Dashboard,
   useQueryProductsSearch,
 } from "../../../common/hooks/Products/Products";
-import { Button, Input, message, Pagination, Popconfirm } from "antd";
+import { Button, Input, message, Pagination, Popconfirm, Spin } from "antd";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Mutation_items } from "../../../common/hooks/Products/mutation_item";
 import { AiOutlinePlus } from "react-icons/ai";
 import Data_Table from "./_component/Data_Table";
@@ -63,7 +63,13 @@ const ListProduct = () => {
       setSelectedProductIds([...selectedProductIds, productId]);
     }
   };
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
   if (isError) return <div>{error.message}</div>;
   return (
     <CheckAuths roles={["admin"]}>

@@ -10,6 +10,8 @@ import {
   Table,
   Drawer,
   Switch,
+  Input,
+  Spin,
 } from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -18,11 +20,12 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
-import { Loader } from "lucide-react";
 import useDataVoucher from "./_component/useDataVoucher";
+import { LoadingOutlined } from "@ant-design/icons";
 const ListVoucher = () => {
   const queryClient = useQueryClient();
   const [messageAPI, contextHolder] = message.useMessage();
+  const [searchText, setSearchText] = useState<string>("");
   const { data, isLoading } = useQuery({
     queryKey: ["voucher"],
     queryFn: () => instance.get(`/voucher`),
@@ -72,8 +75,7 @@ const ListVoucher = () => {
     onError: (error: unknown) => {
       console.error("Lỗi khi cập nhật Voucher:", error);
       messageAPI.error(
-        `Cập nhật Voucher không thành công. ${
-          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Cập nhật Voucher không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
     },
@@ -92,11 +94,14 @@ const ListVoucher = () => {
   const handleTogglePublished = (category: IVoucher) => {
     mutation.mutate({ ...category, isActive: !category.isActive });
   };
-  const dataSource = data?.data?.vouchers.map((voucher: IVoucher) => ({
+
+  const dataSource = data?.data?.vouchers?.map((voucher: IVoucher) => ({
     key: voucher._id,
     ...voucher,
   }));
-
+  const filtered = dataSource?.filter((voucher: IVoucher) =>
+    voucher.name_voucher.toLowerCase().includes(searchText.toLowerCase())
+  );
   const columns = [
     {
       title: "STT",
@@ -189,14 +194,33 @@ const ListVoucher = () => {
     },
   ];
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  };
   return (
     <div className="container">
       {contextHolder}
 
       <div className="mx-6">
         <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
+          <div>
+            {" "}
+            <h1 className="mb-6 text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
+            <div className="flex justify-between mb-2">
+              <div className="flex space-x-5">
+                <Input
+                  className="w-[500px]"
+                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+                <Button type="primary">Tìm kiếm</Button>
+              </div>
+            </div>
+          </div>
 
           <Link to={`/admin/voucher/add`}>
             <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
@@ -208,7 +232,7 @@ const ListVoucher = () => {
         {data && data.data.vouchers.length === 0 ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
-          <Table dataSource={dataSource} columns={columns} />
+          <Table dataSource={filtered} columns={columns} />
         )}
 
         <Drawer
@@ -276,25 +300,25 @@ const ListVoucher = () => {
               <p>
                 <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
-                selectedVoucher.allowedUsers.length > 0
+                  selectedVoucher.allowedUsers.length > 0
                   ? [
-                      ...(auth?.data || []),
-                      ...(shippersData?.data.shippers || []),
-                    ]
-                      .filter((user: any) =>
-                        selectedVoucher.allowedUsers.includes(user._id)
-                      )
-                      .map((user: any, index: number) => (
-                        <span key={index}>
-                          {user.userName} {user.fullName}
-                          {user.role === "courier"
-                            ? "( shipper )"
-                            : "( Người dùng )"}
-                          {index < selectedVoucher.allowedUsers.length - 1
-                            ? ", "
-                            : ""}
-                        </span>
-                      ))
+                    ...(auth?.data || []),
+                    ...(shippersData?.data.shippers || []),
+                  ]
+                    .filter((user: any) =>
+                      selectedVoucher.allowedUsers.includes(user._id)
+                    )
+                    .map((user: any, index: number) => (
+                      <span key={index}>
+                        {user.userName} {user.fullName}
+                        {user.role === "courier"
+                          ? "( shipper )"
+                          : "( Người dùng )"}
+                        {index < selectedVoucher.allowedUsers.length - 1
+                          ? ", "
+                          : ""}
+                      </span>
+                    ))
                   : "Tất cả"}
               </p>
               <hr className="my-3" />

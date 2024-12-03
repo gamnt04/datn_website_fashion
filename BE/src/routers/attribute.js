@@ -43,7 +43,7 @@ router_attribute.get("/thuoc_tinh/lay_thuoc_tinh/:id_account", lay_thuoc_tinh);
 router_attribute.get("/thuoc_tinh/lay_1_thuoc_tinh/:id_account", lay_1_thuoc_tinh);
 router_attribute.put("/thuoc_tinh/sua_thuoc_tinh/:id_account", sua_thuoc_tinh);
 router_attribute.delete(
-  "/thuoc_tinh/xoa_thuoc_tinh/:id_account",
+  "/thuoc_tinh/xoa_thuoc_tinh/:id",
   xoa_thuoc_tinh
 );
 // lấy tất cả thuộc tính

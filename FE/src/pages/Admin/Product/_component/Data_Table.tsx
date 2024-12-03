@@ -145,8 +145,8 @@ export default function Data_Table({ dataProps }: any) {
                         <div></div>
                         {/* attributes */}
                         <div className="flex gap-x-2 w-full">
-                        {item?.symbol && item?.symbol[0] === '#' ? <div style={{background : item?.symbol}} className={`w-6 h-6 rounded`}/> :
-                         <img width={40} height={40} src={item?.symbol}/>}
+                        {(item?.symbol?.trim()) ? item?.symbol[0] === '#' ? <div style={{background : item?.symbol}} className={`w-6 h-6 rounded`}/> :
+                         <img width={40} height={40} src={item?.symbol}/> : ''}
                           <span className="line-clamp-3">{item?.color}</span>,
                           <span className="line-clamp-3">
                             {value?.name_size}

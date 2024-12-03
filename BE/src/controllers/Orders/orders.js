@@ -9,11 +9,10 @@ import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
 import Shipper from "../../models/Shipper/shipper";
 import fetch from "node-fetch";
 import * as turf from "@turf/turf";
-import Notification from "../../models/Notification/notification";
 // Middleware xác thực
 import jwt from "jsonwebtoken";
 import Voucher from "../../models/Voucher/voucher";
-
+import Notification from "../../models/Notification/Notification";
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
   if (!token) {
@@ -61,8 +60,7 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`,
+        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
         toa_do: customerInfo.toa_do,
       },
       totalPrice,
@@ -135,7 +133,7 @@ export const createOrder = async (req, res) => {
     const notification = new Notification({
       userId: userId,
       receiver_id: userId,
-      message: `Người dùng ${customerInfo.userName} đã đặt hàng`,
+      message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
       different: order._id,
       status_notification: false
     });
@@ -153,6 +151,8 @@ export const createOrderPayment = async (req, res) => {
   try {
     const requestBody = JSON.parse(JSON.stringify(req.body));
     const { userId, items, customerInfo, totalPrice } = requestBody;
+    console.log(customerInfo);
+
     const data = await Order.create(requestBody);
     for (let i of items) {
       if (i.productId.attributes) {
@@ -209,8 +209,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`
+          address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
+          toa_do: customerInfo.toa_do,
         },
         totalPrice
       });
@@ -218,7 +218,7 @@ export const createOrderPayment = async (req, res) => {
       const notification = new Notification({
         userId: userId,
         receiver_id: userId,
-        message: `Người dùng ${customerInfo.userName} đã đặt hàng`,
+        message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
         different: order._id,
         status_notification: false
       });
@@ -445,36 +445,31 @@ export const getTop10ProductBestSale = async (req, res) => {
   }
 };
 
-const getCoordinates = async (address) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-    address
-  )}&format=json&limit=1`;
+const calculateDistance = async (coords1, coords2) => {
+  const mapboxAccessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w'; // Thay bằng token của bạn
+
+  const origin = [coords1.lng, coords1.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
+  const destination = [coords2.lng, coords2.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
+
+  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?alternatives=false&geometries=geojson&steps=true&access_token=${mapboxAccessToken}`;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.length > 0) {
-      console.log(`Tọa độ tìm thấy cho địa chỉ: ${address}`, data[0]);
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon)
-      };
+    if (data.routes && data.routes.length > 0) {
+      const distanceInMeters = data.routes[0].distance; // Khoảng cách theo đơn vị mét
+      const distanceInKilometers = distanceInMeters / 1000; // Chuyển từ mét sang kilomet
+      console.log("distanceInKilometers", distanceInKilometers);
+
+      return distanceInKilometers.toFixed(2); // Trả về khoảng cách ở dạng km
     } else {
-      console.warn(`Không tìm thấy tọa độ cho địa chỉ: ${address}`);
-      return null;
+      throw new Error("Không tìm thấy tuyến đường.");
     }
   } catch (error) {
-    console.error("Lỗi khi lấy tọa độ:", error);
-    return null;
+    console.error("Error calculating distance:", error);
+    throw new Error("Không thể tính toán khoảng cách.");
   }
-};
-
-const calculateDistance = (startCoords, destinationCoords) => {
-  const from = turf.point([startCoords.lon, startCoords.lat]);
-  const to = turf.point([destinationCoords.lon, destinationCoords.lat]);
-  const options = { units: "kilometers" };
-  return turf.distance(from, to, options);
 };
 
 export const getOrderById = async (req, res) => {
@@ -482,39 +477,25 @@ export const getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.id).populate("shipperId");
 
     if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Order not found" });
+      return res.status(StatusCodes.NOT_FOUND).json({ error: "Order not found" });
     }
-
-    const warehouseAddress =
-      "FPT Polytechnic, Trịnh Văn Bô, Nam Từ Liêm, Hà Nội";
-
-    const warehouseCoords = await getCoordinates(warehouseAddress);
-    const customerCoords = await getCoordinates(order.customerInfo.address);
-
-    if (!warehouseCoords) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: `Không thể tìm thấy tọa độ của địa chỉ kho: ${warehouseAddress}`
-      });
-    }
+    const warehouseCoords = { lat: 21.037956477970923, lng: 105.74689813551527 };  // Tọa độ kho
+    const customerCoords = order.customerInfo.toa_do;
 
     if (!customerCoords) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: `Không thể tìm thấy tọa độ của địa chỉ người nhận: ${order.customerInfo.address}`
       });
     }
-
-    const distance = calculateDistance(warehouseCoords, customerCoords);
-
+    const distance = await calculateDistance(warehouseCoords, customerCoords);
+    order.deliveryDistance = distance + "km";
+    await order.save();
     return res.status(StatusCodes.OK).json({
       ...order.toObject(),
-      deliveryDistance: distance.toFixed(2) + " km"
+      deliveryDistance: distance + "km"
     });
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
 
@@ -676,7 +657,14 @@ export const updateOrderStatus = async (req, res) => {
     //     }
     //   }
     // }
-
+    if (status === "6") {
+      try {
+        await SendDeliverySuccessMail(order.customerInfo.email, order);
+      } catch (emailError) {
+        console.error("Error sending delivery success email:", emailError);
+        return res.status(500).json({ message: "Failed to send delivery success email." });
+      }
+    }
     await order.save();
     return res
       .status(StatusCodes.OK)

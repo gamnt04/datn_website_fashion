@@ -874,9 +874,9 @@ export const List_Address = ({
 };
 
 export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
+  const [provinces, setProvinces] = useState<any>([]);
+  const [districts, setDistricts] = useState<any>([]);
+  const [wards, setWards] = useState<any>([]);
   const [selectedLocation, setSelectedLocation] = useState({
     province: { code: null, name: "" },
     district: { code: null, name: "" },
@@ -945,7 +945,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
     }
   };
   const handleProvinceChange = (value: string) => {
-    const selectedProvince = provinces.find((item) => item.code === value);
+    const selectedProvince = provinces.find((item: any) => item.code === value);
     if (selectedProvince) {
       setSelectedLocation({
         province: selectedProvince,
@@ -959,9 +959,9 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
   };
 
   const handleDistrictChange = (value: string) => {
-    const selectedDistrict = districts.find((item) => item.code === value);
+    const selectedDistrict = districts.find((item: any) => item.code === value);
     if (selectedDistrict) {
-      setSelectedLocation((prev) => ({
+      setSelectedLocation((prev: any) => ({
         ...prev,
         district: selectedDistrict,
         ward: { code: null, name: "" }
@@ -971,9 +971,9 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
   };
 
   const handleWardChange = (value: string) => {
-    const selectedWard = wards.find((item) => item.code === value);
+    const selectedWard = wards.find((item: any) => item.code === value);
     if (selectedWard) {
-      setSelectedLocation((prev) => ({
+      setSelectedLocation((prev: any) => ({
         ...prev,
         ward: selectedWard
       }));
@@ -1083,9 +1083,13 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: IProps) => {
       setDefault: values.checked
     };
     console.log("data_form", data_form);
+<<<<<<< HEAD
     console.log("fullAddressNumber", fullAddressNumber);
 
     setIsOpen(false);
+=======
+    // setIsOpen(false);
+>>>>>>> 32afd8a2ce3ee0e6f2a49621e80da5bf522d73d4
     mutate(data_form);
   };
   return (

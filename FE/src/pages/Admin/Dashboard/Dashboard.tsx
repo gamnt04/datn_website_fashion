@@ -1,3 +1,4 @@
+import { Spin } from "antd";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import {
   Query_Orders,
@@ -11,10 +12,11 @@ import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
 import ChartUser from "./components/ChartUser";
 import TableOrder from "./components/TableOrder";
 import TableTopProducts from "./components/TableTopProducts";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
-  const { data: productData } = Query_Products();
+  const { data: productData, isLoading } = Query_Products();
   const { data: orderOfDayData } = useOrdersOfDay();
   // const { data: orderData } = Query_Orders();
   console.log(orderOfDayData);
@@ -31,7 +33,13 @@ const MainContent = () => {
     },
     0
   );
-
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
   return (
     <>
       {" "}

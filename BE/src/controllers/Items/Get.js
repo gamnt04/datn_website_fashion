@@ -396,7 +396,7 @@ export async function filterItems(req, res) {
 
     const query = { category_id: { $in: visibleCategoryIds } };
 
-    // Thêm các điều kiện lọc nếu có
+    // Thêm các điều kiện lọc
     if (cate_id) {
       query.category_id = { $in: cate_id.split(",").map((id) => id.trim()) };
     }
@@ -483,26 +483,19 @@ export async function filterItems(req, res) {
       return false;
     });
 
-    // Sắp xếp nếu cần
-    if (_sort.includes("price_attribute")) {
-      const sortOrder = _sort.split(":")[1] === "desc" ? -1 : 1;
-      filteredProducts.sort((a, b) => (a.maxPrice - b.maxPrice) * sortOrder);
-    }
+    // Nếu không có bộ lọc, trả về tất cả sản phẩm
+    const resultProducts =
+      filteredProducts.length > 0 ? filteredProducts : data.docs;
 
-    // Phân trang sau khi lọc
-    const paginatedProducts = filteredProducts.slice(
-      (page - 1) * limit,
-      page * limit
-    );
-
+    // Trả dữ liệu sau khi lọc và phân trang
     return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data: paginatedProducts,
+      data: filteredProducts,
       pagination: {
-        totalItems: filteredProducts.length,
-        currentPage: page,
-        totalPages: Math.ceil(filteredProducts.length / limit),
-        itemsPerPage: limit,
+        totalItems: data.totalDocs,
+        currentPage: data.page,
+        totalPages: data.totalPages,
+        itemsPerPage: data.limit,
       },
     });
   } catch (error) {

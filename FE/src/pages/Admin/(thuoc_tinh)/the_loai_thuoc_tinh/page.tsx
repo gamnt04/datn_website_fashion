@@ -1,8 +1,9 @@
-import { Button, Form, FormProps, Input, Select } from "antd";
+import { Button, Form, FormProps, Input, Select, Spin } from "antd";
 import Table_cpnt from "./table_cpnt";
 import { Dispatch_the_loai_thuoc_tinh, Lay_the_loai_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
 import { useRef, useState } from "react";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
+import { LoadingOutlined } from "@ant-design/icons";
 
 type FieldType = {
   name_attribute?: string;
@@ -11,7 +12,7 @@ type FieldType = {
 
 export default function The_loai_thuoc_tinh() {
   const [user] = useLocalStorage("user", {});
-  const { mutate, isPending, isError } = Dispatch_the_loai_thuoc_tinh('CREATED');
+  const { mutate, isPending, isError, status_api } = Dispatch_the_loai_thuoc_tinh('CREATED');
   const [state_the_loai_thuoc_tinh, setState_the_loai_thuoc_tinh] = useState<string>('');
   const ref_the_loai_thuoc_tinh = useRef<HTMLSpanElement>(null);
   const { data, isPending: loading, isError: error } = Lay_the_loai_thuoc_tinh({
@@ -20,7 +21,7 @@ export default function The_loai_thuoc_tinh() {
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     if (!state_the_loai_thuoc_tinh || state_the_loai_thuoc_tinh === '') {
       ref_the_loai_thuoc_tinh?.current?.classList?.add('block'),
-      ref_the_loai_thuoc_tinh?.current?.classList?.remove('hidden')
+        ref_the_loai_thuoc_tinh?.current?.classList?.remove('hidden')
     }
     else {
       ref_the_loai_thuoc_tinh?.current?.classList?.remove('block')
@@ -33,7 +34,6 @@ export default function The_loai_thuoc_tinh() {
       mutate(data_request)
     }
   };
-
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
@@ -41,8 +41,23 @@ export default function The_loai_thuoc_tinh() {
   const handleChange = (value: string) => {
     setState_the_loai_thuoc_tinh(value)
   };
+  if (isPending) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="px-10">
+      {
+        isPending && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+      {
+        loading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
       <strong>Các thuộc tính</strong>
       <section className="my-8 grid grid-cols-[40%_55%] justify-between">
         {/* cot trai */}
@@ -59,7 +74,7 @@ export default function The_loai_thuoc_tinh() {
               <span>Tên</span>
               <Form.Item<FieldType>
                 name="name_attribute"
-                rules={[{ required: true, message: 'Please input your username!' }]}
+                rules={[{ required: true, message: 'Tên loại thuộc tính không được để trống!' }]}
               >
                 <Input />
               </Form.Item>
@@ -79,6 +94,9 @@ export default function The_loai_thuoc_tinh() {
               />
               <span ref={ref_the_loai_thuoc_tinh} className="hidden text-red-500">Vui long chon!</span>
             </div>
+            {
+              status_api === 400 && <span className="text-xs text-red-500">Loại thuộc tính đã tồn tại!</span>
+            }
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Tạo
@@ -89,9 +107,6 @@ export default function The_loai_thuoc_tinh() {
 
         {/* cot phai */}
         <div>
-          {
-            isPending || loading && <span>Loading...</span>
-          }
           {
             isError || error && <span>Error :((</span>
           }
