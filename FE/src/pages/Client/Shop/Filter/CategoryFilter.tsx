@@ -24,13 +24,17 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     });
   };
 
-  const visibleCategories = categories.filter((category) => category.published);
+  // Lọc danh mục đã được công bố và không có tên là "Uncategorized"
+  const visibleCategories = categories.filter(
+    (category) =>
+      category.published && category.name_category !== "Uncategorized"
+  );
 
   return (
     <div className="relative border border-gray-200">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full py-2 px-4 text-gray-900 rounded-md  "
+        className="flex items-center justify-between w-full py-2 px-4 text-gray-900 rounded-md"
       >
         <strong className="font-semibold mb:text-sm lg:text-lg">
           Danh Mục
@@ -56,7 +60,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </button>
 
       {isOpen && (
-        <div className="w-full bg-white  rounded-md ">
+        <div className="w-full bg-white rounded-md">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
             {visibleCategories.length > 0 ? (
               visibleCategories.map((category) => (
@@ -79,8 +83,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           </div>
         </div>
       )}
-
-      
     </div>
   );
 };

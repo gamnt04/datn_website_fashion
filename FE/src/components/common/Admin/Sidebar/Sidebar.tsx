@@ -39,8 +39,9 @@ export default function Sidebar_Dashboard() {
               <LayoutDashboard />
               <span className="text-[#c4cee3]">Bảng điều khiển</span>
               <ChevronDown
-                className={`ml-auto transform ${expandedSection === "dashboard" ? "rotate-180" : ""
-                  }`}
+                className={`ml-auto transform ${
+                  expandedSection === "dashboard" ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -69,8 +70,9 @@ export default function Sidebar_Dashboard() {
               <Shirt />
               <span className="text-[#c4cee3]">Sản phẩm</span>
               <ChevronDown
-                className={`ml-auto transform ${expandedSection === "products" ? "rotate-180" : ""
-                  }`}
+                className={`ml-auto transform ${
+                  expandedSection === "products" ? "rotate-180" : ""
+                }`}
               />
             </button>
 
