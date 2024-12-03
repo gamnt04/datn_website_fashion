@@ -4,7 +4,6 @@ import { useState } from "react";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
-import { Auth } from "../../../common/interfaces/Auth";
 import {
   Add_Address,
   Update_Address
@@ -83,7 +82,7 @@ const Address = () => {
   if (isError) return <div>{error.message as any}</div>;
 
   // Sắp xếp địa chỉ mặc định lên đầu tiên
-  const sortedAddresses = data?.address?.sort((a, b) => b.checked - a.checked);
+  const sortedAddresses = data?.address?.sort((a: any, b: any) => b.checked - a.checked);
 
   return (
     <>
@@ -113,7 +112,7 @@ const Address = () => {
         </div>
         <div className="px-5 py-4">
           <h2 className="py-2">Địa chỉ</h2>
-          {sortedAddresses?.map((address: Auth) => (
+          {sortedAddresses?.map((address: any) => (
             <div
               key={address?._id}
               className="flex items-center justify-between pb-6 my-5 border-b"
@@ -124,9 +123,9 @@ const Address = () => {
                   <span className="px-2 text-gray-400">|</span>{" "}
                   <span className="text-gray-400">{address?.phoneNumber}</span>
                 </h1>
-                <div className="flex text-gray-400">
-                  <span>{address.addressDetails}</span>
-                  <span>-</span>
+                <div className="flex text-gray-400 gap-2">
+                  <span>{address.detailedAddress}</span>
+                  <span> - </span>
                   <span>{address.address}</span>
                 </div>
                 {address?.checked && (
