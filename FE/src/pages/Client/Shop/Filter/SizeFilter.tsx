@@ -34,7 +34,7 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
         onToggle={() => setIsOpen(!isOpen)}
       >
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 ">
-          <strong>Size</strong>
+          <strong>Kích cỡ</strong>
           <span className="shrink-0 transition duration-300 group-open:-rotate-180">
             <SlArrowDown />
           </span>

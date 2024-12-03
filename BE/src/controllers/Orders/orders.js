@@ -38,7 +38,8 @@ export const createOrder = async (req, res) => {
     email,
     totalPrice,
     discountCode = null,
-    discountAmount = 0
+    discountAmount = 0,
+    delivery_fee
   } = req.body;
   if (
     !customerInfo.email ||
@@ -65,7 +66,8 @@ export const createOrder = async (req, res) => {
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
-      discountAmount: discountAmount || 0 // Lưu số tiền giảm giá nếu có
+      discountAmount: discountAmount || 0, // Lưu số tiền giảm giá nếu có,
+      delivery_fee
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");

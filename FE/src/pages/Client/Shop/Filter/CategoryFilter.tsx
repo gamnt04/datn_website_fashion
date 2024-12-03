@@ -11,7 +11,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategorySelect,
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleCategoryToggle = (id: string) => {
     setSelectedCategories((prev) => {

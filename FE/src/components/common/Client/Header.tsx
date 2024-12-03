@@ -14,7 +14,9 @@ import { LoadingOutlined } from "@ant-design/icons";
 import logo from "../../../assets/Images/Logo/logo white.png";
 import { AiOutlineBell } from "react-icons/ai";
 import { Query_notification } from "../../../_lib/React_Query/Notification/Query";
+import useStoreZustand from "../../../Stores/useStore";
 const Header = () => {
+  const {isVisible} = useStoreZustand();
   const [messageAPI, contentHolder] = message.useMessage();
   const {
     query,
@@ -239,6 +241,12 @@ const Header = () => {
                 <ShoppingCart />
                 {/* <MiniCart /> */}
               </div>
+              {
+                  isVisible &&
+                  <div className='animation_add_cart absolute w-4 h-4 lg:w-8 lg:h-8 rounded-full'>
+                    <img width={40} height={40} className='rounded-full' src={isVisible} alt='.' />
+                  </div>
+                }
             </Link>
 
             {/* heart */}
