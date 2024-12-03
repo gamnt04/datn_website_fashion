@@ -321,7 +321,7 @@ const Pay = () => {
         );
         sessionStorage.setItem(
           "customerInfo",
-          JSON.stringify({ ...data_form })
+          JSON.stringify({ ...data_form, toa_do: selectedAddress?.coordinates })
         );
         const UrlPayment = await axios.post(
           `http://localhost:2004/api/v1/create_payment_url`,
@@ -335,6 +335,7 @@ const Pay = () => {
         sessionStorage.setItem("item_order", JSON.stringify(item_order));
         window.location.href = UrlPayment.data.paymentUrl;
       } else {
+        setIsOrderSuccessfully(true);
         onSubmit(item_order);
       }
       // mutate({
@@ -349,7 +350,7 @@ const Pay = () => {
         content: "Lỗi tạo đơn hàng!"
       });
     }
-    setIsOrderSuccessfully(true);
+
   };
   // console.log("orderSuccessfully", isOrderSuccessfully);
 
