@@ -15,6 +15,7 @@ export default function Attribute() {
   const [user] = useLocalStorage("user", {});
   const { id } = useParams();
   const [symbol, setSymbol] = useState<string>('');
+  const [validate, setValidate] = useState<boolean>(false);
   const [imageFile, setImageFile] = useState<File[]>([]);
   const { data, isPending, isError } = Lay_the_loai_thuoc_tinh({
     id_thuoc_tinh: id,
@@ -43,8 +44,13 @@ export default function Attribute() {
         id_account: user?.user?._id,
         symbol_thuoc_tinh: imageUrl
       }
-      setLoadingUpload(false)
-      mutate(data_request);
+      setValidate(false)
+      if (!imageUrl) {
+        setValidate(true)
+      } else {
+        setLoadingUpload(false)
+        mutate(data_request);
+      }
     } else {
       const data_request = {
         ten_thuoc_tinh: values?.ten_thuoc_tinh,
@@ -52,7 +58,12 @@ export default function Attribute() {
         id_account: user?.user?._id,
         symbol_thuoc_tinh: symbol
       }
-      mutate(data_request);
+      if (!symbol) {
+        setValidate(true)
+      }
+      else {
+        mutate(data_request);
+      }
     }
   };
 
@@ -61,6 +72,7 @@ export default function Attribute() {
   };
   const handleSetColor = (color: any) => {
     setSymbol(color.hex);
+    setValidate(false)
   }
   return (
     <div className="px-10">
@@ -87,7 +99,7 @@ export default function Attribute() {
               <span>Tên</span>
               <Form.Item<any>
                 name="ten_thuoc_tinh"
-                rules={[{ required: true, message: 'Please input your username!' }]}>
+                rules={[{ required: true, message: 'Vui lòng nhập tên thuộc tính!' }]}>
                 <Input />
               </Form.Item>
             </div>
@@ -118,6 +130,9 @@ export default function Attribute() {
                   <PlusOutlined />
                 </button>
               </Upload>
+            }
+            {
+              validate && <span className="text-red-500 text-sm">Vui lòng chọn</span>
             }
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit" className="-translate-x-[100px] mt-10">

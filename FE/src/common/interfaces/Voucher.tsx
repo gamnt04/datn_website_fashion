@@ -9,6 +9,7 @@ export interface IVoucher {
   discountValue: number;
   applyType: string;
   appliedProducts: string[];
+  appliedCategories: string[];
   minimumSpend: number;
   maxDiscount: number;
   allowedUsers: string[];
