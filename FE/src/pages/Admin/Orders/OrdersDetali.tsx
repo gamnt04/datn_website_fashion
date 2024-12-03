@@ -158,8 +158,6 @@ const OrdersDetali = () => {
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
-    console.log(dataBody.cancellationReason);
-
     cancel(dataBody);
   }
   const reason = [

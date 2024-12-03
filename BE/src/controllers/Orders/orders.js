@@ -9,7 +9,6 @@ import SendDeliverySuccessMail from "../SendMail/ThanhCongMail";
 import Shipper from "../../models/Shipper/shipper";
 import fetch from "node-fetch";
 import * as turf from "@turf/turf";
-import Notification from "../../models/Notification/notification";
 // Middleware xác thực
 import jwt from "jsonwebtoken";
 import Voucher from "../../models/Voucher/voucher";
@@ -470,11 +469,31 @@ const getCoordinates = async (address) => {
   }
 };
 
-const calculateDistance = (startCoords, destinationCoords) => {
-  const from = turf.point([startCoords.lon, startCoords.lat]);
-  const to = turf.point([destinationCoords.lon, destinationCoords.lat]);
-  const options = { units: "kilometers" };
-  return turf.distance(from, to, options);
+const calculateDistance = async (coords1, coords2) => {
+  const mapboxAccessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w'; // Thay bằng token của bạn
+
+  const origin = [coords1.lng, coords1.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
+  const destination = [coords2.lng, coords2.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
+
+  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?alternatives=false&geometries=geojson&steps=true&access_token=${mapboxAccessToken}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.routes && data.routes.length > 0) {
+      const distanceInMeters = data.routes[0].distance; // Khoảng cách theo đơn vị mét
+      const distanceInKilometers = distanceInMeters / 1000; // Chuyển từ mét sang kilomet
+      console.log("distanceInKilometers", distanceInKilometers);
+
+      return distanceInKilometers.toFixed(2); // Trả về khoảng cách ở dạng km
+    } else {
+      throw new Error("Không tìm thấy tuyến đường.");
+    }
+  } catch (error) {
+    console.error("Error calculating distance:", error);
+    throw new Error("Không thể tính toán khoảng cách.");
+  }
 };
 
 export const getOrderById = async (req, res) => {
@@ -482,39 +501,25 @@ export const getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.id).populate("shipperId");
 
     if (!order) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Order not found" });
+      return res.status(StatusCodes.NOT_FOUND).json({ error: "Order not found" });
     }
-
-    const warehouseAddress =
-      "FPT Polytechnic, Trịnh Văn Bô, Nam Từ Liêm, Hà Nội";
-
-    const warehouseCoords = await getCoordinates(warehouseAddress);
-    const customerCoords = await getCoordinates(order.customerInfo.address);
-
-    if (!warehouseCoords) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: `Không thể tìm thấy tọa độ của địa chỉ kho: ${warehouseAddress}`
-      });
-    }
+    const warehouseCoords = { lat: 21.037956477970923, lng: 105.74689813551527 };  // Tọa độ kho
+    const customerCoords = order.customerInfo.toa_do;
 
     if (!customerCoords) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: `Không thể tìm thấy tọa độ của địa chỉ người nhận: ${order.customerInfo.address}`
       });
     }
-
-    const distance = calculateDistance(warehouseCoords, customerCoords);
-
+    const distance = await calculateDistance(warehouseCoords, customerCoords);
+    order.deliveryDistance = distance + "km";
+    await order.save();
     return res.status(StatusCodes.OK).json({
       ...order.toObject(),
-      deliveryDistance: distance.toFixed(2) + " km"
+      deliveryDistance: distance + "km"
     });
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
 
