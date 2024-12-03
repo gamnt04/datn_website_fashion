@@ -38,7 +38,7 @@ const orderSchema = new mongoose.Schema(
       payment: String,
       city: String,
       address: String,
-      code: String
+      code: String,
     },
     totalPrice: {
       type: Number,
@@ -101,6 +101,10 @@ const orderSchema = new mongoose.Schema(
         }
       }
     ],
+    delivery_fee: {
+      type: Number,
+      default: 0
+    },
     deliveryDistance: { type: String, default: null }
   },
   { timestamps: true, versionKey: false }

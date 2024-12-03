@@ -8,7 +8,7 @@ import { Dow, Up } from "../../../resources/svg/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Rate } from "antd";
-import useStore from "../../../Stores/useStore";
+import useStoreZustand from "../../../Stores/useStore";
 
 interface InforProductProp {
   product: IProduct;
@@ -16,7 +16,7 @@ interface InforProductProp {
 
 
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
-  const { setImg } = useStore();
+  const { setVisible } = useStoreZustand()
   const navi = useNavigate();
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
   const [color, setColor] = useState();
@@ -72,6 +72,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         if (action === "checkout") {
           navi("/cart");
         }
+        setVisible(dataProps?.products?.image_product);
       } else {
         text_validate();
       }

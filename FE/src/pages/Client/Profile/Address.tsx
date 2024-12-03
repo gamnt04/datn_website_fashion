@@ -91,7 +91,7 @@ const Address = () => {
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h1>Địa chỉ của tôi</h1>
           <button
-            className="flex items-center gap-2 px-3 py-3 text-sm text-white bg-black rounded-md"
+            className="flex items-center gap-2 p-2 text-sm text-white bg-black rounded"
             onClick={handleAddress}
           >
             <svg
@@ -131,7 +131,7 @@ const Address = () => {
                 </div>
                 {address?.checked && (
                   <div className="flex gap-3 mt-3">
-                    <button className="border border-stone-300 bg-[#000000] text-white px-4 py-2 rounded-md text-sm">
+                    <button className="border border-stone-300 bg-[#000000] text-white px-4 py-2 rounded text-sm">
                       Mặc định
                     </button>
                   </div>

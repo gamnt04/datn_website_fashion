@@ -41,13 +41,9 @@ const MenuShop: React.FC<MenuShopProps> = ({
     onColorChange([color]); // Chuyển màu sắc đã tìm kiếm đến onColorChange
   };
   return (
-    <div className="hidden lg:block w-full flex flex-col my-10">
-      <div className="space-x-4 mb-7 mt-3">
-        <h1 className="text-2xl">Bộ Lọc Sản Phẩm</h1>
-      </div>
-
+    <div className="lg:block w-full flex flex-col my-10">
       {/* Bộ lọc danh mục */}
-      <div className="w-full bg-gray-50">
+      <div className="w-full bg-gray-50 *:rounded">
         <CategoryFilter
           categories={categoryData || []}
           onCategorySelect={handleCategoryChange}
@@ -55,20 +51,20 @@ const MenuShop: React.FC<MenuShopProps> = ({
       </div>
 
       {/* Bộ lọc giá */}
-      <div className="w-full bg-gray-50 mt-2">
+      <div className="w-full bg-gray-50 mt-2 *:rounded">
         <PriceFilter onPriceChange={onPriceChange} />
       </div>
 
-      {/* Bộ lọc màu */}
-      <div className="w-full bg-gray-50 mt-2">
+      {/* Bộ lọc màu
+      <div className="w-full bg-gray-50 mt-2 *:rounded">
         <ColorFilter
           selectedColor={selectedColors.join(", ")} // Truyền selectedColors vào
           onColorSearch={handleColorSearch} // Truyền hàm tìm kiếm màu sắc
         />
-      </div>
+      </div> */}
 
       {/* Bộ lọc kích thước */}
-      <div className="w-full bg-gray-50 mt-2">
+      <div className="w-full bg-gray-50 mt-2 *:rounded">
         <SizeFilter
           selectedSizes={selectedSizes}
           toggleSize={toggleSize}
