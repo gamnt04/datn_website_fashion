@@ -95,12 +95,10 @@ const Pay = () => {
   }, [auth, selectedAddress, setValue]);
   useEffect(() => {
     (async () => {
-      const dia_chi_nguoi_dung =
-        selectedAddress?.detailedAddress - selectedAddress?.address;
-      const tong_km = await Tinh_tong_km(dia_chi_nguoi_dung);
-      // console.log(tong_km);
+      const tong_km = Tinh_tong_km(selectedAddress);
+      console.log(tong_km)
       setPhi_van_chuyen(() =>
-        tong_km ? (Math.ceil(tong_km) / 1000) * 5000 : 0
+        tong_km ? ((tong_km > 60) ? 60000 : (tong_km * 5000)) : 0
       );
     })();
   }, [selectedAddress]);
@@ -306,6 +304,7 @@ const Pay = () => {
       items: item_order_checkked,
       customerInfo: {
         ...data_form,
+        toa_do: selectedAddress?.coordinates
       }
       ,
       discountCode: discountCodeToUse, // Lưu mã giảm giá
