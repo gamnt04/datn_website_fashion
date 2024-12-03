@@ -7,11 +7,11 @@ import { Button, Modal, Result, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import {
   Add_Address,
-  List_Address
+  List_Address,
 } from "../../../components/common/Client/_component/Address";
 import {
   Address,
-  Chevron_right
+  Chevron_right,
 } from "../../../components/common/Client/_component/Icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -39,8 +39,7 @@ const Pay = () => {
   const [isOrderSuccessfully, setIsOrderSuccessfully] =
     useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
-  console.log(auth);
-
+  const [selectedVoucherName, setSelectedVoucherName] = useState<string>(""); // Tên voucher đã chọn
   const { data, isPending } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
@@ -48,7 +47,7 @@ const Pay = () => {
     onSubmit,
     contextHolder,
     messageApi,
-    isPending: loadingOrder
+    isPending: loadingOrder,
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
 
@@ -96,9 +95,9 @@ const Pay = () => {
   useEffect(() => {
     (async () => {
       const tong_km = Tinh_tong_km(selectedAddress);
-      console.log(tong_km)
+      console.log(tong_km);
       setPhi_van_chuyen(() =>
-        tong_km ? ((tong_km > 40) ? 50000 : (tong_km * 5000)) : 0
+        tong_km ? (tong_km > 60 ? 60000 : tong_km * 5000) : 0
       );
     })();
   }, [selectedAddress]);
@@ -126,7 +125,7 @@ const Pay = () => {
         code_voucher: discountCode,
         totalAmount: totalPrice,
         userId: user?.user?._id,
-        selectedProducts: selectedProductIds
+        selectedProducts: selectedProductIds,
       });
       const { discount, finalAmount, message } = response.data;
 
@@ -145,7 +144,7 @@ const Pay = () => {
         toast.error(error.message, { autoClose: 1200 });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
-          autoClose: 1200
+          autoClose: 1200,
         });
       }
     }
@@ -179,7 +178,7 @@ const Pay = () => {
         code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
         userId: user?.user?._id,
-        selectedProducts: selectedProductIds // Thêm ID sản phẩm vào payload
+        selectedProducts: selectedProductIds, // Thêm ID sản phẩm vào payload
       });
 
       const { discount, finalAmount, message } = response.data;
@@ -189,7 +188,8 @@ const Pay = () => {
       setSelectedVoucher(voucher);
       setDiscountCode("");
       setSelectedVoucherCode(voucher.code_voucher);
-
+      setSelectedVoucherName(voucher.name);
+      setDiscountCode(voucher.code_voucher); // Nếu bạn cũng muốn hiển thị mã giảm giá trong input
       toast.success(message, { autoClose: 1200 });
       setIsVoucherModalVisible(false);
     } catch (error) {
@@ -205,7 +205,7 @@ const Pay = () => {
         toast.error(error.message, { autoClose: 1200 });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", {
-          autoClose: 1200
+          autoClose: 1200,
         });
       }
     }
@@ -238,7 +238,7 @@ const Pay = () => {
   const dataSort = item_lon_hon_0?.map((order: any) => {
     return {
       key: order.productId._id,
-      ...order
+      ...order,
     };
   });
   const currentDate = new Date(); // Lấy ngày hiện tại
@@ -267,11 +267,32 @@ const Pay = () => {
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn địa chỉ!"
+        content: "Vui lòng chọn địa chỉ!",
       });
       return;
     }
+    // Kiểm tra xem voucher có hợp lệ không
+    if (discountCodeToUse) {
+      try {
+        // Kiểm tra trạng thái của voucher từ server (giả sử bạn có API để làm điều này)
+        const response = await instance.post(`/voucher/use`, {
+          code_voucher: discountCodeToUse,
+        });
 
+        if (!response.data.isValid) {
+          toast.error("Voucher không hợp lệ hoặc đã hết hạn.", {
+            autoClose: 1200,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking voucher validity:", error);
+        toast.error("Không thể kiểm tra voucher. Vui lòng thử lại.", {
+          autoClose: 1200,
+        });
+        return;
+      }
+    }
     // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
@@ -304,15 +325,14 @@ const Pay = () => {
       items: item_order_checkked,
       customerInfo: {
         ...data_form,
-        toa_do: selectedAddress?.coordinates
-      }
-      ,
+        toa_do: selectedAddress?.coordinates,
+      },
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice + phi_van_chuyen,
       email: user?.user?.email,
       // email: user?.user?.email,
-      delivery_fee: phi_van_chuyen
+      delivery_fee: phi_van_chuyen,
     };
     try {
       if (data_form.payment === "VNPAY") {
@@ -329,7 +349,7 @@ const Pay = () => {
             orderId: nanoid(24),
             totalPrice: totalPrice,
             orderDescription: `Order ${orderId._id}`,
-            language: "vn"
+            language: "vn",
           }
         );
         sessionStorage.setItem("item_order", JSON.stringify(item_order));
@@ -347,10 +367,9 @@ const Pay = () => {
       console.error("Order Creation Error: ", error);
       messageApi.open({
         type: "error",
-        content: "Lỗi tạo đơn hàng!"
+        content: "Lỗi tạo đơn hàng!",
       });
     }
-
   };
   // console.log("orderSuccessfully", isOrderSuccessfully);
 
@@ -365,7 +384,7 @@ const Pay = () => {
           className="w-[70px] lg:w-[100px] lg:h-[100px]"
           alt=""
         />
-      )
+      ),
     },
     {
       dataIndex: "name_product",
@@ -383,7 +402,7 @@ const Pay = () => {
               <p className="text-sm lg:text-base">
                 {order?.price_item?.toLocaleString("vi", {
                   style: "currency",
-                  currency: "VND"
+                  currency: "VND",
                 })}
               </p>
               <p className="text-sm lg:text-base">x {order?.quantity}</p>
@@ -396,7 +415,7 @@ const Pay = () => {
             </span>
           </div>
         </div>
-      )
+      ),
     },
     {
       dataIndex: "price_product",
@@ -405,10 +424,10 @@ const Pay = () => {
         <p className="hidden text-sm lg:block lg:text-base">
           {order?.price_item?.toLocaleString("vi", {
             style: "currency",
-            currency: "VND"
+            currency: "VND",
           })}
         </p>
-      )
+      ),
     },
     {
       dataIndex: "quantity",
@@ -418,7 +437,7 @@ const Pay = () => {
           {" "}
           x {order?.quantity}
         </p>
-      )
+      ),
     },
     {
       dataIndex: "total_price_item",
@@ -427,11 +446,11 @@ const Pay = () => {
         <p className="hidden text-sm font-bold lg:block lg:text-base">
           {order?.total_price_item?.toLocaleString("vi", {
             style: "currency",
-            currency: "VND"
+            currency: "VND",
           })}
         </p>
-      )
-    }
+      ),
+    },
   ];
   if (loadingOrder || isPending) {
     return (
@@ -549,7 +568,7 @@ const Pay = () => {
                     Tổng số tiền:{" "}
                     {totalPrice?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND"
+                      currency: "VND",
                     })}
                   </p>
                 </p>
@@ -580,7 +599,7 @@ const Pay = () => {
                       type="text"
                       placeholder="Nhập mã giảm giá"
                       className="w-full text-center border rounded"
-                      value={discountCode}
+                      value={selectedVoucherName || discountCode}
                       onChange={(e) => setDiscountCode(e.target.value)}
                     />
                     {selectedVoucher ? (
@@ -637,18 +656,15 @@ const Pay = () => {
                       style={{ maxHeight: "600px" }}
                     >
                       {sortedVouchers
-                        // Lọc ra những voucher chưa hết hạn và chưa hết số lần sử dụng
                         .filter((voucher: any) => {
                           const isVoucherAvailable =
                             voucher.usedCount < voucher.quantity_voucher;
                           const isExpired =
                             new Date(voucher.expirationDate) < currentDate;
 
-                          // Chỉ giữ lại voucher còn số lượng và chưa hết hạn
                           return isVoucherAvailable && !isExpired;
                         })
                         .map((voucher: any) => {
-                          // Kiểm tra người dùng có được phép sử dụng voucher hay không
                           const isAllowedUser =
                             voucher.allowedUsers.length === 0 ||
                             voucher.allowedUsers.includes(userId);
@@ -658,13 +674,15 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                                } ${isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                                }`}
+                              }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -687,10 +705,11 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
-                                  }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
-                                disabled={isDisabled} // Disable voucher nếu người dùng không đủ điều kiện
+                                disabled={isDisabled}
                               >
                                 {isDisabled ? "Không hợp lệ" : "Sử dụng"}
                               </button>
@@ -754,8 +773,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                            "vi-VN"
-                          )} đ`
+                              "vi-VN"
+                            )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -781,7 +800,7 @@ const Pay = () => {
                     <p>
                       {totalPrice?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND"
+                        currency: "VND",
                       })}
                     </p>
                   </div>
@@ -790,7 +809,7 @@ const Pay = () => {
                     <p>
                       {phi_van_chuyen?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND"
+                        currency: "VND",
                       })}
                     </p>
                   </div>
@@ -799,9 +818,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND"
-                        })}`
+                            style: "currency",
+                            currency: "VND",
+                          })}`
                         : "0đ"}
                     </p>
                   </div>
@@ -815,7 +834,7 @@ const Pay = () => {
                             : totalPrice + phi_van_chuyen
                           )?.toLocaleString("vi", {
                             style: "currency",
-                            currency: "VND"
+                            currency: "VND",
                           })}
                         </p>
                       </p>
@@ -868,12 +887,11 @@ const Pay = () => {
                     <Link to="/profile/list_order">
                       <Button key="buy">Đơn hàng của bạn</Button>
                     </Link>
-                  </>
+                  </>,
                 ]}
               />
             </div>
           )}
-
         </div>
       </div>
     </>

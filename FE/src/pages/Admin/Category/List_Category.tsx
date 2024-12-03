@@ -2,7 +2,6 @@ import {
   Button,
   Checkbox,
   Input,
-  message,
   Pagination,
   Popconfirm,
   Space,
@@ -12,7 +11,6 @@ import {
 } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnsType } from "antd/es/table";
 import { format } from "date-fns";
@@ -28,17 +26,17 @@ import instance from "../../../configs/axios";
 import UpdateComponent from "./Create";
 import CategoryUpdate from "./update";
 import { LoadingOutlined } from "@ant-design/icons";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const List_Category: React.FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data, isLoading, refetch } = useCategoryQuery();
-  const [messageApi, contextHolder] = message.useMessage();
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchName, setSearchName] = useState("");
   const { data: searchData } = useSearchCategoryByName(searchName);
-
   const pageSize = 4;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const dataSource = Array.isArray(searchName && searchData ? searchData : data)
     ? (searchName && searchData ? searchData : data).map(
@@ -51,6 +49,15 @@ const List_Category: React.FC = () => {
 
   const onHandleSearch = () => {
     setSearchName(searchName);
+    toast.info(`Đang tìm kiếm danh mục với tên: ${searchName}`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
   };
 
   const { mutate: deleteCategory } = useMutation({
@@ -62,12 +69,28 @@ const List_Category: React.FC = () => {
       }
     },
     onSuccess: () => {
-      messageApi.success("Xóa danh mục thành công");
+      toast.success("Xóa danh mục thành công", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
       refetch();
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error) => {
-      messageApi.error(error.message || "Xóa danh mục không thành công");
+      toast.error(error.message || "Xóa danh mục không thành công", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     },
   });
 
@@ -80,14 +103,30 @@ const List_Category: React.FC = () => {
       return response.data;
     },
     onSuccess: () => {
-      messageApi.success("Cập nhật danh mục thành công");
+      toast.success("Cập nhật danh mục thành công", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
     onError: (error: unknown) => {
-      console.error("Lỗi khi cập nhật danh mục:", error);
-      messageApi.error(
+      toast.error(
         `Cập nhật danh mục không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
-        }`
+        }`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+        }
       );
     },
   });
@@ -165,7 +204,6 @@ const List_Category: React.FC = () => {
         </a>
       ),
     },
-
     {
       key: "createdAt",
       title: "Ngày Tạo",
@@ -195,7 +233,6 @@ const List_Category: React.FC = () => {
       render: (_: any, category: ICategory) => {
         return (
           <Space>
-            {contextHolder}
             <CategoryUpdate data={data} id={category._id} />
             <Popconfirm
               title={`Danh mục đang có ${category.product_count} sản phẩm. Bạn có muốn xóa không?`}
@@ -274,7 +311,6 @@ const List_Category: React.FC = () => {
                 </Button>
               </div>
             </div>
-
             <Table
               dataSource={dataSource.slice(
                 (currentPage - 1) * pageSize,
@@ -286,6 +322,7 @@ const List_Category: React.FC = () => {
             <div className="flex items-center justify-between mt-4">
               <Pagination {...paginationProps} />
             </div>
+            <ToastContainer />
           </div>
         )}
       </>

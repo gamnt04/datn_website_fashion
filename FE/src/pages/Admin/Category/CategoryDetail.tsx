@@ -92,11 +92,6 @@ const CategoryDetail: React.FC = () => {
       ),
     },
     {
-      title: "Giá",
-      dataIndex: "price_product",
-      key: "price_product",
-    },
-    {
       title: "Thời gian tạo",
       dataIndex: "createdAt",
       key: "createdAt",
@@ -123,7 +118,7 @@ const CategoryDetail: React.FC = () => {
                 okText="Yes"
                 cancelText="No"
               >
-                <Button danger>Delete</Button>
+                <Button danger>Xóa</Button>
               </Popconfirm>
             </div>
           </>
