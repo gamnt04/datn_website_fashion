@@ -62,7 +62,8 @@ export const createOrder = async (req, res) => {
         payment: customerInfo.payment,
         userName: customerInfo.userName,
         address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`
+          }`,
+        toa_do: customerInfo.toa_do,
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
