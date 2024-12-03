@@ -17,7 +17,7 @@ const VoucherSchema = new mongoose.Schema(
     maxDiscount: { type: Number, default: 0 }, // Số tiền tối đa giảm cho loại percentage
     applyType: {
       type: String,
-      enum: ["product", "total"], // Chọn giữa sản phẩm hoặc tổng số tiền
+      enum: ["product", "total", , "category"], // Chọn giữa sản phẩm hoặc tổng số tiền
       required: true,
     },
     appliedProducts: [
@@ -26,6 +26,12 @@ const VoucherSchema = new mongoose.Schema(
         ref: "Products", // Liên kết tới bảng sản phẩm
       },
     ], // Danh sách sản phẩm áp dụng nếu chọn product
+    appliedCategories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category", // Tham chiếu đến bảng danh mục
+      },
+    ],
     minimumSpend: {
       type: Number, // Số tiền tối thiểu để sử dụng mã giảm giá nếu chọn "totalAmount"
       default: 0,
