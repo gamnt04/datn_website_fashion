@@ -12,7 +12,7 @@ import * as turf from "@turf/turf";
 // Middleware xác thực
 import jwt from "jsonwebtoken";
 import Voucher from "../../models/Voucher/voucher";
-
+import Notification from "../../models/Notification/Notification";
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
   if (!token) {
@@ -60,8 +60,7 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-          }`,
+        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
         toa_do: customerInfo.toa_do,
       },
       totalPrice,
@@ -134,7 +133,7 @@ export const createOrder = async (req, res) => {
     const notification = new Notification({
       userId: userId,
       receiver_id: userId,
-      message: `Người dùng ${customerInfo.userName} đã đặt hàng`,
+      message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
       different: order._id,
       status_notification: false
     });
@@ -152,6 +151,8 @@ export const createOrderPayment = async (req, res) => {
   try {
     const requestBody = JSON.parse(JSON.stringify(req.body));
     const { userId, items, customerInfo, totalPrice } = requestBody;
+    console.log(customerInfo);
+
     const data = await Order.create(requestBody);
     for (let i of items) {
       if (i.productId.attributes) {
@@ -208,8 +209,8 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.addressDetail || ""
-            }`
+          address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
+          toa_do: customerInfo.toa_do,
         },
         totalPrice
       });
@@ -217,7 +218,7 @@ export const createOrderPayment = async (req, res) => {
       const notification = new Notification({
         userId: userId,
         receiver_id: userId,
-        message: `Người dùng ${customerInfo.userName} đã đặt hàng`,
+        message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
         different: order._id,
         status_notification: false
       });
@@ -444,31 +445,6 @@ export const getTop10ProductBestSale = async (req, res) => {
   }
 };
 
-const getCoordinates = async (address) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-    address
-  )}&format=json&limit=1`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.length > 0) {
-      console.log(`Tọa độ tìm thấy cho địa chỉ: ${address}`, data[0]);
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon)
-      };
-    } else {
-      console.warn(`Không tìm thấy tọa độ cho địa chỉ: ${address}`);
-      return null;
-    }
-  } catch (error) {
-    console.error("Lỗi khi lấy tọa độ:", error);
-    return null;
-  }
-};
-
 const calculateDistance = async (coords1, coords2) => {
   const mapboxAccessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w'; // Thay bằng token của bạn
 
@@ -681,7 +657,14 @@ export const updateOrderStatus = async (req, res) => {
     //     }
     //   }
     // }
-
+    if (status === "6") {
+      try {
+        await SendDeliverySuccessMail(order.customerInfo.email, order);
+      } catch (emailError) {
+        console.error("Error sending delivery success email:", emailError);
+        return res.status(500).json({ message: "Failed to send delivery success email." });
+      }
+    }
     await order.save();
     return res
       .status(StatusCodes.OK)

@@ -29,7 +29,7 @@ export default function Notification() {
             {
                 data?.notifications?.length > 0 ?
                     data?.notifications?.map((item: any) =>
-                        <details onClick={() => mutate(item._id)} className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
+                        <details onClick={() => mutate(item._id)} open className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
                                 <div className="flex gap-4">
                                     <h2 className="font-medium">
