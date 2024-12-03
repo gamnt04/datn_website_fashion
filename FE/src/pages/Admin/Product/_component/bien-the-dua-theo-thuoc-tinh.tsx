@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Form, Select } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Form, Select, Spin } from 'antd';
+import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Filed_form } from './filed_form';
 import { Lay_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
 import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
@@ -23,6 +23,13 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
             }
         ],
     })) || [];
+    if (isPending) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+            </div>
+        );
+    }
     return (
         <Form.List name={`attributes_${props?.category_attribute}`} initialValue={initialAttributes}>
             {(fields, { remove, ...restField }) => (

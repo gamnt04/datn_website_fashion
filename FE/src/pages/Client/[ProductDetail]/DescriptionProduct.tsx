@@ -57,10 +57,6 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   });
 
   const { data, isLoading, isError } = Query_Products(productId);
-  console.log(data);
-
-  console.log(data?.review);
-
   const getBase64 = (file: FieldType): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -189,65 +185,22 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       <div style={{ marginTop: 8 }}>Thêm ảnh</div>
     </button>
   );
-
-  // const customUploadRequest = async ({ file, onSuccess, onError }) => {
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   formData.append("upload_preset", PRESET_NAME);
-  //   formData.append("folder", FOLDER_NAME);
-
-  //   try {
-  //     const response = await fetch(api, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Upload failed");
-  //     }
-
-  //     const result = await response.json();
-  //     file.url = result.secure_url; // Cập nhật URL từ server
-  //     onSuccess?.(result); // Gọi callback khi upload thành công
-
-  //     form.setFieldsValue({
-  //       image_review: [
-  //         ...(form.getFieldValue("image_review") || []),
-  //         result.secure_url,
-  //       ],
-  //     });
-
-  //     message.success("Tải lên thành công!");
-  //   } catch (error) {
-  //     console.error("Upload error:", error);
-  //     onError?.(error); // Gọi callback khi upload thất bại
-  //     message.error("Tải lên thất bại!");
-  //   }
-  // };
-
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
-      // Tìm sản phẩm từ data
       const productId = data?.products?._id || "";
-
-      // Tìm review chính từ data.review
       const reviewContainer = data?.review?.find((r: any) =>
         r.reviews.some((subReview: any) => subReview._id === editReviewId)
       );
-
-      // Nếu tìm thấy reviewContainer, tìm review con và lấy orderId
       const review = reviewContainer?.reviews.find(
         (subReview: any) => subReview._id === editReviewId
       );
       const orderId = review?.orderId || "";
-
-      // Gọi hàm updateReview với các tham số đã chuẩn bị
       updateReview({
         reviewId: editReviewId,
         contentReview: values.contentReview || "",
         productId,
         orderId,
-        image_review: values.image_review || [], // Thêm image_review vào payload
+        image_review: values.image_review || [],
         rating_review: values.rating_review || 0,
       });
     }
@@ -261,16 +214,19 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     setEditReviewId(null);
     form.resetFields(); // Reset form fields to their initial values
   };
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <>
       <div className="flex flex-col border-t lg:py-10 lg:mt-10 mb:py-[34px] mb:mt-8">
         <ul className="flex items-center gap-x-8 border-b lg:pb-6 mb:pb-5 *:whitespace-nowrap *:px-6 *:lg:py-2.5 *:mb:py-[7px] *:rounded *:border *:place-items-center *:lg:text-base *:mb:text-xs">
           <button
             onClick={() => setTogleDes(true)}
-            className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
-              toggleDes ? "border-[#05422C] text-[#05422C] bg-[#F2F6F4]" : ""
-            }`}
+            className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${toggleDes ? "border-[#05422C] text-[#05422C] bg-[#F2F6F4]" : ""
+              }`}
           >
             Mô tả
           </button>
@@ -280,11 +236,10 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
               <button
                 key={item._id}
                 onClick={() => setTogleDes(false)}
-                className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
-                  toggleDes
+                className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${toggleDes
                     ? ""
                     : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
-                }`}
+                  }`}
               >
                 Đánh giá ({item.reviews?.length ?? 0})
               </button>
@@ -292,9 +247,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
           ) : (
             <button
               onClick={() => setTogleDes(false)}
-              className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${
-                toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
-              }`}
+              className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${toggleDes ? "" : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
+                }`}
             >
               Đánh giá (0)
             </button>
@@ -407,8 +361,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                     }}
                                   >
                                     {rate <=
-                                    (form.getFieldValue("rating_review") ||
-                                      review.rating_review) ? (
+                                      (form.getFieldValue("rating_review") ||
+                                        review.rating_review) ? (
                                       <AiFillStar className="text-yellow-400 text-2xl" />
                                     ) : (
                                       <AiOutlineStar className="text-yellow-400 text-2xl" />
@@ -514,8 +468,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                               {Array.from({ length: 5 }, (_, index) => (
                                 <span key={index}>
                                   {index <
-                                  (rating[review._id] ||
-                                    review.rating_review) ? (
+                                    (rating[review._id] ||
+                                      review.rating_review) ? (
                                     <AiFillStar className="text-yellow-400 text-2xl" />
                                   ) : (
                                     <AiOutlineStar className="text-yellow-400 text-2xl" />
@@ -528,24 +482,24 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                             </p>
                             <div className="mt-[20px] flex flex-wrap gap-2">
                               {review.image_review &&
-                              review.image_review.length > 0
+                                review.image_review.length > 0
                                 ? review.image_review.map((imageUrl, index) => (
-                                    <div
-                                      key={index}
-                                      className="relative w-[120px] h-[120px]"
-                                    >
-                                      <img
-                                        src={imageUrl}
-                                        alt={`Review Image ${index + 1}`}
-                                        style={{
-                                          width: "100%",
-                                          height: "100%",
-                                          objectFit: "cover",
-                                          borderRadius: "8px",
-                                        }}
-                                      />
-                                    </div>
-                                  ))
+                                  <div
+                                    key={index}
+                                    className="relative w-[120px] h-[120px]"
+                                  >
+                                    <img
+                                      src={imageUrl}
+                                      alt={`Review Image ${index + 1}`}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        borderRadius: "8px",
+                                      }}
+                                    />
+                                  </div>
+                                ))
                                 : ""}
                             </div>
                           </div>

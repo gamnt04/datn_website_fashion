@@ -2,9 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import instance from "../../../configs/axios";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Blogs = () => {
-  const { data } = useQuery({
+  const { data, isLoading
+  } = useQuery({
     queryKey: ["BLOGS"],
     queryFn: async () => {
       const { data } = await instance.get("/blogs");
@@ -18,7 +21,11 @@ const Blogs = () => {
   };
 
   const publishedBlogs = filterPublishedBlogs(data || []);
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] my-[40px]">

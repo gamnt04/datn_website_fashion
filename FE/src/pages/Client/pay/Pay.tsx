@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Pay_Mutation } from "../../../common/hooks/Pay/mutation_Pay";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import { Button, Modal, Result, Table } from "antd";
+import { Button, Modal, Result, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import {
   Add_Address,
@@ -15,7 +15,6 @@ import {
 } from "../../../components/common/Client/_component/Icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loader } from "lucide-react";
 import { nanoid } from "nanoid";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import { toast } from "react-toastify";
@@ -23,6 +22,7 @@ import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_ca
 // import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -436,12 +436,13 @@ const Pay = () => {
   if (loadingOrder || isPending) {
     return (
       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
-        <div className="animate-spin">
-          <Loader />
+        <div className="flex justify-center items-center h-screen">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
       </div>
     );
   }
+
   return (
     <>
       <div className="max-w-[1440px] w-[95vw] mx-auto ">

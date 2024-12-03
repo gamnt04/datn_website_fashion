@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import parse from "html-react-parser";
 import slugify from "react-slugify";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -20,7 +22,6 @@ const BlogDetail = () => {
         );
         const parser = new DOMParser();
         const doc = parser.parseFromString(response.data.content, "text/html");
-        console.log("Parsed Document:", response);
         setTitle(doc.querySelector("h1")?.innerText ?? "Không có tiêu đề");
         const h1Tag = doc.querySelector("h1");
         if (h1Tag) {
@@ -63,7 +64,7 @@ const BlogDetail = () => {
 
     fetchBlog();
     fetchRelatedBlogs();
-    
+
     const intervalId = setInterval(async () => {
       try {
         await axios.get(`http://localhost:2004/api/v1/blogs/detail/${slug}`);
@@ -96,10 +97,9 @@ const BlogDetail = () => {
   if (!blog) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-12 h-12 mb-4 ease-linear border-4 border-t-4 border-gray-200 rounded-full loader"></div>
-        <h2 className="text-xl font-semibold text-center text-gray-700">
-          Loading...
-        </h2>
+        <div className="flex justify-center items-center h-screen">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
       </div>
     );
   }
@@ -107,16 +107,16 @@ const BlogDetail = () => {
   return (
     <div className="container flex gap-8 px-4 py-10 mx-auto lg:px-20 justify-between">
       {/* Main content */}
-      { blog.published === true ? (
-      <div className="flex-1">
-        <h1 className="mb-4 text-4xl font-bold text-black">{title}</h1>
-        <p className="mb-6 text-sm text-gray-600">
-          {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
-        </p>
-        <div className="mx-auto prose text-justify max-w-none">
-          {parse(blog.content)}
+      {blog.published === true ? (
+        <div className="flex-1">
+          <h1 className="mb-4 text-4xl font-bold text-black">{title}</h1>
+          <p className="mb-6 text-sm text-gray-600">
+            {new Date(blog.createdAt).toLocaleDateString()} - {blog.author}
+          </p>
+          <div className="mx-auto prose text-justify max-w-none">
+            {parse(blog.content)}
+          </div>
         </div>
-      </div>
       ) : (
         <h1 className="text-4xl font-bold text-black">Bài viết này không hiển thị</h1>
       )}
@@ -130,9 +130,8 @@ const BlogDetail = () => {
               toc.map((item) => (
                 <li
                   key={item.id}
-                  className={`ml-${
-                    item.level === "h2" ? 4 : item.level === "h3" ? 8 : 0
-                  }`}
+                  className={`ml-${item.level === "h2" ? 4 : item.level === "h3" ? 8 : 0
+                    }`}
                 >
                   <a
                     href={`#${item.id}`}

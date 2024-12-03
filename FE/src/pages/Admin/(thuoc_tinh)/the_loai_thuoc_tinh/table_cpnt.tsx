@@ -2,9 +2,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { convert_data } from '../data';
 import { Dispatch_the_loai_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Spin } from 'antd';
 import { useState } from 'react';
 import Modal_cpnt from '../_components/modal_cpnt';
+import { LoadingOutlined } from '@ant-design/icons';
 
 
 const Table_cpnt = ({ data_props }: any) => {
@@ -19,7 +20,11 @@ const Table_cpnt = ({ data_props }: any) => {
         navigate(url.pathname + '?' + url.searchParams.toString());
         setIsModalOpen(true);
     };
-    if (isPending) return <span>Loading...</span>
+    if (isPending) {
+        return <div className="flex justify-center items-center h-screen">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>;
+    }
     if (isError) return <span>Error...</span>
 
     return <div>

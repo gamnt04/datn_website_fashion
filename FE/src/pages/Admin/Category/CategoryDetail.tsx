@@ -50,7 +50,6 @@ const CategoryDetail: React.FC = () => {
       throw error;
     },
   });
-  const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
   useEffect(() => {
     if (categories) {
@@ -60,28 +59,6 @@ const CategoryDetail: React.FC = () => {
       );
     }
   }, [categories, id]);
-
-  if (productsLoading || categoriesLoading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: 50 }}>
-        <Spin indicator={loadingIcon} />
-      </div>
-    );
-  }
-
-  if (productsError || categoriesError) {
-    const errorMessage =
-      (productsError && (productsError as Error).message) ||
-      (categoriesError && (categoriesError as Error).message) ||
-      "Có lỗi xảy ra";
-
-    return (
-      <div style={{ textAlign: "center", marginTop: 50 }}>
-        <Alert message="Error" description={errorMessage} type="error" />
-      </div>
-    );
-  }
-
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
@@ -154,7 +131,26 @@ const CategoryDetail: React.FC = () => {
       },
     },
   ];
+  if (productsLoading || categoriesLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
+  if (productsError || categoriesError) {
+    const errorMessage =
+      (productsError && (productsError as Error).message) ||
+      (categoriesError && (categoriesError as Error).message) ||
+      "Có lỗi xảy ra";
+
+    return (
+      <div style={{ textAlign: "center", marginTop: 50 }}>
+        <Alert message="Error" description={errorMessage} type="error" />
+      </div>
+    );
+  }
   return (
     <CheckAuths roles={["admin"]}>
       <div style={{ padding: 20 }}>

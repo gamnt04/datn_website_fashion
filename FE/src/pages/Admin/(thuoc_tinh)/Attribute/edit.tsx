@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Dispatch_thuoc_tinh, Lay_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
-import { Button, Form, FormProps, Input, Upload } from "antd";
+import { Button, Form, FormProps, Input, Spin, Upload } from "antd";
 import { SketchPicker } from "react-color";
-import { PlusOutlined } from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
 
 export default function Edit_thuoc_tinh({ props }: any) {
@@ -62,7 +62,11 @@ export default function Edit_thuoc_tinh({ props }: any) {
         setSymbol(color.hex);
     }
 
-    if (isPending || loading) return <span>Loading...</span>;
+    if (isPending || loading) {
+        return <div className="flex justify-center items-center h-screen">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>;
+    }
     if (isError || error) return <span>Error...</span>;
     return (
         <div className={`${props?.isModalOpen ? 'translate-y-0' : 'translate-y-[-200%]'} fixed top-0 w-screen left-0 h-screen z-[100]`}>

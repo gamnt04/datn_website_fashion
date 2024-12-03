@@ -4,13 +4,18 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { ICategory } from "../../../../common/interfaces/Category";
 import { useCategoryQuery } from "../../../../common/hooks/Category/useCategoryQuery";
 import ScrollTop from "../../../../common/hooks/Customers/ScrollTop";
+import { Spin } from "antd";
 const AboutUS = () => {
   //const arr = [1, 2, 3];
   const { data, isLoading } = useCategoryQuery();
   const visibleCategories =
     data?.filter((category: ICategory) => category.published) || [];
 
-  if (isLoading) return <LoadingOutlined />;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="container lg:mt-[40px] mt-[60px]">
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">

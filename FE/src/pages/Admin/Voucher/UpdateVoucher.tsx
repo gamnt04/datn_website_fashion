@@ -9,6 +9,7 @@ import {
   InputNumber,
   message,
   Select,
+  Spin,
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
@@ -23,6 +24,7 @@ import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuer
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { AiFillBackward } from "react-icons/ai";
 import { Option } from "antd/es/mentions";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const UpdateVoucher = () => {
   const { id } = useParams();
@@ -125,10 +127,10 @@ const UpdateVoucher = () => {
     userType.length === 0
       ? []
       : userType.includes("user") && userType.includes("shipper")
-      ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
-      : userType.includes("user")
-      ? auth?.data
-      : shippersData?.data.shippers;
+        ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
+        : userType.includes("user")
+          ? auth?.data
+          : shippersData?.data.shippers;
 
   useEffect(() => {
     if (vouchers?.data?.voucher) {
@@ -168,7 +170,13 @@ const UpdateVoucher = () => {
     }
   }, [vouchers?.data?.voucher]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="mt-20">
@@ -610,7 +618,7 @@ const UpdateVoucher = () => {
                       { label: "Shipper", value: "courier" },
                     ]}
                     defaultValue={["user"]}
-                    //onChange={handleUserTypeChange}
+                  //onChange={handleUserTypeChange}
                   />
                 </Form.Item>
 

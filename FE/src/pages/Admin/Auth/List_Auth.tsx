@@ -168,7 +168,11 @@ const List_Auth = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <CheckAuths roles={["admin"]}>
       <>

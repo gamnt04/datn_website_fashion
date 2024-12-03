@@ -6,6 +6,8 @@ import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const CreateComponent = () => {
   const [showMessage, setShowMessage] = useState(false);
@@ -64,7 +66,11 @@ const CreateComponent = () => {
       return () => clearTimeout(timer);
     }
   }, [showMessage]);
-
+  if (isPending) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div>
       <Message
@@ -111,9 +117,8 @@ const CreateComponent = () => {
                   <div className="mt-2 flex items-center">
                     <div className="relative flex items-center">
                       <div
-                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${
-                          imagePreview ? "block" : "block"
-                        }`}
+                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${imagePreview ? "block" : "block"
+                          }`}
                       >
                         <span className="text-3xl text-gray-500">+</span>
                       </div>

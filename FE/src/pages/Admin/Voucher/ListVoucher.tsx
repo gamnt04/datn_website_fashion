@@ -11,6 +11,7 @@ import {
   Drawer,
   Switch,
   Input,
+  Spin,
 } from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -19,8 +20,8 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
-import { Loader } from "lucide-react";
 import useDataVoucher from "./_component/useDataVoucher";
+import { LoadingOutlined } from "@ant-design/icons";
 const ListVoucher = () => {
   const queryClient = useQueryClient();
   const [messageAPI, contextHolder] = message.useMessage();
@@ -74,8 +75,7 @@ const ListVoucher = () => {
     onError: (error: unknown) => {
       console.error("Lỗi khi cập nhật Voucher:", error);
       messageAPI.error(
-        `Cập nhật Voucher không thành công. ${
-          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Cập nhật Voucher không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
     },
@@ -194,7 +194,13 @@ const ListVoucher = () => {
     },
   ];
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  };
   return (
     <div className="container">
       {contextHolder}
@@ -294,25 +300,25 @@ const ListVoucher = () => {
               <p>
                 <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
-                selectedVoucher.allowedUsers.length > 0
+                  selectedVoucher.allowedUsers.length > 0
                   ? [
-                      ...(auth?.data || []),
-                      ...(shippersData?.data.shippers || []),
-                    ]
-                      .filter((user: any) =>
-                        selectedVoucher.allowedUsers.includes(user._id)
-                      )
-                      .map((user: any, index: number) => (
-                        <span key={index}>
-                          {user.userName} {user.fullName}
-                          {user.role === "courier"
-                            ? "( shipper )"
-                            : "( Người dùng )"}
-                          {index < selectedVoucher.allowedUsers.length - 1
-                            ? ", "
-                            : ""}
-                        </span>
-                      ))
+                    ...(auth?.data || []),
+                    ...(shippersData?.data.shippers || []),
+                  ]
+                    .filter((user: any) =>
+                      selectedVoucher.allowedUsers.includes(user._id)
+                    )
+                    .map((user: any, index: number) => (
+                      <span key={index}>
+                        {user.userName} {user.fullName}
+                        {user.role === "courier"
+                          ? "( shipper )"
+                          : "( Người dùng )"}
+                        {index < selectedVoucher.allowedUsers.length - 1
+                          ? ", "
+                          : ""}
+                      </span>
+                    ))
                   : "Tất cả"}
               </p>
               <hr className="my-3" />
