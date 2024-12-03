@@ -5,7 +5,6 @@ const schema_thuoc_tinh = new mongoose.Schema(
         ten_thuoc_tinh: {
             type: String,
             required: true,
-            unique: true
         },
         the_loai_thuoc_tinh: {
             type: String,
