@@ -3,9 +3,9 @@
 
 import { useState } from 'react'
 import { SelectShadcn, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from '../../../../components/ui_shadcn_customer/select';
-import { Button, Form, Select } from 'antd';
+import { Button, Form, Select, Spin } from 'antd';
 import { Filed_form } from './filed_form';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import Filed_bien_the_dua_theo_thuoc_tinh from './bien-the-dua-theo-thuoc-tinh';
 import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 import { Lay_the_loai_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
@@ -17,7 +17,13 @@ export default function Form_variant({ propsData }: any) {
     const { data: data_v2, isPending: loading } = Lay_the_loai_thuoc_tinh({
         id_account: user?.user?._id
     })
-    if (loading) return <span>Loading...</span>
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+            </div>
+        );
+    }
     const initialAttributes = (
         [
             {

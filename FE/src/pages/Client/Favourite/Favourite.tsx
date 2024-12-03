@@ -1,10 +1,11 @@
-import { message } from "antd";
+import { message, Spin } from "antd";
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { useListFavouriteProducts } from "../../../common/hooks/FavoriteProducts/FavoriteProduct";
 import { Mutation_FavouriteProduct } from "../../../common/hooks/FavoriteProducts/mutation_FavouriteProducts";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { HeartIconRed } from "../../../resources/svg/Icon/Icon";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Favourite = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -42,7 +43,11 @@ const Favourite = () => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   if (isError) return <div>{error.message}</div>;
 
   return (

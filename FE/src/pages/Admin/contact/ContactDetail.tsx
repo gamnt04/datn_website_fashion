@@ -4,7 +4,7 @@ import { Table, Spin, Alert, Button } from "antd";
 import instance from "../../../configs/axios";
 import { IContact } from "../../../common/interfaces/Contact";
 import { format } from "date-fns";
-import { BackwardFilled } from "@ant-design/icons";
+import { BackwardFilled, LoadingOutlined } from "@ant-design/icons";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
 
 const ContactDetail = () => {
@@ -29,7 +29,11 @@ const ContactDetail = () => {
   }, [id]);
 
   if (isLoading) {
-    return <Spin size="large" />;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
 
   if (error) {
@@ -79,17 +83,17 @@ const ContactDetail = () => {
 
   const dataSource = contact
     ? [
-        {
-          key: contact._id,
-          name: contact.name,
-          email: contact.email,
-          content: contact.content,
-          createdAt: contact.createdAt,
-          response_content: contact.response_content || "Chưa phản hồi",
-          responder_email: contact.responder_email || "Chưa phản hồi",
-          response_date: contact.response_date || "",
-        },
-      ]
+      {
+        key: contact._id,
+        name: contact.name,
+        email: contact.email,
+        content: contact.content,
+        createdAt: contact.createdAt,
+        response_content: contact.response_content || "Chưa phản hồi",
+        responder_email: contact.responder_email || "Chưa phản hồi",
+        response_date: contact.response_date || "",
+      },
+    ]
     : [];
 
   return (

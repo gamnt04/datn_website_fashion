@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Popconfirm } from "antd";
+import { Button, message, Popconfirm, Spin } from "antd";
 import { useState } from "react";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
@@ -9,9 +9,10 @@ import {
   Update_Address
 } from "../../../components/common/Client/_component/Address";
 import instance from "../../../configs/axios";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Address = () => {
-  const { isLoading, isPending, isError, error } = ProfileHook();
+  const { isLoading, isError, error } = ProfileHook();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
@@ -77,8 +78,11 @@ const Address = () => {
     }
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isPending) return <div>Pending...</div>;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   if (isError) return <div>{error.message as any}</div>;
 
   // Sắp xếp địa chỉ mặc định lên đầu tiên

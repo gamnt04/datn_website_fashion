@@ -10,6 +10,7 @@ import {
   InputNumber,
   message,
   Select,
+  Spin,
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
@@ -23,6 +24,7 @@ import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { AiFillBackward } from "react-icons/ai";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -72,8 +74,8 @@ const AddVoucher = () => {
     userType.includes("user") && userType.includes("courier")
       ? [...(auth?.data || []), ...(shippers?.data?.shippers || [])]
       : userType.includes("user")
-      ? auth?.data || []
-      : shippers?.data?.shippersData || [];
+        ? auth?.data || []
+        : shippers?.data?.shippersData || [];
 
   const handleUserTypeChange = (value: string[]) => {
     console.log("Giá trị userType sau khi thay đổi:", value);
@@ -107,7 +109,13 @@ const AddVoucher = () => {
     auth,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="mt-20">
