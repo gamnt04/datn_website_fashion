@@ -21,6 +21,7 @@ const Shipper_Order = () => {
     const [orderId, setOrderId] = useState<string | null>(null);
     const [messageApi, contextHolder] = message.useMessage();
     const { data, refetch, isLoading } = Query_Orders(id);
+    console.log(data?.status);
 
     const dispathNotification = Mutation_Notification("Add");
     const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
@@ -49,14 +50,15 @@ const Shipper_Order = () => {
     }
     const handleFileChange = ({ fileList }: { fileList: UploadFile<any>[] }) => {
         setFileList(fileList.slice(-1));
-        if (fileList.length > 0) {
-            const file = fileList[0].originFileObj;
+        if (fileList.length > 0 && fileList[0].originFileObj) {
+            const file = fileList[0].originFileObj as Blob;
             const previewUrl = URL.createObjectURL(file);
             setPreviewImage(previewUrl);
         } else {
             setPreviewImage(null);
         }
     };
+
     const handleStatusUpdate = async (
         status: number | string,
         code_order?: string | number,
@@ -158,13 +160,17 @@ const Shipper_Order = () => {
                         <Status_order data_Order={data} />
                     </Card>
 
-                    <Card title="Thông tin Người Mua" className="shadow-md mb-5">
+                    <Card title="Thông tin giao hàng" className="shadow-md mb-5">
                         <div className="text-sm">
                             <p><strong>Tên người mua:</strong> {data?.customerInfo?.userName}</p>
                             <p><strong>SĐT:</strong> {data?.customerInfo?.phone}</p>
                             <p><strong>Địa chỉ:</strong> {data?.customerInfo?.address}</p>
                             {/* <p><strong>Thời gian dự kiến</strong>60 phút</p> */}
                             <p><strong>Quãng đường giao:</strong> {data?.deliveryDistance}</p>
+                            <p><strong>Phí vận chuyển:</strong> {data?.delivery_fee?.toLocaleString("vi", {
+                                style: "currency",
+                                currency: "VND",
+                            })}</p>
                         </div>
                     </Card>
                     <Divider className="my-5" />
@@ -207,7 +213,8 @@ const Shipper_Order = () => {
                     <Card title="" className="shadow-md mt-5">
                         <div className='flex space-x-2'>
                             <>
-                                {data?.status === '6' || "4" ? (
+                                {data?.status == '4' || data?.status == '6' ? (
+
                                     <Button
                                         className="w-full bg-green-500 rounded text-white"
                                         type="primary"
@@ -215,6 +222,7 @@ const Shipper_Order = () => {
                                     >
                                         Giao thành công
                                     </Button>
+
                                 ) : (
                                     <>
                                         <Button

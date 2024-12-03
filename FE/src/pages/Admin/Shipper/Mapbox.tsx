@@ -14,33 +14,10 @@ const Mapbox = ({ id }: { id: any }) => {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const shopLocation: [number, number] = [105.7421, 21.0376]; // Tọa độ cửa hàng
 
-    // Lấy tọa độ khách hàng dựa trên địa chỉ
-    const getCustomerLocation = async (address: string) => {
-        try {
-            const response = await axios.get(
-                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json`,
-                {
-                    params: {
-                        access_token: mapboxgl.accessToken,
-                        limit: 1,
-                    },
-                }
-            );
-
-            if (response.data.features && response.data.features.length > 0) {
-                const [lng, lat] = response.data.features[0].geometry.coordinates;
-                setCustomerLocation([lng, lat]);
-            } else {
-                console.warn("Không tìm thấy vị trí từ địa chỉ:", address);
-            }
-        } catch (error) {
-            console.error("Error getting customer location:", error);
-        }
-    };
-
     useEffect(() => {
-        if (data && data.customerInfo && data.customerInfo.address) {
-            getCustomerLocation(data.customerInfo.address);
+        if (data && data.customerInfo && data.customerInfo.toa_do) {
+            const { lat, lng } = data.customerInfo.toa_do;
+            setCustomerLocation([lng, lat]);
         }
     }, [data]);
 
