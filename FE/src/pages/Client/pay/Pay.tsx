@@ -271,7 +271,28 @@ const Pay = () => {
       });
       return;
     }
+    // Kiểm tra xem voucher có hợp lệ không
+    if (discountCodeToUse) {
+      try {
+        // Kiểm tra trạng thái của voucher từ server (giả sử bạn có API để làm điều này)
+        const response = await instance.post(`/voucher/use`, {
+          code_voucher: discountCodeToUse,
+        });
 
+        if (!response.data.isValid) {
+          toast.error("Voucher không hợp lệ hoặc đã hết hạn.", {
+            autoClose: 1200,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking voucher validity:", error);
+        toast.error("Không thể kiểm tra voucher. Vui lòng thử lại.", {
+          autoClose: 1200,
+        });
+        return;
+      }
+    }
     // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
