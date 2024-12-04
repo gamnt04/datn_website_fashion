@@ -74,6 +74,7 @@ const List_Products = () => {
             Tất cả
           </button>
           {visibleCategories?.map((cat: ICategory) => (
+            (cat.name_category !== 'Uncategorized') &&
             <button
               key={cat._id}
               className={`relative mx-2 ${selectedCategory === cat._id
@@ -84,6 +85,16 @@ const List_Products = () => {
             >
               {cat.name_category}
             </button>
+            // <button
+            //   key={cat._id}
+            //   className={`relative mx-2 ${selectedCategory === cat._id
+            //     ? "opacity-100 after:w-full after:left-0"
+            //     : "opacity-75 hover:opacity-100 after:left-1/2 after:w-0 hover:after:w-full hover:after:left-0"
+            //     } after:content-[''] after:absolute after:h-[2px] after:bg-gray-800 after:bottom-[-20%] after:duration-500 after:rounded-lg`}
+            //   onClick={() => setSelectedCategory(cat._id)}
+            // >
+            //   {cat.name_category}
+            // </button>
           ))}
         </nav>
       </div>

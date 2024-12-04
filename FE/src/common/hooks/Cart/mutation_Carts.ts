@@ -8,7 +8,7 @@ import {
   up_quantity,
   updateQuantity
 } from "../../../_lib/Cart/Cart";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 type Actions =
   | "ADD"
   | "UP"
@@ -24,7 +24,7 @@ export function Mutation_Cart(action: Actions) {
     mutationFn: async (data: any) => {
       switch (action) {
         case "ADD":
-          toast.success("Thêm vào giỏ hàng thành công!", { autoClose: 300 });
+          // toast.success("Thêm vào giỏ hàng thành công!", { autoClose: 300 });
           return await add_cart(data);
         case "UP":
           return await up_quantity(data);
