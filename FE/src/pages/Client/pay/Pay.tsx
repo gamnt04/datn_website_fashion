@@ -22,7 +22,6 @@ import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_ca
 // import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
-import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const Pay = () => {
@@ -52,26 +51,23 @@ const Pay = () => {
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
 
-  // useEffect(() => {
-  //   const fetchVouchers = async () => {
-  //     try {
-  //       const response = await instance.get("/voucher");
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        const response = await instance.get("/voucher");
 
-  //       const activeVouchers = response.data.vouchers.filter(
-  //         (voucher: any) => voucher.isActive === true
-  //       );
+        const activeVouchers = response.data.vouchers.filter(
+          (voucher: any) => voucher.isActive === true
+        );
 
-  //       setVouchers(activeVouchers);
-  //     } catch (error) {
-  //       toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
-  //     }
-  //   };
-  //   fetchVouchers();
-  // }, []);
-  const { data: activeVouchers, isLoading, error } = useVouchersQuery();
-  console.log("vouche test :", activeVouchers);
+        setVouchers(activeVouchers);
+      } catch (error) {
+        toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
+      }
+    };
+    fetchVouchers();
+  }, []);
 
-  // setVouchers(voucher);
   useEffect(() => {
     if (!userId) {
       routing("/login");
@@ -246,21 +242,8 @@ const Pay = () => {
     };
   });
   const currentDate = new Date(); // Lấy ngày hiện tại
-  if (isLoading) {
-    console.log("Đang tải dữ liệu...");
-    return null;
-  }
 
-  if (error) {
-    console.error("Lỗi khi tải dữ liệu:", error);
-    return null;
-  }
-
-  if (!activeVouchers || activeVouchers.length === 0) {
-    console.log("Không có vouchers hợp lệ.");
-    return null;
-  }
-  const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
+  const sortedVouchers = vouchers.sort((a: any, b: any) => {
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
       a.usedCount >= a.quantity_voucher ||
@@ -478,10 +461,11 @@ const Pay = () => {
       </div>
     );
   }
-  if (error) return <div>Error loading vouchers</div>;
-
 
   return (
+    <>
+      <div className="max-w-[1440px] w-[95vw] mx-auto ">
+        {contextHolder}
         <div className="mt-20">
           <div className="mb-6">
             <div className="flex items-center gap-3 bg-[#F5F5F5] py-6">
@@ -690,15 +674,13 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
                                   ? "border-blue-500"
                                   : "border-gray-300"
-                              } ${
-                                isDisabled
+                                } ${isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -721,9 +703,8 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                  }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled}
                               >
@@ -789,8 +770,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -834,9 +815,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
