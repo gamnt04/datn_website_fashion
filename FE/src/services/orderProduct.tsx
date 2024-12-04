@@ -80,11 +80,11 @@ export const Add_Order = async (order: any) => {
 
     return data;
   } catch (error: any) {
-    if (error.response) {
-      toast.error("Sản phẩm số lượng không còn đủ trong kho", {
-        autoClose: 500,
-      });
-    }
+    // if (error.response) {
+    //   toast.error("Sản phẩm số lượng không còn đủ trong kho", {
+    //     autoClose: 500,
+    //   });
+    // }
   }
 };
 export const Update_Status = async (items: any) => {
