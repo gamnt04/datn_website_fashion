@@ -190,41 +190,6 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     </button>
   );
 
-  // const customUploadRequest = async ({ file, onSuccess, onError }) => {
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   formData.append("upload_preset", PRESET_NAME);
-  //   formData.append("folder", FOLDER_NAME);
-
-  //   try {
-  //     const response = await fetch(api, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Upload failed");
-  //     }
-
-  //     const result = await response.json();
-  //     file.url = result.secure_url; // Cập nhật URL từ server
-  //     onSuccess?.(result); // Gọi callback khi upload thành công
-
-  //     form.setFieldsValue({
-  //       image_review: [
-  //         ...(form.getFieldValue("image_review") || []),
-  //         result.secure_url,
-  //       ],
-  //     });
-
-  //     message.success("Tải lên thành công!");
-  //   } catch (error) {
-  //     console.error("Upload error:", error);
-  //     onError?.(error); // Gọi callback khi upload thất bại
-  //     message.error("Tải lên thất bại!");
-  //   }
-  // };
-
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
       // Tìm sản phẩm từ data
