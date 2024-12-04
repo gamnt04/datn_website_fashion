@@ -49,7 +49,7 @@
 }
 
 .animation_add_cart {
-  animation: animation_add_cart 1.5s;
+  animation: animation_add_cart 2s;
 }
 
 @keyframes animation_add_cart {
