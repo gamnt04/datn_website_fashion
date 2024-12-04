@@ -4,13 +4,18 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { ICategory } from "../../../../common/interfaces/Category";
 import { useCategoryQuery } from "../../../../common/hooks/Category/useCategoryQuery";
 import ScrollTop from "../../../../common/hooks/Customers/ScrollTop";
+import { Spin } from "antd";
 const AboutUS = () => {
   //const arr = [1, 2, 3];
   const { data, isLoading } = useCategoryQuery();
   const visibleCategories =
     data?.filter((category: ICategory) => category.published) || [];
 
-  if (isLoading) return <LoadingOutlined />;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="container lg:mt-[40px] mt-[60px]">
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
@@ -39,7 +44,7 @@ const AboutUS = () => {
           <div className="grid lg:grid-cols-4 md:grid-cold-2 grid-cols-1 gap-8 *:bg-gray-100 *:cursor-pointer *:duration-300 *:rounded">
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/chung.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -55,7 +60,7 @@ const AboutUS = () => {
             </div>
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/sau.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -71,7 +76,7 @@ const AboutUS = () => {
             </div>
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/duong.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -88,7 +93,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/lam.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -105,7 +110,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/trung.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -122,7 +127,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/minh.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -139,7 +144,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/duc.jpg"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />

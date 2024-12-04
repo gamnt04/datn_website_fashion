@@ -10,17 +10,17 @@ import {
   Input,
   Checkbox,
   Space,
-  Pagination,
+  Spin,
 } from "antd";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { DeleteOutlined, PlusCircleFilled } from "@ant-design/icons";
 import parse from "html-react-parser";
 import { useSearchBlogByName } from "../../../common/hooks/Blog/querry_blog";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const BlogList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -53,8 +53,7 @@ const BlogList: React.FC = () => {
     } catch (error) {
       console.error("Lỗi khi xóa blog:", error);
       messageApi.error(
-        `Xóa blog không thành công. ${
-          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Xóa blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
     }
@@ -74,8 +73,7 @@ const BlogList: React.FC = () => {
     onError: (error: unknown) => {
       console.error("Lỗi khi cập nhật blog:", error);
       messageApi.error(
-        `Cập nhật blog không thành công. ${
-          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Cập nhật blog không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
     },
@@ -96,8 +94,7 @@ const BlogList: React.FC = () => {
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái hiển thị:", error);
       messageApi.error(
-        `Cập nhật trạng thái hiển thị không thành công. ${
-          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Cập nhật trạng thái hiển thị không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
     }
@@ -228,7 +225,11 @@ const BlogList: React.FC = () => {
     },
   ];
 
-  if (isLoading) return <div className="">loading...</div>;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   if (isError) return <div className="">{(error as any).message}</div>;
 
   return (

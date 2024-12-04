@@ -21,15 +21,17 @@ import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { Loader } from "lucide-react";
 import useDataVoucher from "./_component/useDataVoucher";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 const ListVoucher = () => {
   const queryClient = useQueryClient();
   const [messageAPI, contextHolder] = message.useMessage();
   const [searchText, setSearchText] = useState<string>("");
+  const { data: categories } = useCategoryQuery();
   const { data, isLoading } = useQuery({
     queryKey: ["voucher"],
     queryFn: () => instance.get(`/voucher`),
   });
-  const { products } = useDataVoucher();
+  const { products, auth, shippers } = useDataVoucher();
 
   // Hàm tìm tên sản phẩm dựa trên ID
   const getProductNames = (productIds: string[]) => {
@@ -37,18 +39,21 @@ const ListVoucher = () => {
     return productIds
       .map((id) => {
         const product = products.find((prod: any) => prod._id === id);
-        return product ? product.name_product : id;
+        return product ? product.name_product : [];
       })
       .join(", ");
   };
-  const { data: auth } = useQuery({
-    queryKey: ["auths"],
-    queryFn: () => instance.get(`/auths`),
-  });
-  const { data: shippersData } = useQuery({
-    queryKey: ["shippers"],
-    queryFn: () => instance.get(`/shippers`),
-  });
+
+  // Hàm tìm tên sản phẩm dựa trên ID
+  const getCategoryNames = (categoryIds: string[]) => {
+    if (!categories) return categoryIds.join(", ");
+    return categoryIds
+      .map((id) => {
+        const category = categories.find((cate: any) => cate._id === id);
+        return category ? category.name_category : [];
+      })
+      .join(", ");
+  };
 
   const { mutate } = useMutation({
     mutationFn: (id: string) => instance.delete(`voucher/${id}`),
@@ -271,6 +276,10 @@ const ListVoucher = () => {
                 {getProductNames(selectedVoucher.appliedProducts)}
               </p>
               <p>
+                <strong>Danh mục sản phẩm áp dụng: </strong>{" "}
+                {getCategoryNames(selectedVoucher.appliedCategories)}
+              </p>
+              <p>
                 <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
                 {selectedVoucher.minimumSpend} VND
               </p>
@@ -295,10 +304,7 @@ const ListVoucher = () => {
                 <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
                 selectedVoucher.allowedUsers.length > 0
-                  ? [
-                      ...(auth?.data || []),
-                      ...(shippersData?.data.shippers || []),
-                    ]
+                  ? [...(auth?.data || []), ...(shippers?.data.shippers || [])]
                       .filter((user: any) =>
                         selectedVoucher.allowedUsers.includes(user._id)
                       )

@@ -22,7 +22,7 @@ export default function Sidebar_Dashboard() {
   };
 
   return (
-    <aside className="mx-auto h-screen w-[230px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3">
+    <aside className="mx-auto h-screen w-[230px] text-gray-100 *:text-sm *:font-medium flex flex-col gap-y-3 hidden_scroll_x overflow-y-auto" >
       <div className="items-center px-2 py-1">
         <Link to={"/"}>
           <img src={logo} alt="" className="w-[242px] h-[45px]" />
@@ -215,14 +215,14 @@ export default function Sidebar_Dashboard() {
               <span className="text-[#c4cee3]">Bài viết</span>
             </Link>
           </div>
-          <div className="*:px-2">
+          {/* <div className="*:px-2">
             <Link
               to={`/admin/TotalOrders`}
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
               <span className=" text-[#c4cee3]">Tổng số đơn shipper</span>
             </Link>
-          </div>
+          </div> */}
         </>
       )}
       {role === "courier" && (

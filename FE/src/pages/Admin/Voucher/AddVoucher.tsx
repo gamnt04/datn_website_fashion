@@ -23,6 +23,7 @@ import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { AiFillBackward } from "react-icons/ai";
+import { Auth } from "../../../common/interfaces/Auth";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -69,7 +70,7 @@ const AddVoucher = () => {
 
     const formData = {
       ...values,
-      allowedUsers: selectedUsers,
+      allowedUsers: selectedAuths,
       appliedProducts: selectedItems,
       appliedCategories: selectedCategories,
     };
@@ -355,18 +356,22 @@ const AddVoucher = () => {
                               Chọn tất cả
                             </Checkbox>
                           </div>
-                          <div style={{ paddingLeft: "24px" }}>
-                            {filteredProducts.map((product) => (
-                              <Checkbox
-                                key={product._id}
-                                value={product._id}
-                                checked={selectedItems.includes(product._id)}
-                                onChange={() =>
-                                  handleCheckboxChange(product._id)
-                                }
-                              >
-                                {product.name_product}
-                              </Checkbox>
+                          <div className="py-4 pl-6">
+                            {filteredProducts.map((product, index) => (
+                              <div key={product._id}>
+                                <Checkbox
+                                  value={product._id}
+                                  checked={selectedItems.includes(product._id)}
+                                  onChange={() =>
+                                    handleCheckboxChange(product._id)
+                                  }
+                                >
+                                  {product.name_product}
+                                </Checkbox>
+                                {index < filteredProducts.length - 1 && (
+                                  <div className="h-px my-2 bg-gray-300"></div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -456,22 +461,26 @@ const AddVoucher = () => {
                             </Checkbox>
                           </div>
                           {/* Sử dụng filteredCategories thay vì visibleCategories */}
-                          {filteredCategorys.map((category) => (
-                            <div style={{ paddingLeft: "12px" }}>
-                              <Checkbox
-                                key={category._id}
-                                value={category._id}
-                                checked={selectedCategories.includes(
-                                  category._id
+                          <div className="py-4 pl-6">
+                            {filteredCategorys.map((category, index) => (
+                              <div key={category._id}>
+                                <Checkbox
+                                  value={category._id}
+                                  checked={selectedCategories.includes(
+                                    category._id
+                                  )}
+                                  onChange={() =>
+                                    handleCheckboxChangeCate(category._id)
+                                  }
+                                >
+                                  {category.name_category}
+                                </Checkbox>
+                                {index < filteredCategorys.length - 1 && (
+                                  <div className="h-px my-2 bg-gray-300"></div>
                                 )}
-                                onChange={() =>
-                                  handleCheckboxChangeCate(category._id)
-                                }
-                              >
-                                {category.name_category}
-                              </Checkbox>
-                            </div>
-                          ))}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     ></Select>

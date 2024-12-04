@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Dispatch_the_loai_thuoc_tinh, Lay_the_loai_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
-import { Button, Form, FormProps, Input } from "antd";
+import { Button, Form, FormProps, Input, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function Modal_cpnt({ props }: any) {
     const location_url = useLocation();
@@ -50,7 +51,11 @@ export default function Modal_cpnt({ props }: any) {
         console.log('Failed:', errorInfo);
     };
 
-    if (isPending || loading) return <span>Loading...</span>;
+    if (isPending || loading) {
+        return <div className="flex justify-center items-center h-screen">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>;
+    }
     if (isError || error) return <span>Error...</span>;
 
     return (

@@ -488,56 +488,51 @@ export const setDefaultAddress = async (req, res) => {
 };
 
 export const updateUserAddress = async (req, res) => {
-  const userId = req.params.userId;
-  const addressId = req.params.addressId; // ID của địa chỉ cần cập nhật
-  const updatedAddress = req.body; // Dữ liệu địa chỉ mới
+  const { userId, addressId } = req.params;
+  const { updatedAddress, setDefault } = req.body;
 
   try {
-    // Tìm người dùng trong CSDL bằng userId
+    // Find the user
     const user = await User.findById(userId);
 
-    // Kiểm tra nếu không tìm thấy người dùng
     if (!user) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng"
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Người dùng không tồn tại" });
+    }
+
+    const addressIndex = user.address.findIndex(
+      (address) => address._id.toString() === addressId
+    );
+
+    if (addressIndex === -1) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Địa chỉ không tồn tại" });
+    }
+
+    user.address[addressIndex] = {
+      ...user.address[addressIndex],
+      ...updatedAddress
+    };
+
+    if (setDefault) {
+      user.address.forEach((address, index) => {
+        user.address[index].checked = index === addressIndex;
       });
     }
 
-    // Kiểm tra nếu địa chỉId hợp lệ
-    if (!mongoose.isValidObjectId(addressId)) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID địa chỉ không hợp lệ"
-      });
-    }
-
-    // Tìm địa chỉ cần cập nhật trong mảng địa chỉ
-    const address = user.address.id(addressId);
-
-    // Kiểm tra nếu không tìm thấy địa chỉ
-    if (!address) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ"
-      });
-    }
-
-    // Cập nhật địa chỉ với dữ liệu mới
-    address.set(updatedAddress);
-
-    // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
     const updatedUser = await user.save();
 
-    // Lấy địa chỉ đã được cập nhật từ dữ liệu người dùng đã lưu
-    const updatedAddressData = updatedUser.address.id(addressId);
-
     return res.status(StatusCodes.OK).json({
-      message: "Đã cập nhật địa chỉ thành công",
-      address: updatedAddressData
+      message: "Cập nhật địa chỉ thành công",
+      address: updatedUser.address
     });
   } catch (error) {
-    console.error("Lỗi khi cập nhật địa chỉ:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Lỗi khi cập nhật địa chỉ"
-    });
+    console.error("Error while editing address:", error.message);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi sửa địa chỉ" });
   }
 };
 

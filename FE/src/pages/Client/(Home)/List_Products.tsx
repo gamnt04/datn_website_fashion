@@ -51,7 +51,11 @@ const List_Products = () => {
       }
     }
   };
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="py-16 overflow-hidden text-center border-b">
       {/* title */}
