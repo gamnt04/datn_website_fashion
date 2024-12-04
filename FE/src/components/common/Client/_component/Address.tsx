@@ -851,6 +851,15 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: any) => {
               </Select>
             </Form.Item>
           </div>
+          <Form.Item
+            name="addressDetails"
+            label="Địa chỉ cụ thể"
+            rules={[
+              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }
+            ]}
+          >
+            <Input placeholder="Địa chỉ cụ thể" />
+          </Form.Item>
           <Form.Item name="checked" valuePropName="checked">
             <Checkbox>Đặt làm địa chỉ mặc định</Checkbox>
           </Form.Item>
