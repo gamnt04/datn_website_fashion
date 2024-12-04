@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Spin, Alert } from "antd";
 import instance from "../../../configs/axios";
+import { LoadingOutlined } from "@ant-design/icons";
 
 interface Order {
   _id: string;
@@ -99,8 +100,8 @@ const TotalOrders = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-4">
-        <Spin size="large" /> {/* Loading spinner */}
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
       </div>
     );
   }

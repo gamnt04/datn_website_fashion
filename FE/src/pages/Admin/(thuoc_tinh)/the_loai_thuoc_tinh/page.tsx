@@ -41,6 +41,11 @@ export default function The_loai_thuoc_tinh() {
   const handleChange = (value: string) => {
     setState_the_loai_thuoc_tinh(value)
   };
+  if (isPending) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="px-10">
       {

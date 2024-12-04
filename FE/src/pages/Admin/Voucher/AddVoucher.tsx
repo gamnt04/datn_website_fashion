@@ -13,7 +13,6 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
@@ -23,14 +22,14 @@ import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { AiFillBackward } from "react-icons/ai";
+import { Auth } from "../../../common/interfaces/Auth";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const { data: categories } = useCategoryQuery();
   const nav = useNavigate();
-  const [userType, setUserType] = useState<string[]>(["user"]);
-  const { auth, shippers, products, isLoading } = useDataVoucher();
+  const { auth, products, isLoading } = useDataVoucher();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: IVoucher) => {
@@ -61,27 +60,14 @@ const AddVoucher = () => {
   const onFinish: FormProps<IVoucher>["onFinish"] = (values) => {
     const formData = {
       ...values,
-      allowedUsers: selectedUsers,
+      allowedUsers: selectedAuths,
       appliedProducts: selectedItems,
       appliedCategories: selectedCategories,
     };
     mutate(formData);
   };
 
-  const filteredData =
-    userType.includes("user") && userType.includes("courier")
-      ? [...(auth?.data || []), ...(shippers?.data?.shippers || [])]
-      : userType.includes("user")
-      ? auth?.data || []
-      : shippers?.data?.shippersData || [];
-
-  const handleUserTypeChange = (value: string[]) => {
-    console.log("Giá trị userType sau khi thay đổi:", value);
-    setUserType(value);
-  };
-
   const {
-    selectedUsers,
     applyType,
     discountType,
     selectedItems,
@@ -89,7 +75,6 @@ const AddVoucher = () => {
     selectAll,
     generateRandomCode,
     setSearchText,
-    handleSelectChange,
     onApplyTypeChange,
     ondiscountTypeChange,
     handleCheckboxChange,
@@ -100,6 +85,12 @@ const AddVoucher = () => {
     handleSelectAllCate,
     filteredProducts,
     filteredCategorys,
+    filteredAuths,
+    handleSelectAllAuth,
+    handleSelectAuth,
+    handleCheckboxChangeAuth,
+    selectedAuths,
+    setSelectedAuths,
   } = useVoucherHandlers({
     form,
     products,
@@ -341,18 +332,22 @@ const AddVoucher = () => {
                               Chọn tất cả
                             </Checkbox>
                           </div>
-                          <div style={{ paddingLeft: "24px" }}>
-                            {filteredProducts.map((product) => (
-                              <Checkbox
-                                key={product._id}
-                                value={product._id}
-                                checked={selectedItems.includes(product._id)}
-                                onChange={() =>
-                                  handleCheckboxChange(product._id)
-                                }
-                              >
-                                {product.name_product}
-                              </Checkbox>
+                          <div className="py-4 pl-6">
+                            {filteredProducts.map((product, index) => (
+                              <div key={product._id}>
+                                <Checkbox
+                                  value={product._id}
+                                  checked={selectedItems.includes(product._id)}
+                                  onChange={() =>
+                                    handleCheckboxChange(product._id)
+                                  }
+                                >
+                                  {product.name_product}
+                                </Checkbox>
+                                {index < filteredProducts.length - 1 && (
+                                  <div className="h-px my-2 bg-gray-300"></div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -439,22 +434,26 @@ const AddVoucher = () => {
                             </Checkbox>
                           </div>
                           {/* Sử dụng filteredCategories thay vì visibleCategories */}
-                          {filteredCategorys.map((category) => (
-                            <div style={{ paddingLeft: "12px" }}>
-                              <Checkbox
-                                key={category._id}
-                                value={category._id}
-                                checked={selectedCategories.includes(
-                                  category._id
+                          <div className="py-4 pl-6">
+                            {filteredCategorys.map((category, index) => (
+                              <div key={category._id}>
+                                <Checkbox
+                                  value={category._id}
+                                  checked={selectedCategories.includes(
+                                    category._id
+                                  )}
+                                  onChange={() =>
+                                    handleCheckboxChangeCate(category._id)
+                                  }
+                                >
+                                  {category.name_category}
+                                </Checkbox>
+                                {index < filteredCategorys.length - 1 && (
+                                  <div className="h-px my-2 bg-gray-300"></div>
                                 )}
-                                onChange={() =>
-                                  handleCheckboxChangeCate(category._id)
-                                }
-                              >
-                                {category.name_category}
-                              </Checkbox>
-                            </div>
-                          ))}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     ></Select>
@@ -542,46 +541,68 @@ const AddVoucher = () => {
                   <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item label="Chọn loại người dùng">
-                  <Checkbox.Group
-                    options={[
-                      { label: "Người dùng", value: "user" },
-                      { label: "Shipper", value: "courier" },
-                    ]}
-                    defaultValue={["user"]}
-                    onChange={handleUserTypeChange}
-                  />
-                </Form.Item>
-                <Form.Item<IVoucher> label="Người sử dụng mã giảm giá">
-                  <div className="flex items-center">
-                    <Select
-                      mode="multiple"
-                      style={{
-                        width: "90%",
-                        minHeight: "40px",
-                      }}
-                      placeholder="Chọn người dùng/shipper"
-                      className="mt-2"
-                      options={filteredData?.map((user: any) => {
-                        console.log("Từng user trong options:", user);
-                        return {
-                          value: user._id,
-                          label: user.userName || user.fullName,
-                        };
-                      })}
-                      onChange={handleSelectChange}
-                      value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
-                      maxTagCount={4}
-                      maxTagPlaceholder={(omittedValues) =>
-                        `+${omittedValues.length} người khác`
-                      }
-                      allowClear
-                    />
-                    <span className="ml-2 text-gray-600">
-                      Đã chọn: {selectedUsers.length}
-                    </span>
-                  </div>
+                <Form.Item
+                  label="Người sử dụng mã giảm giá"
+                  name="allowedUsers"
+                >
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn người người sử dụng mã giảm giá"
+                    onChange={handleSelectAuth}
+                    style={{ width: "100%" }}
+                    suffixIcon={
+                      <p className="text-black">
+                        Đã chọn: {selectedAuths.length}
+                      </p>
+                    }
+                    showSearch={false}
+                    dropdownRender={(menu: any) => (
+                      <div className="max-h-[500px] overflow-y-auto">
+                        {/* Thêm ô tìm kiếm */}
+                        <div style={{ padding: "8px 12px" }}>
+                          <Input.Search
+                            placeholder="Tìm kiếm người sử dụng..."
+                            onChange={(e) => setSearchText(e.target.value)}
+                            style={{ marginBottom: 8 }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            padding: "8px 12px",
+                            borderBottom: "1px solid #f0f0f0",
+                          }}
+                        >
+                          <Checkbox
+                            checked={selectAll}
+                            onChange={(e) =>
+                              handleSelectAllAuth(e.target.checked)
+                            }
+                          >
+                            Chọn tất cả
+                          </Checkbox>
+                        </div>
+
+                        <div className="py-4 pl-6">
+                          {filteredAuths?.map((user, index) => (
+                            <div key={user._id}>
+                              <Checkbox
+                                value={user._id}
+                                checked={selectedAuths.includes(user._id)}
+                                onChange={() =>
+                                  handleCheckboxChangeAuth(user._id)
+                                }
+                              >
+                                {user.userName}
+                              </Checkbox>
+                              {index < filteredAuths.length - 1 && (
+                                <div className="h-px my-2 bg-gray-300"></div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  ></Select>
                 </Form.Item>
               </div>
             </div>

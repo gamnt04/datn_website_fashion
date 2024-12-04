@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FormInstance } from "antd";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { Auth } from "../../../../common/interfaces/Auth";
 
 interface VoucherHandlersProps {
   form: FormInstance;
@@ -23,6 +24,7 @@ export const useVoucherHandlers = ({
   const [discountType, setdiscountType] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedAuths, setSelectedAuths] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
 
@@ -100,6 +102,16 @@ export const useVoucherHandlers = ({
       }
     });
   };
+
+  const handleCheckboxChangeAuth = (userId: string) => {
+    setSelectedAuths((prevSelected) => {
+      if (prevSelected.includes(userId)) {
+        return prevSelected.filter((id) => id !== userId);
+      } else {
+        return [...prevSelected, userId];
+      }
+    });
+  };
   const handleSelect = (value: string[]) => {
     setSelectedItems(value);
     form.setFieldsValue({ appliedProducts: value });
@@ -107,6 +119,11 @@ export const useVoucherHandlers = ({
   const handleSelectCate = (value: string[]) => {
     setSelectedCategories(value);
     form.setFieldsValue({ appliedCategories: value });
+  };
+
+  const handleSelectAuth = (value: string[]) => {
+    setSelectedAuths(value);
+    form.setFieldsValue({ allowedUsers: value });
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -128,16 +145,30 @@ export const useVoucherHandlers = ({
     }
   };
 
+  const handleSelectAllAuth = (checked: boolean) => {
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedAuths(auth?.data.map((user: Auth) => user._id));
+    } else {
+      setSelectedAuths([]);
+    }
+  };
+
   const filteredProducts = products?.filter((product) =>
     product.name_product.toLowerCase().includes(searchText.toLowerCase())
   );
   const filteredCategorys = visibleCategories?.filter((category) =>
     category.name_category.toLowerCase().includes(searchText.toLowerCase())
   );
+  const filteredAuths = auth?.data?.filter((user) =>
+    user.userName.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return {
     // States
     selectedUsers,
+    selectedAuths,
+    setSelectedAuths,
     userType,
     applyType,
     limitType,
@@ -145,6 +176,7 @@ export const useVoucherHandlers = ({
     selectedItems,
     selectedCategories,
     setSelectedCategories,
+
     selectAll,
     searchText,
     setLimitType,
@@ -166,9 +198,13 @@ export const useVoucherHandlers = ({
     handleSelectCate,
     handleSelectAll,
     handleSelectAllCate,
+    handleSelectAllAuth,
+    handleSelectAuth,
+    handleCheckboxChangeAuth,
     // Computed values
     filteredProducts,
     visibleCategories,
     filteredCategorys,
+    filteredAuths,
   };
 };
