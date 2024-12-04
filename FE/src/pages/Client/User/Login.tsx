@@ -29,7 +29,6 @@ const Login = () => {
     token?: string;
   };
 
-
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const email: string = values.email || "";
     const password: string = values.password || "";
@@ -55,27 +54,30 @@ const Login = () => {
   const handleGoogleLogin = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
     try {
-      const response = await axios.post('http://localhost:2004/api/v1/auth/google', {
-        token,
-      });
+      const response = await axios.post(
+        "http://localhost:2004/api/v1/auth/google",
+        {
+          token,
+        }
+      );
 
       const { token: jwtToken, user } = response.data;
       const user_data = {
-        user
-      }
-      console.log(user_data)
-      localStorage.setItem('token', jwtToken);
-      localStorage.setItem('user', JSON.stringify(user_data));
+        user,
+      };
+      console.log(user_data);
+      localStorage.setItem("token", jwtToken);
+      localStorage.setItem("user", JSON.stringify(user_data));
 
       toast.success("Đăng nhập thành công!");
 
-      if (user.role === 'admin') {
-        navigate('/admin');
+      if (user.role === "admin") {
+        navigate("/admin");
       } else {
-        navigate('/');
+        navigate("/");
       }
     } catch (error) {
-      console.error('Lỗi đăng nhập Google:', error);
+      console.error("Lỗi đăng nhập Google:", error);
       toast.error("Đăng nhập Google thất bại. Vui lòng thử lại!");
     }
   };
@@ -96,13 +98,13 @@ const Login = () => {
     );
   }
 
-  if (isError && error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div>Error: {error.message}</div>
-      </div>
-    );
-  }
+  // if (isError && error) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen">
+  //       <div>Error: {error.message}</div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="container flex flex-col mx-auto mt-5 bg-white rounded-lg">
@@ -113,7 +115,9 @@ const Login = () => {
               <h3 className="mb-3 text-4xl font-extrabold text-gray-900">
                 Đăng nhập
               </h3>
-              <p className="mb-4 text-gray-600">Nhập email và mật khẩu của bạn</p>
+              <p className="mb-4 text-gray-600">
+                Nhập email và mật khẩu của bạn
+              </p>
               <div className="flex items-center mb-3">
                 <hr className="flex-grow border-gray-300" />
               </div>

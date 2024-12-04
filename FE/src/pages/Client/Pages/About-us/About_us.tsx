@@ -44,7 +44,7 @@ const AboutUS = () => {
           <div className="grid lg:grid-cols-4 md:grid-cold-2 grid-cols-1 gap-8 *:bg-gray-100 *:cursor-pointer *:duration-300 *:rounded">
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/chung.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -60,7 +60,7 @@ const AboutUS = () => {
             </div>
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/sau.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -76,7 +76,7 @@ const AboutUS = () => {
             </div>
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/duong.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -93,7 +93,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/lam.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -110,7 +110,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/trung.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -127,7 +127,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/minh.png"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
@@ -144,7 +144,7 @@ const AboutUS = () => {
 
             <div className="border p-[25px] hover:scale-105">
               <img
-                src="../../../src/resources/images/teams/duc.jpg"
+                src="../../../src/assets/Images/Products/images.png"
                 alt=""
                 className="object-fill w-full h-48"
               />
