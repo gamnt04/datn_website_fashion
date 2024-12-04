@@ -312,7 +312,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       {contextHolder}
-      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[600px] overflow-y-auto custom-scrollbar">
+      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[500px] overflow-y-auto custom-scrollbar">
         <h1 className="py-1 font-medium text-center">Cập nhật địa chỉ</h1>
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
@@ -752,10 +752,11 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: any) => {
     };
     mutate(data_form);
   };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       {contextHolder}
-      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[600px] overflow-y-auto custom-scrollbar">
+      <div className="bg-white p-4 border rounded relative w-[600px] lg:w-[800px] h-[500px] overflow-y-[600px] custom-scrollbar">
         <h1 className="py-1 font-medium text-center">Địa chỉ mới</h1>
         <Form onFinish={onFinish} layout="vertical">
           <Form.Item
@@ -850,20 +851,10 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: any) => {
               </Select>
             </Form.Item>
           </div>
-          <Form.Item
-            name="addressDetails"
-            className="w-full"
-            label="Địa chỉ cụ thể"
-            rules={[
-              { required: true, message: "Vui lòng nhập địa chỉ cụ thể!" }
-            ]}
-          >
-            <Input
-              className="w-full px-2 py-2 border rounded focus:ring-0"
-              placeholder="Địa chỉ cụ thể"
-            />
+          <Form.Item name="checked" valuePropName="checked">
+            <Checkbox>Đặt làm địa chỉ mặc định</Checkbox>
           </Form.Item>
-          {coordinates && (
+          {coordinates.lat !== null && coordinates.lng !== null && (
             <div className="">
               <div
                 ref={mapContainerRef}
@@ -875,13 +866,6 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: any) => {
             </div>
           )}
 
-          <Form.Item
-            className="flex items-center w-full gap-3 mt-10"
-            name="checked"
-            valuePropName="checked"
-          >
-            <Checkbox>Đặt làm mặc định</Checkbox>
-          </Form.Item>
           <Form.Item className="flex justify-center">
             <Button htmlType="submit" className="h-10 text-white bg-black">
               Hoàn Thành
