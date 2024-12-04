@@ -16,4 +16,5 @@ export interface IVoucher {
   startDate: Date | null;
   expirationDate: Date | null;
   limitType: string;
+  userType: string[]; // Thêm trường này
 }
