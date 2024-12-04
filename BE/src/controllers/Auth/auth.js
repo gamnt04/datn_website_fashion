@@ -487,119 +487,6 @@ export const setDefaultAddress = async (req, res) => {
   }
 };
 
-// export const updateUserAddress = async (req, res) => {
-//   const userId = req.params.userId;
-//   const addressId = req.params.addressId; // ID của địa chỉ cần cập nhật
-//   const updatedAddress = req.body; // Dữ liệu địa chỉ mới
-
-//   try {
-//     // Tìm người dùng trong CSDL bằng userId
-//     const user = await User.findById(userId);
-
-//     // Kiểm tra nếu không tìm thấy người dùng
-//     if (!user) {
-//       return res.status(StatusCodes.NOT_FOUND).json({
-//         message: "Không tìm thấy người dùng"
-//       });
-//     }
-
-//     // Kiểm tra nếu địa chỉId hợp lệ
-//     if (!mongoose.isValidObjectId(addressId)) {
-//       return res.status(StatusCodes.BAD_REQUEST).json({
-//         message: "ID địa chỉ không hợp lệ"
-//       });
-//     }
-
-//     // Tìm địa chỉ cần cập nhật trong mảng địa chỉ
-//     const address = user.address.id(addressId);
-//     console.log("address", address);
-
-//     // Kiểm tra nếu không tìm thấy địa chỉ
-//     if (!address) {
-//       return res.status(StatusCodes.NOT_FOUND).json({
-//         message: "Không tìm thấy địa chỉ"
-//       });
-//     }
-
-//     // Cập nhật địa chỉ với dữ liệu mới
-//     address.set(updatedAddress);
-//     console.log("updatedAddress", updatedAddress);
-
-//     // Lưu người dùng đã được cập nhật vào cơ sở dữ liệu
-//     const updatedUser = await user.save();
-
-//     // Lấy địa chỉ đã được cập nhật từ dữ liệu người dùng đã lưu
-//     const updatedAddressData = updatedUser.address.id(addressId);
-//     console.log("updatedAddressData", updatedAddressData);
-
-//     return res.status(StatusCodes.OK).json({
-//       message: "Đã cập nhật địa chỉ thành công",
-//       address: updatedAddressData
-//     });
-//   } catch (error) {
-//     console.error("Lỗi khi cập nhật địa chỉ:", error);
-//     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-//       message: "Lỗi khi cập nhật địa chỉ"
-//     });
-//   }
-// };
-
-// export const updateUserAddress = async (req, res) => {
-//   const { userId, addressId } = req.params;
-//   const updatedAddress = req.body;
-
-//   try {
-//     if (
-//       !mongoose.isValidObjectId(userId) ||
-//       !mongoose.isValidObjectId(addressId)
-//     ) {
-//       return res.status(StatusCodes.BAD_REQUEST).json({
-//         message: "ID người dùng hoặc ID địa chỉ không hợp lệ"
-//       });
-//     }
-
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(StatusCodes.NOT_FOUND).json({
-//         message: "Không tìm thấy người dùng"
-//       });
-//     }
-
-//     const address = user.address.id(addressId);
-//     if (!address) {
-//       return res.status(StatusCodes.NOT_FOUND).json({
-//         message: "Không tìm thấy địa chỉ"
-//       });
-//     }
-
-//     // Log dữ liệu cũ và mới để kiểm tra sự thay đổi
-//     console.log("Dữ liệu cũ của address:", address);
-//     console.log("Dữ liệu mới của updatedAddress:", updatedAddress);
-
-//     // Cập nhật thông tin địa chỉ với dữ liệu mới
-//     address.set(updatedAddress);
-//     console.log("address sau khi set:", address);
-
-//     // Lưu người dùng sau khi cập nhật
-//     await user.save();
-
-//     // Kiểm tra dữ liệu đã cập nhật trong cơ sở dữ liệu
-//     const updatedAddressData = user.address.id(addressId);
-//     console.log("Địa chỉ đã cập nhật:", updatedAddressData);
-
-//     return res.status(StatusCodes.OK).json({
-//       message: "Đã cập nhật địa chỉ thành công",
-//       address: updatedAddressData
-//     });
-//   } catch (error) {
-//     console.error("Lỗi khi cập nhật địa chỉ:", error);
-//     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-//       message: "Đã xảy ra lỗi khi cập nhật địa chỉ",
-//       error: error.message
-//     });
-//   }
-// };
-
 export const updateUserAddress = async (req, res) => {
   const { userId, addressId } = req.params;
   const { updatedAddress, setDefault } = req.body;
@@ -665,47 +552,37 @@ export const delete_address = async (req, res) => {
   }
 
   try {
-    if (
-      !mongoose.isValidObjectId(userId) ||
-      !mongoose.isValidObjectId(addressId)
-    ) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "ID người dùng hoặc ID địa chỉ không hợp lệ"
-      });
-    }
-
     // Tìm người dùng
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy người dùng"
-      });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy người dùng" });
     }
 
-    // Tìm địa chỉ trong mảng address của người dùng
-    const address = user.address.find(
-      (addr) => addr._id.toString() === addressId
+    // Xóa địa chỉ theo ID
+    const addressIndex = user.address.findIndex(
+      (address) => address._id.toString() === addressId
     );
-    if (!address) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không tìm thấy địa chỉ với ID đã cung cấp"
-      });
+
+    if (addressIndex === -1) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "Không tìm thấy địa chỉ" });
     }
 
-    // Cập nhật địa chỉ
-    Object.assign(address, updatedAddress);
-    await user.save();
+    user.address.splice(addressIndex, 1); // Xóa địa chỉ
 
-    return res.status(StatusCodes.OK).json({
-      message: "Cập nhật địa chỉ thành công",
-      address
-    });
+    // Lưu thay đổi
+    await user.save();
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Đã xóa địa chỉ thành công", address: user.address });
   } catch (error) {
-    console.error("Lỗi khi cập nhật địa chỉ:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Đã xảy ra lỗi khi cập nhật địa chỉ",
-      error: error.message
-    });
+    console.error("Lỗi khi xóa địa chỉ:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Lỗi khi xóa địa chỉ" });
   }
 };
 export const updateUser = async (req, res) => {

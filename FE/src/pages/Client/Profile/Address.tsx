@@ -37,7 +37,9 @@ const Address = () => {
         const { data } = await instance.delete(`/shippers/${userId}/${id}`);
         return data;
       } else {
-        const { data } = await instance.delete(`/auth/${userId}/${id}`);
+        const { data } = await instance.delete(
+          `/auth/remove_address/${userId}/${id}`
+        );
         return data;
       }
     },

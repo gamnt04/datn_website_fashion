@@ -31,9 +31,9 @@ const userSchema = new Schema(
         fullName: { type: String, required: true },
         phoneNumber: { type: String, required: true },
         address: { type: String, required: true },
-        addressNumber: [
+        addressName: [
           {
-            type: Number
+            type: String
           }
         ],
         detailedAddress: { type: String },
