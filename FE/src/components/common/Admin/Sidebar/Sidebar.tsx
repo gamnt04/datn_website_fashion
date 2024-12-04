@@ -38,7 +38,7 @@ export default function Sidebar_Dashboard() {
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
               <Box />
-              <span className=" text-[#c4cee3]">Đơn Hàng</span>
+              <span className=" text-[#c4cee3]">Đơn Hàng Chờ</span>
             </Link>
           </div>
           <div className="*:px-2">
@@ -50,7 +50,7 @@ export default function Sidebar_Dashboard() {
               <span className=" text-[#c4cee3]">Lịch sử giao hàng</span>
             </Link>
           </div>
-          <div className="*:px-2">
+          {/* <div className="*:px-2">
             <Link
               to={`/courier/salary_shipper`}
               className="flex items-center w-full py-3 text-left gap-x-4"
@@ -67,7 +67,7 @@ export default function Sidebar_Dashboard() {
               <IoIosStats className="text-2xl" />
               <span className=" text-[#c4cee3]">Thống kê đơn hàng</span>
             </Link>
-          </div>
+          </div> */}
         </div>
       )}
     </aside>
