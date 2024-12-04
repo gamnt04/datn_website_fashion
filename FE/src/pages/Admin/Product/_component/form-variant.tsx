@@ -193,25 +193,30 @@ export default function Form_variant({ propsData }: any) {
                                                                 >
                                                                     Thêm biến thể
                                                                 </Button>
-                                                                <Button
-                                                                    onClick={() => remove(name)}
-                                                                    className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
-                                                                >
-                                                                    Xóa thuộc tính
-                                                                </Button>
+                                                                {
+                                                                    (fields?.length > 1) &&
+                                                                    <Button
+                                                                        onClick={() => remove(name)}
+                                                                        className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"
+                                                                    >
+                                                                        Xóa thuộc tính
+                                                                    </Button>
+                                                                }
                                                             </div>
                                                         </>
                                                     )}
                                                 </Form.List>
                                             </div>
                                         ))}
-                                        <Button
-                                            className="px-2 my-4"
-                                            type="primary"
-                                            onClick={() => add()}
-                                        >
-                                            Thêm thuộc tính
-                                        </Button>
+                                        <div>
+                                            <Button
+                                                className="px-2 my-4"
+                                                type="primary"
+                                                onClick={() => add()}
+                                            >
+                                                Thêm thuộc tính
+                                            </Button>
+                                        </div>
                                     </>
                                 );
                             }}
