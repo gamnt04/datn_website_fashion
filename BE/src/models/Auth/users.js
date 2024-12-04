@@ -31,7 +31,13 @@ const userSchema = new Schema(
         fullName: { type: String, required: true },
         phoneNumber: { type: String, required: true },
         address: { type: String, required: true },
+        addressNumber: [
+          {
+            type: Number
+          }
+        ],
         detailedAddress: { type: String },
+
         checked: { type: Boolean, default: false },
         coordinates: {
           lat: { type: Number },

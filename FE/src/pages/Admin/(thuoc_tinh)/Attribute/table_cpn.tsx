@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Edit_thuoc_tinh from './edit';
 import { Dispatch_thuoc_tinh } from '../../../../API/Dispatch/slice_attribute';
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 
 const Table_cpnt = ({ data_props }: any) => {
@@ -18,8 +19,11 @@ const Table_cpnt = ({ data_props }: any) => {
         navigate(url.pathname + '?' + url.searchParams.toString());
         setIsModalOpen(true);
     };
-    if (isPending) return <span>Loading...</span>
-    if (isError) return <span>Error...</span>
+    if (isPending) {
+        return <div className="flex justify-center items-center h-screen">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>;
+    } if (isError) return <span>Error...</span>
     return <div>
         <table className='auto border border-gray-400 w-full'>
             <thead className='*:border *:border-gray-400'>

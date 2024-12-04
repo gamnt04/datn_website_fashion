@@ -24,7 +24,11 @@ const Ourblog = () => {
 
   // Chọn 3 bài viết nổi bật
   const featuredBlogs = publishedBlogs.slice(0, 3);
-
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">

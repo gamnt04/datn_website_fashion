@@ -2,14 +2,14 @@ import {
   Button,
   Checkbox,
   Input,
-  message,
   Pagination,
   Popconfirm,
   Space,
+  Spin,
   Switch,
   Table,
 } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnsType } from "antd/es/table";
@@ -25,6 +25,7 @@ import Loading from "../../../components/base/Loading/Loading";
 import instance from "../../../configs/axios";
 import UpdateComponent from "./Create";
 import CategoryUpdate from "./update";
+import { LoadingOutlined } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -39,11 +40,11 @@ const List_Category: React.FC = () => {
 
   const dataSource = Array.isArray(searchName && searchData ? searchData : data)
     ? (searchName && searchData ? searchData : data).map(
-        (category: ICategory) => ({
-          key: category._id,
-          ...category,
-        })
-      )
+      (category: ICategory) => ({
+        key: category._id,
+        ...category,
+      })
+    )
     : [];
 
   const onHandleSearch = () => {
@@ -115,8 +116,7 @@ const List_Category: React.FC = () => {
     },
     onError: (error: unknown) => {
       toast.error(
-        `Cập nhật danh mục không thành công. ${
-          (error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Cập nhật danh mục không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`,
         {
           position: "top-right",
@@ -280,7 +280,13 @@ const List_Category: React.FC = () => {
     onChange: onChangePage,
     showTotal: (total: number) => `Tổng ${total} mục`,
   };
-
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
   return (
     <CheckAuths roles={["admin"]}>
       <>

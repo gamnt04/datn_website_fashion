@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Typography, message, Row, Col, Table, Tag, Image, Space, Modal, Divider } from 'antd';
-import { SearchOutlined, ShoppingOutlined, UserOutlined, DollarOutlined, CalendarOutlined, HomeOutlined, EyeOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Typography, message, Row, Col, Table, Tag, Image, Space, Modal, Spin } from 'antd';
+import { SearchOutlined, ShoppingOutlined, UserOutlined, DollarOutlined, CalendarOutlined, HomeOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
@@ -42,15 +42,15 @@ const statusMapping: { [key: string]: string } = {
   "7": "Hủy",
 };
 const statusColorMapping: { [key: string]: string } = {
-    "1": "orange", // Chờ xác nhận
-    "2": "blue",   // Đang chuẩn bị hàng
-    "3": "yellow", // Đang vận chuyển
-    "4": "green",  // Giao hàng thành công
-    "5": "red",    // Giao hàng thất bại
-    "6": "purple", // Hoàn thành
-    "7": "gray",   // Hủy
-  };
-  
+  "1": "orange", // Chờ xác nhận
+  "2": "blue",   // Đang chuẩn bị hàng
+  "3": "yellow", // Đang vận chuyển
+  "4": "green",  // Giao hàng thành công
+  "5": "red",    // Giao hàng thất bại
+  "6": "purple", // Hoàn thành
+  "7": "gray",   // Hủy
+};
+
 const TrackOrder: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -100,28 +100,28 @@ const TrackOrder: React.FC = () => {
       render: (totalPrice: number) => `${totalPrice.toLocaleString()}đ`,
     },
     {
-        title: 'Trạng thái',
-        dataIndex: 'status',
-        key: 'status',
-        render: (status: string) => (
-          <Tag color={statusColorMapping[status] || "default"}>
-            {statusMapping[status]}
-          </Tag>
-        ),
-      },
-      {
-        title: 'Xem chi tiết',
-        key: 'action',
-        render: (text: any, record: Order) => (
-          <Button
-            type="primary"
-            icon={<EyeOutlined />}
-            onClick={() => setSelectedOrder(record)}
-          >
-            Xem chi tiết
-          </Button>
-        ),
-      },
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => (
+        <Tag color={statusColorMapping[status] || "default"}>
+          {statusMapping[status]}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Xem chi tiết',
+      key: 'action',
+      render: (_: any, record: Order) => (
+        <Button
+          type="primary"
+          icon={<EyeOutlined />}
+          onClick={() => setSelectedOrder(record)}
+        >
+          Xem chi tiết
+        </Button>
+      ),
+    },
   ];
 
   // Cấu hình các cột hiển thị cho sản phẩm trong đơn hàng
@@ -171,53 +171,57 @@ const TrackOrder: React.FC = () => {
       render: (total: number) => <Text strong>{`${total.toLocaleString()}đ`}</Text>,
     },
   ];
-
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Spin indicator={<LoadingOutlined spin />} size="large" />
+    </div>;
+  }
   return (
-    
+
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded mb-5 mt-5" >
-          <Link to={`/`} className="text-gray-500 hover:text-black ">
-            Trang chủ
-          </Link>
-          <span className="mx-1 text-gray-500">&#10148;</span>
-          Tra cứu đơn hàng 
-        </div>
-      
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded mb-5 mt-5" >
+        <Link to={`/`} className="text-gray-500 hover:text-black ">
+          Trang chủ
+        </Link>
+        <span className="mx-1 text-gray-500">&#10148;</span>
+        Tra cứu đơn hàng
+      </div>
+
       {/* Tiêu đề và mô tả */}
       <Card
-  style={{
-    marginBottom: '20px',
-    padding: '20px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
-    textAlign: 'center',
-  }}
->
-  <Title level={2}>Tra cứu Đơn Hàng</Title>
-  <Text type="secondary">Nhập số điện thoại của bạn để theo dõi trạng thái đơn hàng.</Text>
-  
-  <Form onFinish={onFinish} layout="inline" style={{ justifyContent: 'center', marginTop: '20px' }}>
-  <Form.Item
-  name="phone"
-  rules={[
-    { required: true, message: 'Vui lòng nhập số điện thoại!' },
-    {
-      pattern: /^(0[3|5|7|8|9][0-9]{8})$/, // Regular expression for Vietnamese phone numbers
-      message: 'Số điện thoại không hợp lệ! Vui lòng nhập lại.',
-    },
-  ]}
->
-  <Input placeholder="Nhập số điện thoại" style={{ width: '300px', borderRadius: '8px' }} />
-</Form.Item>
-    <Form.Item>
-      <Button type="primary" htmlType="submit" loading={loading} icon={<SearchOutlined />} style={{ borderRadius: '8px' }}>
-        Tra cứu
-      </Button>
-    </Form.Item>
-  </Form>
-</Card>
+        style={{
+          marginBottom: '20px',
+          padding: '20px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          borderRadius: '8px',
+          textAlign: 'center',
+        }}
+      >
+        <Title level={2}>Tra cứu Đơn Hàng</Title>
+        <Text type="secondary">Nhập số điện thoại của bạn để theo dõi trạng thái đơn hàng.</Text>
 
-{!isLoggedIn && (
+        <Form onFinish={onFinish} layout="inline" style={{ justifyContent: 'center', marginTop: '20px' }}>
+          <Form.Item
+            name="phone"
+            rules={[
+              { required: true, message: 'Vui lòng nhập số điện thoại!' },
+              {
+                pattern: /^(0[3|5|7|8|9][0-9]{8})$/, // Regular expression for Vietnamese phone numbers
+                message: 'Số điện thoại không hợp lệ! Vui lòng nhập lại.',
+              },
+            ]}
+          >
+            <Input placeholder="Nhập số điện thoại" style={{ width: '300px', borderRadius: '8px' }} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} icon={<SearchOutlined />} style={{ borderRadius: '8px' }}>
+              Tra cứu
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+
+      {!isLoggedIn && (
         <Card
           style={{
             marginBottom: '20px',
@@ -272,90 +276,90 @@ const TrackOrder: React.FC = () => {
 
       {/* Modal hiển thị chi tiết đơn hàng khi người dùng chọn */}
       <Modal
-  visible={!!selectedOrder}
-  title="Chi tiết đơn hàng"
-  onCancel={() => setSelectedOrder(null)}
-  footer={null}
-  width={800}
->
-  {selectedOrder && (
-    <>
-      <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
-        <Col xs={24} sm={12} md={8}>
-          <Text strong><ShoppingOutlined /> Mã đơn hàng:</Text> 
-          <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.orderNumber}</Tag>
-        </Col>
-        <Col xs={24} sm={12} md={8}>
-          <Text strong><CalendarOutlined /> Ngày mua:</Text> 
-          <Text>{new Date(selectedOrder.createdAt).toLocaleString()}</Text>
-        </Col>
-        <Col xs={24} sm={12} md={8}>
-          <Text strong><DollarOutlined /> Tổng tiền:</Text> 
-          <Tag color="green" style={{ marginLeft: '8px' }}>{selectedOrder.totalPrice.toLocaleString()}đ</Tag>
-        </Col>
-      </Row>
-
-      {/* Hiển thị trạng thái giao hàng hiện tại */}
-      <Row style={{ marginBottom: '20px' }}>
-  <Col>
-    <Text strong style={{ fontSize: '16px', color: '#333' }}>
-      Trạng thái giao hàng hiện tại:
-    </Text>
-    <Text
-      strong
-      style={{
-        fontSize: '16px',
-        color: statusColorMapping[selectedOrder.status],
-        backgroundColor: '#f0f0f0', // Thêm nền nhạt để nổi bật hơn
-        padding: '0 8px', // Thêm khoảng cách xung quanh text
-        borderRadius: '4px', // Bo tròn các góc
-        marginLeft: '8px', // Khoảng cách giữa hai phần text
-      }}
-    >
-      {statusMapping[selectedOrder.status]}
-    </Text>
-  </Col>
-</Row>
-
-
-      {/* Thông tin khách hàng */}
-      <Card
-        title={<Title level={4}><UserOutlined /> Thông tin khách hàng</Title>}
-        style={{ marginBottom: '20px', padding: '20px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}
+        visible={!!selectedOrder}
+        title="Chi tiết đơn hàng"
+        onCancel={() => setSelectedOrder(null)}
+        footer={null}
+        width={800}
       >
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={8}>
-            <Text strong><UserOutlined /> Tên khách hàng:</Text> 
-            <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
-          </Col>
-          <Col span={24}>
-            <Text strong><HomeOutlined /> Địa chỉ:</Text> 
-            <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
-          </Col>
-        </Row>
-      </Card>
+        {selectedOrder && (
+          <>
+            <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
+              <Col xs={24} sm={12} md={8}>
+                <Text strong><ShoppingOutlined /> Mã đơn hàng:</Text>
+                <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.orderNumber}</Tag>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Text strong><CalendarOutlined /> Ngày mua:</Text>
+                <Text>{new Date(selectedOrder.createdAt).toLocaleString()}</Text>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Text strong><DollarOutlined /> Tổng tiền:</Text>
+                <Tag color="green" style={{ marginLeft: '8px' }}>{selectedOrder.totalPrice.toLocaleString()}đ</Tag>
+              </Col>
+            </Row>
 
-      {/* Thông tin sản phẩm */}
-      <Card
-        title={<Title level={4}><ShoppingOutlined /> Thông tin sản phẩm</Title>}
-        style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}
-      >
-        <Table
-          dataSource={selectedOrder.items}
-          columns={productColumns}
-          pagination={false}
-          rowKey={(record) => record.productId._id}
-        />
-      </Card>
-    </>
-  )}
-</Modal>
+            {/* Hiển thị trạng thái giao hàng hiện tại */}
+            <Row style={{ marginBottom: '20px' }}>
+              <Col>
+                <Text strong style={{ fontSize: '16px', color: '#333' }}>
+                  Trạng thái giao hàng hiện tại:
+                </Text>
+                <Text
+                  strong
+                  style={{
+                    fontSize: '16px',
+                    color: statusColorMapping[selectedOrder.status],
+                    backgroundColor: '#f0f0f0', // Thêm nền nhạt để nổi bật hơn
+                    padding: '0 8px', // Thêm khoảng cách xung quanh text
+                    borderRadius: '4px', // Bo tròn các góc
+                    marginLeft: '8px', // Khoảng cách giữa hai phần text
+                  }}
+                >
+                  {statusMapping[selectedOrder.status]}
+                </Text>
+              </Col>
+            </Row>
+
+
+            {/* Thông tin khách hàng */}
+            <Card
+              title={<Title level={4}><UserOutlined /> Thông tin khách hàng</Title>}
+              style={{ marginBottom: '20px', padding: '20px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}
+            >
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={12} md={8}>
+                  <Text strong><UserOutlined /> Tên khách hàng:</Text>
+                  <Tag color="blue" style={{ marginLeft: '8px' }}>{selectedOrder.customerInfo.userName}</Tag>
+                </Col>
+                <Col xs={24} sm={12} md={8}>
+                  <Text strong>SĐT:</Text> <Text>{selectedOrder.customerInfo.phone}</Text>
+                </Col>
+                <Col xs={24} sm={12} md={8}>
+                  <Text strong>Email:</Text> <Text>{selectedOrder.customerInfo.email}</Text>
+                </Col>
+                <Col span={24}>
+                  <Text strong><HomeOutlined /> Địa chỉ:</Text>
+                  <Text>{selectedOrder.customerInfo?.address || 'Không có địa chỉ'}</Text>
+                </Col>
+              </Row>
+            </Card>
+
+            {/* Thông tin sản phẩm */}
+            <Card
+              title={<Title level={4}><ShoppingOutlined /> Thông tin sản phẩm</Title>}
+              style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}
+            >
+              <Table
+                dataSource={selectedOrder.items}
+                columns={productColumns}
+                pagination={false}
+                rowKey={(record) => record.productId._id}
+              />
+            </Card>
+          </>
+        )}
+      </Modal>
 
     </div>
   );
