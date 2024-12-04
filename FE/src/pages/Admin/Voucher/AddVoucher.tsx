@@ -13,7 +13,7 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
@@ -29,8 +29,8 @@ const AddVoucher = () => {
   const [form] = Form.useForm();
   const { data: categories } = useCategoryQuery();
   const nav = useNavigate();
-  const [userType, setUserType] = useState<string[]>(["user"]);
   const { auth, shippers, products, isLoading } = useDataVoucher();
+  const [userType, setUserType] = useState<string[]>(["user"]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: IVoucher) => {
@@ -59,6 +59,14 @@ const AddVoucher = () => {
   });
 
   const onFinish: FormProps<IVoucher>["onFinish"] = (values) => {
+    if (!values.userType || values.userType.length === 0) {
+      messageApi.open({
+        type: "error",
+        content: "Vui lòng chọn ít nhất một loại người dùng!",
+      });
+      return;
+    }
+
     const formData = {
       ...values,
       allowedUsers: selectedUsers,
@@ -68,28 +76,30 @@ const AddVoucher = () => {
     mutate(formData);
   };
 
-  const filteredData =
-    userType.includes("user") && userType.includes("courier")
-      ? [...(auth?.data || []), ...(shippers?.data?.shippers || [])]
-      : userType.includes("user")
+  const filteredData = useMemo(() => {
+    if (userType.includes("user") && userType.includes("courier")) {
+      return [...(auth?.data || []), ...(shippers?.data?.shippers || [])];
+    }
+    return userType.includes("user")
       ? auth?.data || []
-      : shippers?.data?.shippersData || [];
+      : shippers?.data?.shippers || [];
+  }, [auth, shippers, userType]);
 
   const handleUserTypeChange = (value: string[]) => {
-    console.log("Giá trị userType sau khi thay đổi:", value);
-    setUserType(value);
+    // Nếu không chọn bất kỳ checkbox nào, đặt lại một giá trị mặc định
+    if (value.length === 0) {
+      setUserType(["user"]); // Giữ lại ít nhất một giá trị mặc định
+    } else {
+      setUserType(value);
+    }
   };
 
   const {
-    selectedUsers,
     applyType,
     discountType,
-    selectedItems,
-    selectedCategories,
     selectAll,
     generateRandomCode,
     setSearchText,
-    handleSelectChange,
     onApplyTypeChange,
     ondiscountTypeChange,
     handleCheckboxChange,
@@ -100,6 +110,10 @@ const AddVoucher = () => {
     handleSelectAllCate,
     filteredProducts,
     filteredCategorys,
+    selectedUsers,
+    selectedItems,
+    selectedCategories,
+    handleSelectChange,
   } = useVoucherHandlers({
     form,
     products,
@@ -360,7 +374,10 @@ const AddVoucher = () => {
                     >
                       {selectedItems.map((id) => (
                         <Option key={id} value={id}>
-                          {products.find((p) => p._id === id)?.name_product}
+                          {
+                            products.find((p: any) => p._id === id)
+                              ?.name_product
+                          }
                         </Option>
                       ))}
                     </Select>
@@ -461,7 +478,6 @@ const AddVoucher = () => {
                   </Form.Item>
                 )}
               </div>
-
               {/* Cột 2 */}
               <div className="w-full px-4 md:w-1/2">
                 <Form.Item<IVoucher>
@@ -548,10 +564,11 @@ const AddVoucher = () => {
                       { label: "Người dùng", value: "user" },
                       { label: "Shipper", value: "courier" },
                     ]}
-                    defaultValue={["user"]}
+                    value={userType} // Đảm bảo rằng giá trị được quản lý
                     onChange={handleUserTypeChange}
                   />
                 </Form.Item>
+
                 <Form.Item<IVoucher> label="Người sử dụng mã giảm giá">
                   <div className="flex items-center">
                     <Select
@@ -562,14 +579,27 @@ const AddVoucher = () => {
                       }}
                       placeholder="Chọn người dùng/shipper"
                       className="mt-2"
-                      options={filteredData?.map((user: any) => {
-                        console.log("Từng user trong options:", user);
-                        return {
+                      options={[
+                        {
+                          label: "Chọn tất cả",
+                          value: "all",
+                        },
+                        ...filteredData?.map((user: any) => ({
                           value: user._id,
                           label: user.userName || user.fullName,
-                        };
-                      })}
-                      onChange={handleSelectChange}
+                        })),
+                      ]}
+                      onChange={(value) => {
+                        // Kiểm tra xem người dùng có chọn "Chọn tất cả"
+                        if (value.includes("all")) {
+                          // Chọn tất cả các người dùng
+                          const allUsers =
+                            filteredData?.map((user: any) => user._id) || [];
+                          handleSelectChange(allUsers); // Gọi hàm của bạn để cập nhật selectedUsers
+                        } else {
+                          handleSelectChange(value); // Chọn các mục đã chọn
+                        }
+                      }}
                       value={selectedUsers}
                       dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
                       maxTagCount={4}

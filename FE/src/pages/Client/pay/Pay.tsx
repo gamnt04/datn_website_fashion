@@ -23,6 +23,7 @@ import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_ca
 // import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
+import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -51,23 +52,26 @@ const Pay = () => {
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
 
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        const response = await instance.get("/voucher");
+  // useEffect(() => {
+  //   const fetchVouchers = async () => {
+  //     try {
+  //       const response = await instance.get("/voucher");
 
-        const activeVouchers = response.data.vouchers.filter(
-          (voucher: any) => voucher.isActive === true
-        );
+  //       const activeVouchers = response.data.vouchers.filter(
+  //         (voucher: any) => voucher.isActive === true
+  //       );
 
-        setVouchers(activeVouchers);
-      } catch (error) {
-        toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
-      }
-    };
-    fetchVouchers();
-  }, []);
+  //       setVouchers(activeVouchers);
+  //     } catch (error) {
+  //       toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
+  //     }
+  //   };
+  //   fetchVouchers();
+  // }, []);
+  const { data: activeVouchers, isLoading, error } = useVouchersQuery();
+  console.log("vouche test :", activeVouchers);
 
+  // setVouchers(voucher);
   useEffect(() => {
     if (!userId) {
       routing("/login");
@@ -242,8 +246,21 @@ const Pay = () => {
     };
   });
   const currentDate = new Date(); // Lấy ngày hiện tại
+  if (isLoading) {
+    console.log("Đang tải dữ liệu...");
+    return null;
+  }
 
-  const sortedVouchers = vouchers.sort((a: any, b: any) => {
+  if (error) {
+    console.error("Lỗi khi tải dữ liệu:", error);
+    return null;
+  }
+
+  if (!activeVouchers || activeVouchers.length === 0) {
+    console.log("Không có vouchers hợp lệ.");
+    return null;
+  }
+  const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
       a.usedCount >= a.quantity_voucher ||
@@ -461,6 +478,7 @@ const Pay = () => {
       </div>
     );
   }
+  if (error) return <div>Error loading vouchers</div>;
   return (
     <>
       <div className="max-w-[1440px] w-[95vw] mx-auto ">

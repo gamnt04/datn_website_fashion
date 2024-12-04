@@ -61,6 +61,14 @@ const UpdateVoucher = () => {
     queryKey: ["vouchers", id],
     queryFn: () => instance.get(`/voucher/${id}`),
   });
+  const handleUserTypeChange = (value: string[]) => {
+    // Nếu không chọn bất kỳ checkbox nào, đặt lại một giá trị mặc định
+    if (value.length === 0) {
+      setUserType(["user"]); // Giữ lại ít nhất một giá trị mặc định
+    } else {
+      setUserType(value);
+    }
+  };
   const {
     selectedUsers,
     applyType,
@@ -609,8 +617,8 @@ const UpdateVoucher = () => {
                       { label: "Người dùng", value: "user" },
                       { label: "Shipper", value: "courier" },
                     ]}
-                    defaultValue={["user"]}
-                    //onChange={handleUserTypeChange}
+                    value={userType} // Đảm bảo rằng giá trị được quản lý
+                    onChange={handleUserTypeChange}
                   />
                 </Form.Item>
 
@@ -624,11 +632,27 @@ const UpdateVoucher = () => {
                       }}
                       placeholder="Chọn người dùng/shipper"
                       className="mt-2"
-                      options={filteredData?.map((user: any) => ({
-                        value: user._id,
-                        label: user.userName || user.fullName,
-                      }))}
-                      onChange={handleSelectChange}
+                      options={[
+                        {
+                          label: "Chọn tất cả",
+                          value: "all",
+                        },
+                        ...filteredData?.map((user: any) => ({
+                          value: user._id,
+                          label: user.userName || user.fullName,
+                        })),
+                      ]}
+                      onChange={(value) => {
+                        // Kiểm tra xem người dùng có chọn "Chọn tất cả"
+                        if (value.includes("all")) {
+                          // Chọn tất cả các người dùng
+                          const allUsers =
+                            filteredData?.map((user: any) => user._id) || [];
+                          handleSelectChange(allUsers); // Gọi hàm của bạn để cập nhật selectedUsers
+                        } else {
+                          handleSelectChange(value); // Chọn các mục đã chọn
+                        }
+                      }}
                       value={selectedUsers}
                       dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
                       maxTagCount={4}
