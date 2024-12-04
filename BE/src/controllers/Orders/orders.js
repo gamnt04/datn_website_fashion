@@ -598,7 +598,10 @@ export const updateOrderStatus = async (req, res) => {
     if (order.status === "6" || order.status === "7") {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: "Order cannot be updated" });
+        .json({ error: "Order cannot be updated" }
+          
+        );
+        
     }
     order.status = status;
     if (status == "4") {
@@ -682,14 +685,22 @@ export const updateOrderStatus = async (req, res) => {
     //   }
     // }
 
+    if (status === "6") {
+      try {
+        await SendDeliverySuccessMail(order.customerInfo.email, order);
+      } catch (emailError) {
+        console.error("Error sending delivery success email:", emailError);
+        return res.status(500).json({ message: "Failed to send delivery success email." });
+      }
+    }
+
+    // Save the updated order
     await order.save();
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Order status updated successfully" });
+
+    return res.status(StatusCodes.OK).json({ message: "Order status updated successfully" });
   } catch (error) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: error.message });
+    console.error("Error updating order status:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
 
@@ -970,10 +981,9 @@ export const deliverSuccess = async (req, res) => {
     }
 
     // Update order status and confirmation image
-    order.status = "4";
+    order.status = "2";
     order.confirmationImage = confirmationImage;
     await order.save();
-
     // Send email notification
     try {
       await SendDeliverySuccessMail(order.customerInfo.email, order);
@@ -991,6 +1001,9 @@ export const deliverSuccess = async (req, res) => {
     res.status(500).json({ name: error.name, message: error.message });
   }
 };
+
+
+
 export const addShipperOrder = async (req, res) => {
   try {
     const { id } = req.params;

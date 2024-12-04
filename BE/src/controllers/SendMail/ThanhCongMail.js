@@ -14,11 +14,7 @@ let transporter = nodemailer.createTransport({
 });
 
 async function SendDeliverySuccessMail(email, order) {
-  if (!email || !order) {
-    console.error("Email or order data is missing.");
-    return false;
-  }
-
+  
   const { _id: orderId, customerInfo, items, totalPrice, updatedAt } = order;
   const { email: customerEmail, phone, userName, address } = customerInfo;
 
