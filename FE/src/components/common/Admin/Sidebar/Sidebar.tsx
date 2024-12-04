@@ -215,14 +215,14 @@ export default function Sidebar_Dashboard() {
               <span className="text-[#c4cee3]">Bài viết</span>
             </Link>
           </div>
-          <div className="*:px-2">
+          {/* <div className="*:px-2">
             <Link
               to={`/admin/TotalOrders`}
               className="flex items-center w-full py-3 text-left gap-x-4"
             >
               <span className=" text-[#c4cee3]">Tổng số đơn shipper</span>
             </Link>
-          </div>
+          </div> */}
         </>
       )}
       {role === "courier" && (

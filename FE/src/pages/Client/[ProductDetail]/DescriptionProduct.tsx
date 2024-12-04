@@ -185,6 +185,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
       <div style={{ marginTop: 8 }}>Thêm ảnh</div>
     </button>
   );
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     if (editReviewId) {
       const productId = data?.products?._id || "";
