@@ -7,8 +7,9 @@ import { Button } from "../../../components/ui/button";
 import { Dow, Up } from "../../../resources/svg/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { Rate } from "antd";
+import { Rate, Spin } from "antd";
 import useStoreZustand from "../../../Stores/useStore";
+import { LoadingOutlined } from "@ant-design/icons";
 
 interface InforProductProp {
   product: IProduct;

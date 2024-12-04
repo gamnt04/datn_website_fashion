@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, FormProps, Select, Upload } from "antd";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, FormProps, Select, Spin, Upload } from "antd";
 import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AiFillBackward } from "react-icons/ai";
@@ -78,12 +78,6 @@ const Form_Item = ({ mode }: any) => {
     }
   }, [data, data_one_item, form]);
 
-  if (data_one_item?.isPending) {
-    return (
-      <div className="fixed bg-[#17182177] w-screen h-screen top-0 right-0"></div>
-    );
-  }
-
   if (mode && data_one_item?.data?.product?.image_product) {
     image_item = [
       {
@@ -120,7 +114,13 @@ const Form_Item = ({ mode }: any) => {
   const onFormValuesChange = () => {
     setCheckEditForm(false);
   };
-
+  if (data_one_item?.isPending) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
   return (
     <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-6">
       {(isPending || loading) && (

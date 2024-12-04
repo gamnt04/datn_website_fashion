@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Pagination, Table } from "antd";
-import { Link } from "react-router-dom";
+import { Table } from "antd";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
-import { IOrder } from "../../../../common/interfaces/Orders";
+import { Link } from "react-router-dom";
 import { use10NewOrderInDay } from "../../../../common/hooks/Order/querry_Order";
+import { IOrder } from "../../../../common/interfaces/Orders";
 import { Ellipsis_horizontal } from "../../../../components/common/Client/_component/Icons";
 
 const TableOrder = () => {
@@ -119,7 +119,7 @@ const TableOrder = () => {
   ];
 
   return (
-    <div className="">
+    <div className="w-[100%]">
       <Table columns={columns} dataSource={dataSort} pagination={false} />
     </div>
   );

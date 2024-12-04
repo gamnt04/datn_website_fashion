@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Button,
@@ -12,7 +14,7 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
@@ -22,15 +24,16 @@ import useDataVoucher from "./_component/useDataVoucher";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { AiFillBackward } from "react-icons/ai";
+import { Option } from "antd/es/mentions";
+import { Auth } from "../../../common/interfaces/Auth";
 
 const UpdateVoucher = () => {
   const { id } = useParams();
   const [messageApi, contextHolder] = message.useMessage();
   const nav = useNavigate();
-  const [userType, setUserType] = useState<string[]>(["user"]);
   const [form] = Form.useForm();
   const { data: categories } = useCategoryQuery();
-  const { auth, shippersData, products } = useDataVoucher();
+  const { auth, products } = useDataVoucher();
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: IVoucher) => {
       try {
@@ -67,25 +70,30 @@ const UpdateVoucher = () => {
     discountType,
     selectedItems,
     selectedCategories,
+    setSelectedCategories,
     selectAll,
     setLimitType,
     setdiscountType,
-    setSelectedUsers,
     setApplyType,
     setSelectedItems,
     generateRandomCode,
     setSearchText,
-    handleSelectChange,
-    handleUserTypeChange,
     onApplyTypeChange,
-    onLimitTypeChange,
     ondiscountTypeChange,
     handleCheckboxChange,
     handleSelect,
-    handleCategoryChange,
     handleSelectAll,
     filteredProducts,
-    filteredCategories,
+    handleCheckboxChangeCate,
+    filteredCategorys,
+    handleSelectAllCate,
+    handleSelectCate,
+    handleSelectAllAuth,
+    handleSelectAuth,
+    handleCheckboxChangeAuth,
+    selectedAuths,
+    setSelectedAuths,
+    filteredAuths,
   } = useVoucherHandlers({
     form,
     products,
@@ -113,19 +121,11 @@ const UpdateVoucher = () => {
       ...values,
       allowedUsers: selectedUsers,
       appliedProducts: selectedItems,
+      appliedCategories: selectedCategories,
     };
     console.log(`formData`, formData);
     mutate(formData);
   };
-
-  const filteredData =
-    userType.length === 0
-      ? []
-      : userType.includes("user") && userType.includes("shipper")
-      ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
-      : userType.includes("user")
-      ? auth?.data
-      : shippersData?.data.shippers;
 
   useEffect(() => {
     if (vouchers?.data?.voucher) {
@@ -144,6 +144,9 @@ const UpdateVoucher = () => {
       if (voucherData.applyType === "product") {
         setApplyType("product");
         setSelectedItems(voucherData.appliedProducts || []);
+      } else if (voucherData.applyType === "category") {
+        setApplyType("category");
+        setSelectedCategories(voucherData.appliedCategories || []);
       } else {
         setApplyType("total");
       }
@@ -157,7 +160,7 @@ const UpdateVoucher = () => {
         limitTypes.push("quantity");
       }
       setLimitType(limitTypes);
-      setSelectedUsers(voucherData.allowedUsers || []);
+      setSelectedAuths(voucherData.allowedUsers || []);
       setdiscountType(voucherData.discountType);
     }
   }, [vouchers?.data?.voucher]);
@@ -347,6 +350,9 @@ const UpdateVoucher = () => {
                     placeholder="Chọn loại áp dụng"
                   >
                     <Select.Option value="product">Sản phẩm</Select.Option>
+                    <Select.Option value="category">
+                      Danh mục sản phẩm
+                    </Select.Option>
                     <Select.Option value="total">
                       Tổng giá trị đơn hàng
                     </Select.Option>
@@ -360,7 +366,7 @@ const UpdateVoucher = () => {
                       mode="multiple"
                       placeholder="Chọn sản phẩm áp dụng"
                       value={[]}
-                      tagRender={() => null}
+                      tagRender={(): any => null}
                       onChange={handleSelect}
                       style={{ width: "100%" }}
                       suffixIcon={
@@ -368,7 +374,7 @@ const UpdateVoucher = () => {
                           Đã chọn: {selectedItems.length}
                         </p>
                       }
-                      dropdownRender={(menu: any) => (
+                      dropdownRender={(menu) => (
                         <div className="max-h-[500px] overflow-y-auto">
                           {/* Thêm ô tìm kiếm */}
                           <div style={{ padding: "8px 12px" }}>
@@ -393,57 +399,32 @@ const UpdateVoucher = () => {
                               Chọn tất cả
                             </Checkbox>
                           </div>
-                          {/* Sử dụng filteredCategories thay vì visibleCategories */}
-                          {filteredCategories.map((category) => (
-                            <div
-                              key={category._id}
-                              style={{ padding: "8px 0" }}
-                            >
-                              <div style={{ paddingLeft: "12px" }}>
+                          <div className="py-4 pl-6">
+                            {filteredProducts.map((product, index) => (
+                              <div key={product._id}>
                                 <Checkbox
-                                  checked={selectedCategories.includes(
-                                    category._id
-                                  )}
+                                  value={product._id}
+                                  checked={selectedItems.includes(product._id)}
                                   onChange={() =>
-                                    handleCategoryChange(category._id)
+                                    handleCheckboxChange(product._id)
                                   }
                                 >
-                                  <span style={{ fontWeight: "bold" }}>
-                                    {category.name_category}
-                                  </span>
+                                  {product.name_product}
                                 </Checkbox>
+                                {index < filteredProducts.length - 1 && (
+                                  <div className="h-px my-2 bg-gray-300"></div>
+                                )}
                               </div>
-                              <div style={{ paddingLeft: "24px" }}>
-                                {filteredProducts
-                                  .filter(
-                                    (product) =>
-                                      product.category_id === category._id
-                                  )
-                                  .map((product) => (
-                                    <Checkbox
-                                      key={product._id}
-                                      value={product._id}
-                                      checked={selectedItems.includes(
-                                        product._id
-                                      )}
-                                      onChange={() =>
-                                        handleCheckboxChange(product._id)
-                                      }
-                                    >
-                                      {product.name_product}
-                                    </Checkbox>
-                                  ))}
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       )}
                     >
-                      {/* {selectedItems.map((id) => (
+                      {selectedItems.map((id) => (
                         <Option key={id} value={id}>
-                          {products?.find((p) => p._id === id)?.name_product}
+                          {products.find((p) => p._id === id)?.name_product}
                         </Option>
-                      ))} */}
+                      ))}
                     </Select>
                   </Form.Item>
                 )}
@@ -477,6 +458,75 @@ const UpdateVoucher = () => {
                     />
                   </Form.Item>
                 )}
+
+                {applyType === "category" && (
+                  <Form.Item
+                    label="Danh mục sản phẩm áp dụng"
+                    name="appliedCategories"
+                  >
+                    <Select
+                      mode="multiple"
+                      placeholder="Chọn danh mục sản phẩm áp dụng"
+                      value={[]}
+                      tagRender={(): any => null}
+                      onChange={handleSelectCate}
+                      style={{ width: "100%" }}
+                      suffixIcon={
+                        <p className="text-black">
+                          Đã chọn: {selectedCategories.length}
+                        </p>
+                      }
+                      showSearch={false}
+                      dropdownRender={(menu) => (
+                        <div className="max-h-[500px] overflow-y-auto">
+                          {/* Thêm ô tìm kiếm */}
+                          <div style={{ padding: "8px 12px" }}>
+                            <Input.Search
+                              placeholder="Tìm kiếm danh mục..."
+                              onChange={(e) => setSearchText(e.target.value)}
+                              style={{ marginBottom: 8 }}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              padding: "8px 12px",
+                              borderBottom: "1px solid #f0f0f0",
+                            }}
+                          >
+                            <Checkbox
+                              checked={selectAll}
+                              onChange={(e) =>
+                                handleSelectAllCate(e.target.checked)
+                              }
+                            >
+                              Chọn tất cả
+                            </Checkbox>
+                          </div>
+                          <div className="py-4 pl-6">
+                            {filteredCategorys.map((category, index) => (
+                              <div key={category._id}>
+                                <Checkbox
+                                  value={category._id}
+                                  checked={selectedCategories.includes(
+                                    category._id
+                                  )}
+                                  onChange={() =>
+                                    handleCheckboxChangeCate(category._id)
+                                  }
+                                >
+                                  {category.name_category}
+                                </Checkbox>
+                                {index < filteredCategorys.length - 1 && (
+                                  <div className="h-px my-2 bg-gray-300"></div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    ></Select>
+                  </Form.Item>
+                )}
               </div>
 
               {/* Cột 2 */}
@@ -488,123 +538,138 @@ const UpdateVoucher = () => {
                 >
                   <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item label="Giới hạn mã giảm giá">
-                  <Checkbox.Group
-                    value={limitType}
-                    options={[
-                      { label: "Giới hạn thời gian", value: "time" },
-                      { label: "Giới hạn số lượng", value: "quantity" },
-                    ]}
-                    onChange={onLimitTypeChange}
-                  />
-                </Form.Item>
-                {/* Hiển thị ô thời gian nếu chọn "Giới hạn thời gian" */}
-                {limitType.includes("time") && (
-                  <div>
-                    <Form.Item<IVoucher>
-                      label="Ngày bắt đầu"
-                      name="startDate"
-                      rules={[
-                        {
-                          validator: (_, value) => {
-                            if (!value || value.isBefore(new Date())) {
-                              return Promise.reject(
-                                new Error(
-                                  "Ngày bắt đầu không được trong quá khứ!"
-                                )
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker showTime className="w-full " />
-                    </Form.Item>
 
-                    <Form.Item<IVoucher>
-                      label="Ngày kết thúc"
-                      name="expirationDate"
-                      rules={[
-                        {
-                          validator: (_, value) => {
-                            const startDate = form.getFieldValue("startDate");
-                            if (
-                              startDate &&
-                              value &&
-                              value.isBefore(startDate)
-                            ) {
-                              return Promise.reject(
-                                new Error(
-                                  "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
-                                )
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker showTime className="w-full " />
-                    </Form.Item>
-                  </div>
-                )}
-
-                {/* Hiển thị ô số lượng nếu chọn "Giới hạn số lượng" */}
-                {limitType.includes("quantity") && (
+                <div>
                   <Form.Item<IVoucher>
-                    label="Số lượng mã giảm giá"
-                    name="quantity_voucher"
+                    label="Ngày bắt đầu"
+                    name="startDate"
                     rules={[
                       {
-                        type: "number",
-                        min: 1,
-                        message: "Số lượng phải lớn hơn 0!",
+                        required: true,
+                        message: "Vui lòng nhập ngày bắt đầu!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          if (!value || value.isBefore(new Date())) {
+                            return Promise.reject(
+                              new Error(
+                                "Ngày bắt đầu không được trong quá khứ!"
+                              )
+                            );
+                          }
+                          return Promise.resolve();
+                        },
                       },
                     ]}
                   >
-                    <InputNumber className="w-full " />
+                    <DatePicker showTime className="w-full " />
                   </Form.Item>
-                )}
 
-                <Form.Item label="Chọn loại người dùng">
-                  <Checkbox.Group
-                    options={[
-                      { label: "Người dùng", value: "user" },
-                      { label: "Shipper", value: "courier" },
+                  <Form.Item<IVoucher>
+                    label="Ngày kết thúc"
+                    name="expirationDate"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập ngày kết thúc!",
+                      },
+                      {
+                        validator: (_, value) => {
+                          const startDate = form.getFieldValue("startDate");
+                          if (startDate && value && value.isBefore(startDate)) {
+                            return Promise.reject(
+                              new Error(
+                                "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                              )
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
                     ]}
-                    defaultValue={["user"]}
-                    onChange={handleUserTypeChange}
-                  />
+                  >
+                    <DatePicker showTime className="w-full " />
+                  </Form.Item>
+                </div>
+
+                <Form.Item<IVoucher>
+                  label="Số lượng mã giảm giá"
+                  name="quantity_voucher"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập số lượng!" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Số lượng phải lớn hơn 0!",
+                    },
+                  ]}
+                >
+                  <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item<IVoucher> label="Người sử dụng mã giảm giá">
-                  <div className="flex items-center">
-                    <Select
-                      mode="multiple"
-                      style={{
-                        width: "90%",
-                        minHeight: "40px",
-                      }}
-                      placeholder="Chọn người dùng/shipper"
-                      className="mt-2"
-                      options={filteredData?.map((user: any) => ({
-                        value: user._id,
-                        label: user.userName || user.fullName,
-                      }))}
-                      onChange={handleSelectChange}
-                      value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
-                      maxTagCount={4}
-                      maxTagPlaceholder={(omittedValues) =>
-                        `+${omittedValues.length} người khác`
-                      }
-                      allowClear
-                    />
-                    <span className="ml-2 text-gray-600">
-                      Đã chọn: {selectedUsers.length}
-                    </span>
-                  </div>
+                <Form.Item
+                  label="Người sử dụng mã giảm giá"
+                  name="allowedUsers"
+                >
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn người người sử dụng mã giảm giá"
+                    value={[]}
+                    tagRender={(): any => null}
+                    onChange={handleSelectAuth}
+                    style={{ width: "100%" }}
+                    suffixIcon={
+                      <p className="text-black">
+                        Đã chọn: {selectedAuths.length}
+                      </p>
+                    }
+                    showSearch={false}
+                    dropdownRender={(menu: any) => (
+                      <div className="max-h-[500px] overflow-y-auto">
+                        {/* Thêm ô tìm kiếm */}
+                        <div style={{ padding: "8px 12px" }}>
+                          <Input.Search
+                            placeholder="Tìm kiếm người sử dụng..."
+                            onChange={(e) => setSearchText(e.target.value)}
+                            style={{ marginBottom: 8 }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            padding: "8px 12px",
+                            borderBottom: "1px solid #f0f0f0",
+                          }}
+                        >
+                          <Checkbox
+                            checked={selectAll}
+                            onChange={(e) =>
+                              handleSelectAllAuth(e.target.checked)
+                            }
+                          >
+                            Chọn tất cả
+                          </Checkbox>
+                        </div>
+                        <div className="py-4 pl-6">
+                          {filteredAuths?.map((user: Auth, index: any) => (
+                            <div key={user._id}>
+                              <Checkbox
+                                value={user._id}
+                                checked={selectedAuths.includes(user._id)}
+                                onChange={() =>
+                                  handleCheckboxChangeAuth(user._id)
+                                }
+                              >
+                                {user.userName}
+                              </Checkbox>
+                              {index < filteredAuths.length - 1 && (
+                                <div className="h-px my-2 bg-gray-300"></div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  ></Select>
                 </Form.Item>
               </div>
             </div>

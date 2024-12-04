@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FormInstance } from "antd";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { Auth } from "../../../../common/interfaces/Auth";
 
 interface VoucherHandlersProps {
   form: FormInstance;
@@ -23,6 +24,7 @@ export const useVoucherHandlers = ({
   const [discountType, setdiscountType] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedAuths, setSelectedAuths] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
 
@@ -52,10 +54,16 @@ export const useVoucherHandlers = ({
   const onApplyTypeChange = (value: string) => {
     // Reset các trường input khi áp dụng giảm giá thay đổi
     if (value !== "product") {
+      setSelectAll(false);
       setSelectedItems([]);
       form.setFieldsValue({ appliedProducts: [] });
     }
     if (value !== "total") {
+      form.setFieldsValue({ minimumSpend: null });
+    }
+    if (value !== "category") {
+      setSelectAll(false);
+      setSelectedCategories([]);
       form.setFieldsValue({ minimumSpend: null });
     }
     setApplyType(value);
@@ -85,33 +93,37 @@ export const useVoucherHandlers = ({
       }
     });
   };
+  const handleCheckboxChangeCate = (categoryId: string) => {
+    setSelectedCategories((prevSelected) => {
+      if (prevSelected.includes(categoryId)) {
+        return prevSelected.filter((id) => id !== categoryId);
+      } else {
+        return [...prevSelected, categoryId];
+      }
+    });
+  };
 
+  const handleCheckboxChangeAuth = (userId: string) => {
+    setSelectedAuths((prevSelected) => {
+      if (prevSelected.includes(userId)) {
+        return prevSelected.filter((id) => id !== userId);
+      } else {
+        return [...prevSelected, userId];
+      }
+    });
+  };
   const handleSelect = (value: string[]) => {
     setSelectedItems(value);
     form.setFieldsValue({ appliedProducts: value });
   };
+  const handleSelectCate = (value: string[]) => {
+    setSelectedCategories(value);
+    form.setFieldsValue({ appliedCategories: value });
+  };
 
-  const handleCategoryChange = (categoryId: string) => {
-    setSelectedCategories((prev) => {
-      if (prev.includes(categoryId)) {
-        const newSelected = prev.filter((id) => id !== categoryId);
-        const productsInCategory = products
-          .filter((product) => product.category_id === categoryId)
-          .map((p) => p._id);
-        setSelectedItems((prev) =>
-          prev.filter((id) => !productsInCategory.includes(id))
-        );
-        return newSelected;
-      } else {
-        const productsInCategory = products
-          .filter((product) => product.category_id === categoryId)
-          .map((p) => p._id);
-        setSelectedItems((prev) => [
-          ...new Set([...prev, ...productsInCategory]),
-        ]);
-        return [...prev, categoryId];
-      }
-    });
+  const handleSelectAuth = (value: string[]) => {
+    setSelectedAuths(value);
+    form.setFieldsValue({ allowedUsers: value });
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -119,33 +131,52 @@ export const useVoucherHandlers = ({
     if (checked) {
       const allProducts = products.map((product) => product._id);
       setSelectedItems(allProducts);
-      setSelectedCategories(visibleCategories.map((cat) => cat._id));
     } else {
       setSelectedItems([]);
+    }
+  };
+
+  const handleSelectAllCate = (checked: boolean) => {
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedCategories(visibleCategories.map((cat) => cat._id));
+    } else {
       setSelectedCategories([]);
+    }
+  };
+
+  const handleSelectAllAuth = (checked: boolean) => {
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedAuths(auth?.data.map((user: Auth) => user._id));
+    } else {
+      setSelectedAuths([]);
     }
   };
 
   const filteredProducts = products?.filter((product) =>
     product.name_product.toLowerCase().includes(searchText.toLowerCase())
   );
-
-  const filteredCategories = visibleCategories.filter((category) => {
-    const productsInCategory = filteredProducts?.some(
-      (product) => product.category_id === category._id
-    );
-    return productsInCategory;
-  });
+  const filteredCategorys = visibleCategories?.filter((category) =>
+    category.name_category.toLowerCase().includes(searchText.toLowerCase())
+  );
+  const filteredAuths = auth?.data?.filter((user) =>
+    user.userName.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return {
     // States
     selectedUsers,
+    selectedAuths,
+    setSelectedAuths,
     userType,
     applyType,
     limitType,
     discountType,
     selectedItems,
     selectedCategories,
+    setSelectedCategories,
+
     selectAll,
     searchText,
     setLimitType,
@@ -162,12 +193,18 @@ export const useVoucherHandlers = ({
     onLimitTypeChange,
     ondiscountTypeChange,
     handleCheckboxChange,
+    handleCheckboxChangeCate,
     handleSelect,
-    handleCategoryChange,
+    handleSelectCate,
     handleSelectAll,
-
+    handleSelectAllCate,
+    handleSelectAllAuth,
+    handleSelectAuth,
+    handleCheckboxChangeAuth,
     // Computed values
     filteredProducts,
-    filteredCategories,
+    visibleCategories,
+    filteredCategorys,
+    filteredAuths,
   };
 };

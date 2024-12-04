@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Mutation_Notification, Query_notification } from "../../_lib/React_Query/Notification/Query"
 import useLocalStorage from "../../common/hooks/Storage/useStorage";
-import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Popconfirm } from "antd";
+import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Spin } from "antd";
 import { useListAllShipper } from "../../common/hooks/Shipper/querry_shipper";
 
 export default function Notification() {
@@ -10,7 +10,7 @@ export default function Notification() {
     const userId = user?.user?._id;
     const role = user?.user?.role;
     const { mutate: remove } = Mutation_Notification("Remove");
-    const { data } = Query_notification(userId, role);
+    const { data, isLoading } = Query_notification(userId, role);
     const { data: shipper } = useListAllShipper()
     let courier: any;
     let fullName: any
@@ -20,8 +20,15 @@ export default function Notification() {
     })
     const { mutate } = Mutation_Notification("Send");
     const allSend = data?.notifications?.every((item: any) => item.status_notification === true);
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+            </div>
+        );
+    }
     return (
-        <div className="space-y-4 text-sm">
+        <div className="m-4 space-y-4 text-sm">
             <div className="flex justify-between">
                 <strong className="text-lg">Thông báo của bạn</strong>
                 <Button onClick={() => mutate(undefined)} disabled={allSend} className="ml-4" type="primary">Đọc tất cả</Button>
@@ -29,7 +36,7 @@ export default function Notification() {
             {
                 data?.notifications?.length > 0 ?
                     data?.notifications?.map((item: any) =>
-                        <details onClick={() => mutate(item._id)} className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
+                        <details onClick={() => mutate(item._id)} open className="group rounded-lg bg-gray-100 p-6 [&_summary::-webkit-details-marker]:hidden">
                             <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900">
                                 <div className="flex gap-4">
                                     <h2 className="font-medium">

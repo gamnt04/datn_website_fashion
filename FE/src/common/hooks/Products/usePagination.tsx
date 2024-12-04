@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 
 interface UsePaginationProps {
   initialPage?: number;
-  initialLimit?: number;
   totalItems: number;
   itemsPerPage: number;
 }
@@ -18,21 +17,22 @@ interface Pagination {
 
 export function usePagination({
   initialPage = 1,
-  // initialLimit = 20,
   totalItems,
-  itemsPerPage
+  itemsPerPage,
 }: UsePaginationProps): Pagination {
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
 
   // Tính tổng số trang
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  // Đảm bảo trang hiện tại nằm trong phạm vi hợp lệ
+  // Đảm bảo trang hiện tại nằm trong phạm vi hợp lệ khi totalItems thay đổi
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
+    if (totalItems === 0) {
+      setCurrentPage(1); // Nếu không có sản phẩm, đặt trang về 1
+    } else if (currentPage > totalPages) {
+      setCurrentPage(totalPages); // Nếu currentPage vượt quá tổng số trang, điều chỉnh lại
     }
-  }, [currentPage, totalPages]);
+  }, [totalItems, currentPage, totalPages]);
 
   // Chuyển đến trang tiếp theo
   const nextPage = () => {
@@ -54,6 +54,6 @@ export function usePagination({
     itemsPerPage,
     setPage: setCurrentPage,
     nextPage,
-    prevPage
+    prevPage,
   };
 }

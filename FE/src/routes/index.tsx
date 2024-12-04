@@ -25,7 +25,6 @@ import OrderDetail from "../pages/Client/Order/OrderDetail/OrderDetail";
 import Favourite from "../pages/Client/Favourite/Favourite";
 import List_Category from "../pages/Admin/Category/List_Category";
 import BlogDetail from "../pages/Client/Blogs/BlogDetail";
-import Test from "../pages/Client/TEST/Test";
 import List_Auth from "../pages/Admin/Auth/List_Auth";
 import Layout_Profile from "../pages/Client/Profile/layout";
 import Add_Item from "../pages/Admin/Product/Add_Item";
@@ -66,12 +65,10 @@ const RouterComponent = () => {
             <Route path="/chat" element={<ChatBot />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/shops" element={<IndexShops />} />
-            <Route path="/test" element={<Test />} />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/cart" element={<ListCart />} />
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
-            {/* <Route path="/order/pay" element={<OrderPay />} /> */}
             <Route path="/favourite" element={<Favourite />} />
             <Route path="delivery" element={<Delivery />} />
             <Route path="faqs" element={<FAQ />} />
@@ -79,11 +76,8 @@ const RouterComponent = () => {
             <Route path="track-order" element={<TrackOrder />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* <Route path="products" element={<ListProducts />} /> */}
-            {/* <Route path="blogs/detailblog" element={<DetailBlogs />} /> */}
             <Route path="shops/:id" element={<ProductDetail />} />
-            {/* 
-            <Route path="shops/:id#reviews" element={<DescriptionProduct />} /> */}
+
             <Route path="/profile" element={<Layout_Profile />}>
               <Route index element={<Profile />} />
               <Route path="/profile/address" element={<Address />} />
@@ -94,7 +88,6 @@ const RouterComponent = () => {
               <Route path="/profile/notification" element={<Notification />} />
               <Route path="/profile/order/:id" element={<OrderDetail />} />
               <Route path="/profile/list_order" element={<List_order />} />
-              {/* <Route path="/profile/allorder" element={<Order_All />} /> */}
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="login/register" element={<Register />} />
@@ -106,8 +99,6 @@ const RouterComponent = () => {
             <Route path="category" element={<List_Category />} />
             <Route path="category/products/:id" element={<CategoryDetail />} />
             <Route path="chatAdmin/:id" element={<MessAdmin />} />
-            {/* <Route path="test1" element={<Add_Item />} />
-            <Route path="test2/:id" element={<Edit_Item />} /> */}
             <Route path="products/add" element={<Add_Item />} />
             <Route
               path="products/the_loai_thuoc_tinh"
@@ -119,8 +110,6 @@ const RouterComponent = () => {
             />
             <Route path="products/edit/:id" element={<Edit_Item />} />
             <Route path="products" element={<ListProduct />} />
-            {/* <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/edit/:id" element={<UpdateProduct />} /> */}
             <Route path="trash" element={<TrashProduct />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="TotalOrders" element={<TotalOrders />} />

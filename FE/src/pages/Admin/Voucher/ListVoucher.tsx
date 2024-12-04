@@ -10,6 +10,7 @@ import {
   Table,
   Drawer,
   Switch,
+  Input,
 } from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -20,14 +21,17 @@ import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { Loader } from "lucide-react";
 import useDataVoucher from "./_component/useDataVoucher";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 const ListVoucher = () => {
   const queryClient = useQueryClient();
   const [messageAPI, contextHolder] = message.useMessage();
+  const [searchText, setSearchText] = useState<string>("");
+  const { data: categories } = useCategoryQuery();
   const { data, isLoading } = useQuery({
     queryKey: ["voucher"],
     queryFn: () => instance.get(`/voucher`),
   });
-  const { products } = useDataVoucher();
+  const { products, auth, shippers } = useDataVoucher();
 
   // Hàm tìm tên sản phẩm dựa trên ID
   const getProductNames = (productIds: string[]) => {
@@ -35,18 +39,21 @@ const ListVoucher = () => {
     return productIds
       .map((id) => {
         const product = products.find((prod: any) => prod._id === id);
-        return product ? product.name_product : id;
+        return product ? product.name_product : [];
       })
       .join(", ");
   };
-  const { data: auth } = useQuery({
-    queryKey: ["auths"],
-    queryFn: () => instance.get(`/auths`),
-  });
-  const { data: shippersData } = useQuery({
-    queryKey: ["shippers"],
-    queryFn: () => instance.get(`/shippers`),
-  });
+
+  // Hàm tìm tên sản phẩm dựa trên ID
+  const getCategoryNames = (categoryIds: string[]) => {
+    if (!categories) return categoryIds.join(", ");
+    return categoryIds
+      .map((id) => {
+        const category = categories.find((cate: any) => cate._id === id);
+        return category ? category.name_category : [];
+      })
+      .join(", ");
+  };
 
   const { mutate } = useMutation({
     mutationFn: (id: string) => instance.delete(`voucher/${id}`),
@@ -92,11 +99,14 @@ const ListVoucher = () => {
   const handleTogglePublished = (category: IVoucher) => {
     mutation.mutate({ ...category, isActive: !category.isActive });
   };
-  const dataSource = data?.data?.vouchers.map((voucher: IVoucher) => ({
+
+  const dataSource = data?.data?.vouchers?.map((voucher: IVoucher) => ({
     key: voucher._id,
     ...voucher,
   }));
-
+  const filtered = dataSource?.filter((voucher: IVoucher) =>
+    voucher.name_voucher.toLowerCase().includes(searchText.toLowerCase())
+  );
   const columns = [
     {
       title: "STT",
@@ -196,7 +206,20 @@ const ListVoucher = () => {
 
       <div className="mx-6">
         <div className="flex items-center justify-between mt-20 mb-5">
-          <h1 className="text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
+          <div>
+            {" "}
+            <h1 className="mb-6 text-2xl font-semibold">Quản Lý Mã Giảm Giá</h1>
+            <div className="flex justify-between mb-2">
+              <div className="flex space-x-5">
+                <Input
+                  className="w-[500px]"
+                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+                <Button type="primary">Tìm kiếm</Button>
+              </div>
+            </div>
+          </div>
 
           <Link to={`/admin/voucher/add`}>
             <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
@@ -208,7 +231,7 @@ const ListVoucher = () => {
         {data && data.data.vouchers.length === 0 ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
-          <Table dataSource={dataSource} columns={columns} />
+          <Table dataSource={filtered} columns={columns} />
         )}
 
         <Drawer
@@ -253,6 +276,10 @@ const ListVoucher = () => {
                 {getProductNames(selectedVoucher.appliedProducts)}
               </p>
               <p>
+                <strong>Danh mục sản phẩm áp dụng: </strong>{" "}
+                {getCategoryNames(selectedVoucher.appliedCategories)}
+              </p>
+              <p>
                 <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
                 {selectedVoucher.minimumSpend} VND
               </p>
@@ -277,10 +304,7 @@ const ListVoucher = () => {
                 <strong>Người được dùng:</strong>
                 {selectedVoucher?.allowedUsers &&
                 selectedVoucher.allowedUsers.length > 0
-                  ? [
-                      ...(auth?.data || []),
-                      ...(shippersData?.data.shippers || []),
-                    ]
+                  ? [...(auth?.data || []), ...(shippers?.data.shippers || [])]
                       .filter((user: any) =>
                         selectedVoucher.allowedUsers.includes(user._id)
                       )
