@@ -23,6 +23,10 @@ import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_ca
 import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
+import { IVoucher } from "../../../common/interfaces/Voucher";
+import { IProduct } from "../../../common/interfaces/Product";
+import { ICategory } from "../../../common/interfaces/Category";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -30,12 +34,13 @@ const Pay = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
   const userId = user?.user?._id;
-  const [vouchers, setVouchers] = useState([]);
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
   const [phi_van_chuyen, setPhi_van_chuyen] = useState<number>(0);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [voucherDetails, setVoucherDetails] = useState<any>(null);
+  const [selectedProducts, setselectedProducts] = useState<IProduct[]>([]);
+  const [selectedCategories, setselectedCategories] = useState<ICategory[]>([]);
   const [isOrderSuccessfully, setIsOrderSuccessfully] =
     useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
@@ -51,23 +56,7 @@ const Pay = () => {
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
 
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        const response = await instance.get("/voucher");
-
-        const activeVouchers = response.data.vouchers.filter(
-          (voucher: any) => voucher.isActive === true
-        );
-
-        setVouchers(activeVouchers);
-      } catch (error) {
-        toast.error("Không thể tải danh sách voucher", { autoClose: 1200 });
-      }
-    };
-    fetchVouchers();
-  }, []);
-
+  const { data: activeVouchers, isLoading, error } = useVouchersQuery();
   useEffect(() => {
     if (!userId) {
       routing("/login");
@@ -243,26 +232,72 @@ const Pay = () => {
   });
   const currentDate = new Date(); // Lấy ngày hiện tại
 
-  const sortedVouchers = vouchers.sort((a: any, b: any) => {
-    const aDisabled =
-      (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
-      a.usedCount >= a.quantity_voucher ||
-      new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+  if (isLoading) {
+    console.log("Đang tải dữ liệu...");
+    return null;
+  }
 
-    const bDisabled =
-      (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
-      b.usedCount >= b.quantity_voucher ||
-      new Date(b.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+  if (error) {
+    console.error("Lỗi khi tải dữ liệu:", error);
+    return null;
+  }
+  if (!activeVouchers || activeVouchers.length === 0) {
+    console.log("Không có vouchers hợp lệ.");
+    return null;
+  }
+  const sortedVouchers = (
+    activeVouchers: IVoucher[],
+    selectedProducts: IProduct[],
+    selectedCategories: ICategory[],
+    userId: string,
+    currentDate: Date
+  ) => {
+    return activeVouchers.sort((a: any, b: any) => {
+      const aDisabled =
+        // Kiểm tra nếu voucher không áp dụng cho sản phẩm hoặc danh mục đang thanh toán
+        !(
+          a.appliedProducts.some((productId: string) =>
+            selectedProducts.some(
+              (product: IProduct) => product._id === productId
+            )
+          ) ||
+          a.appliedCategories.some((categoryId: string) =>
+            selectedCategories.some(
+              (category: ICategory) => category._id === categoryId
+            )
+          )
+        ) ||
+        // Kiểm tra các điều kiện khác của voucher
+        (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
+        a.usedCount >= a.quantity_voucher ||
+        new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
 
-    if (aDisabled && !bDisabled) return 1;
-    if (!aDisabled && bDisabled) return -1;
-    return 0;
-  });
+      const bDisabled =
+        !(
+          b.appliedProducts.some((productId: string) =>
+            selectedProducts.some(
+              (product: IProduct) => product._id === productId
+            )
+          ) ||
+          b.appliedCategories.some((categoryId: string) =>
+            selectedCategories.some(
+              (category: ICategory) => category._id === categoryId
+            )
+          )
+        ) ||
+        (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
+        b.usedCount >= b.quantity_voucher ||
+        new Date(b.expirationDate) < currentDate;
 
-  // add order
+      if (aDisabled && !bDisabled) return 1;
+      if (!aDisabled && bDisabled) return -1;
+      return 0;
+    });
+  };
+
   const onAddOrder = async (data_form: any) => {
     console.log(data_form);
-
+    const voucher = data_form.voucher;
     const discountCodeToUse = selectedVoucherCode || discountCode;
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
@@ -271,34 +306,56 @@ const Pay = () => {
       });
       return;
     }
-    // Kiểm tra xem voucher có hợp lệ không
-    // if (discountCodeToUse) {
-    //   try {
-    //     const selectedProductIds = item_order_checkked?.map(
-    //       (item: any) => item.productId._id
-    //     );
-    //     // Kiểm tra trạng thái của voucher từ server (giả sử bạn có API để làm điều này)
-    //     const response = await instance.post(`/voucher/use`, {
-    //       code_voucher: discountCodeToUse,
-    //       totalAmount: totalPrice,
-    //       userId: user?.user?._id,
-    //       selectedProducts: selectedProductIds
-    //     });
 
-    //     if (!response.data.isValid) {
-    //       toast.error("Voucher không hợp lệ hoặc đã hết hạn.", {
-    //         autoClose: 1200,
-    //       });
-    //       return;
-    //     }
-    //   } catch (error) {
-    //     console.error("Error checking voucher validity:", error);
-    //     toast.error("Không thể kiểm tra voucher. Vui lòng thử lại.", {
-    //       autoClose: 1200,
-    //     });
-    //     return;
-    //   }
-    // }
+    if (discountCodeToUse && voucher) {
+      try {
+        const response = await instance.post(`/voucher/use`, {
+          code_voucher: discountCodeToUse,
+          discountValue: voucher.discountValue,
+          appliedProducts: voucher.appliedProducts,
+          appliedCategories: voucher.appliedCategories,
+          userId: user?.user?._id,
+          minimumSpend: voucher.minimumSpend,
+          maxDiscount: voucher.maxDiscount,
+          allowedUsers: voucher.allowedUsers,
+          startDate: voucher.startDate,
+          expirationDate: voucher.expirationDate,
+        });
+
+        if (!response.data.isValid) {
+          toast.error("Voucher không hợp lệ hoặc đã hết hạn.", {
+            autoClose: 1200,
+          });
+          return;
+        }
+
+        // Kiểm tra điều kiện khác của voucher (ví dụ: số lượng còn lại, hết hạn, áp dụng đúng sản phẩm, v.v.)
+        const { isValid, appliedProducts, appliedCategories, allowedUsers } =
+          response.data;
+
+        // Giả sử bạn đã có danh sách sản phẩm và danh mục người dùng chọn
+        const validVoucher =
+          isValid && appliedProducts.length > 0 && appliedCategories.length > 0;
+
+        if (!validVoucher) {
+          toast.error("Voucher không áp dụng cho đơn hàng này.", {
+            autoClose: 1200,
+          });
+          return;
+        }
+
+        // Voucher hợp lệ, tiến hành tiếp tục đặt hàng
+        // Logic xử lý tiếp theo...
+      } catch (error) {
+        console.error("Error checking voucher validity:", error);
+        toast.error("Không thể kiểm tra voucher. Vui lòng thử lại.", {
+          autoClose: 1200,
+        });
+        return;
+      }
+    }
+
+
     // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
@@ -656,12 +713,18 @@ const Pay = () => {
                   width={1350}
                 >
                   <p className="mb-5 text-xl">Tất cả Voucher</p>
-                  {sortedVouchers.length > 0 ? (
+                  {activeVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
                       style={{ maxHeight: "600px" }}
                     >
-                      {sortedVouchers
+                      {sortedVouchers(
+                        activeVouchers,
+                        selectedProducts,
+                        selectedCategories,
+                        userId,
+                        currentDate
+                      )
                         .filter((voucher: any) => {
                           const isVoucherAvailable =
                             voucher.usedCount < voucher.quantity_voucher;
@@ -680,13 +743,15 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                                } ${isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                                }`}
+                              }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -709,8 +774,9 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
-                                  }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled}
                               >
@@ -776,8 +842,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                            "vi-VN"
-                          )} đ`
+                              "vi-VN"
+                            )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -821,9 +887,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}`
+                            style: "currency",
+                            currency: "VND",
+                          })}`
                         : "0đ"}
                     </p>
                   </div>
