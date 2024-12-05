@@ -73,6 +73,12 @@ async function SendDeliverySuccessMail(email, order) {
         <p><strong>Email:</strong> ${customerEmail}</p>
         <p><strong>Ngày giao hàng:</strong> ${updatedAt}</p>
 
+ <div style="text-align: center; margin-top: 20px;">
+        <a href="http://localhost:7899/profile/list_order?_page=1&_limit=10&_status=4" 
+          style="background-color: #4CAF50; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+          Đã nhận hàng
+        </a>
+      </div>
         <h2 style="color: #333;">Chi tiết đơn hàng</h2>
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
           <thead>
