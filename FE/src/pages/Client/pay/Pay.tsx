@@ -84,9 +84,8 @@ const Pay = () => {
   useEffect(() => {
     (async () => {
       const tong_km = Tinh_tong_km(selectedAddress);
-      console.log(tong_km);
       setPhi_van_chuyen(() =>
-        tong_km ? (tong_km > 60 ? 60000 : tong_km * 5000) : 0
+        tong_km ? 30000 : 0
       );
     })();
   }, [selectedAddress]);
@@ -210,6 +209,7 @@ const Pay = () => {
     if (address) setAddress(false);
     if (address) setAddress(false);
   };
+
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsOpen(false);
@@ -306,6 +306,7 @@ const Pay = () => {
       });
       return;
     }
+
     if (discountCodeToUse && voucher) {
       try {
         const response = await instance.post(`/voucher/use`, {
@@ -353,6 +354,7 @@ const Pay = () => {
         return;
       }
     }
+
 
     // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
@@ -408,7 +410,7 @@ const Pay = () => {
           `http://localhost:2004/api/v1/create_payment_url`,
           {
             orderId: nanoid(24),
-            totalPrice: totalPrice,
+            totalPrice: totalPrice + 30000,
             orderDescription: `Order ${orderId._id}`,
             language: "vn",
           }
