@@ -395,7 +395,7 @@ export default function List_order() {
                 ...dataForm,
               },
               totalPrice: Number(parsed.query.vnp_Amount) / 100,
-              status: "2",
+              status: "1",
             });
 
             console.log(response.data);

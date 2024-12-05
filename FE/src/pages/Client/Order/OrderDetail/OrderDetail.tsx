@@ -185,11 +185,9 @@ const OrderDetail = () => {
               </p>
             </div>
             <div className="flex justify-between py-2">
-              <p>Phí vận chuyển</p>
-              <p>{data?.delivery_fee?.toLocaleString("vi", {
-                style: "currency",
-                currency: "VND",
-              })}</p>
+            <p>Phí vận chuyển</p>
+<p>30.000 ₫</p>
+
             </div>
             <div className="flex justify-between py-2">
               <p>Voucher giảm giá</p>
