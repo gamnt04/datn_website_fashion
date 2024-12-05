@@ -112,12 +112,12 @@ const Message = () => {
     }
   }, [isChatOpen, dataMessageByRole]);
 
-  if (isLoading) {
-    return <p>Loading messages...</p>;
-  }
-  if (error) {
-    return <p>Error loading messages</p>;
-  }
+  // if (isLoading) {
+  //   return <p>Loading messages...</p>;
+  // }
+  // if (error) {
+  //   return <p>Error loading messages</p>;
+  // }
   return (
     <>
       <div>

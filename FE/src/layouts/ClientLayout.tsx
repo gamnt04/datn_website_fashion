@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/common/Client/Header";
 import Footer from "../components/common/Client/Footer";
-// import Message from "../components/ui/message";
+import Message from "../components/ui/message";
 
 const ClientLayout = () => {
   return (
@@ -10,7 +10,7 @@ const ClientLayout = () => {
       <div>
         <Outlet />
       </div>
-      {/* <Message /> */}
+      <Message />
       <Footer />
     </div>
   );

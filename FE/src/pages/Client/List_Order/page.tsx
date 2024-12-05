@@ -413,7 +413,7 @@ export default function List_order() {
         }
       } catch (error) {
         console.error("Error processing payment:", error);
-        message.error("Có lỗi xảy ra trong quá trình thanh toán");
+        // message.error("Có lỗi xảy ra trong quá trình thanh toán");
       } finally {
         setPaymentPending(false); // Kết thúc trạng thái loading cho thanh toán
       }
