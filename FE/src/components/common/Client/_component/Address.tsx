@@ -18,9 +18,8 @@ import {
 import "mapbox-gl/dist/mapbox-gl.css";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import instance from "../../../../configs/axios";
-// import { useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 mapboxgl.accessToken =
   "pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MmNkdnU1Mmo5dTJscXQ0cWFtNGJqeCJ9.3pBGjdx-XHSvKR3BIg-e0Q";
 type FieldType = {
@@ -32,11 +31,7 @@ type FieldType = {
   checked: boolean;
   newAddress: string;
 };
-interface IProps {
-  isOpen?: boolean;
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAddress?: () => void;
-}
+
 const { Option } = Select;
 
 export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
@@ -275,11 +270,9 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       message.error("Vui lòng chọn lại phường/xã");
       return;
     }
-    const fullAddress = `${
-      selectedLocation.ward.name || form.getFieldValue("ward")
-    }, ${selectedLocation.district.name || form.getFieldValue("district")}, ${
-      selectedLocation.province.name || form.getFieldValue("province")
-    }`;
+    const fullAddress = `${selectedLocation.ward.name || form.getFieldValue("ward")
+      }, ${selectedLocation.district.name || form.getFieldValue("district")}, ${selectedLocation.province.name || form.getFieldValue("province")
+      }`;
     const fullAddressName = [
       selectedLocation.ward.name || form.getFieldValue("ward"),
       selectedLocation.district.name || form.getFieldValue("district"),
@@ -419,7 +412,7 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
 
           <div className="text-center py-3">
             <Button
-              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+              className="h-10 mt-5 text-white bg-black"
               htmlType="submit"
             >
               Cập nhật
@@ -445,8 +438,16 @@ export const List_Address = ({
   handleTAdd,
   handleAddressSelect,
   handleAddress,
-  selectedAddress
+  selectedAddress,
 }: any) => {
+  // const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
+  const [addressId, setAddressId] = useState<string | null>(null);
+
+  const handleUpdateAddress = () => {
+    setIsOpenUpdate(true);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[600px] max-h-[600px] overflow-auto hidden_scroll_x">
@@ -487,7 +488,9 @@ export const List_Address = ({
                   <div className="hidden lg:block">
                     <div className="flex flex-col gap-2 py-2 text-blue-400">
                       <Button className="w-9 h-9">
-                        <EditOutlined />
+                        <EditOutlined onClick={() => {
+                          handleUpdateAddress(), setAddressId(item?._id);
+                        }} />
                       </Button>
                       <Popconfirm
                         title="Địa chỉ nhận hàng"
@@ -538,12 +541,18 @@ export const List_Address = ({
         >
           <CloseOutlined />
         </Button>
+        {isOpenUpdate && <Update_Address
+          isOpenUpdate={isOpenUpdate}
+          setIsOpenUpdate={setIsOpenUpdate}
+          handleUpdateAddress={handleUpdateAddress}
+          addressId={addressId}
+        />}
       </div>
     </div>
   );
 };
 
-export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: any) => {
+export const Add_Address = ({ setIsOpen, handleAddress }: any) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -876,7 +885,7 @@ export const Add_Address = ({ isOpen, setIsOpen, handleAddress }: any) => {
           )}
 
           <Form.Item className="flex justify-center">
-            <Button htmlType="submit" className="h-10 text-white bg-black">
+            <Button htmlType="submit" className="h-10 mt-10 text-white bg-black">
               Hoàn Thành
             </Button>
           </Form.Item>

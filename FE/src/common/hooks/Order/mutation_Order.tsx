@@ -4,11 +4,13 @@ import {
   cancel_product,
   complete_product,
   confirmCancelOrder,
-  failDelivery, // Import hàm failDelivery
+  failDelivery,
+  Update_Status, // Import hàm failDelivery
 } from "../../../services/orderProduct";
 import { message } from "antd";
 
 type Action =
+  "UPDATE"
   | "CONFIRM_CANCEL"
   | "UPDATE_ORDER"
   | "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
@@ -17,14 +19,18 @@ type Action =
 export function useOrderMutations(action: Action) {
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const { mutate, ...rest } = useMutation({
+  const { mutate, isPending, ...rest } = useMutation({
     mutationFn: async (data: {
       id_item: string | number;
       action?: string;
       cancellationReason?: string;
       failureReason?: string; // Thêm lý do thất bại
     }) => {
+      // console.log(data);
+
       switch (action) {
+        case "UPDATE":
+          return await Update_Status(data?.id_item, data.cancellationReason)
         case "CONFIRM_CANCEL":
           return await confirmCancelOrder(data);
         case "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT":
@@ -73,5 +79,5 @@ export function useOrderMutations(action: Action) {
       });
     },
   });
-  return { mutate, ...rest, contextHolder };
+  return { mutate, ...rest, contextHolder, isPending };
 }

@@ -133,7 +133,7 @@ export const createOrder = async (req, res) => {
     const notification = new Notification({
       userId: userId,
       receiver_id: userId,
-      message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
+      message: `Đã có một đơn hàng mới`,
       different: order._id,
       status_notification: false
     });
@@ -575,9 +575,9 @@ export const updateOrderStatus = async (req, res) => {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Order cannot be updated" }
-          
+
         );
-        
+
     }
     order.status = status;
     if (status == "4") {
