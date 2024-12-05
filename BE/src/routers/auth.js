@@ -41,7 +41,7 @@ Routes_auth.post("/auth/add_address", add_address);
 Routes_auth.get("/auth/address/:userId", get_address);
 Routes_auth.get("/auth/address/:userId/:addressId", getAddressById);
 Routes_auth.put("/auth/update_address/:userId/:addressId", updateUserAddress);
-Routes_auth.delete("/auth/:userId/:addressId", delete_address);
+Routes_auth.delete("/auth/remove_address/:userId/:addressId", delete_address);
 Routes_auth.patch("/auth/:userId/:addressId/default", setDefaultAddress);
 Routes_auth.post("/forgot-password", forgotPassword);
 Routes_auth.post("/change-password", authenticateToken, changePassword);

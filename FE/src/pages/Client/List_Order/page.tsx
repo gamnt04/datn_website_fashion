@@ -323,7 +323,7 @@ export default function List_order() {
       order.items.forEach(() => {
         switch (+order.status) {
           case 1:
-            orderStatusCounts["Chờ Xác Nhận"] += itemCount;
+            orderStatusCounts["Chờ Xác Nhận"];
             break;
           case 2:
             orderStatusCounts["Đang Chuẩn Bị Hàng"] += itemCount;
@@ -439,17 +439,17 @@ export default function List_order() {
             onClick={() => handle_status_order(i)}
           >
             {menu} {/* Chỉ hiển thị số lượng khi item được click */}
-            {selectedMenu === i && (
+            {/* {selectedMenu === i && (
               <>
                 {" "}
                 (
                 {orderStatusCounts[menu as keyof typeof orderStatusCounts] !==
-                  undefined
+                undefined
                   ? orderStatusCounts[menu as keyof typeof orderStatusCounts]
                   : 0}
                 )
               </>
-            )}
+            )} */}
           </li>
         ))}
       </ul>
@@ -541,7 +541,10 @@ export default function List_order() {
                         okText="Có "
                         cancelText="Không"
                       >
-                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none" loading={isLoading}>
+                        <Button
+                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
+                          loading={isLoading}
+                        >
                           {isLoading ? "loading" : "Hủy đơn hàng"}
                         </Button>
                       </Popconfirm>

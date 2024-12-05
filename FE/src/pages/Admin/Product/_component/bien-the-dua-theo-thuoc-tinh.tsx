@@ -177,6 +177,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                 Thêm biến thể
                                             </Button>
                                             {
+                                                (fields?.length > 1) &&
                                                 <Button
                                                     onClick={() => remove(name)}
                                                     className="px-2  bg-red-600 text-gray-100 hover:!text-gray-100 border-none hover:!bg-red-700 hover"

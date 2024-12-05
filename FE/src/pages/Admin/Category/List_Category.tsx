@@ -105,7 +105,7 @@ const List_Category: React.FC = () => {
     onSuccess: () => {
       toast.success("Cập nhật danh mục thành công", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 300,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -120,7 +120,7 @@ const List_Category: React.FC = () => {
         }`,
         {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 300,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,

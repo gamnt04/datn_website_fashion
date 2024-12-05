@@ -206,7 +206,7 @@ const Form_Item = ({ mode }: any) => {
                 <strong>Dữ liệu sản phẩm</strong>
                 {
                   !mode &&
-                  <div>
+                  <div className="*:rounded">
                     <SelectShadcn onValueChange={(value: any) => setStatusOptions(value)}>
                       <SelectTrigger className="!h-auto pt-2 mt-1">
                         <SelectValue placeholder="Lựa chọn" />

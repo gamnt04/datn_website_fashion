@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Items_order({ product }: any) {
   return (
     <div className="relative flex flex-row gap-4 py-[12px] w-full">
@@ -14,9 +16,9 @@ export default function Items_order({ product }: any) {
         />
       </div>
       <div className="pr-2 basis-full">
-        <h2 className="w-full text-sm lg:text-[16px]">
+        <Link to={`/shops/${product?.productId?._id}`} className="w-full text-sm lg:text-[16px]">
           {product?.productId?.name_product}
-        </h2>
+        </Link>
         <div className="flex justify-between gap-2 py-2">
           <p className="text-xs lg:text-sm text-[#0000008a] ">
             <p>
