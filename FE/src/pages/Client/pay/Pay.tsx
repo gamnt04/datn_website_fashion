@@ -353,7 +353,7 @@ const Pay = () => {
           `http://localhost:2004/api/v1/create_payment_url`,
           {
             orderId: nanoid(24),
-            totalPrice: totalPrice,
+            totalPrice: totalPrice + 30000,
             orderDescription: `Order ${orderId._id}`,
             language: "vn",
           }
