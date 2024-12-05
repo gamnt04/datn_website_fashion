@@ -1,19 +1,94 @@
-import { Pagination, Table } from "antd";
+import { message, Pagination, Popconfirm, Radio, Table, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
+import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
+import useLocalStorage from "../../../common/hooks/Storage/useStorage";
+import { useState } from "react";
+import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 
 const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const dispathNotification = Mutation_Notification("Add");
+  const [messageApi, contextHolder] = message.useMessage();
+  const [selectedReason, setSelectedReason] = useState("");
+  const { mutate: xac_nhan, isPending: isConfirming } = useOrderMutations("UPDATE")
+  const { mutate: cancel, isPending: isCancelling } = useOrderMutations(
+    "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
+  );
   const formatDate = (createdAt: any) => {
     if (!createdAt) return "";
     const date = new Date(createdAt);
     return date.toLocaleDateString();
   };
+  let order_1: any
+  orders?.map((order: any) => {
+    order_1 = order
+  })
   const dataSort = orders?.map((order: any) => ({
     key: order._id,
     ...order,
   }));
+
+  const handleStatusUpdate = async (dataBody: any) => {
+    if (!dataBody.id_item) return;
+    const message =
+      dataBody.status === 2
+        ? `Người bán đã xác nhận đơn hàng ${dataBody.code_order}`
+        : `Người bán đã từ chối đơn hàng ${dataBody.code_order}. Vui lòng chọn sản phẩm khác!`;
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: order_1?.userId,
+      message: message,
+      different: dataBody.id_order,
+    });
+
+    try {
+      await xac_nhan(dataBody);
+
+      messageApi.open({
+        type: "success",
+        content: `Xác nhận đơn hàng thành công!`,
+      });
+    } catch (error) {
+      messageApi.open({
+        type: "error",
+        content: "Có lỗi xảy ra khi hủy đơn hàng!",
+      });
+    }
+  };
+
+  const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
+  function huy_don(dataBody: {
+    id_item: string | number;
+    numberOrder?: string | number;
+    action?: string;
+    cancellationReason?: string;
+  }) {
+    dispathNotification?.mutate({
+      userId: userId,
+      receiver_id: order_1?.userId,
+      message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
+      different: dataBody?.id_item,
+      id_different: dataBody?.numberOrder,
+    });
+    cancel(dataBody, {
+      onSuccess: () => {
+        messageApi.open({
+          type: "success",
+          content: `Đơn hàng ${dataBody?.numberOrder} đã được hủy thành công!`,
+        });
+      },
+      onError: () => {
+        messageApi.open({
+          type: "error",
+          content: "Có lỗi xảy ra khi hủy đơn hàng!",
+        });
+      }
+    })
+  }
   const createFilters = (order: IOrder[]) => {
     return order
       .map((order: IOrder) => order.orderNumber)
@@ -40,8 +115,11 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       sorter: (a: IOrder, b: IOrder) =>
         a.orderNumber.localeCompare(b.orderNumber),
       sortDirections: ["ascend", "descend"] as SortOrder[],
-      render: (_: any, order: any) => (
-        <p className="font-bold">{order?.orderNumber}</p>
+      render: (_: any, orders: any) => (
+        <Link to={`/admin/orders/${orders._id}`}>
+          <p className="font-bold">{orders?.orderNumber}</p>
+        </Link>
+
       ),
     },
     {
@@ -56,12 +134,6 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       key: "phone",
       render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>,
     },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    //   render: (_: any, order: any) => <p>{order?.customerInfo?.email}</p>
-    // },
     {
       title: "Ngày Đặt",
       dataIndex: "datetime",
@@ -73,6 +145,12 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       dataIndex: "payment",
       key: "payment",
       render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>,
+    },
+    {
+      title: "Thanh toán",
+      dataIndex: "thanhtoan",
+      key: "thanhtoan",
+      render: (_: any, order: any) => order.status === "6" ? "Thanh toán thành công" : order.status === "5" ? "Thanh toán thất bại" : 'Chưa thanh toán',
     },
     {
       title: "Trạng Thái",
@@ -109,21 +187,100 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     {
       dataIndex: "action",
       key: "action",
-      title: "Thao Tác  ",
-      render: (_: any, orders: any) => (
-        <>
-          <Link to={`/admin/orders/${orders._id}`}>
-            <span className="flex justify-center">
-              <Ellipsis_horizontal />
-            </span>
-          </Link>
-        </>
-      ),
+      title: "Thao Tác",
+      render: (_: any, orders: any) => {
+        return (
+          <>
+            <Tooltip
+              placement="left"
+
+              title={
+                <div className="flex flex-col space-y-2 m-2">
+                  <Link to={`/admin/orders/${orders._id}`}>
+                    <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">Xem chi tiết</button>
+                  </Link>
+                  {orders.status === "1" &&
+                    <>
+                      <Popconfirm
+                        title="Xác nhận đơn hàng?"
+                        description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
+                        onConfirm={() =>
+                          handleStatusUpdate({
+                            status: 2,
+                            code_order: orders?.orderNumber,
+                            id_item: orders?._id,
+                          })
+                        }
+                        okText="Xác nhận"
+                        cancelText="Không"
+                        okButtonProps={{
+                          loading: isConfirming,
+                        }}
+                      >
+                        <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
+                          Xác nhận
+                        </button>
+                      </Popconfirm>
+                      <Popconfirm
+                        title="Từ chối xác nhận?"
+                        description={
+                          <div>
+                            <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                            <div>
+                              <p>Chọn lý do hủy:</p>
+                              <Radio.Group
+                                className="flex flex-col gap-2"
+                                onChange={(e) => setSelectedReason(e.target.value)}
+                              >
+                                {reasons.map((reason, index) => (
+                                  <Radio key={index} value={reason}>
+                                    {reason}
+                                  </Radio>
+                                ))}
+                              </Radio.Group>
+                            </div>
+                          </div>
+                        }
+                        onConfirm={() => {
+                          if (!selectedReason) {
+                            messageApi.warning("Vui lòng chọn lý do hủy!");
+                            return;
+                          }
+                          huy_don({
+                            id_item: orders?._id,
+                            action: "huy",
+                            cancellationReason: selectedReason,
+                            numberOrder: orders?.orderNumber,
+                          });
+                        }}
+                        okText="Từ chối"
+                        cancelText="Không"
+                        okButtonProps={{
+                          loading: isCancelling,
+                        }}
+                      >
+                        <button className="w-auto p-3 bg-red-500 rounded text-white">
+                          Từ chối
+                        </button>
+                      </Popconfirm>
+                    </>}
+
+                </div>
+              }
+            >
+              <span className="flex justify-center cursor-pointer">
+                <Ellipsis_horizontal />
+              </span>
+            </Tooltip>
+          </>
+        )
+      },
     },
   ];
 
   return (
     <div className="">
+      {contextHolder}
       <Table columns={columns} dataSource={dataSort} pagination={false} />
       <div className="flex justify-between items-center mt-4">
         <Pagination
