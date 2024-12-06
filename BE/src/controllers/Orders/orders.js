@@ -13,6 +13,8 @@ import * as turf from "@turf/turf";
 import jwt from "jsonwebtoken";
 import Voucher from "../../models/Voucher/voucher";
 import Notification from "../../models/Notification/Notification";
+import SendDeliveryFailureMail from "../SendMail/HuyMailShipper";
+import SendDeliverySuccessMailToAdmin from "../SendMail/ThanhCongMailShipper";
 const timeZone = "Asia/Ho_Chi_Minh";
 
 export const authenticate = (req, res, next) => {
@@ -635,6 +637,7 @@ export const updateOrderStatus = async (req, res) => {
 
       // Send cancellation email
       try {
+        
         await SendCancellationMail(
           order.customerInfo.email,
           order,
@@ -685,8 +688,7 @@ export const updateOrderStatus = async (req, res) => {
           .status(500)
           .json({ message: "Failed to send delivery success email." });
       }
-    }
-
+    } 
     // Save the updated order
     await order.save();
 
@@ -797,7 +799,7 @@ export const userCancelOrder = async (req, res) => {
 };
 export const adminCancelOrder = async (req, res) => {
   const id = req.params.id;
-  const { confirm } = req.body;
+  const { confirm, failureReason } = req.body;
 
   try {
     const order = await Order.findById(id);
@@ -848,6 +850,7 @@ export const adminCancelOrder = async (req, res) => {
 
       // Send cancellation email
       try {
+        await SendDeliveryFailureMail(order);
         await SendCancellationMail(
           order.customerInfo.email,
           order,
@@ -981,6 +984,7 @@ export const deliverSuccess = async (req, res) => {
     await order.save();
     // Send email notification
     try {
+      await SendDeliverySuccessMailToAdmin(order);
       await SendDeliverySuccessMail(order.customerInfo.email, order);
     } catch (emailError) {
       console.error("Lỗi gửi email:", emailError);
@@ -1027,9 +1031,10 @@ export const addShipperOrder = async (req, res) => {
 };
 export const adminFailDelivery = async (req, res) => {
   const id = req.params.id;
-  const { failureReason } = req.body; // Lấy lý do từ request body
+  const { failureReason, status } = req.body; // Lấy lý do và trạng thái từ request body
 
   try {
+    // Tìm đơn hàng theo ID
     const order = await Order.findById(id);
     if (!order) {
       return res
@@ -1037,33 +1042,35 @@ export const adminFailDelivery = async (req, res) => {
         .json({ message: "Không tìm thấy đơn hàng" });
     }
 
-    // Kiểm tra nếu đơn hàng đã hoàn thành hoặc bị hủy thì không cho phép cập nhật giao hàng thất bại
-    if (order.status === "completed" || order.status === "5") {
+    // Kiểm tra nếu trạng thái là "Giao hàng thất bại" (status = 5) hoặc "Giao hàng thành công" (status = 4)
+    if (order.status === "5") {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message:
-          "Không thể cập nhật trạng thái thất bại cho đơn hàng đã hoàn thành hoặc bị hủy"
+        message: "Đơn hàng đã bị hủy, không thể cập nhật giao hàng thất bại"
+      });
+    }
+
+    if (order.status === "4") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Đơn hàng đã giao hàng thành công, không thể đánh dấu giao hàng thất bại"
       });
     }
 
     // Cập nhật trạng thái thành 'Giao hàng thất bại'
-    order.status = "5"; // Giao hàng thất bại
-    order.failureReason = failureReason; // Lưu lý do giao hàng thất bại
+    order.status = "5"; // Cập nhật trạng thái giao hàng thất bại
+    order.failureReason = failureReason || "Không có lý do cụ thể"; // Lưu lý do giao hàng thất bại
 
+    // Xử lý thay đổi số lượng sản phẩm trong kho (tương tự phần hủy đơn)
     const items = order.items;
     for (let i of items) {
-      // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
+      // Kiểm tra nếu có thuộc tính (size, color) thì cập nhật kho
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({});
         for (let j of data_attr) {
           for (let k of j.values) {
-            if (k.color == i.color_item) {
+            if (k.color === i.color_item) {
               for (let x of k.size) {
-                if (x.name_size) {
-                  if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute + i.quantity;
-                  }
-                } else {
-                  x.stock_attribute = x.stock_attribute + i.quantity;
+                if (x.name_size === i.name_size) {
+                  x.stock_attribute += i.quantity;
                 }
               }
             }
@@ -1071,23 +1078,36 @@ export const adminFailDelivery = async (req, res) => {
           await j.save();
         }
       } else {
-        const data_items = await Products.find({ _id: i.productId._id });
-        for (let a of data_items) {
-          a.stock = a.stock + i.quantity;
-          await a.save();
+        // Cập nhật kho cho sản phẩm nếu không có thuộc tính
+        const product = await Products.findById(i.productId._id);
+        if (product) {
+          product.stock += i.quantity;
+          await product.save();
         }
       }
     }
 
+    // Gửi email thông báo giao hàng thất bại
+    try {
+      await SendDeliveryFailureMail(order, failureReason);
+    } catch (emailError) {
+      console.error("Lỗi gửi email thông báo giao hàng thất bại:", emailError);
+    }
+    // Lưu lại thông tin đơn hàng sau khi thay đổi
     await order.save();
-    res.status(StatusCodes.OK).json({
+
+    return res.status(StatusCodes.OK).json({
       message: "Đơn hàng đã được cập nhật trạng thái giao hàng thất bại",
       failureReason: order.failureReason
     });
   } catch (error) {
+    console.error("Lỗi trong quá trình xử lý đơn hàng:", error);
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
+
+
+
 
 //Hàm tra cứu đơn hàng theo số điện thoại
 export const getOrdersByPhone = async (req, res) => {
