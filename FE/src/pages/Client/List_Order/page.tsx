@@ -43,7 +43,7 @@ const getBase64 = (file: FileType): Promise<string> =>
   });
 
 export default function List_order() {
-  //Khai báo
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
   const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
@@ -51,6 +51,7 @@ export default function List_order() {
   const { mutate, contextHolder } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
+
   const dispathNotification = Mutation_Notification("Add");
   const [selectedReason, setSelectedReason] = useState("");
   const [user] = useLocalStorage("user", {});
@@ -64,11 +65,24 @@ export default function List_order() {
   );
   const [openReview, setOpenReview] = useState(false);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
-  const [reviewedOrders, setReviewedOrders] = useState<{
+  const [, setReviewedOrders] = useState<{
     [orderId: string]: Set<string>;
   }>({});
+  const [searchParamsUri] = useSearchParams();
+  const status_order = searchParamsUri.get("_status");
+  const dataClient = {
+    id_user: userId,
+    page: 1,
+    limit: 20,
+    status: +(status_order || 0),
+  };
+  const { data, isPending } = Query_Order(dataClient);
+  let name_1: any;
+  data?.data?.docs?.map((name: any) => {
+    return (name_1 = name?.customerInfo?.userName);
+  });
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingOrderId, setLoadingOrderId] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const uploadButton = (
@@ -82,7 +96,7 @@ export default function List_order() {
   const FOLDER_NAME = "PRODUCTS";
   const api = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
   const [rating, setRating] = useState<number>(0); // State để lưu giá trị rating
-  const [initialContent, setInitialContent] = useState(""); // State để giữ giá trị ban đầu
+  const [, setInitialContent] = useState(""); // State để giữ giá trị ban đầu
   const reasons = [
     "Thay đổi ý định",
     "Tìm được giá tốt hơn",
@@ -107,8 +121,6 @@ export default function List_order() {
     },
     enabled: !!currentReviewId, // Chỉ thực hiện query khi currentReviewId có giá trị
   });
-  console.log(dataReviewById);
-
   const { mutate: addReview } = useMutation({
     mutationFn: async (reviewData: {
       contentReview: string;
@@ -164,15 +176,11 @@ export default function List_order() {
   };
   const [img, setImg] = useState<any>("");
   const handleImageChange = (info: any) => {
-    console.log("File List:", info);
     const files = info?.fileList.map(
       (file: any) => file?.originFileObj || file
     );
-    console.log("Files:", files); // Kiểm tra các tệp ảnh được lưu
     setImg(files);
   };
-
-  console.log(img);
 
   const onFinish = async (
     values: any,
@@ -180,13 +188,7 @@ export default function List_order() {
     productGroup: any,
     items: any
   ) => {
-    console.log(values);
-
-    console.log(img);
-
     const secure_url = await UploadGallery(img);
-    console.log(secure_url);
-
     addReview({
       contentReview: values[`contentReview_${index}`] || "",
       productId: productGroup.productId,
@@ -209,7 +211,7 @@ export default function List_order() {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: "nguyenvana@gmail.com",
-      message: `Người dùng ${user?.user?.userName} đã yêu cầu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
+      message: `Người dùng ${name_1} đã yêu cầu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
     });
     mutate(dataBody);
@@ -221,14 +223,16 @@ export default function List_order() {
     orderNumber?: string | number;
     linkUri?: string | number;
   }) {
-    setIsLoading(true);
+    setLoadingOrderId(dataBody.id_item as string);
+
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: "nguyenvana@gmail.com",
-      message: `Người dùng ${user?.user?.userName} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
+      message: `Người dùng ${name_1} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
       id_different: dataBody?.orderNumber,
     });
+
     mutate(dataBody, {
       onSuccess: async (response) => {
         try {
@@ -241,10 +245,13 @@ export default function List_order() {
           console.log("Email hủy đơn đã được gửi thành công!");
         } catch (error) {
           console.error("Lỗi khi gửi email:", error);
+        } finally {
+          setLoadingOrderId(null);
         }
       },
       onError: (error) => {
         console.error("Lỗi khi hủy đơn:", error);
+        setLoadingOrderId(null);
       },
     });
   }
@@ -273,7 +280,7 @@ export default function List_order() {
         return;
     }
   }
-  const [selectedMenu, setSelectedMenu] = useState<number | null>(null);
+  const [, setSelectedMenu] = useState<number | null>(null);
   function handle_status_order(i: number) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set("_page", "1");
@@ -283,14 +290,7 @@ export default function List_order() {
 
     setSelectedMenu(i);
   }
-  const [searchParamsUri] = useSearchParams();
-  const status_order = searchParamsUri.get("_status");
-  const dataClient = {
-    id_user: userId,
-    page: 1,
-    limit: 20,
-    status: +(status_order || 1),
-  };
+
   const menuItems = [
     "Tất Cả",
     "Chờ Xác Nhận",
@@ -301,8 +301,6 @@ export default function List_order() {
     "Hoàn Thành",
     "Đã Hủy",
   ];
-
-  const { data, isPending } = Query_Order(dataClient);
   // Đếm số lượng sản phẩm theo trạng thái
   const orderStatusCounts = {
     "Tất Cả": 0,
@@ -395,10 +393,8 @@ export default function List_order() {
                 ...dataForm,
               },
               totalPrice: Number(parsed.query.vnp_Amount) / 100,
-              status: "2",
+              status: "1",
             });
-
-            console.log(response.data);
             if (response.data) {
               message.success("Thanh toán thành công");
               sessionStorage.removeItem("item_order");
@@ -413,7 +409,7 @@ export default function List_order() {
         }
       } catch (error) {
         console.error("Error processing payment:", error);
-        message.error("Có lỗi xảy ra trong quá trình thanh toán");
+        // message.error("Có lỗi xảy ra trong quá trình thanh toán");
       } finally {
         setPaymentPending(false); // Kết thúc trạng thái loading cho thanh toán
       }
@@ -428,6 +424,7 @@ export default function List_order() {
       </div>
     );
   }
+
   return (
     <div>
       {contextHolder}
@@ -438,18 +435,7 @@ export default function List_order() {
             className={`px-3 py-3 hover:border-b-2 hover:border-yellow-400`}
             onClick={() => handle_status_order(i)}
           >
-            {menu} {/* Chỉ hiển thị số lượng khi item được click */}
-            {selectedMenu === i && (
-              <>
-                {" "}
-                (
-                {orderStatusCounts[menu as keyof typeof orderStatusCounts] !==
-                undefined
-                  ? orderStatusCounts[menu as keyof typeof orderStatusCounts]
-                  : 0}
-                )
-              </>
-            )}
+            {menu}
           </li>
         ))}
       </ul>
@@ -507,7 +493,7 @@ export default function List_order() {
                         Chờ xác nhận
                       </Button>
                       <Popconfirm
-                        title="Hủy dơn hàng?"
+                        title="Hủy đơn hàng?"
                         description={
                           <div>
                             <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
@@ -537,15 +523,16 @@ export default function List_order() {
                             linkUri: items?._id,
                           })
                         }
-                        // onCancel={cancel}
-                        okText="Có "
+                        okText="Có"
                         cancelText="Không"
                       >
                         <Button
                           className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
-                          loading={isLoading}
+                          loading={loadingOrderId === items?._id}
                         >
-                          {isLoading ? "loading" : "Hủy đơn hàng"}
+                          {loadingOrderId === items?._id
+                            ? "Đang hủy đơn"
+                            : "Hủy đơn hàng"}
                         </Button>
                       </Popconfirm>
                     </div>
@@ -633,19 +620,6 @@ export default function List_order() {
                       Đã Nhận Hàng
                     </Button>
                   ) : items?.status === "4" ? (
-                    // <Button
-                    //   className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none"
-                    //   onClick={() => (
-                    //     mutate({ id_item: items._id }),
-                    //     dispathNotification?.mutate({
-                    //       userId: userId,
-                    //       receiver_id: userId,
-                    //       message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                    //     })
-                    //   )}
-                    // >
-                    //   Đã Nhận Hàng
-                    // </Button>
                     <Popconfirm
                       title="Xác nhận đã nhận hàng?"
                       description="Bạn có chắc chắn muốn xác nhận đã nhận hàng không?"
@@ -710,7 +684,7 @@ export default function List_order() {
 
                             {/* Tạo một tập hợp các sản phẩm để nhóm thuộc tính cùng sản phẩm lại */}
                             {items.items
-                              .reduce((acc, item) => {
+                              .reduce((acc: any, item: any) => {
                                 const existingProduct = acc.find(
                                   (p) => p.productId === item.productId._id
                                 );
@@ -726,9 +700,10 @@ export default function List_order() {
                                 }
                                 return acc;
                               }, [])
-                              .map((productGroup, index) => {
+                              .map((productGroup: any, index: number) => {
                                 const review = items.reviews.find(
-                                  (r) => r.productId === productGroup.productId
+                                  (r: any) =>
+                                    r.productId === productGroup.productId
                                 );
 
                                 return (
@@ -747,15 +722,19 @@ export default function List_order() {
                                       <div>{productGroup.productName}</div>
                                     </div>
                                     <Form
-                                      // form={form}
-                                      onFinish={(values) =>
-                                        onFinish(
-                                          values,
-                                          index,
-                                          productGroup,
-                                          items
-                                        )
-                                      }
+                                      onFinish={async (values) => {
+                                        setLoading(true); // Bật loading khi gửi đánh giá
+                                        try {
+                                          await onFinish(
+                                            values,
+                                            index,
+                                            productGroup,
+                                            items
+                                          );
+                                        } finally {
+                                          setLoading(false); // Tắt loading sau khi hoàn tất
+                                        }
+                                      }}
                                       onValuesChange={(changedValues) => {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
@@ -845,7 +824,7 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
-                                                  (url, idx) => ({
+                                                  (url: any, idx: any) => ({
                                                     uid: `${idx}`,
                                                     name: `image_${idx}`,
                                                     status: "done",
@@ -863,6 +842,25 @@ export default function List_order() {
                                             onSuccess,
                                             onError,
                                           }) => {
+                                            // Tạo bản sao tạm thời của fileList để hiển thị trạng thái "uploading"
+                                            const tempFile = {
+                                              uid:
+                                                file.uid || String(Date.now()),
+                                              name: file.name,
+                                              status: "uploading",
+                                              url: URL.createObjectURL(file), // Tạo URL tạm thời từ file
+                                            };
+
+                                            setFileList((prevLists) => ({
+                                              ...prevLists,
+                                              [productGroup.productId]: [
+                                                ...(prevLists[
+                                                  productGroup.productId
+                                                ] || []),
+                                                tempFile,
+                                              ],
+                                            }));
+
                                             const formData = new FormData();
                                             formData.append("file", file);
                                             formData.append(
@@ -893,15 +891,21 @@ export default function List_order() {
                                                 await response.json();
                                               file.url = result.secure_url;
 
-                                              // Cập nhật fileList sau khi tải lên thành công
+                                              // Cập nhật trạng thái fileList sau khi tải thành công
                                               setFileList((prevLists) => ({
                                                 ...prevLists,
-                                                [productGroup.productId]: [
-                                                  ...(prevLists[
+                                                [productGroup.productId]:
+                                                  prevLists[
                                                     productGroup.productId
-                                                  ] || []),
-                                                  file,
-                                                ],
+                                                  ]?.map((f) =>
+                                                    f.uid === tempFile.uid
+                                                      ? {
+                                                          ...f,
+                                                          status: "done",
+                                                          url: result.secure_url,
+                                                        }
+                                                      : f
+                                                  ),
                                               }));
 
                                               onSuccess?.();
@@ -910,8 +914,36 @@ export default function List_order() {
                                                 "Upload error:",
                                                 error
                                               );
+
+                                              // Cập nhật trạng thái fileList khi có lỗi
+                                              setFileList((prevLists) => ({
+                                                ...prevLists,
+                                                [productGroup.productId]:
+                                                  prevLists[
+                                                    productGroup.productId
+                                                  ]?.map((f) =>
+                                                    f.uid === tempFile.uid
+                                                      ? {
+                                                          ...f,
+                                                          status: "error",
+                                                        }
+                                                      : f
+                                                  ),
+                                              }));
+
                                               onError?.(error);
                                             }
+                                          }}
+                                          onRemove={(file) => {
+                                            setFileList((prevLists) => ({
+                                              ...prevLists,
+                                              [productGroup.productId]:
+                                                prevLists[
+                                                  productGroup.productId
+                                                ]?.filter(
+                                                  (f) => f.uid !== file.uid
+                                                ),
+                                            }));
                                           }}
                                         >
                                           {fileList[productGroup.productId]
@@ -922,9 +954,13 @@ export default function List_order() {
                                       </Form.Item>
 
                                       {review ? (
-                                        <div>
-                                          <Form.Item>
-                                            <Button className="bg-black text-white">
+                                        <Form.Item>
+                                          <Spin spinning={loading}>
+                                            <Button
+                                              className="bg-black text-white"
+                                              type="primary"
+                                              disabled={loading}
+                                            >
                                               <Link
                                                 to={`/shops/${review?.productId}`}
                                                 className="ant-btn ant-btn-primary"
@@ -932,19 +968,20 @@ export default function List_order() {
                                                 Xem đánh giá
                                               </Link>
                                             </Button>
-                                          </Form.Item>
-                                        </div>
+                                          </Spin>
+                                        </Form.Item>
                                       ) : (
-                                        <div>
-                                          <Form.Item>
+                                        <Form.Item>
+                                          <Spin spinning={loading}>
                                             <Button
                                               type="primary"
                                               htmlType="submit"
+                                              disabled={loading}
                                             >
                                               Gửi đánh giá
                                             </Button>
-                                          </Form.Item>
-                                        </div>
+                                          </Spin>
+                                        </Form.Item>
                                       )}
                                     </Form>
                                   </div>

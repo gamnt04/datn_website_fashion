@@ -15,6 +15,7 @@ const Status_order = ({ data_Order, notification }: any) => {
     }
   })
     .filter(Boolean);
+  console.log(a);
 
   const timelineItems = [
     {

@@ -40,11 +40,11 @@ const List_Category: React.FC = () => {
 
   const dataSource = Array.isArray(searchName && searchData ? searchData : data)
     ? (searchName && searchData ? searchData : data).map(
-      (category: ICategory) => ({
-        key: category._id,
-        ...category,
-      })
-    )
+        (category: ICategory) => ({
+          key: category._id,
+          ...category,
+        })
+      )
     : [];
 
   const onHandleSearch = () => {
@@ -116,7 +116,8 @@ const List_Category: React.FC = () => {
     },
     onError: (error: unknown) => {
       toast.error(
-        `Cập nhật danh mục không thành công. ${(error as any).response?.data?.message || "Vui lòng thử lại sau."
+        `Cập nhật danh mục không thành công. ${
+          (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`,
         {
           position: "top-right",
@@ -231,16 +232,28 @@ const List_Category: React.FC = () => {
       key: "action",
       title: "Thao Tác",
       render: (_: any, category: ICategory) => {
+        const isUncategorized = category.name_category === "Uncategorized";
+
         return (
           <Space>
-            <CategoryUpdate data={data} id={category._id} />
+            {/* Nút Cập nhật */}
+            <CategoryUpdate
+              data={data}
+              id={category._id}
+              disabled={isUncategorized} // Disable nếu là "Uncategorized"
+            />
+
+            {/* Nút Xóa */}
             <Popconfirm
               title={`Danh mục đang có ${category.product_count} sản phẩm. Bạn có muốn xóa không?`}
               onConfirm={() => deleteCategory(category._id)}
               okText="Có"
               cancelText="Không"
             >
-              <Button danger>
+              <Button
+                danger
+                disabled={isUncategorized} // Disable nếu là "Uncategorized"
+              >
                 <FaDeleteLeft />
               </Button>
             </Popconfirm>

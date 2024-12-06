@@ -80,19 +80,30 @@ export const Add_Order = async (order: any) => {
 
     return data;
   } catch (error: any) {
-    if (error.response) {
-      toast.error("Sản phẩm số lượng không còn đủ trong kho", {
-        autoClose: 500,
-      });
-    }
+    // if (error.response) {
+    //   toast.error("Sản phẩm số lượng không còn đủ trong kho", {
+    //     autoClose: 500,
+    //   });
+    // }
   }
 };
-export const Update_Status = async (items: any) => {
-  console.log(items);
+
+export const Update_Status = async (id: any, cancellationReason: any) => {
+  console.log(id);
+
   try {
-    const { data } = await instance.patch(`orders/${items.id}`, items.status);
+    const { data } = await instance.patch(`/orders/${id}`, {
+      status: "2",
+      cancellationReason,
+    });
+    const message = "huy";
+    const res = {
+      data,
+      message,
+    };
     console.log(data);
-    return data;
+
+    return res;
   } catch (error) {
     console.log(error);
   }
@@ -216,21 +227,3 @@ export const complete_product = async (id: any) => {
     console.log(error);
   }
 };
-// export const updateOrderStatus = async (id: any, currentStatus: string) => {
-//   const statusOrder: any = {
-//     "1": "2",
-//     "2": "3",
-//     "3": "4",
-//   };
-//   if (currentStatus === "5") {
-//     return;
-//   }
-//   const nextStatus = statusOrder[currentStatus] || "4";
-
-//   try {
-//     const { data } = await instance.patch(`/orders/${id}`, { status: nextStatus });
-//     return data;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
