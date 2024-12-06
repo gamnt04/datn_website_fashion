@@ -11,9 +11,14 @@ import { Button } from "antd";
 interface CategoryUpdateProps {
   id?: string;
   data: ICategory[];
+  disabled: boolean;
 }
 
-export default function CategoryCreate({ id, data }: CategoryUpdateProps) {
+export default function CategoryCreate({
+  id,
+  data,
+  disabled,
+}: CategoryUpdateProps) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -26,7 +31,7 @@ export default function CategoryCreate({ id, data }: CategoryUpdateProps) {
 
   return (
     <div>
-      <Button onClick={handleClickOpen} type="primary">
+      <Button onClick={handleClickOpen} type="primary" disabled={disabled}>
         <FaEdit />
       </Button>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>

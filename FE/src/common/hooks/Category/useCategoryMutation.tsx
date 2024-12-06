@@ -1,10 +1,9 @@
-import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Message from "../../../components/base/Message/Message";
 import { createCategories, remove, update } from "../../../services/category";
 import { ICategory } from "../../interfaces/Category";
-import { CategoryJoiSchema } from "../../validations/category";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 type useCategoryMutationProps = {
   action: "CREATE" | "DELETE" | "UPDATE";
@@ -16,12 +15,6 @@ const useCategoryMutation = ({
   onSuccess,
 }: useCategoryMutationProps) => {
   const queryClient = useQueryClient();
-  const form = useForm({
-    resolver: joiResolver(CategoryJoiSchema),
-    defaultValues: {
-      name: "",
-    },
-  });
 
   const { mutate, ...rest } = useMutation({
     mutationFn: async (category: ICategory) => {
@@ -33,35 +26,38 @@ const useCategoryMutation = ({
         case "UPDATE":
           return await update(category);
         default:
-          return null;
+          throw new Error("Invalid action");
       }
     },
     onSuccess: (data) => {
       if (data) {
+        // Callback onSuccess từ props
         onSuccess && onSuccess();
+
+        // Invalidate các query để làm mới dữ liệu
         queryClient.invalidateQueries({
           queryKey: ["CATEGORY_KEY"],
         });
-      } else {
-        <Message
-          message={"Có lỗi xảy ra vui lòng thử lại !"}
-          timeout={5000}
-          openMessage={true}
-          type={"error"}
-        />;
-        return;
       }
     },
-    onError: (error) => {
-      console.log(error);
+    onError: (error: any) => {
+      toast.error(` ${error?.message || "Vui lòng thử lại sau."}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     },
   });
+
   const onSubmit: SubmitHandler<ICategory> = async (category) => {
     mutate(category);
-    console.log(category);
   };
 
-  return { mutate, form, onSubmit, ...rest };
+  return { mutate, onSubmit, ...rest };
 };
 
 export default useCategoryMutation;

@@ -77,6 +77,11 @@ const Shipper_Detail: React.FC<ShipperDetailProps> = ({
             {formatDate(shipperData.birthDate)}
           </p>
         </Col>
+        <Col span={24}>
+          <p>
+            <strong>Địa chỉ:</strong> {shipperData.address}
+          </p>
+        </Col>
       </Row>
       <Divider />
     </Drawer>

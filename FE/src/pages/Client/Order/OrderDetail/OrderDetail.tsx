@@ -1,23 +1,29 @@
 import { Link, useParams } from "react-router-dom";
 import { Query_Orders } from "../../../../common/hooks/Order/querry_Order";
+import Status_order from "../../../Admin/Orders/Status_order";
+import { Query_notification } from "../../../../_lib/React_Query/Notification/Query";
+import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 const OrderDetail = () => {
+  const [user] = useLocalStorage("user", {});
+  const userId = user?.user?._id;
+  const role = user?.user?.role;
   const { id } = useParams();
   const { data } = Query_Orders(id);
-
+  const { data: notification } = Query_notification(userId, role);
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity; // Nhân giá sản phẩm với số lượng
     }, 0);
   };
 
-  const formatDate = (datetime: any) => {
-    if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
-    const date = new Date(datetime);
-    return date.toLocaleDateString(); // Lấy ngày tháng năm
-  };
-  const getStatusClass = (status: number) => {
-    return data?.status >= status ? "font-bold text-blue-500" : "";
-  };
+  // const formatDate = (datetime: any) => {
+  //   if (!datetime) return ""; // Bảo vệ trường hợp datetime không tồn tại
+  //   const date = new Date(datetime);
+  //   return date.toLocaleDateString(); // Lấy ngày tháng năm
+  // };
+  // const getStatusClass = (status: number) => {
+  //   return data?.status >= status ? "font-bold text-blue-500" : "";
+  // };
   return (
     <>
       <div className=" shadow-lg">
@@ -65,7 +71,7 @@ const OrderDetail = () => {
             </div>
           </div>
         </div>
-        <div className="border-b px-5 py-5 flex justify-center">
+        {/* <div className="border-b px-5 py-5 flex justify-center">
           {getStatusClass(7) ? (
             <div className="text-center font-bold text-red-500">Đã hủy</div>
           ) : (
@@ -95,41 +101,24 @@ const OrderDetail = () => {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
+
         <div className="border-b">
           <div className="px-5 py-4">
             <div>
               <h1 className="text-xl font-medium">Địa chỉ nhận hàng</h1>
             </div>
-            <div className="flex gap-10 pt-6">
-              <div className="w-[45%]">
-                <p>{data?.customerInfo?.userName}</p>
-                <p className="py-2">{data?.customerInfo?.phone}</p>
-                <p>{data?.customerInfo?.address}</p>
+            <div className="flex items-center gap-10 pt-6">
+              <div className="w-[45%] ">
+                <p>Tên khách hàng: <strong>{data?.customerInfo?.userName}</strong></p>
+                <p className="py-2"> Số điện thoại: <strong>{data?.customerInfo?.phone}</strong></p>
+                <p>Địa chỉ: <strong>{data?.customerInfo?.address}</strong></p>
               </div>
-              <div className="flex gap-8 border-l pl-3">
-                <div className="flex gap-4">
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
-                      />
-                    </svg>
-                  </span>
-                  <p>Ngày đặt: {formatDate(data?.createdAt)}</p>
-                </div>
-                <p className="font-semibold">Đặt hàng thành công</p>
+              <div className="w-[55%] border-l-2">
+                <Status_order data_Order={data} notification={notification}></Status_order>
               </div>
             </div>
+
           </div>
         </div>
 
@@ -202,12 +191,12 @@ const OrderDetail = () => {
             </div>
             <div className="flex justify-between py-2 font-semibold">
               <p>Tổng thanh toán</p>
-              <p>
+              <strong>
                 {data?.totalPrice?.toLocaleString("vi", {
                   style: "currency",
                   currency: "VND",
                 })}
-              </p>
+              </strong>
             </div>
           </div>
         </div>

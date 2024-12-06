@@ -15,6 +15,8 @@ import Voucher from "../../models/Voucher/voucher";
 import Notification from "../../models/Notification/Notification";
 import SendDeliveryFailureMail from "../SendMail/HuyMailShipper";
 import SendDeliverySuccessMailToAdmin from "../SendMail/ThanhCongMailShipper";
+const timeZone = "Asia/Ho_Chi_Minh";
+
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
   if (!token) {
@@ -62,8 +64,10 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
-        toa_do: customerInfo.toa_do,
+        address: `${customerInfo.address || ""}${
+          customerInfo.detailedAddress || ""
+        }`,
+        toa_do: customerInfo.toa_do
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
@@ -135,7 +139,7 @@ export const createOrder = async (req, res) => {
     const notification = new Notification({
       userId: userId,
       receiver_id: userId,
-      message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
+      message: `Đã có một đơn hàng mới`,
       different: order._id,
       status_notification: false
     });
@@ -211,8 +215,10 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
-          toa_do: customerInfo.toa_do,
+          address: `${customerInfo.address || ""}${
+            customerInfo.detailedAddress || ""
+          }`,
+          toa_do: customerInfo.toa_do
         },
         totalPrice
       });
@@ -255,7 +261,8 @@ export const getAllOrdersToday = async (req, res) => {
       createdAt: {
         $gte: startOfDay,
         $lte: endOfDay
-      }
+      },
+      status: "6"
     }).exec();
     // const ordersToday = await Order.find();
     return res.status(StatusCodes.OK).json(ordersToday);
@@ -280,7 +287,8 @@ export const getAllOrderWeek = async (req, res) => {
       createdAt: {
         $gte: startWeek,
         $lte: endWeek
-      }
+      },
+      status: "6"
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfWeek);
   } catch (error) {
@@ -289,7 +297,6 @@ export const getAllOrderWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
-const timeZone = "Asia/Ho_Chi_Minh";
 
 export const getOrderByDayOfWeek = async (req, res) => {
   try {
@@ -322,7 +329,8 @@ export const getOrderByDayOfWeek = async (req, res) => {
             createdAt: {
               $gte: startOfDay,
               $lt: endOfDay
-            }
+            },
+            status: "6"
           }
         },
         {
@@ -367,7 +375,8 @@ export const getAllOrderMonth = async (req, res) => {
       createdAt: {
         $gte: startMonth,
         $lte: endMonth
-      }
+      },
+      status: "6"
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfMonth);
   } catch (error) {
@@ -387,7 +396,8 @@ export const getAllOrderByMonthOfYear = async (req, res) => {
           createdAt: {
             $gte: new Date(`${currentYear}-01-01T00:00:00.000Z`),
             $lte: new Date(`${currentYear}-12-31T23:59:59.999Z`)
-          }
+          },
+          status: "6"
         }
       },
       {
@@ -448,7 +458,8 @@ export const getTop10ProductBestSale = async (req, res) => {
 };
 
 const calculateDistance = async (coords1, coords2) => {
-  const mapboxAccessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w'; // Thay bằng token của bạn
+  const mapboxAccessToken =
+    "pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w"; // Thay bằng token của bạn
 
   const origin = [coords1.lng, coords1.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
   const destination = [coords2.lng, coords2.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
@@ -479,9 +490,14 @@ export const getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.id).populate("shipperId");
 
     if (!order) {
-      return res.status(StatusCodes.NOT_FOUND).json({ error: "Order not found" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
     }
-    const warehouseCoords = { lat: 21.037956477970923, lng: 105.74689813551527 };  // Tọa độ kho
+    const warehouseCoords = {
+      lat: 21.037956477970923,
+      lng: 105.74689813551527
+    }; // Tọa độ kho
     const customerCoords = order.customerInfo.toa_do;
 
     if (!customerCoords) {
@@ -497,7 +513,9 @@ export const getOrderById = async (req, res) => {
       deliveryDistance: distance + "km"
     });
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 
@@ -576,10 +594,7 @@ export const updateOrderStatus = async (req, res) => {
     if (order.status === "6" || order.status === "7") {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: "Order cannot be updated" }
-          
-        );
-        
+        .json({ error: "Order cannot be updated" });
     }
     order.status = status;
     if (status == "4") {
@@ -669,16 +684,22 @@ export const updateOrderStatus = async (req, res) => {
         await SendDeliverySuccessMail(order.customerInfo.email, order);
       } catch (emailError) {
         console.error("Error sending delivery success email:", emailError);
-        return res.status(500).json({ message: "Failed to send delivery success email." });
+        return res
+          .status(500)
+          .json({ message: "Failed to send delivery success email." });
       }
     } 
     // Save the updated order
     await order.save();
 
-    return res.status(StatusCodes.OK).json({ message: "Order status updated successfully" });
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Order status updated successfully" });
   } catch (error) {
     console.error("Error updating order status:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 
@@ -929,13 +950,11 @@ export const get10NewOrderToday = async (req, res) => {
     startOfday.setHours(0, 0, 0, 0);
     const endOfday = new Date();
     endOfday.setHours(23, 59, 59, 999);
-    // const orderToDay = await Order.find({
-    //   createdAt: {
-    //     $gte: startOfday,
-    //     $lte: endOfday
-    //   }
-    // })
-    const orderToDay = await Order.find()
+
+    const orderToDay = await Order.find({
+      createdAt: { $gte: startOfday, $lte: endOfday },
+      status: { $in: ["1", "2", "3", "4", "5", "7"] }
+    })
       .sort({ createdAt: -1 })
       .limit(10)
       .exec();
@@ -981,8 +1000,6 @@ export const deliverSuccess = async (req, res) => {
     res.status(500).json({ name: error.name, message: error.message });
   }
 };
-
-
 
 export const addShipperOrder = async (req, res) => {
   try {

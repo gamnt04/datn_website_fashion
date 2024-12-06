@@ -18,8 +18,6 @@ const MainContent = () => {
   const { data: userData } = List_Auth("");
   const { data: productData, isLoading } = Query_Products();
   const { data: orderOfDayData } = useOrdersOfDay();
-  // const { data: orderData } = Query_Orders();
-  console.log(orderOfDayData);
 
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
