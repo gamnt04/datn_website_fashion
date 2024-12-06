@@ -23,7 +23,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   sortOption,
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 12;
 
   // Hook lọc sản phẩm
   const {
