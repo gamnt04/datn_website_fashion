@@ -21,8 +21,10 @@ export const createCategories = async (category: ICategory) => {
   try {
     const { data } = await instance.post("/category", category);
     return data;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message || "Đã xảy ra lỗi khi tạo danh mục.";
+    throw new Error(errorMessage);
   }
 };
 
@@ -41,6 +43,7 @@ export const update = async (category: ICategory) => {
     console.log(data);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error in update:", error);
+    throw error; // Ném lỗi để xử lý phía client
   }
 };

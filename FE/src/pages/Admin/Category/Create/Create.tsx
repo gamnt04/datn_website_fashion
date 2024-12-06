@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useCategoryMutation from "../../../../common/hooks/Category/useCategoryMutation";
 import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-
 const CreateComponent = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -20,6 +18,9 @@ const CreateComponent = () => {
   } = useForm<ICategory>();
   const { onSubmit, isPending } = useCategoryMutation({
     action: "CREATE",
+    onSuccess: () => {
+      setShowMessage(true); // Hiển thị Message sau khi thêm thành công
+    },
   });
 
   const handleSubmitForm = async (data: ICategory | any) => {
@@ -34,10 +35,9 @@ const CreateComponent = () => {
         };
 
         await onSubmit(formData);
-        setShowMessage(true);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      message.error(error.message || "Đã xảy ra lỗi không xác định!");
     }
   };
 
@@ -62,23 +62,21 @@ const CreateComponent = () => {
     if (showMessage) {
       const timer = setTimeout(() => {
         setShowMessage(false);
-      }, 2000);
+      }, 2000); // Đóng thông báo sau 2 giây
       return () => clearTimeout(timer);
     }
   }, [showMessage]);
+
   if (isPending) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
+
   return (
     <div>
-      <Message
-        message={"Thêm danh mục thành công !"}
-        timeout={2000}
-        openMessage={showMessage}
-        type={"success"}
-      />
       <form onSubmit={handleSubmit(handleSubmitForm)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
@@ -117,8 +115,7 @@ const CreateComponent = () => {
                   <div className="mt-2 flex items-center">
                     <div className="relative flex items-center">
                       <div
-                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${imagePreview ? "block" : "block"
-                          }`}
+                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2`}
                       >
                         <span className="text-3xl text-gray-500">+</span>
                       </div>
@@ -141,7 +138,15 @@ const CreateComponent = () => {
             </div>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-center gap-x-6">
+        <div className="mt-6 flex flex-col items-center gap-y-4">
+          {showMessage && (
+            <Message
+              message="Thêm danh mục thành công!"
+              type="success"
+              timeout={2000} // Tự động tắt sau 2 giây
+              openMessage={showMessage}
+            />
+          )}
           <button
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             type="submit"

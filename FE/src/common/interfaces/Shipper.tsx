@@ -7,14 +7,7 @@ export interface Shipper {
   vehicle: string;
   phone: string;
   birthDate: string;
-  address: [
-    {
-      fullName: string;
-      phoneNumber: string;
-      addressDetails: string;
-      addressType: string;
-    }
-  ];
+  address: string;
   role?: string;
   status: "On delivery" | "Available" | "Offline";
 }
