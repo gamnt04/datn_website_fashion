@@ -13,7 +13,6 @@ import {
 } from "antd";
 import instance from "../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
-import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
@@ -23,15 +22,13 @@ import { IVoucher } from "../../../common/interfaces/Voucher";
 import { useVoucherHandlers } from "./_component/useVoucherHandlers ";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
 import { AiFillBackward } from "react-icons/ai";
-import { Auth } from "../../../common/interfaces/Auth";
 
 const AddVoucher = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const { data: categories } = useCategoryQuery();
   const nav = useNavigate();
-  const { auth, shippers, products, isLoading } = useDataVoucher();
-  const [userType, setUserType] = useState<string[]>(["user"]);
+  const { auth, products, isLoading } = useDataVoucher();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (formData: IVoucher) => {
@@ -60,14 +57,6 @@ const AddVoucher = () => {
   });
 
   const onFinish: FormProps<IVoucher>["onFinish"] = (values) => {
-    if (!values.userType || values.userType.length === 0) {
-      messageApi.open({
-        type: "error",
-        content: "Vui lòng chọn ít nhất một loại người dùng!",
-      });
-      return;
-    }
-
     const formData = {
       ...values,
       allowedUsers: selectedAuths,
@@ -77,27 +66,11 @@ const AddVoucher = () => {
     mutate(formData);
   };
 
-  const filteredData = useMemo(() => {
-    if (userType.includes("user") && userType.includes("courier")) {
-      return [...(auth?.data || []), ...(shippers?.data?.shippers || [])];
-    }
-    return userType.includes("user")
-      ? auth?.data || []
-      : shippers?.data?.shippers || [];
-  }, [auth, shippers, userType]);
-
-  const handleUserTypeChange = (value: string[]) => {
-    // Nếu không chọn bất kỳ checkbox nào, đặt lại một giá trị mặc định
-    if (value.length === 0) {
-      setUserType(["user"]); // Giữ lại ít nhất một giá trị mặc định
-    } else {
-      setUserType(value);
-    }
-  };
-
   const {
     applyType,
     discountType,
+    selectedItems,
+    selectedCategories,
     selectAll,
     generateRandomCode,
     setSearchText,
@@ -111,10 +84,11 @@ const AddVoucher = () => {
     handleSelectAllCate,
     filteredProducts,
     filteredCategorys,
-    selectedUsers,
-    selectedItems,
-    selectedCategories,
-    handleSelectChange,
+    filteredAuths,
+    handleSelectAllAuth,
+    handleSelectAuth,
+    handleCheckboxChangeAuth,
+    selectedAuths,
   } = useVoucherHandlers({
     form,
     products,
@@ -379,10 +353,7 @@ const AddVoucher = () => {
                     >
                       {selectedItems.map((id) => (
                         <Option key={id} value={id}>
-                          {
-                            products.find((p: any) => p._id === id)
-                              ?.name_product
-                          }
+                          {products.find((p) => p._id === id)?.name_product}
                         </Option>
                       ))}
                     </Select>
@@ -487,6 +458,7 @@ const AddVoucher = () => {
                   </Form.Item>
                 )}
               </div>
+
               {/* Cột 2 */}
               <div className="w-full px-4 md:w-1/2">
                 <Form.Item<IVoucher>
@@ -567,60 +539,68 @@ const AddVoucher = () => {
                   <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item label="Chọn loại người dùng">
-                  <Checkbox.Group
-                    options={[
-                      { label: "Người dùng", value: "user" },
-                      { label: "Shipper", value: "courier" },
-                    ]}
-                    value={userType} // Đảm bảo rằng giá trị được quản lý
-                    onChange={handleUserTypeChange}
-                  />
-                </Form.Item>
+                <Form.Item
+                  label="Người sử dụng mã giảm giá"
+                  name="allowedUsers"
+                >
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn người người sử dụng mã giảm giá"
+                    onChange={handleSelectAuth}
+                    style={{ width: "100%" }}
+                    suffixIcon={
+                      <p className="text-black">
+                        Đã chọn: {selectedAuths.length}
+                      </p>
+                    }
+                    showSearch={false}
+                    dropdownRender={(menu: any) => (
+                      <div className="max-h-[500px] overflow-y-auto">
+                        {/* Thêm ô tìm kiếm */}
+                        <div style={{ padding: "8px 12px" }}>
+                          <Input.Search
+                            placeholder="Tìm kiếm người sử dụng..."
+                            onChange={(e) => setSearchText(e.target.value)}
+                            style={{ marginBottom: 8 }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            padding: "8px 12px",
+                            borderBottom: "1px solid #f0f0f0",
+                          }}
+                        >
+                          <Checkbox
+                            checked={selectAll}
+                            onChange={(e) =>
+                              handleSelectAllAuth(e.target.checked)
+                            }
+                          >
+                            Chọn tất cả
+                          </Checkbox>
+                        </div>
 
-                <Form.Item<IVoucher> label="Người sử dụng mã giảm giá">
-                  <div className="flex items-center">
-                    <Select
-                      mode="multiple"
-                      style={{
-                        width: "90%",
-                        minHeight: "40px",
-                      }}
-                      placeholder="Chọn người dùng/shipper"
-                      className="mt-2"
-                      options={[
-                        {
-                          label: "Chọn tất cả",
-                          value: "all",
-                        },
-                        ...filteredData?.map((user: any) => ({
-                          value: user._id,
-                          label: user.userName || user.fullName,
-                        })),
-                      ]}
-                      onChange={(value) => {
-                        // Kiểm tra xem người dùng có chọn "Chọn tất cả"
-                        if (value.includes("all")) {
-                          // Chọn tất cả các người dùng
-                          const allUsers =
-                            filteredData?.map((user: any) => user._id) || [];
-                          handleSelectChange(allUsers); // Gọi hàm của bạn để cập nhật selectedUsers
-                        } else {
-                          handleSelectChange(value); // Chọn các mục đã chọn
-                        }
-                      }}
-                      value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
-                      maxTagCount={4}
-                      maxTagPlaceholder={(omittedValues) =>
-                        `+${omittedValues.length} người khác`
-                      }
-                      allowClear
-                    />
-                    <span className="ml-2 text-gray-600">
-                      Đã chọn: {selectedUsers.length}
-                    </span>
-                  </div>
+                        <div className="py-4 pl-6">
+                          {filteredAuths?.map((user, index) => (
+                            <div key={user._id}>
+                              <Checkbox
+                                value={user._id}
+                                checked={selectedAuths.includes(user._id)}
+                                onChange={() =>
+                                  handleCheckboxChangeAuth(user._id)
+                                }
+                              >
+                                {user.userName}
+                              </Checkbox>
+                              {index < filteredAuths.length - 1 && (
+                                <div className="h-px my-2 bg-gray-300"></div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  ></Select>
                 </Form.Item>
               </div>
             </div>
