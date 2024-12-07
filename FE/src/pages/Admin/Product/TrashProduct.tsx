@@ -109,7 +109,7 @@ const TrashProduct = () => {
           dataProps={{
             dataTable: data,
             mutate: mutate,
-            action: "recycle"
+            action: "recycle",
           }}
         />
       </div>
