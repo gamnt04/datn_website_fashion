@@ -360,36 +360,6 @@ const AddVoucher = () => {
                   </Form.Item>
                 )}
 
-                {/* Hiển thị ô Tổng giá trị đơn hàng nếu chọn "total" */}
-                {applyType === "total" && (
-                  <Form.Item<IVoucher>
-                    label="Số tiền đơn hàng tối thiểu"
-                    name="minimumSpend"
-                    rules={[
-                      {
-                        type: "number",
-                        min: 0,
-                        message: "Số tiền tối thiểu phải lớn hơn hoặc bằng 0!",
-                      },
-                    ]}
-                  >
-                    <InputNumber
-                      addonAfter={
-                        <div
-                          className="flex items-center justify-center w-12 h-full"
-                          style={{
-                            border: "none",
-                            backgroundColor: "transparent",
-                          }}
-                        >
-                          VND
-                        </div>
-                      }
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                )}
-
                 {applyType === "category" && (
                   <Form.Item
                     label="Danh mục sản phẩm áp dụng"
@@ -457,6 +427,64 @@ const AddVoucher = () => {
                     ></Select>
                   </Form.Item>
                 )}
+
+                <Form.Item
+                  label="Số tiền đơn hàng tối thiểu"
+                  name="minimumSpend"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số tiền tối thiểu!",
+                    },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Số tiền tối thiểu phải lớn hơn hoặc bằng 0!",
+                    },
+                    {
+                      validator: (_, value) => {
+                        const discountValue =
+                          form.getFieldValue("discountValue");
+                        const maxDiscount = form.getFieldValue("maxDiscount");
+
+                        // Kiểm tra nếu minimumSpend <= discountValue
+                        if (value && discountValue && value <= discountValue) {
+                          return Promise.reject(
+                            new Error(
+                              "Số tiền tối thiểu phải lớn hơn giá trị giảm giá!"
+                            )
+                          );
+                        }
+
+                        // Kiểm tra nếu minimumSpend <= maxDiscount
+                        if (value && maxDiscount && value <= maxDiscount) {
+                          return Promise.reject(
+                            new Error(
+                              "Số tiền tối thiểu phải lớn hơn giá trị giảm giá tối đa!"
+                            )
+                          );
+                        }
+
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    addonAfter={
+                      <div
+                        className="flex items-center justify-center w-12 h-full"
+                        style={{
+                          border: "none",
+                          backgroundColor: "transparent",
+                        }}
+                      >
+                        VND
+                      </div>
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
               </div>
 
               {/* Cột 2 */}

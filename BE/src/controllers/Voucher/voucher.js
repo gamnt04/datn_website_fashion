@@ -253,6 +253,20 @@ export const useVoucher = async (req, res) => {
       }
     }
 
+    // Kiểm tra nếu tổng giá trị đơn hàng lớn hơn giá trị giảm giá
+    if (totalAmount < voucher.discountValue) {
+      return res.status(400).json({
+        message: `Tổng giá trị đơn hàng chưa đủ điều kiện để sử dụng mã giảm giá này`,
+      });
+    }
+
+    // Kiểm tra minimumSpend cho voucher
+    if (voucher.minimumSpend > 0 && totalAmount < voucher.minimumSpend) {
+      return res.status(400).json({
+        message: `Để áp dụng mã giảm giá này, bạn cần chi tiêu ít nhất ${voucher.minimumSpend}`,
+      });
+    }
+
     // Tính giá trị giảm giá dựa trên loại mã giảm giá
     let discount = 0;
     if (voucher.discountType === "percentage") {
