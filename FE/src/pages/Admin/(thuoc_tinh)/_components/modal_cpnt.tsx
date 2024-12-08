@@ -12,11 +12,11 @@ export default function Modal_cpnt({ props }: any) {
     const urlParams = new URLSearchParams(location_url.search);
     const editId = urlParams.get('_id');
     const [user] = useLocalStorage("user", {});
-    const { data, isPending, isError } = Lay_the_loai_thuoc_tinh({
+    const { data, isLoading, isError } = Lay_the_loai_thuoc_tinh({
         id_account: user?.user?._id,
         id_thuoc_tinh: editId
     });
-    const { mutate, isPending: loading, isError: error } = Dispatch_the_loai_thuoc_tinh('EDIT')
+    const { mutate, isLoading: loading, isError: error } = Dispatch_the_loai_thuoc_tinh('EDIT')
 
     const [form] = Form.useForm();
 
@@ -51,7 +51,7 @@ export default function Modal_cpnt({ props }: any) {
         console.log('Failed:', errorInfo);
     };
 
-    if (isPending || loading) {
+    if (isLoading || loading) {
         return <div className="flex justify-center items-center h-screen">
             <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>;

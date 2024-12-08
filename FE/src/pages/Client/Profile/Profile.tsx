@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Button,
   DatePicker,
@@ -28,7 +29,6 @@ const Profile = () => {
     isChanged,
     isSaving,
     isLoading,
-    isPending,
     isError,
     error,
     handleValuesChange,
@@ -82,7 +82,7 @@ const Profile = () => {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (isPending) return <div>Pending...</div>;
+  if (isLoading) return <div>Pending...</div>;
   if (isError) return <div>{error.message}</div>;
 
   return (
@@ -103,9 +103,9 @@ const Profile = () => {
             initialValues={
               data
                 ? {
-                    ...data,
-                    birthDate: data.birthDate ? dayjs(data.birthDate) : null
-                  }
+                  ...data,
+                  birthDate: data.birthDate ? dayjs(data.birthDate) : null
+                }
                 : {}
             }
             onFinish={onFinish}
@@ -253,7 +253,7 @@ const Profile = () => {
                         onChange={handleChange}
                         showUploadList={false}
                         style={{ display: "none" }}
-                        // multiple
+                      // multiple
                       >
                         <button
                           className="bg-black text-white w-[100px] h-[40px]"

@@ -16,17 +16,17 @@ export default function Attribute() {
   const [symbol, setSymbol] = useState<string>('');
   const [validate, setValidate] = useState<boolean>(false);
   const [imageFile, setImageFile] = useState<File[]>([]);
-  const { data, isPending, isError } = Lay_the_loai_thuoc_tinh({
+  const { data, isLoading, isError } = Lay_the_loai_thuoc_tinh({
     id_thuoc_tinh: id,
     id_account: user?.user?._id
   });
-  const { mutate, isPending: loading } = Dispatch_thuoc_tinh('CREATED');
-  const { data: data_2, isPending: loading_2 } = Lay_thuoc_tinh({
+  const { mutate, isLoading: loading } = Dispatch_thuoc_tinh('CREATED');
+  const { data: data_2, isLoading: loading_2 } = Lay_thuoc_tinh({
     id_account: user?.user?._id,
     category_attribute: data?.category_attribute
   });
   const [loadingUpload, setLoadingUpload] = useState<boolean>(false)
-  if (isPending || loading || loading_2) return <span>Loading...</span>
+  if (isLoading || loading || loading_2) return <span>Loading...</span>
   if (isError) return <span>Error...</span>
   const handleImageChange = (imageItem: any) => {
     const files =
@@ -75,7 +75,7 @@ export default function Attribute() {
   }
   return (
     <div className="px-10">
-      {(isPending || loading || loadingUpload) && (
+      {(isLoading || loading || loadingUpload) && (
         <div className="flex justify-center items-center h-screen">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>

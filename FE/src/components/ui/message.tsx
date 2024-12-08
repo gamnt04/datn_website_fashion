@@ -47,9 +47,9 @@ const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isLoading, error } = useGetMessageById(userId);
+  const { data, isLoading: loading_message, error } = useGetMessageById(userId);
   const { data: getUser } = List_Auth(userId);
-  const { mutate: SendMessage, isPending } = ChatCozeMutation();
+  const { mutate: SendMessage, isLoading } = ChatCozeMutation();
   const messagesEndRef = useRef(null);
   console.log("data user", getUser);
   const [message, setMessage] = useState<string>("");
@@ -262,14 +262,14 @@ const Message = () => {
                 <input
                   className="flex h-10 w-[48vh] rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
                   placeholder="Nhập tin nhắn ..."
-                  disabled={isPending}
+                  disabled={isLoading}
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
 
                 <button className="inline-flex items-center justify-center rounded-md text-sm font-medium text-[#f9fafb] disabled:pointer-events-none disabled:opacity-50 bg-black hover:bg-[#111827E6] h-10 px-4 py-2">
-                  {isPending ? (
+                  {isLoading || loading_message ? (
                     <FaSpinner className="animate-spin" />
                   ) : (
                     <AiOutlineSend />

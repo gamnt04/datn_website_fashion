@@ -9,7 +9,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 
 const Table_cpnt = ({ data_props }: any) => {
-    const { mutate, isPending, isError } = Dispatch_thuoc_tinh('REMOVE');
+    const { mutate, isLoading, isError } = Dispatch_thuoc_tinh('REMOVE');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const navigate = useNavigate();
     const showModal = (id: string | number) => {
@@ -19,7 +19,7 @@ const Table_cpnt = ({ data_props }: any) => {
         navigate(url.pathname + '?' + url.searchParams.toString());
         setIsModalOpen(true);
     };
-    if (isPending) {
+    if (isLoading) {
         return <div className="flex justify-center items-center h-screen">
             <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>;
