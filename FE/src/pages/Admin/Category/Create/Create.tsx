@@ -17,7 +17,7 @@ const CreateComponent = () => {
     formState: { errors },
     watch,
   } = useForm<ICategory>();
-  const { onSubmit, isPending } = useCategoryMutation({
+  const { onSubmit, isLoading } = useCategoryMutation({
     action: "CREATE",
     onSuccess: () => {
       setShowMessage(true); // Hiển thị Message sau khi thêm thành công
@@ -68,7 +68,7 @@ const CreateComponent = () => {
     }
   }, [showMessage]);
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-96">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -78,7 +78,7 @@ const CreateComponent = () => {
 
   return (
     <div>
-      {isPending ? (
+      {isLoading ? (
         <Loading />
       ) : (
         <form onSubmit={handleSubmit(handleSubmitForm)}>
@@ -155,7 +155,7 @@ const CreateComponent = () => {
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               type="submit"
             >
-              {isPending ? "Đang thêm" : "Xác nhận"}
+              {isLoading ? "Đang thêm" : "Xác nhận"}
             </button>
           </div>
         </form>

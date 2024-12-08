@@ -19,7 +19,7 @@ type Action =
 export function useOrderMutations(action: Action) {
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const { mutate, isPending, ...rest } = useMutation({
+  const { mutate, isLoading, ...rest } = useMutation({
     mutationFn: async (data: {
       id_item: string | number;
       action?: string;
@@ -79,5 +79,5 @@ export function useOrderMutations(action: Action) {
       });
     },
   });
-  return { mutate, ...rest, contextHolder, isPending };
+  return { mutate, ...rest, contextHolder, isLoading };
 }

@@ -46,7 +46,7 @@ const AddVoucher = () => {
   const [limitType, setLimitType] = useState<string | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
         return await instance.post(`/voucher`, formData);
@@ -158,7 +158,7 @@ const AddVoucher = () => {
   return (
     <div className="mt-20">
       <div className="pb-12 border-b border-gray-900/10">
-        {isPending && (
+        {isLoading && (
           <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
             <div className="animate-spin">
               <Loader />

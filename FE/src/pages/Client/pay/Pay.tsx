@@ -39,32 +39,35 @@ const Pay = () => {
   const [phi_van_chuyen, setPhi_van_chuyen] = useState<number>(0);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [voucherDetails, setVoucherDetails] = useState<any>(null);
-  const [selectedProducts, setselectedProducts] = useState<IProduct[]>([]);
-  const [selectedCategories, setselectedCategories] = useState<ICategory[]>([]);
+  const [selectedProducts] = useState<IProduct[]>([]);
+  const [selectedCategories] = useState<ICategory[]>([]);
   const [isOrderSuccessfully, setIsOrderSuccessfully] =
     useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
   const [selectedVoucherName, setSelectedVoucherName] = useState<string>(""); // Tên voucher đã chọn
-  const { data, isPending } = List_Cart(userId);
+  const { data, isLoading: Loading_cart } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const {
     onSubmit,
     contextHolder,
     messageApi,
-    isPending: loadingOrder,
+    isLoading: loadingOrder,
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
 
   const { data: activeVouchers, isLoading, error } = useVouchersQuery();
+  const item_order_checkked = data?.products?.filter(
+    (value: any) => value?.status_checked && value?.productId !== null
+  );
   useEffect(() => {
     if (!userId) {
       routing("/login");
     }
     if (item_order_checkked?.length < 1) {
-      routing("/login");
+      routing("/");
     }
-  }, [userId, routing]);
+  }, [userId, routing, item_order_checkked]);
 
   useEffect(() => {
     if (auth && auth?.address) {
@@ -215,10 +218,6 @@ const Pay = () => {
     setIsOpen(false);
   };
 
-  const item_order_checkked = data?.products?.filter(
-    (value: any) => value?.status_checked
-  );
-
   const totalPrice = item_order_checkked?.reduce(
     (a: any, curr: any) => a + curr?.total_price_item,
     0
@@ -232,7 +231,7 @@ const Pay = () => {
   });
   const currentDate = new Date(); // Lấy ngày hiện tại
 
-  if (isLoading) {
+  if (isLoading || Loading_cart) {
     console.log("Đang tải dữ liệu...");
     return null;
   }
@@ -296,7 +295,6 @@ const Pay = () => {
   };
 
   const onAddOrder = async (data_form: any) => {
-    console.log(data_form);
     const voucher = data_form.voucher;
     const discountCodeToUse = selectedVoucherCode || discountCode;
     if (!data_form.address || data_form?.address.trim() === "") {
@@ -330,7 +328,7 @@ const Pay = () => {
         }
 
         // Kiểm tra điều kiện khác của voucher (ví dụ: số lượng còn lại, hết hạn, áp dụng đúng sản phẩm, v.v.)
-        const { isValid, appliedProducts, appliedCategories, allowedUsers } =
+        const { isValid, appliedProducts, appliedCategories } =
           response.data;
 
         // Giả sử bạn đã có danh sách sản phẩm và danh mục người dùng chọn
@@ -383,6 +381,7 @@ const Pay = () => {
         return;
       }
     }
+    console.log(item_order_checkked)
     const item_order = {
       userId: userId,
       items: item_order_checkked,
@@ -515,7 +514,7 @@ const Pay = () => {
       ),
     },
   ];
-  if (loadingOrder || isPending) {
+  if (loadingOrder || isLoading) {
     return (
       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
         <div className="flex justify-center items-center h-screen">

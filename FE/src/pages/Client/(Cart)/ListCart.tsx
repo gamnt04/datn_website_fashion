@@ -22,6 +22,7 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
+import { io } from 'socket.io-client';
 
 interface DataType {
   key: string;
@@ -32,16 +33,29 @@ interface DataType {
 }
 
 const ListCart = () => {
+  const socket = io('http://localhost:2004');
   const routing = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError, error } = List_Cart(userId);
+  const { data, isLoading, isError, error } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-  const { mutate: handle_status_checked, isPending: loading_btn_checkked } = Mutation_Cart(
+  const { mutate: handle_status_checked, isLoading: loading_btn_checkked } = Mutation_Cart(
     "HANLDE_STATUS_CHECKED"
   );
+  useEffect(() => {
+    socket.on('connect_error', () => {
+      socket.disconnect();
+    })
+  }, [socket]);
+  useEffect(() => {
+    const socket = io('http://localhost:2004')
+    socket.on('lay_thong_tin_san_pham_xoa', (data: any) => {
+      console.log(data);
+      window.alert(data)
+    })
+  }, []);
   const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
   // useEffect(() => {
   //   sessionStorage.setItem("totalPriceCart", JSON.stringify(data?.total_price));
@@ -324,7 +338,7 @@ const ListCart = () => {
       routing("/login");
     }
   }
-  if (isPending) {
+  if (isLoading) {
     return <div className="flex justify-center items-center h-screen">
       <Spin indicator={<LoadingOutlined spin />} size="large" />
     </div>;
@@ -336,7 +350,7 @@ const ListCart = () => {
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto relative">
       {
-        isPending || loading_btn_checkked &&
+        isLoading || loading_btn_checkked &&
         <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>

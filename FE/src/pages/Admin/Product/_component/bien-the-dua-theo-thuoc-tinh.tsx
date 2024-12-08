@@ -7,11 +7,11 @@ import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 
 const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
     const [user] = useLocalStorage('user', '');
-    const { data, isPending } = Lay_thuoc_tinh({
+    const { data, isLoading } = Lay_thuoc_tinh({
         id_account: user?.user?._id,
         category_attribute: props?.category_attribute
     });
-    if (isPending) return <span>Loading...</span>
+    if (isLoading) return <span>Loading...</span>
     const initialAttributes = data?.map((item: any) => ({
         color: item?.ten_thuoc_tinh || '',
         symbol: item?.symbol_thuoc_tinh,
@@ -23,7 +23,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
             }
         ],
     })) || [];
-    if (isPending) {
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <Spin indicator={<LoadingOutlined spin />} size="large" />

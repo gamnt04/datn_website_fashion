@@ -76,7 +76,7 @@ export default function List_order() {
     limit: 20,
     status: +(status_order || 0),
   };
-  const { data, isPending } = Query_Order(dataClient);
+  const { data, isLoading } = Query_Order(dataClient);
   let name_1: any;
   data?.data?.docs?.map((name: any) => {
     return (name_1 = name?.customerInfo?.userName);
@@ -417,7 +417,7 @@ export default function List_order() {
 
     fetchData();
   }, [location.search]);
-  if (isPending || paymentPending) {
+  if (isLoading || paymentPending) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />

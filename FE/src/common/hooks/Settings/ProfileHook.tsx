@@ -33,7 +33,7 @@ const ProfileHook = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const { data, isLoading, isPending, isError, error } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["AUTH_KEY", userId],
     queryFn: async () => {
       const { data } = await instance.get(`/auth/${userId}`);
@@ -123,7 +123,6 @@ const ProfileHook = () => {
     isChanged,
     isSaving,
     isLoading,
-    isPending,
     isError,
     error,
     handleValuesChange,
