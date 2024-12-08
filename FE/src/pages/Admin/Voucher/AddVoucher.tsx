@@ -28,9 +28,9 @@ const AddVoucher = () => {
   const [form] = Form.useForm();
   const { data: categories } = useCategoryQuery();
   const nav = useNavigate();
-  const { auth, products, isLoading } = useDataVoucher();
+  const { auth, products, isLoading: loading_voucher } = useDataVoucher();
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: async (formData: IVoucher) => {
       try {
         return await instance.post(`/voucher`, formData);
@@ -96,12 +96,12 @@ const AddVoucher = () => {
     auth,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading || loading_voucher) return <Loader />;
 
   return (
     <div className="mt-20">
       <div className="pb-12 border-b border-gray-900/10">
-        {isPending && (
+        {isLoading && (
           <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
             <div className="animate-spin">
               <Loader />

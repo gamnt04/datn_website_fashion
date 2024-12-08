@@ -17,7 +17,7 @@ const useSignUp = () => {
   // const [inputValue, setInputValue] = useState("");
 
   const navigate = useNavigate();
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isLoading, isError, error } = useMutation({
     mutationFn: async (formData: SignUpFormData) => {
       try {
         const response = await instance.post(`auth/signup`, formData);
@@ -48,7 +48,7 @@ const useSignUp = () => {
   });
 
   return {
-    isPending,
+    isLoading,
     isError,
     error,
     mutate,

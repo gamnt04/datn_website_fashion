@@ -13,7 +13,7 @@ type FieldType = {
 const Register: React.FC = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const { mutate, isPending, status_api } = useSignUp();
+  const { mutate, isLoading, status_api } = useSignUp();
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     try {
@@ -23,7 +23,7 @@ const Register: React.FC = () => {
     }
   };
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -151,7 +151,7 @@ const Register: React.FC = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      loading={isPending}
+                      loading={isLoading}
                       className="w-[100px] h-[50px]"
                     >
                       Đăng ký

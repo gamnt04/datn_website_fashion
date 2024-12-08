@@ -14,7 +14,7 @@ export default function Form_variant({ propsData }: any) {
     const [user] = useLocalStorage('user', '');
     const [state_variant, setState_variant] = useState<string>('');
     const [state_attribute, setStateCategory_attribute] = useState<string>('');
-    const { data: data_v2, isPending: loading } = Lay_the_loai_thuoc_tinh({
+    const { data: data_v2, isLoading: loading } = Lay_the_loai_thuoc_tinh({
         id_account: user?.user?._id
     })
     if (loading) {

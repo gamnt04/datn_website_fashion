@@ -36,7 +36,7 @@ const Form_Item = ({ mode }: any) => {
   // hooks
   const {
     onSubmit,
-    isPending,
+    isLoading,
     isError,
     handleImageChange,
     handleGalleryChange,
@@ -46,7 +46,7 @@ const Form_Item = ({ mode }: any) => {
 
   const { data } = useCategoryQuery();
   const [form] = Form.useForm();
-  const [statusOptions, setStatusOptions] = useState<any>('');
+  const [statusOptions, setStatusOptions] = useState<any>('no-variant');
 
   const onFinish: FormProps<any>["onFinish"] = (values) => {
     const attributeNames = [
@@ -114,7 +114,7 @@ const Form_Item = ({ mode }: any) => {
   const onFormValuesChange = () => {
     setCheckEditForm(false);
   };
-  if (data_one_item?.isPending) {
+  if (data_one_item?.isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -123,7 +123,7 @@ const Form_Item = ({ mode }: any) => {
   }
   return (
     <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-6">
-      {(isPending || loading) && (
+      {(isLoading || loading) && (
         <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
           <div className="animate-spin">
             <Loader />
@@ -209,7 +209,7 @@ const Form_Item = ({ mode }: any) => {
                   <div className="*:rounded">
                     <SelectShadcn onValueChange={(value: any) => setStatusOptions(value)}>
                       <SelectTrigger className="!h-auto pt-2 mt-1">
-                        <SelectValue placeholder="Lựa chọn" />
+                        <SelectValue placeholder="Sản phẩm đơn giản" />
                       </SelectTrigger>
                       <SelectContent className="bg-white z-[10]">
                         <SelectGroup>
@@ -362,7 +362,7 @@ const Form_Item = ({ mode }: any) => {
         <Form.Item>
           {check_edit_form ? (
             <Button type="primary" htmlType="button" className="bg-gray-300">
-              {isPending || loading
+              {isLoading || loading
                 ? "Loading"
                 : mode
                   ? "Cập nhật sản phẩm"
@@ -370,7 +370,7 @@ const Form_Item = ({ mode }: any) => {
             </Button>
           ) : (
             <Button type="primary" htmlType="submit">
-              {isPending || loading
+              {isLoading || loading
                 ? "Loading"
                 : mode
                   ? "Cập nhật sản phẩm"

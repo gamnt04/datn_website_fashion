@@ -4876,10 +4876,10 @@ var NavLink = React2.forwardRef(function NavLinkWithRef(_ref8, ref) {
   }
   const endSlashPosition = toPathname !== "/" && toPathname.endsWith("/") ? toPathname.length - 1 : toPathname.length;
   let isActive = locationPathname === toPathname || !end && locationPathname.startsWith(toPathname) && locationPathname.charAt(endSlashPosition) === "/";
-  let isPending = nextLocationPathname != null && (nextLocationPathname === toPathname || !end && nextLocationPathname.startsWith(toPathname) && nextLocationPathname.charAt(toPathname.length) === "/");
+  let isLoading = nextLocationPathname != null && (nextLocationPathname === toPathname || !end && nextLocationPathname.startsWith(toPathname) && nextLocationPathname.charAt(toPathname.length) === "/");
   let renderProps = {
     isActive,
-    isPending,
+    isLoading,
     isTransitioning
   };
   let ariaCurrent = isActive ? ariaCurrentProp : void 0;
@@ -4887,7 +4887,7 @@ var NavLink = React2.forwardRef(function NavLinkWithRef(_ref8, ref) {
   if (typeof classNameProp === "function") {
     className = classNameProp(renderProps);
   } else {
-    className = [classNameProp, isActive ? "active" : null, isPending ? "pending" : null, isTransitioning ? "transitioning" : null].filter(Boolean).join(" ");
+    className = [classNameProp, isActive ? "active" : null, isLoading ? "pending" : null, isTransitioning ? "transitioning" : null].filter(Boolean).join(" ");
   }
   let style = typeof styleProp === "function" ? styleProp(renderProps) : styleProp;
   return React2.createElement(Link, _extends3({}, rest, {

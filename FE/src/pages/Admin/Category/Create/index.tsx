@@ -11,7 +11,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 
 export default function CategoryCreate() {
   const [open, setOpen] = React.useState(false);
-  const [isPending, setIsPending] = React.useState(false); // Thêm state cho loading
+  const [isLoading, setisLoading] = React.useState(false); // Thêm state cho loading
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -19,7 +19,7 @@ export default function CategoryCreate() {
   const handleClose = () => {
     setOpen(false);
   };
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />

@@ -2054,14 +2054,14 @@ var QueryObserver = (_a9 = class extends Subscribable {
       status = "error";
     }
     const isFetching = newState.fetchStatus === "fetching";
-    const isPending = status === "pending";
+    const isLoading = status === "pending";
     const isError = status === "error";
-    const isLoading = isPending && isFetching;
+    const isLoading = isLoading && isFetching;
     const hasData = data !== void 0;
     const result = {
       status,
       fetchStatus: newState.fetchStatus,
-      isPending,
+      isLoading,
       isSuccess: status === "success",
       isError,
       isInitialLoading: isLoading,
@@ -2076,7 +2076,7 @@ var QueryObserver = (_a9 = class extends Subscribable {
       isFetched: newState.dataUpdateCount > 0 || newState.errorUpdateCount > 0,
       isFetchedAfterMount: newState.dataUpdateCount > queryInitialState.dataUpdateCount || newState.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
-      isRefetching: isFetching && !isPending,
+      isRefetching: isFetching && !isLoading,
       isLoadingError: isError && !hasData,
       isPaused: newState.fetchStatus === "paused",
       isPlaceholderData,
@@ -2548,7 +2548,7 @@ var MutationObserver = (_a11 = class extends Subscribable {
   const state = ((_a12 = __privateGet(this, _currentMutation)) == null ? void 0 : _a12.state) ?? getDefaultState2();
   __privateSet(this, _currentResult2, {
     ...state,
-    isPending: state.status === "pending",
+    isLoading: state.status === "pending",
     isSuccess: state.status === "success",
     isError: state.status === "error",
     isIdle: state.status === "idle",
@@ -2788,7 +2788,7 @@ var ensureStaleTime = (defaultedOptions) => {
   }
 };
 var willFetch = (result, isRestoring) => result.isLoading && result.isFetching && !isRestoring;
-var shouldSuspend = (defaultedOptions, result) => (defaultedOptions == null ? void 0 : defaultedOptions.suspense) && result.isPending;
+var shouldSuspend = (defaultedOptions, result) => (defaultedOptions == null ? void 0 : defaultedOptions.suspense) && result.isLoading;
 var fetchOptimistic = (defaultedOptions, observer, errorResetBoundary) => observer.fetchOptimistic(defaultedOptions).catch(() => {
   errorResetBoundary.clearReset();
 });
