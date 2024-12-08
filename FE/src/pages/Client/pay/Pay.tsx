@@ -27,6 +27,9 @@ import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { IProduct } from "../../../common/interfaces/Product";
 import { ICategory } from "../../../common/interfaces/Category";
+import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { Query_Products } from "../../../common/hooks/Products/Products";
+type SelectedItem = ICategory | IProduct;
 
 const Pay = () => {
   const routing = useNavigate();
@@ -55,6 +58,17 @@ const Pay = () => {
     isPending: loadingOrder,
   } = Pay_Mutation();
   // const { mutate } = Mutation_Notification("Add");
+  const [selectedItems, setSelectedItems] = useState([]);
+  useEffect(() => {
+    const selectedItemsData = sessionStorage.getItem("selectedItems");
+    if (selectedItemsData) {
+      const parsedItems = JSON.parse(selectedItemsData);
+      setSelectedItems(parsedItems);
+      console.log("Dữ liệu trong sessionStorage:", parsedItems);
+    } else {
+      console.log("Không có dữ liệu trong sessionStorage.");
+    }
+  }, []);
 
   const { data: activeVouchers, isLoading, error } = useVouchersQuery();
   useEffect(() => {
@@ -84,9 +98,7 @@ const Pay = () => {
   useEffect(() => {
     (async () => {
       const tong_km = Tinh_tong_km(selectedAddress);
-      setPhi_van_chuyen(() =>
-        tong_km ? 30000 : 0
-      );
+      setPhi_van_chuyen(() => (tong_km ? 30000 : 0));
     })();
   }, [selectedAddress]);
 
@@ -157,6 +169,7 @@ const Pay = () => {
 
   const handleApplyVoucher = async (e: React.MouseEvent, voucher: any) => {
     e.preventDefault();
+
     try {
       const selectedProductIds = item_order_checkked?.map(
         (item: any) => item.productId._id
@@ -245,55 +258,22 @@ const Pay = () => {
     console.log("Không có vouchers hợp lệ.");
     return null;
   }
-  const sortedVouchers = (
-    activeVouchers: IVoucher[],
-    selectedProducts: IProduct[],
-    selectedCategories: ICategory[],
-    userId: string,
-    currentDate: Date
-  ) => {
-    return activeVouchers.sort((a: any, b: any) => {
-      const aDisabled =
-        // Kiểm tra nếu voucher không áp dụng cho sản phẩm hoặc danh mục đang thanh toán
-        !(
-          a.appliedProducts.some((productId: string) =>
-            selectedProducts.some(
-              (product: IProduct) => product._id === productId
-            )
-          ) ||
-          a.appliedCategories.some((categoryId: string) =>
-            selectedCategories.some(
-              (category: ICategory) => category._id === categoryId
-            )
-          )
-        ) ||
-        // Kiểm tra các điều kiện khác của voucher
-        (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
-        a.usedCount >= a.quantity_voucher ||
-        new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
 
-      const bDisabled =
-        !(
-          b.appliedProducts.some((productId: string) =>
-            selectedProducts.some(
-              (product: IProduct) => product._id === productId
-            )
-          ) ||
-          b.appliedCategories.some((categoryId: string) =>
-            selectedCategories.some(
-              (category: ICategory) => category._id === categoryId
-            )
-          )
-        ) ||
-        (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
-        b.usedCount >= b.quantity_voucher ||
-        new Date(b.expirationDate) < currentDate;
+  const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
+    const aDisabled =
+      (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
+      a.usedCount >= a.quantity_voucher ||
+      new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
 
-      if (aDisabled && !bDisabled) return 1;
-      if (!aDisabled && bDisabled) return -1;
-      return 0;
-    });
-  };
+    const bDisabled =
+      (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
+      b.usedCount >= b.quantity_voucher ||
+      new Date(b.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+
+    if (aDisabled && !bDisabled) return 1;
+    if (!aDisabled && bDisabled) return -1;
+    return 0;
+  });
 
   const onAddOrder = async (data_form: any) => {
     console.log(data_form);
@@ -354,7 +334,6 @@ const Pay = () => {
         return;
       }
     }
-
 
     // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
@@ -435,6 +414,7 @@ const Pay = () => {
     }
   };
   // console.log("orderSuccessfully", isOrderSuccessfully);
+  console.log("dữ liệu của voucher", sortedVouchers); // Kiểm tra giá trị của sortedVouchers
 
   const columns = [
     {
@@ -713,85 +693,60 @@ const Pay = () => {
                   width={1350}
                 >
                   <p className="mb-5 text-xl">Tất cả Voucher</p>
-                  {activeVouchers.length > 0 ? (
+                  {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
                       style={{ maxHeight: "600px" }}
                     >
-                      {sortedVouchers(
-                        activeVouchers,
-                        selectedProducts,
-                        selectedCategories,
-                        userId,
-                        currentDate
-                      )
-                        .filter((voucher: any) => {
-                          const isVoucherAvailable =
-                            voucher.usedCount < voucher.quantity_voucher;
-                          const isExpired =
-                            new Date(voucher.expirationDate) < currentDate;
+                      {sortedVouchers.map((voucher: IVoucher) => {
+                        const expirationDate = voucher.expirationDate
+                          ? new Date(voucher.expirationDate)
+                          : null;
 
-                          return isVoucherAvailable && !isExpired;
-                        })
-                        .map((voucher: any) => {
-                          const isAllowedUser =
-                            voucher.allowedUsers.length === 0 ||
-                            voucher.allowedUsers.includes(userId);
-
-                          const isDisabled = !isAllowedUser;
-
-                          return (
-                            <div
-                              key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              } ${
-                                isDisabled
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                              }`}
-                            >
-                              <div>
-                                <p className="text-lg font-bold">
-                                  {voucher.name_voucher}
-                                </p>
-                                <p>
-                                  Hạn dùng:{" "}
-                                  {new Date(
-                                    voucher.expirationDate
-                                  ).toLocaleDateString()}
-                                </p>
-                                <p>
-                                  Số lượng còn lại:{" "}
-                                  {voucher.quantity_voucher - voucher.usedCount}
-                                </p>
-                                <Button
-                                  onClick={() => showVoucherDetails(voucher)}
-                                >
-                                  Xem chi tiết
-                                </Button>
-                              </div>
-                              <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
-                                onClick={(e) => handleApplyVoucher(e, voucher)}
-                                disabled={isDisabled}
+                        return (
+                          <div
+                            key={voucher._id}
+                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                              selectedVoucher?._id === voucher._id
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            <div>
+                              <p className="text-lg font-bold">
+                                {voucher.name_voucher}
+                              </p>
+                              <p>
+                                Hạn dùng:{" "}
+                                {expirationDate
+                                  ? expirationDate.toLocaleDateString()
+                                  : "Không có hạn dùng"}
+                              </p>
+                              <p>
+                                Số lượng còn lại:{" "}
+                                {voucher.quantity_voucher - voucher.usedCount}
+                              </p>
+                              <Button
+                                onClick={() => showVoucherDetails(voucher)}
                               >
-                                {isDisabled ? "Không hợp lệ" : "Sử dụng"}
-                              </button>
+                                Xem chi tiết
+                              </Button>
                             </div>
-                          );
-                        })}
+                            <button
+                              className={`ml-4 px-6 py-3 font-bold rounded ${"bg-blue-500 text-white"}`}
+                              onClick={(e) => handleApplyVoucher(e, voucher)}
+                            >
+                              {"Sử dụng"}
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <p>Không có voucher nào khả dụng</p>
                   )}
                 </Modal>
-
-                {/* Modal chi tiết voucher */}
+                ;{/* Modal chi tiết voucher */}
                 <Modal
                   visible={isDetailModalVisible}
                   onCancel={handleCancelDetailsModal}
