@@ -9,7 +9,7 @@ export function Pay_Mutation() {
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
   const [messageApi, contextHolder] = message.useMessage();
-  const { mutate, isPending } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (order) => Add_Order(order),
     onSuccess: async (res) => {
       // messageApi.open({
@@ -30,5 +30,5 @@ export function Pay_Mutation() {
 
     mutate(formData);
   };
-  return { mutate, onSubmit, userId, contextHolder, messageApi, isPending };
+  return { mutate, onSubmit, userId, contextHolder, messageApi, isLoading };
 }

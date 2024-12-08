@@ -29,7 +29,7 @@
 //   const [selectedAddress, setSelectedAddress] = useState<any>();
 
 //   const { register, handleSubmit, setValue } = useForm();
-//   const { onSubmit, contextHolder, messageApi, isPending } = Pay_Mutation();
+//   const { onSubmit, contextHolder, messageApi, isLoading } = Pay_Mutation();
 //   const data_sessionStorage = sessionStorage.getItem("item_order");
 //   let data: any;
 //   if (data_sessionStorage) {
@@ -210,7 +210,7 @@
 //       )
 //     }
 //   ];
-//   if (isPending) {
+//   if (isLoading) {
 //     return (
 //       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
 //         <div className="animate-spin">

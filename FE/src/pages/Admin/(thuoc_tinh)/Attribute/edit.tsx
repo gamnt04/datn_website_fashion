@@ -14,12 +14,12 @@ export default function Edit_thuoc_tinh({ props }: any) {
     const editId = urlParams.get('_id');
     const [symbol, setSymbol] = useState<string>('');
     const [user] = useLocalStorage("user", {});
-    const { data, isPending, isError } = Lay_thuoc_tinh({
+    const { data, isLoading, isError } = Lay_thuoc_tinh({
         id_account: user?.user?._id,
         id_thuoc_tinh: editId
     });
     const [imageFile, setImageFile] = useState<File[]>([]);
-    const { mutate, isPending: loading, isError: error } = Dispatch_thuoc_tinh('EDIT')
+    const { mutate, isLoading: loading, isError: error } = Dispatch_thuoc_tinh('EDIT')
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -62,7 +62,7 @@ export default function Edit_thuoc_tinh({ props }: any) {
         setSymbol(color.hex);
     }
 
-    if (isPending || loading) {
+    if (isLoading || loading) {
         return <div className="flex justify-center items-center h-screen">
             <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>;

@@ -12,10 +12,10 @@ type FieldType = {
 
 export default function The_loai_thuoc_tinh() {
   const [user] = useLocalStorage("user", {});
-  const { mutate, isPending, isError, status_api } = Dispatch_the_loai_thuoc_tinh('CREATED');
+  const { mutate, isLoading, isError, status_api } = Dispatch_the_loai_thuoc_tinh('CREATED');
   const [state_the_loai_thuoc_tinh, setState_the_loai_thuoc_tinh] = useState<string>('');
   const ref_the_loai_thuoc_tinh = useRef<HTMLSpanElement>(null);
-  const { data, isPending: loading, isError: error } = Lay_the_loai_thuoc_tinh({
+  const { data, isLoading: loading, isError: error } = Lay_the_loai_thuoc_tinh({
     id_account: user?.user?._id
   });
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
@@ -41,7 +41,7 @@ export default function The_loai_thuoc_tinh() {
   const handleChange = (value: string) => {
     setState_the_loai_thuoc_tinh(value)
   };
-  if (isPending) {
+  if (isLoading) {
     return <div className="flex justify-center items-center h-screen">
       <Spin indicator={<LoadingOutlined spin />} size="large" />
     </div>;
@@ -49,7 +49,7 @@ export default function The_loai_thuoc_tinh() {
   return (
     <div className="px-10">
       {
-        isPending && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+        isLoading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
       }
