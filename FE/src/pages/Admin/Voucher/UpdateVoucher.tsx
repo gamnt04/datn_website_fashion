@@ -63,14 +63,6 @@ const UpdateVoucher = () => {
     queryKey: ["vouchers", id],
     queryFn: () => instance.get(`/voucher/${id}`),
   });
-  const handleUserTypeChange = (value: string[]) => {
-    // Nếu không chọn bất kỳ checkbox nào, đặt lại một giá trị mặc định
-    if (value.length === 0) {
-      setUserType(["user"]); // Giữ lại ít nhất một giá trị mặc định
-    } else {
-      setUserType(value);
-    }
-  };
   const {
     selectedUsers,
     applyType,
@@ -110,21 +102,10 @@ const UpdateVoucher = () => {
   });
 
   const onFinish: FormProps<IVoucher>["onFinish"] = (values) => {
-    if (!limitType.includes("quantity")) {
-      values.quantity_voucher = 0;
-    }
-    if (!limitType.includes("time")) {
-      values.startDate = null;
-      values.expirationDate = null;
-    }
-    // Kiểm tra điều kiện cho applyType
     if (applyType !== "product") {
       values.appliedProducts = []; // Đặt giá trị trống nếu không áp dụng cho sản phẩm
     }
 
-    if (applyType !== "total") {
-      values.minimumSpend = 0; // Đặt giá trị null nếu không áp dụng cho tổng chi tiêu
-    }
     const formData = {
       ...values,
       allowedUsers: selectedUsers,
@@ -437,36 +418,6 @@ const UpdateVoucher = () => {
                   </Form.Item>
                 )}
 
-                {/* Hiển thị ô Tổng giá trị đơn hàng nếu chọn "total" */}
-                {applyType === "total" && (
-                  <Form.Item<IVoucher>
-                    label="Số tiền đơn hàng tối thiểu"
-                    name="minimumSpend"
-                    rules={[
-                      {
-                        type: "number",
-                        min: 0,
-                        message: "Số tiền tối thiểu phải lớn hơn hoặc bằng 0!",
-                      },
-                    ]}
-                  >
-                    <InputNumber
-                      addonAfter={
-                        <div
-                          className="flex items-center justify-center w-12 h-full"
-                          style={{
-                            border: "none",
-                            backgroundColor: "transparent",
-                          }}
-                        >
-                          VND
-                        </div>
-                      }
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                )}
-
                 {applyType === "category" && (
                   <Form.Item
                     label="Danh mục sản phẩm áp dụng"
@@ -535,6 +486,64 @@ const UpdateVoucher = () => {
                     ></Select>
                   </Form.Item>
                 )}
+
+                <Form.Item
+                  label="Số tiền đơn hàng tối thiểu"
+                  name="minimumSpend"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số tiền tối thiểu!",
+                    },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Số tiền tối thiểu phải lớn hơn hoặc bằng 0!",
+                    },
+                    {
+                      validator: (_, value) => {
+                        const discountValue =
+                          form.getFieldValue("discountValue");
+                        const maxDiscount = form.getFieldValue("maxDiscount");
+
+                        // Kiểm tra nếu minimumSpend <= discountValue
+                        if (value && discountValue && value <= discountValue) {
+                          return Promise.reject(
+                            new Error(
+                              "Số tiền tối thiểu phải lớn hơn giá trị giảm giá!"
+                            )
+                          );
+                        }
+
+                        // Kiểm tra nếu minimumSpend <= maxDiscount
+                        if (value && maxDiscount && value <= maxDiscount) {
+                          return Promise.reject(
+                            new Error(
+                              "Số tiền tối thiểu phải lớn hơn giá trị giảm giá tối đa!"
+                            )
+                          );
+                        }
+
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    addonAfter={
+                      <div
+                        className="flex items-center justify-center w-12 h-full"
+                        style={{
+                          border: "none",
+                          backgroundColor: "transparent",
+                        }}
+                      >
+                        VND
+                      </div>
+                    }
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
               </div>
 
               {/* Cột 2 */}
@@ -615,60 +624,69 @@ const UpdateVoucher = () => {
                   <InputNumber className="w-full " />
                 </Form.Item>
 
-                <Form.Item label="Chọn loại người dùng">
-                  <Checkbox.Group
-                    options={[
-                      { label: "Người dùng", value: "user" },
-                      { label: "Shipper", value: "courier" },
-                    ]}
-                    value={userType} // Đảm bảo rằng giá trị được quản lý
-                    onChange={handleUserTypeChange}
-                  />
-                </Form.Item>
-
-                <Form.Item<IVoucher> label="Người sử dụng mã giảm giá">
-                  <div className="flex items-center">
-                    <Select
-                      mode="multiple"
-                      style={{
-                        width: "90%",
-                        minHeight: "40px",
-                      }}
-                      placeholder="Chọn người dùng/shipper"
-                      className="mt-2"
-                      options={[
-                        {
-                          label: "Chọn tất cả",
-                          value: "all",
-                        },
-                        ...filteredData?.map((user: any) => ({
-                          value: user._id,
-                          label: user.userName || user.fullName,
-                        })),
-                      ]}
-                      onChange={(value) => {
-                        // Kiểm tra xem người dùng có chọn "Chọn tất cả"
-                        if (value.includes("all")) {
-                          // Chọn tất cả các người dùng
-                          const allUsers =
-                            filteredData?.map((user: any) => user._id) || [];
-                          handleSelectChange(allUsers); // Gọi hàm của bạn để cập nhật selectedUsers
-                        } else {
-                          handleSelectChange(value); // Chọn các mục đã chọn
-                        }
-                      }}
-                      value={selectedUsers}
-                      dropdownStyle={{ maxHeight: 250, overflowY: "auto" }}
-                      maxTagCount={4}
-                      maxTagPlaceholder={(omittedValues) =>
-                        `+${omittedValues.length} người khác`
-                      }
-                      allowClear
-                    />
-                    <span className="ml-2 text-gray-600">
-                      Đã chọn: {selectedUsers.length}
-                    </span>
-                  </div>
+                <Form.Item
+                  label="Người sử dụng mã giảm giá"
+                  name="allowedUsers"
+                >
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn người người sử dụng mã giảm giá"
+                    value={[]}
+                    tagRender={(): any => null}
+                    onChange={handleSelectAuth}
+                    style={{ width: "100%" }}
+                    suffixIcon={
+                      <p className="text-black">
+                        Đã chọn: {selectedAuths.length}
+                      </p>
+                    }
+                    showSearch={false}
+                    dropdownRender={(menu: any) => (
+                      <div className="max-h-[500px] overflow-y-auto">
+                        {/* Thêm ô tìm kiếm */}
+                        <div style={{ padding: "8px 12px" }}>
+                          <Input.Search
+                            placeholder="Tìm kiếm người sử dụng..."
+                            onChange={(e) => setSearchText(e.target.value)}
+                            style={{ marginBottom: 8 }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            padding: "8px 12px",
+                            borderBottom: "1px solid #f0f0f0",
+                          }}
+                        >
+                          <Checkbox
+                            checked={selectAll}
+                            onChange={(e) =>
+                              handleSelectAllAuth(e.target.checked)
+                            }
+                          >
+                            Chọn tất cả
+                          </Checkbox>
+                        </div>
+                        <div className="py-4 pl-6">
+                          {filteredAuths?.map((user: Auth, index: any) => (
+                            <div key={user._id}>
+                              <Checkbox
+                                value={user._id}
+                                checked={selectedAuths.includes(user._id)}
+                                onChange={() =>
+                                  handleCheckboxChangeAuth(user._id)
+                                }
+                              >
+                                {user.userName}
+                              </Checkbox>
+                              {index < filteredAuths.length - 1 && (
+                                <div className="h-px my-2 bg-gray-300"></div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  ></Select>
                 </Form.Item>
               </div>
             </div>

@@ -311,9 +311,6 @@ const ListVoucher = () => {
                       .map((user: any, index: number) => (
                         <span key={index}>
                           {user.userName} {user.fullName}
-                          {user.role === "courier"
-                            ? "( shipper )"
-                            : "( Người dùng )"}
                           {index < selectedVoucher.allowedUsers.length - 1
                             ? ", "
                             : ""}
