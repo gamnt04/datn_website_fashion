@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, FormProps, Select, Spin, Upload } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, FormProps, Select, Upload } from "antd";
 import { Loader } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AiFillBackward } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useCategoryQuery } from "../../../../common/hooks/Category/useCategoryQuery";
@@ -14,19 +14,6 @@ import { SelectShadcn, SelectTrigger, SelectValue, SelectContent, SelectGroup, S
 import Form_variant from "./form-variant";
 import Bien_the_trang_update from "./bien-the-trang-cap-nhat";
 
-// type FieldType = {
-//   name_product: string;
-//   price_product: number;
-//   description_product: string;
-//   category_id: string[];
-//   image_product: string;
-//   gallery_product: string[];
-//   stock: number;
-//   attributes: IAttribute[];
-//   featured_product: boolean;
-//   tag_product: string[];
-// };
-
 const Form_Item = ({ mode }: any) => {
   const [check_edit_form, setCheckEditForm] = useState<boolean>(true);
   let image_item: any;
@@ -36,7 +23,7 @@ const Form_Item = ({ mode }: any) => {
   // hooks
   const {
     onSubmit,
-    isPending,
+    isLoading,
     isError,
     handleImageChange,
     handleGalleryChange,
@@ -46,8 +33,7 @@ const Form_Item = ({ mode }: any) => {
 
   const { data } = useCategoryQuery();
   const [form] = Form.useForm();
-  const [statusOptions, setStatusOptions] = useState<any>('');
-
+  const [statusOptions, setStatusOptions] = useState<any>('no-variant');
   const onFinish: FormProps<any>["onFinish"] = (values) => {
     const attributeNames = [
       "attributes_ux_image",
@@ -61,10 +47,12 @@ const Form_Item = ({ mode }: any) => {
       : values;
     if (attributeKey) {
       const { [attributeKey]: _, ...rest } = data_request;
+      console.log(_)
       data_request = rest;
     }
     onSubmit(data_request);
   };
+  console.count('re-render:')
 
   useEffect(() => {
     if (data_one_item?.data?.product?.category_id) {
@@ -100,39 +88,42 @@ const Form_Item = ({ mode }: any) => {
       }
     );
   }
-
-  const initialAttributes =
-    data_one_item?.data?.product?.attributes?.values || [];
-  const initialValues = {
-    ...data_one_item?.data?.product,
-    attributes: initialAttributes.map((attr: IAttribute) => ({
-      ...attr,
-      size: attr.size || [{}]
-    }))
-  };
-
+  const initialValues = useMemo(() => {
+    const initialAttributes =
+      data_one_item?.data?.product?.attributes?.values || [];
+    if (data_one_item?.data?.product) {
+      return {
+        ...data_one_item?.data?.product,
+        attributes: initialAttributes.map((attr: IAttribute) => ({
+          ...attr,
+          size: attr.size || [{}]
+        }))
+      };
+    }
+    return {}
+  }, [data_one_item])
   const onFormValuesChange = () => {
     setCheckEditForm(false);
   };
-  if (data_one_item?.isPending) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
+  if (data_one_item?.isLoading) {
+    return <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+      <div className="animate-spin">
+        <Loader />
       </div>
-    );
+    </div>
   }
   return (
-    <div className="relative text-[#1C2434] min-h-[90vh] mt-[100px] mx-6">
-      {(isPending || loading) && (
+    <div className="relative text-[#1C2434] min-h-[90vh] mt-10 mx-6">
+      {(isLoading || loading) && (
         <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
           <div className="animate-spin">
             <Loader />
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between mb-5 -mt-5">
+      <div className="flex items-center justify-between mb-5">
         <h1 className="text-[26px] font-semibold">
-          {mode ? "Cập nhật sản phẩm" : "Thêm Mới Sản Phẩm"}
+          {mode ? "Cập Nhật Sản Phẩm" : "Thêm Mới Sản Phẩm"}
         </h1>
         <Link to="/admin/products">
           <Button type="primary">
@@ -145,7 +136,7 @@ const Form_Item = ({ mode }: any) => {
         name="basic"
         layout="vertical"
         onFinish={onFinish}
-        initialValues={mode && initialValues}
+        initialValues={ initialValues}
         onValuesChange={onFormValuesChange}
       >
         <div className="grid grid-cols-[60%,40%] gap-8">
@@ -168,7 +159,7 @@ const Form_Item = ({ mode }: any) => {
             </div>
             <div className="">
               {" "}
-              <label htmlFor="" className="text-[#1C2434] font-medium text-sm">
+              <label className="text-[#1C2434] font-medium text-sm">
                 Danh mục
               </label>
               <Form.Item
@@ -209,7 +200,7 @@ const Form_Item = ({ mode }: any) => {
                   <div className="*:rounded">
                     <SelectShadcn onValueChange={(value: any) => setStatusOptions(value)}>
                       <SelectTrigger className="!h-auto pt-2 mt-1">
-                        <SelectValue placeholder="Lựa chọn" />
+                        <SelectValue placeholder="Sản phẩm đơn giản" />
                       </SelectTrigger>
                       <SelectContent className="bg-white z-[10]">
                         <SelectGroup>
@@ -300,9 +291,9 @@ const Form_Item = ({ mode }: any) => {
                 </label>
                 <Form.Item<any>
                   name="image_product"
-                  initialValue={{
-                    ...data_one_item?.data?.product?.image_product
-                  }}
+                  // initialValue={mode && {
+                  //   ...data_one_item?.data?.product?.image_product
+                  // }}
                   rules={[
                     {
                       required: true,
@@ -354,15 +345,17 @@ const Form_Item = ({ mode }: any) => {
             </div>
           </div>
         </div>
-        {isError && (
-          <span className="text-red-500">
-            Lỗi! Vui lòng kiểm tra và thử lại!
-          </span>
-        )}
+        {
+          isError && (
+            <span className="text-red-500">
+              Lỗi! Vui lòng kiểm tra và thử lại!
+            </span>
+          )
+        }
         <Form.Item>
           {check_edit_form ? (
-            <Button type="primary" htmlType="button" className="bg-gray-300">
-              {isPending || loading
+            <Button disabled={true} htmlType="button">
+              {isLoading || loading
                 ? "Loading"
                 : mode
                   ? "Cập nhật sản phẩm"
@@ -370,7 +363,7 @@ const Form_Item = ({ mode }: any) => {
             </Button>
           ) : (
             <Button type="primary" htmlType="submit">
-              {isPending || loading
+              {isLoading || loading
                 ? "Loading"
                 : mode
                   ? "Cập nhật sản phẩm"
@@ -378,8 +371,8 @@ const Form_Item = ({ mode }: any) => {
             </Button>
           )}
         </Form.Item>
-      </Form>
-    </div>
+      </Form >
+    </div >
   );
 };
 export default Form_Item;

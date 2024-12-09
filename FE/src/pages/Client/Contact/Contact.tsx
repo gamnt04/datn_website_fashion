@@ -188,7 +188,7 @@ export default ContactForm;
 //   const [user] = useLocalStorage("user", {});
 //   const userId = user?.user?._id;
 //   const messagesEndRef = useRef(null);
-//   const { mutate: SendMessage, isPending } = SendMessageMutation();
+//   const { mutate: SendMessage, isLoading } = SendMessageMutation();
 
 //   const [message, setMessage] = useState<string>("");
 
@@ -221,7 +221,7 @@ export default ContactForm;
 //     if (messagesEndRef.current) {
 //       messagesEndRef.current.scrollIntoView();
 //     }
-//   }, [isPending]);
+//   }, [isLoading]);
 
 //   return (
 //     <div className="max-w-[1440px] w-[95vw] mx-auto">
@@ -287,14 +287,14 @@ export default ContactForm;
 //                 />
 //                 <button
 //                   className={`h-[45px] mt-2 w-[100%] bg-black text-white rounded-md text-sm flex items-center justify-center ${
-//                     isPending
+//                     isLoading
 //                       ? "opacity-50 cursor-not-allowed"
 //                       : "hover:bg-[#f68e56]"
 //                   }`}
 //                   type="submit"
-//                   disabled={isPending}
+//                   disabled={isLoading}
 //                 >
-//                   {isPending ? <FaSpinner className="animate-spin" /> : "Gửi"}
+//                   {isLoading ? <FaSpinner className="animate-spin" /> : "Gửi"}
 //                 </button>
 //               </div>
 //             </form>

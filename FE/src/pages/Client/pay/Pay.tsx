@@ -24,61 +24,46 @@ import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
-import { IVoucher } from "../../../common/interfaces/Voucher";
-import { IProduct } from "../../../common/interfaces/Product";
-import { ICategory } from "../../../common/interfaces/Category";
-import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
-import { Query_Products } from "../../../common/hooks/Products/Products";
-type SelectedItem = ICategory | IProduct;
 
 const Pay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
+
+  const itemOrder = JSON.parse(sessionStorage.getItem("item_order") || "[]");
   const userId = user?.user?._id;
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
   const [phi_van_chuyen, setPhi_van_chuyen] = useState<number>(0);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [voucherDetails, setVoucherDetails] = useState<any>(null);
-  const [selectedProducts, setselectedProducts] = useState<IProduct[]>([]);
-  const [selectedCategories, setselectedCategories] = useState<ICategory[]>([]);
   const [isOrderSuccessfully, setIsOrderSuccessfully] =
     useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
   const [selectedVoucherName, setSelectedVoucherName] = useState<string>(""); // Tên voucher đã chọn
-  const { data, isPending } = List_Cart(userId);
+  const { data, isLoading: Loading_cart } = List_Cart(userId);
   const [selectedAddress, setSelectedAddress] = useState<any>();
   const { register, handleSubmit, setValue } = useForm();
   const {
     onSubmit,
     contextHolder,
     messageApi,
-    isPending: loadingOrder,
+    isLoading: loadingOrder,
   } = Pay_Mutation();
-  // const { mutate } = Mutation_Notification("Add");
-  const [selectedItems, setSelectedItems] = useState([]);
-  useEffect(() => {
-    const selectedItemsData = sessionStorage.getItem("selectedItems");
-    if (selectedItemsData) {
-      const parsedItems = JSON.parse(selectedItemsData);
-      setSelectedItems(parsedItems);
-      console.log("Dữ liệu trong sessionStorage:", parsedItems);
-    } else {
-      console.log("Không có dữ liệu trong sessionStorage.");
-    }
-  }, []);
 
   const { data: activeVouchers, isLoading, error } = useVouchersQuery();
+  const item_order_checkked = data?.products?.filter(
+    (value: any) => value?.status_checked && value?.productId !== null
+  );
   useEffect(() => {
     if (!userId) {
       routing("/login");
     }
     if (item_order_checkked?.length < 1) {
-      routing("/login");
+      routing("/");
     }
-  }, [userId, routing]);
+  }, [userId, routing, item_order_checkked]);
 
   useEffect(() => {
     if (auth && auth?.address) {
@@ -169,7 +154,6 @@ const Pay = () => {
 
   const handleApplyVoucher = async (e: React.MouseEvent, voucher: any) => {
     e.preventDefault();
-
     try {
       const selectedProductIds = item_order_checkked?.map(
         (item: any) => item.productId._id
@@ -179,7 +163,7 @@ const Pay = () => {
         code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
         userId: user?.user?._id,
-        selectedProducts: selectedProductIds, // Thêm ID sản phẩm vào payload
+        selectedProducts: selectedProductIds,
       });
 
       const { discount, finalAmount, message } = response.data;
@@ -190,11 +174,10 @@ const Pay = () => {
       setDiscountCode("");
       setSelectedVoucherCode(voucher.code_voucher);
       setSelectedVoucherName(voucher.name);
-      setDiscountCode(voucher.code_voucher); // Nếu bạn cũng muốn hiển thị mã giảm giá trong input
+      setDiscountCode(voucher.code_voucher);
       toast.success(message, { autoClose: 1200 });
       setIsVoucherModalVisible(false);
     } catch (error) {
-      // Narrow the type of error by checking if it is an instance of AxiosError
       if (
         axios.isAxiosError(error) &&
         error.response &&
@@ -228,10 +211,6 @@ const Pay = () => {
     setIsOpen(false);
   };
 
-  const item_order_checkked = data?.products?.filter(
-    (value: any) => value?.status_checked
-  );
-
   const totalPrice = item_order_checkked?.reduce(
     (a: any, curr: any) => a + curr?.total_price_item,
     0
@@ -243,9 +222,9 @@ const Pay = () => {
       ...order,
     };
   });
-  const currentDate = new Date(); // Lấy ngày hiện tại
+  const currentDate = new Date();
 
-  if (isLoading) {
+  if (isLoading || Loading_cart) {
     console.log("Đang tải dữ liệu...");
     return null;
   }
@@ -258,27 +237,59 @@ const Pay = () => {
     console.log("Không có vouchers hợp lệ.");
     return null;
   }
-
   const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
+    const currentDate = new Date(); // Đảm bảo currentDate được xác định trong hàm sort nếu chưa được khai báo
+
+    // Kiểm tra điều kiện voucher a
+    const isProductValidA = itemOrder.every(
+      (item: any) =>
+        a.appliedProducts.length === 0 ||
+        a.appliedProducts.includes(item.productId._id)
+    );
+    const isCategoryValidA = itemOrder.every(
+      (item: any) =>
+        a.appliedCategories.length === 0 ||
+        a.appliedCategories.includes(item.productId.category_id)
+    );
+    const isVoucherValidA = isProductValidA && isCategoryValidA;
+
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
       a.usedCount >= a.quantity_voucher ||
-      new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+      new Date(a.expirationDate) < currentDate || // Hết hạn
+      new Date(a.startDate) > currentDate || // Chưa có hiệu lực
+      !isVoucherValidA; // Không thỏa mãn điều kiện sản phẩm và danh mục
+
+    // Kiểm tra điều kiện voucher b
+    const isProductValidB = itemOrder.every(
+      (item: any) =>
+        b.appliedProducts.length === 0 ||
+        b.appliedProducts.includes(item.productId._id)
+    );
+    const isCategoryValidB = itemOrder.every(
+      (item: any) =>
+        b.appliedCategories.length === 0 ||
+        b.appliedCategories.includes(item.productId.category_id)
+    );
+    const isVoucherValidB = isProductValidB && isCategoryValidB;
 
     const bDisabled =
       (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
       b.usedCount >= b.quantity_voucher ||
-      new Date(b.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+      new Date(b.expirationDate) < currentDate || // Hết hạn
+      new Date(b.startDate) > currentDate || // Chưa có hiệu lực
+      !isVoucherValidB; // Không thỏa mãn điều kiện sản phẩm và danh mục
 
-    if (aDisabled && !bDisabled) return 1;
-    if (!aDisabled && bDisabled) return -1;
-    return 0;
+    // Sắp xếp voucher không disabled lên trên
+    if (aDisabled && !bDisabled) return 1; // Nếu a bị disabled mà b không thì a xuống dưới
+    if (!aDisabled && bDisabled) return -1; // Nếu b bị disabled mà a không thì b xuống dưới
+    return 0; // Nếu cả hai đều disabled hoặc không disabled thì không thay đổi thứ tự
   });
 
   const onAddOrder = async (data_form: any) => {
-    console.log(data_form);
-    const voucher = data_form.voucher;
     const discountCodeToUse = selectedVoucherCode || discountCode;
+
+    // Kiểm tra địa chỉ trước
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
         type: "warning",
@@ -287,55 +298,73 @@ const Pay = () => {
       return;
     }
 
-    if (discountCodeToUse && voucher) {
-      try {
-        const response = await instance.post(`/voucher/use`, {
-          code_voucher: discountCodeToUse,
-          discountValue: voucher.discountValue,
-          appliedProducts: voucher.appliedProducts,
-          appliedCategories: voucher.appliedCategories,
-          userId: user?.user?._id,
-          minimumSpend: voucher.minimumSpend,
-          maxDiscount: voucher.maxDiscount,
-          allowedUsers: voucher.allowedUsers,
-          startDate: voucher.startDate,
-          expirationDate: voucher.expirationDate,
+    // Kiểm tra voucher trước khi tiếp tục
+    if (discountCodeToUse) {
+      const voucher = sortedVouchers.find(
+        (voucher: any) => voucher._id === discountCodeToUse
+      );
+
+      if (!voucher) {
+        messageApi.open({
+          type: "warning",
+          content: "Voucher không hợp lệ!",
         });
+        return;
+      }
 
-        if (!response.data.isValid) {
-          toast.error("Voucher không hợp lệ hoặc đã hết hạn.", {
-            autoClose: 1200,
-          });
-          return;
-        }
+      if (!voucher.isActive) {
+        messageApi.open({
+          type: "warning",
+          content: "Voucher không còn hoạt động!",
+        });
+        return;
+      }
 
-        // Kiểm tra điều kiện khác của voucher (ví dụ: số lượng còn lại, hết hạn, áp dụng đúng sản phẩm, v.v.)
-        const { isValid, appliedProducts, appliedCategories, allowedUsers } =
-          response.data;
+      const isExpired = new Date(voucher.expirationDate) < new Date();
+      if (isExpired) {
+        messageApi.open({
+          type: "warning",
+          content: "Voucher đã hết hạn!",
+        });
+        return;
+      }
 
-        // Giả sử bạn đã có danh sách sản phẩm và danh mục người dùng chọn
-        const validVoucher =
-          isValid && appliedProducts.length > 0 && appliedCategories.length > 0;
+      // Kiểm tra số lượng voucher
+      const isVoucherAvailable = voucher.usedCount < voucher.quantity_voucher;
+      if (!isVoucherAvailable) {
+        messageApi.open({
+          type: "warning",
+          content: "Voucher không còn số lượng sử dụng!",
+        });
+        return;
+      }
 
-        if (!validVoucher) {
-          toast.error("Voucher không áp dụng cho đơn hàng này.", {
-            autoClose: 1200,
-          });
-          return;
-        }
+      // Kiểm tra các điều kiện khác của voucher (sản phẩm, danh mục, người dùng)
+      const isAllowedUser =
+        voucher.allowedUsers.length === 0 ||
+        voucher.allowedUsers.includes(userId);
+      const isProductValid = item_order_checkked.every(
+        (item: any) =>
+          voucher.appliedProducts.length === 0 ||
+          voucher.appliedProducts.includes(item.productId._id)
+      );
+      const isCategoryValid = item_order_checkked.every(
+        (item: any) =>
+          voucher.appliedCategories.length === 0 ||
+          voucher.appliedCategories.includes(item.productId.category_id)
+      );
 
-        // Voucher hợp lệ, tiến hành tiếp tục đặt hàng
-        // Logic xử lý tiếp theo...
-      } catch (error) {
-        console.error("Error checking voucher validity:", error);
-        toast.error("Không thể kiểm tra voucher. Vui lòng thử lại.", {
-          autoClose: 1200,
+      if (!isAllowedUser || !isProductValid || !isCategoryValid) {
+        messageApi.open({
+          type: "warning",
+          content:
+            "Voucher không hợp lệ với các sản phẩm hoặc danh mục trong đơn hàng!",
         });
         return;
       }
     }
 
-    // Validate stock trước khi đặt hàng
+    // Validate số lượng sản phẩm trong kho
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
         const check_color = i?.productId?.attributes?.values?.find(
@@ -356,12 +385,14 @@ const Pay = () => {
       } else if (i?.quantity > i?.productId?.stock) {
         toast.error(
           `Sản phẩm ${i?.productId?.name_product} hiện tại 
-          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`,
+        chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`,
           { autoClose: 1200 }
         );
         return;
       }
     }
+
+    // Tạo đối tượng đơn hàng
     const item_order = {
       userId: userId,
       items: item_order_checkked,
@@ -373,9 +404,9 @@ const Pay = () => {
       discountAmount: discountAmount, // Lưu số tiền giảm giá
       totalPrice: finalAmount > 0 ? finalAmount : totalPrice + phi_van_chuyen,
       email: user?.user?.email,
-      // email: user?.user?.email,
       delivery_fee: phi_van_chuyen,
     };
+
     try {
       if (data_form.payment === "VNPAY") {
         const orderId = JSON.parse(
@@ -400,11 +431,6 @@ const Pay = () => {
         setIsOrderSuccessfully(true);
         onSubmit(item_order);
       }
-      // mutate({
-      //   userId: userId,
-      //   receiver_id: "nguyenvana@gmail.com",
-      //   message: `Người dùng ${user?.user?.userName} đã đặt hàng`,
-      // });
     } catch (error) {
       console.error("Order Creation Error: ", error);
       messageApi.open({
@@ -413,8 +439,8 @@ const Pay = () => {
       });
     }
   };
+
   // console.log("orderSuccessfully", isOrderSuccessfully);
-  console.log("dữ liệu của voucher", sortedVouchers); // Kiểm tra giá trị của sortedVouchers
 
   const columns = [
     {
@@ -435,9 +461,9 @@ const Pay = () => {
       render: (_: any, order: any) => (
         <div className="gap-10 lg:flex lg:items-center">
           <div>
-            <h1 className="text-sm font-bold lg:text-base">
+            <span className="text-sm font-semibold lg:text-base">
               {order?.productId?.name_product}
-            </h1>
+            </span>
             {/* <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
               Đổi trả miễn phí 15 ngày
             </p> */}
@@ -495,32 +521,28 @@ const Pay = () => {
       ),
     },
   ];
-  if (loadingOrder || isPending) {
-    return (
-      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
-        <div className="flex justify-center items-center h-screen">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="max-w-[1440px] w-[95vw] mx-auto ">
         {contextHolder}
         <div className="mt-20">
           <div className="mb-6">
-            <div className="flex items-center gap-3 bg-[#F5F5F5] py-6">
-              <img
-                src="../../src/assets/Images/Logo/logo.png"
-                className="w-[50px] h-[50px]"
-                alt=""
-              />
-              <span className="h-[50px] border-black border-r-2"></span>
-              <h1 className="text-2xl font-bold">Thanh Toán</h1>
+            <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+              <Link to={`/`} className="text-gray-500 hover:text-black">
+                Trang chủ
+              </Link>
+              <span className="mx-1 text-gray-500">&#10148;</span>
+              Thanh toán
             </div>
           </div>
+          {loadingOrder ||
+            (isLoading && (
+              <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+                <div className="flex justify-center items-center h-screen">
+                  <Spin indicator={<LoadingOutlined spin />} size="large" />
+                </div>
+              </div>
+            ))}
           <form onSubmit={handleSubmit(onAddOrder)}>
             <div className="p-2 border rounded shadow-sm lg:py-6 lg:px-6">
               <div className="flex gap-3">
@@ -606,9 +628,9 @@ const Pay = () => {
                 pagination={false}
               />
               <div className="flex items-center justify-end gap-8 p-6">
-                <p className="text-xl font-bold text-black">
+                <p className="text-xl font-semibold text-black">
                   <p>
-                    Tổng số tiền:{" "}
+                    Tổng tiền :{" "}
                     {totalPrice?.toLocaleString("vi", {
                       style: "currency",
                       currency: "VND",
@@ -698,55 +720,105 @@ const Pay = () => {
                       className="flex flex-wrap gap-4 overflow-y-auto"
                       style={{ maxHeight: "600px" }}
                     >
-                      {sortedVouchers.map((voucher: IVoucher) => {
-                        const expirationDate = voucher.expirationDate
-                          ? new Date(voucher.expirationDate)
-                          : null;
+                      {sortedVouchers
+                        .filter((voucher: any) => {
+                          const isExpired =
+                            new Date(voucher.expirationDate) < currentDate;
+                          const isVoucherAvailable =
+                            voucher.usedCount < voucher.quantity_voucher;
 
-                        return (
-                          <div
-                            key={voucher._id}
-                            className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                              selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                            }`}
-                          >
-                            <div>
-                              <p className="text-lg font-bold">
-                                {voucher.name_voucher}
-                              </p>
-                              <p>
-                                Hạn dùng:{" "}
-                                {expirationDate
-                                  ? expirationDate.toLocaleDateString()
-                                  : "Không có hạn dùng"}
-                              </p>
-                              <p>
-                                Số lượng còn lại:{" "}
-                                {voucher.quantity_voucher - voucher.usedCount}
-                              </p>
-                              <Button
-                                onClick={() => showVoucherDetails(voucher)}
-                              >
-                                Xem chi tiết
-                              </Button>
-                            </div>
-                            <button
-                              className={`ml-4 px-6 py-3 font-bold rounded ${"bg-blue-500 text-white"}`}
-                              onClick={(e) => handleApplyVoucher(e, voucher)}
+                          return !isExpired && isVoucherAvailable;
+                        })
+                        .map((voucher: any) => {
+                          const isAllowedUser =
+                            voucher.allowedUsers.length === 0 ||
+                            voucher.allowedUsers.includes(userId);
+                          const isProductValid = itemOrder.every(
+                            (item: any) =>
+                              voucher.appliedProducts.length === 0 ||
+                              voucher.appliedProducts.includes(
+                                item.productId._id
+                              )
+                          );
+
+                          const isCategoryValid = itemOrder.every(
+                            (item: any) =>
+                              voucher.appliedCategories.length === 0 ||
+                              voucher.appliedCategories.includes(
+                                item.productId.category_id
+                              )
+                          );
+
+                          const isVoucherDisabled = !(
+                            isProductValid && isCategoryValid
+                          );
+
+                          const isExpired =
+                            new Date(voucher.expirationDate) < currentDate;
+                          const isVoucherAvailable =
+                            voucher.usedCount < voucher.quantity_voucher;
+                          const isNotYetValid =
+                            new Date(voucher.startDate) > currentDate;
+
+                          const isDisabled =
+                            isExpired ||
+                            !isVoucherAvailable ||
+                            isVoucherDisabled ||
+                            isNotYetValid ||
+                            !isAllowedUser;
+                          return (
+                            <div
+                              key={voucher._id}
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
                             >
-                              {"Sử dụng"}
-                            </button>
-                          </div>
-                        );
-                      })}
+                              <div>
+                                <p className="text-lg font-bold">
+                                  {voucher.name_voucher}
+                                </p>
+                                <p>
+                                  Hạn dùng:{" "}
+                                  {new Date(
+                                    voucher.expirationDate
+                                  ).toLocaleDateString()}
+                                </p>
+                                <p>
+                                  Số lượng còn lại:{" "}
+                                  {voucher.quantity_voucher - voucher.usedCount}
+                                </p>
+                                <Button
+                                  onClick={() => showVoucherDetails(voucher)}
+                                  disabled={false}
+                                >
+                                  Xem chi tiết
+                                </Button>
+                              </div>
+                              <button
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
+                                onClick={(e) => handleApplyVoucher(e, voucher)}
+                                disabled={isDisabled}
+                              >
+                                {isDisabled ? "Không hợp lệ" : "Sử dụng"}
+                              </button>
+                            </div>
+                          );
+                        })}
                     </div>
                   ) : (
                     <p>Không có voucher nào khả dụng</p>
                   )}
                 </Modal>
-                ;{/* Modal chi tiết voucher */}
+
+                {/* Modal chi tiết voucher */}
                 <Modal
                   visible={isDetailModalVisible}
                   onCancel={handleCancelDetailsModal}
@@ -817,7 +889,7 @@ const Pay = () => {
                   )}
                 </Modal>
               </div>
-              <div className="flex justify-end px-6 py-6 border-b">
+              <div className="flex justify-end px-6 pt-6">
                 <div>
                   <div className="flex justify-between gap-16 py-3">
                     <p>Tổng tiền hàng</p>
@@ -850,7 +922,7 @@ const Pay = () => {
                   </div>
                   <div className="my-4 border rounded shadow-sm">
                     <div className="flex items-center justify-end gap-8 p-6">
-                      <p className="text-xl font-bold text-black">
+                      <p className="text-xl font-semibold text-black">
                         <p>
                           Tổng số tiền:{" "}
                           {(finalAmount > 0
@@ -894,7 +966,7 @@ const Pay = () => {
               handleAddressSelect={handleAddressSelect}
               handleAddress={handleAddress}
               selectedAddress={selectedAddress}
-            ></List_Address>
+            />
           )}
           {isOrderSuccessfully && (
             <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">

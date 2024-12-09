@@ -34,7 +34,7 @@ const useForm = ({ mode }: UseFormProps) => {
     }
   }, [mode, dataOneItem]);
 
-  const { mutate, isPending, isError, status_api } = Mutation_items(
+  const { mutate, isLoading, isError, status_api } = Mutation_items(
     mode ? "EDIT" : "CREATE"
   );
 
@@ -120,7 +120,7 @@ const useForm = ({ mode }: UseFormProps) => {
 
   return {
     onSubmit,
-    isPending,
+    isLoading,
     isError,
     data_one_item: dataOneItem,
     handleImageChange,

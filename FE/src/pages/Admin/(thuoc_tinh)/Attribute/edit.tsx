@@ -14,12 +14,12 @@ export default function Edit_thuoc_tinh({ props }: any) {
     const editId = urlParams.get('_id');
     const [symbol, setSymbol] = useState<string>('');
     const [user] = useLocalStorage("user", {});
-    const { data, isPending, isError } = Lay_thuoc_tinh({
+    const { data, isLoading, isError } = Lay_thuoc_tinh({
         id_account: user?.user?._id,
         id_thuoc_tinh: editId
     });
     const [imageFile, setImageFile] = useState<File[]>([]);
-    const { mutate, isPending: loading, isError: error } = Dispatch_thuoc_tinh('EDIT')
+    const { mutate, isLoading: loading, isError: error } = Dispatch_thuoc_tinh('EDIT')
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -61,18 +61,17 @@ export default function Edit_thuoc_tinh({ props }: any) {
     const handleSetColor = (color: any) => {
         setSymbol(color.hex);
     }
-
-    if (isPending || loading) {
-        return <div className="flex justify-center items-center h-screen">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>;
-    }
     if (isError || error) return <span>Error...</span>;
     return (
         <div className={`${props?.isModalOpen ? 'translate-y-0' : 'translate-y-[-200%]'} fixed top-0 w-screen left-0 h-screen z-[100]`}>
             <div className={`bg-[#33333333] w-screen h-screen fixed top-0 left-0 z-[100]`} onClick={handleCancel}></div>
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto py-5 px-4 rounded bg-white z-[110]">
-                <strong>Sửa thể loại thuộc tính {data?.name_attribute}</strong>
+            <div className={`${props?.isModalOpen ? '-translate-y-1/2' : '-translate-y-[200%]'} fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto py-5 px-14 rounded bg-white z-[110]`}>
+                {(isLoading || loading) &&
+                    <div className="flex justify-center items-center h-screen">
+                        <Spin indicator={<LoadingOutlined spin />} size="large" />
+                    </div>
+                }
+                <span className="text-lg font-semibold">Cập nhật thuộc tính {data?.ten_thuoc_tinh}</span>
                 <Form className="mt-10"
                     form={form}  // Liên kết form instance với Form
                     name="basic"

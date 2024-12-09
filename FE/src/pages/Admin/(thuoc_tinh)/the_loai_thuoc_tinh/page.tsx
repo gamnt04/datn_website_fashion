@@ -12,10 +12,10 @@ type FieldType = {
 
 export default function The_loai_thuoc_tinh() {
   const [user] = useLocalStorage("user", {});
-  const { mutate, isPending, isError, status_api } = Dispatch_the_loai_thuoc_tinh('CREATED');
+  const { mutate, isLoading, isError, status_api } = Dispatch_the_loai_thuoc_tinh('CREATED');
   const [state_the_loai_thuoc_tinh, setState_the_loai_thuoc_tinh] = useState<string>('');
   const ref_the_loai_thuoc_tinh = useRef<HTMLSpanElement>(null);
-  const { data, isPending: loading, isError: error } = Lay_the_loai_thuoc_tinh({
+  const { data, isLoading: loading, isError: error } = Lay_the_loai_thuoc_tinh({
     id_account: user?.user?._id
   });
   const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
@@ -41,28 +41,18 @@ export default function The_loai_thuoc_tinh() {
   const handleChange = (value: string) => {
     setState_the_loai_thuoc_tinh(value)
   };
-  if (isPending) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
-  }
   return (
-    <div className="px-10">
+    <div className="px-10 pt-5">
       {
-        isPending && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+        loading || isLoading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
       }
-      {
-        loading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      }
-      <strong>Các thuộc tính</strong>
+      <span className="text-xl font-semibold">Loại thuộc tính</span>
       <section className="my-8 grid grid-cols-[40%_55%] justify-between">
         {/* cot trai */}
         <div>
-          <strong>Them thuoc tinh moi</strong> <br />
+          <div className="text-lg mb-2">Thêm loại thuộc tính</div> <br />
           <Form
             name="basic"
             initialValues={{ remember: true }}
@@ -71,7 +61,7 @@ export default function The_loai_thuoc_tinh() {
             autoComplete="off"
           >
             <div className="flex flex-col gap-1">
-              <span>Tên</span>
+              <span>Tên loại :</span>
               <Form.Item<FieldType>
                 name="name_attribute"
                 rules={[{ required: true, message: 'Tên loại thuộc tính không được để trống!' }]}

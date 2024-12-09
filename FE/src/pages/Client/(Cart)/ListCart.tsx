@@ -22,6 +22,7 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
+import { io } from "socket.io-client";
 
 interface DataType {
   key: string;
@@ -32,19 +33,29 @@ interface DataType {
 }
 
 const ListCart = () => {
+  const socket = io("http://localhost:2004");
   const routing = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError, error } = List_Cart(userId);
+  const { data, isLoading, isError, error } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-  const { mutate: handle_status_checked, isPending: loading_btn_checkked } =
+  const { mutate: handle_status_checked, isLoading: loading_btn_checkked } =
     Mutation_Cart("HANLDE_STATUS_CHECKED");
+  useEffect(() => {
+    socket.on("connect_error", () => {
+      socket.disconnect();
+    });
+  }, [socket]);
+  useEffect(() => {
+    const socket = io("http://localhost:2004");
+    socket.on("lay_thong_tin_san_pham_xoa", (data: any) => {
+      console.log(data);
+      window.alert(data);
+    });
+  }, []);
   const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
-  // useEffect(() => {
-  //   sessionStorage.setItem("totalPriceCart", JSON.stringify(data?.total_price));
-  // }, [data?.total_price]);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState<number | null>(null);
   const remove_item = (item: any) => {
@@ -317,19 +328,23 @@ const ListCart = () => {
         });
         return null;
       }
-      const selectedItems = data_cart.map((item: any) => ({
-        productId: item?.productId?._id,
-        categoryId: item?.productId?.category_id,
-      }));
-      sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
-      console.log("Dữ liệu đã lưu vào sessionStorage:", selectedItems);
+      const categories = data_cart
+        .map((item: any) => item?.productId?.category_id)
+        .filter((categoryId: any) => !!categoryId); // Lọc những giá trị không hợp lệ
+      console.log("thong tin từ giỏ hàng", categories);
+      console.log("Item Order Checked:", item_order_checkked);
 
+      sessionStorage.setItem("item_order", JSON.stringify(data_cart));
+      sessionStorage.setItem(
+        "categories",
+        JSON.stringify([...new Set(categories)])
+      );
       routing("/cart/pay");
     } else {
       routing("/login");
     }
   }
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -342,7 +357,7 @@ const ListCart = () => {
 
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto relative">
-      {isPending ||
+      {isLoading ||
         (loading_btn_checkked && (
           <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
             <Spin indicator={<LoadingOutlined spin />} size="large" />

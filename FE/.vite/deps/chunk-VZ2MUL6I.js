@@ -12902,23 +12902,23 @@ var require_react_dom_development = __commonJS({
           }
         }
         function mountTransition() {
-          var _mountState = mountState(false), isPending = _mountState[0], setPending = _mountState[1];
+          var _mountState = mountState(false), isLoading = _mountState[0], setPending = _mountState[1];
           var start = startTransition.bind(null, setPending);
           var hook = mountWorkInProgressHook();
           hook.memoizedState = start;
-          return [isPending, start];
+          return [isLoading, start];
         }
         function updateTransition() {
-          var _updateState = updateState(), isPending = _updateState[0];
+          var _updateState = updateState(), isLoading = _updateState[0];
           var hook = updateWorkInProgressHook();
           var start = hook.memoizedState;
-          return [isPending, start];
+          return [isLoading, start];
         }
         function rerenderTransition() {
-          var _rerenderState = rerenderState(), isPending = _rerenderState[0];
+          var _rerenderState = rerenderState(), isLoading = _rerenderState[0];
           var hook = updateWorkInProgressHook();
           var start = hook.memoizedState;
-          return [isPending, start];
+          return [isLoading, start];
         }
         var isUpdatingOpaqueValueInRenderPhase = false;
         function getIsUpdatingOpaqueValueInRenderPhaseInDEV() {

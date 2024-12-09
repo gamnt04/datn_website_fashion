@@ -5,10 +5,10 @@ export const convert_data = [
     },
     {
         key: 'ux_label',
-        name: 'UX label'
+        name: 'Văn bản'
     },
     {
         key: 'ux_image',
-        name: 'Hình ảnh'
+        name: 'Họa tiết'
     }
 ]

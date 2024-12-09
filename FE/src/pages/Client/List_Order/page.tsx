@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -76,7 +77,7 @@ export default function List_order() {
     limit: 20,
     status: +(status_order || 0),
   };
-  const { data, isPending } = Query_Order(dataClient);
+  const { data, isLoading } = Query_Order(dataClient);
   let name_1: any;
   data?.data?.docs?.map((name: any) => {
     return (name_1 = name?.customerInfo?.userName);
@@ -417,7 +418,7 @@ export default function List_order() {
 
     fetchData();
   }, [location.search]);
-  if (isPending || paymentPending) {
+  if (isLoading || paymentPending) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -608,14 +609,14 @@ export default function List_order() {
                     <Button
                       className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
                       disabled
-                      // onClick={() => (
-                      //   mutate({ id_item: items._id }),
-                      //   dispathNotification?.mutate({
-                      //     userId: userId,
-                      //     receiver_id: userId,
-                      //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                      //   })
-                      // )}
+                    // onClick={() => (
+                    //   mutate({ id_item: items._id }),
+                    //   dispathNotification?.mutate({
+                    //     userId: userId,
+                    //     receiver_id: userId,
+                    //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                    //   })
+                    // )}
                     >
                       Đã Nhận Hàng
                     </Button>
@@ -686,7 +687,7 @@ export default function List_order() {
                             {items.items
                               .reduce((acc: any, item: any) => {
                                 const existingProduct = acc.find(
-                                  (p) => p.productId === item.productId._id
+                                  (p: any) => p.productId === item.productId._id
                                 );
                                 if (existingProduct) {
                                   existingProduct.items.push(item);
@@ -739,12 +740,12 @@ export default function List_order() {
                                         // Đồng bộ giá trị rating khi người dùng thay đổi
                                         if (
                                           changedValues[
-                                            `rating_review_${index}`
+                                          `rating_review_${index}`
                                           ]
                                         ) {
                                           setRating(
                                             changedValues[
-                                              `rating_review_${index}`
+                                            `rating_review_${index}`
                                             ]
                                           );
                                         }
@@ -756,7 +757,7 @@ export default function List_order() {
                                           review
                                             ? review.rating_review
                                             : rating[productGroup.productId] ||
-                                              0
+                                            0
                                         }
                                         rules={[
                                           {
@@ -815,8 +816,8 @@ export default function List_order() {
                                           review && review.image_review
                                             ? review.image_review
                                             : fileList[
-                                                productGroup.productId
-                                              ]?.map((file) => file.url) || []
+                                              productGroup.productId
+                                            ]?.map((file: any) => file.url) || []
                                         }
                                       >
                                         <Upload
@@ -824,16 +825,16 @@ export default function List_order() {
                                           fileList={
                                             review && review.image_review
                                               ? review.image_review.map(
-                                                  (url: any, idx: any) => ({
-                                                    uid: `${idx}`,
-                                                    name: `image_${idx}`,
-                                                    status: "done",
-                                                    url: url,
-                                                  })
-                                                )
+                                                (url: any, idx: any) => ({
+                                                  uid: `${idx}`,
+                                                  name: `image_${idx}`,
+                                                  status: "done",
+                                                  url: url,
+                                                })
+                                              )
                                               : fileList[
-                                                  productGroup.productId
-                                                ] || []
+                                              productGroup.productId
+                                              ] || []
                                           }
                                           onChange={handleImageChange}
                                           onPreview={handlePreview}
@@ -900,10 +901,10 @@ export default function List_order() {
                                                   ]?.map((f) =>
                                                     f.uid === tempFile.uid
                                                       ? {
-                                                          ...f,
-                                                          status: "done",
-                                                          url: result.secure_url,
-                                                        }
+                                                        ...f,
+                                                        status: "done",
+                                                        url: result.secure_url,
+                                                      }
                                                       : f
                                                   ),
                                               }));
@@ -924,9 +925,9 @@ export default function List_order() {
                                                   ]?.map((f) =>
                                                     f.uid === tempFile.uid
                                                       ? {
-                                                          ...f,
-                                                          status: "error",
-                                                        }
+                                                        ...f,
+                                                        status: "error",
+                                                      }
                                                       : f
                                                   ),
                                               }));
