@@ -126,7 +126,7 @@ const ChartUser: React.FC = () => {
               {totalUser}
             </h5>
             <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              Số lượng người dùng mới trong 7 ngày vừa qua
+              Người dùng mới trong 7 ngày vừa qua
             </p>
           </div>
         </div>

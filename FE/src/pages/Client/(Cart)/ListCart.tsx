@@ -11,7 +11,6 @@ import {
   TableProps,
 } from "antd";
 import { useEffect, useState } from "react";
-import { FaDeleteLeft } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
@@ -22,7 +21,6 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
-import { io } from "socket.io-client";
 
 interface DataType {
   key: string;
@@ -259,17 +257,20 @@ const ListCart = () => {
       render: (_: any, product: any) => {
         return (
           <div>
-            <Button danger className="w-[50px]">
-              <Popconfirm
-                title="Xóa sản phẩm khỏi giỏ hàng?"
-                description="Bạn có chắc chắn muốn xóa không?"
-                onConfirm={() => remove_item(product)}
-                okText="Có"
-                cancelText="Không"
-              >
-                <FaDeleteLeft style={{ fontSize: "24px" }} />
-              </Popconfirm>
-            </Button>
+            <Popconfirm
+              className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
+              title="Xóa sản phẩm khỏi giỏ hàng?"
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
+                product?.productId?.name_product?.length > 20
+                  ? product?.productId?.name_product?.slice(0, 20) + "..."
+                  : product?.productId?.name_product
+              } khỏi giỏ hàng không?`}
+              onConfirm={() => remove_item(product)}
+              okText="Có"
+              cancelText="Không"
+            >
+              <Trash2 />
+            </Popconfirm>
           </div>
         );
       },
@@ -344,7 +345,7 @@ const ListCart = () => {
       routing("/login");
     }
   }
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -364,7 +365,7 @@ const ListCart = () => {
           </div>
         ))}
 
-      <div className="w-[95%] mx-[2.5%] mt-[70px]">
+      <div className="mt-10">
         {contextHolder}
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           <Link to={`/`} className="text-gray-500 hover:text-black">
@@ -376,18 +377,21 @@ const ListCart = () => {
         <>
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="md:w-[70%] mb:w-full w-full">
-              <Button danger className="w-[50px]">
+              {item_order_checkked?.length > 0 ? (
                 <Popconfirm
-                  className="text-red-500"
-                  title="Xóa sản phẩm khỏi giỏ hàng?"
+                  className="text-red-500 border rounded border-red-500 cursor-pointer mb-4 opacity-75 hover:opacity-100 duration-200"
+                  title={`Xóa ${item_order_checkked?.length} sản phẩm khỏi giỏ hàng?`}
                   description="Bạn có chắc chắn muốn xóa không?"
                   onConfirm={() => handleRemoveMultiple()}
                   okText="Có"
                   cancelText="Không"
                 >
-                  <FaDeleteLeft style={{ fontSize: "20px" }} />
+                  <Trash2 className="!w-10 p-1 h-8" />
                 </Popconfirm>
-              </Button>
+              ) : (
+                <Trash2 className="!w-10 p-1 h-8 text-red-500 border border-red-500 rounded opacity-75 cursor-not-allowed mb-4" />
+              )}
+
               <Table
                 columns={columns}
                 dataSource={dataSort}
@@ -395,8 +399,8 @@ const ListCart = () => {
               />
             </div>
 
-            <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-              <div className="flex flex-col justify-between w-full h-[200px] border rounded-lg lg:p-6 mb:p-4">
+            <div className="md:w-[27%] bg-white flex flex-col text-sm text-black">
+              <div className="flex flex-col justify-between w-full h-[200px] border rounded lg:p-6 mb:p-4">
                 <div>
                   <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
                     <strong>Tổng giá trị đơn hàng</strong>
@@ -433,7 +437,7 @@ const ListCart = () => {
                 </div>
                 <button
                   onClick={next_order}
-                  className="px-4 py-3 mt-4 mr-5 font-semibold text-white duration-200 bg-black border border-black rounded hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+                  className="px-4 py-3 mt-4 mr-5 text-white duration-200 bg-gray-800 border border-black rounded hover:bg-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
                 >
                   Tiến hành thanh toán
                 </button>

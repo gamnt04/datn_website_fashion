@@ -376,3 +376,6 @@ const Form_Item = ({ mode }: any) => {
   );
 };
 export default Form_Item;
+
+
+//  leader vừa bảo tôi làm thêm cái giá sale, theo ông thì làm phần trăm hay fix cứng

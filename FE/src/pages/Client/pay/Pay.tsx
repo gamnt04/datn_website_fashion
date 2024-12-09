@@ -287,6 +287,8 @@ const Pay = () => {
   });
 
   const onAddOrder = async (data_form: any) => {
+    console.log(data_form);
+    const voucher = data_form.voucher;
     const discountCodeToUse = selectedVoucherCode || discountCode;
 
     // Kiểm tra địa chỉ trước
@@ -320,21 +322,17 @@ const Pay = () => {
         return;
       }
 
-      const isExpired = new Date(voucher.expirationDate) < new Date();
-      if (isExpired) {
-        messageApi.open({
-          type: "warning",
-          content: "Voucher đã hết hạn!",
-        });
-        return;
-      }
+      // Kiểm tra điều kiện khác của voucher (ví dụ: số lượng còn lại, hết hạn, áp dụng đúng sản phẩm, v.v.)
+      const { isValid, appliedProducts, appliedCategories, allowedUsers } =
+        response.data;
 
-      // Kiểm tra số lượng voucher
-      const isVoucherAvailable = voucher.usedCount < voucher.quantity_voucher;
-      if (!isVoucherAvailable) {
-        messageApi.open({
-          type: "warning",
-          content: "Voucher không còn số lượng sử dụng!",
+      // Giả sử bạn đã có danh sách sản phẩm và danh mục người dùng chọn
+      const validVoucher =
+        isValid && appliedProducts.length > 0 && appliedCategories.length > 0;
+
+      if (!validVoucher) {
+        toast.error("Voucher không áp dụng cho đơn hàng này.", {
+          autoClose: 1200,
         });
         return;
       }
@@ -521,6 +519,16 @@ const Pay = () => {
       ),
     },
   ];
+  if (loadingOrder || isPending) {
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="flex justify-center items-center h-screen">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="max-w-[1440px] w-[95vw] mx-auto ">

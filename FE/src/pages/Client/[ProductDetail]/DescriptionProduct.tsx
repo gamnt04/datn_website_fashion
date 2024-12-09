@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { IProduct } from "../../../common/interfaces/Product";
 import { Query_Products } from "../../../common/hooks/Products/Products";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
@@ -20,16 +21,10 @@ import {
   UploadProps,
   message,
 } from "antd";
-import { AiFillStar, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
-type FieldType = {
-  contentReview?: string;
-  image_review?: string[]; // Thêm image_review vào FieldType
-  rating_review?: number; // Thêm image_review vào FieldType
-};
-
-const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
+const DescriptionProduct = ({ product }: any) => {
   const formattedDescription = product?.description_product.replace(
     /\n/g,
     "<br />"
@@ -49,15 +44,15 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
 
   const [fileList, setFileList] = useState(() => {
     const initialImages = form.getFieldValue("image_review") || [];
-    return initialImages.map((url, index) => ({
+    return initialImages.map((url: any, index: any) => ({
       uid: index.toString(),
       name: `image-${index}`,
       url,
     }));
   });
 
-  const { data, isLoading, isError } = Query_Products(productId);
-  const getBase64 = (file: FieldType): Promise<string> =>
+  const { data, isLoading } = Query_Products(productId);
+  const getBase64 = (file: any): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -80,7 +75,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
 
   useEffect(() => {
     const initialFileList = (form.getFieldValue("image_review") || []).map(
-      (url, index) => ({
+      (url: any, index: any) => ({
         uid: index.toString(),
         url,
         name: `image-${index}`, // Có thể thêm tên tùy ý
@@ -105,7 +100,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
   }, [editReviewId, data, form]);
 
   const { mutate: deleteReview } = useMutation({
-    mutationFn: async ({ reviewId, productId, orderId }) => {
+    mutationFn: async ({ reviewId, productId, orderId }: any) => {
       if (!userId) {
         throw new Error("User not authenticated");
       }
@@ -123,7 +118,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     },
   });
 
-  const handleRatingChange = (reviewId, rate) => {
+  const handleRatingChange = (reviewId: any, rate: any) => {
     setRating((prevRating) => ({
       ...prevRating,
       [reviewId]: rate, // Lưu giá trị rating tương ứng với mỗi review
@@ -186,7 +181,7 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
     </button>
   );
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  const onFinish: FormProps<any>["onFinish"] = (values) => {
     if (editReviewId) {
       const productId = data?.products?._id || "";
       const reviewContainer = data?.review?.find((r: any) =>
@@ -238,8 +233,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                 key={item._id}
                 onClick={() => setTogleDes(false)}
                 className={`btn_show_description grid hover:border-[#05422C] hover:bg-[#F2F6F4] ${toggleDes
-                    ? ""
-                    : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
+                  ? ""
+                  : "border-[#05422C] text-[#05422C] bg-[#F2F6F4]"
                   }`}
               >
                 Đánh giá ({item.reviews?.length ?? 0})
@@ -270,13 +265,12 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
             <Spin indicator={<LoadingOutlined spin />} size="large" />
           </div>
         )}
-
         {!toggleDes &&
           !isLoading &&
-          data?.review?.length > 0 &&
-          data.review.map((reviewItem) => (
+          data?.review?.length > 0 ?
+          data.review.map((reviewItem: any) => (
             <div key={reviewItem._id}>
-              {reviewItem?.reviews.map((review) => (
+              {reviewItem?.reviews.map((review: any) => (
                 <section className="block" key={review._id}>
                   <div className="flex flex-col text-sm text-[#46494F] leading-[21px] gap-y-4 lg:pt-6 mb:pt-5 mb:pb-0">
                     <div className="border rounded-2xl lg:p-6 mb:p-5">
@@ -410,8 +404,8 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                                     onSuccess?.();
 
                                     // Cập nhật fileList mới
-                                    setFileList((prevList) =>
-                                      prevList.map((f) =>
+                                    setFileList((prevList: any) =>
+                                      prevList.map((f: any) =>
                                         f.uid === file.uid
                                           ? { ...f, url: result.secure_url }
                                           : f
@@ -511,7 +505,9 @@ const DescriptionProduct = ({ product, id }: IProduct & { id?: string }) => {
                 </section>
               ))}
             </div>
-          ))}
+          )) :
+          <div className="grid place-items-center h-[100px]">Chưa có đánh giá!</div>
+        }
       </div>
     </>
   );
