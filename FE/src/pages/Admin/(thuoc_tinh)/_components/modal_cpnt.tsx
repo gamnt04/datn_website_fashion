@@ -50,28 +50,28 @@ export default function Modal_cpnt({ props }: any) {
     const onFinishFailed: FormProps<any>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-
-    if (isLoading || loading) {
-        return <div className="flex justify-center items-center h-screen">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>;
-    }
     if (isError || error) return <span>Error...</span>;
 
     return (
         <div className={`${props?.isModalOpen ? 'translate-y-0' : 'translate-y-[-200%]'} fixed top-0 w-screen left-0 h-screen z-[100]`}>
             <div className={`bg-[#33333333] w-screen h-screen fixed top-0 left-0 z-[100]`} onClick={handleCancel}></div>
-            <div className="fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto py-5 px-4 rounded bg-white z-[110]">
-                <strong>Sửa thể loại thuộc tính {data?.name_attribute}</strong>
+            <div className={`${props?.isModalOpen ? '-translate-y-1/2' : '-translate-y-[200%]'} duration-200 fixed top-1/3 left-1/2 -translate-x-1/2 w-auto py-5 px-10 rounded bg-white z-[110]`}>
+                <span className="text-lg">Cập nhật loại thuộc tính {data?.name_attribute}</span>
+                {
+                    (isLoading || loading) &&
+                    <div className="flex justify-center items-center h-screen">
+                        < Spin indicator={<LoadingOutlined spin />} size="large" />
+                    </div>
+                }
                 <Form className="mt-10"
-                    form={form}  // Liên kết form instance với Form
+                    form={form}
                     name="basic"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
                     <Form.Item<any>
-                        label="Tên loại thuộc tính"
+                        label="Tên loại: "
                         name="name_attribute"
                         rules={[{ required: true, message: 'Không được để trống!' }]}
                     >
@@ -84,6 +84,6 @@ export default function Modal_cpnt({ props }: any) {
                     </Form.Item>
                 </Form>
             </div>
-        </div>
+        </div >
     );
 }

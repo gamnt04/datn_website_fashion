@@ -61,6 +61,7 @@ const Form_Item = ({ mode }: any) => {
       : values;
     if (attributeKey) {
       const { [attributeKey]: _, ...rest } = data_request;
+      console.log(_)
       data_request = rest;
     }
     onSubmit(data_request);
