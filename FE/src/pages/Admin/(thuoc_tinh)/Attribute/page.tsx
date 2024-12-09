@@ -20,13 +20,12 @@ export default function Attribute() {
     id_thuoc_tinh: id,
     id_account: user?.user?._id
   });
-  const { mutate, isLoading: loading } = Dispatch_thuoc_tinh('CREATED');
+  const { mutate, status_api, isLoading: loading } = Dispatch_thuoc_tinh('CREATED');
   const { data: data_2, isLoading: loading_2 } = Lay_thuoc_tinh({
     id_account: user?.user?._id,
     category_attribute: data?.category_attribute
   });
   const [loadingUpload, setLoadingUpload] = useState<boolean>(false)
-  if (isLoading || loading || loading_2) return <span>Loading...</span>
   if (isError) return <span>Error...</span>
   const handleImageChange = (imageItem: any) => {
     const files =
@@ -74,18 +73,17 @@ export default function Attribute() {
     setValidate(false)
   }
   return (
-    <div className="px-10">
-      {(isLoading || loading || loadingUpload) && (
-        <div className="flex justify-center items-center h-screen">
+    <div className="px-10 pt-5">
+      {
+        loading || isLoading || loadingUpload || loading_2 && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
-      )}
-
-      <strong>Sản phẩm {data?.name_attribute}</strong>
+      }
+      <span className="text-xl font-semibold">Thuộc tính {data?.name_attribute}</span>
       <section className="grid grid-cols-[35%_60%] justify-between">
         {/* cot trai */}
         <div className="mt-10">
-          <span>Thêm mới {data?.name_attribute}</span>
+          <div className="mb-3 text-lg">Thêm mới {data?.name_attribute}</div>
           <Form
             name="basic"
             initialValues={{ remember: true }}
@@ -94,7 +92,7 @@ export default function Attribute() {
             autoComplete="off"
           >
             <div className="flex flex-col gap-1">
-              <span>Tên</span>
+              <span>Tên thuộc tính :</span>
               <Form.Item<any>
                 name="ten_thuoc_tinh"
                 rules={[{ required: true, message: 'Vui lòng nhập tên thuộc tính!' }]}>
@@ -130,7 +128,10 @@ export default function Attribute() {
               </Upload>
             }
             {
-              validate && <span className="text-red-500 text-sm">Vui lòng chọn</span>
+              validate && <div className="text-red-500 text-sm mt-2">Vui lòng chọn</div>
+            }
+            {
+              status_api === 400 && <div className="text-red-500 mt-5">Tên thuộc tính đã tồn tại!</div>
             }
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit" className="-translate-x-[100px] mt-10">
@@ -139,10 +140,12 @@ export default function Attribute() {
             </Form.Item>
           </Form>
         </div>
-
         {/* cot phai */}
         <div>
-          <Table_cpn data_props={data_2} />
+          {
+            data &&
+            <Table_cpn data_props={data_2} />
+          }
         </div>
       </section>
     </div>
