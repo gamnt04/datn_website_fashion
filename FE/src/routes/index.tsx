@@ -70,8 +70,8 @@ const RouterComponent = () => {
             <Route path="contact" element={<Contact />} />
             <Route path="/cart/pay" element={<Pay />} />
             <Route path="/favourite" element={<Favourite />} />
-            <Route path="delivery" element={<Delivery />} />
-            <Route path="faqs" element={<FAQ />} />
+            {/* <Route path="delivery" element={<Delivery />} /> */}
+            {/* <Route path="faqs" element={<FAQ />} /> */}
             <Route path="about-us" element={<AboutUS />} />
             <Route path="track-order" element={<TrackOrder />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
@@ -114,10 +114,7 @@ const RouterComponent = () => {
             <Route path="orders" element={<OrderList />} />
             <Route path="TotalOrders" element={<TotalOrders />} />
             <Route path="auth" element={<List_Auth />} />
-            <Route
-              path="/admin/orders/:id"
-              element={<OrdersDetali />}
-            />
+            <Route path="/admin/orders/:id" element={<OrdersDetali />} />
             <Route path="/admin/contact" element={<ListContact />} />
             <Route path="contact/:id" element={<ContactDetail />} />
             <Route path="feedback/:id" element={<Feedback />} />
