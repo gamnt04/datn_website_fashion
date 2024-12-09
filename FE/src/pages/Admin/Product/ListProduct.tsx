@@ -81,7 +81,7 @@ const ListProduct = () => {
             <h1 className="text-2xl font-semibold">Quản Lý Sản Phẩm</h1>{" "}
             <Link to="/admin/products/add">
               <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
-                <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SẢN PHẨM
+                <AiOutlinePlus className="ml-[3px]" /> Thêm mới sản phẩm
               </Button>
             </Link>
           </div>
@@ -90,18 +90,25 @@ const ListProduct = () => {
             <div className="space-x-5">
               {/* <Checkbox className="ml-4" />
             <Button>Chọn tất cả (7)</Button> */}
-              <Popconfirm
-                title="Xóa sản phẩm "
-                description="Bạn có muốn xóa sản phẩm này không ?"
-                onConfirm={handleRemoveMultiple}
-                okText="Có"
-                cancelText="Không"
-              >
-                <Button danger>
-                  <DeleteOutlined style={{ fontSize: "24px" }} />
-                  Xóa sản phẩm đã chọn
-                </Button>
-              </Popconfirm>
+              {
+                selectedProductIds?.length > 0 ?
+                  <Popconfirm
+                    title="Xóa sản phẩm "
+                    description={`Bạn có muốn xóa ${selectedProductIds?.length} sản phẩm không?`}
+                    onConfirm={handleRemoveMultiple}
+                    okText="Có"
+                    cancelText="Không"
+                  >
+                    <Button danger>
+                      <DeleteOutlined style={{ fontSize: "24px" }} />
+                      Xóa sản phẩm đã chọn
+                    </Button>
+                  </Popconfirm> :
+                  <Button disabled>
+                    <DeleteOutlined style={{ fontSize: "24px" }} />
+                    Xóa sản phẩm đã chọn
+                  </Button>
+              }
             </div>
             <div className="flex space-x-5">
               <Input

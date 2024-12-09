@@ -14,7 +14,7 @@ const ProductDetail = () => {
   return (
     <>
       <div className="max-w-[1440px] w-[95vw] mx-auto">
-        <div className="lg:mt-[40px] mt-[60px] lg:w-full w-[90vw] mx-auto">
+        <div className="lg:mt-10 mt-16 lg:w-full w-[90vw] mx-auto">
           <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
             <Link to={`/`} className="text-gray-500 hover:text-black">
               Trang chủ
