@@ -22,7 +22,8 @@ import {
   addShipperOrder,
   adminFailDelivery,
   getOrdersByPhone,
-  getTotalOrdersByRole
+  getTotalOrdersByRole,
+  getAllOrderSuccess
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 import { checkRole } from "../controllers/Auth/auth";
@@ -57,5 +58,6 @@ router.post("/orders/:id/fail-delivery", adminFailDelivery);
 router.post("/orders/shipper/:id", addShipperOrder);
 router.get("/list_order/:id_user", list_items_order_by_user);
 router.get("/orders_phone", getOrdersByPhone);
+router.get("/all_orders_success", getAllOrderSuccess);
 
 export default router;

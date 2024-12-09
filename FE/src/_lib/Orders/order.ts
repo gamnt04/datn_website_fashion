@@ -28,3 +28,11 @@ export const GetNew10OrderInDay = async () => {
     console.log(error);
   }
 };
+export const GetAllOrdersSuccess = async () => {
+  try {
+    const { data } = await instance.get("/all_orders_success");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

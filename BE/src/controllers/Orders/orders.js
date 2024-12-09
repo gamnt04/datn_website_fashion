@@ -32,7 +32,6 @@ export const authenticate = (req, res, next) => {
     next();
   });
 };
-
 export const createOrder = async (req, res) => {
   const {
     userId,
@@ -250,7 +249,6 @@ export const createOrderPayment = async (req, res) => {
       .json({ message: "Lỗi rồi fix lại thanh toán online" });
   }
 };
-
 export const getAllOrdersToday = async (req, res) => {
   try {
     const startOfDay = new Date();
@@ -272,7 +270,6 @@ export const getAllOrdersToday = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const getAllOrderWeek = async (req, res) => {
   try {
     const now = new Date();
@@ -297,7 +294,6 @@ export const getAllOrderWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const getOrderByDayOfWeek = async (req, res) => {
   try {
     const now = new Date();
@@ -456,7 +452,6 @@ export const getTop10ProductBestSale = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
-
 const calculateDistance = async (coords1, coords2) => {
   const mapboxAccessToken =
     "pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w"; // Thay bằng token của bạn
@@ -484,7 +479,6 @@ const calculateDistance = async (coords1, coords2) => {
     throw new Error("Không thể tính toán khoảng cách.");
   }
 };
-
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("shipperId");
@@ -518,7 +512,6 @@ export const getOrderById = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const getOneOrderUser = async (req, res) => {
   const {
     _page = 1,
@@ -559,7 +552,6 @@ export const getOneOrderUser = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const updateOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -578,7 +570,6 @@ export const updateOrder = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -637,7 +628,6 @@ export const updateOrderStatus = async (req, res) => {
 
       // Send cancellation email
       try {
-        
         await SendCancellationMail(
           order.customerInfo.email,
           order,
@@ -688,7 +678,7 @@ export const updateOrderStatus = async (req, res) => {
           .status(500)
           .json({ message: "Failed to send delivery success email." });
       }
-    } 
+    }
     // Save the updated order
     await order.save();
 
@@ -702,7 +692,6 @@ export const updateOrderStatus = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export async function get_orders_client(req, res) {
   const {
     _page = 1,
@@ -755,7 +744,6 @@ export async function get_orders_client(req, res) {
     });
   }
 }
-
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
@@ -1000,7 +988,6 @@ export const deliverSuccess = async (req, res) => {
     res.status(500).json({ name: error.name, message: error.message });
   }
 };
-
 export const addShipperOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1051,7 +1038,8 @@ export const adminFailDelivery = async (req, res) => {
 
     if (order.status === "4") {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Đơn hàng đã giao hàng thành công, không thể đánh dấu giao hàng thất bại"
+        message:
+          "Đơn hàng đã giao hàng thành công, không thể đánh dấu giao hàng thất bại"
       });
     }
 
@@ -1105,10 +1093,6 @@ export const adminFailDelivery = async (req, res) => {
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
-
-
-
-
 //Hàm tra cứu đơn hàng theo số điện thoại
 export const getOrdersByPhone = async (req, res) => {
   const { phone } = req.query;
@@ -1122,7 +1106,6 @@ export const getOrdersByPhone = async (req, res) => {
     res.status(500).json({ message: "Lỗi server", error });
   }
 };
-
 export const getTotalOrdersByRole = async (req, res) => {
   try {
     const user = req.user;
@@ -1173,6 +1156,17 @@ export const getTotalOrdersByRole = async (req, res) => {
     } else {
       return res.status(403).json({ message: "Không có quyền truy cập" });
     }
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
+export const getAllOrderSuccess = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      status: "6"
+    }).exec();
+    return res.status(StatusCodes.OK).json(orders);
   } catch (error) {
     console.error("Error fetching orders: ", error);
     return res.status(500).json({ message: "Lỗi máy chủ" });
