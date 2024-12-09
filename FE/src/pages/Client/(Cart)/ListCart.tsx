@@ -57,9 +57,6 @@ const ListCart = () => {
     })
   }, []);
   const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
-  // useEffect(() => {
-  //   sessionStorage.setItem("totalPriceCart", JSON.stringify(data?.total_price));
-  // }, [data?.total_price]);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState<number | null>(null);
   const remove_item = (item: any) => {

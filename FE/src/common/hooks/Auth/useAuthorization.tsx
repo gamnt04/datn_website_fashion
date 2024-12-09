@@ -110,6 +110,5 @@ export const CheckAuths = ({ roles, children }: any) => {
       />
     );
   }
-
   return <>{children}</>;
 };

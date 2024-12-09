@@ -125,7 +125,7 @@ const MainContent = () => {
             </div>
           </CardDataStats>
           <CardDataStats
-            title="Số Lượng Khách Hàng"
+            title="Khách Hàng"
             total={userData?.data.length}
             rate="0.43%"
             levelUp

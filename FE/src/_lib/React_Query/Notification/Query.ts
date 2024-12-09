@@ -15,8 +15,6 @@ export function Query_notification(userId?: string | number, role?: string) {
         },
         enabled: !!userId || role === 'admin'
     });
-    console.log(data);
-
     return { data, ...rest }
 }
 
