@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default function Het_hang({ dataProps }: any) {
     let quantity_attr: number = 0;
