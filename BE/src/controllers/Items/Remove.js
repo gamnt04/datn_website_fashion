@@ -26,7 +26,7 @@ export const removeMultipleProducts = async (req, res) => {
         .json({ error: "Invalid product IDs" });
     }
     // kiểm tra xem _id có nằm trong 1 mảng productIds không
-    const result = await Products.deleteMany({
+    const result = await Products.delete({
       _id: { $in: productIds }
     });
 

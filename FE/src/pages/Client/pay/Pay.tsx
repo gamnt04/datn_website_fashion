@@ -381,7 +381,6 @@ const Pay = () => {
         return;
       }
     }
-    console.log(item_order_checkked)
     const item_order = {
       userId: userId,
       items: item_order_checkked,
@@ -454,9 +453,9 @@ const Pay = () => {
       render: (_: any, order: any) => (
         <div className="gap-10 lg:flex lg:items-center">
           <div>
-            <h1 className="text-sm font-bold lg:text-base">
+            <span className="text-sm font-semibold lg:text-base">
               {order?.productId?.name_product}
-            </h1>
+            </span>
             {/* <p className="border border-stone-200 rounded my-1 lg:my-3 px-3 py-1 lg:py-2 lg:w-[220px] w-full text-xs lg:text-sm">
               Đổi trả miễn phí 15 ngày
             </p> */}
@@ -514,15 +513,6 @@ const Pay = () => {
       ),
     },
   ];
-  if (loadingOrder || isLoading) {
-    return (
-      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
-        <div className="flex justify-center items-center h-screen">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -530,16 +520,21 @@ const Pay = () => {
         {contextHolder}
         <div className="mt-20">
           <div className="mb-6">
-            <div className="flex items-center gap-3 bg-[#F5F5F5] py-6">
-              <img
-                src="../../src/assets/Images/Logo/logo.png"
-                className="w-[50px] h-[50px]"
-                alt=""
-              />
-              <span className="h-[50px] border-black border-r-2"></span>
-              <h1 className="text-2xl font-bold">Thanh Toán</h1>
+            <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
+              <Link to={`/`} className="text-gray-500 hover:text-black">
+                Trang chủ
+              </Link>
+              <span className="mx-1 text-gray-500">&#10148;</span>
+              Thanh toán
             </div>
           </div>
+          {loadingOrder || isLoading &&
+            <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+              <div className="flex justify-center items-center h-screen">
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+              </div>
+            </div>
+          }
           <form onSubmit={handleSubmit(onAddOrder)}>
             <div className="p-2 border rounded shadow-sm lg:py-6 lg:px-6">
               <div className="flex gap-3">
@@ -625,9 +620,9 @@ const Pay = () => {
                 pagination={false}
               />
               <div className="flex items-center justify-end gap-8 p-6">
-                <p className="text-xl font-bold text-black">
+                <p className="text-xl font-semibold text-black">
                   <p>
-                    Tổng số tiền:{" "}
+                    Tổng tiền :{" "}
                     {totalPrice?.toLocaleString("vi", {
                       style: "currency",
                       currency: "VND",
@@ -858,7 +853,7 @@ const Pay = () => {
                   )}
                 </Modal>
               </div>
-              <div className="flex justify-end px-6 py-6 border-b">
+              <div className="flex justify-end px-6 pt-6">
                 <div>
                   <div className="flex justify-between gap-16 py-3">
                     <p>Tổng tiền hàng</p>
@@ -891,7 +886,7 @@ const Pay = () => {
                   </div>
                   <div className="my-4 border rounded shadow-sm">
                     <div className="flex items-center justify-end gap-8 p-6">
-                      <p className="text-xl font-bold text-black">
+                      <p className="text-xl font-semibold text-black">
                         <p>
                           Tổng số tiền:{" "}
                           {(finalAmount > 0
@@ -935,7 +930,7 @@ const Pay = () => {
               handleAddressSelect={handleAddressSelect}
               handleAddress={handleAddress}
               selectedAddress={selectedAddress}
-            ></List_Address>
+            />
           )}
           {isOrderSuccessfully && (
             <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
