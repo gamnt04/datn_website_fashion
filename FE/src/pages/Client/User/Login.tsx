@@ -17,7 +17,7 @@ const Login = () => {
     formErrors,
     setFormErrors,
     validateForm,
-    isPending,
+    isLoading,
     isError,
     error,
     status_api,
@@ -90,7 +90,7 @@ const Login = () => {
     navigate("/forgot-password");
   };
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />

@@ -14,8 +14,8 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   const dispathNotification = Mutation_Notification("Add");
   const [messageApi, contextHolder] = message.useMessage();
   const [selectedReason, setSelectedReason] = useState("");
-  const { mutate: xac_nhan, isPending: isConfirming } = useOrderMutations("UPDATE")
-  const { mutate: cancel, isPending: isCancelling } = useOrderMutations(
+  const { mutate: xac_nhan, isLoading: isConfirming } = useOrderMutations("UPDATE")
+  const { mutate: cancel, isLoading: isCancelling } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
   const formatDate = (createdAt: any) => {

@@ -28,7 +28,7 @@ const useSignIn = (userId?: string) => {
       });
     }
   };
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isLoading, isError, error } = useMutation({
     mutationFn: async (formData: { email: string; password: string }) => {
       return await SignIn(formData);
     },
@@ -85,7 +85,7 @@ const useSignIn = (userId?: string) => {
     formErrors,
     setFormErrors,
     validateForm,
-    isPending,
+    isLoading,
     isError,
     error,
     status_api,

@@ -34,7 +34,7 @@ const UpdateVoucher = () => {
   const [form] = Form.useForm();
   const { data: categories } = useCategoryQuery();
   const { auth, products } = useDataVoucher();
-  const { mutate, isPending } = useMutation({
+  const { mutate, isLoading: loading_voucher } = useMutation({
     mutationFn: async (formData: IVoucher) => {
       try {
         return await instance.put(`/voucher/${id}`, formData);
@@ -154,12 +154,12 @@ const UpdateVoucher = () => {
     }
   }, [vouchers?.data?.voucher]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading || loading_voucher) return <Loader />;
 
   return (
     <div className="mt-20">
       <div className="pb-12 border-b border-gray-900/10">
-        {isPending && (
+        {isLoading && (
           <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
             <div className="animate-spin">
               <Loader />
@@ -411,7 +411,7 @@ const UpdateVoucher = () => {
                     >
                       {selectedItems.map((id) => (
                         <Option key={id} value={id}>
-                          {products.find((p) => p._id === id)?.name_product}
+                          {products.find((p: any) => p._id === id)?.name_product}
                         </Option>
                       ))}
                     </Select>

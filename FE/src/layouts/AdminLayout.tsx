@@ -10,7 +10,7 @@ const AdminLayout: React.FC = () => {
     <CheckAuths roles={["admin", "courier"]}>
       <div className="relative flex min-h-screen">
         {/* Sidebar */}
-        <div className="w-[250px] bg-[#1C2434] pt-4 border-r border-gray-600 fixed top-0 left-0 h-full">
+        <div className="w-[250px] bg-[#1C2434] pt-4 border-r z-[100] border-gray-600 fixed top-0 left-0 h-full">
           <Sidebar_Dashboard />
         </div>
 

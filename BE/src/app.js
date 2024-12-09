@@ -99,6 +99,11 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   console.log(`Người dùng kết nối: ${socket.user.userId}`);
   console.log("Client đã kết nối:", socket.id);
+  
+  socket.on('gui_thong_tin_san_pham_xoa', (data) => {
+    console.log('day la thong tin', data)
+    io.emit('lay_thong_tin_san_pham_xoa', data)
+  })
 
   socket.on("send_message", async (data) => {
     const { receiverId, content } = data;
@@ -117,7 +122,6 @@ io.on("connection", (socket) => {
       socket.emit("error", "Gửi tin nhắn thất bại.");
     }
   });
-
   socket.on("disconnect", () => {
     console.log(`Người dùng ngắt kết nối: ${socket.user.userId}`);
   });

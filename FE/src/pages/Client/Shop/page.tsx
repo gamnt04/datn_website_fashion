@@ -13,7 +13,7 @@ const IndexShops = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
 
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
@@ -68,7 +68,7 @@ const IndexShops = () => {
             resetSizeFilter={resetSizeFilter}
             onSizeChange={handleSizeChange}
           />
-          <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
+          <div className="mb:w-[95%] pb-8 xl:w-full mb:mx-[2.5%] xl:mx-0">
             <ArrangeFilter
               sortOption={sortOption}
               onSortChange={handleSortChange}

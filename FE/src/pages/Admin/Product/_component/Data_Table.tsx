@@ -6,12 +6,20 @@ import { FaEdit, FaRecycle } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { TiDelete } from "react-icons/ti";
 import { Link } from "react-router-dom";
+import { io } from 'socket.io-client';
+import { useEffect } from "react";
 
 export default function Data_Table({ dataProps }: any) {
+  const socket = io('http://localhost:2004');
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
   };
+  useEffect(() => {
+    socket.on('connect_error', () => {
+      socket.disconnect();
+    })
+  }, [socket])
 
   return (
     <>
@@ -45,7 +53,7 @@ export default function Data_Table({ dataProps }: any) {
                 alt="Loading..."
               />
               {/* name */}
-              <span className="line-clamp-3">{data?.name_product}</span>
+              <Link to={`/admin/products/edit/${data._id}`} className="line-clamp-3">{data?.name_product}</Link>
               {/* category */}
               <span className="line-clamp-2">
                 {data?.category_id?.name_category}
@@ -94,20 +102,20 @@ export default function Data_Table({ dataProps }: any) {
                     </Popconfirm>
                   </Space>
                 ) : (
-                  <Space>
-                    <Button type="primary">
-                      <Link to={`/admin/products/edit/${data._id}`}>
-                        <FaEdit />
-                      </Link>
-                    </Button>
+                  <Space className="flex items-center">
+                    <Link to={`/admin/products/edit/${data._id}`} className="bg-transparent h-8 grid place-items-center w-10 rounded border border-sky-600">
+                      <FaEdit />
+                    </Link>
                     <Popconfirm
                       title="Xóa sản phẩm"
-                      description="Bạn có muốn xóa sản phẩm này không ?"
-                      onConfirm={() =>
+                      description="Bạn có muốn xóa sản phẩm này không?"
+                      onConfirm={() => {
+                        socket.emit('gui_thong_tin_san_pham_xoa', data);
                         dataProps?.mutate({
                           id_item: data._id,
                           action: "remove",
                         })
+                      }
                       }
                       // onCancel={cancel}
                       okText="Có"
@@ -128,7 +136,7 @@ export default function Data_Table({ dataProps }: any) {
                 open={true}
               >
                 <summary className="flex cursor-pointer items-center justify-between px-4 py-1 w-[100px] mx-auto ">
-                  <span className="group-open:block hidden">Đóng</span>
+                  <span className="group-open:block hidden">Ẩn</span>
                   <span className="group-open:hidden">Hiện</span>
                   <span className="shrink-0 transition duration-300 group-open:-rotate-180">
                     <ChevronUp className="h-4" />
@@ -139,14 +147,14 @@ export default function Data_Table({ dataProps }: any) {
                     item?.size?.map((value: any) => (
                       <div
                         key={value?._id}
-                        className="grid border-t duration-200 border-gray-300 gap-x-4 grid-cols-[180px_180px_180px_180px_100px_100px_150px_80px] 
+                        className="grid border-t duration-200 border-gray-300 gap-x-4 grid-cols-[180px_180px_180px_250px_100px_100px_150px_80px] 
                                                 items-center text-start justify-between py-4"
                       >
                         <div></div>
                         {/* attributes */}
                         <div className="flex gap-x-2 w-full">
-                        {(item?.symbol?.trim()) ? item?.symbol[0] === '#' ? <div style={{background : item?.symbol}} className={`w-6 h-6 rounded`}/> :
-                         <img width={40} height={40} src={item?.symbol}/> : ''}
+                          {(item?.symbol?.trim()) ? item?.symbol[0] === '#' ? <div style={{ background: item?.symbol }} className={`w-6 h-6 rounded`} /> :
+                            <img width={40} height={40} src={item?.symbol} /> : ''}
                           <span className="line-clamp-3">{item?.color}</span>,
                           <span className="line-clamp-3">
                             {value?.name_size}
