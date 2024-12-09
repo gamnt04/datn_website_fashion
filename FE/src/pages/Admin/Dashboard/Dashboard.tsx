@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Spin } from "antd";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import {
-  Query_Orders,
   useOrdersOfDay
 } from "../../../common/hooks/Order/querry_Order";
 import { Query_Products } from "../../../common/hooks/Products/Products";
