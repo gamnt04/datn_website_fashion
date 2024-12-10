@@ -262,10 +262,11 @@ const ListCart = () => {
             <Popconfirm
               className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
               title="Xóa sản phẩm khỏi giỏ hàng?"
-              description={`Bạn có chắc chắn muốn xóa sản phẩm ${product?.productId?.name_product?.length > 20
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
+                product?.productId?.name_product?.length > 20
                   ? product?.productId?.name_product?.slice(0, 20) + "..."
                   : product?.productId?.name_product
-                } khỏi giỏ hàng không?`}
+              } khỏi giỏ hàng không?`}
               onConfirm={() => remove_item(product)}
               okText="Có"
               cancelText="Không"
