@@ -63,9 +63,8 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${
-          customerInfo.detailedAddress || ""
-        }`,
+        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""
+          }`,
         toa_do: customerInfo.toa_do
       },
       totalPrice,
@@ -155,8 +154,8 @@ export const createOrder = async (req, res) => {
 export const createOrderPayment = async (req, res) => {
   try {
     const requestBody = JSON.parse(JSON.stringify(req.body));
-    const { userId, items, customerInfo, totalPrice } = requestBody;
-    console.log(customerInfo);
+    const { userId, items, customerInfo, totalPrice, delivery_fee } = requestBody;
+    console.log("TEST", requestBody);
 
     const data = await Order.create(requestBody);
     for (let i of items) {
@@ -214,12 +213,12 @@ export const createOrderPayment = async (req, res) => {
           phone: customerInfo.phone,
           payment: customerInfo.payment,
           userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${
-            customerInfo.detailedAddress || ""
-          }`,
+          address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""
+            }`,
           toa_do: customerInfo.toa_do
         },
-        totalPrice
+        totalPrice,
+        delivery_fee
       });
       await SendMail(customerInfo.email, order);
       const notification = new Notification({
