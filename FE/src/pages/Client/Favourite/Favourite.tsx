@@ -51,7 +51,7 @@ const Favourite = () => {
   if (isError) return <div>{error.message}</div>;
 
   return (
-    <div className="lg:mt-[40px] mt-[60px] lg:w-[1440px] lg:mx-auto ">
+    <div className="lg:mt-[40px] mt-[60px] lg:w-[1440px] lg:mx-auto">
       {contextHolder}
       <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
         <Link to={`/`} className="text-gray-500 hover:text-black">
@@ -69,7 +69,7 @@ const Favourite = () => {
           />
         </div>
       ) : (
-        <div className="overflow-x-scroll py-4 hidden_scroll-x_trendingproducts scroll-smooth grid grid-flow-col auto-cols-[48%] md:auto-cols-[33%] lg:auto-cols-[24%] gap-x-[1.5%]">
+        <div className="grid grid-cols-4 gap-4 my-5">
           {data?.products?.map((items: any) => {
             let min: number | undefined;
             let max: number | undefined;
@@ -96,7 +96,7 @@ const Favourite = () => {
 
             return (
               <div
-                className="flex flex-col justify-between w-full gap-y-5"
+                className="flex flex-col justify-between w-full gap-y-5 "
                 key={items?.productId?._id}
               >
                 <div className="relative w-full group border rounded-xl">

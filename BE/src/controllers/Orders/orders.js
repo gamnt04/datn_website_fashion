@@ -74,7 +74,6 @@ export const createOrder = async (req, res) => {
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
-    console.log("dataCart", dataCart);
     if (!dataCart) {
       console.error("Cart not found for userId:", userId);
       return res
@@ -155,8 +154,6 @@ export const createOrderPayment = async (req, res) => {
   try {
     const requestBody = JSON.parse(JSON.stringify(req.body));
     const { userId, items, customerInfo, totalPrice, delivery_fee } = requestBody;
-    console.log("TEST", requestBody);
-
     const data = await Order.create(requestBody);
     for (let i of items) {
       if (i.productId.attributes) {
@@ -181,12 +178,10 @@ export const createOrderPayment = async (req, res) => {
         }
       }
     }
-    // Lấy giỏ hàng của người dùng
     const dataCart = await Cart.findOne({ userId: userId });
     if (!dataCart) {
       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
     }
-    // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
     dataCart.products = dataCart.products.filter((i) => {
       const foundItem = items.some(
         (j) =>
@@ -200,11 +195,9 @@ export const createOrderPayment = async (req, res) => {
       return !foundItem;
     });
 
-    // Lưu lại giỏ hàng sau khi cập nhật
     await dataCart.save();
 
     if (data) {
-      // Gửi email xác nhận đơn hàng
       const order = new Order({
         userId,
         items,
@@ -220,11 +213,12 @@ export const createOrderPayment = async (req, res) => {
         totalPrice,
         delivery_fee
       });
+      await order.save();
       await SendMail(customerInfo.email, order);
       const notification = new Notification({
         userId: userId,
         receiver_id: userId,
-        message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
+        message: `Đã có một đơn hàng mới`,
         different: order._id,
         status_notification: false
       });
