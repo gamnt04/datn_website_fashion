@@ -21,6 +21,8 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
+import { Trash2 } from "lucide-react";
+import { io } from "socket.io-client";
 
 interface DataType {
   key: string;
@@ -260,11 +262,10 @@ const ListCart = () => {
             <Popconfirm
               className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
               title="Xóa sản phẩm khỏi giỏ hàng?"
-              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
-                product?.productId?.name_product?.length > 20
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${product?.productId?.name_product?.length > 20
                   ? product?.productId?.name_product?.slice(0, 20) + "..."
                   : product?.productId?.name_product
-              } khỏi giỏ hàng không?`}
+                } khỏi giỏ hàng không?`}
               onConfirm={() => remove_item(product)}
               okText="Có"
               cancelText="Không"
@@ -345,7 +346,7 @@ const ListCart = () => {
       routing("/login");
     }
   }
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spin indicator={<LoadingOutlined spin />} size="large" />

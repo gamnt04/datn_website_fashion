@@ -519,7 +519,7 @@ const Pay = () => {
       ),
     },
   ];
-  if (loadingOrder || isPending) {
+  if (loadingOrder || Loading_cart || isLoading) {
     return (
       <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
         <div className="flex justify-center items-center h-screen">
@@ -777,15 +777,13 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
                                   ? "border-blue-500"
                                   : "border-gray-300"
-                              } ${
-                                isDisabled
+                                } ${isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -809,9 +807,8 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                  }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled}
                               >
@@ -877,8 +874,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -922,9 +919,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
