@@ -383,7 +383,10 @@ const Pay = () => {
       },
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
-      totalPrice: finalAmount > 0 ? finalAmount : totalPrice + phi_van_chuyen,
+      totalPrice:
+        finalAmount > 0
+          ? finalAmount + phi_van_chuyen
+          : totalPrice + phi_van_chuyen,
       email: user?.user?.email,
       delivery_fee: phi_van_chuyen,
     };
@@ -505,6 +508,15 @@ const Pay = () => {
       ),
     },
   ];
+  if (loadingOrder || Loading_cart || isLoading) {
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="flex justify-center items-center h-screen">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -23,6 +23,7 @@ import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
 import { Trash2 } from "lucide-react";
 import { io } from "socket.io-client";
+
 interface DataType {
   key: string;
   name: string;
@@ -346,7 +347,13 @@ const ListCart = () => {
       routing("/login");
     }
   }
-
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
+  }
   if (isError) {
     return <p>{error.message}</p>;
   }

@@ -7,7 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Dow, Up } from "../../../resources/svg/Icon/Icon";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { Rate } from "antd";
+import { message, Rate } from "antd";
 import useStoreZustand from "../../../Stores/useStore";
 
 interface InforProductProp {
@@ -16,6 +16,7 @@ interface InforProductProp {
 
 
 const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const { setVisible } = useStoreZustand()
   const navi = useNavigate();
   const ref_validate_attr = useRef<HTMLSpanElement>(null);
@@ -147,7 +148,11 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
           if (quantity_item < quantity_attr) {
             setQuantity_item(quantity_item + 1);
           } else {
-            Swal.fire("Vượt quá số lượng sản phẩm!");
+            messageApi.destroy();
+            messageApi.open({
+              type: 'error',
+              content: 'Vượt quá số lượng sản phẩm!',
+            });
           }
         } else {
           text_validate();
@@ -157,7 +162,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         return;
     }
   }
-
   let min =
     dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ?? 0;
   let max =
@@ -185,9 +189,9 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
     }
   }
-
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
+      {contextHolder}
       <div className="flex flex-col lg:gap-y-2">
         <div className="flex flex-col lg:gap-y-2">
           <span className="text-gray-700 font-bold lg:text-3xl mb:text-xl">
@@ -320,15 +324,24 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <button onClick={() => handle_quantity_item("dow")}>
                   <Dow />
                 </button>
-                <input
-                  onChange={(e) =>
-                    quantity_attr &&
-                    +e.target.value <= quantity_attr &&
-                    setQuantity_item(+e.target.value)
-                  }
-                  className="bg-[#F4F4F4] text-center rounded"
-                  value={quantity_item}
-                />
+                {
+                  quantity_attr ?
+                    <input
+                      onChange={(e) =>
+                        (+e?.target?.value) < 1 ? setQuantity_item(1) :
+                          quantity_attr &&
+                          (+e.target.value <= quantity_attr ?
+                            setQuantity_item(+e.target.value) :
+                            setQuantity_item(quantity_attr))
+                      }
+                      className="bg-[#F4F4F4] text-center rounded"
+                      value={quantity_item}
+                    /> : <input
+                      className="bg-[#F4F4F4] text-center rounded cursor-not-allowed"
+                      value={1}
+                      disabled={true}
+                    />
+                }
                 <button onClick={() => handle_quantity_item("up")}>
                   <Up />
                 </button>
@@ -338,15 +351,15 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </span>
             </div>
           </div>
-          {/* <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
+          <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
             <span className="text-[#EB2606]">
               {(dataProps?.products?.attributes
-                ? price_item_attr
-                : price
+                ? (price_attr * quantity_item)
+                : (price_product * quantity_item)
               )?.toLocaleString("vi", { style: "currency", currency: "VND" })}
             </span>
-          </div> */}
+          </div>
           <div className="mt-5 flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             <Button
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"
