@@ -162,7 +162,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
         return;
     }
   }
-
   let min =
     dataProps?.products?.attributes?.values[0]?.size[0]?.price_attribute ?? 0;
   let max =
@@ -190,7 +189,6 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       }
     }
   }
-
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       {contextHolder}
@@ -326,15 +324,24 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 <button onClick={() => handle_quantity_item("dow")}>
                   <Dow />
                 </button>
-                <input
-                  onChange={(e) =>
-                    quantity_attr &&
-                    +e.target.value <= quantity_attr &&
-                    setQuantity_item(+e.target.value)
-                  }
-                  className="bg-[#F4F4F4] text-center rounded"
-                  value={quantity_item}
-                />
+                {
+                  quantity_attr ?
+                    <input
+                      onChange={(e) =>
+                        (+e?.target?.value) < 1 ? setQuantity_item(1) :
+                          quantity_attr &&
+                          (+e.target.value <= quantity_attr ?
+                            setQuantity_item(+e.target.value) :
+                            setQuantity_item(quantity_attr))
+                      }
+                      className="bg-[#F4F4F4] text-center rounded"
+                      value={quantity_item}
+                    /> : <input
+                      className="bg-[#F4F4F4] text-center rounded cursor-not-allowed"
+                      value={1}
+                      disabled={true}
+                    />
+                }
                 <button onClick={() => handle_quantity_item("up")}>
                   <Up />
                 </button>
