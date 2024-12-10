@@ -31,7 +31,6 @@ const Pay = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
 
-  const itemOrder = JSON.parse(sessionStorage.getItem("item_order") || "[]");
   const userId = user?.user?._id;
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
@@ -238,15 +237,14 @@ const Pay = () => {
     return null;
   }
   const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
-    const currentDate = new Date(); // Đảm bảo currentDate được xác định trong hàm sort nếu chưa được khai báo
+    const currentDate = new Date();
 
-    // Kiểm tra điều kiện voucher a
-    const isProductValidA = itemOrder.every(
+    const isProductValidA = item_lon_hon_0.every(
       (item: any) =>
         a.appliedProducts.length === 0 ||
         a.appliedProducts.includes(item.productId._id)
     );
-    const isCategoryValidA = itemOrder.every(
+    const isCategoryValidA = item_lon_hon_0.every(
       (item: any) =>
         a.appliedCategories.length === 0 ||
         a.appliedCategories.includes(item.productId.category_id)
@@ -256,17 +254,16 @@ const Pay = () => {
     const aDisabled =
       (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
       a.usedCount >= a.quantity_voucher ||
-      new Date(a.expirationDate) < currentDate || // Hết hạn
-      new Date(a.startDate) > currentDate || // Chưa có hiệu lực
-      !isVoucherValidA; // Không thỏa mãn điều kiện sản phẩm và danh mục
+      new Date(a.expirationDate) < currentDate ||
+      new Date(a.startDate) > currentDate ||
+      !isVoucherValidA;
 
-    // Kiểm tra điều kiện voucher b
-    const isProductValidB = itemOrder.every(
+    const isProductValidB = item_lon_hon_0.every(
       (item: any) =>
         b.appliedProducts.length === 0 ||
         b.appliedProducts.includes(item.productId._id)
     );
-    const isCategoryValidB = itemOrder.every(
+    const isCategoryValidB = item_lon_hon_0.every(
       (item: any) =>
         b.appliedCategories.length === 0 ||
         b.appliedCategories.includes(item.productId.category_id)
@@ -276,22 +273,18 @@ const Pay = () => {
     const bDisabled =
       (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
       b.usedCount >= b.quantity_voucher ||
-      new Date(b.expirationDate) < currentDate || // Hết hạn
-      new Date(b.startDate) > currentDate || // Chưa có hiệu lực
-      !isVoucherValidB; // Không thỏa mãn điều kiện sản phẩm và danh mục
+      new Date(b.expirationDate) < currentDate ||
+      new Date(b.startDate) > currentDate ||
+      !isVoucherValidB;
 
-    // Sắp xếp voucher không disabled lên trên
-    if (aDisabled && !bDisabled) return 1; // Nếu a bị disabled mà b không thì a xuống dưới
-    if (!aDisabled && bDisabled) return -1; // Nếu b bị disabled mà a không thì b xuống dưới
-    return 0; // Nếu cả hai đều disabled hoặc không disabled thì không thay đổi thứ tự
+    if (aDisabled && !bDisabled) return 1;
+    if (!aDisabled && bDisabled) return -1;
+    return 0;
   });
 
   const onAddOrder = async (data_form: any) => {
-    console.log(data_form);
-    const voucher = data_form.voucher;
     const discountCodeToUse = selectedVoucherCode || discountCode;
 
-    // Kiểm tra địa chỉ trước
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
         type: "warning",
@@ -299,70 +292,60 @@ const Pay = () => {
       });
       return;
     }
-
-    // Kiểm tra voucher trước khi tiếp tục
+    // Kiểm tra tình trạng voucher
     if (discountCodeToUse) {
-      const voucher = sortedVouchers.find(
-        (voucher: any) => voucher._id === discountCodeToUse
-      );
+      try {
+        const voucherResponse = await instance.post(`/voucher/use`, {
+          code_voucher: discountCodeToUse,
+          totalAmount: totalPrice + phi_van_chuyen,
+          applyType: userId,
+          appliedProducts: item_order_checkked.map(
+            (item: any) => item.productId._id
+          ), // Lấy danh sách sản phẩm
+        });
 
-      if (!voucher) {
+        // Kiểm tra phản hồi voucher
+        if (!voucherResponse.data) {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá này không còn hiệu lực hoặc đã bị ẩn!",
+          });
+          return;
+        }
+
+        if (voucherResponse.data.status === "isActive") {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá này không còn hiệu lực hoặc đã bị ẩn!",
+          });
+          return;
+        }
+
+        if (voucherResponse.data.expirationDate < new Date()) {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá đã hết hạn!",
+          });
+          return;
+        }
+
+        if (voucherResponse.data.quantity_voucher <= 0) {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá này đã hết số lượng sử dụng!",
+          });
+          return;
+        }
+      } catch (error) {
         messageApi.open({
-          type: "warning",
-          content: "Voucher không hợp lệ!",
+          type: "error",
+          content: "Lỗi kiểm tra mã giảm giá!",
         });
-        return;
-      }
-
-      if (!voucher.isActive) {
-        messageApi.open({
-          type: "warning",
-          content: "Voucher không còn hoạt động!",
-        });
-        return;
-      }
-
-      // Kiểm tra điều kiện khác của voucher (ví dụ: số lượng còn lại, hết hạn, áp dụng đúng sản phẩm, v.v.)
-      const { isValid, appliedProducts, appliedCategories, allowedUsers } =
-        response.data;
-
-      // Giả sử bạn đã có danh sách sản phẩm và danh mục người dùng chọn
-      const validVoucher =
-        isValid && appliedProducts.length > 0 && appliedCategories.length > 0;
-
-      if (!validVoucher) {
-        toast.error("Voucher không áp dụng cho đơn hàng này.", {
-          autoClose: 1200,
-        });
-        return;
-      }
-
-      // Kiểm tra các điều kiện khác của voucher (sản phẩm, danh mục, người dùng)
-      const isAllowedUser =
-        voucher.allowedUsers.length === 0 ||
-        voucher.allowedUsers.includes(userId);
-      const isProductValid = item_order_checkked.every(
-        (item: any) =>
-          voucher.appliedProducts.length === 0 ||
-          voucher.appliedProducts.includes(item.productId._id)
-      );
-      const isCategoryValid = item_order_checkked.every(
-        (item: any) =>
-          voucher.appliedCategories.length === 0 ||
-          voucher.appliedCategories.includes(item.productId.category_id)
-      );
-
-      if (!isAllowedUser || !isProductValid || !isCategoryValid) {
-        messageApi.open({
-          type: "warning",
-          content:
-            "Voucher không hợp lệ với các sản phẩm hoặc danh mục trong đơn hàng!",
-        });
+        console.error("Voucher Error:", error);
         return;
       }
     }
 
-    // Validate số lượng sản phẩm trong kho
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
         const check_color = i?.productId?.attributes?.values?.find(
@@ -418,7 +401,10 @@ const Pay = () => {
           `http://localhost:2004/api/v1/create_payment_url`,
           {
             orderId: nanoid(24),
-            totalPrice: totalPrice + 30000,
+            totalPrice:
+              finalAmount > 0
+                ? finalAmount + phi_van_chuyen
+                : totalPrice + phi_van_chuyen,
             orderDescription: `Order ${orderId._id}`,
             language: "vn",
           }
@@ -519,15 +505,6 @@ const Pay = () => {
       ),
     },
   ];
-  if (loadingOrder || isPending) {
-    return (
-      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
-        <div className="flex justify-center items-center h-screen">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -741,7 +718,7 @@ const Pay = () => {
                           const isAllowedUser =
                             voucher.allowedUsers.length === 0 ||
                             voucher.allowedUsers.includes(userId);
-                          const isProductValid = itemOrder.every(
+                          const isProductValid = item_lon_hon_0.every(
                             (item: any) =>
                               voucher.appliedProducts.length === 0 ||
                               voucher.appliedProducts.includes(
@@ -749,7 +726,7 @@ const Pay = () => {
                               )
                           );
 
-                          const isCategoryValid = itemOrder.every(
+                          const isCategoryValid = item_lon_hon_0.every(
                             (item: any) =>
                               voucher.appliedCategories.length === 0 ||
                               voucher.appliedCategories.includes(
@@ -934,7 +911,7 @@ const Pay = () => {
                         <p>
                           Tổng số tiền:{" "}
                           {(finalAmount > 0
-                            ? finalAmount
+                            ? finalAmount + phi_van_chuyen
                             : totalPrice + phi_van_chuyen
                           )?.toLocaleString("vi", {
                             style: "currency",
