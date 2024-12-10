@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import {
   Query_Orders,
   useAllOrderSuccess,
-  useSearchOrdersByNumberOrNumberPhone
+  useSearchOrdersByNumberOrNumberPhone,
 } from "../../../common/hooks/Order/querry_Order";
 import OrderTable from "./OrderTable";
 
@@ -68,9 +68,9 @@ const OrderList = () => {
           name_product: p.productId.name_product,
           price_product: p.total_price_item,
           quantity_product: p.quantity,
-          classification_product: `${p.color_item} - ${p.name_size}`
+          classification_product: `${p.color_item} - ${p.name_size}`,
         })),
-        total_price_order: item.totalPrice
+        total_price_order: item.totalPrice,
       }));
       setDataExport(formattedData);
     }
@@ -96,7 +96,7 @@ const OrderList = () => {
             price_product: p.price_product,
             quantity_product: p.quantity_product,
             classification_product: p.classification_product,
-            total_price_order: item.total_price_order
+            total_price_order: item.total_price_order,
           });
         });
       });
@@ -106,9 +106,6 @@ const OrderList = () => {
   }, [dataExport]);
 
   const handleExport = async () => {
-    // const exportData: any[] = [];
-    // exportData.push();
-
     const header = [
       "STT",
       "Mã đơn hàng",
@@ -122,73 +119,68 @@ const OrderList = () => {
       "Giá sản phẩm",
       "Số lượng sản phẩm",
       "Phân loại sản phẩm",
-      "Tổng đơn hàng"
+      "Tổng đơn hàng",
     ];
 
-    const worksheet = XLSX.utils.json_to_sheet(dataState, { header: header });
-    console.log("worksheet", worksheet);
+    const worksheetData = dataState.map((row) => ({
+      STT: row.stt,
+      "Mã đơn hàng": row.number_order,
+      "Tên khách hàng": row.name_customer,
+      "Số điện thoại": row.number_phone_customer,
+      Email: row.email_customer,
+      "Địa chỉ": row.address_customer,
+      "Ngày đặt hàng": row.order_date,
+      "Ngày hoàn thành": row.order_success,
+      "Tên sản phẩm": row.name_product,
+      "Giá sản phẩm": row.price_product,
+      "Số lượng sản phẩm": row.quantity_product,
+      "Phân loại sản phẩm": row.classification_product,
+      "Tổng đơn hàng": row.total_price_order,
+    }));
 
-    const merges: any[] = [];
-    let currentId: any = null;
-    let currentRowIndex: any = null;
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData, { header });
+
+    const merges = [];
+    let currentOrder = null;
+    let startRow = null;
+
+    // Tạo merge cells cho các cột thông tin đơn hàng
     dataState.forEach((row, index) => {
-      if (row.number_order !== currentId) {
-        // Nếu ID thay đổi, ghi lại row cũ (nếu có)
-        if (currentRowIndex !== null && index > currentRowIndex) {
+      if (row.number_order !== currentOrder) {
+        if (startRow !== null) {
+          // Thêm merge cho các cột
+          for (let col = 0; col <= 7; col++) {
+            // Cột từ STT đến Ngày hoàn thành
+            merges.push({
+              s: { r: startRow, c: col },
+              e: { r: index - 1, c: col },
+            });
+          }
           merges.push({
-            s: { r: currentRowIndex, c: 0 }, // Cột number_order
-            e: { r: index - 1, c: 0 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 1 }, // Cột name_customer
-            e: { r: index - 1, c: 1 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 2 }, // Cột number_phone_customer
-            e: { r: index - 1, c: 2 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 3 }, // Cột email_customer
-            e: { r: index - 1, c: 3 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 4 }, // Cột address_customer
-            e: { r: index - 1, c: 4 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 5 }, // Cột order_date
-            e: { r: index - 1, c: 5 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 6 }, // Cột order_success
-            e: { r: index - 1, c: 6 }
-          });
-          merges.push({
-            s: { r: currentRowIndex, c: 11 }, // Cột total_price_order
-            e: { r: index - 1, c: 11 }
+            s: { r: startRow, c: 12 }, // Cột Tổng đơn hàng
+            e: { r: index - 1, c: 12 },
           });
         }
-        currentId = row.number_order;
-        currentRowIndex = index;
+        currentOrder = row.number_order;
+        startRow = index;
       }
     });
 
-    if (currentRowIndex !== null && dataState.length > currentRowIndex) {
+    // Merge cuối cùng
+    if (startRow !== null) {
+      for (let col = 0; col <= 7; col++) {
+        merges.push({
+          s: { r: startRow, c: col },
+          e: { r: dataState.length - 1, c: col },
+        });
+      }
       merges.push({
-        s: { r: currentRowIndex, c: 0 },
-        e: { r: dataState.length - 1, c: 0 }
-      });
-      merges.push({
-        s: { r: currentRowIndex, c: 1 },
-        e: { r: dataState.length - 1, c: 1 }
+        s: { r: startRow, c: 12 },
+        e: { r: dataState.length - 1, c: 12 },
       });
     }
 
     worksheet["!merges"] = merges;
-    worksheet["!merges"].push({
-      s: { r: 0, c: 0 },
-      e: { r: 0, c: 3 }
-    });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(
       workbook,
@@ -198,7 +190,7 @@ const OrderList = () => {
 
     const excelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
-      type: "array"
+      type: "array",
     });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
 

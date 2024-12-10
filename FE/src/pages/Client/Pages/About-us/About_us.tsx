@@ -9,12 +9,19 @@ const AboutUS = () => {
   //const arr = [1, 2, 3];
   const { data, isLoading } = useCategoryQuery();
   const visibleCategories =
-    data?.filter((category: ICategory) => category.published) || [];
+    data?.filter(
+      (category: ICategory) =>
+        category.published &&
+        category.published &&
+        category.name_category !== "Uncategorized"
+    ) || [];
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
   return (
     <div className="container lg:mt-[40px] mt-[60px]">
