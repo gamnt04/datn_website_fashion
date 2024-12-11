@@ -183,9 +183,9 @@ export const useVoucher = async (req, res) => {
 
     // Kiểm tra nếu voucher chỉ dành cho một số người dùng
     if (
-      voucher.allowedUsers.length > 0 && // Nếu có giới hạn người dùng
-      !voucher.allowedUsers.includes("all") && // Không có "all" trong danh sách
-      !voucher.allowedUsers.includes(userId) // Người dùng không nằm trong danh sách cho phép
+      voucher.allowedUsers.length > 0 &&
+      !voucher.allowedUsers.includes("all") &&
+      !voucher.allowedUsers.includes(userId)
     ) {
       return res
         .status(403)
@@ -212,42 +212,45 @@ export const useVoucher = async (req, res) => {
     }
 
     if (voucher.applyType === "product") {
-      // Kiểm tra nếu áp dụng cho sản phẩm
+      // Kiểm tra sản phẩm nếu voucher áp dụng cho sản phẩm
       if (voucher.appliedProducts.length === 0) {
         // Nếu không có sản phẩm nào trong appliedProducts, cho phép tất cả sản phẩm
       } else {
-        // Kiểm tra xem các sản phẩm đã chọn có hợp lệ không
-        const validProducts = selectedProducts.filter((productId) =>
-          voucher.appliedProducts.includes(productId)
+        // Kiểm tra xem tất cả sản phẩm đã chọn có hợp lệ không
+        const invalidProducts = selectedProducts.filter(
+          (productId) => !voucher.appliedProducts.includes(productId)
         );
 
-        if (validProducts.length === 0) {
-          return res
-            .status(400)
-            .json({ message: "Mã giảm giá không áp dụng cho sản phẩm này" });
+        if (invalidProducts.length > 0) {
+          return res.status(400).json({
+            message: `Mã giảm giá không áp dụng cho sản phẩm có ID: ${invalidProducts.join(
+              ", "
+            )}`,
+          });
         }
       }
     } else if (voucher.applyType === "total") {
-      // Kiểm tra nếu áp dụng cho tổng số tiền
+      // Kiểm tra nếu voucher áp dụng cho tổng số tiền
       if (totalAmount < voucher.minimumSpend) {
         return res.status(400).json({
           message: `Số tiền tối thiểu để sử dụng mã giảm giá này là ${voucher.minimumSpend}`,
         });
       }
     } else if (voucher.applyType === "category") {
+      // Kiểm tra danh mục nếu voucher áp dụng cho danh mục sản phẩm
       if (voucher.appliedCategories.length === 0) {
         // Nếu không có danh mục nào trong appliedCategories, cho phép áp dụng cho tất cả danh mục
       } else {
-        // Kiểm tra xem các sản phẩm đã chọn có thuộc danh mục hợp lệ không
-        const validProducts = await Products.find({
+        // Kiểm tra xem có sản phẩm nào không thuộc danh mục hợp lệ không
+        const invalidProducts = await Products.find({
           _id: { $in: selectedProducts },
-          category_id: { $in: voucher.appliedCategories },
+          category_id: { $nin: voucher.appliedCategories },
         });
 
-        if (validProducts.length === 0) {
+        if (invalidProducts.length > 0) {
           return res.status(400).json({
             message:
-              "Mã giảm giá không áp dụng cho sản phẩm thuộc danh mục này",
+              "Mã giảm giá không áp dụng cho sản phẩm thuộc các danh mục không hợp lệ",
           });
         }
       }

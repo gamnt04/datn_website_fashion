@@ -292,60 +292,67 @@ const Pay = () => {
       });
       return;
     }
-    // Kiểm tra tình trạng voucher
+
+    // Kiểm tra voucher bằng API
     if (discountCodeToUse) {
       try {
-        const voucherResponse = await instance.post(`/voucher/use`, {
-          code_voucher: discountCodeToUse,
-          totalAmount: totalPrice + phi_van_chuyen,
-          applyType: userId,
-          appliedProducts: item_order_checkked.map(
-            (item: any) => item.productId._id
-          ), // Lấy danh sách sản phẩm
+        const selectedProductIds = item_order_checkked?.map(
+          (item: any) => item.productId._id
+        );
+        const response = await instance.post(`/voucher/use`, {
+          code_voucher: discountCode,
+          totalAmount: totalPrice,
+          userId: user?.user?._id,
+          selectedProducts: selectedProductIds,
         });
 
-        // Kiểm tra phản hồi voucher
-        if (!voucherResponse.data) {
+        const voucher = response.data;
+
+        console.log("Voucher response:", voucher);
+        const expirationDate = voucher?.expirationDate
+          ? new Date(voucher.expirationDate)
+          : null;
+        const isActive = voucher?.isActive ?? true;
+
+        if (!voucher) {
           messageApi.open({
-            type: "warning",
-            content: "Mã giảm giá này không còn hiệu lực hoặc đã bị ẩn!",
+            type: "error",
+            content: "Mã giảm giá không hợp lệ!",
           });
           return;
         }
 
-        if (voucherResponse.data.status === "isActive") {
+        if (!isActive) {
           messageApi.open({
-            type: "warning",
-            content: "Mã giảm giá này không còn hiệu lực hoặc đã bị ẩn!",
+            type: "error",
+            content: "Mã giảm giá đã bị ẩn!",
+          });
+          return;
+        }
+        if (voucher?.usedCount >= voucher?.quantity_voucher) {
+          messageApi.open({
+            type: "error",
+            content: "Mã giảm giá đã hết số lượng sử dụng!",
           });
           return;
         }
 
-        if (voucherResponse.data.expirationDate < new Date()) {
+        if (expirationDate && expirationDate < new Date()) {
           messageApi.open({
-            type: "warning",
+            type: "error",
             content: "Mã giảm giá đã hết hạn!",
           });
           return;
         }
-
-        if (voucherResponse.data.quantity_voucher <= 0) {
-          messageApi.open({
-            type: "warning",
-            content: "Mã giảm giá này đã hết số lượng sử dụng!",
-          });
-          return;
-        }
       } catch (error) {
+        console.error("Error checking voucher:", error);
         messageApi.open({
           type: "error",
-          content: "Lỗi kiểm tra mã giảm giá!",
+          content: "Lỗi khi kiểm tra mã giảm giá!",
         });
-        console.error("Voucher Error:", error);
         return;
       }
     }
-
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
         const check_color = i?.productId?.attributes?.values?.find(

@@ -5,7 +5,6 @@ import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 
 const IndexShops = () => {
-  const navigate = useNavigate();
   const [cate_id, setCategoryId] = useState<string[]>([]);
   const [priceRanges, setPriceRanges] = useState<
     { min: number; max: number }[]
@@ -17,7 +16,6 @@ const IndexShops = () => {
 
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
-    navigate(`/shops?category=${id.join(",")}`);
   };
 
   const handlePriceChange = (priceRanges: { min: number; max: number }[]) => {
