@@ -74,7 +74,6 @@ export const createOrder = async (req, res) => {
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
-    console.log("dataCart", dataCart);
     if (!dataCart) {
       console.error("Cart not found for userId:", userId);
       return res
@@ -151,13 +150,130 @@ export const createOrder = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
+// export const createOrderPayment = async (req, res) => {
+  
+//   try {
+//     const requestBody = JSON.parse(JSON.stringify(req.body));
+//     const { userId, items, customerInfo, totalPrice, delivery_fee } = requestBody;
+//     const data = await Order.create(requestBody);
+//     for (let i of items) {
+//       if (i.productId.attributes) {
+//         const data_attr = await Attributes.find({});
+//         for (let j of data_attr) {
+//           for (let k of j.values) {
+//             if (k.color === i.color_item) {
+//               for (let x of k.size) {
+//                 if (x.name_size === i.name_size) {
+//                   x.stock_attribute = x.stock_attribute - i.quantity;
+//                 }
+//               }
+//             }
+//           }
+//           await j.save();
+//         }
+//       } else {
+//         const data_items = await Products.find({ _id: i.productId._id });
+//         for (let a of data_items) {
+//           a.stock = a.stock - i.quantity;
+//           await a.save();
+//         }
+//       }
+//     }
+//     const dataCart = await Cart.findOne({ userId: userId });
+//     if (!dataCart) {
+//       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
+//     }
+//     dataCart.products = dataCart.products.filter((i) => {
+//       const foundItem = items.some(
+//         (j) =>
+//           i.productId._id.toString() === j.productId._id.toString() &&
+//           i.color_item === j.color_item &&
+//           i.name_size === j.name_size
+//       );
+//       if (foundItem) {
+//         console.log(`Removing product from cart: ${i.productId._id}`);
+//       }
+//       return !foundItem;
+//     });
+
+//     await dataCart.save();
+
+//     if (data) {
+//       const order = new Order({
+//         userId,
+//         items,
+//         customerInfo: {
+//           email: customerInfo.email,
+//           phone: customerInfo.phone,
+//           payment: customerInfo.payment,
+//           userName: customerInfo.userName,
+//           address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""
+//             }`,
+//           toa_do: customerInfo.toa_do
+//         },
+//         totalPrice,
+//         delivery_fee
+//       });
+//       await order.save();
+//       await SendMail(customerInfo.email, order);
+//       const notification = new Notification({
+//         userId: userId,
+//         receiver_id: userId,
+//         message: `Đã có một đơn hàng mới`,
+//         different: order._id,
+//         status_notification: false
+//       });
+
+//       await notification.save();
+//       // Trả về giỏ hàng đã cập nhật
+//       return res.status(201).json({
+//         data,
+//         updatedCart: dataCart,
+//         message: "Tạo đơn hàng thanh toán online thành công"
+//       });
+//     } else {
+//       return res
+//         .status(400)
+//         .json({ message: "Lỗi rồi fix lại thanh toán online" });
+//     }
+//   } catch (error) {
+//     console.error("Error creating order payment:", error);
+//     return res
+//       .status(500)
+//       .json({ message: "Lỗi rồi fix lại thanh toán online" });
+//   }
+// };
 export const createOrderPayment = async (req, res) => {
   try {
-    const requestBody = JSON.parse(JSON.stringify(req.body));
-    const { userId, items, customerInfo, totalPrice, delivery_fee } = requestBody;
-    console.log("TEST", requestBody);
+    const {
+      userId,
+      items,
+      customerInfo,
+      totalPrice,
+      discountCode = null, // Mã giảm giá (nếu có)
+      discountAmount = 0, // Số tiền giảm giá (nếu có)
+      delivery_fee // Phí vận chuyển
+    } = req.body;
 
-    const data = await Order.create(requestBody);
+    // Tạo đơn hàng với các thông tin
+    const order = new Order({
+      userId,
+      items,
+      customerInfo: {
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        payment: customerInfo.payment,
+        userName: customerInfo.userName,
+        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
+        toa_do: customerInfo.toa_do,
+      },
+      totalPrice,
+      discountCode: discountCode || null, // Lưu mã giảm giá (nếu có)
+      discountAmount: discountAmount || 0, // Lưu số tiền giảm giá (nếu có)
+      delivery_fee, // Lưu phí vận chuyển
+    });
+
+    // Cập nhật kho hàng dựa trên các item
     for (let i of items) {
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({});
@@ -166,7 +282,7 @@ export const createOrderPayment = async (req, res) => {
             if (k.color === i.color_item) {
               for (let x of k.size) {
                 if (x.name_size === i.name_size) {
-                  x.stock_attribute = x.stock_attribute - i.quantity;
+                  x.stock_attribute -= i.quantity;
                 }
               }
             }
@@ -176,17 +292,18 @@ export const createOrderPayment = async (req, res) => {
       } else {
         const data_items = await Products.find({ _id: i.productId._id });
         for (let a of data_items) {
-          a.stock = a.stock - i.quantity;
+          a.stock -= i.quantity;
           await a.save();
         }
       }
     }
-    // Lấy giỏ hàng của người dùng
+
+    // Cập nhật giỏ hàng của người dùng
     const dataCart = await Cart.findOne({ userId: userId });
     if (!dataCart) {
       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
     }
-    // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
+
     dataCart.products = dataCart.products.filter((i) => {
       const foundItem = items.some(
         (j) =>
@@ -194,53 +311,43 @@ export const createOrderPayment = async (req, res) => {
           i.color_item === j.color_item &&
           i.name_size === j.name_size
       );
-      if (foundItem) {
-        console.log(`Removing product from cart: ${i.productId._id}`);
-      }
-      return !foundItem;
+      return !foundItem; // Loại bỏ sản phẩm đã đặt hàng
     });
 
-    // Lưu lại giỏ hàng sau khi cập nhật
     await dataCart.save();
 
-    if (data) {
-      // Gửi email xác nhận đơn hàng
-      const order = new Order({
-        userId,
-        items,
-        customerInfo: {
-          email: customerInfo.email,
-          phone: customerInfo.phone,
-          payment: customerInfo.payment,
-          userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""
-            }`,
-          toa_do: customerInfo.toa_do
-        },
-        totalPrice,
-        delivery_fee
-      });
-      await SendMail(customerInfo.email, order);
-      const notification = new Notification({
-        userId: userId,
-        receiver_id: userId,
-        message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
-        different: order._id,
-        status_notification: false
-      });
-
-      await notification.save();
-      // Trả về giỏ hàng đã cập nhật
-      return res.status(201).json({
-        data,
-        updatedCart: dataCart,
-        message: "Tạo đơn hàng thanh toán online thành công"
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Lỗi rồi fix lại thanh toán online" });
+    // Xử lý mã giảm giá (nếu có)
+    if (discountCode) {
+      const voucher = await Voucher.findOne({ code_voucher: discountCode });
+      if (voucher) {
+        voucher.usedCount += 1;
+        await voucher.save();
+      }
     }
+
+    // Lưu đơn hàng
+    await order.save();
+
+    // Gửi email xác nhận đơn hàng
+    await SendMail(customerInfo.email, order);
+
+    // Tạo thông báo
+    const notification = new Notification({
+      userId: userId,
+      receiver_id: userId,
+      message: `Đã có một đơn hàng mới`,
+      different: order._id,
+      status_notification: false,
+    });
+
+    await notification.save();
+
+    // Trả về dữ liệu phản hồi
+    return res.status(201).json({
+      order,
+      updatedCart: dataCart,
+      message: "Tạo đơn hàng thanh toán online thành công",
+    });
   } catch (error) {
     console.error("Error creating order payment:", error);
     return res
@@ -248,6 +355,7 @@ export const createOrderPayment = async (req, res) => {
       .json({ message: "Lỗi rồi fix lại thanh toán online" });
   }
 };
+
 export const getAllOrdersToday = async (req, res) => {
   try {
     const startOfDay = new Date();

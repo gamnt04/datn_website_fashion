@@ -22,11 +22,11 @@ function sortObject(obj) {
 
 // Hàm tạo URL thanh toán
 export function createPaymentUrl(req, res, next) {
-  const { orderId, totalPrice, orderDescription, language, bankCode } = req.body;
-
+  const { orderId, totalPrice, orderDescription, language, bankCode, discountAmount = 0, delivery_fee = 0 } = req.body;
+  const finalAmount = totalPrice + delivery_fee - discountAmount;
   // Kiểm tra đầu vào
-  if (!orderId || isNaN(totalPrice) || totalPrice <= 0) {
-    return res.status(400).json({ error: "Dữ liệu không hợp lệ" });
+  if (isNaN(finalAmount) || finalAmount <= 0) {
+    return res.status(400).json({ error: "Tổng tiền không hợp lệ" });
   }
 
   const ipAddr =
@@ -47,7 +47,7 @@ export function createPaymentUrl(req, res, next) {
     vnp_TxnRef: orderId,
     vnp_OrderInfo: `${orderDescription} ${orderId}`,
     vnp_OrderType: "other",
-    vnp_Amount: totalPrice * 100,
+    vnp_Amount: finalAmount  * 100,
     vnp_ReturnUrl: returnUrl,
     vnp_IpAddr: ipAddr,
     vnp_CreateDate: createDate,

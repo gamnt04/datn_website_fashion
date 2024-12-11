@@ -68,7 +68,8 @@ export const createProduct = async (req, res) => {
             {
               name_size: data_size.name_size ? data_size.name_size.toString() : '',
               stock_attribute: data_size.stock_attribute ? data_size.stock_attribute : 0,
-              price_attribute: data_size.price_attribute ? +data_size.price_attribute : 1
+              price_attribute: data_size.price_attribute ? +data_size.price_attribute : 1,
+              // sale: data_size.sale ? +data_size.sale : 0
             }
           )
           )

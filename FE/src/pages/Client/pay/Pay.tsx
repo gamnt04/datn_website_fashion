@@ -400,28 +400,31 @@ const Pay = () => {
 
     try {
       if (data_form.payment === "VNPAY") {
-        const orderId = JSON.parse(
-          sessionStorage.getItem("item_order") as string
-        );
+        // Thêm vào sessionStorage
         sessionStorage.setItem(
           "customerInfo",
           JSON.stringify({ ...data_form, toa_do: selectedAddress?.coordinates })
         );
+    
+        // Tạo URL thanh toán
         const UrlPayment = await axios.post(
           `http://localhost:2004/api/v1/create_payment_url`,
           {
             orderId: nanoid(24),
-            totalPrice:
-              finalAmount > 0
-                ? finalAmount + phi_van_chuyen
-                : totalPrice + phi_van_chuyen,
-            orderDescription: `Order ${orderId._id}`,
+            totalPrice: totalPrice,
+            orderDescription: `Order ${item_order.items[0]._id}`, // Ví dụ: Lấy sản phẩm đầu tiên
+            discountCode: discountCodeToUse,
+            discountAmount: discountAmount,
+            delivery_fee: phi_van_chuyen,
             language: "vn",
           }
         );
+    
+        // Lưu thông tin vào sessionStorage
         sessionStorage.setItem("item_order", JSON.stringify(item_order));
         window.location.href = UrlPayment.data.paymentUrl;
       } else {
+        // Thanh toán COD
         setIsOrderSuccessfully(true);
         onSubmit(item_order);
       }

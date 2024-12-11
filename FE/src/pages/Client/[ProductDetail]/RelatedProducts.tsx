@@ -1,9 +1,9 @@
 import Products from "../../../components/common/Items/Products";
-import { Query_Products } from "../../../common/hooks/Products/Products";
 import { IProduct } from "../../../common/interfaces/Product";
+import { Query_All_Products } from "../../../common/hooks/Products/Products";
 
 const ProductRelated = ({ product }: { product: IProduct }) => {
-  const data = Query_Products();
+  const { data } = Query_All_Products();
   const san_pham_cung_loai = data?.data?.filter(
     (item: IProduct) => item?.category_id === product?.category_id
   );
