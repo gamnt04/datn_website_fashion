@@ -164,25 +164,25 @@ export default function Data_Table({ dataProps }: any) {
                         <div></div>
                         {/* price */}
                         <div>
-                            <span className={`${value?.sale > 0 ? 'text-gray-500 line-through' : 'text-red-600'} line-clamp-1`}>
-                              {value?.price_attribute?.toLocaleString("vi", {
-                                style: "currency",
-                                currency: "VND",
-                              })}
-                            </span>
+                          <span className={`${data?.sale > 0 ? 'text-gray-500 line-through' : 'text-red-600'} line-clamp-1`}>
+                            {value?.price_attribute?.toLocaleString("vi", {
+                              style: "currency",
+                              currency: "VND",
+                            })}
+                          </span>
                           {
-                            value?.sale > 0 &&
+                            data?.sale > 0 &&
                             <div className="flex items-center gap-x-3">
                               <span className="line-clamp-1 text-red-600">
-                              {value?.price_sale?.toLocaleString("vi", {
-                                style: "currency",
-                                currency: "VND",
-                              })}
-                            </span>
-                             {
-                              value?.sale > 0 &&
-                              <span className="text-sm font-normal text-gray-600 translate-y-[-10px]">-{value?.sale}%</span>
-                            }
+                                {(value?.price_attribute * (1 - data?.sale / 100))?.toLocaleString("vi", {
+                                  style: "currency",
+                                  currency: "VND",
+                                })}
+                              </span>
+                              {
+                                data?.sale > 0 &&
+                                <span className="text-sm font-normal text-gray-600 translate-y-[-10px]">-{data?.sale}%</span>
+                              }
                             </div>
                           }
                         </div>
