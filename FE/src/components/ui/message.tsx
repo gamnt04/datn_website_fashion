@@ -25,23 +25,44 @@ interface IDataMessageByRole {
 //   return message;
 // };
 
-const formatMessageWithProductLink = (message: any) => {
+// const formatMessageWithProductLink = (message: any) => {
+//   if (typeof message !== "string") {
+//     console.warn("Message không phải là chuỗi:", message);
+//     return "";
+//   }
+
+//   const productIdRegex = /\b([a-f0-9]{24})\b/;
+//   const match = message.match(productIdRegex);
+
+//   if (match) {
+//     const productId = match[0];
+//     const productLink = `<a href="http://localhost:7899/shops/${productId}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">Tại đây</a>`;
+//     return message.replace(productId, productLink);
+//   }
+
+//   // Nếu không tìm thấy ID sản phẩm, trả về chuỗi gốc
+//   return message;
+// };
+const formatMessageWithProductLink = (message: string): string => {
   if (typeof message !== "string") {
     console.warn("Message không phải là chuỗi:", message);
     return "";
   }
 
+  // Regex để tìm các URL
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  // Regex để tìm ID sản phẩm (24 ký tự hex)
   const productIdRegex = /\b([a-f0-9]{24})\b/;
-  const match = message.match(productIdRegex);
 
-  if (match) {
-    const productId = match[0];
-    const productLink = `<a href="http://localhost:7899/shops/${productId}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">Tại đây</a>`;
-    return message.replace(productId, productLink);
-  }
-
-  // Nếu không tìm thấy ID sản phẩm, trả về chuỗi gốc
-  return message;
+  return message.replace(urlRegex, (url) => {
+    // Kiểm tra nếu URL chứa ID sản phẩm
+    const productIdMatch = url.match(productIdRegex);
+    if (productIdMatch) {
+      return `<a href="${url}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">tại đây</a>`;
+    }
+    // Nếu chỉ là URL thường, gắn thẻ <a>
+    return `<a href="${url}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">${url}</a>`;
+  });
 };
 const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -111,7 +132,9 @@ const Message = () => {
       messagesEndRef.current.scrollIntoView();
     }
   }, [isChatOpen, dataMessageByRole]);
-
+  const message11 =
+    "Bạn tham khảo qua mẫu này http://localhost:7899/shops?category=674febe630fc628fb7748a3a";
+  const formattedMessage = formatMessageWithProductLink(message11);
   // if (isLoading) {
   //   return <p>Loading messages...</p>;
   // }
@@ -280,6 +303,10 @@ const Message = () => {
           </div>
         )}
       </div>
+      {/* <div
+        className=""
+        dangerouslySetInnerHTML={{ __html: formattedMessage }} // Sử dụng thuộc tính này để render HTML
+      /> */}
     </>
   );
 };
