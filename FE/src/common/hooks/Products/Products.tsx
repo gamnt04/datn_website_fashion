@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from "@tanstack/react-query";
 import {
+  get_all_items_client,
   get_detai_items_dashboard,
   get_detail_items,
   get_items_client,
@@ -21,6 +22,16 @@ export const Query_Products = (id?: string | number, page?: number) => {
   });
   return { data, ...rest };
 };
+
+export const Query_All_Products = () => {
+  const key = ["Product"];
+  const { data, ...rest } = useQuery({
+    queryKey: key,
+    queryFn: () => get_all_items_client(),
+  });
+  return { data, ...rest };
+};
+
 
 export function Query_Products_Dashboard(page: number) {
   const { data, ...rest } = useQuery({

@@ -36,7 +36,8 @@ export const updateProductById = async (req, res) => {
         size: item.size.map(s => ({
           name_size: s.name_size ? s.name_size.toString() : '',
           stock_attribute: s.stock_attribute ? s.stock_attribute : 0,
-          price_attribute: s.price_attribute ? s.price_attribute : 1
+          price_attribute: s.price_attribute ? s.price_attribute : 1,
+          // sale: s.sale ? +s.sale : 0
         }))
       }));
       const new_attr = await Attributes.create({ id_item: req.params.id, values: varriant });

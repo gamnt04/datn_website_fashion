@@ -32,7 +32,7 @@ const useForm = ({ mode }: UseFormProps) => {
         setOldGalleryFiles(product?.gallery_product);
       }
     }
-  }, [mode, dataOneItem]);
+  }, [mode]);
 
   const { mutate, isLoading, isError, status_api } = Mutation_items(
     mode ? "EDIT" : "CREATE"
@@ -58,7 +58,6 @@ const useForm = ({ mode }: UseFormProps) => {
 
   const onSubmit = async (dataForm: any) => {
     setLoading(true);
-
     try {
       const imageUrl = await UploadImage(imageFile[0]);
       const galleryUrls = await UploadGallery(galleryFiles);

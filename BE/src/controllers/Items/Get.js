@@ -1,8 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
-import Attribute from "../../models/attribute/variant";
 import Category from "../../models/Items/Category";
-import ThuocTinh from "../../models/attribute/thuoc_tinh";
 import mongoose from "mongoose";
 
 // list all
@@ -17,10 +15,10 @@ export const getAllProducts = async (req, res) => {
         },
       ];
     }
-    const products = await Products.find(querry);
+    const data = await Products.find(querry);
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      products,
+      data,
     });
   } catch (error) {
     console.error("Error getting all products:", error);

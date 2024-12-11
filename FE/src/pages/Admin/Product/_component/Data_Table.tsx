@@ -163,12 +163,29 @@ export default function Data_Table({ dataProps }: any) {
                         {/* div giả */}
                         <div></div>
                         {/* price */}
-                        <span className="line-clamp-1 text-red-600">
-                          {value?.price_attribute?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}
-                        </span>
+                        <div>
+                            <span className={`${value?.sale > 0 ? 'text-gray-500 line-through' : 'text-red-600'} line-clamp-1`}>
+                              {value?.price_attribute?.toLocaleString("vi", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
+                            </span>
+                          {
+                            value?.sale > 0 &&
+                            <div className="flex items-center gap-x-3">
+                              <span className="line-clamp-1 text-red-600">
+                              {value?.price_sale?.toLocaleString("vi", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
+                            </span>
+                             {
+                              value?.sale > 0 &&
+                              <span className="text-sm font-normal text-gray-600 translate-y-[-10px]">-{value?.sale}%</span>
+                            }
+                            </div>
+                          }
+                        </div>
                         {/* quantity */}
                         <div>
                           {value?.stock_attribute > 0 ? (
