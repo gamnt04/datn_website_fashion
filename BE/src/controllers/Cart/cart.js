@@ -16,7 +16,6 @@ export const getCartByUserId = async (req, res) => {
         { userId: userId },
         { $pull: { products: { productId: null } } }
       );
-    console.log(data_cart)
     data_cart.total_price = dataCart.products.reduce((a, b) => {
       if (b.status_checked) {
         return a + b.total_price_item;

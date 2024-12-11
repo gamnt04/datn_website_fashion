@@ -1,17 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Carousel } from "antd";
 import React, { useState } from "react";
-import { IProduct } from "../../../common/interfaces/Product";
 
-interface ImageProductProp {
-  product: IProduct;
-}
 
-const ImageProducts: React.FC<ImageProductProp> = ({ product }) => {
-  console.log(product);
-  const { image_product } = product;
+const ImageProducts: React.FC<any> = ({ product }: any) => {
+  const image_product = product?.image_product;
 
-  let { gallery_product }: any = product;
+  let gallery_product: any = product?.gallery_product;
   const [currentImage, setCurrentImage] = useState(image_product);
   gallery_product = [...gallery_product, image_product];
   const chunkArray = (array: any, size: any) => {

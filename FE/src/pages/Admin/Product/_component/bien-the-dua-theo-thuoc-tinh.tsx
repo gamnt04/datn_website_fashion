@@ -19,7 +19,8 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
             {
                 name_size: '',
                 stock_attribute: 0,
-                price_attribute: 0
+                price_attribute: 0,
+                // sale: 0
             }
         ],
     })) || [];
@@ -70,7 +71,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                     sizeFields,
                                     { add: addSize, remove: removeSize }
                                 ) => (
-                                    <div className='mt-14'>
+                                    <div className='mt-20'>
                                         {sizeFields.map(
                                             ({
                                                 key: sizeKey,
@@ -79,7 +80,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                             }) => (
                                                 <div
                                                     key={sizeKey}
-                                                    className="flex items-center gap-[13px]"
+                                                    className="flex items-center gap-3"
                                                 >
                                                     <div>
                                                         <label className="text-[#1C2434] font-medium text-sm">
@@ -161,6 +162,38 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                                                             }}
                                                         />
                                                     </div>
+                                                    {/* <div>
+                                                        <label className="text-sm font-medium">
+                                                            {" "}
+                                                            Ưu đãi (%) :
+                                                        </label>
+                                                        <Filed_form
+                                                            props={{
+                                                                name_field: [
+                                                                    sizeName,
+                                                                    "sale"
+                                                                ],
+                                                                ruler_field: [
+                                                                    {
+                                                                        required: true,
+                                                                        message:
+                                                                            "Ưu đãi tối thiểu bằng 0!"
+                                                                    },
+                                                                    {
+                                                                        type: "number",
+                                                                        min: 0,
+                                                                        max: 50,
+                                                                        message:
+                                                                            "Ưu đãi sản phẩm phải là số dương nhỏ hơn 50!",
+                                                                        transform(value: number) {
+                                                                            return Number(value);
+                                                                        }
+                                                                    }
+                                                                ],
+                                                                restField: restSizeField
+                                                            }}
+                                                        />
+                                                    </div> */}
                                                     <DeleteOutlined
                                                         onClick={() => removeSize(sizeName)}
                                                         style={{ fontSize: "20px" }}
