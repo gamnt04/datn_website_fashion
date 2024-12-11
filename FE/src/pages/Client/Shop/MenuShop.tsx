@@ -36,9 +36,14 @@ const MenuShop: React.FC<MenuShopProps> = ({
   const handleCategoryChange = (selectedCategories: string[]) => {
     onCategorySelect(selectedCategories);
   };
-  const handleColorSearch = (color: string) => {
-    onColorChange([color]); // Chuyển màu sắc đã tìm kiếm đến onColorChange
+  const handleColorSearch = (color?: string) => {
+    if (color) {
+      onColorChange([color]); 
+    } else {
+      onColorChange([]); 
+    }
   };
+
   return (
     <div className="lg:block w-full flex flex-col my-10">
       {/* Bộ lọc danh mục */}

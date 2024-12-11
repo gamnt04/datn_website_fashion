@@ -25,7 +25,6 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
 
-  // Hook lọc sản phẩm
   const {
     data: productsResponse,
     isLoading,
@@ -41,18 +40,16 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     itemsPerPage,
     sortOption
   );
+  // Define updateURL function
 
-  // Xử lý khi thay đổi trang
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Đặt lại trang khi bộ lọc thay đổi
   useEffect(() => {
-    setCurrentPage(1); // Reset về trang 1 mỗi khi bộ lọc thay đổi
+    setCurrentPage(1);
   }, [query, cate_id, price_ranges, selectedSizes, selectedColors, sortOption]);
 
-  // Hiển thị khi đang tải dữ liệu
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -61,7 +58,6 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     );
   }
 
-  // Hiển thị khi có lỗi
   if (isError && error) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -70,7 +66,6 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     );
   }
 
-  // Kiểm tra xem có dữ liệu không
   if (!productsResponse?.data || productsResponse.data.length === 0) {
     return (
       <div className="flex justify-center items-center text-lg py-4">
@@ -79,9 +74,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     );
   }
 
-  // Xử lý phân trang đúng cách
   const totalItems = productsResponse.pagination?.totalItems || 0;
-  const currentItems = productsResponse.data.length;
 
   return (
     <div>
@@ -92,14 +85,14 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
       </div>
 
       {/* Phân trang */}
-      {totalItems > currentItems && (
+      {totalItems > 0 && (
         <div className="flex justify-center mt-6">
           <Pagination
             current={currentPage}
             pageSize={itemsPerPage}
             total={totalItems}
             onChange={handlePageChange}
-            showSizeChanger={false} // Ẩn tùy chọn thay đổi số lượng items mỗi trang
+            showSizeChanger={false}
           />
         </div>
       )}
