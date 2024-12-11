@@ -23,6 +23,19 @@ export async function get_items_client(page?: number) {
   }
 }
 
+export async function get_all_items_client() {
+  try {
+    const res = await fetch(`http://localhost:2004/api/v1/products_all`);
+    if (!res.ok) {
+      console.warn("Kiem tra lai server hoac internet !");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+}
+
 export async function get_items_dashboard(page?: number) {
   try {
     let uri = `${baseUri}/dashboard`;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin, Pagination } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -47,6 +47,12 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     setCurrentPage(page);
   };
 
+  // Đặt lại trang khi bộ lọc thay đổi
+  useEffect(() => {
+    setCurrentPage(1); // Reset về trang 1 mỗi khi bộ lọc thay đổi
+  }, [query, cate_id, price_ranges, selectedSizes, selectedColors, sortOption]);
+
+  // Hiển thị khi đang tải dữ liệu
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -55,6 +61,7 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     );
   }
 
+  // Hiển thị khi có lỗi
   if (isError && error) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -63,29 +70,37 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     );
   }
 
+  // Kiểm tra xem có dữ liệu không
+  if (!productsResponse?.data || productsResponse.data.length === 0) {
+    return (
+      <div className="flex justify-center items-center text-lg py-4">
+        Không có sản phẩm nào
+      </div>
+    );
+  }
+
+  // Xử lý phân trang đúng cách
+  const totalItems = productsResponse.pagination?.totalItems || 0;
+  const currentItems = productsResponse.data.length;
+
   return (
     <div>
-      {productsResponse?.data?.length ? (
-        <>
-          <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
-            {productsResponse.data.map((item: IProduct) => (
-              <Products key={item._id} items={item} />
-            ))}
-          </div>
-          {/* Phân trang */}
-          <div className="flex justify-center mt-6">
-            <Pagination
-              current={currentPage}
-              pageSize={itemsPerPage}
-              total={productsResponse.pagination.totalItems}
-              onChange={handlePageChange}
-              showSizeChanger={false} // Ẩn tùy chọn thay đổi số lượng items mỗi trang
-            />
-          </div>
-        </>
-      ) : (
-        <div className="flex justify-center items-center text-lg py-4">
-          Không có sản phẩm nào
+      <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
+        {productsResponse.data.map((item: IProduct) => (
+          <Products key={item._id} items={item} />
+        ))}
+      </div>
+
+      {/* Phân trang */}
+      {totalItems > currentItems && (
+        <div className="flex justify-center mt-6">
+          <Pagination
+            current={currentPage}
+            pageSize={itemsPerPage}
+            total={totalItems}
+            onChange={handlePageChange}
+            showSizeChanger={false} // Ẩn tùy chọn thay đổi số lượng items mỗi trang
+          />
         </div>
       )}
     </div>

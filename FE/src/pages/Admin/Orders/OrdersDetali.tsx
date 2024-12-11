@@ -146,11 +146,10 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan"
-          ? "xác nhận"
-          : `Từ Chối:  ${dataBody?.cancellationReason}`
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan"
+        ? "xác nhận"
+        : `Từ Chối:  ${dataBody?.cancellationReason}`
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder,
     });
@@ -209,14 +208,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : status === 6
-        ? `Đã giao đơn hàng ${code_order} thành công!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : status === 6
+                ? `Đã giao đơn hàng ${code_order} thành công!`
+                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -364,11 +363,10 @@ const OrdersDetali = () => {
                         </div>
                         <Button
                           onClick={() => handleSelectShipper(shipper._id)}
-                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${
-                            selectedShipper === shipper._id
-                              ? "bg-green-500"
-                              : ""
-                          }`}
+                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${selectedShipper === shipper._id
+                            ? "bg-green-500"
+                            : ""
+                            }`}
                         >
                           {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                         </Button>
@@ -535,6 +533,7 @@ const OrdersDetali = () => {
                   </p>
                 </p>
                 <p className="py-2 text-gray-800 text-left">
+
                   {data?.delivery_fee?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
@@ -544,13 +543,14 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND",
-                      })} `
+                      style: "currency",
+                      currency: "VND",
+                    })} `
                     : "0đ"}
                 </p>
 
                 <p className="py-2 text-[#ee4d2d] text-xl">
+
                   {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
                     currency: "VND",
@@ -757,11 +757,10 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${
-                      role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
-                    } `}
+                    className={`w - 52 rounded text - white ${role !== "courier"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
+                      } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại

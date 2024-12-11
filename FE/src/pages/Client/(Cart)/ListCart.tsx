@@ -8,7 +8,7 @@ import {
   Popconfirm,
   Spin,
   Table,
-  TableProps
+  TableProps,
 } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,8 +21,8 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
-import { io } from 'socket.io-client';
 import { Trash2 } from "lucide-react";
+import { io } from "socket.io-client";
 
 interface DataType {
   key: string;
@@ -33,7 +33,7 @@ interface DataType {
 }
 
 const ListCart = () => {
-  const socket = io('http://localhost:2004');
+  const socket = io("http://localhost:2004");
   const routing = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
@@ -41,20 +41,19 @@ const ListCart = () => {
   const { data, isLoading, isError, error } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-  const { mutate: handle_status_checked, isLoading: loading_btn_checkked } = Mutation_Cart(
-    "HANLDE_STATUS_CHECKED"
-  );
+  const { mutate: handle_status_checked, isLoading: loading_btn_checkked } =
+    Mutation_Cart("HANLDE_STATUS_CHECKED");
   useEffect(() => {
-    socket.on('connect_error', () => {
+    socket.on("connect_error", () => {
       socket.disconnect();
-    })
+    });
   }, [socket]);
   useEffect(() => {
-    const socket = io('http://localhost:2004')
-    socket.on('lay_thong_tin_san_pham_xoa', (data: any) => {
+    const socket = io("http://localhost:2004");
+    socket.on("lay_thong_tin_san_pham_xoa", (data: any) => {
       console.log(data);
-      window.alert(data)
-    })
+      window.alert(data);
+    });
   }, []);
   const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
@@ -62,18 +61,18 @@ const ListCart = () => {
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
-      id: item?._id
+      id: item?._id,
     };
     removeSingle(data_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công"
+      content: "Xóa thành công",
     });
   };
 
   const handleRemoveMultiple = () => {
     const product_item = {
-      userId: userId
+      userId: userId,
     };
     const data_cart = dataSort?.filter(
       (item: any) => item?.status_checked && item
@@ -81,14 +80,14 @@ const ListCart = () => {
     if (data_cart.length === 0) {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn sản phẩm để xóa!"
+        content: "Vui lòng chọn sản phẩm để xóa!",
       });
       return;
     }
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công"
+      content: "Xóa thành công",
     });
   };
 
@@ -97,7 +96,7 @@ const ListCart = () => {
       userId: userId,
       productId: productId,
       color: color,
-      size: size
+      size: size,
     };
     handle_status_checked(item_client);
   };
@@ -112,7 +111,7 @@ const ListCart = () => {
       updateQuantity({
         userId: userId,
         productId: product?._id,
-        quantity: inputValue
+        quantity: inputValue,
       });
     }
 
@@ -123,7 +122,7 @@ const ListCart = () => {
     (product: any) =>
       product?.productId?._id && {
         key: product?.productId?._id,
-        ...product
+        ...product,
       }
   );
 
@@ -144,7 +143,7 @@ const ListCart = () => {
             }
           ></Checkbox>
         );
-      }
+      },
     },
     {
       key: "image",
@@ -160,7 +159,7 @@ const ListCart = () => {
             />
           </Link>
         );
-      }
+      },
     },
     {
       title: "Sản phẩm",
@@ -179,7 +178,7 @@ const ListCart = () => {
             {product?.color_item} - {product?.name_size}
           </p>
         </>
-      )
+      ),
     },
     {
       title: "Đơn giá",
@@ -190,11 +189,11 @@ const ListCart = () => {
           <div className="font-medium">
             {product?.price_item.toLocaleString("vi", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </div>
         );
-      }
+      },
     },
     {
       key: "quantity",
@@ -208,7 +207,7 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size
+                size: product?.name_size,
               }}
             />
             {editingProductId === product?.productId ? (
@@ -232,12 +231,12 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size
+                size: product?.name_size,
               }}
             />
           </div>
         );
-      }
+      },
     },
     {
       title: <span className="whitespace-nowrap">Tổng tiền</span>,
@@ -248,11 +247,11 @@ const ListCart = () => {
           <div className="font-medium">
             {(product?.total_price_item).toLocaleString("vi", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </div>
         );
-      }
+      },
     },
     {
       key: "action",
@@ -263,10 +262,11 @@ const ListCart = () => {
             <Popconfirm
               className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
               title="Xóa sản phẩm khỏi giỏ hàng?"
-              description={`Bạn có chắc chắn muốn xóa sản phẩm ${product?.productId?.name_product?.length > 20 ?
-                (product?.productId?.name_product?.slice(0, 20) + '...') :
-                product?.productId?.name_product
-                } khỏi giỏ hàng không?`}
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
+                product?.productId?.name_product?.length > 20
+                  ? product?.productId?.name_product?.slice(0, 20) + "..."
+                  : product?.productId?.name_product
+              } khỏi giỏ hàng không?`}
               onConfirm={() => remove_item(product)}
               okText="Có"
               cancelText="Không"
@@ -275,8 +275,8 @@ const ListCart = () => {
             </Popconfirm>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
   const item_order_checkked = data?.products?.filter(
     (value: any) => value?.status_checked
@@ -327,15 +327,32 @@ const ListCart = () => {
       if (data_cart.length === 0 || data?.total_price < 1) {
         messageApi.open({
           type: "warning",
-          content: "Vui lòng chọn sản phẩm trước khi thanh toán!"
+          content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
         });
         return null;
       }
+      const categories = data_cart
+        .map((item: any) => item?.productId?.category_id)
+        .filter((categoryId: any) => !!categoryId); // Lọc những giá trị không hợp lệ
+      console.log("thong tin từ giỏ hàng", categories);
+      console.log("Item Order Checked:", item_order_checkked);
+
       sessionStorage.setItem("item_order", JSON.stringify(data_cart));
+      sessionStorage.setItem(
+        "categories",
+        JSON.stringify([...new Set(categories)])
+      );
       routing("/cart/pay");
     } else {
       routing("/login");
     }
+  }
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
   if (isError) {
     return <p>{error.message}</p>;
@@ -343,12 +360,12 @@ const ListCart = () => {
 
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto relative">
-      {
-        isLoading || loading_btn_checkked &&
-        <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      }
+      {isLoading ||
+        (loading_btn_checkked && (
+          <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </div>
+        ))}
 
       <div className="mt-10">
         {contextHolder}
@@ -362,20 +379,20 @@ const ListCart = () => {
         <>
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="md:w-[70%] mb:w-full w-full">
-              {
-                item_order_checkked?.length > 0 ?
-                  <Popconfirm
-                    className="text-red-500 border rounded border-red-500 cursor-pointer mb-4 opacity-75 hover:opacity-100 duration-200"
-                    title={`Xóa ${item_order_checkked?.length} sản phẩm khỏi giỏ hàng?`}
-                    description="Bạn có chắc chắn muốn xóa không?"
-                    onConfirm={() => handleRemoveMultiple()}
-                    okText="Có"
-                    cancelText="Không"
-                  >
-                    <Trash2 className="!w-10 p-1 h-8" />
-                  </Popconfirm> :
-                  <Trash2 className="!w-10 p-1 h-8 text-red-500 border border-red-500 rounded opacity-75 cursor-not-allowed mb-4" />
-              }
+              {item_order_checkked?.length > 0 ? (
+                <Popconfirm
+                  className="text-red-500 border rounded border-red-500 cursor-pointer mb-4 opacity-75 hover:opacity-100 duration-200"
+                  title={`Xóa ${item_order_checkked?.length} sản phẩm khỏi giỏ hàng?`}
+                  description="Bạn có chắc chắn muốn xóa không?"
+                  onConfirm={() => handleRemoveMultiple()}
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <Trash2 className="!w-10 p-1 h-8" />
+                </Popconfirm>
+              ) : (
+                <Trash2 className="!w-10 p-1 h-8 text-red-500 border border-red-500 rounded opacity-75 cursor-not-allowed mb-4" />
+              )}
 
               <Table
                 columns={columns}
@@ -392,7 +409,7 @@ const ListCart = () => {
                     <p className="text-xl font-bold text-yellow-500">
                       {totalPrice?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND"
+                        currency: "VND",
                       })}
                     </p>
                   </div>
@@ -415,7 +432,7 @@ const ListCart = () => {
                     <strong>
                       {totalPrice?.toLocaleString("vi", {
                         style: "currency",
-                        currency: "VND"
+                        currency: "VND",
                       })}
                     </strong>
                   </div>

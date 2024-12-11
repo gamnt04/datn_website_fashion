@@ -24,23 +24,19 @@ import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
-import { IVoucher } from "../../../common/interfaces/Voucher";
-import { IProduct } from "../../../common/interfaces/Product";
-import { ICategory } from "../../../common/interfaces/Category";
 
 const Pay = () => {
   const routing = useNavigate();
   const [user] = useLocalStorage("user", {});
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState(false);
+
   const userId = user?.user?._id;
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
   const [phi_van_chuyen, setPhi_van_chuyen] = useState<number>(0);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [voucherDetails, setVoucherDetails] = useState<any>(null);
-  const [selectedProducts] = useState<IProduct[]>([]);
-  const [selectedCategories] = useState<ICategory[]>([]);
   const [isOrderSuccessfully, setIsOrderSuccessfully] =
     useState<boolean>(false);
   const { data: auth } = List_Auth(userId);
@@ -54,7 +50,6 @@ const Pay = () => {
     messageApi,
     isLoading: loadingOrder,
   } = Pay_Mutation();
-  // const { mutate } = Mutation_Notification("Add");
 
   const { data: activeVouchers, isLoading, error } = useVouchersQuery();
   const item_order_checkked = data?.products?.filter(
@@ -87,9 +82,7 @@ const Pay = () => {
   useEffect(() => {
     (async () => {
       const tong_km = Tinh_tong_km(selectedAddress);
-      setPhi_van_chuyen(() =>
-        tong_km ? 30000 : 0
-      );
+      setPhi_van_chuyen(() => (tong_km ? 30000 : 0));
     })();
   }, [selectedAddress]);
 
@@ -169,7 +162,7 @@ const Pay = () => {
         code_voucher: voucher.code_voucher,
         totalAmount: totalPrice,
         userId: user?.user?._id,
-        selectedProducts: selectedProductIds, // Thêm ID sản phẩm vào payload
+        selectedProducts: selectedProductIds,
       });
 
       const { discount, finalAmount, message } = response.data;
@@ -180,11 +173,10 @@ const Pay = () => {
       setDiscountCode("");
       setSelectedVoucherCode(voucher.code_voucher);
       setSelectedVoucherName(voucher.name);
-      setDiscountCode(voucher.code_voucher); // Nếu bạn cũng muốn hiển thị mã giảm giá trong input
+      setDiscountCode(voucher.code_voucher);
       toast.success(message, { autoClose: 1200 });
       setIsVoucherModalVisible(false);
     } catch (error) {
-      // Narrow the type of error by checking if it is an instance of AxiosError
       if (
         axios.isAxiosError(error) &&
         error.response &&
@@ -229,7 +221,7 @@ const Pay = () => {
       ...order,
     };
   });
-  const currentDate = new Date(); // Lấy ngày hiện tại
+  const currentDate = new Date();
 
   if (isLoading || Loading_cart) {
     console.log("Đang tải dữ liệu...");
@@ -244,59 +236,55 @@ const Pay = () => {
     console.log("Không có vouchers hợp lệ.");
     return null;
   }
-  const sortedVouchers = (
-    activeVouchers: IVoucher[],
-    selectedProducts: IProduct[],
-    selectedCategories: ICategory[],
-    userId: string,
-    currentDate: Date
-  ) => {
-    return activeVouchers.sort((a: any, b: any) => {
-      const aDisabled =
-        // Kiểm tra nếu voucher không áp dụng cho sản phẩm hoặc danh mục đang thanh toán
-        !(
-          a.appliedProducts.some((productId: string) =>
-            selectedProducts.some(
-              (product: IProduct) => product._id === productId
-            )
-          ) ||
-          a.appliedCategories.some((categoryId: string) =>
-            selectedCategories.some(
-              (category: ICategory) => category._id === categoryId
-            )
-          )
-        ) ||
-        // Kiểm tra các điều kiện khác của voucher
-        (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
-        a.usedCount >= a.quantity_voucher ||
-        new Date(a.expirationDate) < currentDate; // Kiểm tra nếu voucher đã hết hạn
+  const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
+    const currentDate = new Date();
 
-      const bDisabled =
-        !(
-          b.appliedProducts.some((productId: string) =>
-            selectedProducts.some(
-              (product: IProduct) => product._id === productId
-            )
-          ) ||
-          b.appliedCategories.some((categoryId: string) =>
-            selectedCategories.some(
-              (category: ICategory) => category._id === categoryId
-            )
-          )
-        ) ||
-        (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
-        b.usedCount >= b.quantity_voucher ||
-        new Date(b.expirationDate) < currentDate;
+    const isProductValidA = item_lon_hon_0.every(
+      (item: any) =>
+        a.appliedProducts.length === 0 ||
+        a.appliedProducts.includes(item.productId._id)
+    );
+    const isCategoryValidA = item_lon_hon_0.every(
+      (item: any) =>
+        a.appliedCategories.length === 0 ||
+        a.appliedCategories.includes(item.productId.category_id)
+    );
+    const isVoucherValidA = isProductValidA && isCategoryValidA;
 
-      if (aDisabled && !bDisabled) return 1;
-      if (!aDisabled && bDisabled) return -1;
-      return 0;
-    });
-  };
+    const aDisabled =
+      (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
+      a.usedCount >= a.quantity_voucher ||
+      new Date(a.expirationDate) < currentDate ||
+      new Date(a.startDate) > currentDate ||
+      !isVoucherValidA;
+
+    const isProductValidB = item_lon_hon_0.every(
+      (item: any) =>
+        b.appliedProducts.length === 0 ||
+        b.appliedProducts.includes(item.productId._id)
+    );
+    const isCategoryValidB = item_lon_hon_0.every(
+      (item: any) =>
+        b.appliedCategories.length === 0 ||
+        b.appliedCategories.includes(item.productId.category_id)
+    );
+    const isVoucherValidB = isProductValidB && isCategoryValidB;
+
+    const bDisabled =
+      (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
+      b.usedCount >= b.quantity_voucher ||
+      new Date(b.expirationDate) < currentDate ||
+      new Date(b.startDate) > currentDate ||
+      !isVoucherValidB;
+
+    if (aDisabled && !bDisabled) return 1;
+    if (!aDisabled && bDisabled) return -1;
+    return 0;
+  });
 
   const onAddOrder = async (data_form: any) => {
-    const voucher = data_form.voucher;
     const discountCodeToUse = selectedVoucherCode || discountCode;
+
     if (!data_form.address || data_form?.address.trim() === "") {
       messageApi.open({
         type: "warning",
@@ -304,57 +292,60 @@ const Pay = () => {
       });
       return;
     }
-
-    if (discountCodeToUse && voucher) {
+    // Kiểm tra tình trạng voucher
+    if (discountCodeToUse) {
       try {
-        const response = await instance.post(`/voucher/use`, {
+        const voucherResponse = await instance.post(`/voucher/use`, {
           code_voucher: discountCodeToUse,
-          discountValue: voucher.discountValue,
-          appliedProducts: voucher.appliedProducts,
-          appliedCategories: voucher.appliedCategories,
-          userId: user?.user?._id,
-          minimumSpend: voucher.minimumSpend,
-          maxDiscount: voucher.maxDiscount,
-          allowedUsers: voucher.allowedUsers,
-          startDate: voucher.startDate,
-          expirationDate: voucher.expirationDate,
+          totalAmount: totalPrice + phi_van_chuyen,
+          applyType: userId,
+          appliedProducts: item_order_checkked.map(
+            (item: any) => item.productId._id
+          ), // Lấy danh sách sản phẩm
         });
 
-        if (!response.data.isValid) {
-          toast.error("Voucher không hợp lệ hoặc đã hết hạn.", {
-            autoClose: 1200,
+        // Kiểm tra phản hồi voucher
+        if (!voucherResponse.data) {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá này không còn hiệu lực hoặc đã bị ẩn!",
           });
           return;
         }
 
-        // Kiểm tra điều kiện khác của voucher (ví dụ: số lượng còn lại, hết hạn, áp dụng đúng sản phẩm, v.v.)
-        const { isValid, appliedProducts, appliedCategories } =
-          response.data;
-
-        // Giả sử bạn đã có danh sách sản phẩm và danh mục người dùng chọn
-        const validVoucher =
-          isValid && appliedProducts.length > 0 && appliedCategories.length > 0;
-
-        if (!validVoucher) {
-          toast.error("Voucher không áp dụng cho đơn hàng này.", {
-            autoClose: 1200,
+        if (voucherResponse.data.status === "isActive") {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá này không còn hiệu lực hoặc đã bị ẩn!",
           });
           return;
         }
 
-        // Voucher hợp lệ, tiến hành tiếp tục đặt hàng
-        // Logic xử lý tiếp theo...
+        if (voucherResponse.data.expirationDate < new Date()) {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá đã hết hạn!",
+          });
+          return;
+        }
+
+        if (voucherResponse.data.quantity_voucher <= 0) {
+          messageApi.open({
+            type: "warning",
+            content: "Mã giảm giá này đã hết số lượng sử dụng!",
+          });
+          return;
+        }
       } catch (error) {
-        console.error("Error checking voucher validity:", error);
-        toast.error("Không thể kiểm tra voucher. Vui lòng thử lại.", {
-          autoClose: 1200,
+        messageApi.open({
+          type: "error",
+          content: "Lỗi kiểm tra mã giảm giá!",
         });
+        console.error("Voucher Error:", error);
         return;
       }
     }
 
-
-    // Validate stock trước khi đặt hàng
     for (const i of item_order_checkked) {
       if (i?.productId?.attributes) {
         const check_color = i?.productId?.attributes?.values?.find(
@@ -375,12 +366,14 @@ const Pay = () => {
       } else if (i?.quantity > i?.productId?.stock) {
         toast.error(
           `Sản phẩm ${i?.productId?.name_product} hiện tại 
-          chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`,
+        chỉ còn ${i?.productId?.stock}. Vui lòng giảm số lượng trước khi thanh toán!`,
           { autoClose: 1200 }
         );
         return;
       }
     }
+
+    // Tạo đối tượng đơn hàng
     const item_order = {
       userId: userId,
       items: item_order_checkked,
@@ -390,11 +383,14 @@ const Pay = () => {
       },
       discountCode: discountCodeToUse, // Lưu mã giảm giá
       discountAmount: discountAmount, // Lưu số tiền giảm giá
-      totalPrice: finalAmount > 0 ? finalAmount : totalPrice + phi_van_chuyen,
+      totalPrice:
+        finalAmount > 0
+          ? finalAmount + phi_van_chuyen
+          : totalPrice + phi_van_chuyen,
       email: user?.user?.email,
-      // email: user?.user?.email,
       delivery_fee: phi_van_chuyen,
     };
+
     try {
       if (data_form.payment === "VNPAY") {
         const orderId = JSON.parse(
@@ -408,7 +404,10 @@ const Pay = () => {
           `http://localhost:2004/api/v1/create_payment_url`,
           {
             orderId: nanoid(24),
-            totalPrice: totalPrice + 30000,
+            totalPrice:
+              finalAmount > 0
+                ? finalAmount + phi_van_chuyen
+                : totalPrice + phi_van_chuyen,
             orderDescription: `Order ${orderId._id}`,
             language: "vn",
           }
@@ -419,11 +418,6 @@ const Pay = () => {
         setIsOrderSuccessfully(true);
         onSubmit(item_order);
       }
-      // mutate({
-      //   userId: userId,
-      //   receiver_id: "nguyenvana@gmail.com",
-      //   message: `Người dùng ${user?.user?.userName} đã đặt hàng`,
-      // });
     } catch (error) {
       console.error("Order Creation Error: ", error);
       messageApi.open({
@@ -432,6 +426,7 @@ const Pay = () => {
       });
     }
   };
+
   // console.log("orderSuccessfully", isOrderSuccessfully);
 
   const columns = [
@@ -513,6 +508,15 @@ const Pay = () => {
       ),
     },
   ];
+  if (loadingOrder || Loading_cart || isLoading) {
+    return (
+      <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+        <div className="flex justify-center items-center h-screen">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -528,13 +532,14 @@ const Pay = () => {
               Thanh toán
             </div>
           </div>
-          {loadingOrder || isLoading &&
-            <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
-              <div className="flex justify-center items-center h-screen">
-                <Spin indicator={<LoadingOutlined spin />} size="large" />
+          {loadingOrder ||
+            (isLoading && (
+              <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+                <div className="flex justify-center items-center h-screen">
+                  <Spin indicator={<LoadingOutlined spin />} size="large" />
+                </div>
               </div>
-            </div>
-          }
+            ))}
           <form onSubmit={handleSubmit(onAddOrder)}>
             <div className="p-2 border rounded shadow-sm lg:py-6 lg:px-6">
               <div className="flex gap-3">
@@ -707,43 +712,69 @@ const Pay = () => {
                   width={1350}
                 >
                   <p className="mb-5 text-xl">Tất cả Voucher</p>
-                  {activeVouchers.length > 0 ? (
+                  {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
                       style={{ maxHeight: "600px" }}
                     >
-                      {sortedVouchers(
-                        activeVouchers,
-                        selectedProducts,
-                        selectedCategories,
-                        userId,
-                        currentDate
-                      )
+                      {sortedVouchers
                         .filter((voucher: any) => {
-                          const isVoucherAvailable =
-                            voucher.usedCount < voucher.quantity_voucher;
                           const isExpired =
                             new Date(voucher.expirationDate) < currentDate;
+                          const isVoucherAvailable =
+                            voucher.usedCount < voucher.quantity_voucher;
 
-                          return isVoucherAvailable && !isExpired;
+                          return !isExpired && isVoucherAvailable;
                         })
                         .map((voucher: any) => {
                           const isAllowedUser =
                             voucher.allowedUsers.length === 0 ||
                             voucher.allowedUsers.includes(userId);
+                          const isProductValid = item_lon_hon_0.every(
+                            (item: any) =>
+                              voucher.appliedProducts.length === 0 ||
+                              voucher.appliedProducts.includes(
+                                item.productId._id
+                              )
+                          );
 
-                          const isDisabled = !isAllowedUser;
+                          const isCategoryValid = item_lon_hon_0.every(
+                            (item: any) =>
+                              voucher.appliedCategories.length === 0 ||
+                              voucher.appliedCategories.includes(
+                                item.productId.category_id
+                              )
+                          );
 
+                          const isVoucherDisabled = !(
+                            isProductValid && isCategoryValid
+                          );
+
+                          const isExpired =
+                            new Date(voucher.expirationDate) < currentDate;
+                          const isVoucherAvailable =
+                            voucher.usedCount < voucher.quantity_voucher;
+                          const isNotYetValid =
+                            new Date(voucher.startDate) > currentDate;
+
+                          const isDisabled =
+                            isExpired ||
+                            !isVoucherAvailable ||
+                            isVoucherDisabled ||
+                            isNotYetValid ||
+                            !isAllowedUser;
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                                } ${isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                                }`}
+                              }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -761,13 +792,15 @@ const Pay = () => {
                                 </p>
                                 <Button
                                   onClick={() => showVoucherDetails(voucher)}
+                                  disabled={false}
                                 >
                                   Xem chi tiết
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
-                                  }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled}
                               >
@@ -833,8 +866,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                            "vi-VN"
-                          )} đ`
+                              "vi-VN"
+                            )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -878,9 +911,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}`
+                            style: "currency",
+                            currency: "VND",
+                          })}`
                         : "0đ"}
                     </p>
                   </div>
@@ -890,7 +923,7 @@ const Pay = () => {
                         <p>
                           Tổng số tiền:{" "}
                           {(finalAmount > 0
-                            ? finalAmount
+                            ? finalAmount + phi_van_chuyen
                             : totalPrice + phi_van_chuyen
                           )?.toLocaleString("vi", {
                             style: "currency",

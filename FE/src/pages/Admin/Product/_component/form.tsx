@@ -136,14 +136,14 @@ const Form_Item = ({ mode }: any) => {
         name="basic"
         layout="vertical"
         onFinish={onFinish}
-        initialValues={ initialValues}
+        initialValues={initialValues}
         onValuesChange={onFormValuesChange}
       >
-        <div className="grid grid-cols-[60%,40%] gap-8">
+        <div className="grid grid-cols-[70%,auto] gap-8">
           <div>
-            <div>
+            <div className="bg-gray-50 rounded-t p-4">
               {" "}
-              <label className="text-sm font-medium ">Tên sản phẩm</label>
+              <label className="text-sm font-semibold">Tên sản phẩm</label>
               <Filed_form
                 props={{
                   name_field: "name_product",
@@ -157,9 +157,9 @@ const Form_Item = ({ mode }: any) => {
                 }}
               />
             </div>
-            <div className="">
+            <div className="bg-gray-50 px-4 pb-4">
               {" "}
-              <label className="text-[#1C2434] font-medium text-sm">
+              <label className="text-[#1C2434] font-semibold text-sm">
                 Danh mục
               </label>
               <Form.Item
@@ -183,15 +183,17 @@ const Form_Item = ({ mode }: any) => {
                 ></Select>
               </Form.Item>
             </div>
-            <label className="text-[#1C2434]font-medium text-sm">
-              Mô tả sản phẩm
-            </label>
-            <Filed_form
-              props={{
-                name_field: "description_product",
-                action: "textarea"
-              }}
-            />
+            <div className="bg-gray-50 rounded-b pb-4 px-4 mb-4">
+              <label className="text-[#1C2434] font-semibold text-sm">
+                Mô tả sản phẩm
+              </label>
+              <Filed_form
+                props={{
+                  name_field: "description_product",
+                  action: "textarea"
+                }}
+              />
+            </div>
             <div className='w-full bg-gray-50 rounded *:p-4'>
               <section className='w-full border-b flex items-center gap-10'>
                 <strong>Dữ liệu sản phẩm</strong>
@@ -275,6 +277,34 @@ const Form_Item = ({ mode }: any) => {
                   sizes,
                 }} />
               }
+              <div className="max-w-[150px] whitespace-nowrap">
+                <label className="text-sm font-medium">
+                  {" "}
+                  Ưu đãi (%) :
+                </label>
+                <Filed_form
+                  props={{
+                    name_field: "sale",
+                    ruler_field: [
+                      {
+                        required: true,
+                        message:
+                          "Ưu đãi tối thiểu bằng 0!"
+                      },
+                      {
+                        type: "number",
+                        min: 0,
+                        max: 50,
+                        message:
+                          "Ưu đãi sản phẩm phải là số dương nhỏ hơn 50!",
+                        transform(value: number) {
+                          return Number(value);
+                        }
+                      }
+                    ],
+                  }}
+                />
+              </div>
             </div>
             <Form.Item<any>
               name="featured_product"
@@ -284,7 +314,7 @@ const Form_Item = ({ mode }: any) => {
             </Form.Item>
           </div>
           <div>
-            <div className="flex flex-col items-start justify-between gap-4">
+            <div className="flex flex-col items-start justify-between gap-4 bg-gray-50 p-4">
               <div>
                 <label className=" text-[#1C2434] font-medium text-sm">
                   Ảnh sản phẩm

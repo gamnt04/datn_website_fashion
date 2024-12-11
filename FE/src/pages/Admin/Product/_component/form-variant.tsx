@@ -33,7 +33,8 @@ export default function Form_variant({ propsData }: any) {
                     {
                         name_size: '',
                         stock_attribute: 0,
-                        price_attribute: 0
+                        price_attribute: 0,
+                        // sale: 0
                     }
                 ],
             }
@@ -41,7 +42,7 @@ export default function Form_variant({ propsData }: any) {
     );
     return (
         <div>
-            <div className='w-[40%] *:bg-white *:z-[10] *:rounded'>
+            <div className='w-[40%] *:bg-white *:z-[10] *:rounded mb-4'>
                 <SelectShadcn onValueChange={(value: any) => setState_variant(value)}>
                     <SelectTrigger className="!h-auto py-2 mt-1">
                         <SelectValue placeholder="Lựa chọn" />
@@ -112,7 +113,6 @@ export default function Form_variant({ propsData }: any) {
                                                                                         label: size,
                                                                                         value: size
                                                                                     }))}
-                                                                                    placeholder="Chọn kích cỡ"
                                                                                 />
                                                                                 {/* <Input className=" mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none " /> */}
                                                                             </Form.Item>
@@ -178,10 +178,45 @@ export default function Form_variant({ propsData }: any) {
                                                                                 }}
                                                                             />
                                                                         </div>
-                                                                        <DeleteOutlined
-                                                                            onClick={() => removeSize(sizeName)}
-                                                                            style={{ fontSize: "20px" }}
-                                                                        />
+                                                                        {/* <div>
+                                                                            <label className="text-sm font-medium">
+                                                                                {" "}
+                                                                                Ưu đãi (%) :
+                                                                            </label>
+                                                                            <Filed_form
+                                                                                props={{
+                                                                                    name_field: [
+                                                                                        sizeName,
+                                                                                        "sale"
+                                                                                    ],
+                                                                                    ruler_field: [
+                                                                                        {
+                                                                                            required: true,
+                                                                                            message:
+                                                                                                "Ưu đãi tối thiểu bằng 0!"
+                                                                                        },
+                                                                                        {
+                                                                                            type: "number",
+                                                                                            min: 0,
+                                                                                            max: 50,
+                                                                                            message:
+                                                                                                "Ưu đãi sản phẩm phải là số dương nhỏ hơn 50!",
+                                                                                            transform(value: number) {
+                                                                                                return Number(value);
+                                                                                            }
+                                                                                        }
+                                                                                    ],
+                                                                                    restField: restSizeField
+                                                                                }}
+                                                                            />
+                                                                        </div> */}
+                                                                        {
+                                                                            sizeFields?.length > 1 &&
+                                                                            <DeleteOutlined
+                                                                                onClick={() => removeSize(sizeName)}
+                                                                                style={{ fontSize: "20px" }}
+                                                                            />
+                                                                        }
                                                                     </div>
                                                                 )
                                                             )}
@@ -227,7 +262,7 @@ export default function Form_variant({ propsData }: any) {
                     (state_variant.toString() === 'tao_bien_the_tu_thuoc_tinh') &&
                     <>
                         <SelectShadcn onValueChange={(value: any) => setStateCategory_attribute(value)}>
-                            <SelectTrigger className="!h-auto py-2 w-auto rounded -mt-[38px] ml-[350px] ">
+                            <SelectTrigger className="!h-auto py-2 w-auto rounded -mt-[54px] ml-[400px] ">
                                 <SelectValue placeholder="Lựa chọn" />
                             </SelectTrigger>
                             <SelectContent className='bg-white z-[10]'>
