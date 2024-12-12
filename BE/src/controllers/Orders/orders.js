@@ -63,8 +63,9 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""
-          }`,
+        address: `${customerInfo.address || ""}${
+          customerInfo.detailedAddress || ""
+        }`,
         toa_do: customerInfo.toa_do
       },
       totalPrice,
@@ -151,7 +152,7 @@ export const createOrder = async (req, res) => {
   }
 };
 // export const createOrderPayment = async (req, res) => {
-  
+
 //   try {
 //     const requestBody = JSON.parse(JSON.stringify(req.body));
 //     const { userId, items, customerInfo, totalPrice, delivery_fee } = requestBody;
@@ -264,13 +265,15 @@ export const createOrderPayment = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
-        toa_do: customerInfo.toa_do,
+        address: `${customerInfo.address || ""}${
+          customerInfo.detailedAddress || ""
+        }`,
+        toa_do: customerInfo.toa_do
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá (nếu có)
       discountAmount: discountAmount || 0, // Lưu số tiền giảm giá (nếu có)
-      delivery_fee, // Lưu phí vận chuyển
+      delivery_fee // Lưu phí vận chuyển
     });
 
     // Cập nhật kho hàng dựa trên các item
@@ -337,7 +340,7 @@ export const createOrderPayment = async (req, res) => {
       receiver_id: userId,
       message: `Đã có một đơn hàng mới`,
       different: order._id,
-      status_notification: false,
+      status_notification: false
     });
 
     await notification.save();
@@ -346,7 +349,7 @@ export const createOrderPayment = async (req, res) => {
     return res.status(201).json({
       order,
       updatedCart: dataCart,
-      message: "Tạo đơn hàng thanh toán online thành công",
+      message: "Tạo đơn hàng thanh toán online thành công"
     });
   } catch (error) {
     console.error("Error creating order payment:", error);
