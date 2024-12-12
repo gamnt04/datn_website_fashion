@@ -8,6 +8,7 @@ import {
   remove,
   statistical,
   update,
+  removeProduct,
 } from "../controllers/Categories/category";
 
 const Routes_categories = Router();
@@ -18,6 +19,8 @@ Routes_categories.get("/category/products/:id", getCategoryById);
 Routes_categories.post("/category", create);
 Routes_categories.post("/category/search", getCategoryByName);
 Routes_categories.delete("/category/:id", remove);
+Routes_categories.delete("/category/products/:productId", removeProduct);
+
 Routes_categories.put("/category/:id", update);
 Routes_categories.get("/category/statistical", statistical);
 
