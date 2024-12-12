@@ -89,6 +89,17 @@ export const get = async (req, res) => {
       },
       {
         $addFields: {
+          products: {
+            $filter: {
+              input: "$products",
+              as: "product",
+              cond: { $ne: ["$$product.deleted", true] },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
           product_count: { $size: "$products" },
         },
       },
@@ -155,8 +166,10 @@ export async function getCategoryById(req, res) {
     if (!category) {
       return res.status(404).json({ message: "Danh mục không tồn tại" });
     }
-
-    const products = await Products.find({ category_id: category._id });
+    // Tìm tất cả sản phẩm thuộc danh mục này
+    const products = await Products.find({
+      category_id: category._id,
+    }).populate("attributes"); // Sử dụng populate để lấy thông tin của attribut
 
     res.status(200).json(products);
   } catch (error) {
@@ -245,6 +258,44 @@ export const remove = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ name: error.name, message: error.message });
+  }
+};
+
+export const removeProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    // Tìm danh mục mặc định (ví dụ, danh mục có tên "Uncategorized")
+    const defaultCategory = await Category.findOne({
+      name_category: "Uncategorized",
+    });
+
+    if (!defaultCategory) {
+      return res
+        .status(404)
+        .json({ message: "Danh mục mặc định không tồn tại" });
+    }
+
+    // Cập nhật sản phẩm, chuyển danh mục của sản phẩm sang danh mục mặc định
+    const updatedProduct = await Products.findByIdAndUpdate(
+      productId,
+      { category_id: defaultCategory._id },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+    }
+
+    return res.status(200).json({
+      message: "Sản phẩm đã được chuyển sang danh mục mặc định",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      name: error.name,
+      message: error.message,
+    });
   }
 };
 
