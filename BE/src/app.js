@@ -18,22 +18,17 @@ import Routes_voucher from "./routers/voucher";
 import { Server } from "socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
-import Messages from "./models/Message/Message";
+import User from "./models/Auth/users";
 import Router_Message from "./routers/message";
 import router_attribute from "./routers/attribute";
 import Router_HuyMail from "./routers/sendmail";
 import Router_coze from "./routers/coze";
 
 dotenv.config();
-
 const app = express();
-
 app.use(express.json());
 app.use(cors());
-
 connectDB(process.env.DB_URL);
-
-// Định nghĩa các routes
 app.use("/api/v1", Routes_Products);
 app.use("/api/v1", Routes_categories);
 app.use("/api/v1", Routes_orders);
@@ -51,82 +46,78 @@ app.use("/api/v1", Router_Message);
 app.use("/api/v1", Router_HuyMail);
 app.use("/api/v1", Router_coze);
 app.use("/api/v1", router_attribute);
-
 app.use("/api/v1", Router_HuyMail);
-// Định nghĩa một số route khác
-// app.get("/profile/allorder", (req, res) => {
-//   const amount = req.query.vnp_Amount;
-//   const responseCode = req.query.vnp_ResponseCode;
-//   const txnRef = req.query.vnp_TxnRef;
-//   console.log("Amount: ", amount);
-//   console.log("Response Code: ", responseCode);
-//   console.log("Transaction Reference: ", txnRef);
-//   if (responseCode === "00") {
-//     res.send("Giao dịch thành công");
-//   } else {
-//     res.send("Giao dịch thất bại");
-//   }
-// });
 
-// Tạo server HTTP
 const server = http.createServer(app);
-
-// Thiết lập Socket.IO server
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:7899",
+    origin: "http://localhost:7900", // Thay bằng URL của frontend
     methods: ["GET", "POST"],
   },
 });
 
-// Middleware xác thực JWT cho Socket.IO
-io.use((socket, next) => {
+app.use(cors());
+app.use(express.json());
+
+// JWT secret key
+const JWT_SECRET = process.env.JWT_SECRET; // Thay bằng key bí mật của bạn
+
+// Middleware xác thực JWT
+const authenticateToken = (socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {
-    return next(new Error("Vui lòng cung cấp token hợp lệ."));
+    return next(new Error("Authentication error: Token not provided"));
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = decoded;
-    next();
-  } catch (error) {
-    return next(new Error("Token không hợp lệ."));
-  }
-});
-
-// Sự kiện khi có kết nối socket
-io.on("connection", (socket) => {
-  console.log(`Người dùng kết nối: ${socket.user.userId}`);
-  console.log("Client đã kết nối:", socket.id);
-
-  socket.on("send_message", async (data) => {
-    const { receiverId, content } = data;
-
-    try {
-      const message = new Messages({
-        senderId: socket.user.userId,
-        receiverId,
-        content,
-      });
-
-      await message.save();
-      socket.to(receiverId).emit("receive_message", message);
-    } catch (error) {
-      console.error("Lỗi khi lưu tin nhắn:", error);
-      socket.emit("error", "Gửi tin nhắn thất bại.");
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return next(new Error("Authentication error: Invalid token"));
     }
+    socket.user = user; // Lưu thông tin user vào socket
+    next();
   });
+};
 
-  socket.on("disconnect", () => {
-    console.log(`Người dùng ngắt kết nối: ${socket.user.userId}`);
+// Lắng nghe sự kiện kết nối WebSocket
+io.use(authenticateToken).on("connection", (socket) => {
+  console.log(`User connected: ${socket.id} (${socket.user.username})`);
+
+  // Kiểm tra trạng thái block của user
+  const user = User.find((u) => u.id === socket.user.id);
+  if (user && user.blocked) {
+    // Gửi sự kiện "blocked" tới client
+    socket.emit("blocked", { reason: user.reason });
+    console.log(`User ${user.username} bị khóa: ${user.reason}`);
+  }
+
+  // Lắng nghe sự kiện ngắt kết nối
+  socket.on("disconnect", (reason) => {
+    console.log(`User disconnected: ${socket.id}, Reason: ${reason}`);
   });
 });
 
-// Lắng nghe cổng
-const PORT = process.env.PORT || 2004;
-server.listen(PORT, () => {
-  console.log(`Server đang chạy trên cổng ${PORT}`);
+// API để login và tạo token
+app.post("/login", (req, res) => {
+  const { username } = req.body;
+
+  const user = User.find((u) => u.username === username);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // Tạo token cho user
+  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  res.json({ token });
 });
+
+// Start server
+server.listen(2004, () => {
+  console.log("Server is running on http://localhost:2004");
+});
+
+export const getIO = () => io;
 
 export const viteNodeApp = app;

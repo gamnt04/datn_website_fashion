@@ -67,6 +67,9 @@ const useSignIn = (userId?: string) => {
         if (res.status === 404) {
           toast.error("Sai thông tin đăng nhập. Vui lòng đăng nhập lại!");
           setStatus_api(true);
+        } else if (res.status === 403) {
+          toast.error("Tài khoản của bạn đã bị chặn!");
+          setStatus_api(true);
         } else {
           toast.error("Đăng nhập thất bại!");
           setStatus_api(true);

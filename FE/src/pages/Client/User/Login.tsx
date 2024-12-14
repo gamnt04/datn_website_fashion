@@ -18,8 +18,6 @@ const Login = () => {
     setFormErrors,
     validateForm,
     isPending,
-    isError,
-    error,
     status_api,
   } = useSignIn();
 
@@ -53,32 +51,52 @@ const Login = () => {
   };
   const handleGoogleLogin = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
+
     try {
       const response = await axios.post(
         "http://localhost:2004/api/v1/auth/google",
-        {
-          token,
-        }
+        { token }
       );
 
-      const { token: jwtToken, user } = response.data;
-      const user_data = {
-        user,
-      };
-      console.log(user_data);
-      localStorage.setItem("token", jwtToken);
-      localStorage.setItem("user", JSON.stringify(user_data));
+      // Kiểm tra nếu phản hồi từ server có dữ liệu hợp lệ
+      if (response.data && response.data.token && response.data.user) {
+        const { token: jwtToken, user } = response.data;
 
-      toast.success("Đăng nhập thành công!");
+        // Tạo đối tượng user_data và lưu vào localStorage
+        const user_data = {
+          user,
+        };
 
-      if (user.role === "admin") {
-        navigate("/admin");
+        // Lưu token và user vào localStorage
+        localStorage.setItem("token", jwtToken);
+        localStorage.setItem("user", JSON.stringify(user_data));
+
+        // Thông báo đăng nhập thành công
+        toast.success("Đăng nhập thành công!");
+
+        // Điều hướng người dùng dựa trên vai trò
+        if (user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       } else {
-        navigate("/");
+        // Nếu không có dữ liệu hợp lệ trong phản hồi
+        toast.error("Dữ liệu đăng nhập không hợp lệ. Vui lòng thử lại!");
       }
     } catch (error) {
       console.error("Lỗi đăng nhập Google:", error);
-      toast.error("Đăng nhập Google thất bại. Vui lòng thử lại!");
+
+      // Kiểm tra lỗi từ phản hồi của server, nếu có
+      if (error.response) {
+        toast.error(
+          `Đăng nhập Google thất bại: ${
+            error.response.data.message || "Vui lòng thử lại!"
+          }`
+        );
+      } else {
+        toast.error("Đã xảy ra lỗi kết nối. Vui lòng thử lại!");
+      }
     }
   };
 
@@ -97,14 +115,6 @@ const Login = () => {
       </div>
     );
   }
-
-  // if (isError && error) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <div>Error: {error.message}</div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="container flex flex-col mx-auto mt-5 bg-white rounded-lg">
@@ -155,7 +165,9 @@ const Login = () => {
                   />
                 </Form.Item>
                 {status_api && (
-                  <span className="text-red-500">Sai thông tin tài khoản!</span>
+                  <span className="text-red-500">
+                    Sai thông tin đăng nhập hoặc tài khoản của bạn đã bị chặn!
+                  </span>
                 )}
                 <Form.Item>
                   <Button

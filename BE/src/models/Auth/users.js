@@ -1,30 +1,31 @@
+import { boolean } from "joi";
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 const updatedFieldSchema = new mongoose.Schema({
   field: { type: String },
   time: { type: Date, default: Date.now },
-  value: { type: String }
+  value: { type: String },
 });
 const userSchema = new Schema(
   {
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     password: {
-      type: String
+      type: String,
     },
     userName: {
       type: String,
       required: true,
       minlength: 3,
-      maxlength: 30
+      maxlength: 30,
     },
     fullName: {
       type: String,
       minlength: 3,
-      maxlength: 30
+      maxlength: 30,
     },
     address: [
       {
@@ -33,36 +34,50 @@ const userSchema = new Schema(
         address: { type: String, required: true },
         addressName: [
           {
-            type: String
-          }
+            type: String,
+          },
         ],
         detailedAddress: { type: String },
 
         checked: { type: Boolean, default: false },
         coordinates: {
           lat: { type: Number },
-          lng: { type: Number }
-        }
-      }
+          lng: { type: Number },
+        },
+      },
     ],
     phone: {
-      type: String
+      type: String,
     },
     role: {
       type: String,
       enum: ["user", "admin", "courier"],
-      default: "user"
+      default: "user",
     },
 
     avatar: {
       type: String,
-      default: "https://vectorified.com/images/default-avatar-icon-12.png"
+      default: "https://vectorified.com/images/default-avatar-icon-12.png",
     },
-
+    isBlock: {
+      type: Boolean,
+      default: false,
+    },
+    reasonBlock: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    reasonUnblock: {
+      // Thêm lý do hủy block
+      type: String,
+      default: null,
+      trim: true,
+    },
     birthDate: {
-      type: String
+      type: String,
     },
-    updatedFields: { type: [updatedFieldSchema], default: [] }
+    updatedFields: { type: [updatedFieldSchema], default: [] },
   },
   { timestamps: true, versionKey: false }
 );
