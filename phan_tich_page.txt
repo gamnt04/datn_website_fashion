@@ -1,0 +1,50 @@
+Lâm: Cart
+Chung: DetailP
+Gấm: SignIn/SignUp/SignOut + Settings
+Minh: Pay(Thanh toán)
+Nam: Đơn hàng + Favourite
+Đức: Home + Search + Blog + Contact
+Trung: Shops(List P)+ Pages
+
++Liệt kê các thành phần có trong trang
++Liệt kê các chức năng  của trang
++Liệt kê cá trường hợp có thể xảy ra(Bên quản lý thay đổi thì bên người dùng ntn, bên người dùng thựuc hiện thì bên quản lý thay đổi ntn)
+
+* Shop ( List P ):
+- Header + Footer giống trang home
+- phần lọc (khi người dùng bầm lọc sẽ lọc ra các sản phẩm tương ứng, nếu người dùng lọc theo danh mục thì chỉ hiện ra danh mục đúng với yêu cầu và nếu lọc danh mục + giá thì cũng chỉ ra sản phẩm tương ứng,...):
+	+ lọc theo danh mục: có các select để hiện các danh mục từ admin ra client, khi bên admin xóa một danh mục thì bên client sẽ mất danh mục đấy, có thể chọn nhiều danh mục
+	+ lọc theo giá: có thanh kéo để tìm giá, giá sẽ để theo giá từ 0$ đên giá cao hơn giá sản phẩm cao nhất làm tròn giá 
+	+ lọc theo màu: có các select để hiện các màu từ admin ra client, khi bên admin xóa một màu nào thì bên client sẽ mất đi màu đấy, có thể chọn nhiều màu để lọc 
+	+ lọc theo size: có các select để hiện các size từ admin ra client, khi bên admin xóa một size nào đó thì bên client sẽ mất đi size đấy và có thể chọn nhiều size để lọc
+- thông tin sản phẩm: sẽ hiện thị các thông tin nổi bật của sản phẩm như ( ảnh sản phẩm, tên , giá), khi click vào ảnh& tên của sản phẩm sẽ chuyển sản trang chi tiết sản phẩm đó, khi di chuyển vào ảnh sẽ có hover hiện ra icon giỏ hàng và icon yêu thích khi click vào 1 trong 2 icon đó sản phẩm được click sẽ đc lưu vào 1 trong 2 trang mà người dùng click, có một nút mua ngay ở phía dưới mỗi sản phẩm người dùng có thế mua sản phẩm luôn ở trang này hoặc trong trang chi tiết sản phẩm
+- nút chuyển trang khi có nhiều sản phẩm, tối đa dài 4*4 
+
+* Pages : có 3 trang
+- Header + Footer giống trang home
+- trang about-us: 
+	+ Đầu tiên giới thiệu về trang web
+	+ giới thiệu về các thành viên của trang web
+	+ video giới thiệu
+	+ các danh mục nổi bật của website, có một nút views all để xem tất cả sản phẩm, bấm vào một danh mục bất kì sẽ hiện ra các sản phẩm của danh mục đó
+- trang faps: sẽ chia lam 2  
+	+ phần bên trái Sẽ có các câu hỏi để mặc định và khi bấn vào một câu hỏi sẽ có câu trả lời ở đó và mặc định có nút + khi bấm vào có nút -
+	+ phần bên phải sẽ là from để người dùng có thể hỏi/khiếu nại về email của admin, form gồm có ( tên, email, sdt, nội dung ) của người gửi và có một nút gửi ở dưới
+- trang delivery : trang này giúp người dùng biết thêm thông tin của đơn vị vận chuyển và cách đổi trả hàng
+	+ có một thẻ h1 ghi tiêu đề nội dung chính của trang, tiếp theo là một thẻ nhỏ hơn ghi tiêu đề nội dùng từng phân , cuối cùng là nội dung của từng phần 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
