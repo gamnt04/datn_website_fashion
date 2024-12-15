@@ -33,6 +33,10 @@ const sendEmail = async (
   userName,
   email,
   code_voucher,
+  discountType,
+  discountValue,
+  minimumSpend,
+  description_voucher,
   startDate,
   expirationDate
 ) => {
@@ -44,7 +48,6 @@ const sendEmail = async (
     },
   });
 
-  // Định dạng thời gian
   const formatDate = (date) =>
     new Intl.DateTimeFormat("vi-VN", {
       day: "2-digit",
@@ -55,24 +58,141 @@ const sendEmail = async (
   const formattedStartDate = formatDate(startDate);
   const formattedExpirationDate = formatDate(expirationDate);
 
+  const formattedDiscountValue =
+    discountType === "percentage"
+      ? `${discountValue}%`
+      : `${discountValue.toLocaleString("vi-VN")} đ`;
+
+  const formattedMinimumSpend = `${minimumSpend.toLocaleString("vi-VN")} đ`;
+
   const mailOptions = {
     from: process.env.SMTP_USER,
     to: email,
-    subject: "Mã giảm giá mới dành cho bạn!",
-    text: `Kính gửi ${userName},
+    subject: "🎉 Ưu đãi đặc biệt dành riêng cho bạn!",
+    html: `
+      <div style="
+        max-width: 600px;
+        margin: 0 auto;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      ">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="
+            color: #1a73e8;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+          ">Ưu Đãi Đặc Biệt</h1>
+        </div>
 
-Bạn đã nhận được mã giảm giá mới từ chúng tôi:
-Mã giảm giá: ${code_voucher}
-Thời gian sử dụng: ${formattedStartDate} - ${formattedExpirationDate}
-Vui lòng truy cập web và mua sắm để sử dụng mã giảm giá này --> http://localhost:7899/shops
+        <h2 style="
+          color: #1a73e8;
+          font-size: 20px;
+          margin-bottom: 20px;
+        ">Xin chào ${userName},</h2>
 
-Xin chân thành cảm ơn!`,
+        <p style="
+          font-size: 16px;
+          margin-bottom: 25px;
+          color: #555;
+        ">Chúng tôi vui mừng thông báo bạn đã nhận được <strong>mã giảm giá độc quyền</strong>!</p>
+
+        <div style="
+          background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 15px;
+          padding: 25px;
+          margin: 20px 0;
+          border: 2px dashed #1a73e8;
+        ">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="
+              font-size: 24px;
+              font-weight: bold;
+              color: #1a73e8;
+              background-color: #ffffff;
+              padding: 10px 20px;
+              border-radius: 8px;
+              display: inline-block;
+              box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            ">${code_voucher}</div>
+          </div>
+
+          <div style="margin-bottom: 3px;">
+            <strong style="color: #4a4a4a;">Ưu đãi:</strong> 
+            <span style="
+              color: #28a745;
+              font-weight: bold;
+              font-size: 18px;
+            ">${formattedDiscountValue}</span>
+            <span >với đơn hàng tối thiểu</span>
+            <span style="
+              color: #1a73e8;
+              font-weight: bold;
+            ">${formattedMinimumSpend}</span>
+          </div>
+
+          <div style="margin-bottom: 3px;">
+            <strong style="color: #4a4a4a;">Mô tả:</strong> 
+            <span style="color: #666;">${description_voucher}</span>
+          </div>
+
+          <div>
+            <strong style="color: #4a4a4a;">Thời gian áp dụng:</strong>
+            <span style="color: #666;">Từ ${formattedStartDate} đến ${formattedExpirationDate}</span>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="http://localhost:7899/shops" style="
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(26,115,232,0.2);
+          ">Mua sắm ngay</a>
+        </div>
+
+        <p style="
+          text-align: center;
+          color: #666;
+          margin-top: 30px;
+          font-style: italic;
+        ">Cảm ơn bạn đã luôn đồng hành cùng chúng tôi!</p>
+
+        <hr style="
+          border: none;
+          border-top: 1px solid #eee;
+          margin: 30px 0;
+        ">
+
+        <div style="
+          text-align: center;
+          font-size: 12px;
+          color: #999;
+        ">
+          <p>Nếu bạn cần hỗ trợ, vui lòng liên hệ với chúng tôi qua email hoặc hotline.</p>
+          <p>© 2024 Seven. All rights reserved.</p>
+        </div>
+      </div>
+    `,
   };
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log("Email đã được gửi thành công.");
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Lỗi khi gửi email:", error);
   }
 };
 
@@ -102,6 +222,10 @@ export const addVoucher = async (req, res) => {
             user.userName,
             user.email,
             newVoucher.code_voucher,
+            newVoucher.discountType,
+            newVoucher.discountValue,
+            newVoucher.minimumSpend,
+            newVoucher.description_voucher,
             newVoucher.startDate,
             newVoucher.expirationDate
           );
@@ -115,6 +239,10 @@ export const addVoucher = async (req, res) => {
           user.userName,
           user.email,
           newVoucher.code_voucher,
+          newVoucher.discountType,
+          newVoucher.discountValue,
+          newVoucher.minimumSpend,
+          newVoucher.description_voucher,
           newVoucher.startDate,
           newVoucher.expirationDate
         );
