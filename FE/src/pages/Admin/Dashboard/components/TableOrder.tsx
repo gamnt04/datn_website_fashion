@@ -150,7 +150,7 @@ const TableOrder = () => {
       userId: userId,
       receiver_id: order_1?.userId,
       message: message,
-      different: dataBody.id_order
+      different: dataBody.id_item
     });
 
     try {
@@ -249,8 +249,8 @@ const TableOrder = () => {
         order.status === "6"
           ? "Thanh toán thành công"
           : order.status === "5"
-          ? "Thanh toán thất bại"
-          : "Chưa thanh toán"
+            ? "Thanh toán thất bại"
+            : "Chưa thanh toán"
     },
     {
       title: "Trạng Thái",
