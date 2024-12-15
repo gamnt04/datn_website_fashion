@@ -108,7 +108,7 @@ const UpdateVoucher = () => {
 
     const formData = {
       ...values,
-      allowedUsers: selectedUsers,
+      allowedUsers: selectedAuths,
       appliedProducts: selectedItems,
       appliedCategories: selectedCategories,
     };
@@ -411,7 +411,10 @@ const UpdateVoucher = () => {
                     >
                       {selectedItems.map((id) => (
                         <Option key={id} value={id}>
-                          {products.find((p: any) => p._id === id)?.name_product}
+                          {
+                            products.find((p: any) => p._id === id)
+                              ?.name_product
+                          }
                         </Option>
                       ))}
                     </Select>

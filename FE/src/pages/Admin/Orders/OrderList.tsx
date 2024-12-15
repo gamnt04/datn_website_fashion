@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Input, Select, Spin, Tooltip } from "antd";
+import { Button, Input, Popconfirm, Select, Spin, Tooltip } from "antd";
 import { saveAs } from "file-saver";
 import { useEffect, useState } from "react";
 import { AiOutlineExport } from "react-icons/ai";
@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import {
   Query_Orders,
   useAllOrderSuccess,
-  useSearchOrdersByNumberOrNumberPhone,
+  useSearchOrdersByNumberOrNumberPhone
 } from "../../../common/hooks/Order/querry_Order";
 import OrderTable from "./OrderTable";
 
@@ -68,9 +68,9 @@ const OrderList = () => {
           name_product: p.productId.name_product,
           price_product: p.total_price_item,
           quantity_product: p.quantity,
-          classification_product: `${p.color_item} - ${p.name_size}`,
+          classification_product: `${p.color_item} - ${p.name_size}`
         })),
-        total_price_order: item.totalPrice,
+        total_price_order: item.totalPrice
       }));
       setDataExport(formattedData);
     }
@@ -96,7 +96,7 @@ const OrderList = () => {
             price_product: p.price_product,
             quantity_product: p.quantity_product,
             classification_product: p.classification_product,
-            total_price_order: item.total_price_order,
+            total_price_order: item.total_price_order
           });
         });
       });
@@ -119,7 +119,7 @@ const OrderList = () => {
       "Giá sản phẩm",
       "Số lượng sản phẩm",
       "Phân loại sản phẩm",
-      "Tổng đơn hàng",
+      "Tổng đơn hàng"
     ];
 
     const worksheetData = dataState.map((row) => ({
@@ -135,7 +135,7 @@ const OrderList = () => {
       "Giá sản phẩm": row.price_product,
       "Số lượng sản phẩm": row.quantity_product,
       "Phân loại sản phẩm": row.classification_product,
-      "Tổng đơn hàng": row.total_price_order,
+      "Tổng đơn hàng": row.total_price_order
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(worksheetData, { header });
@@ -153,12 +153,12 @@ const OrderList = () => {
             // Cột từ STT đến Ngày hoàn thành
             merges.push({
               s: { r: startRow, c: col },
-              e: { r: index - 1, c: col },
+              e: { r: index - 1, c: col }
             });
           }
           merges.push({
             s: { r: startRow, c: 12 }, // Cột Tổng đơn hàng
-            e: { r: index - 1, c: 12 },
+            e: { r: index - 1, c: 12 }
           });
         }
         currentOrder = row.number_order;
@@ -171,12 +171,12 @@ const OrderList = () => {
       for (let col = 0; col <= 7; col++) {
         merges.push({
           s: { r: startRow, c: col },
-          e: { r: dataState.length - 1, c: col },
+          e: { r: dataState.length - 1, c: col }
         });
       }
       merges.push({
         s: { r: startRow, c: 12 },
-        e: { r: dataState.length - 1, c: 12 },
+        e: { r: dataState.length - 1, c: 12 }
       });
     }
 
@@ -190,7 +190,7 @@ const OrderList = () => {
 
     const excelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
-      type: "array",
+      type: "array"
     });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
 
@@ -245,15 +245,21 @@ const OrderList = () => {
           </div>
         </div>
         <div className="flex space-x-5">
-          <Tooltip placement="topLeft" title={"Xuất dữ liệu đơn hàng"}>
-            <Button
-              onClick={handleExport}
-              className="bg-[#13DEB9] text-[white] border-none h-10"
-            >
-              <AiOutlineExport />
-              Xuất dữ liệu
-            </Button>
-          </Tooltip>
+          <Popconfirm
+            title="Xuất tất cả dữ liệu đơn hàng"
+            description="Bạn có chắc chắn muốn xuất tất cả các đơn hàng ra file excel không? "
+            onConfirm={handleExport}
+            // onCancel={cancel}
+            okText="Có "
+            cancelText="Không"
+          >
+            <Tooltip placement="topLeft" title={"Xuất dữ liệu đơn hàng"}>
+              <Button className="bg-[#13DEB9] text-[white] border-none h-10">
+                <AiOutlineExport />
+                Xuất dữ liệu
+              </Button>
+            </Tooltip>
+          </Popconfirm>
         </div>
       </div>
       <OrderTable

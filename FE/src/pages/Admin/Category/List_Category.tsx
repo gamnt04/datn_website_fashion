@@ -169,11 +169,6 @@ const List_Category: React.FC = () => {
 
   const columns: ColumnsType<ICategory> = [
     {
-      key: "checkbox",
-      title: <Checkbox />,
-      render: (_: any, cate: ICategory) => <Checkbox />,
-    },
-    {
       key: "image_category",
       title: "Ảnh Danh Mục",
       render: (_: any, record: ICategory) => (

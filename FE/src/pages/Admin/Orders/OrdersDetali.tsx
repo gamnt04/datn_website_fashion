@@ -1,7 +1,7 @@
 import {
   LeftOutlined,
   LoadingOutlined,
-  UploadOutlined,
+  UploadOutlined
 } from "@ant-design/icons";
 import {
   Button,
@@ -12,14 +12,14 @@ import {
   Radio,
   Spin,
   Table,
-  Upload,
+  Upload
 } from "antd";
 import { UploadFile } from "antd/es/upload/interface";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Mutation_Notification,
-  Query_notification,
+  Query_notification
 } from "../../../_lib/React_Query/Notification/Query";
 import { useOrderMutations } from "../../../common/hooks/Order/mutation_Order";
 import { Query_Orders } from "../../../common/hooks/Order/querry_Order";
@@ -67,7 +67,7 @@ const OrdersDetali = () => {
         },
         onError: () => {
           messageApi.error("Thêm shipper thất bại!");
-        },
+        }
       }
     );
   };
@@ -123,7 +123,7 @@ const OrdersDetali = () => {
       }
       await instance.post("/deliver-success", {
         orderId,
-        confirmationImage: imageUrl,
+        confirmationImage: imageUrl
       });
       handleStatusUpdate(4, data?.orderNumber, data._id);
       refetch();
@@ -146,12 +146,13 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${dataBody?.action === "xac_nhan"
-        ? "xác nhận"
-        : `Từ Chối:  ${dataBody?.cancellationReason}`
-        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${
+        dataBody?.action === "xac_nhan"
+          ? "xác nhận"
+          : `Từ Chối:  ${dataBody?.cancellationReason}`
+      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
-      id_different: dataBody?.numberOrder,
+      id_different: dataBody?.numberOrder
     });
   }
   const reasons = ["Hết hàng", "Sai thông tin sản phẩm", "Giá nhập thay đổi"];
@@ -166,18 +167,18 @@ const OrdersDetali = () => {
       receiver_id: data?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.id_item,
-      id_different: dataBody?.numberOrder,
+      id_different: dataBody?.numberOrder
     });
     cancel(dataBody);
   }
   const reason = [
     "Người nhận không nghe máy",
     "Hoàn hàng",
-    "Đơn hàng quá 3 ngày",
+    "Đơn hàng quá 3 ngày"
   ];
   const reason1 = [
     "Đơn hàng đã được giao cho đơn vị vận chuyển",
-    "Chúng tôi không thể đồng ý với yêu cầu của bạn",
+    "Chúng tôi không thể đồng ý với yêu cầu của bạn"
   ];
   function giao_hang_that_bai(dataBody: {
     id_item: string | number;
@@ -191,7 +192,7 @@ const OrdersDetali = () => {
       receiver_id: data?.userId,
       message: `Người giao hàng đã giao hàng đơn hàng  ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.id_item,
-      id_different: dataBody?.numberOrder,
+      id_different: dataBody?.numberOrder
     });
     console.log(dataBody.cancellationReason);
 
@@ -208,44 +209,44 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-          : status === 4
-            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-            : status === 5
-              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-              : status === 6
-                ? `Đã giao đơn hàng ${code_order} thành công!`
-                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+        : status === 4
+        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+        : status === 5
+        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+        : status === 6
+        ? `Đã giao đơn hàng ${code_order} thành công!`
+        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
       message: message,
-      different: id_order,
+      different: id_order
     });
     try {
       const response = await instance.patch(`/orders/${id}`, {
-        status: status,
+        status: status
       });
       messageApi.open({
         type: "success",
         content:
           response.data.status === "6"
             ? "Đơn hàng đã được giao"
-            : "Cập nhật trạng thái đơn hàng thành công!",
+            : "Cập nhật trạng thái đơn hàng thành công!"
       });
       refetch();
     } catch (error) {
       messageApi.open({
         type: "error",
-        content: "Cập nhật trạng thái đơn hàng thất bại!",
+        content: "Cập nhật trạng thái đơn hàng thất bại!"
       });
     }
   };
   const cancellationRequested = data?.cancellationRequested;
   const dataSort = data?.items?.map((item: any) => ({
     key: item._id,
-    ...item,
+    ...item
   }));
   const columns = [
     {
@@ -258,7 +259,7 @@ const OrdersDetali = () => {
           alt=""
           className="w-[80px] h-[80px] object-cover "
         />
-      ),
+      )
     },
     {
       title: "Tên Sản Phẩm",
@@ -273,7 +274,7 @@ const OrdersDetali = () => {
             Loại: {item?.color_item} - {item?.name_size}
           </p>
         </div>
-      ),
+      )
     },
     {
       title: "Giá Sản Phẩm",
@@ -283,10 +284,10 @@ const OrdersDetali = () => {
         <p className="">
           {item?.price_item.toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
+      )
     },
     {
       title: "Số Lượng",
@@ -294,7 +295,7 @@ const OrdersDetali = () => {
       key: "quantity",
       render: (_: any, item: any) => (
         <p className="text-center">{item?.quantity}</p>
-      ),
+      )
     },
     {
       title: "Tổng Tiền",
@@ -304,11 +305,11 @@ const OrdersDetali = () => {
         <p>
           {(item?.total_price_item).toLocaleString("vi", {
             style: "currency",
-            currency: "VND",
+            currency: "VND"
           })}
         </p>
-      ),
-    },
+      )
+    }
   ];
   if (isLoading) {
     return (
@@ -347,7 +348,7 @@ const OrdersDetali = () => {
                         <img
                           src={shipper.avatar}
                           alt="Shipper Avatar"
-                          className="w-12 h-12 rounded-full object-cover mr-4"
+                          className="w-14 h-14 rounded-lg object-cover mr-4"
                         />
                         <div className="flex-1 w-40 ">
                           <p className="text-lg font-medium">
@@ -363,10 +364,11 @@ const OrdersDetali = () => {
                         </div>
                         <Button
                           onClick={() => handleSelectShipper(shipper._id)}
-                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${selectedShipper === shipper._id
-                            ? "bg-green-500"
-                            : ""
-                            }`}
+                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${
+                            selectedShipper === shipper._id
+                              ? "bg-green-500"
+                              : ""
+                          }`}
                         >
                           {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                         </Button>
@@ -448,7 +450,7 @@ const OrdersDetali = () => {
                 <p>
                   {calculateTotalProductPrice()?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
               </span>
@@ -528,32 +530,30 @@ const OrdersDetali = () => {
                   <p>
                     {calculateTotalProductPrice()?.toLocaleString("vi", {
                       style: "currency",
-                      currency: "VND",
+                      currency: "VND"
                     })}
                   </p>
                 </p>
                 <p className="py-2 text-gray-800 text-left">
-
                   {data?.delivery_fee?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
                 <p className="py-2 text-gray-800 ">
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })} `
+                        style: "currency",
+                        currency: "VND"
+                      })} `
                     : "0đ"}
                 </p>
 
                 <p className="py-2 text-[#ee4d2d] text-xl">
-
                   {data?.totalPrice?.toLocaleString("vi", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                   })}
                 </p>
               </div>
@@ -604,7 +604,7 @@ const OrdersDetali = () => {
                       id_item: data?._id,
                       action: "huy",
                       cancellationReason: selectedReason,
-                      numberOrder: data?.orderNumber,
+                      numberOrder: data?.orderNumber
                     });
                   }}
                   okText="Từ chối"
@@ -628,7 +628,7 @@ const OrdersDetali = () => {
                           id_item: data?._id,
                           confirm: true,
                           numberOrder: data?.orderNumber,
-                          action: "xac_nhan",
+                          action: "xac_nhan"
                         })
                       }
                       okText="Xác nhận"
@@ -670,7 +670,7 @@ const OrdersDetali = () => {
                           confirm: false,
                           cancellationReason: selectedReason,
                           numberOrder: data?.orderNumber,
-                          action: "tu_choi",
+                          action: "tu_choi"
                         });
                       }}
                       okText="Từ chối"
@@ -748,7 +748,7 @@ const OrdersDetali = () => {
                         action: "huy",
                         cancellationReason: selectedReason,
                         numberOrder: data?.orderNumber,
-                        linkUri: data?._id,
+                        linkUri: data?._id
                       });
                     }
                   }}
@@ -757,10 +757,11 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${role !== "courier"
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-red-500"
-                      } `}
+                    className={`w - 52 rounded text - white ${
+                      role !== "courier"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-red-500"
+                    } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại
@@ -811,7 +812,7 @@ const OrdersDetali = () => {
               name="confirmationImage"
               label="Ảnh Xác Nhận"
               rules={[
-                { required: true, message: "Vui lòng chọn ảnh xác nhận" },
+                { required: true, message: "Vui lòng chọn ảnh xác nhận" }
               ]}
             >
               <Upload
@@ -836,7 +837,7 @@ const OrdersDetali = () => {
                       width: "40%",
                       maxHeight: 200,
                       objectFit: "cover",
-                      border: "1px solid black",
+                      border: "1px solid black"
                     }}
                   />
                 </div>

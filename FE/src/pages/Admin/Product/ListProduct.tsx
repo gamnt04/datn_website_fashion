@@ -42,7 +42,7 @@ const ListProduct = () => {
       onError: (error) => {
         messageApi.open({
           type: "error",
-          content: error.message,
+          content: error?.message,
         });
       },
     });
@@ -70,7 +70,7 @@ const ListProduct = () => {
       </div>
     );
   }
-  if (isError) return <div>{error.message}</div>;
+  if (isError) return <div>{error?.message}</div>;
   return (
     <CheckAuths roles={["admin"]}>
       <>
