@@ -372,7 +372,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                       </Popconfirm>
                     </>
                   )}
-                  {orders.status === "6" && (
+                  {/* {orders.status === "6" && (
                     <>
                       {" "}
                       <Popconfirm
@@ -390,7 +390,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                         </button>
                       </Popconfirm>
                     </>
-                  )}
+                  )} */}
                 </div>
               }
             >
