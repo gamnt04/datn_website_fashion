@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingOutlined } from "@ant-design/icons";
 import {
-  Button,
   Checkbox,
   Input,
   message,
@@ -55,9 +54,9 @@ const ListCart = () => {
       window.alert(data);
     });
   }, []);
-  const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
+  const { mutate: updateQuantity, isLoading: loading_update_quantity } = Mutation_Cart("UPDATEQUANTITY");
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [inputValue, setInputValue] = useState<number | null>(null);
+  const [inputValue, setInputValue] = useState<any>(0);
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
@@ -106,17 +105,25 @@ const ListCart = () => {
     setInputValue(quantity);
   };
 
-  const handleBlur = (product: any) => {
+  const handleBlur = (product: any, item: any) => {
+    const check_color = item?.productId?.attributes?.values?.find((a: any) => a?.color === item?.color_item);
+    const check_size = check_color?.size?.find((b: any) => (b?.name_size?.trim() ? b?.name_size : undefined) === item?.name_size);
+    // (inputValue > check_size?.stock_attribute) && setInputValue(check_size?.stock_attribute)
     if (inputValue !== product?.quantity) {
+      if (inputValue > check_size?.stock_attribute) {
+        messageApi.destroy()
+        messageApi.open({
+          type: 'error',
+          content: `Số lượng sản phẩm được mua là ${check_size?.stock_attribute}`,
+        });
+        setInputValue(check_size?.stock_attribute)
+      }
       updateQuantity({
         userId: userId,
         productId: product?._id,
-        quantity: inputValue,
+        quantity: (inputValue > check_size?.stock_attribute) ? check_size?.stock_attribute : inputValue,
       });
     }
-
-    setEditingProductId(null);
-    setInputValue(null);
   };
   const dataSort = data?.products?.filter(
     (product: any) =>
@@ -125,7 +132,18 @@ const ListCart = () => {
         ...product,
       }
   );
-
+  const handleQuantityChange = (e: any) => {
+    const value: any = e?.target?.value;
+    if (!isNaN(value) && value.trim() !== '') {
+      setInputValue(Number(value));
+    } else {
+      messageApi.destroy()
+      messageApi.open({
+        type: 'error',
+        content: 'Vui lòng nhập số hợp lệ!',
+      });
+    }
+  };
   const columns: TableProps<DataType>["columns"] = [
     {
       key: "checkbox",
@@ -213,8 +231,8 @@ const ListCart = () => {
             {editingProductId === product?.productId ? (
               <Input
                 value={inputValue}
-                onChange={(e) => setInputValue(Number(e.target.value))}
-                onBlur={() => handleBlur(product?.productId)}
+                onChange={(e) => handleQuantityChange(e)}
+                onBlur={() => handleBlur(product?.productId, product)}
                 className="px-0 text-center !max-w-20"
               />
             ) : (
@@ -262,11 +280,10 @@ const ListCart = () => {
             <Popconfirm
               className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
               title="Xóa sản phẩm khỏi giỏ hàng?"
-              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
-                product?.productId?.name_product?.length > 20
-                  ? product?.productId?.name_product?.slice(0, 20) + "..."
-                  : product?.productId?.name_product
-              } khỏi giỏ hàng không?`}
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${product?.productId?.name_product?.length > 20
+                ? product?.productId?.name_product?.slice(0, 20) + "..."
+                : product?.productId?.name_product
+                } khỏi giỏ hàng không?`}
               onConfirm={() => remove_item(product)}
               okText="Có"
               cancelText="Không"
@@ -361,7 +378,7 @@ const ListCart = () => {
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto relative">
       {isLoading ||
-        (loading_btn_checkked && (
+        (loading_btn_checkked || loading_update_quantity && (
           <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
             <Spin indicator={<LoadingOutlined spin />} size="large" />
           </div>

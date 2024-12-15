@@ -15,9 +15,9 @@ export default function Het_hang({ dataProps }: any) {
     return (
         <>
             {quantity_attr < 1 && (
-                <div className="absolute top-0 z-[9] w-full bg-[#37415190] h-full grid place-items-center after:absolute after:w-[95%] after:-right-[95%] after:top-0 
-    before:absolute after:h-full after:bg-gradient-to-r from-[#37415190] to-[#37415100] before:w-1/2 before:h-full before:bg-[#37415188] before:-left-1/2">
-                    <span className="text-gray-100 text-base">Hết hàng</span>
+                <div className="absolute top-0 z-[9] w-full bg-[#37415130] h-full grid place-items-center after:absolute after:w-[95%] after:-right-[95%] after:top-0 
+    before:absolute after:h-full after:bg-gradient-to-r from-[#37415130] to-[#37415100] before:w-1/2 before:h-full before:bg-[#37415130] before:-left-1/2">
+                    <span className="text-red-500 text-lg">Hết hàng</span>
                 </div>
             )}
         </>

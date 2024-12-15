@@ -211,7 +211,7 @@ export default function List_order() {
   }) {
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: "nguyenvana@gmail.com",
+      receiver_id: "totnghieppoly@gmail.com",
       message: `Người dùng ${name_1} đã yêu cầu hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
     });
@@ -228,7 +228,7 @@ export default function List_order() {
 
     dispathNotification?.mutate({
       userId: userId,
-      receiver_id: "nguyenvana@gmail.com",
+      receiver_id: "totnghieppoly@gmail.com",
       message: `Người dùng ${name_1} đã hủy đơn ${dataBody?.orderNumber} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.linkUri,
       id_different: dataBody?.orderNumber,
@@ -379,15 +379,15 @@ export default function List_order() {
       try {
         setPaymentPending(true);
         const parsed = queryString.parseUrl(location.search);
-  
+
         if (parsed.query.vnp_TransactionStatus === "00") {
           const itemOrder = sessionStorage.getItem("item_order");
           const customerInfo = sessionStorage.getItem("customerInfo");
-  
+
           if (itemOrder && customerInfo) {
             const getItemOrder = JSON.parse(itemOrder);
             const dataForm = JSON.parse(customerInfo);
-  
+
             const response = await instance.post("/orderspayment", {
               userId: getItemOrder.userId,
               items: getItemOrder?.items,
@@ -399,7 +399,7 @@ export default function List_order() {
               discountAmount: getItemOrder.discountAmount, // Thêm mã giảm giá
               status: "1", // Trạng thái thanh toán thành công
             });
-  
+
             if (response.data) {
               message.success("Thanh toán thành công");
               sessionStorage.removeItem("item_order");
@@ -419,10 +419,10 @@ export default function List_order() {
         setPaymentPending(false); // Kết thúc trạng thái loading cho thanh toán
       }
     };
-  
+
     fetchData();
   }, [location.search]);
-  
+
   if (isLoading || paymentPending) {
     return (
       <div className="flex justify-center items-center h-screen">
