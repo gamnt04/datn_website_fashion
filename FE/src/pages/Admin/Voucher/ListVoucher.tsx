@@ -10,7 +10,7 @@ import {
   Table,
   Drawer,
   Switch,
-  Input,
+  Input
 } from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -29,7 +29,7 @@ const ListVoucher = () => {
   const { data: categories } = useCategoryQuery();
   const { data, isLoading } = useQuery({
     queryKey: ["voucher"],
-    queryFn: () => instance.get(`/voucher`),
+    queryFn: () => instance.get(`/voucher`)
   });
   const { products, auth, shippers } = useDataVoucher();
 
@@ -60,12 +60,12 @@ const ListVoucher = () => {
     onSuccess: () => {
       messageAPI.success(`Xóa thành công`);
       queryClient.invalidateQueries({
-        queryKey: ["voucher"],
+        queryKey: ["voucher"]
       });
     },
     onError: (error) => {
       messageAPI.error(error.message);
-    },
+    }
   });
   const mutation = useMutation({
     mutationFn: async (category: IVoucher) => {
@@ -83,7 +83,7 @@ const ListVoucher = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    },
+    }
   });
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
@@ -102,7 +102,7 @@ const ListVoucher = () => {
 
   const dataSource = data?.data?.vouchers?.map((voucher: IVoucher) => ({
     key: voucher._id,
-    ...voucher,
+    ...voucher
   }));
   const filtered = dataSource?.filter((voucher: IVoucher) =>
     voucher.name_voucher.toLowerCase().includes(searchText.toLowerCase())
@@ -110,22 +110,22 @@ const ListVoucher = () => {
   const columns = [
     {
       title: "STT",
-      render: (_: any, __: any, index: any) => <p>{index + 1}</p>,
+      render: (_: any, __: any, index: any) => <p>{index + 1}</p>
     },
     {
       title: "Tên mã giảm giá",
       dataIndex: "name_voucher",
-      key: "name_voucher",
+      key: "name_voucher"
     },
     {
       title: "Mã giảm giá",
       dataIndex: "code_voucher",
-      key: "code_voucher",
+      key: "code_voucher"
     },
     {
       title: "Số lượng ",
       dataIndex: "quantity_voucher",
-      key: "quantity_voucher",
+      key: "quantity_voucher"
     },
     {
       key: "discountType",
@@ -137,24 +137,24 @@ const ListVoucher = () => {
         >
           {discountType === "percentage" ? "Theo %" : "Theo số tiền cố định"}
         </span>
-      ),
+      )
     },
     {
       title: "Giá trị ",
       dataIndex: "discountValue",
-      key: "discountValue",
+      key: "discountValue"
     },
     {
       title: "Thời gian bắt đầu",
       dataIndex: "startDate",
       key: "startDate",
-      render: (text: string) => formatDate(text),
+      render: (text: string) => formatDate(text)
     },
     {
       title: "Thời gian kết thúc",
       dataIndex: "expirationDate",
       key: "expirationDate",
-      render: (text: string) => formatDate(text),
+      render: (text: string) => formatDate(text)
     },
     {
       key: "isActive",
@@ -165,7 +165,7 @@ const ListVoucher = () => {
           checked={isActive}
           onChange={() => handleTogglePublished(record)}
         />
-      ),
+      )
     },
     {
       key: "actions",
@@ -195,8 +195,8 @@ const ListVoucher = () => {
             </Button>
           </Popconfirm>
         </Space>
-      ),
-    },
+      )
+    }
   ];
 
   if (isLoading) return <Loader />;
@@ -213,7 +213,7 @@ const ListVoucher = () => {
               <div className="flex space-x-5">
                 <Input
                   className="w-[500px]"
-                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                  placeholder="Nhập tên mã giảm giá để tìm kiếm..."
                   onChange={(e) => setSearchText(e.target.value)}
                 />
                 <Button type="primary">Tìm kiếm</Button>
