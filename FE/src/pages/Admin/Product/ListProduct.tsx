@@ -18,7 +18,7 @@ const ListProduct = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate } = Mutation_items("REMOVE_and_REMOVE_MULTIPLE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const { data, isLoading, isError, error } = Query_Products_Dashboard(
+  const { data, isLoading, isError } = Query_Products_Dashboard(
     +(searchParams?.get("_page") || 1)
   );
 
@@ -31,15 +31,16 @@ const ListProduct = () => {
     const products = { productIds: selectedProductIds };
     mutate(products, {
       onSuccess: () => {
+        messageApi.destroy()
         messageApi.open({
           type: "success",
-          content: "Xóa thành công",
+          content: "Xóa thành công, bạn có thể khôi phục trong thùng rác!",
         });
         queryClient.invalidateQueries({
           queryKey: ["Product_Dashboard"],
         });
       },
-      onError: (error) => {
+      onError: (error: any) => {
         messageApi.open({
           type: "error",
           content: error?.message,
@@ -70,7 +71,7 @@ const ListProduct = () => {
       </div>
     );
   }
-  if (isError) return <div>{error?.message}</div>;
+  if (isError) return <div>Lỗi!!</div>;
   return (
     <CheckAuths roles={["admin"]}>
       <>

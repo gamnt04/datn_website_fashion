@@ -52,7 +52,6 @@ const Form_Item = ({ mode }: any) => {
     }
     onSubmit(data_request);
   };
-
   useEffect(() => {
     if (data_one_item?.data?.product?.category_id) {
       const invalidCategory = !data?.some(
