@@ -13,6 +13,8 @@ import * as turf from "@turf/turf";
 import jwt from "jsonwebtoken";
 import { DailyOrderStats } from "../../models/Orders/daily";
 import MonthlySummary from "../../models/Orders/month";
+import SendDeliverySuccessMailToAdmin from "../SendMail/ThanhcongMailShipper";
+import SendDeliveryFailureMail from "../SendMail/HuyMailShipper";
 
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
@@ -565,6 +567,7 @@ export const updateOrderStatus = async (req, res) => {
 
       // Send cancellation email
       try {
+        await SendDeliveryFailureMail(order);
         await SendCancellationMail(
           order.customerInfo.email,
           order,
@@ -605,6 +608,16 @@ export const updateOrderStatus = async (req, res) => {
     //     }
     //   }
     // }
+    if (status === "6") {
+      try {
+        await SendDeliverySuccessMailToAdmin(order);
+      } catch (emailError) {
+        console.error("Error sending delivery success email:", emailError);
+        return res
+          .status(500)
+          .json({ message: "Failed to send delivery success email." });
+      }
+    }
 
     await order.save();
     return res
@@ -763,6 +776,7 @@ export const adminCancelOrder = async (req, res) => {
 
       // Send cancellation email
       try {
+        await SendDeliveryFailureMail(order);
         await SendCancellationMail(
           order.customerInfo.email,
           order,
@@ -851,6 +865,39 @@ export const get10NewOrderToday = async (req, res) => {
     });
   }
 };
+// export const deliverSuccess = async (req, res) => {
+//   try {
+//     const { orderId, confirmationImage } = req.body;
+
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res.status(404).json({ message: "Đơn hàng không tồn tại." });
+//     }
+
+//     // Update order status and confirmation image
+//     order.status = "4";
+//     order.confirmationImage = confirmationImage;
+//     await order.save();
+
+//     // Send email notification
+//     try {
+//       await SendDeliverySuccessMailToAdmin(order);
+//       await SendDeliverySuccessMail(order.customerInfo.email, order);
+//     } catch (emailError) {
+//       console.error("Lỗi gửi email:", emailError);
+//       return res.status(500).json({ message: "Gửi email thông báo thất bại." });
+//     }
+
+//     res.status(200).json({
+//       message:
+//         "Đơn hàng đã được đánh dấu là giao hàng thành công và email đã được gửi.",
+//       order,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ name: error.name, message: error.message });
+//   }
+// };
+
 export const deliverSuccess = async (req, res) => {
   try {
     const { orderId, confirmationImage } = req.body;
@@ -861,12 +908,12 @@ export const deliverSuccess = async (req, res) => {
     }
 
     // Update order status and confirmation image
-    order.status = "4";
+    order.status = "2";
     order.confirmationImage = confirmationImage;
     await order.save();
-
     // Send email notification
     try {
+      await SendDeliverySuccessMailToAdmin(order);
       await SendDeliverySuccessMail(order.customerInfo.email, order);
     } catch (emailError) {
       console.error("Lỗi gửi email:", emailError);
@@ -876,7 +923,7 @@ export const deliverSuccess = async (req, res) => {
     res.status(200).json({
       message:
         "Đơn hàng đã được đánh dấu là giao hàng thành công và email đã được gửi.",
-      order,
+      order
     });
   } catch (error) {
     res.status(500).json({ name: error.name, message: error.message });
@@ -912,9 +959,10 @@ export const addShipperOrder = async (req, res) => {
 };
 export const adminFailDelivery = async (req, res) => {
   const id = req.params.id;
-  const { failureReason } = req.body; // Lấy lý do từ request body
+  const { failureReason, status } = req.body; // Lấy lý do và trạng thái từ request body
 
   try {
+    // Tìm đơn hàng theo ID
     const order = await Order.findById(id);
     if (!order) {
       return res
@@ -922,33 +970,36 @@ export const adminFailDelivery = async (req, res) => {
         .json({ message: "Không tìm thấy đơn hàng" });
     }
 
-    // Kiểm tra nếu đơn hàng đã hoàn thành hoặc bị hủy thì không cho phép cập nhật giao hàng thất bại
-    if (order.status === "completed" || order.status === "5") {
+    // Kiểm tra nếu trạng thái là "Giao hàng thất bại" (status = 5) hoặc "Giao hàng thành công" (status = 4)
+    if (order.status === "5") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Đơn hàng đã bị hủy, không thể cập nhật giao hàng thất bại"
+      });
+    }
+
+    if (order.status === "4") {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message:
-          "Không thể cập nhật trạng thái thất bại cho đơn hàng đã hoàn thành hoặc bị hủy",
+          "Đơn hàng đã giao hàng thành công, không thể đánh dấu giao hàng thất bại"
       });
     }
 
     // Cập nhật trạng thái thành 'Giao hàng thất bại'
-    order.status = "5"; // Giao hàng thất bại
-    order.failureReason = failureReason; // Lưu lý do giao hàng thất bại
+    order.status = "5"; // Cập nhật trạng thái giao hàng thất bại
+    order.failureReason = failureReason || "Không có lý do cụ thể"; // Lưu lý do giao hàng thất bại
 
+    // Xử lý thay đổi số lượng sản phẩm trong kho (tương tự phần hủy đơn)
     const items = order.items;
     for (let i of items) {
-      // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
+      // Kiểm tra nếu có thuộc tính (size, color) thì cập nhật kho
       if (i.productId.attributes) {
-        const data_attr = await Attributes.find({ id_item: i.productId._id });
+        const data_attr = await Attributes.find({});
         for (let j of data_attr) {
           for (let k of j.values) {
-            if (k.color == i.color_item) {
+            if (k.color === i.color_item) {
               for (let x of k.size) {
-                if (x.name_size) {
-                  if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute + i.quantity;
-                  }
-                } else {
-                  x.stock_attribute = x.stock_attribute + i.quantity;
+                if (x.name_size === i.name_size) {
+                  x.stock_attribute += i.quantity;
                 }
               }
             }
@@ -956,542 +1007,31 @@ export const adminFailDelivery = async (req, res) => {
           await j.save();
         }
       } else {
-        const data_items = await Products.find({ _id: i.productId._id });
-        for (let a of data_items) {
-          a.stock_product = a.stock_product + i.quantity;
-          await a.save();
+        // Cập nhật kho cho sản phẩm nếu không có thuộc tính
+        const product = await Products.findById(i.productId._id);
+        if (product) {
+          product.stock += i.quantity;
+          await product.save();
         }
       }
     }
 
+    // Gửi email thông báo giao hàng thất bại
+    try {
+      await SendDeliveryFailureMail(order, failureReason);
+    } catch (emailError) {
+      console.error("Lỗi gửi email thông báo giao hàng thất bại:", emailError);
+    }
+    // Lưu lại thông tin đơn hàng sau khi thay đổi
     await order.save();
-    res.status(StatusCodes.OK).json({
+
+    return res.status(StatusCodes.OK).json({
       message: "Đơn hàng đã được cập nhật trạng thái giao hàng thất bại",
-      failureReason: order.failureReason,
+      failureReason: order.failureReason
     });
   } catch (error) {
+    console.error("Lỗi trong quá trình xử lý đơn hàng:", error);
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
 
-//Hàm tra cứu đơn hàng theo số điện thoại
-export const getOrdersByPhone = async (req, res) => {
-  const { phone } = req.query;
-  try {
-    const orders = await Order.find({ "customerInfo.phone": phone });
-    if (!orders.length) {
-      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
-    }
-    res.json({ orders });
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error });
-  }
-};
-
-export const getTotalOrdersByRole = async (req, res) => {
-  try {
-    const user = req.user;
-    if (user.role === "admin") {
-      const shippers = await Shipper.find();
-      const shipperData = await Promise.all(
-        shippers.map(async (shipper) => {
-          const orders = await Order.find({
-            shipperId: shipper._id,
-            status: "6",
-          });
-
-          if (orders.length > 0) {
-            const ordersByDate = orders.reduce((acc, order) => {
-              const orderDate = new Date(order.deliveredAt)
-                .toISOString()
-                .split("T")[0];
-              if (!acc[orderDate]) {
-                acc[orderDate] = {
-                  count: 1,
-                  addresses: [order.customerInfo.address],
-                };
-              } else {
-                acc[orderDate].count += 1;
-                acc[orderDate].addresses.push(order.customerInfo.address);
-              }
-              return acc;
-            }, {});
-
-            const orderDetails = Object.entries(ordersByDate).map(
-              ([date, details]) => ({
-                date,
-                count: details.count,
-                addresses: details.addresses,
-              })
-            );
-
-            return {
-              fullName: shipper.fullName,
-              totalOrders: orders.length,
-              ordersByDate: orderDetails,
-            };
-          }
-          return null;
-        })
-      );
-
-      const filteredShippers = shipperData.filter(
-        (shipper) => shipper !== null
-      );
-      return res.status(200).json({
-        message: "Admin - Tổng quan số lượng đơn hàng đã giao của các shipper",
-        shippers: filteredShippers,
-      });
-    } else if (user.role === "courier") {
-      const shipperInfo = await Shipper.findById(user.userId);
-      const orders = await Order.find({
-        shipperId: user.userId,
-        status: "6",
-      });
-
-      const ordersByDate = orders.reduce((acc, order) => {
-        const orderDate = new Date(order.deliveredAt)
-          .toISOString()
-          .split("T")[0];
-        if (!acc[orderDate]) {
-          acc[orderDate] = {
-            count: 1,
-            addresses: [order.customerInfo.address],
-          };
-        } else {
-          acc[orderDate].count += 1;
-          acc[orderDate].addresses.push(order.customerInfo.address);
-        }
-        return acc;
-      }, {});
-
-      const orderDetails = Object.entries(ordersByDate).map(
-        ([date, details]) => ({
-          date,
-          count: details.count,
-          addresses: details.addresses,
-        })
-      );
-
-      return res.status(200).json({
-        fullName: shipperInfo ? shipperInfo.fullName : user.fullName,
-        totalOrders: orders.length,
-        ordersByDate: orderDetails,
-      });
-    } else {
-      return res.status(403).json({ message: "Không có quyền truy cập" });
-    }
-  } catch (error) {
-    console.error("Error fetching orders: ", error);
-    return res.status(500).json({ message: "Lỗi máy chủ" });
-  }
-};
-
-export async function get_orders_daily(req, res) {
-  const {
-    _page = 1,
-    _limit = 7,
-    _sort = "",
-    _search = "",
-    _status = "",
-  } = req.query;
-
-  const options = {
-    page: _page,
-    limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 },
-  };
-  const { role, userId } = req.user;
-
-  let query = {};
-
-  if (role === "courier") {
-    query.shipperId = userId;
-  }
-
-  if (_search) {
-    query._id = { $regex: _search, $options: "i" };
-  }
-
-  if (_status) {
-    query.status = _status;
-  }
-
-  try {
-    const data = await Order.paginate(query, options);
-
-    if (!data || data.docs.length < 1) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có dữ liệu!",
-      });
-    }
-
-    const ordersByDate = data.docs.reduce((acc, order) => {
-      const date = order.deliveredAt?.toISOString().split("T")[0];
-
-      if (!acc[date]) {
-        acc[date] = { totalDistance: 0, orderCount: 0 };
-      }
-
-      if (order.deliveryDistance) {
-        acc[date].totalDistance += parseFloat(
-          order.deliveryDistance.replace(" km", "")
-        );
-      }
-
-      acc[date].orderCount += 1;
-      return acc;
-    }, {});
-
-    // Lưu dữ liệu vào bảng DailyOrderStats
-    for (const [date, stats] of Object.entries(ordersByDate)) {
-      await DailyOrderStats.findOneAndUpdate(
-        { date, shipperId: userId },
-        {
-          date,
-          shipperId: userId,
-          totalDistance: stats.totalDistance,
-          orderCount: stats.orderCount,
-        },
-        { upsert: true, new: true } // Nếu không tìm thấy thì tạo mới
-      );
-    }
-
-    return res.status(StatusCodes.OK).json({
-      message: "Hoàn thành!",
-      dailyStats: ordersByDate,
-    });
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server!",
-    });
-  }
-}
-
-export async function get_orders_month(req, res) {
-  const {
-    _page = 1,
-    _limit = 7,
-    _sort = "",
-    _search = "",
-    _status = "",
-  } = req.query;
-
-  const options = {
-    page: _page,
-    limit: _limit,
-    sort: _sort ? { [_sort]: 1 } : { createdAt: -1 },
-  };
-  const { role, userId } = req.user;
-
-  let orders;
-  const query = {};
-
-  if (role === "courier") {
-    query.shipperId = userId;
-  }
-
-  if (_search) {
-    query._id = { $regex: _search, $options: "i" };
-  }
-
-  if (_status) {
-    query.status = _status;
-  }
-
-  try {
-    const data = await Order.paginate(query, options);
-
-    if (!data || data.docs.length < 1) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "Không có dữ liệu!",
-      });
-    }
-
-    // Tính toán tổng khoảng cách và tổng số đơn hàng
-    let totalDistance = 0;
-    let totalOrders = data.docs.length; // Tổng số đơn hàng
-
-    for (const order of data.docs) {
-      if (order.deliveryDistance) {
-        // Chuyển đổi giá trị khoảng cách về dạng số
-        const distance = parseFloat(order.deliveryDistance);
-        if (!isNaN(distance)) {
-          totalDistance += distance; // Cộng dồn khoảng cách
-        }
-      }
-    }
-
-    // Tính toán tháng hiện tại
-    const month = moment().format("YYYY-MM");
-
-    // Kiểm tra xem đã có bản ghi cho tháng này chưa
-    let summary = await MonthlySummary.findOne({ shipperId: userId, month });
-
-    if (!summary) {
-      // Nếu chưa có, tạo mới
-      summary = new MonthlySummary({
-        shipperId: userId,
-        month,
-        totalDistance, // Lưu trực tiếp giá trị số
-        totalOrders,
-      });
-    } else {
-      // Cập nhật bản ghi nếu đã có
-      summary.totalDistance += totalDistance; // Cộng dồn khoảng cách
-      summary.totalOrders += totalOrders; // Cộng dồn số đơn hàng
-    }
-
-    await summary.save(); // Lưu bản ghi
-
-    return res.status(StatusCodes.OK).json({
-      message: "Hoàn thành!",
-      data,
-      totalDocs: data.totalDocs,
-      totalPages: data.totalPages,
-      totalDistance: `${totalDistance.toFixed(2)} km`, // Tổng khoảng cách
-      totalOrders: totalOrders, // Tổng số đơn hàng
-    });
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: error.message || "Lỗi server!",
-    });
-  }
-}
-export const fetchOrdersToday = async (req, res) => {
-  const user = req.user;
-
-  // Kiểm tra quyền truy cập
-  if (user.role !== "courier") {
-    return res.status(403).json({ message: "Không có quyền truy cập" });
-  }
-
-  try {
-    const targetDate = new Date();
-    const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
-
-    // Lấy danh sách đơn hàng
-    const orders = await Order.find({
-      shipperId: user.userId,
-      status: { $in: [5, 6] }, // Chỉ lấy trạng thái giao hàng thành công (6) hoặc thất bại (5)
-      deliveredAt: { $gte: startOfDay, $lte: endOfDay },
-    })
-      .select("quantity status deliveredAt") // Không chọn customerInfo ở đây
-      .populate("customerInfo", "userName orderName"); // Populate để lấy tên người mua hàng
-
-    return res.status(200).json({
-      message: "Danh sách đơn hàng theo ngày của shipper",
-      date: targetDate.toISOString().split("T")[0],
-      totalOrders: orders.length,
-      orders,
-    });
-  } catch (error) {
-    console.error("Error fetching orders: ", error);
-    return res.status(500).json({ message: "Lỗi máy chủ" });
-  }
-};
-
-export const fetchOrdersThisWeek = async (req, res) => {
-  const user = req.user; // Người dùng đã đăng nhập
-
-  // Kiểm tra xem người dùng có vai trò shipper không
-  if (user.role !== "courier") {
-    return res.status(403).json({ message: "Không có quyền truy cập" });
-  }
-
-  try {
-    // Lấy ngày hiện tại
-    const today = new Date();
-
-    // Tính toán ngày bắt đầu tuần (Thứ Hai)
-    const firstDayOfWeek = new Date(today);
-    const dayOfWeek = today.getDay(); // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
-    const daysToSubtract = (dayOfWeek + 6) % 7; // Số ngày cần trừ để đến Thứ Hai
-    firstDayOfWeek.setDate(today.getDate() - daysToSubtract); // Ngày đầu tuần (Thứ Hai)
-    firstDayOfWeek.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
-
-    // Tính toán ngày cuối tuần (Chủ Nhật)
-    const lastDayOfWeek = new Date(firstDayOfWeek);
-    lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6); // Ngày cuối tuần (Chủ Nhật)
-    lastDayOfWeek.setHours(23, 59, 59, 999); // Đặt giờ về 23:59:59
-
-    // Mảng để lưu số lượng đơn hàng cho mỗi ngày trong tuần
-    const successfulOrdersPerDay = [];
-    const failedOrdersPerDay = [];
-
-    // Lặp qua từng ngày trong tuần để tính số lượng đơn hàng
-    for (let i = 0; i < 7; i++) {
-      const dayStart = new Date(firstDayOfWeek);
-      dayStart.setDate(firstDayOfWeek.getDate() + i);
-      dayStart.setHours(0, 0, 0, 0);
-
-      const dayEnd = new Date(dayStart);
-      dayEnd.setHours(23, 59, 59, 999);
-
-      // Đếm số lượng đơn hàng thành công (status = 6)
-      const successfulOrdersCount = await Order.countDocuments({
-        shipperId: user.userId, // ID của shipper từ phiên đăng nhập
-        status: 6, // Trạng thái thành công
-        deliveredAt: { $gte: dayStart, $lte: dayEnd }, // Kiểm tra thời gian giao hàng trong ngày
-      });
-      successfulOrdersPerDay.push(successfulOrdersCount);
-
-      // Đếm số lượng đơn hàng thất bại (status = 5)
-      const failedOrdersCount = await Order.countDocuments({
-        shipperId: user.userId, // ID của shipper từ phiên đăng nhập
-        status: 5, // Trạng thái thất bại
-        deliveredAt: { $gte: dayStart, $lte: dayEnd }, // Kiểm tra thời gian giao hàng trong ngày
-      });
-      failedOrdersPerDay.push(failedOrdersCount);
-    }
-
-    // Tính tổng số đơn hàng thành công và thất bại trong tuần
-    const totalSuccessfulOrders = successfulOrdersPerDay.reduce(
-      (acc, count) => acc + count,
-      0
-    );
-    const totalFailedOrders = failedOrdersPerDay.reduce(
-      (acc, count) => acc + count,
-      0
-    );
-
-    return res.status(200).json({
-      message:
-        "Tổng số đơn hàng theo tuần của shipper (thành công và thất bại)",
-      weekStart: firstDayOfWeek.toISOString().split("T")[0], // Ngày bắt đầu tuần
-      weekEnd: lastDayOfWeek.toISOString().split("T")[0], // Ngày kết thúc tuần
-      totalSuccessfulOrders,
-      totalFailedOrders,
-      successfulOrdersPerDay, // Số lượng đơn hàng thành công theo từng ngày trong tuần
-      failedOrdersPerDay, // Số lượng đơn hàng thất bại theo từng ngày trong tuần
-    });
-  } catch (error) {
-    console.error("Error fetching orders: ", error);
-    return res.status(500).json({ message: "Lỗi máy chủ" });
-  }
-};
-
-export const fetchOrdersThisMonth = async (req, res) => {
-  const user = req.user; // Người dùng đã đăng nhập
-
-  // Kiểm tra xem người dùng có vai trò shipper không
-  if (user.role !== "courier") {
-    return res.status(403).json({ message: "Không có quyền truy cập" });
-  }
-
-  try {
-    // Lấy ngày hiện tại
-    const today = new Date();
-
-    // Tính toán ngày bắt đầu tháng
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    firstDayOfMonth.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00
-
-    // Tính toán ngày cuối tháng
-    const lastDayOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      0
-    );
-    lastDayOfMonth.setHours(23, 59, 59, 999); // Đặt giờ về 23:59:59
-
-    // Tính tổng số đơn hàng đã giao cho shipper theo tháng (thành công và thất bại)
-    const totalOrders = await Order.countDocuments({
-      shipperId: user.userId,
-      status: { $in: [5, 6] }, // Trạng thái thành công (6) và thất bại (5)
-      deliveredAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
-    });
-
-    // Tính số lượng đơn hàng theo từng tuần
-    const weeksOrders = [];
-    const successfulOrdersPerWeek = []; // Mảng để lưu số đơn hàng thành công theo từng tuần
-    const failedOrdersPerWeek = []; // Mảng để lưu số đơn hàng thất bại theo từng tuần
-
-    const startDate = new Date(firstDayOfMonth);
-    const endDate = new Date(lastDayOfMonth);
-
-    // Lặp qua từng tuần trong tháng
-    for (
-      let weekStart = new Date(startDate);
-      weekStart <= endDate;
-      weekStart.setDate(weekStart.getDate() + 7)
-    ) {
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekEnd.getDate() + 6); // Ngày kết thúc của tuần
-
-      // Đảm bảo tuần không vượt quá cuối tháng
-      if (weekEnd > endDate) weekEnd.setTime(endDate.getTime());
-
-      // Đếm số đơn hàng thành công trong tuần
-      const successfulCount = await Order.countDocuments({
-        shipperId: user.userId,
-        status: 6, // Trạng thái thành công
-        deliveredAt: { $gte: weekStart, $lte: weekEnd },
-      });
-
-      // Đếm số đơn hàng thất bại trong tuần
-      const failedCount = await Order.countDocuments({
-        shipperId: user.userId,
-        status: 5, // Trạng thái thất bại
-        deliveredAt: { $gte: weekStart, $lte: weekEnd },
-      });
-
-      // Lưu trữ dữ liệu vào mảng
-      weeksOrders.push({
-        weekStart: weekStart.toISOString().split("T")[0],
-        weekEnd: weekEnd.toISOString().split("T")[0],
-        successfulCount,
-        failedCount,
-      });
-
-      successfulOrdersPerWeek.push(successfulCount);
-      failedOrdersPerWeek.push(failedCount);
-    }
-
-    return res.status(200).json({
-      message:
-        "Tổng số đơn hàng theo tháng của shipper (thành công và thất bại)",
-      monthStart: firstDayOfMonth.toISOString().split("T")[0],
-      monthEnd: lastDayOfMonth.toISOString().split("T")[0],
-      totalOrders,
-      weeksOrders, // Dữ liệu số lượng đơn hàng theo từng tuần
-      successfulOrdersPerWeek, // Số đơn hàng thành công theo tuần
-      failedOrdersPerWeek, // Số đơn hàng thất bại theo tuần
-    });
-  } catch (error) {
-    console.error("Error fetching orders: ", error);
-    return res.status(500).json({ message: "Lỗi máy chủ" });
-  }
-};
-
-export const fetchOrderSuccessFailureStats = async (req, res) => {
-  const user = req.user;
-
-  // Kiểm tra quyền truy cập
-  if (user.role !== "courier") {
-    return res.status(403).json({ message: "Không có quyền truy cập" });
-  }
-
-  try {
-    // Đếm số lượng đơn hàng thành công và thất bại
-    const successCount = await Order.countDocuments({
-      shipperId: user.userId,
-      status: 6, // Trạng thái giao hàng thành công
-    });
-
-    const failureCount = await Order.countDocuments({
-      shipperId: user.userId,
-      status: 5, // Trạng thái giao hàng thất bại
-    });
-
-    return res.status(200).json({
-      message: "Thống kê đơn hàng thành công và thất bại của shipper",
-      successCount,
-      failureCount,
-    });
-  } catch (error) {
-    console.error("Error fetching order stats: ", error);
-    return res.status(500).json({ message: "Lỗi máy chủ" });
-  }
-};

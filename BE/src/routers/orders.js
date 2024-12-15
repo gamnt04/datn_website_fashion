@@ -16,49 +16,16 @@ import {
   getAllOrderByMonthOfYear,
   getTop10ProductBestSale,
   getOrderByNumberOrPhoneNumber,
-  get10NewOrderToday,
-  //get10OrderNewInDay,
   deliverSuccess,
   addShipperOrder,
   adminFailDelivery,
-  getOrdersByPhone,
-  get_orders_daily,
-  get_orders_month,
-  getTotalOrdersByRole,
-  fetchOrderSuccessFailureStats,
-  fetchOrdersThisMonth,
-  fetchOrdersThisWeek,
-  fetchOrdersToday,
+
 } from "../controllers/Orders/orders";
 import { list_items_order_by_user } from "../controllers/Orders/options";
 import { checkRole } from "../controllers/Auth/auth";
 
 const router = Router();
-router.get(
-  "/orders/daily-order-summary",
-  checkRole(["admin", "courier"]),
-  getTotalOrdersByRole
-);
-router.get(
-  "/orders/order_shipper_to_day",
-  checkRole(["courier"]),
-  fetchOrdersToday
-);
-router.get(
-  "/orders/order_shipper_week",
-  checkRole(["courier"]),
-  fetchOrdersThisWeek
-);
-router.get(
-  "/orders/order_shipper_month",
-  checkRole(["courier"]),
-  fetchOrdersThisMonth
-);
-router.get(
-  "/orders/order_success_failure_stats",
-  checkRole(["courier"]),
-  fetchOrderSuccessFailureStats
-);
+
 router.post("/orders", createOrder);
 router.get("/orders", checkRole(["admin", "courier"]), get_orders_client);
 router.get("/orders/all_order_of_to_day", getAllOrdersToday);
@@ -82,8 +49,6 @@ router.post("/orders/:id/fail-delivery", adminFailDelivery);
 router.post("/orders/shipper/:id", addShipperOrder);
 // ---
 router.get("/list_order/:id_user", list_items_order_by_user);
-router.get("/orders_phone", getOrdersByPhone);
-router.get("/orders_daily", checkRole(["admin", "courier"]), get_orders_daily);
-router.get("/orders_month", checkRole(["admin", "courier"]), get_orders_month);
+
 
 export default router;

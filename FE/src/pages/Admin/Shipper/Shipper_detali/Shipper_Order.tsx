@@ -70,7 +70,8 @@ const Shipper_Order = () => {
     ];
     const defaultReasons = [
         "Người nhận không nghe máy",
-        "Hoàn hàng",
+        "Khách hàng hủy đơn",
+        "Không tìm thấy địa chỉ giao hàng",
         "Đơn hàng quá 3 ngày",
     ];
 
