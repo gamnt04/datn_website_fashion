@@ -34,7 +34,7 @@ export default function Attribute() {
   };
   const onFinish: FormProps<any>['onFinish'] = async (values) => {
     if (data?.category_attribute === 'ux_image') {
-      setLoadingUpload(true)
+      setLoadingUpload(true);
       const imageUrl = await UploadImage(imageFile[0]);
       const data_request = {
         ten_thuoc_tinh: values?.ten_thuoc_tinh,
@@ -42,14 +42,14 @@ export default function Attribute() {
         id_account: user?.user?._id,
         symbol_thuoc_tinh: imageUrl
       }
+      setLoadingUpload(false)
       setValidate(false)
       if (!imageUrl) {
         setValidate(true)
       } else {
-        setLoadingUpload(false)
         mutate(data_request);
       }
-    } else {
+    } else if (data?.category_attribute === 'ux_color') {
       const data_request = {
         ten_thuoc_tinh: values?.ten_thuoc_tinh,
         the_loai_thuoc_tinh: data?.category_attribute,
@@ -62,6 +62,14 @@ export default function Attribute() {
       else {
         mutate(data_request);
       }
+    } else {
+      const data_request = {
+        ten_thuoc_tinh: values?.ten_thuoc_tinh,
+        the_loai_thuoc_tinh: data?.category_attribute,
+        id_account: user?.user?._id,
+        symbol_thuoc_tinh: ''
+      }
+      mutate(data_request);
     }
   };
 
@@ -75,7 +83,22 @@ export default function Attribute() {
   return (
     <div className="px-10 pt-5">
       {
-        loading || isLoading || loadingUpload || loading_2 && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+        loading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+      {
+        isLoading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+      {
+        loadingUpload && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+      {
+        loading_2 && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
       }
@@ -128,6 +151,7 @@ export default function Attribute() {
               </Upload>
             }
             {
+              (data?.category_attribute === 'ux_color' || data?.category_attribute === 'ux_image') &&
               validate && <div className="text-red-500 text-sm mt-2">Vui lòng chọn</div>
             }
             {
