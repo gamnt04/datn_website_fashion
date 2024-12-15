@@ -110,6 +110,14 @@ const ListCart = () => {
     const check_size = check_color?.size?.find((b: any) => (b?.name_size?.trim() ? b?.name_size : undefined) === item?.name_size);
     // (inputValue > check_size?.stock_attribute) && setInputValue(check_size?.stock_attribute)
     if (inputValue !== product?.quantity) {
+      if (inputValue > check_size?.stock_attribute) {
+        messageApi.destroy()
+        messageApi.open({
+          type: 'error',
+          content: `Số lượng sản phẩm được mua là ${check_size?.stock_attribute}`,
+        });
+        setInputValue(check_size?.stock_attribute)
+      }
       updateQuantity({
         userId: userId,
         productId: product?._id,
@@ -124,7 +132,18 @@ const ListCart = () => {
         ...product,
       }
   );
-  const arr_number = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+  const handleQuantityChange = (e: any) => {
+    const value: any = e?.target?.value;
+    if (!isNaN(value) && value.trim() !== '') {
+      setInputValue(Number(value));
+    } else {
+      messageApi.destroy()
+      messageApi.open({
+        type: 'error',
+        content: 'Vui lòng nhập số hợp lệ!',
+      });
+    }
+  };
   const columns: TableProps<DataType>["columns"] = [
     {
       key: "checkbox",
@@ -212,7 +231,7 @@ const ListCart = () => {
             {editingProductId === product?.productId ? (
               <Input
                 value={inputValue}
-                onChange={(e) => setInputValue(Number(e?.target?.value))}
+                onChange={(e) => handleQuantityChange(e)}
                 onBlur={() => handleBlur(product?.productId, product)}
                 className="px-0 text-center !max-w-20"
               />
