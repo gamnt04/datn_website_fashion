@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import Table_cpnt from "./table_cpnt";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { Dispatch_thuoc_tinh, Lay_the_loai_thuoc_tinh, Lay_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
 import { Button, Form, FormProps, Input, Spin, Upload } from "antd";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import Table_cpn from "./table_cpn";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { AiFillBackward } from "react-icons/ai";
 
 export default function Attribute() {
   const [user] = useLocalStorage("user", {});
@@ -102,14 +103,23 @@ export default function Attribute() {
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
       }
-      <span className="text-xl font-semibold">Thuộc tính {data?.name_attribute}</span>
+
+      <div className="flex justify-between items-center mb-8">
+        <span className="text-xl font-semibold">Thuộc tính {data?.name_attribute}</span>
+        <Link to="/admin/products/the_loai_thuoc_tinh">
+          <Button type="primary">
+            <AiFillBackward /> Quay lại
+          </Button>
+        </Link>
+      </div>
+
       <section className="grid grid-cols-[35%_60%] justify-between">
         {/* cot trai */}
         <div className="mt-10">
           <div className="mb-3 text-lg">Thêm mới {data?.name_attribute}</div>
           <Form
             name="basic"
-            initialValues={{ remember: true }}
+            initialValues={{}}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
