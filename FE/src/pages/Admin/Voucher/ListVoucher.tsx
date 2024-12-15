@@ -10,7 +10,7 @@ import {
   Table,
   Drawer,
   Switch,
-  Input
+  Input,
 } from "antd";
 import { IVoucher } from "../../../common/interfaces/Voucher";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -29,7 +29,7 @@ const ListVoucher = () => {
   const { data: categories } = useCategoryQuery();
   const { data, isLoading } = useQuery({
     queryKey: ["voucher"],
-    queryFn: () => instance.get(`/voucher`)
+    queryFn: () => instance.get(`/voucher`),
   });
   const { products, auth, shippers } = useDataVoucher();
 
@@ -60,12 +60,12 @@ const ListVoucher = () => {
     onSuccess: () => {
       messageAPI.success(`Xóa thành công`);
       queryClient.invalidateQueries({
-        queryKey: ["voucher"]
+        queryKey: ["voucher"],
       });
     },
     onError: (error) => {
       messageAPI.error(error.message);
-    }
+    },
   });
   const mutation = useMutation({
     mutationFn: async (category: IVoucher) => {
@@ -83,7 +83,7 @@ const ListVoucher = () => {
           (error as any).response?.data?.message || "Vui lòng thử lại sau."
         }`
       );
-    }
+    },
   });
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
@@ -102,7 +102,7 @@ const ListVoucher = () => {
 
   const dataSource = data?.data?.vouchers?.map((voucher: IVoucher) => ({
     key: voucher._id,
-    ...voucher
+    ...voucher,
   }));
   const filtered = dataSource?.filter((voucher: IVoucher) =>
     voucher.name_voucher.toLowerCase().includes(searchText.toLowerCase())
@@ -110,22 +110,17 @@ const ListVoucher = () => {
   const columns = [
     {
       title: "STT",
-      render: (_: any, __: any, index: any) => <p>{index + 1}</p>
+      render: (_: any, __: any, index: any) => <p>{index + 1}</p>,
     },
     {
       title: "Tên mã giảm giá",
       dataIndex: "name_voucher",
-      key: "name_voucher"
+      key: "name_voucher",
     },
     {
       title: "Mã giảm giá",
       dataIndex: "code_voucher",
-      key: "code_voucher"
-    },
-    {
-      title: "Số lượng ",
-      dataIndex: "quantity_voucher",
-      key: "quantity_voucher"
+      key: "code_voucher",
     },
     {
       key: "discountType",
@@ -137,24 +132,34 @@ const ListVoucher = () => {
         >
           {discountType === "percentage" ? "Theo %" : "Theo số tiền cố định"}
         </span>
-      )
+      ),
     },
     {
-      title: "Giá trị ",
+      title: "Giá trị mã",
       dataIndex: "discountValue",
-      key: "discountValue"
+      key: "discountValue",
+      render: (discountValue: number, record: IVoucher) =>
+        record.discountType === "percentage"
+          ? `${discountValue}%`
+          : `${discountValue.toLocaleString()} đ`,
+    },
+    {
+      title: "Giá trị đơn hàng tối thiểu",
+      dataIndex: "minimumSpend",
+      key: "minimumSpend",
+      render: (minimumSpend: number) => `${minimumSpend.toLocaleString()} đ`,
     },
     {
       title: "Thời gian bắt đầu",
       dataIndex: "startDate",
       key: "startDate",
-      render: (text: string) => formatDate(text)
+      render: (text: string) => formatDate(text),
     },
     {
       title: "Thời gian kết thúc",
       dataIndex: "expirationDate",
       key: "expirationDate",
-      render: (text: string) => formatDate(text)
+      render: (text: string) => formatDate(text),
     },
     {
       key: "isActive",
@@ -165,7 +170,7 @@ const ListVoucher = () => {
           checked={isActive}
           onChange={() => handleTogglePublished(record)}
         />
-      )
+      ),
     },
     {
       key: "actions",
@@ -195,8 +200,8 @@ const ListVoucher = () => {
             </Button>
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   if (isLoading) return <Loader />;
@@ -258,11 +263,18 @@ const ListVoucher = () => {
               </p>
               <p>
                 <strong>Giá trị mã giảm giá:</strong>{" "}
-                {selectedVoucher.discountValue}
+                <strong>Giá trị mã giảm giá:</strong>{" "}
+                {selectedVoucher.discountType === "percentage"
+                  ? `${selectedVoucher.discountValue}%`
+                  : `${selectedVoucher.discountValue} đ`}
               </p>
               <p>
                 <strong>Giá trị giảm giá tối đa:</strong>{" "}
-                {selectedVoucher.maxDiscount}
+                {selectedVoucher.maxDiscount} đ
+              </p>
+              <p>
+                <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
+                {selectedVoucher.minimumSpend} đ
               </p>
               <hr className="my-3" />
               <p>
@@ -279,13 +291,10 @@ const ListVoucher = () => {
                 <strong>Danh mục sản phẩm áp dụng: </strong>{" "}
                 {getCategoryNames(selectedVoucher.appliedCategories)}
               </p>
-              <p>
-                <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
-                {selectedVoucher.minimumSpend} VND
-              </p>
+
               <hr className="my-3" />
               <p>
-                <strong>Giới hạn mã giảm giá: </strong>
+                <strong>Giới hạn mã giảm giá</strong>
               </p>
               <p>
                 <strong>Số lượng tạo:</strong>{" "}
@@ -320,7 +329,7 @@ const ListVoucher = () => {
               </p>
               <hr className="my-3" />
               <p>
-                <strong>Số lượng còn lại:</strong>
+                <strong>Số lượng còn lại: </strong>
                 {selectedVoucher.quantity_voucher - selectedVoucher.usedCount}
               </p>
               <p>
