@@ -260,8 +260,6 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       });
     }
   });
-  console.log("selectedLocation", selectedLocation);
-
   const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
     if (data.address.addressName[2] !== selectedLocation.province?.name) {
       message.error("Vui lòng chọn lại quận/huyện!");
@@ -553,7 +551,7 @@ export const List_Address = ({
   );
 };
 
-export const Add_Address = ({ setIsOpen, handleAddress }: any) => {
+export const Add_Address = ({ handleAddress }: any) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -584,7 +582,7 @@ export const Add_Address = ({ setIsOpen, handleAddress }: any) => {
     },
     onSuccess: () => {
       form.resetFields();
-      setIsOpen(false);
+      handleAddress(false);
       querryClient.invalidateQueries({
         queryKey: ["AUTH_KEY"]
       });

@@ -268,7 +268,7 @@ const TrackOrder: React.FC = () => {
           <Table
             dataSource={orders}
             columns={orderColumns}
-            pagination={false}
+            pagination={true}
             rowKey="orderNumber"
           />
         </Card>
