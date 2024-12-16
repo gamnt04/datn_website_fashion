@@ -46,7 +46,7 @@ const Shipper_Order = () => {
     const [customReason, setCustomReason] = useState("");
     const [IsLoading, setIsLoading] = useState(false); // State kiểm tra trạng thái loading của toàn trang
     const dispathNotification = Mutation_Notification("Add");
-    const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
+    // const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
     const [selectedReason, setSelectedReason] = useState("");
     const [isDeliverSuccessModalVisible, setDeliverSuccessModalVisible] =
         useState(false);
@@ -64,10 +64,7 @@ const Shipper_Order = () => {
             setPreviewImage(null);
         }
     };
-    const reason1 = [
-        "Đơn hàng đã được giao cho đơn vị vận chuyển",
-        "Chúng tôi không thể đồng ý với yêu cầu của bạn",
-    ];
+
     const defaultReasons = [
         "Người nhận không nghe máy",
         "Khách hàng hủy đơn",
@@ -79,25 +76,52 @@ const Shipper_Order = () => {
         const reasonToSubmit =
             selectedReason === "Khác" ? customReason : selectedReason;
         if (!data?._id || !reasonToSubmit) return;
+
         setLoading(true);
         setIsLoading(true);
+
         try {
             await instance.post(`/orders/${data._id}/fail-delivery`, {
                 failureReason: reasonToSubmit,
             });
 
+            giao_hang_that_bai({
+                id_item: data._id,
+                numberOrder: data?.orderNumber,
+                action: "fail-delivery",
+                cancellationReason: reasonToSubmit,
+                linkUri: `/orders/${data._id}`,
+            });
+
             message.success("Đơn hàng đã được đánh dấu giao hàng thất bại.");
+
             setDeliverFailModalVisible(false);
             refetch();
         } catch (error) {
-            message.error(
-                error.response?.data?.message || "Cập nhật giao hàng thất bại."
-            );
+            const errorMessage =
+                (error as any)?.response?.data?.message ||
+                "Cập nhật giao hàng thất bại.";
+            message.error(errorMessage);
         } finally {
-            setIsLoading(false); // Tắt loading toàn trang sau khi xử lý xong
+            // Tắt trạng thái loading
+            setIsLoading(false);
             setLoading(false);
         }
     };
+
+    function giao_hang_that_bai(dataBody: any) {
+        dispathNotification?.mutate({
+            userId: userId,
+            receiver_id: data?.userId,
+            message: `Người giao hàng đã giao hàng đơn hàng ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
+            different: dataBody?.id_item,
+            id_different: dataBody?.numberOrder,
+        });
+
+        console.log(dataBody.cancellationReason);
+
+        // Bạn có thể bổ sung thêm các logic khác nếu cần
+    }
     const handleStatusUpdate = async (
         status: number | string,
         code_order?: string | number,
