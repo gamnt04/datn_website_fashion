@@ -66,7 +66,8 @@ const ListCart = () => {
     removeSingle(data_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công",
+      content: `Đã xóa sản phẩm ${item?.productId?.name_product?.length > 20 ?
+        item?.productId?.name_product?.slice(20) + '...' : item?.productId?.name_product}`,
     });
   };
 
@@ -142,15 +143,16 @@ const ListCart = () => {
       }
   );
   const handleQuantityChange = (e: any) => {
-    const value: any = e?.target?.value;
-    if (!isNaN(value) && value.trim() !== "") {
-      setInputValue(Number(value));
-    } else {
+    const value: string = e?.target?.value;
+    if (/[^0-9]/.test(value) && value !== '' && value !== 'Backspace') {
+      e.preventDefault();
       messageApi.destroy();
       messageApi.open({
         type: "error",
         content: "Vui lòng nhập số hợp lệ!",
       });
+    } else {
+      setInputValue(Number(value));
     }
   };
   const columns: TableProps<DataType>["columns"] = [
@@ -289,11 +291,10 @@ const ListCart = () => {
             <Popconfirm
               className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
               title="Xóa sản phẩm khỏi giỏ hàng?"
-              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
-                product?.productId?.name_product?.length > 20
-                  ? product?.productId?.name_product?.slice(0, 20) + "..."
-                  : product?.productId?.name_product
-              } khỏi giỏ hàng không?`}
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${product?.productId?.name_product?.length > 20
+                ? product?.productId?.name_product?.slice(0, 20) + "..."
+                : product?.productId?.name_product
+                } khỏi giỏ hàng không?`}
               onConfirm={() => remove_item(product)}
               okText="Có"
               cancelText="Không"
@@ -382,7 +383,7 @@ const ListCart = () => {
     );
   }
   if (isError) {
-    return <p>{error.message}</p>;
+    return <p>{error?.message}</p>;
   }
 
   return (
