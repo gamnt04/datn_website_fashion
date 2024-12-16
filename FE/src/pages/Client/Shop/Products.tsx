@@ -69,7 +69,10 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   if (!productsResponse?.data || productsResponse.data.length === 0) {
     return (
       <div className="flex justify-center items-center text-lg py-4">
-        Không có sản phẩm nào
+        <img
+          src="../../src/assets/Images/Products/no-data.png"
+          alt="Không có sản phẩm"
+        />
       </div>
     );
   }
