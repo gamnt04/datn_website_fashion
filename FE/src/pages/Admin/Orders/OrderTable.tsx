@@ -1,4 +1,4 @@
-import { message, Pagination, Popconfirm, Radio, Table, Tooltip } from "antd";
+import { message, Popconfirm, Radio, Table, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 import { IOrder } from "../../../common/interfaces/Orders";
@@ -103,9 +103,9 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       }));
   };
 
-  const onHandelExport = (orderId: number) => {
-    console.log("Xuất hóa đơn cho đơn hàng:", orderId);
-  };
+  // const onHandelExport = (orderId: number) => {
+  //   console.log("Xuất hóa đơn cho đơn hàng:", orderId);
+  // };
   const columns: ColumnType<IOrder>[] = [
     {
       title: "Mã đơn",
@@ -407,15 +407,14 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   return (
     <div className="">
       {contextHolder}
-      <Table columns={columns} dataSource={dataSort} pagination={false} />
-      <div className="flex justify-between items-center mt-4">
-        <Pagination
-          current={currentPage}
-          pageSize={10}
-          total={totalPages}
-          onChange={goToPage}
-        />
-      </div>
+      <Table columns={columns} dataSource={dataSort} pagination={{
+        current: currentPage,
+        pageSize: 10,
+        total: totalPages * 10,
+        onChange: goToPage,
+        showSizeChanger: false,
+        style: { display: 'flex', justifyContent: 'center' }
+      }} />
     </div>
   );
 };

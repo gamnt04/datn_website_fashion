@@ -36,7 +36,7 @@ const Ourblog = () => {
     <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
         <div className="container mx-auto pt-[20px] text-center">
-          <h1 className="text-[32px] capitalize font-medium ">Tin tức nổi bật</h1>
+          <h1 className="text-[32px] capitalize font-medium ">Tin tức mới nhất</h1>
         </div>
 
         {isLoading ? (

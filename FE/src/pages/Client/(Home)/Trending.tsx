@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
 import Products from "../../../components/common/Items/Products";
-import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Query_Products } from "../../../common/hooks/Products/Products";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin, Carousel } from "antd";

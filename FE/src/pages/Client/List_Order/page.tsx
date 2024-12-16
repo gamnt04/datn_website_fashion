@@ -9,6 +9,7 @@ import {
   Input,
   message,
   Modal,
+  Pagination,
   Popconfirm,
   Radio,
   Rate,
@@ -70,11 +71,20 @@ export default function List_order() {
     [orderId: string]: Set<string>;
   }>({});
   const [searchParamsUri] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const handlePageChange = (page: number, pageSize?: number) => {
+    setCurrentPage(page);
+    if (pageSize) {
+      setPageSize(pageSize);
+    }
+  };
   const status_order = searchParamsUri.get("_status");
   const dataClient = {
     id_user: userId,
-    page: 1,
-    limit: 20,
+    page: currentPage,
+    limit: pageSize,
     status: +(status_order || 0),
   };
   const { data, isLoading } = Query_Order(dataClient);
@@ -456,118 +466,51 @@ export default function List_order() {
         <div>
           {data?.data?.docs?.map((items: any) => {
             return (
-              <div className="border-t py-4">
-                <div className="flex gap-2 py-5 border-b-2 justify-between">
-                  <Link
-                    to={`/profile/order/${items._id}`}
-                    className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded"
-                  >
-                    Xem ngay
-                  </Link>
-                  <div className="flex">
-                    <a href="" className="flex items-center gap-3">
-                      <Car />
-                      {status_item(items?.status)}
-                    </a>
-                  </div>
-                </div>
-                {items?.items.map((product: any) => {
-                  return <Items_order product={product} />;
-                })}
-                <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
-                  <div className="flex items-center gap-1">
-                    <TotalPrice />
-                    <p>
-                      Thành tiền :{" "}
-                      <span className="lg:text-lg text-sm text-[#f68e56]">
-                        {items.totalPrice?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 w-full py-4 px-2 justify-between">
-                  <p className="text-[#0000008A] text-[12px]">
-                    Vui lòng chỉ nhấn "Đã nhận được hàng" khi đơn hàng đã được
-                    giao đến bạn và sản phẩm nhận được không có vấn đề nào.
-                  </p>
-                  {items?.status === "1" ? (
-                    <div className="flex gap-3 lg:basis-3/12 w-full">
-                      <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
-                        Chờ xác nhận
-                      </Button>
-                      <Popconfirm
-                        title="Hủy đơn hàng?"
-                        description={
-                          <div>
-                            <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
-                            <div>
-                              <p>Chọn lý do hủy:</p>
-                              <Radio.Group
-                                className="flex flex-col gap-2"
-                                onChange={(e) =>
-                                  setSelectedReason(e.target.value)
-                                }
-                              >
-                                {reasons.map((reason, index) => (
-                                  <Radio key={index} value={reason}>
-                                    {reason}
-                                  </Radio>
-                                ))}
-                              </Radio.Group>
-                            </div>
-                          </div>
-                        }
-                        onConfirm={() =>
-                          huy_don({
-                            id_item: items?._id,
-                            action: "huy",
-                            cancellationReason: selectedReason,
-                            orderNumber: items?.orderNumber,
-                            linkUri: items?._id,
-                          })
-                        }
-                        okText="Có"
-                        cancelText="Không"
-                      >
-                        <Button
-                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
-                          loading={loadingOrderId === items?._id}
-                        >
-                          {loadingOrderId === items?._id
-                            ? "Đang hủy đơn"
-                            : "Hủy đơn hàng"}
-                        </Button>
-                      </Popconfirm>
+              <>
+                <div className="border-t py-4">
+                  <div className="flex gap-2 py-5 border-b-2 justify-between">
+                    <Link
+                      to={`/profile/order/${items._id}`}
+                      className="py-2 px-4 bg-[#222222] text-white text-[12px] lg:text-sm rounded"
+                    >
+                      Xem ngay
+                    </Link>
+                    <div className="flex">
+                      <a href="" className="flex items-center gap-3">
+                        <Car />
+                        {status_item(items?.status)}
+                      </a>
                     </div>
-                  ) : items?.status === "2" ? (
-                    <div className="flex gap-3 lg:basis-3/12 w-full">
-                      <Button
-                        className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded "
-                        disabled
-                      >
-                        Đã Nhận Hàng
-                      </Button>
-                      {items.cancellationRequested === true ? (
+                  </div>
+                  {items?.items.map((product: any) => {
+                    return <Items_order product={product} />;
+                  })}
+                  <div className="py-3 px-2 flex justify-end items-center border-t  border-b border-[#eaeaea] ">
+                    <div className="flex items-center gap-1">
+                      <TotalPrice />
+                      <p>
+                        Thành tiền :{" "}
+                        <span className="lg:text-lg text-sm text-[#f68e56]">
+                          {items.totalPrice?.toLocaleString("vi", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 w-full py-4 px-2 justify-between">
+                    <p className="text-[#0000008A] text-[12px]">
+                      Vui lòng chỉ nhấn "Đã nhận được hàng" khi đơn hàng đã được
+                      giao đến bạn và sản phẩm nhận được không có vấn đề nào.
+                    </p>
+                    {items?.status === "1" ? (
+                      <div className="flex gap-3 lg:basis-3/12 w-full">
+                        <Button className="!bg-stone-300 hover:!bg-stone-400 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none">
+                          Chờ xác nhận
+                        </Button>
                         <Popconfirm
-                          title="Yêu cầu hủy dơn hàng?"
-                          description="Bạn có muốn yêu cầu hủy đơn hàng này?"
-                          okText="Có"
-                          cancelText="Không"
-                        >
-                          <Button
-                            h-10
-                            className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded"
-                            disabled
-                          >
-                            Yêu cầu hủy đơn
-                          </Button>
-                        </Popconfirm>
-                      ) : (
-                        <Popconfirm
-                          title="Yêu cầu hủy dơn hàng?"
+                          title="Hủy đơn hàng?"
                           description={
                             <div>
                               <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
@@ -589,455 +532,535 @@ export default function List_order() {
                             </div>
                           }
                           onConfirm={() =>
-                            yeu_cau_huy_don({
+                            huy_don({
                               id_item: items?._id,
-                              action: "yeu_cau_huy",
+                              action: "huy",
                               cancellationReason: selectedReason,
                               orderNumber: items?.orderNumber,
                               linkUri: items?._id,
                             })
                           }
-                          // onCancel={cancel}
                           okText="Có"
                           cancelText="Không"
                         >
                           <Button
-                            h-10
                             className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
+                            loading={loadingOrderId === items?._id}
                           >
-                            Yêu cầu hủy đơn
+                            {loadingOrderId === items?._id
+                              ? "Đang hủy đơn"
+                              : "Hủy đơn hàng"}
                           </Button>
                         </Popconfirm>
-                      )}
-                    </div>
-                  ) : items?.status === "3" ? (
-                    <Button
-                      className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
-                      disabled
-                    // onClick={() => (
-                    //   mutate({ id_item: items._id }),
-                    //   dispathNotification?.mutate({
-                    //     userId: userId,
-                    //     receiver_id: userId,
-                    //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                    //   })
-                    // )}
-                    >
-                      Đã Nhận Hàng
-                    </Button>
-                  ) : items?.status === "4" ? (
-                    <Popconfirm
-                      title="Xác nhận đã nhận hàng?"
-                      description="Bạn có chắc chắn muốn xác nhận đã nhận hàng không?"
-                      onConfirm={() => (
-                        mutate({ id_item: items._id }),
-                        dispathNotification?.mutate({
-                          userId: userId,
-                          receiver_id: userId,
-                          message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
-                        })
-                      )}
-                      // onConfirm={() => addCart(items?._id)}
-                      // onCancel={cancel}
-                      okText="Có "
-                      cancelText="Không"
-                    >
-                      <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Đã nhận hàng
-                      </Button>
-                    </Popconfirm>
-                  ) : items?.status === "5" ? (
-                    <Popconfirm
-                      title="Mua lại đơn hàng?"
-                      description="Bạn có chắc chắn muốn mua lại không?"
-                      onConfirm={() => addCart(items?._id)}
-                      // onCancel={cancel}
-                      okText="Có "
-                      cancelText="Không"
-                    >
-                      <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua lại
-                      </Button>
-                    </Popconfirm>
-                  ) : items?.status === "6" ? (
-                    <div className="flex gap-3 lg:basis-3/12 w-full">
-                      <Button
-                        type="default"
-                        className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
-                        onClick={() =>
-                          handleOpenReview(
-                            items._id,
-                            items.items[0]?.productId?._id,
-                            items.reviews
-                          )
-                        }
-                      >
-                        {items?.reviews.length > 0
-                          ? "Xem đánh giá"
-                          : "Đánh giá"}
-                      </Button>
-                      {openReview && openReviewOrderId === items._id && (
-                        <div>
-                          <Modal
-                            open={openReview}
-                            onCancel={() => setOpenReview(false)}
-                            footer={null}
-                            width={600}
+                      </div>
+                    ) : items?.status === "2" ? (
+                      <div className="flex gap-3 lg:basis-3/12 w-full">
+                        <Button
+                          className="bg-stone-300 w-full h-10 lg:w-[50%] text-white text-[12px] rounded "
+                          disabled
+                        >
+                          Đã Nhận Hàng
+                        </Button>
+                        {items.cancellationRequested === true ? (
+                          <Popconfirm
+                            title="Yêu cầu hủy dơn hàng?"
+                            description="Bạn có muốn yêu cầu hủy đơn hàng này?"
+                            okText="Có"
+                            cancelText="Không"
                           >
-                            <h1 className="text-2xl font-semibold mb-4 text-center">
-                              ĐÁNH GIÁ SẢN PHẨM
-                            </h1>
-
-                            {/* Tạo một tập hợp các sản phẩm để nhóm thuộc tính cùng sản phẩm lại */}
-                            {items.items
-                              .reduce((acc: any, item: any) => {
-                                const existingProduct = acc.find(
-                                  (p: any) => p.productId === item.productId._id
-                                );
-                                if (existingProduct) {
-                                  existingProduct.items.push(item);
-                                } else {
-                                  acc.push({
-                                    productId: item.productId._id,
-                                    productName: item.productId.name_product,
-                                    productImage: item.productId.image_product,
-                                    items: [item],
-                                  });
-                                }
-                                return acc;
-                              }, [])
-                              .map((productGroup: any, index: number) => {
-                                const review = items.reviews.find(
-                                  (r: any) =>
-                                    r.productId === productGroup.productId
-                                );
-
-                                return (
-                                  <div
-                                    key={index}
-                                    className="flex flex-col gap-4 mb-4"
-                                  >
-                                    <div className="flex items-center gap-4">
-                                      <div className="w-[50px] h-[50px]">
-                                        <img
-                                          src={productGroup.productImage}
-                                          alt=""
-                                          className="w-full h-full object-cover"
-                                        />
-                                      </div>
-                                      <div>{productGroup.productName}</div>
-                                    </div>
-                                    <Form
-                                      onFinish={async (values) => {
-                                        setLoading(true); // Bật loading khi gửi đánh giá
-                                        try {
-                                          await onFinish(
-                                            values,
-                                            index,
-                                            productGroup,
-                                            items
-                                          );
-                                        } finally {
-                                          setLoading(false); // Tắt loading sau khi hoàn tất
-                                        }
-                                      }}
-                                      onValuesChange={(changedValues) => {
-                                        // Đồng bộ giá trị rating khi người dùng thay đổi
-                                        if (
-                                          changedValues[
-                                          `rating_review_${index}`
-                                          ]
-                                        ) {
-                                          setRating(
-                                            changedValues[
-                                            `rating_review_${index}`
-                                            ]
-                                          );
-                                        }
-                                      }}
-                                    >
-                                      <Form.Item
-                                        name={`rating_review_${index}`}
-                                        initialValue={
-                                          review
-                                            ? review.rating_review
-                                            : rating[productGroup.productId] ||
-                                            0
-                                        }
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message:
-                                              "Vui lòng chọn mức đánh giá!",
-                                          },
-                                        ]}
-                                      >
-                                        <Rate
-                                          allowClear={false}
-                                          disabled={!!review} // Không cho chỉnh sửa nếu đã có đánh giá
-                                          value={
-                                            rating[productGroup.productId] || 0
-                                          }
-                                          onChange={(value) => {
-                                            // Cập nhật giá trị vào form
-                                            form.setFieldsValue({
-                                              [`rating_review_${index}`]: value,
-                                            });
-
-                                            // Đồng bộ với state rating
-                                            setRating((prevRatings) => ({
-                                              ...prevRatings,
-                                              [productGroup.productId]: value,
-                                            }));
-                                          }}
-                                        />
-                                      </Form.Item>
-
-                                      {/* Các phần khác vẫn giữ nguyên */}
-                                      <Form.Item
-                                        name={`contentReview_${index}`}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message:
-                                              "Vui lòng nhập nội dung đánh giá!",
-                                          },
-                                        ]}
-                                        initialValue={
-                                          review ? review.contentReview : ""
-                                        }
-                                      >
-                                        <Input.TextArea
-                                          rows={4}
-                                          placeholder="Nhập nội dung đánh giá"
-                                          disabled={!!review} // Vô hiệu hóa nếu đã có đánh giá
-                                        />
-                                      </Form.Item>
-
-                                      {/* Phần Upload */}
-                                      <Form.Item
-                                        name={`image_review_${index}`}
-                                        initialValue={
-                                          review && review.image_review
-                                            ? review.image_review
-                                            : fileList[
-                                              productGroup.productId
-                                            ]?.map((file: any) => file.url) || []
-                                        }
-                                      >
-                                        <Upload
-                                          listType="picture-card"
-                                          fileList={
-                                            review && review.image_review
-                                              ? review.image_review.map(
-                                                (url: any, idx: any) => ({
-                                                  uid: `${idx}`,
-                                                  name: `image_${idx}`,
-                                                  status: "done",
-                                                  url: url,
-                                                })
-                                              )
-                                              : fileList[
-                                              productGroup.productId
-                                              ] || []
-                                          }
-                                          onChange={handleImageChange}
-                                          onPreview={handlePreview}
-                                          customRequest={async ({
-                                            file,
-                                            onSuccess,
-                                            onError,
-                                          }) => {
-                                            // Tạo bản sao tạm thời của fileList để hiển thị trạng thái "uploading"
-                                            const tempFile = {
-                                              uid:
-                                                file.uid || String(Date.now()),
-                                              name: file.name,
-                                              status: "uploading",
-                                              url: URL.createObjectURL(file), // Tạo URL tạm thời từ file
-                                            };
-
-                                            setFileList((prevLists) => ({
-                                              ...prevLists,
-                                              [productGroup.productId]: [
-                                                ...(prevLists[
-                                                  productGroup.productId
-                                                ] || []),
-                                                tempFile,
-                                              ],
-                                            }));
-
-                                            const formData = new FormData();
-                                            formData.append("file", file);
-                                            formData.append(
-                                              "upload_preset",
-                                              PRESET_NAME
-                                            );
-                                            formData.append(
-                                              "folder",
-                                              FOLDER_NAME
-                                            );
-
-                                            try {
-                                              const response = await fetch(
-                                                api,
-                                                {
-                                                  method: "POST",
-                                                  body: formData,
-                                                }
-                                              );
-
-                                              if (!response.ok) {
-                                                throw new Error(
-                                                  "Upload failed"
-                                                );
-                                              }
-
-                                              const result =
-                                                await response.json();
-                                              file.url = result.secure_url;
-
-                                              // Cập nhật trạng thái fileList sau khi tải thành công
-                                              setFileList((prevLists) => ({
-                                                ...prevLists,
-                                                [productGroup.productId]:
-                                                  prevLists[
-                                                    productGroup.productId
-                                                  ]?.map((f) =>
-                                                    f.uid === tempFile.uid
-                                                      ? {
-                                                        ...f,
-                                                        status: "done",
-                                                        url: result.secure_url,
-                                                      }
-                                                      : f
-                                                  ),
-                                              }));
-
-                                              onSuccess?.();
-                                            } catch (error) {
-                                              console.error(
-                                                "Upload error:",
-                                                error
-                                              );
-
-                                              // Cập nhật trạng thái fileList khi có lỗi
-                                              setFileList((prevLists) => ({
-                                                ...prevLists,
-                                                [productGroup.productId]:
-                                                  prevLists[
-                                                    productGroup.productId
-                                                  ]?.map((f) =>
-                                                    f.uid === tempFile.uid
-                                                      ? {
-                                                        ...f,
-                                                        status: "error",
-                                                      }
-                                                      : f
-                                                  ),
-                                              }));
-
-                                              onError?.(error);
-                                            }
-                                          }}
-                                          onRemove={(file) => {
-                                            setFileList((prevLists) => ({
-                                              ...prevLists,
-                                              [productGroup.productId]:
-                                                prevLists[
-                                                  productGroup.productId
-                                                ]?.filter(
-                                                  (f) => f.uid !== file.uid
-                                                ),
-                                            }));
-                                          }}
-                                        >
-                                          {fileList[productGroup.productId]
-                                            ?.length >= 8
-                                            ? null
-                                            : uploadButton}
-                                        </Upload>
-                                      </Form.Item>
-
-                                      {review ? (
-                                        <Form.Item>
-                                          <Spin spinning={loading}>
-                                            <Button
-                                              className="bg-black text-white"
-                                              type="primary"
-                                              disabled={loading}
-                                            >
-                                              <Link
-                                                to={`/shops/${review?.productId}`}
-                                                className="ant-btn ant-btn-primary"
-                                              >
-                                                Xem đánh giá
-                                              </Link>
-                                            </Button>
-                                          </Spin>
-                                        </Form.Item>
-                                      ) : (
-                                        <Form.Item>
-                                          <Spin spinning={loading}>
-                                            <Button
-                                              type="primary"
-                                              htmlType="submit"
-                                              disabled={loading}
-                                            >
-                                              Gửi đánh giá
-                                            </Button>
-                                          </Spin>
-                                        </Form.Item>
-                                      )}
-                                    </Form>
-                                  </div>
-                                );
-                              })}
-
-                            <Modal
-                              open={previewOpen}
-                              footer={null}
-                              onCancel={() => setPreviewOpen(false)}
+                            <Button
+                              h-10
+                              className="bg-red-500 w-full h-10 lg:w-[50%] text-white text-[12px] rounded"
+                              disabled
                             >
-                              <Image src={previewImage} />
-                            </Modal>
-                          </Modal>
-                        </div>
-                      )}
-
-                      <Button className="!bg-stone-300 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none disabled cursor-not-allowed">
+                              Yêu cầu hủy đơn
+                            </Button>
+                          </Popconfirm>
+                        ) : (
+                          <Popconfirm
+                            title="Yêu cầu hủy dơn hàng?"
+                            description={
+                              <div>
+                                <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+                                <div>
+                                  <p>Chọn lý do hủy:</p>
+                                  <Radio.Group
+                                    className="flex flex-col gap-2"
+                                    onChange={(e) =>
+                                      setSelectedReason(e.target.value)
+                                    }
+                                  >
+                                    {reasons.map((reason, index) => (
+                                      <Radio key={index} value={reason}>
+                                        {reason}
+                                      </Radio>
+                                    ))}
+                                  </Radio.Group>
+                                </div>
+                              </div>
+                            }
+                            onConfirm={() =>
+                              yeu_cau_huy_don({
+                                id_item: items?._id,
+                                action: "yeu_cau_huy",
+                                cancellationReason: selectedReason,
+                                orderNumber: items?.orderNumber,
+                                linkUri: items?._id,
+                              })
+                            }
+                            // onCancel={cancel}
+                            okText="Có"
+                            cancelText="Không"
+                          >
+                            <Button
+                              h-10
+                              className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
+                            >
+                              Yêu cầu hủy đơn
+                            </Button>
+                          </Popconfirm>
+                        )}
+                      </div>
+                    ) : items?.status === "3" ? (
+                      <Button
+                        className="!bg-stone-300 w-full h-10 lg:w-[30%] !text-white text-[12px] rounded border-none cursor-not-allowed"
+                        disabled
+                      // onClick={() => (
+                      //   mutate({ id_item: items._id }),
+                      //   dispathNotification?.mutate({
+                      //     userId: userId,
+                      //     receiver_id: userId,
+                      //     message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                      //   })
+                      // )}
+                      >
                         Đã Nhận Hàng
                       </Button>
+                    ) : items?.status === "4" ? (
+                      <Popconfirm
+                        title="Xác nhận đã nhận hàng?"
+                        description="Bạn có chắc chắn muốn xác nhận đã nhận hàng không?"
+                        onConfirm={() => (
+                          mutate({ id_item: items._id }),
+                          dispathNotification?.mutate({
+                            userId: userId,
+                            receiver_id: userId,
+                            message: `Đơn hàng ${items?.orderNumber} đã được giao thành công!`,
+                          })
+                        )}
+                        // onConfirm={() => addCart(items?._id)}
+                        // onCancel={cancel}
+                        okText="Có "
+                        cancelText="Không"
+                      >
+                        <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
+                          Đã nhận hàng
+                        </Button>
+                      </Popconfirm>
+                    ) : items?.status === "5" ? (
                       <Popconfirm
                         title="Mua lại đơn hàng?"
                         description="Bạn có chắc chắn muốn mua lại không?"
                         onConfirm={() => addCart(items?._id)}
-                        okText="Có"
+                        // onCancel={cancel}
+                        okText="Có "
                         cancelText="Không"
                       >
-                        <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
+                        <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
+                          Mua lại
+                        </Button>
+                      </Popconfirm>
+                    ) : items?.status === "6" ? (
+                      <div className="flex gap-3 lg:basis-3/12 w-full">
+                        <Button
+                          type="default"
+                          className="bg-red-500 hover:!bg-red-600 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none"
+                          onClick={() =>
+                            handleOpenReview(
+                              items._id,
+                              items.items[0]?.productId?._id,
+                              items.reviews
+                            )
+                          }
+                        >
+                          {items?.reviews.length > 0
+                            ? "Xem đánh giá"
+                            : "Đánh giá"}
+                        </Button>
+                        {openReview && openReviewOrderId === items._id && (
+                          <div>
+                            <Modal
+                              open={openReview}
+                              onCancel={() => setOpenReview(false)}
+                              footer={null}
+                              width={600}
+                            >
+                              <h1 className="text-2xl font-semibold mb-4 text-center">
+                                ĐÁNH GIÁ SẢN PHẨM
+                              </h1>
+
+                              {/* Tạo một tập hợp các sản phẩm để nhóm thuộc tính cùng sản phẩm lại */}
+                              {items.items
+                                .reduce((acc: any, item: any) => {
+                                  const existingProduct = acc.find(
+                                    (p: any) => p.productId === item.productId._id
+                                  );
+                                  if (existingProduct) {
+                                    existingProduct.items.push(item);
+                                  } else {
+                                    acc.push({
+                                      productId: item.productId._id,
+                                      productName: item.productId.name_product,
+                                      productImage: item.productId.image_product,
+                                      items: [item],
+                                    });
+                                  }
+                                  return acc;
+                                }, [])
+                                .map((productGroup: any, index: number) => {
+                                  const review = items.reviews.find(
+                                    (r: any) =>
+                                      r.productId === productGroup.productId
+                                  );
+
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="flex flex-col gap-4 mb-4"
+                                    >
+                                      <div className="flex items-center gap-4">
+                                        <div className="w-[50px] h-[50px]">
+                                          <img
+                                            src={productGroup.productImage}
+                                            alt=""
+                                            className="w-full h-full object-cover"
+                                          />
+                                        </div>
+                                        <div>{productGroup.productName}</div>
+                                      </div>
+                                      <Form
+                                        onFinish={async (values) => {
+                                          setLoading(true); // Bật loading khi gửi đánh giá
+                                          try {
+                                            await onFinish(
+                                              values,
+                                              index,
+                                              productGroup,
+                                              items
+                                            );
+                                          } finally {
+                                            setLoading(false); // Tắt loading sau khi hoàn tất
+                                          }
+                                        }}
+                                        onValuesChange={(changedValues) => {
+                                          // Đồng bộ giá trị rating khi người dùng thay đổi
+                                          if (
+                                            changedValues[
+                                            `rating_review_${index}`
+                                            ]
+                                          ) {
+                                            setRating(
+                                              changedValues[
+                                              `rating_review_${index}`
+                                              ]
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        <Form.Item
+                                          name={`rating_review_${index}`}
+                                          initialValue={
+                                            review
+                                              ? review.rating_review
+                                              : rating[productGroup.productId] ||
+                                              0
+                                          }
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message:
+                                                "Vui lòng chọn mức đánh giá!",
+                                            },
+                                          ]}
+                                        >
+                                          <Rate
+                                            allowClear={false}
+                                            disabled={!!review} // Không cho chỉnh sửa nếu đã có đánh giá
+                                            value={
+                                              rating[productGroup.productId] || 0
+                                            }
+                                            onChange={(value) => {
+                                              // Cập nhật giá trị vào form
+                                              form.setFieldsValue({
+                                                [`rating_review_${index}`]: value,
+                                              });
+
+                                              // Đồng bộ với state rating
+                                              setRating((prevRatings) => ({
+                                                ...prevRatings,
+                                                [productGroup.productId]: value,
+                                              }));
+                                            }}
+                                          />
+                                        </Form.Item>
+
+                                        {/* Các phần khác vẫn giữ nguyên */}
+                                        <Form.Item
+                                          name={`contentReview_${index}`}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message:
+                                                "Vui lòng nhập nội dung đánh giá!",
+                                            },
+                                          ]}
+                                          initialValue={
+                                            review ? review.contentReview : ""
+                                          }
+                                        >
+                                          <Input.TextArea
+                                            rows={4}
+                                            placeholder="Nhập nội dung đánh giá"
+                                            disabled={!!review} // Vô hiệu hóa nếu đã có đánh giá
+                                          />
+                                        </Form.Item>
+
+                                        {/* Phần Upload */}
+                                        <Form.Item
+                                          name={`image_review_${index}`}
+                                          initialValue={
+                                            review && review.image_review
+                                              ? review.image_review
+                                              : fileList[
+                                                productGroup.productId
+                                              ]?.map((file: any) => file.url) || []
+                                          }
+                                        >
+                                          <Upload
+                                            listType="picture-card"
+                                            fileList={
+                                              review && review.image_review
+                                                ? review.image_review.map(
+                                                  (url: any, idx: any) => ({
+                                                    uid: `${idx}`,
+                                                    name: `image_${idx}`,
+                                                    status: "done",
+                                                    url: url,
+                                                  })
+                                                )
+                                                : fileList[
+                                                productGroup.productId
+                                                ] || []
+                                            }
+                                            onChange={handleImageChange}
+                                            onPreview={handlePreview}
+                                            customRequest={async ({
+                                              file,
+                                              onSuccess,
+                                              onError,
+                                            }) => {
+                                              // Tạo bản sao tạm thời của fileList để hiển thị trạng thái "uploading"
+                                              const tempFile = {
+                                                uid:
+                                                  file.uid || String(Date.now()),
+                                                name: file.name,
+                                                status: "uploading",
+                                                url: URL.createObjectURL(file), // Tạo URL tạm thời từ file
+                                              };
+
+                                              setFileList((prevLists) => ({
+                                                ...prevLists,
+                                                [productGroup.productId]: [
+                                                  ...(prevLists[
+                                                    productGroup.productId
+                                                  ] || []),
+                                                  tempFile,
+                                                ],
+                                              }));
+
+                                              const formData = new FormData();
+                                              formData.append("file", file);
+                                              formData.append(
+                                                "upload_preset",
+                                                PRESET_NAME
+                                              );
+                                              formData.append(
+                                                "folder",
+                                                FOLDER_NAME
+                                              );
+
+                                              try {
+                                                const response = await fetch(
+                                                  api,
+                                                  {
+                                                    method: "POST",
+                                                    body: formData,
+                                                  }
+                                                );
+
+                                                if (!response.ok) {
+                                                  throw new Error(
+                                                    "Upload failed"
+                                                  );
+                                                }
+
+                                                const result =
+                                                  await response.json();
+                                                file.url = result.secure_url;
+
+                                                // Cập nhật trạng thái fileList sau khi tải thành công
+                                                setFileList((prevLists) => ({
+                                                  ...prevLists,
+                                                  [productGroup.productId]:
+                                                    prevLists[
+                                                      productGroup.productId
+                                                    ]?.map((f) =>
+                                                      f.uid === tempFile.uid
+                                                        ? {
+                                                          ...f,
+                                                          status: "done",
+                                                          url: result.secure_url,
+                                                        }
+                                                        : f
+                                                    ),
+                                                }));
+
+                                                onSuccess?.();
+                                              } catch (error) {
+                                                console.error(
+                                                  "Upload error:",
+                                                  error
+                                                );
+
+                                                // Cập nhật trạng thái fileList khi có lỗi
+                                                setFileList((prevLists) => ({
+                                                  ...prevLists,
+                                                  [productGroup.productId]:
+                                                    prevLists[
+                                                      productGroup.productId
+                                                    ]?.map((f) =>
+                                                      f.uid === tempFile.uid
+                                                        ? {
+                                                          ...f,
+                                                          status: "error",
+                                                        }
+                                                        : f
+                                                    ),
+                                                }));
+
+                                                onError?.(error);
+                                              }
+                                            }}
+                                            onRemove={(file) => {
+                                              setFileList((prevLists) => ({
+                                                ...prevLists,
+                                                [productGroup.productId]:
+                                                  prevLists[
+                                                    productGroup.productId
+                                                  ]?.filter(
+                                                    (f) => f.uid !== file.uid
+                                                  ),
+                                              }));
+                                            }}
+                                          >
+                                            {fileList[productGroup.productId]
+                                              ?.length >= 8
+                                              ? null
+                                              : uploadButton}
+                                          </Upload>
+                                        </Form.Item>
+
+                                        {review ? (
+                                          <Form.Item>
+                                            <Spin spinning={loading}>
+                                              <Button
+                                                className="bg-black text-white"
+                                                type="primary"
+                                                disabled={loading}
+                                              >
+                                                <Link
+                                                  to={`/shops/${review?.productId}`}
+                                                  className="ant-btn ant-btn-primary"
+                                                >
+                                                  Xem đánh giá
+                                                </Link>
+                                              </Button>
+                                            </Spin>
+                                          </Form.Item>
+                                        ) : (
+                                          <Form.Item>
+                                            <Spin spinning={loading}>
+                                              <Button
+                                                type="primary"
+                                                htmlType="submit"
+                                                disabled={loading}
+                                              >
+                                                Gửi đánh giá
+                                              </Button>
+                                            </Spin>
+                                          </Form.Item>
+                                        )}
+                                      </Form>
+                                    </div>
+                                  );
+                                })}
+
+                              <Modal
+                                open={previewOpen}
+                                footer={null}
+                                onCancel={() => setPreviewOpen(false)}
+                              >
+                                <Image src={previewImage} />
+                              </Modal>
+                            </Modal>
+                          </div>
+                        )}
+
+                        <Button className="!bg-stone-300 w-full h-10 lg:w-[50%] !text-white text-[12px] rounded border-none disabled cursor-not-allowed">
+                          Đã Nhận Hàng
+                        </Button>
+                        <Popconfirm
+                          title="Mua lại đơn hàng?"
+                          description="Bạn có chắc chắn muốn mua lại không?"
+                          onConfirm={() => addCart(items?._id)}
+                          okText="Có"
+                          cancelText="Không"
+                        >
+                          <Button className="bg-red-500 hover:!bg-red-600 w-full h-10 !lg:w-[50%] !text-white text-[12px] rounded border-none">
+                            Mua Lại
+                          </Button>
+                        </Popconfirm>
+                      </div>
+                    ) : (
+                      <Popconfirm
+                        title="Mua lại đơn hàng?"
+                        description="Bạn có chắc chắn muốn mua lại không?"
+                        onConfirm={() => addCart(items?._id)}
+                        // onCancel={cancel}
+                        okText="Có "
+                        cancelText="Không"
+                      >
+                        <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
                           Mua Lại
                         </Button>
                       </Popconfirm>
-                    </div>
-                  ) : (
-                    <Popconfirm
-                      title="Mua lại đơn hàng?"
-                      description="Bạn có chắc chắn muốn mua lại không?"
-                      onConfirm={() => addCart(items?._id)}
-                      // onCancel={cancel}
-                      okText="Có "
-                      cancelText="Không"
-                    >
-                      <Button className="bg-red-500 hover:!bg-red-600 h-10 lg:w-[30%] !text-white text-[12px] rounded border-none">
-                        Mua Lại
-                      </Button>
-                    </Popconfirm>
-                  )}
+                    )}
+                  </div>
+
                 </div>
-              </div>
+
+              </>
             );
           })}
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={data?.data?.totalDocs || 0}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+            style={{ display: "flex", justifyContent: "center" }}
+            onShowSizeChange={handlePageChange}
+          />
         </div>
       )}
     </div>
