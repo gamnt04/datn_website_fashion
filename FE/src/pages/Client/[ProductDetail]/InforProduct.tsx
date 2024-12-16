@@ -54,25 +54,34 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
   const addCart = (id?: string | number, action?: string) => {
     if (account) {
       if (quantity_attr) {
-        let item: any = {
-          userId: account,
-          productId: id,
-          price_item_attr: (dataProps?.products?.sale > 0) ? price_attr * (1 - dataProps?.products?.sale / 100) : price_attr,
-          quantity: quantity_item,
-          color: color,
-          size: size,
-        };
-        if (action === "checkout") {
-          item = {
-            ...item,
-            status_checked: true,
+        if (quantity_item > 0) {
+          let item: any = {
+            userId: account,
+            productId: id,
+            price_item_attr: (dataProps?.products?.sale > 0) ? price_attr * (1 - dataProps?.products?.sale / 100) : price_attr,
+            quantity: quantity_item,
+            color: color,
+            size: size,
           };
+          if (action === "checkout") {
+            item = {
+              ...item,
+              status_checked: true,
+            };
+          }
+          mutate(item);
+          if (action === "checkout") {
+            navi("/cart");
+          }
+          setVisible(dataProps?.products?.image_product);
         }
-        mutate(item);
-        if (action === "checkout") {
-          navi("/cart");
+        else {
+          messageApi.destroy();
+          messageApi.open({
+            type: "error",
+            content: "Số lượng phải lớn hơn 0!",
+          });
         }
-        setVisible(dataProps?.products?.image_product);
       } else {
         text_validate();
       }
@@ -194,6 +203,35 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
     min_price_sale = min * (1 - dataProps?.products?.sale / 100);
     max_price_sale = min * (1 - dataProps?.products?.sale / 100);
   }
+
+  const handleQuantityChange = (e: any) => {
+    const value: string = e?.target?.value;
+    if (/[^0-9]/.test(value) && value !== '' && value !== 'Backspace') {
+      e.preventDefault();
+      messageApi.destroy();
+      messageApi.open({
+        type: "error",
+        content: "Vui lòng nhập số hợp lệ!",
+      });
+    } else {
+      if (+value < 1) {
+        setQuantity_item(0)
+      } else {
+        if (quantity_attr) {
+          if (+value < quantity_attr) {
+            setQuantity_item(+value)
+          } else {
+            messageApi.destroy();
+            messageApi.open({
+              type: "error",
+              content: `Số lượng sản phẩm được phép mua là ${quantity_attr}`,
+            });
+            setQuantity_item(quantity_attr)
+          }
+        }
+      }
+    }
+  };
   return (
     <div className="h-full w-full *:w-full lg:mt-2 mb:mt-5">
       {contextHolder}
@@ -381,12 +419,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                   quantity_attr ?
                     <input
                       onChange={(e) =>
-                        (+e?.target?.value) < 1 ? setQuantity_item(1) :
-                          quantity_attr &&
-                          (+e.target.value <= quantity_attr ?
-                            setQuantity_item(+e.target.value) :
-                            setQuantity_item(quantity_attr))
-                      }
+                        handleQuantityChange(e)}
                       className="bg-[#F4F4F4] text-center rounded"
                       value={quantity_item}
                     /> : <input
