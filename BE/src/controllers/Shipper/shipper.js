@@ -20,23 +20,37 @@ const sendEmail = async (fullName, email, token) => {
   });
 
   const mailOptions = {
-    from: process.env.SMTP_USER,
+    from: `Hỗ trợ đăng ký tài khoản <${process.env.SMTP_USER}>`,
     to: email,
-    subject: " Xác Nhận Tài Khoản",
-    text: `Kính gửi ${fullName},
-
-    Chúng tôi đã đăng ký thành công tài khoản của bạn với thông tin dưới đây:
-    Tên người dùng: ${fullName}
-    Email:  ${email}
-
-    Để hoàn tất quy trình đăng ký, vui lòng xác nhận tài khoản của bạn bằng cách nhấp vào liên kết bên dưới:
-    http://localhost:7899/verify?token=${token}
-    
-    Xin chân thành cảm ơn!`,
+    subject: "Xác Nhận Tài Khoản",
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #4CAF50;">Xác nhận tài khoản của bạn</h2>
+        <p>Kính gửi <strong>${fullName}</strong>,</p>
+        <p>Chúng tôi rất vui mừng thông báo rằng tài khoản của bạn đã được đăng ký thành công với các thông tin sau:</p>
+        <ul>
+          <li><strong>Tên người dùng:</strong> ${fullName}</li>
+          <li><strong>Email:</strong> ${email}</li>
+        </ul>
+        <p>Để hoàn tất quá trình đăng ký, vui lòng xác nhận tài khoản của bạn bằng cách nhấp vào liên kết bên dưới:</p>
+        <p style="text-align: center;">
+          <a 
+            href="http://localhost:7899/verify?token=${token}" 
+            style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+            Xác nhận tài khoản
+          </a>
+        </p>
+        <p>Nếu bạn không yêu cầu đăng ký tài khoản này, xin vui lòng bỏ qua email này.</p>
+        <p>Xin chân thành cảm ơn!</p>
+        <hr>
+        <p style="font-size: 12px; color: #888;">Đây là email tự động, vui lòng không trả lời lại email này.</p>
+      </div>
+    `,
   };
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully");
   } catch (error) {
     console.error("Error sending email:", error);
   }
@@ -187,26 +201,35 @@ const sendPasswordEmail = async (fullName, email, password) => {
   });
 
   const mailOptions = {
-    from: process.env.SMTP_USER,
+    from: `Hỗ trợ tài khoản <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Tài khoản của bạn đã được xác thực",
-    text: `Kính gửi ${fullName},
-
-    Tài khoản của bạn đã được xác thực thành công. Đây là thông tin đăng nhập của bạn:
-    Email: ${email}
-    Mật khẩu: ${password}
-
-    Vui lòng đăng nhập vào hệ thống với thông tin trên.
-
-    Xin chân thành cảm ơn!`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #4CAF50;">Tài khoản đã được xác thực thành công</h2>
+        <p>Kính gửi <strong>${fullName}</strong>,</p>
+        <p>Chúng tôi xin thông báo rằng tài khoản của bạn đã được xác thực thành công. Dưới đây là thông tin đăng nhập của bạn:</p>
+        <ul>
+          <li><strong>Email:</strong> ${email}</li>
+          <li><strong>Mật khẩu:</strong> ${password}</li>
+        </ul>
+        <p>Vui lòng sử dụng thông tin trên để đăng nhập vào hệ thống. Để bảo mật, hãy thay đổi mật khẩu sau khi đăng nhập lần đầu.</p>
+        <p>Nếu bạn không yêu cầu tài khoản này, xin vui lòng liên hệ với chúng tôi ngay lập tức.</p>
+        <p>Xin chân thành cảm ơn!</p>
+        <hr>
+        <p style="font-size: 12px; color: #888;">Đây là email tự động, vui lòng không trả lời lại email này.</p>
+      </div>
+    `,
   };
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully");
   } catch (error) {
     console.error("Error sending email:", error);
   }
 };
+
 // Xác thực token
 export const verifyEmail = async (req, res) => {
   const { token } = req.query;
