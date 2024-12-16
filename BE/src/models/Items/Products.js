@@ -17,6 +17,11 @@ const productSchema = new mongoose.Schema(
       type: Number,
       min: 1,
     },
+    sale: {
+      type: Number,
+      default: 0,
+      max: 50,
+    },
     image_product: {
       type: String,
       required: true,

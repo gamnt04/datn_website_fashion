@@ -23,6 +23,19 @@ export async function get_items_client(page?: number) {
   }
 }
 
+export async function get_all_items_client() {
+  try {
+    const res = await fetch(`http://localhost:2004/api/v1/products_all`);
+    if (!res.ok) {
+      console.warn("Kiem tra lai server hoac internet !");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error || "Loi server!");
+  }
+}
+
 export async function get_items_dashboard(page?: number) {
   try {
     let uri = `${baseUri}/dashboard`;
@@ -164,10 +177,6 @@ export async function remove_items(dataBody: any) {
         autoClose: 500,
       });
       return res;
-    } else {
-      toast.success(`Xóa sản phẩm ${dataBody.id_item}  thành công`, {
-        autoClose: 500,
-      });
     }
     return res;
   } catch (error) {
@@ -202,8 +211,6 @@ export const destroy_delete_Product = async (id: string) => {
     if (!response.ok) {
       toast.error(`Không thể xóa sản phẩm ${id}`, { autoClose: 500 });
       return response;
-    } else {
-      toast.success(`Xóa sản phẩm ${id}  thành công`, { autoClose: 500 });
     }
     await response.json();
     return response;
@@ -225,10 +232,6 @@ export const restoreProduct = async (item: any) => {
         autoClose: 500,
       });
       return response;
-    } else {
-      toast.success(`Khôi phục sản phẩm ${item.id_item}  thành công`, {
-        autoClose: 500,
-      });
     }
     await response.json();
     return response;

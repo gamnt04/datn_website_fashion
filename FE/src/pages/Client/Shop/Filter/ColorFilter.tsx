@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { SearchOutlined, CloseCircleOutlined } from "@ant-design/icons"; // Import các icon từ Ant Design
+import { SearchOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { SlArrowDown } from "react-icons/sl";
 
 interface ColorFilterProps {
-  selectedColor: string; // Được truyền từ MenuShop
-  onColorSearch: (color: string) => void; // Được truyền từ MenuShop
+  selectedColor: string;
+  onColorSearch: (color?: string) => void;
 }
 
 const ColorFilter: React.FC<ColorFilterProps> = ({
@@ -18,17 +18,21 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
   };
 
   const handleSearch = () => {
-    onColorSearch(colorInput); // Gửi tên màu sắc tìm kiếm lên bố
+    if (colorInput.trim()) {
+      onColorSearch(colorInput);
+    } else {
+      onColorSearch();
+    }
   };
 
   const handleClear = () => {
-    setColorInput(""); // Xóa nội dung input
-    onColorSearch(""); // Gửi giá trị rỗng lên bố (có thể dùng để reset màu sắc)
+    setColorInput("");
+    onColorSearch();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      handleSearch(); // Gọi hàm tìm kiếm khi nhấn Enter
+      handleSearch();
     }
   };
 
@@ -43,23 +47,20 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
         </summary>
         <div className="pt-2">
           <div className="relative flex items-center w-52 p-2">
-            {/* Đặt position relative cho div để chứa các icon */}
             <input
               type="text"
               value={colorInput}
               onChange={handleInputChange}
-              onKeyDown={handleKeyDown} // Thêm sự kiện keydown cho ô input
-              className="border p-2 rounded-md flex-grow pl-10 w-20" // Thêm padding-left để không bị chồng lên icon
+              onKeyDown={handleKeyDown}
+              className="border p-2 rounded-md flex-grow pl-10 w-20"
               placeholder="Nhập tên màu"
             />
-            {/* Icon tìm kiếm trong input */}
             <button
               onClick={handleSearch}
               className="absolute left-4 text-gray-500"
             >
               <SearchOutlined />
             </button>
-            {/* Icon "X" ngoài input */}
             {colorInput && (
               <button
                 onClick={handleClear}

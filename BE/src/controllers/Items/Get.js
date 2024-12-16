@@ -1,8 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Products from "../../models/Items/Products";
-import Attribute from "../../models/attribute/variant";
 import Category from "../../models/Items/Category";
-import ThuocTinh from "../../models/attribute/thuoc_tinh";
 import mongoose from "mongoose";
 
 // list all
@@ -17,10 +15,10 @@ export const getAllProducts = async (req, res) => {
         },
       ];
     }
-    const products = await Products.find(querry);
+    const data = await Products.find(querry);
     return res.status(StatusCodes.OK).json({
       message: "Done !",
-      products,
+      data,
     });
   } catch (error) {
     console.error("Error getting all products:", error);
@@ -378,15 +376,10 @@ export async function filterItems(req, res) {
   const limit = parseInt(_limit, 10) || 20;
 
   const options = {
-    page,
-    limit,
-    sort: _sort
-      ? { [_sort.split(":")[0]]: _sort.split(":")[1] === "desc" ? -1 : 1 }
-      : { "attributes.values.size.price_attribute": 1 },
+    sort: {},
   };
 
   try {
-    // Lấy danh sách danh mục hiển thị
     const visibleCategories = await Category.find({ published: true }).select(
       "_id"
     );
@@ -396,9 +389,25 @@ export async function filterItems(req, res) {
 
     const query = { category_id: { $in: visibleCategoryIds } };
 
-    // Thêm các điều kiện lọc
     if (cate_id) {
-      query.category_id = { $in: cate_id.split(",").map((id) => id.trim()) };
+      const cateIds = cate_id.split(",").map((id) => id.trim());
+      const validCateIds = cateIds.filter((id) =>
+        visibleCategoryIds.includes(id)
+      );
+      if (validCateIds.length > 0) {
+        query.category_id = { $in: validCateIds };
+      } else {
+        return res.status(StatusCodes.OK).json({
+          message: "Không có sản phẩm trong danh mục yêu cầu.",
+          data: [],
+          pagination: {
+            totalItems: 0,
+            currentPage: page,
+            totalPages: 0,
+            itemsPerPage: limit,
+          },
+        });
+      }
     }
 
     if (_search) {
@@ -412,7 +421,6 @@ export async function filterItems(req, res) {
       ? name_size.split(",").map((s) => s.trim().toLowerCase())
       : [];
 
-    // Xử lý price_ranges
     let formattedPriceRanges = [];
     if (price_ranges) {
       try {
@@ -431,12 +439,12 @@ export async function filterItems(req, res) {
       }
     }
 
-    // Lấy dữ liệu sản phẩm ban đầu
-    const data = await Products.paginate(query, options);
-    await Products.populate(data.docs, { path: "attributes" });
+    const data = await Products.find(query)
+      .populate("attributes")
+      .populate("category_id")
+      .sort(options.sort);
 
-    // Lọc sản phẩm theo điều kiện
-    const filteredProducts = data.docs.filter((item) => {
+    const filteredProducts = data.filter((item) => {
       let total_stock = 0;
       let matched = false;
       let maxPrice = 0;
@@ -482,20 +490,36 @@ export async function filterItems(req, res) {
       }
       return false;
     });
+    const sortedProducts = filteredProducts.sort((a, b) => {
+      const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
+      const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
 
-    // Nếu không có bộ lọc, trả về tất cả sản phẩm
-    const resultProducts =
-      filteredProducts.length > 0 ? filteredProducts : data.docs;
+      if (_sort === "price:desc") {
+        return (b.maxPrice || 0) - (a.maxPrice || 0);
+      } else if (_sort === "price:asc") {
+        return (a.minPrice || Infinity) - (b.minPrice || Infinity);
+      } else if (_sort === "updatedAt:desc") {
+        return dateB - dateA;
+      } else if (_sort === "updatedAt:asc") {
+        return dateA - dateB;
+      }
+      return 0;
+    });
+    const totalCount = sortedProducts.length;
+    const totalPages = Math.ceil(totalCount / limit);
+    const paginatedProducts = sortedProducts.slice(
+      (page - 1) * limit,
+      page * limit
+    );
 
-    // Trả dữ liệu sau khi lọc và phân trang
     return res.status(StatusCodes.OK).json({
       message: "Thành công!",
-      data: filteredProducts,
+      data: paginatedProducts,
       pagination: {
-        totalItems: data.totalDocs,
-        currentPage: data.page,
-        totalPages: data.totalPages,
-        itemsPerPage: data.limit,
+        totalItems: totalCount,
+        currentPage: page,
+        totalPages: totalPages,
+        itemsPerPage: limit,
       },
     });
   } catch (error) {

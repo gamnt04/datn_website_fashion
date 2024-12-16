@@ -32,9 +32,9 @@ const useForm = ({ mode }: UseFormProps) => {
         setOldGalleryFiles(product?.gallery_product);
       }
     }
-  }, [mode, dataOneItem]);
+  }, [mode, dataOneItem?.data?.product]);
 
-  const { mutate, isPending, isError, status_api } = Mutation_items(
+  const { mutate, isLoading, isError, status_api } = Mutation_items(
     mode ? "EDIT" : "CREATE"
   );
 
@@ -58,7 +58,6 @@ const useForm = ({ mode }: UseFormProps) => {
 
   const onSubmit = async (dataForm: any) => {
     setLoading(true);
-
     try {
       const imageUrl = await UploadImage(imageFile[0]);
       const galleryUrls = await UploadGallery(galleryFiles);
@@ -120,7 +119,7 @@ const useForm = ({ mode }: UseFormProps) => {
 
   return {
     onSubmit,
-    isPending,
+    isLoading,
     isError,
     data_one_item: dataOneItem,
     handleImageChange,

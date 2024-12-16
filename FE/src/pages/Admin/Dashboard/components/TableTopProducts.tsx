@@ -1,21 +1,29 @@
+import { Link } from "react-router-dom";
 import { useTop10ProductBestSale } from "../../../../common/hooks/Order/querry_Order";
+import ScrollTop from "../../../../common/hooks/Customers/ScrollTop";
+import { Spin } from "antd";
 
 const TableTopProducts = () => {
   const {
     data: top10ProductBestSale,
     isLoading,
-    error
+    error,
   } = useTop10ProductBestSale();
 
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
-      currency: "VND"
+      currency: "VND",
     }).format(amount);
   };
+  // console.log("top10ProductBestSale", top10ProductBestSale);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   if (error) {
@@ -109,12 +117,20 @@ const TableTopProducts = () => {
               </div>
             </div>
             <div className="">
-              <h3 className="text-[20px] font-bold">
+              <Link
+                onClick={ScrollTop}
+                to={`/shops/${product?.productId?._id}`}
+                className="h-full cursor-pointer"
+              >
                 {" "}
-                {product?.productId?.name_product.length > 40
-                  ? `${product?.productId?.name_product.slice(0, 40)}...`
-                  : product?.productId?.name_product}
-              </h3>
+                <h3 className="text-[20px] font-bold">
+                  {" "}
+                  {product?.productId?.name_product.length > 40
+                    ? `${product?.productId?.name_product.slice(0, 40)}...`
+                    : product?.productId?.name_product}
+                </h3>
+              </Link>
+
               <h5 className="text-lg text-gray-600">
                 {" "}
                 {formatCurrency(product.price_item)}

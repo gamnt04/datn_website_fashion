@@ -9,12 +9,19 @@ const AboutUS = () => {
   //const arr = [1, 2, 3];
   const { data, isLoading } = useCategoryQuery();
   const visibleCategories =
-    data?.filter((category: ICategory) => category.published) || [];
+    data?.filter(
+      (category: ICategory) =>
+        category.published &&
+        category.published &&
+        category.name_category !== "Uncategorized"
+    ) || [];
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
   return (
     <div className="container lg:mt-[40px] mt-[60px]">
@@ -223,13 +230,6 @@ const AboutUS = () => {
                 </p>
               </div>
             </div> */}
-          </div>
-
-          <div className="flex items-center justify-center my-10  mx-auto h-[60px] w-[144px]  hover:bg-gray-100 duration-200 hover:text-black border border-black  bg-black cursor-pointer text-white">
-            {" "}
-            <Link className="text-[15px] px-[30px] " to={""}>
-              Xem tất cả
-            </Link>
           </div>
         </div>
       </div>

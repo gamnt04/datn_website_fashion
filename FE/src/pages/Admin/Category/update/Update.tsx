@@ -6,6 +6,7 @@ import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { update } from "../../../../services/category";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { toast } from "react-toastify";
 
 interface UpdateComponentProps {
   id?: string;
@@ -31,11 +32,13 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       image_category: "",
     },
   });
-
   const mutation = useMutation({
     mutationFn: async (category: ICategory) => {
-      const { data } = await update(category);
-      return data;
+      const response = await update(category);
+      if (!response || !response.data) {
+        throw new Error("Không nhận được dữ liệu hợp lệ từ API");
+      }
+      return response.data; // Trả về `data` từ API
     },
     onSuccess: () => {
       setShowMessage(true);
@@ -44,7 +47,17 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
       });
     },
     onError: (error: any) => {
-      setErrorMessage(error.message || "Đã có lỗi xảy ra");
+      const message =
+        error?.response?.data?.message || "Cập nhật danh mục không thành công!";
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     },
   });
 
@@ -78,6 +91,7 @@ const UpdateComponent = ({ id, data }: UpdateComponentProps) => {
   const onSubmit = async (formData: ICategory | any) => {
     try {
       let imageUrl = formData.image_category;
+
       if (
         formData.image_category instanceof FileList &&
         formData.image_category.length > 0

@@ -42,7 +42,6 @@ const BlogDetail = () => {
           })
         );
         setToc(tocItems);
-
       } catch (error: any) {
         if (error.response?.status === 404) {
           setDeleted(true); // Nếu bài viết không tồn tại, đặt trạng thái xóa
@@ -93,7 +92,6 @@ const BlogDetail = () => {
     );
   }
 
-
   if (!blog) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -118,7 +116,9 @@ const BlogDetail = () => {
           </div>
         </div>
       ) : (
-        <h1 className="text-4xl font-bold text-black">Bài viết này không hiển thị</h1>
+        <h1 className="text-4xl font-bold text-black">
+          Bài viết này không hiển thị
+        </h1>
       )}
       {/* Sidebar */}
       <div className="flex flex-col w-1/3 gap-8">
@@ -130,8 +130,9 @@ const BlogDetail = () => {
               toc.map((item) => (
                 <li
                   key={item.id}
-                  className={`ml-${item.level === "h2" ? 4 : item.level === "h3" ? 8 : 0
-                    }`}
+                  className={`ml-${
+                    item.level === "h2" ? 4 : item.level === "h3" ? 8 : 0
+                  }`}
                 >
                   <a
                     href={`#${item.id}`}
@@ -148,7 +149,7 @@ const BlogDetail = () => {
         </aside>
 
         {/* Related Blogs */}
-        <aside className="sticky p-4 bg-gray-100 rounded-lg shadow-md h-fit top-16">
+        <aside className="sticky p-4 bg-gray-100 rounded-lg shadow-md top-16">
           <h2 className="mb-4 text-xl font-semibold">Tất cả bài viết</h2>
           <ul>
             {relatedBlogs.length > 0 ? (

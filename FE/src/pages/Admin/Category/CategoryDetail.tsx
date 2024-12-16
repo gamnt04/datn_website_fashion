@@ -9,6 +9,7 @@ import { IProduct } from "../../../common/interfaces/Product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const CategoryDetail: React.FC = () => {
   const queryClient = useQueryClient();
@@ -28,15 +29,17 @@ const CategoryDetail: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: IProduct) => {
       try {
-        return await instance.delete(`/products/${id}`);
+        // Gọi API để chuyển sản phẩm sang danh mục mặc định
+        const response = await instance.delete(`/category/products/${id}`);
+        return response.data; // Dữ liệu trả về từ backend
       } catch (error) {
-        throw new Error("Xóa sản phẩm thất bại");
+        throw new Error("Chuyển sản phẩm thất bại");
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       messageApi.open({
         type: "success",
-        content: "Xóa Sản phẩm thành công",
+        content: "Sản phẩm đã được chuyển sang danh mục mặc định thành công",
       });
       queryClient.invalidateQueries({
         queryKey: ["products"],
@@ -91,18 +94,17 @@ const CategoryDetail: React.FC = () => {
         <span className="line-clamp-2 max-w-[200px]">{text}</span>
       ),
     },
+
+    //  tôi muốn thêm bảng thuộc tính và có nút ẩn/hiện
+    //  khi bấm vào thì sẽ có bảng hiện thị xuống, trong đó hiện thị các
+    //  thông tin attributes của sản phẩm đó
     {
       title: "Thời gian tạo",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text: string) => formatDate(text),
     },
-    {
-      title: "Thời gian cập nhật",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (text: string) => formatDate(text),
-    },
+
     {
       key: "action",
       render: (_: any, product: any) => {
@@ -118,7 +120,10 @@ const CategoryDetail: React.FC = () => {
                 okText="Yes"
                 cancelText="No"
               >
-                <Button danger>Xóa</Button>
+                <Button danger>
+                  {" "}
+                  <FaDeleteLeft />
+                </Button>
               </Popconfirm>
             </div>
           </>

@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
-import {
-  Query_Orders,
-  useOrdersOfDay
-} from "../../../common/hooks/Order/querry_Order";
-import { Query_Products } from "../../../common/hooks/Products/Products";
+import { useOrdersOfDay } from "../../../common/hooks/Order/querry_Order";
+import { Query_All_Products } from "../../../common/hooks/Products/Products";
 import { IOrder } from "../../../common/interfaces/Orders";
 import CardDataStats from "./components/CardDataStats";
 import ChartRevenueStatistcs from "./components/ChartRevenueStatistics";
@@ -12,15 +11,16 @@ import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
 import ChartUser from "./components/ChartUser";
 import TableOrder from "./components/TableOrder";
 import TableTopProducts from "./components/TableTopProducts";
-import { LoadingOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
-  const { data: productData, isLoading } = Query_Products();
+  // const { data: productData, isLoading } = Query_Products();
   const { data: orderOfDayData } = useOrdersOfDay();
-  // const { data: orderData } = Query_Orders();
-  console.log(orderOfDayData);
-
+  const { data: productData, isLoading } = Query_All_Products();
+  // console.log("productData", productData);
+  console.log("datatest", productData?.data?.length);
+  const navigate = useNavigate();
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -71,7 +71,7 @@ const MainContent = () => {
             </div>
           </CardDataStats>
           <CardDataStats
-            title="Số Lượng Đơn Hàng"
+            title="Đơn Hàng"
             total={orderOfDayData?.length}
             rate="0.43%"
             levelUp
@@ -101,10 +101,12 @@ const MainContent = () => {
             </div>
           </CardDataStats>
           <CardDataStats
-            title="Số Lượng Sản Phẩm"
-            total={productData?.length}
+            title="Sản Phẩm Bày Bán "
+            total={productData?.data?.length}
             rate="0.43%"
             levelUp
+            onClick={() => navigate("/admin/products")} // Điều hướng khi nhấn vào
+            className="cursor-pointer"
           >
             <div className="fill-[#3C50E0] bg-[#EFF2F7] rounded-full flex justify-between items-center">
               <svg
@@ -127,7 +129,7 @@ const MainContent = () => {
             </div>
           </CardDataStats>
           <CardDataStats
-            title="Số Lượng Khách Hàng"
+            title="Khách Hàng"
             total={userData?.data.length}
             rate="0.43%"
             levelUp

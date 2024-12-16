@@ -13,6 +13,10 @@ import * as turf from "@turf/turf";
 import jwt from "jsonwebtoken";
 import Voucher from "../../models/Voucher/voucher";
 import Notification from "../../models/Notification/Notification";
+import SendDeliveryFailureMail from "../SendMail/HuyMailShipper";
+import SendDeliverySuccessMailToAdmin from "../SendMail/ThanhCongMailShipper";
+const timeZone = "Asia/Ho_Chi_Minh";
+
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Lấy token từ header
   if (!token) {
@@ -28,7 +32,6 @@ export const authenticate = (req, res, next) => {
     next();
   });
 };
-
 export const createOrder = async (req, res) => {
   const {
     userId,
@@ -60,8 +63,10 @@ export const createOrder = async (req, res) => {
         phone: customerInfo.phone,
         payment: customerInfo.payment,
         userName: customerInfo.userName,
-        address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
-        toa_do: customerInfo.toa_do,
+        address: `${customerInfo.address || ""}${
+          customerInfo.detailedAddress || ""
+        }`,
+        toa_do: customerInfo.toa_do
       },
       totalPrice,
       discountCode: discountCode || null, // Lưu mã giảm giá nếu có
@@ -70,7 +75,6 @@ export const createOrder = async (req, res) => {
     });
 
     const dataCart = await Cart.findOne({ userId }).populate("products");
-    console.log("dataCart", dataCart);
     if (!dataCart) {
       console.error("Cart not found for userId:", userId);
       return res
@@ -147,13 +151,132 @@ export const createOrder = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
+// export const createOrderPayment = async (req, res) => {
+
+//   try {
+//     const requestBody = JSON.parse(JSON.stringify(req.body));
+//     const { userId, items, customerInfo, totalPrice, delivery_fee } = requestBody;
+//     const data = await Order.create(requestBody);
+//     for (let i of items) {
+//       if (i.productId.attributes) {
+//         const data_attr = await Attributes.find({});
+//         for (let j of data_attr) {
+//           for (let k of j.values) {
+//             if (k.color === i.color_item) {
+//               for (let x of k.size) {
+//                 if (x.name_size === i.name_size) {
+//                   x.stock_attribute = x.stock_attribute - i.quantity;
+//                 }
+//               }
+//             }
+//           }
+//           await j.save();
+//         }
+//       } else {
+//         const data_items = await Products.find({ _id: i.productId._id });
+//         for (let a of data_items) {
+//           a.stock = a.stock - i.quantity;
+//           await a.save();
+//         }
+//       }
+//     }
+//     const dataCart = await Cart.findOne({ userId: userId });
+//     if (!dataCart) {
+//       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
+//     }
+//     dataCart.products = dataCart.products.filter((i) => {
+//       const foundItem = items.some(
+//         (j) =>
+//           i.productId._id.toString() === j.productId._id.toString() &&
+//           i.color_item === j.color_item &&
+//           i.name_size === j.name_size
+//       );
+//       if (foundItem) {
+//         console.log(`Removing product from cart: ${i.productId._id}`);
+//       }
+//       return !foundItem;
+//     });
+
+//     await dataCart.save();
+
+//     if (data) {
+//       const order = new Order({
+//         userId,
+//         items,
+//         customerInfo: {
+//           email: customerInfo.email,
+//           phone: customerInfo.phone,
+//           payment: customerInfo.payment,
+//           userName: customerInfo.userName,
+//           address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""
+//             }`,
+//           toa_do: customerInfo.toa_do
+//         },
+//         totalPrice,
+//         delivery_fee
+//       });
+//       await order.save();
+//       await SendMail(customerInfo.email, order);
+//       const notification = new Notification({
+//         userId: userId,
+//         receiver_id: userId,
+//         message: `Đã có một đơn hàng mới`,
+//         different: order._id,
+//         status_notification: false
+//       });
+
+//       await notification.save();
+//       // Trả về giỏ hàng đã cập nhật
+//       return res.status(201).json({
+//         data,
+//         updatedCart: dataCart,
+//         message: "Tạo đơn hàng thanh toán online thành công"
+//       });
+//     } else {
+//       return res
+//         .status(400)
+//         .json({ message: "Lỗi rồi fix lại thanh toán online" });
+//     }
+//   } catch (error) {
+//     console.error("Error creating order payment:", error);
+//     return res
+//       .status(500)
+//       .json({ message: "Lỗi rồi fix lại thanh toán online" });
+//   }
+// };
 export const createOrderPayment = async (req, res) => {
   try {
-    const requestBody = JSON.parse(JSON.stringify(req.body));
-    const { userId, items, customerInfo, totalPrice } = requestBody;
-    console.log(customerInfo);
+    const {
+      userId,
+      items,
+      customerInfo,
+      totalPrice,
+      discountCode = null, // Mã giảm giá (nếu có)
+      discountAmount = 0, // Số tiền giảm giá (nếu có)
+      delivery_fee // Phí vận chuyển
+    } = req.body;
 
-    const data = await Order.create(requestBody);
+    // Tạo đơn hàng với các thông tin
+    const order = new Order({
+      userId,
+      items,
+      customerInfo: {
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        payment: customerInfo.payment,
+        userName: customerInfo.userName,
+        address: `${customerInfo.address || ""}${
+          customerInfo.detailedAddress || ""
+        }`,
+        toa_do: customerInfo.toa_do
+      },
+      totalPrice,
+      discountCode: discountCode || null, // Lưu mã giảm giá (nếu có)
+      discountAmount: discountAmount || 0, // Lưu số tiền giảm giá (nếu có)
+      delivery_fee // Lưu phí vận chuyển
+    });
+
+    // Cập nhật kho hàng dựa trên các item
     for (let i of items) {
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({});
@@ -162,7 +285,7 @@ export const createOrderPayment = async (req, res) => {
             if (k.color === i.color_item) {
               for (let x of k.size) {
                 if (x.name_size === i.name_size) {
-                  x.stock_attribute = x.stock_attribute - i.quantity;
+                  x.stock_attribute -= i.quantity;
                 }
               }
             }
@@ -172,17 +295,18 @@ export const createOrderPayment = async (req, res) => {
       } else {
         const data_items = await Products.find({ _id: i.productId._id });
         for (let a of data_items) {
-          a.stock = a.stock - i.quantity;
+          a.stock -= i.quantity;
           await a.save();
         }
       }
     }
-    // Lấy giỏ hàng của người dùng
+
+    // Cập nhật giỏ hàng của người dùng
     const dataCart = await Cart.findOne({ userId: userId });
     if (!dataCart) {
       return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
     }
-    // Cập nhật giỏ hàng, chỉ giữ lại những sản phẩm chưa được thanh toán
+
     dataCart.products = dataCart.products.filter((i) => {
       const foundItem = items.some(
         (j) =>
@@ -190,51 +314,43 @@ export const createOrderPayment = async (req, res) => {
           i.color_item === j.color_item &&
           i.name_size === j.name_size
       );
-      if (foundItem) {
-        console.log(`Removing product from cart: ${i.productId._id}`);
-      }
-      return !foundItem;
+      return !foundItem; // Loại bỏ sản phẩm đã đặt hàng
     });
 
-    // Lưu lại giỏ hàng sau khi cập nhật
     await dataCart.save();
 
-    if (data) {
-      // Gửi email xác nhận đơn hàng
-      const order = new Order({
-        userId,
-        items,
-        customerInfo: {
-          email: customerInfo.email,
-          phone: customerInfo.phone,
-          payment: customerInfo.payment,
-          userName: customerInfo.userName,
-          address: `${customerInfo.address || ""}${customerInfo.detailedAddress || ""}`,
-          toa_do: customerInfo.toa_do,
-        },
-        totalPrice
-      });
-      await SendMail(customerInfo.email, order);
-      const notification = new Notification({
-        userId: userId,
-        receiver_id: userId,
-        message: `Đã có một đơn hàng mới từ ${customerInfo.userName}`,
-        different: order._id,
-        status_notification: false
-      });
-
-      await notification.save();
-      // Trả về giỏ hàng đã cập nhật
-      return res.status(201).json({
-        data,
-        updatedCart: dataCart,
-        message: "Tạo đơn hàng thanh toán online thành công"
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Lỗi rồi fix lại thanh toán online" });
+    // Xử lý mã giảm giá (nếu có)
+    if (discountCode) {
+      const voucher = await Voucher.findOne({ code_voucher: discountCode });
+      if (voucher) {
+        voucher.usedCount += 1;
+        await voucher.save();
+      }
     }
+
+    // Lưu đơn hàng
+    await order.save();
+
+    // Gửi email xác nhận đơn hàng
+    await SendMail(customerInfo.email, order);
+
+    // Tạo thông báo
+    const notification = new Notification({
+      userId: userId,
+      receiver_id: userId,
+      message: `Đã có một đơn hàng mới`,
+      different: order._id,
+      status_notification: false
+    });
+
+    await notification.save();
+
+    // Trả về dữ liệu phản hồi
+    return res.status(201).json({
+      order,
+      updatedCart: dataCart,
+      message: "Tạo đơn hàng thanh toán online thành công"
+    });
   } catch (error) {
     console.error("Error creating order payment:", error);
     return res
@@ -253,7 +369,8 @@ export const getAllOrdersToday = async (req, res) => {
       createdAt: {
         $gte: startOfDay,
         $lte: endOfDay
-      }
+      },
+      status: "6"
     }).exec();
     // const ordersToday = await Order.find();
     return res.status(StatusCodes.OK).json(ordersToday);
@@ -263,7 +380,6 @@ export const getAllOrdersToday = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const getAllOrderWeek = async (req, res) => {
   try {
     const now = new Date();
@@ -278,7 +394,8 @@ export const getAllOrderWeek = async (req, res) => {
       createdAt: {
         $gte: startWeek,
         $lte: endWeek
-      }
+      },
+      status: "6"
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfWeek);
   } catch (error) {
@@ -287,8 +404,6 @@ export const getAllOrderWeek = async (req, res) => {
       .json({ error: error.message });
   }
 };
-const timeZone = "Asia/Ho_Chi_Minh";
-
 export const getOrderByDayOfWeek = async (req, res) => {
   try {
     const now = new Date();
@@ -320,7 +435,8 @@ export const getOrderByDayOfWeek = async (req, res) => {
             createdAt: {
               $gte: startOfDay,
               $lt: endOfDay
-            }
+            },
+            status: "6"
           }
         },
         {
@@ -365,7 +481,8 @@ export const getAllOrderMonth = async (req, res) => {
       createdAt: {
         $gte: startMonth,
         $lte: endMonth
-      }
+      },
+      status: "6"
     }).exec();
     return res.status(StatusCodes.OK).json(orderOfMonth);
   } catch (error) {
@@ -385,7 +502,8 @@ export const getAllOrderByMonthOfYear = async (req, res) => {
           createdAt: {
             $gte: new Date(`${currentYear}-01-01T00:00:00.000Z`),
             $lte: new Date(`${currentYear}-12-31T23:59:59.999Z`)
-          }
+          },
+          status: "6"
         }
       },
       {
@@ -444,9 +562,9 @@ export const getTop10ProductBestSale = async (req, res) => {
       .json({ message: "Lỗi rồi đại ca ơi" });
   }
 };
-
 const calculateDistance = async (coords1, coords2) => {
-  const mapboxAccessToken = 'pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w'; // Thay bằng token của bạn
+  const mapboxAccessToken =
+    "pk.eyJ1IjoibmFkdWMiLCJhIjoiY200MDIydDZnMXo4dzJpcjBiaTBiamRmdiJ9.-xDuU81CG7JJDtlHK5lc7w"; // Thay bằng token của bạn
 
   const origin = [coords1.lng, coords1.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
   const destination = [coords2.lng, coords2.lat]; // Đảm bảo tọa độ đúng: [longitude, latitude]
@@ -471,15 +589,19 @@ const calculateDistance = async (coords1, coords2) => {
     throw new Error("Không thể tính toán khoảng cách.");
   }
 };
-
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("shipperId");
 
     if (!order) {
-      return res.status(StatusCodes.NOT_FOUND).json({ error: "Order not found" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Order not found" });
     }
-    const warehouseCoords = { lat: 21.037956477970923, lng: 105.74689813551527 };  // Tọa độ kho
+    const warehouseCoords = {
+      lat: 21.037956477970923,
+      lng: 105.74689813551527
+    }; // Tọa độ kho
     const customerCoords = order.customerInfo.toa_do;
 
     if (!customerCoords) {
@@ -495,10 +617,11 @@ export const getOrderById = async (req, res) => {
       deliveryDistance: distance + "km"
     });
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
-
 export const getOneOrderUser = async (req, res) => {
   const {
     _page = 1,
@@ -539,7 +662,6 @@ export const getOneOrderUser = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const updateOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -558,7 +680,6 @@ export const updateOrder = async (req, res) => {
       .json({ error: error.message });
   }
 };
-
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -574,10 +695,7 @@ export const updateOrderStatus = async (req, res) => {
     if (order.status === "6" || order.status === "7") {
       return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: "Order cannot be updated" }
-
-        );
-
+        .json({ error: "Order cannot be updated" });
     }
     order.status = status;
     if (status == "4") {
@@ -666,20 +784,24 @@ export const updateOrderStatus = async (req, res) => {
         await SendDeliverySuccessMail(order.customerInfo.email, order);
       } catch (emailError) {
         console.error("Error sending delivery success email:", emailError);
-        return res.status(500).json({ message: "Failed to send delivery success email." });
+        return res
+          .status(500)
+          .json({ message: "Failed to send delivery success email." });
       }
     }
-
     // Save the updated order
     await order.save();
 
-    return res.status(StatusCodes.OK).json({ message: "Order status updated successfully" });
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Order status updated successfully" });
   } catch (error) {
     console.error("Error updating order status:", error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
-
 export async function get_orders_client(req, res) {
   const {
     _page = 1,
@@ -732,7 +854,6 @@ export async function get_orders_client(req, res) {
     });
   }
 }
-
 export const userCancelOrder = async (req, res) => {
   const { id } = req.params;
   const { cancellationReason } = req.body;
@@ -776,7 +897,7 @@ export const userCancelOrder = async (req, res) => {
 };
 export const adminCancelOrder = async (req, res) => {
   const id = req.params.id;
-  const { confirm } = req.body;
+  const { confirm, failureReason } = req.body;
 
   try {
     const order = await Order.findById(id);
@@ -827,6 +948,7 @@ export const adminCancelOrder = async (req, res) => {
 
       // Send cancellation email
       try {
+        await SendDeliveryFailureMail(order);
         await SendCancellationMail(
           order.customerInfo.email,
           order,
@@ -926,13 +1048,11 @@ export const get10NewOrderToday = async (req, res) => {
     startOfday.setHours(0, 0, 0, 0);
     const endOfday = new Date();
     endOfday.setHours(23, 59, 59, 999);
-    // const orderToDay = await Order.find({
-    //   createdAt: {
-    //     $gte: startOfday,
-    //     $lte: endOfday
-    //   }
-    // })
-    const orderToDay = await Order.find()
+
+    const orderToDay = await Order.find({
+      createdAt: { $gte: startOfday, $lte: endOfday },
+      status: { $in: ["1", "2", "3", "4", "5", "7"] }
+    })
       .sort({ createdAt: -1 })
       .limit(10)
       .exec();
@@ -962,6 +1082,7 @@ export const deliverSuccess = async (req, res) => {
     await order.save();
     // Send email notification
     try {
+      await SendDeliverySuccessMailToAdmin(order);
       await SendDeliverySuccessMail(order.customerInfo.email, order);
     } catch (emailError) {
       console.error("Lỗi gửi email:", emailError);
@@ -977,9 +1098,6 @@ export const deliverSuccess = async (req, res) => {
     res.status(500).json({ name: error.name, message: error.message });
   }
 };
-
-
-
 export const addShipperOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1010,9 +1128,10 @@ export const addShipperOrder = async (req, res) => {
 };
 export const adminFailDelivery = async (req, res) => {
   const id = req.params.id;
-  const { failureReason } = req.body; // Lấy lý do từ request body
+  const { failureReason, status } = req.body; // Lấy lý do và trạng thái từ request body
 
   try {
+    // Tìm đơn hàng theo ID
     const order = await Order.findById(id);
     if (!order) {
       return res
@@ -1020,33 +1139,36 @@ export const adminFailDelivery = async (req, res) => {
         .json({ message: "Không tìm thấy đơn hàng" });
     }
 
-    // Kiểm tra nếu đơn hàng đã hoàn thành hoặc bị hủy thì không cho phép cập nhật giao hàng thất bại
-    if (order.status === "completed" || order.status === "5") {
+    // Kiểm tra nếu trạng thái là "Giao hàng thất bại" (status = 5) hoặc "Giao hàng thành công" (status = 4)
+    if (order.status === "5") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Đơn hàng đã bị hủy, không thể cập nhật giao hàng thất bại"
+      });
+    }
+
+    if (order.status === "4") {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message:
-          "Không thể cập nhật trạng thái thất bại cho đơn hàng đã hoàn thành hoặc bị hủy"
+          "Đơn hàng đã giao hàng thành công, không thể đánh dấu giao hàng thất bại"
       });
     }
 
     // Cập nhật trạng thái thành 'Giao hàng thất bại'
-    order.status = "5"; // Giao hàng thất bại
-    order.failureReason = failureReason; // Lưu lý do giao hàng thất bại
+    order.status = "5"; // Cập nhật trạng thái giao hàng thất bại
+    order.failureReason = failureReason || "Không có lý do cụ thể"; // Lưu lý do giao hàng thất bại
 
+    // Xử lý thay đổi số lượng sản phẩm trong kho (tương tự phần hủy đơn)
     const items = order.items;
     for (let i of items) {
-      // Xử lý thay đổi số lượng sản phẩm (tương tự phần hủy đơn)
+      // Kiểm tra nếu có thuộc tính (size, color) thì cập nhật kho
       if (i.productId.attributes) {
         const data_attr = await Attributes.find({});
         for (let j of data_attr) {
           for (let k of j.values) {
-            if (k.color == i.color_item) {
+            if (k.color === i.color_item) {
               for (let x of k.size) {
-                if (x.name_size) {
-                  if (x.name_size == i.name_size) {
-                    x.stock_attribute = x.stock_attribute + i.quantity;
-                  }
-                } else {
-                  x.stock_attribute = x.stock_attribute + i.quantity;
+                if (x.name_size === i.name_size) {
+                  x.stock_attribute += i.quantity;
                 }
               }
             }
@@ -1054,24 +1176,33 @@ export const adminFailDelivery = async (req, res) => {
           await j.save();
         }
       } else {
-        const data_items = await Products.find({ _id: i.productId._id });
-        for (let a of data_items) {
-          a.stock = a.stock + i.quantity;
-          await a.save();
+        // Cập nhật kho cho sản phẩm nếu không có thuộc tính
+        const product = await Products.findById(i.productId._id);
+        if (product) {
+          product.stock += i.quantity;
+          await product.save();
         }
       }
     }
 
+    // Gửi email thông báo giao hàng thất bại
+    try {
+      await SendDeliveryFailureMail(order, failureReason);
+    } catch (emailError) {
+      console.error("Lỗi gửi email thông báo giao hàng thất bại:", emailError);
+    }
+    // Lưu lại thông tin đơn hàng sau khi thay đổi
     await order.save();
-    res.status(StatusCodes.OK).json({
+
+    return res.status(StatusCodes.OK).json({
       message: "Đơn hàng đã được cập nhật trạng thái giao hàng thất bại",
       failureReason: order.failureReason
     });
   } catch (error) {
+    console.error("Lỗi trong quá trình xử lý đơn hàng:", error);
     return res.status(500).json({ message: "Lỗi máy chủ!" });
   }
 };
-
 //Hàm tra cứu đơn hàng theo số điện thoại
 export const getOrdersByPhone = async (req, res) => {
   const { phone } = req.query;
@@ -1085,7 +1216,6 @@ export const getOrdersByPhone = async (req, res) => {
     res.status(500).json({ message: "Lỗi server", error });
   }
 };
-
 export const getTotalOrdersByRole = async (req, res) => {
   try {
     const user = req.user;
@@ -1136,6 +1266,17 @@ export const getTotalOrdersByRole = async (req, res) => {
     } else {
       return res.status(403).json({ message: "Không có quyền truy cập" });
     }
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
+export const getAllOrderSuccess = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      status: "6"
+    }).exec();
+    return res.status(StatusCodes.OK).json(orders);
   } catch (error) {
     console.error("Error fetching orders: ", error);
     return res.status(500).json({ message: "Lỗi máy chủ" });

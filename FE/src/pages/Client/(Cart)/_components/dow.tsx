@@ -3,12 +3,18 @@ import useLocalStorage from '../../../../common/hooks/Storage/useStorage';
 import { Mutation_Cart } from '../../../../common/hooks/Cart/mutation_Carts';
 import Swal from 'sweetalert2'
 import { Button } from 'antd';
+import { useState } from 'react';
 
 const Dow_btn = ({ dataProps }: any) => {
     const [user] = useLocalStorage("user", {});
     const account = user?.user;
-    const { mutate } = Mutation_Cart('DOW');
+    const [loading, setLoading] = useState<boolean>(false);
+    const { mutate, isLoading } = Mutation_Cart('DOW');
     function dow() {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000)
         const data = {
             userId: account,
             productId: dataProps?.id_item,
@@ -23,7 +29,7 @@ const Dow_btn = ({ dataProps }: any) => {
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Xác nhận!",
-                cancelButtonText : 'Hủy',
+                cancelButtonText: 'Hủy',
             }).then((result: any) => {
                 if (result.isConfirmed) {
                     mutate(data)
@@ -40,7 +46,9 @@ const Dow_btn = ({ dataProps }: any) => {
         }
     }
     return (
-        <Button onClick={dow}> - </Button>
+        <Button
+            className={isLoading || loading ? "opacity-75" : ""}
+            disabled={isLoading || loading} onClick={dow}> - </Button>
     )
 }
 

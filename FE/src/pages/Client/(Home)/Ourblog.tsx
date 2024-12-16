@@ -23,7 +23,10 @@ const Ourblog = () => {
   const publishedBlogs = filterPublishedBlogs(data || []);
 
   // Chọn 3 bài viết nổi bật
-  const featuredBlogs = publishedBlogs.slice(0, 3);
+  const featuredBlogs = publishedBlogs
+  .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  .slice(0, 3);
+
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">
       <Spin indicator={<LoadingOutlined spin />} size="large" />
@@ -33,7 +36,7 @@ const Ourblog = () => {
     <div className="max-w-[1440px] w-[95vw] mx-auto">
       <div className="lg:mt-[40px] mt-[60px]">
         <div className="container mx-auto pt-[20px] text-center">
-          <h1 className="text-[32px] capitalize font-medium ">Tin tức nổi bật</h1>
+          <h1 className="text-[32px] capitalize font-medium ">Tin tức mới nhất</h1>
         </div>
 
         {isLoading ? (
@@ -48,7 +51,7 @@ const Ourblog = () => {
                 const doc = parser.parseFromString(blog.content, "text/html");
                 const title = doc.querySelector("h1");
                 const image = doc.querySelector("img");
-                const content = doc.querySelectorAll("p")[1];
+                const content = doc.querySelector("p");
 
                 return (
                   <div

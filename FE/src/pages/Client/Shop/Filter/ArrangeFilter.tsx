@@ -7,12 +7,11 @@ interface ArrangeFilterProps {
 
 const sortOptions = [
   { value: "", label: "Mặc Định" },
-  { value: "createdAt:desc", label: "Mới Nhất" },
-  { value: "createdAt:asc", label: "Cũ Nhất" },
-  { value: "price_attribute:asc", label: "Giá thấp" }, // Sắp xếp theo giá thấp
-  { value: "price_attribute:desc", label: "Giá cao" }, // Sắp xếp theo giá cao
+  { value: "updatedAt:asc", label: "Mới Nhất" },
+  { value: "updatedAt:desc", label: "Cũ Nhất" },
+  { value: "price:desc", label: "Giá cao" }, // Sắp xếp theo giá thấp
+  { value: "price:asc", label: "Giá thấp" }, // Sắp xếp theo giá cao
 ];
-
 const ArrangeFilter: React.FC<ArrangeFilterProps> = ({
   onSortChange,
   sortOption,

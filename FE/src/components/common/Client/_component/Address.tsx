@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CheckOutlined,
   CloseOutlined,
@@ -259,8 +260,6 @@ export const Update_Address = ({ addressId, setIsOpenUpdate }: any) => {
       });
     }
   });
-  console.log("selectedLocation", selectedLocation);
-
   const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
     if (data.address.addressName[2] !== selectedLocation.province?.name) {
       message.error("Vui lòng chọn lại quận/huyện!");
@@ -450,7 +449,8 @@ export const List_Address = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-white p-5 border rounded relative w-[400px] lg:w-[600px] max-h-[600px] overflow-auto hidden_scroll_x">
+      <div className="w-screen z-[50] h-screen fixed top-0 left-0 bg-transparent" onClick={handleAddress} />
+      <div className="bg-white z-[100] p-5 border rounded relative w-[400px] lg:w-[600px] max-h-[600px] overflow-auto hidden_scroll_x">
         <h1 className="py-3 text-xl font-medium text-center">
           Địa chỉ của tôi
         </h1>
@@ -462,7 +462,6 @@ export const List_Address = ({
                 <PlusOutlined />
               </Button>
             </div>
-
             {auth?.map((item: any, index: number) => (
               <div
                 className="flex items-center justify-between pb-6 my-5 border-b"
@@ -552,7 +551,7 @@ export const List_Address = ({
   );
 };
 
-export const Add_Address = ({ setIsOpen, handleAddress }: any) => {
+export const Add_Address = ({ handleAddress }: any) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -583,7 +582,7 @@ export const Add_Address = ({ setIsOpen, handleAddress }: any) => {
     },
     onSuccess: () => {
       form.resetFields();
-      setIsOpen(false);
+      handleAddress(false);
       querryClient.invalidateQueries({
         queryKey: ["AUTH_KEY"]
       });

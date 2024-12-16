@@ -1,10 +1,11 @@
 import React from "react";
 import CategoryFilter from "./Filter/CategoryFilter";
 import PriceFilter from "./Filter/PriceFilter";
-import ColorFilter from "./Filter/ColorFilter"; // Import ColorFilter
+import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { Spin } from "antd";
 
 interface MenuShopProps {
   onCategorySelect: (ids: string[]) => void;
@@ -15,6 +16,7 @@ interface MenuShopProps {
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
   onSizeChange: (sizes: string[]) => void;
+  selectedCategories: string[]; // Thêm prop để nhận danh mục đã chọn
 }
 
 const MenuShop: React.FC<MenuShopProps> = ({
@@ -26,19 +28,31 @@ const MenuShop: React.FC<MenuShopProps> = ({
   toggleSize,
   resetSizeFilter,
   onSizeChange,
+  selectedCategories, // Nhận danh mục đã chọn từ cha
 }) => {
   const { data: categoryData } = useCategoryQuery();
   const { sizes, loading, error } = useAttributes();
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
   if (error) return <p>Error: {error}</p>;
 
   const handleCategoryChange = (selectedCategories: string[]) => {
     onCategorySelect(selectedCategories);
   };
-  const handleColorSearch = (color: string) => {
-    onColorChange([color]); // Chuyển màu sắc đã tìm kiếm đến onColorChange
+  const handleColorSearch = (color?: string) => {
+    if (color) {
+      onColorChange([color]);
+    } else {
+      onColorChange([]);
+    }
   };
+
   return (
     <div className="lg:block w-full flex flex-col my-10">
       {/* Bộ lọc danh mục */}
@@ -46,6 +60,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
         <CategoryFilter
           categories={categoryData || []}
           onCategorySelect={handleCategoryChange}
+          selectedCategories={selectedCategories} // Truyền danh mục đã chọn
         />
       </div>
 

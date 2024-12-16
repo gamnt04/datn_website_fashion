@@ -11,13 +11,19 @@ export const getCartByUserId = async (req, res) => {
     if (!dataCart) {
       return res.status(StatusCodes.OK).json([]);
     }
-    dataCart.total_price = dataCart.products.reduce((a, b) => {
+    const data_cart = dataCart.products.filter(item => item?.productId?._id && item);
+      await Cart.updateOne(
+        { userId: userId },
+        { $pull: { products: { productId: null } } }
+      );
+    data_cart.total_price = dataCart.products.reduce((a, b) => {
       if (b.status_checked) {
         return a + b.total_price_item;
       } else {
         return a;
       }
     }, 0);
+    await dataCart.save();
     return res.status(StatusCodes.OK).json(dataCart);
   } catch (error) {
     return res

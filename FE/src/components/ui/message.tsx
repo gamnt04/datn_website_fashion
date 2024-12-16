@@ -25,31 +25,34 @@ interface IDataMessageByRole {
 //   return message;
 // };
 
-const formatMessageWithProductLink = (message: any) => {
+const formatMessageWithProductLink = (message: string): string => {
   if (typeof message !== "string") {
     console.warn("Message không phải là chuỗi:", message);
     return "";
   }
 
+  // Regex để tìm các URL
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  // Regex để tìm ID sản phẩm (24 ký tự hex)
   const productIdRegex = /\b([a-f0-9]{24})\b/;
-  const match = message.match(productIdRegex);
 
-  if (match) {
-    const productId = match[0];
-    const productLink = `<a href="http://localhost:7899/shops/${productId}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">Tại đây</a>`;
-    return message.replace(productId, productLink);
-  }
-
-  // Nếu không tìm thấy ID sản phẩm, trả về chuỗi gốc
-  return message;
+  return message.replace(urlRegex, (url) => {
+    // Kiểm tra nếu URL chứa ID sản phẩm
+    const productIdMatch = url.match(productIdRegex);
+    if (productIdMatch) {
+      return `<a href="${url}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">tại đây</a>`;
+    }
+    // Nếu chỉ là URL thường, gắn thẻ <a>
+    return `<a href="${url}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">tại đây</a>`;
+  });
 };
 const Message = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isLoading, error } = useGetMessageById(userId);
+  const { data, isLoading: loading_message, error } = useGetMessageById(userId);
   const { data: getUser } = List_Auth(userId);
-  const { mutate: SendMessage, isPending } = ChatCozeMutation();
+  const { mutate: SendMessage, isLoading } = ChatCozeMutation();
   const messagesEndRef = useRef(null);
   console.log("data user", getUser);
   const [message, setMessage] = useState<string>("");
@@ -262,14 +265,14 @@ const Message = () => {
                 <input
                   className="flex h-10 w-[48vh] rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
                   placeholder="Nhập tin nhắn ..."
-                  disabled={isPending}
+                  disabled={isLoading}
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
 
                 <button className="inline-flex items-center justify-center rounded-md text-sm font-medium text-[#f9fafb] disabled:pointer-events-none disabled:opacity-50 bg-black hover:bg-[#111827E6] h-10 px-4 py-2">
-                  {isPending ? (
+                  {isLoading || loading_message ? (
                     <FaSpinner className="animate-spin" />
                   ) : (
                     <AiOutlineSend />

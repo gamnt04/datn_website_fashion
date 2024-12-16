@@ -11,6 +11,7 @@ import {
   getTop10ProductSale
 } from "../../../services/orderProduct";
 import {
+  GetAllOrdersSuccess,
   GetNew10OrderInDay,
   GetOrderBuyNumberOrNumberPhone
 } from "../../../_lib/Orders/order";
@@ -138,8 +139,16 @@ export const useSearchOrdersByNumberOrNumberPhone = (searchOrder: string) => {
 };
 export const use10NewOrderInDay = () => {
   const { data, ...rest } = useQuery({
-    queryKey: ["NewOrderInDay"],
+    queryKey: ["Order_Key"],
     queryFn: () => GetNew10OrderInDay()
+  });
+  return { data, ...rest };
+};
+
+export const useAllOrderSuccess = () => {
+  const { data, ...rest } = useQuery({
+    queryKey: ["AllOrdersSuccess"],
+    queryFn: () => GetAllOrdersSuccess()
   });
   return { data, ...rest };
 };

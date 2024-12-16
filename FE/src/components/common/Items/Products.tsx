@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Link } from "react-router-dom";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
@@ -68,6 +69,12 @@ const Products = ({ items }: any) => {
       }
     }
   }
+  let min_price_sale = 0;
+  let max_price_sale = 0;
+  if (items?.sale || items?.sale > 0) {
+    min_price_sale = min * (1 - items?.sale / 100);
+    max_price_sale = min * (1 - items?.sale / 100);
+  }
 
   return (
     <div
@@ -81,7 +88,7 @@ const Products = ({ items }: any) => {
           className="h-full cursor-pointer"
         >
           <div className="relative overflow-hidden border-b border-gray-300 rounded-t-xl">
-            <div className="w-full h-[250px] lg:h-[400px] relative">
+            <div className="w-full h-[200px] lg:h-[350px] relative">
               <img
                 className="w-full h-full object-cover rounded-t-xl bg-[#f3f3f3] transition-transform duration-200 ease-in-out transform hover:scale-110"
                 loading="lazy"
@@ -119,7 +126,7 @@ const Products = ({ items }: any) => {
             )}{" "}
           </div>
         </div>
-        <div className="flex flex-col h-[135px] items-center justify-between px-4 py-5 gap-y-3">
+        <div className="flex flex-col h-[165px] items-center px-4 py-5 gap-y-3">
           <Link
             onClick={ScrollTop}
             to={`/shops/${items?._id}`}
@@ -137,21 +144,41 @@ const Products = ({ items }: any) => {
                   })}
                 </span>
               ) : (
-                <>
-                  <span>
-                    {min?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </span>{" "}
-                  -
-                  <span>
-                    {max?.toLocaleString("vi", {
-                      style: "currency",
-                      currency: "VND",
-                    })}
-                  </span>
-                </>
+                <div className="flex flex-col gap-2 *:flex items-center">
+                  {
+                    items?.sale > 0 &&
+                    <div>
+                      <span>
+                        {min_price_sale?.toLocaleString("vi", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </span>{" "}
+                      -
+                      <span>
+                        {max_price_sale?.toLocaleString("vi", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </span>
+                    </div>
+                  }
+                  <div className={`${(items?.sale > 0) ? 'text-gray-500 line-through font-normal' : 'text-[#EB2606]'}`}>
+                    <span>
+                      {min?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </span>{" "}
+                    -
+                    <span>
+                      {max?.toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </span>
+                  </div>
+                </div>
               )}
             </div>
           ) : (

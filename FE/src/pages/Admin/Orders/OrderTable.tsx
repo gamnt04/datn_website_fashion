@@ -1,4 +1,4 @@
-import { message, Pagination, Popconfirm, Radio, Table, Tooltip } from "antd";
+import { message, Popconfirm, Radio, Table, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import { Ellipsis_horizontal } from "../../../components/common/Client/_component/Icons";
 import { IOrder } from "../../../common/interfaces/Orders";
@@ -14,8 +14,9 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   const dispathNotification = Mutation_Notification("Add");
   const [messageApi, contextHolder] = message.useMessage();
   const [selectedReason, setSelectedReason] = useState("");
-  const { mutate: xac_nhan, isPending: isConfirming } = useOrderMutations("UPDATE")
-  const { mutate: cancel, isPending: isCancelling } = useOrderMutations(
+  const { mutate: xac_nhan, isLoading: isConfirming } =
+    useOrderMutations("UPDATE");
+  const { mutate: cancel, isLoading: isCancelling } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
   const formatDate = (createdAt: any) => {
@@ -23,13 +24,13 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
     const date = new Date(createdAt);
     return date.toLocaleDateString();
   };
-  let order_1: any
+  let order_1: any;
   orders?.map((order: any) => {
-    order_1 = order
-  })
+    order_1 = order;
+  });
   const dataSort = orders?.map((order: any) => ({
     key: order._id,
-    ...order,
+    ...order
   }));
 
   const handleStatusUpdate = async (dataBody: any) => {
@@ -42,7 +43,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       userId: userId,
       receiver_id: order_1?.userId,
       message: message,
-      different: dataBody.id_order,
+      different: dataBody.id_order
     });
 
     try {
@@ -50,12 +51,12 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
 
       messageApi.open({
         type: "success",
-        content: `Xác nhận đơn hàng thành công!`,
+        content: `Xác nhận đơn hàng thành công!`
       });
     } catch (error) {
       messageApi.open({
         type: "error",
-        content: "Có lỗi xảy ra khi hủy đơn hàng!",
+        content: "Có lỗi xảy ra khi hủy đơn hàng!"
       });
     }
   };
@@ -72,22 +73,22 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       receiver_id: order_1?.userId,
       message: `Người bán đã hủy đơn ${dataBody?.numberOrder} với lí do ${dataBody?.cancellationReason}!`,
       different: dataBody?.id_item,
-      id_different: dataBody?.numberOrder,
+      id_different: dataBody?.numberOrder
     });
     cancel(dataBody, {
       onSuccess: () => {
         messageApi.open({
           type: "success",
-          content: `Đơn hàng ${dataBody?.numberOrder} đã được hủy thành công!`,
+          content: `Đơn hàng ${dataBody?.numberOrder} đã được hủy thành công!`
         });
       },
       onError: () => {
         messageApi.open({
           type: "error",
-          content: "Có lỗi xảy ra khi hủy đơn hàng!",
+          content: "Có lỗi xảy ra khi hủy đơn hàng!"
         });
       }
-    })
+    });
   }
   const createFilters = (order: IOrder[]) => {
     return order
@@ -98,9 +99,13 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
       )
       .map((orderNumber: string) => ({
         text: orderNumber,
-        value: orderNumber,
+        value: orderNumber
       }));
   };
+
+  // const onHandelExport = (orderId: number) => {
+  //   console.log("Xuất hóa đơn cho đơn hàng:", orderId);
+  // };
   const columns: ColumnType<IOrder>[] = [
     {
       title: "Mã đơn",
@@ -119,38 +124,42 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
         <Link to={`/admin/orders/${orders._id}`}>
           <p className="font-bold">{orders?.orderNumber}</p>
         </Link>
-
-      ),
+      )
     },
     {
       title: "Người Mua",
       dataIndex: "userName",
       key: "userName",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>,
+      render: (_: any, order: any) => <p>{order?.customerInfo?.userName}</p>
     },
     {
       title: "Số Điện Thoại",
       dataIndex: "phone",
       key: "phone",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>,
+      render: (_: any, order: any) => <p>{order?.customerInfo?.phone}</p>
     },
     {
       title: "Ngày Đặt",
       dataIndex: "datetime",
       key: "datetime",
-      render: (_: any, order: any) => <p>{formatDate(order?.createdAt)}</p>,
+      render: (_: any, order: any) => <p>{formatDate(order?.createdAt)}</p>
     },
     {
       title: "Hình Thức",
       dataIndex: "payment",
       key: "payment",
-      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>,
+      render: (_: any, order: any) => <p>{order?.customerInfo?.payment}</p>
     },
     {
       title: "Thanh toán",
       dataIndex: "thanhtoan",
       key: "thanhtoan",
-      render: (_: any, order: any) => order.status === "6" ? "Thanh toán thành công" : order.status === "5" ? "Thanh toán thất bại" : 'Chưa thanh toán',
+      render: (_: any, order: any) =>
+        order.status === "6"
+          ? "Thanh toán thành công"
+          : order.status === "5"
+            ? "Thanh toán thất bại"
+            : "Chưa thanh toán"
     },
     {
       title: "Trạng Thái",
@@ -182,8 +191,103 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
             )}
           </>
         );
-      },
+      }
     },
+    // {
+    //   dataIndex: "action",
+    //   key: "action",
+    //   title: "Thao Tác",
+    //   render: (_: any, orders: any) => {
+    //     return (
+    //       <>
+    //         <Tooltip
+    //           placement="left"
+    //           title={
+    //             <div className="flex flex-col space-y-2 m-2">
+    //               <Link to={`/admin/orders/${orders._id}`}>
+    //                 <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
+    //                   Xem chi tiết
+    //                 </button>
+    //               </Link>
+    //               {orders.status === "1" && (
+    //                 <>
+    //                   <Popconfirm
+    //                     title="Xác nhận đơn hàng?"
+    //                     description="Bạn có chắc chắn muốn xác nhận đơn hàng này?"
+    //                     onConfirm={() =>
+    //                       handleStatusUpdate({
+    //                         status: 2,
+    //                         code_order: orders?.orderNumber,
+    //                         id_item: orders?._id
+    //                       })
+    //                     }
+    //                     okText="Xác nhận"
+    //                     cancelText="Không"
+    //                     okButtonProps={{
+    //                       loading: isConfirming
+    //                     }}
+    //                   >
+    //                     <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
+    //                       Xác nhận
+    //                     </button>
+    //                   </Popconfirm>
+    //                   <Popconfirm
+    //                     title="Từ chối xác nhận?"
+    //                     description={
+    //                       <div>
+    //                         <p>Bạn có chắc chắn muốn hủy đơn hàng này?</p>
+    //                         <div>
+    //                           <p>Chọn lý do hủy:</p>
+    //                           <Radio.Group
+    //                             className="flex flex-col gap-2"
+    //                             onChange={(e) =>
+    //                               setSelectedReason(e.target.value)
+    //                             }
+    //                           >
+    //                             {reasons.map((reason, index) => (
+    //                               <Radio key={index} value={reason}>
+    //                                 {reason}
+    //                               </Radio>
+    //                             ))}
+    //                           </Radio.Group>
+    //                         </div>
+    //                       </div>
+    //                     }
+    //                     onConfirm={() => {
+    //                       if (!selectedReason) {
+    //                         messageApi.warning("Vui lòng chọn lý do hủy!");
+    //                         return;
+    //                       }
+    //                       huy_don({
+    //                         id_item: orders?._id,
+    //                         action: "huy",
+    //                         cancellationReason: selectedReason,
+    //                         numberOrder: orders?.orderNumber
+    //                       });
+    //                     }}
+    //                     okText="Từ chối"
+    //                     cancelText="Không"
+    //                     okButtonProps={{
+    //                       loading: isCancelling
+    //                     }}
+    //                   >
+    //                     <button className="w-auto p-3 bg-red-500 rounded text-white">
+    //                       Từ chối
+    //                     </button>
+    //                   </Popconfirm>
+    //                 </>
+    //               )}
+    //             </div>
+    //           }
+    //         >
+    //           <span className="flex justify-center cursor-pointer">
+    //             <Ellipsis_horizontal />
+    //           </span>
+    //         </Tooltip>
+    //       </>
+    //     );
+    //   }
+    // },
     {
       dataIndex: "action",
       key: "action",
@@ -193,13 +297,14 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
           <>
             <Tooltip
               placement="left"
-
               title={
-                <div className="flex flex-col space-y-2 m-2">
+                <div className="flex flex-col space-y-2 m-2 w-50">
                   <Link to={`/admin/orders/${orders._id}`}>
-                    <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">Xem chi tiết</button>
+                    <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
+                      Xem chi tiết
+                    </button>
                   </Link>
-                  {orders.status === "1" &&
+                  {orders.status === "1" && (
                     <>
                       <Popconfirm
                         title="Xác nhận đơn hàng?"
@@ -208,13 +313,13 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                           handleStatusUpdate({
                             status: 2,
                             code_order: orders?.orderNumber,
-                            id_item: orders?._id,
+                            id_item: orders?._id
                           })
                         }
                         okText="Xác nhận"
                         cancelText="Không"
                         okButtonProps={{
-                          loading: isConfirming,
+                          loading: isConfirming
                         }}
                       >
                         <button className="w-auto p-3 bg-[#1B7EE2] rounded text-white">
@@ -230,7 +335,9 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                               <p>Chọn lý do hủy:</p>
                               <Radio.Group
                                 className="flex flex-col gap-2"
-                                onChange={(e) => setSelectedReason(e.target.value)}
+                                onChange={(e) =>
+                                  setSelectedReason(e.target.value)
+                                }
                               >
                                 {reasons.map((reason, index) => (
                                   <Radio key={index} value={reason}>
@@ -250,21 +357,40 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
                             id_item: orders?._id,
                             action: "huy",
                             cancellationReason: selectedReason,
-                            numberOrder: orders?.orderNumber,
+                            numberOrder: orders?.orderNumber
                           });
                         }}
                         okText="Từ chối"
                         cancelText="Không"
                         okButtonProps={{
-                          loading: isCancelling,
+                          loading: isCancelling
                         }}
                       >
                         <button className="w-auto p-3 bg-red-500 rounded text-white">
                           Từ chối
                         </button>
                       </Popconfirm>
-                    </>}
-
+                    </>
+                  )}
+                  {/* {orders.status === "6" && (
+                    <>
+                      {" "}
+                      <Popconfirm
+                        title="Xuất hóa đơn "
+                        description="Bạn có chắc chắn muốn xuất hóa đơn ra file pdf không ? "
+                        onConfirm={() => {
+                          onHandelExport(orders.orderNumber);
+                        }}
+                        // onCancel={cancel}
+                        okText="Có "
+                        cancelText="Không"
+                      >
+                        <button className="w-auto p-3 bg-green-500 rounded text-white">
+                          Xuất hóa đơn
+                        </button>
+                      </Popconfirm>
+                    </>
+                  )} */}
                 </div>
               }
             >
@@ -273,23 +399,22 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
               </span>
             </Tooltip>
           </>
-        )
-      },
-    },
+        );
+      }
+    }
   ];
 
   return (
     <div className="">
       {contextHolder}
-      <Table columns={columns} dataSource={dataSort} pagination={false} />
-      <div className="flex justify-between items-center mt-4">
-        <Pagination
-          current={currentPage}
-          pageSize={10}
-          total={totalPages * 10}
-          onChange={goToPage}
-        />
-      </div>
+      <Table columns={columns} dataSource={dataSort} pagination={{
+        current: currentPage,
+        pageSize: 10,
+        total: totalPages * 10,
+        onChange: goToPage,
+        showSizeChanger: false,
+        style: { display: 'flex', justifyContent: 'center' }
+      }} />
     </div>
   );
 };

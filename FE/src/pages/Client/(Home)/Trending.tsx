@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
 import Products from "../../../components/common/Items/Products";
-import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import { Query_Products } from "../../../common/hooks/Products/Products";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin, Carousel } from "antd";
@@ -48,7 +46,7 @@ const Trending_Products = () => {
                 dots={true}
                 autoplaySpeed={2000}
                 arrows={true}
-                className="py-4 px-1"
+                className="px-1 py-4"
                 slidesToShow={4}
                 centerMode={false}
                 infinite={true}
@@ -63,15 +61,6 @@ const Trending_Products = () => {
               </Carousel>
             </div>
           )}
-          <div className="flex items-center justify-center mx-auto py-2 w-[130px] rounded hover:bg-gray-50 duration-200 hover:text-black border border-black bg-black cursor-pointer text-white">
-            <Link
-              onClick={ScrollTop}
-              className="text-[16px] font-bold"
-              to={"/shops"}
-            >
-              Xem thêm
-            </Link>
-          </div>
         </>
       )}
     </div>

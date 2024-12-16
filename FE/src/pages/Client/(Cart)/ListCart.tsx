@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingOutlined } from "@ant-design/icons";
 import {
-  Button,
   Checkbox,
   Input,
   message,
   Popconfirm,
   Spin,
   Table,
-  TableProps
+  TableProps,
 } from "antd";
 import { useEffect, useState } from "react";
-import { FaDeleteLeft } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
@@ -22,6 +20,8 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
+import { Trash2 } from "lucide-react";
+import { io } from "socket.io-client";
 
 interface DataType {
   key: string;
@@ -32,37 +32,47 @@ interface DataType {
 }
 
 const ListCart = () => {
+  const socket = io("http://localhost:2004");
   const routing = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
-  const { data, isPending, isError, error } = List_Cart(userId);
+  const { data, isLoading, isError, error } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
-  const { mutate: handle_status_checked, isPending: loading_btn_checkked } = Mutation_Cart(
-    "HANLDE_STATUS_CHECKED"
-  );
-  const { mutate: updateQuantity } = Mutation_Cart("UPDATEQUANTITY");
-  // useEffect(() => {
-  //   sessionStorage.setItem("totalPriceCart", JSON.stringify(data?.total_price));
-  // }, [data?.total_price]);
+  const { mutate: handle_status_checked, isLoading: loading_btn_checkked } =
+    Mutation_Cart("HANLDE_STATUS_CHECKED");
+  useEffect(() => {
+    socket.on("connect_error", () => {
+      socket.disconnect();
+    });
+  }, [socket]);
+  useEffect(() => {
+    const socket = io("http://localhost:2004");
+    socket.on("lay_thong_tin_san_pham_xoa", (data: any) => {
+      console.log(data);
+      window.alert(data);
+    });
+  }, []);
+  const { mutate: updateQuantity, isLoading: loading_update_quantity } =
+    Mutation_Cart("UPDATEQUANTITY");
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [inputValue, setInputValue] = useState<number | null>(null);
+  const [inputValue, setInputValue] = useState<any>(0);
   const remove_item = (item: any) => {
     const data_item = {
       userId: userId,
-      id: item?._id
+      id: item?._id,
     };
     removeSingle(data_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công"
+      content: "Xóa thành công",
     });
   };
 
   const handleRemoveMultiple = () => {
     const product_item = {
-      userId: userId
+      userId: userId,
     };
     const data_cart = dataSort?.filter(
       (item: any) => item?.status_checked && item
@@ -70,14 +80,14 @@ const ListCart = () => {
     if (data_cart.length === 0) {
       messageApi.open({
         type: "warning",
-        content: "Vui lòng chọn sản phẩm để xóa!"
+        content: "Vui lòng chọn sản phẩm để xóa!",
       });
       return;
     }
     removeMultiple(product_item);
     messageApi.open({
       type: "success",
-      content: "Xóa thành công"
+      content: "Xóa thành công",
     });
   };
 
@@ -86,7 +96,7 @@ const ListCart = () => {
       userId: userId,
       productId: productId,
       color: color,
-      size: size
+      size: size,
     };
     handle_status_checked(item_client);
   };
@@ -96,26 +106,53 @@ const ListCart = () => {
     setInputValue(quantity);
   };
 
-  const handleBlur = (product: any) => {
+  const handleBlur = (product: any, item: any) => {
+    const check_color = item?.productId?.attributes?.values?.find(
+      (a: any) => a?.color === item?.color_item
+    );
+    const check_size = check_color?.size?.find(
+      (b: any) =>
+        (b?.name_size?.trim() ? b?.name_size : undefined) === item?.name_size
+    );
+    // (inputValue > check_size?.stock_attribute) && setInputValue(check_size?.stock_attribute)
     if (inputValue !== product?.quantity) {
+      if (inputValue > check_size?.stock_attribute) {
+        messageApi.destroy();
+        messageApi.open({
+          type: "error",
+          content: `Số lượng sản phẩm được mua là ${check_size?.stock_attribute}`,
+        });
+        setInputValue(check_size?.stock_attribute);
+      }
       updateQuantity({
         userId: userId,
         productId: product?._id,
-        quantity: inputValue
+        quantity:
+          inputValue > check_size?.stock_attribute
+            ? check_size?.stock_attribute
+            : inputValue,
       });
     }
-
-    setEditingProductId(null);
-    setInputValue(null);
   };
   const dataSort = data?.products?.filter(
     (product: any) =>
       product?.productId?._id && {
         key: product?.productId?._id,
-        ...product
+        ...product,
       }
   );
-
+  const handleQuantityChange = (e: any) => {
+    const value: any = e?.target?.value;
+    if (!isNaN(value) && value.trim() !== "") {
+      setInputValue(Number(value));
+    } else {
+      messageApi.destroy();
+      messageApi.open({
+        type: "error",
+        content: "Vui lòng nhập số hợp lệ!",
+      });
+    }
+  };
   const columns: TableProps<DataType>["columns"] = [
     {
       key: "checkbox",
@@ -133,7 +170,7 @@ const ListCart = () => {
             }
           ></Checkbox>
         );
-      }
+      },
     },
     {
       key: "image",
@@ -149,7 +186,7 @@ const ListCart = () => {
             />
           </Link>
         );
-      }
+      },
     },
     {
       title: "Sản phẩm",
@@ -168,7 +205,7 @@ const ListCart = () => {
             {product?.color_item} - {product?.name_size}
           </p>
         </>
-      )
+      ),
     },
     {
       title: "Đơn giá",
@@ -179,11 +216,11 @@ const ListCart = () => {
           <div className="font-medium">
             {product?.price_item.toLocaleString("vi", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </div>
         );
-      }
+      },
     },
     {
       key: "quantity",
@@ -197,14 +234,14 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size
+                size: product?.name_size,
               }}
             />
             {editingProductId === product?.productId ? (
               <Input
                 value={inputValue}
-                onChange={(e) => setInputValue(Number(e.target.value))}
-                onBlur={() => handleBlur(product?.productId)}
+                onChange={(e) => handleQuantityChange(e)}
+                onBlur={() => handleBlur(product?.productId, product)}
                 className="px-0 text-center !max-w-20"
               />
             ) : (
@@ -221,12 +258,12 @@ const ListCart = () => {
                 id_item: product?.productId,
                 quantity_item: product?.quantity,
                 color: product?.color_item,
-                size: product?.name_size
+                size: product?.name_size,
               }}
             />
           </div>
         );
-      }
+      },
     },
     {
       title: <span className="whitespace-nowrap">Tổng tiền</span>,
@@ -237,11 +274,11 @@ const ListCart = () => {
           <div className="font-medium">
             {(product?.total_price_item).toLocaleString("vi", {
               style: "currency",
-              currency: "VND"
+              currency: "VND",
             })}
           </div>
         );
-      }
+      },
     },
     {
       key: "action",
@@ -249,21 +286,24 @@ const ListCart = () => {
       render: (_: any, product: any) => {
         return (
           <div>
-            <Button danger className="w-[50px]">
-              <Popconfirm
-                title="Xóa sản phẩm khỏi giỏ hàng?"
-                description="Bạn có chắc chắn muốn xóa không?"
-                onConfirm={() => remove_item(product)}
-                okText="Có"
-                cancelText="Không"
-              >
-                <FaDeleteLeft style={{ fontSize: "24px" }} />
-              </Popconfirm>
-            </Button>
+            <Popconfirm
+              className="text-red-500 cursor-pointer opacity-75 hover:opacity-100 duration-200 h-6"
+              title="Xóa sản phẩm khỏi giỏ hàng?"
+              description={`Bạn có chắc chắn muốn xóa sản phẩm ${
+                product?.productId?.name_product?.length > 20
+                  ? product?.productId?.name_product?.slice(0, 20) + "..."
+                  : product?.productId?.name_product
+              } khỏi giỏ hàng không?`}
+              onConfirm={() => remove_item(product)}
+              okText="Có"
+              cancelText="Không"
+            >
+              <Trash2 />
+            </Popconfirm>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
   const item_order_checkked = data?.products?.filter(
     (value: any) => value?.status_checked
@@ -314,20 +354,32 @@ const ListCart = () => {
       if (data_cart.length === 0 || data?.total_price < 1) {
         messageApi.open({
           type: "warning",
-          content: "Vui lòng chọn sản phẩm trước khi thanh toán!"
+          content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
         });
         return null;
       }
+      const categories = data_cart
+        .map((item: any) => item?.productId?.category_id)
+        .filter((categoryId: any) => !!categoryId); // Lọc những giá trị không hợp lệ
+      console.log("thong tin từ giỏ hàng", categories);
+      console.log("Item Order Checked:", item_order_checkked);
+
       sessionStorage.setItem("item_order", JSON.stringify(data_cart));
+      sessionStorage.setItem(
+        "categories",
+        JSON.stringify([...new Set(categories)])
+      );
       routing("/cart/pay");
     } else {
       routing("/login");
     }
   }
-  if (isPending) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
   if (isError) {
     return <p>{error.message}</p>;
@@ -335,14 +387,15 @@ const ListCart = () => {
 
   return (
     <div className="max-w-[1440px] w-[95vw] mx-auto relative">
-      {
-        isPending || loading_btn_checkked &&
-        <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </div>
-      }
+      {isLoading ||
+        loading_btn_checkked ||
+        (loading_update_quantity && (
+          <div className="fixed grid place-items-center w-screen h-screen top-0 left-0 bg-[#33333333] z-[10]">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </div>
+        ))}
 
-      <div className="w-[95%] mx-[2.5%] mt-[70px]">
+      <div className="mt-10">
         {contextHolder}
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">
           <Link to={`/`} className="text-gray-500 hover:text-black">
@@ -354,18 +407,21 @@ const ListCart = () => {
         <>
           <div className="w-full md:mt-10 h-auto flex mb:flex-col md:flex-row gap-x-[5%] my-[30px] mb:gap-y-[30px] md:gap-y-0">
             <div className="md:w-[70%] mb:w-full w-full">
-              <Button danger className="w-[50px]">
+              {item_order_checkked?.length > 0 ? (
                 <Popconfirm
-                  className="text-red-500"
-                  title="Xóa sản phẩm khỏi giỏ hàng?"
+                  className="text-red-500 border rounded border-red-500 cursor-pointer mb-4 opacity-75 hover:opacity-100 duration-200"
+                  title={`Xóa ${item_order_checkked?.length} sản phẩm khỏi giỏ hàng?`}
                   description="Bạn có chắc chắn muốn xóa không?"
                   onConfirm={() => handleRemoveMultiple()}
                   okText="Có"
                   cancelText="Không"
                 >
-                  <FaDeleteLeft style={{ fontSize: "20px" }} />
+                  <Trash2 className="!w-10 p-1 h-8" />
                 </Popconfirm>
-              </Button>
+              ) : (
+                <Trash2 className="!w-10 p-1 h-8 text-red-500 border border-red-500 rounded opacity-75 cursor-not-allowed mb-4" />
+              )}
+
               <Table
                 columns={columns}
                 dataSource={dataSort}
@@ -373,45 +429,20 @@ const ListCart = () => {
               />
             </div>
 
-            <div className="md:w-[27%] bg-white flex flex-col shadow-sm text-sm text-black">
-              <div className="flex flex-col justify-between w-full h-[200px] border rounded-lg lg:p-6 mb:p-4">
-                <div>
-                  <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                    <strong>Tổng giá trị đơn hàng</strong>
-                    <p className="text-xl font-bold text-yellow-500">
-                      {totalPrice?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND"
-                      })}
-                    </p>
-                  </div>
-                  {/* <div className="flex flex-col py-5 my-5 border-y">
-                    <span className="mb-2 text-xs">Nhập mã giảm giá</span>
-                    <form className="border-2 md:h-[45px] mb:h-[35px] border-black rounded overflow-hidden grid grid-cols-[70%_30%] auto-row-full mb-5">
-                      <input
-                        className="px-4 outline-none"
-                        type="text"
-                        placeholder="Enter Code"
-                      />
-                      <button className="grid text-gray-100 bg-black place-items-center md:text-base mb:text-sm">
-                        Apply
-                      </button>
-                    </form>
-                  </div> */}
-                  <div className="my-2"></div>
-                  <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
-                    <strong>Cần thanh toán :</strong>
-                    <strong>
-                      {totalPrice?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND"
-                      })}
-                    </strong>
-                  </div>
+            <div className="md:w-[27%] bg-white flex flex-col text-sm text-black">
+              <div className="flex flex-col justify-between w-full h-[150px] border rounded lg:p-6 mb:p-4">
+                <div className="flex justify-between *:md:text-base *:mb:text-sm *:font-medium">
+                  <strong>Tổng giá trị đơn hàng</strong>
+                  <p className="text-xl font-bold text-yellow-500">
+                    {totalPrice?.toLocaleString("vi", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </p>
                 </div>
                 <button
                   onClick={next_order}
-                  className="px-4 py-3 mt-4 mr-5 font-semibold text-white duration-200 bg-black border border-black rounded hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+                  className="px-4 py-3 mr-5 text-white duration-200 bg-gray-800 border border-black rounded hover:bg-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
                 >
                   Tiến hành thanh toán
                 </button>

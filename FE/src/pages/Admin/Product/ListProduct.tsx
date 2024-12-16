@@ -18,7 +18,7 @@ const ListProduct = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { mutate } = Mutation_items("REMOVE_and_REMOVE_MULTIPLE");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const { data, isLoading, isError, error } = Query_Products_Dashboard(
+  const { data, isLoading, isError } = Query_Products_Dashboard(
     +(searchParams?.get("_page") || 1)
   );
 
@@ -31,18 +31,19 @@ const ListProduct = () => {
     const products = { productIds: selectedProductIds };
     mutate(products, {
       onSuccess: () => {
+        messageApi.destroy()
         messageApi.open({
           type: "success",
-          content: "Xóa thành công",
+          content: "Xóa thành công, bạn có thể khôi phục trong thùng rác!",
         });
         queryClient.invalidateQueries({
           queryKey: ["Product_Dashboard"],
         });
       },
-      onError: (error) => {
+      onError: (error: any) => {
         messageApi.open({
           type: "error",
-          content: error.message,
+          content: error?.message,
         });
       },
     });
@@ -70,7 +71,7 @@ const ListProduct = () => {
       </div>
     );
   }
-  if (isError) return <div>{error.message}</div>;
+  if (isError) return <div>Lỗi!!</div>;
   return (
     <CheckAuths roles={["admin"]}>
       <>
@@ -81,7 +82,7 @@ const ListProduct = () => {
             <h1 className="text-2xl font-semibold">Quản Lý Sản Phẩm</h1>{" "}
             <Link to="/admin/products/add">
               <Button className="px-[6px] h-[38px] text-[14px] font-semibold border-[#1976D2] text-[#1976D2]">
-                <AiOutlinePlus className="ml-[3px]" /> THÊM MỚI SẢN PHẨM
+                <AiOutlinePlus className="ml-[3px]" /> Thêm mới sản phẩm
               </Button>
             </Link>
           </div>
@@ -90,18 +91,25 @@ const ListProduct = () => {
             <div className="space-x-5">
               {/* <Checkbox className="ml-4" />
             <Button>Chọn tất cả (7)</Button> */}
-              <Popconfirm
-                title="Xóa sản phẩm "
-                description="Bạn có muốn xóa sản phẩm này không ?"
-                onConfirm={handleRemoveMultiple}
-                okText="Có"
-                cancelText="Không"
-              >
-                <Button danger>
-                  <DeleteOutlined style={{ fontSize: "24px" }} />
-                  Xóa sản phẩm đã chọn
-                </Button>
-              </Popconfirm>
+              {
+                selectedProductIds?.length > 0 ?
+                  <Popconfirm
+                    title="Xóa sản phẩm "
+                    description={`Bạn có muốn xóa ${selectedProductIds?.length} sản phẩm không?`}
+                    onConfirm={handleRemoveMultiple}
+                    okText="Có"
+                    cancelText="Không"
+                  >
+                    <Button danger>
+                      <DeleteOutlined style={{ fontSize: "24px" }} />
+                      Xóa sản phẩm đã chọn
+                    </Button>
+                  </Popconfirm> :
+                  <Button disabled>
+                    <DeleteOutlined style={{ fontSize: "24px" }} />
+                    Xóa sản phẩm đã chọn
+                  </Button>
+              }
             </div>
             <div className="flex space-x-5">
               <Input

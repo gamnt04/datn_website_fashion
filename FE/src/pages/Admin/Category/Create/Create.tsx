@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useCategoryMutation from "../../../../common/hooks/Category/useCategoryMutation";
 import { ICategory } from "../../../../common/interfaces/Category";
 import Message from "../../../../components/base/Message/Message";
 import { Input } from "../../../../components/ui/Input";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-
+import Loading from "../../../../components/base/Loading/Loading";
 const CreateComponent = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -18,8 +17,11 @@ const CreateComponent = () => {
     formState: { errors },
     watch,
   } = useForm<ICategory>();
-  const { onSubmit, isPending } = useCategoryMutation({
+  const { onSubmit, isLoading } = useCategoryMutation({
     action: "CREATE",
+    onSuccess: () => {
+      setShowMessage(true); // Hiển thị Message sau khi thêm thành công
+    },
   });
 
   const handleSubmitForm = async (data: ICategory | any) => {
@@ -34,10 +36,9 @@ const CreateComponent = () => {
         };
 
         await onSubmit(formData);
-        setShowMessage(true);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      message.error(error.message || "Đã xảy ra lỗi không xác định!");
     }
   };
 
@@ -62,94 +63,103 @@ const CreateComponent = () => {
     if (showMessage) {
       const timer = setTimeout(() => {
         setShowMessage(false);
-      }, 2000);
+      }, 2000); // Đóng thông báo sau 2 giây
       return () => clearTimeout(timer);
     }
   }, [showMessage]);
-  if (isPending) {
-    return <div className="flex justify-center items-center h-screen">
-      <Spin indicator={<LoadingOutlined spin />} size="large" />
-    </div>;
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </div>
+    );
   }
+
   return (
     <div>
-      <Message
-        message={"Thêm danh mục thành công !"}
-        timeout={2000}
-        openMessage={showMessage}
-        type={"success"}
-      />
-      <form onSubmit={handleSubmit(handleSubmitForm)}>
-        <div className="space-y-12">
-          <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-2xl font-semibold leading-7 text-gray-900 text-center">
-              Thêm danh mục
-            </h2>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 justify-center">
-              <div className="sm:col-span-6 flex justify-center">
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="name"
-                    className="block text-[16px] font-medium leading-6 text-gray-900"
-                  >
-                    Tên danh mục
-                  </label>
-                  <div className="mt-2">
-                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-lg">
-                      <Input
-                        type="text"
-                        placeholder="Nhập tên danh mục..."
-                        {...register("name_category", { required: true })}
-                      />
-                    </div>
-                    {errors.name_category && (
-                      <p className="text-red-600">
-                        Tên danh mục bắt buộc nhập!
-                      </p>
-                    )}
-                  </div>
-                  <label
-                    htmlFor="image_category"
-                    className="block text-[16px] font-medium leading-6 text-gray-900 mt-4"
-                  >
-                    Hình ảnh danh mục
-                  </label>
-                  <div className="mt-2 flex items-center">
-                    <div className="relative flex items-center">
-                      <div
-                        className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2 ${imagePreview ? "block" : "block"
-                          }`}
-                      >
-                        <span className="text-3xl text-gray-500">+</span>
-                      </div>
-                      {imagePreview && (
-                        <img
-                          src={imagePreview}
-                          alt="Image Preview"
-                          className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <form onSubmit={handleSubmit(handleSubmitForm)}>
+          <div className="space-y-12">
+            <div className="border-b border-gray-900/10 pb-12">
+              <h2 className="text-2xl font-semibold leading-7 text-gray-900 text-center">
+                Thêm danh mục
+              </h2>
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 justify-center">
+                <div className="sm:col-span-6 flex justify-center">
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-[16px] font-medium leading-6 text-gray-900"
+                    >
+                      Tên danh mục
+                    </label>
+                    <div className="mt-2">
+                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-lg">
+                        <Input
+                          type="text"
+                          placeholder="Nhập tên danh mục..."
+                          {...register("name_category", { required: true })}
                         />
+                      </div>
+                      {errors.name_category && (
+                        <p className="text-red-600">
+                          Tên danh mục bắt buộc nhập!
+                        </p>
                       )}
-                      <Input
-                        type="file"
-                        {...register("image_category", { required: true })}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
+                    </div>
+                    <label
+                      htmlFor="image_category"
+                      className="block text-[16px] font-medium leading-6 text-gray-900 mt-4"
+                    >
+                      Hình ảnh danh mục
+                    </label>
+                    <div className="mt-2 flex items-center">
+                      <div className="relative flex items-center">
+                        <div
+                          className={`flex items-center justify-center w-32 h-32 border border-gray-300 rounded-lg bg-gray-100 mr-2`}
+                        >
+                          <span className="text-3xl text-gray-500">+</span>
+                        </div>
+                        {imagePreview && (
+                          <img
+                            src={imagePreview}
+                            alt="Image Preview"
+                            className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
+                          />
+                        )}
+                        <Input
+                          type="file"
+                          {...register("image_category", { required: true })}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="mt-6 flex items-center justify-center gap-x-6">
-          <button
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            type="submit"
-          >
-            {isPending ? "Đang thêm" : "Xác nhận"}
-          </button>
-        </div>
-      </form>
+          <div className="mt-6 flex flex-col items-center gap-y-4">
+            {showMessage && (
+              <Message
+                message="Thêm danh mục thành công!"
+                type="success"
+                timeout={2000} // Tự động tắt sau 2 giây
+                openMessage={showMessage}
+              />
+            )}
+            <button
+              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              type="submit"
+            >
+              {isLoading ? "Đang thêm" : "Xác nhận"}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };

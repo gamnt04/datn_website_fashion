@@ -1,25 +1,36 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import ArrangeFilter from "./Filter/ArrangeFilter";
 import MenuShop from "./MenuShop";
 import Products_Shop from "./Products";
 
 const IndexShops = () => {
-  const navigate = useNavigate();
-  const [cate_id, setCategoryId] = useState<string[]>([]);
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
+
+  const [cate_id, setCategoryId] = useState<string[]>(
+    categoryFromUrl ? [categoryFromUrl] : []
+  );
   const [priceRanges, setPriceRanges] = useState<
     { min: number; max: number }[]
   >([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
+
+  // Thêm useEffect để lắng nghe thay đổi của URL
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setCategoryId([categoryFromUrl]);
+    }
+  }, [categoryFromUrl]);
 
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
-    navigate(`/shops?category=${id.join(",")}`);
   };
 
+  // Các hàm xử lý khác giữ nguyên
   const handlePriceChange = (priceRanges: { min: number; max: number }[]) => {
     setPriceRanges(priceRanges);
   };
@@ -67,8 +78,10 @@ const IndexShops = () => {
             toggleSize={toggleSize}
             resetSizeFilter={resetSizeFilter}
             onSizeChange={handleSizeChange}
+            selectedCategories={cate_id} // Pass cate_id here
           />
-          <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
+
+          <div className="mb:w-[95%] pb-8 xl:w-full mb:mx-[2.5%] xl:mx-0">
             <ArrangeFilter
               sortOption={sortOption}
               onSortChange={handleSortChange}

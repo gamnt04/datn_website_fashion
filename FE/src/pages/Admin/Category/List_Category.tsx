@@ -69,6 +69,16 @@ const List_Category: React.FC = () => {
       }
     },
     onSuccess: () => {
+      // Lấy tổng số mục sau khi xóa
+      const remainingItems = dataSource.length - 1;
+      const totalPages = Math.ceil(remainingItems / pageSize);
+
+      // Nếu không còn mục nào trên trang hiện tại và không phải trang đầu tiên, chuyển về trang trước đó
+      if (remainingItems <= (currentPage - 1) * pageSize && currentPage > 1) {
+        setCurrentPage((prevPage) => prevPage - 1);
+      }
+
+      // Hiển thị thông báo
       toast.success("Xóa danh mục thành công", {
         position: "top-right",
         autoClose: 3000,
@@ -78,6 +88,8 @@ const List_Category: React.FC = () => {
         draggable: true,
         theme: "light",
       });
+
+      // Làm mới dữ liệu
       refetch();
       queryClient.invalidateQueries({ queryKey: ["CATEGORY_KEY"] });
     },
@@ -156,11 +168,6 @@ const List_Category: React.FC = () => {
   };
 
   const columns: ColumnsType<ICategory> = [
-    {
-      key: "checkbox",
-      title: <Checkbox />,
-      render: (_: any, cate: ICategory) => <Checkbox />,
-    },
     {
       key: "image_category",
       title: "Ảnh Danh Mục",
@@ -246,7 +253,9 @@ const List_Category: React.FC = () => {
             {/* Nút Xóa */}
             <Popconfirm
               title={`Danh mục đang có ${category.product_count} sản phẩm. Bạn có muốn xóa không?`}
-              onConfirm={() => deleteCategory(category._id)}
+              onConfirm={() => {
+                deleteCategory(category._id);
+              }}
               okText="Có"
               cancelText="Không"
             >
@@ -335,7 +344,7 @@ const List_Category: React.FC = () => {
             <div className="flex items-center justify-between mt-4">
               <Pagination {...paginationProps} />
             </div>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
           </div>
         )}
       </>
