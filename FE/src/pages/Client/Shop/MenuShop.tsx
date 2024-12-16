@@ -5,6 +5,7 @@ import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
+import { Spin } from "antd";
 
 interface MenuShopProps {
   onCategorySelect: (ids: string[]) => void;
@@ -32,7 +33,13 @@ const MenuShop: React.FC<MenuShopProps> = ({
   const { data: categoryData } = useCategoryQuery();
   const { sizes, loading, error } = useAttributes();
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
   if (error) return <p>Error: {error}</p>;
 
   const handleCategoryChange = (selectedCategories: string[]) => {

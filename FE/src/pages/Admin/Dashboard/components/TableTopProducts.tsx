@@ -1,24 +1,29 @@
 import { Link } from "react-router-dom";
 import { useTop10ProductBestSale } from "../../../../common/hooks/Order/querry_Order";
 import ScrollTop from "../../../../common/hooks/Customers/ScrollTop";
+import { Spin } from "antd";
 
 const TableTopProducts = () => {
   const {
     data: top10ProductBestSale,
     isLoading,
-    error
+    error,
   } = useTop10ProductBestSale();
 
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
-      currency: "VND"
+      currency: "VND",
     }).format(amount);
   };
   // console.log("top10ProductBestSale", top10ProductBestSale);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   if (error) {
