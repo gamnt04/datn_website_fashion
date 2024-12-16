@@ -11,6 +11,7 @@ import ChartRevenueWeekly from "./components/ChartRevenueWeekly";
 import ChartUser from "./components/ChartUser";
 import TableOrder from "./components/TableOrder";
 import TableTopProducts from "./components/TableTopProducts";
+import { useNavigate } from "react-router-dom";
 
 const MainContent = () => {
   const { data: userData } = List_Auth("");
@@ -19,7 +20,7 @@ const MainContent = () => {
   const { data: productData, isLoading } = Query_All_Products();
   // console.log("productData", productData);
   console.log("datatest", productData?.data?.length);
-
+  const navigate = useNavigate();
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -70,7 +71,7 @@ const MainContent = () => {
             </div>
           </CardDataStats>
           <CardDataStats
-            title="Số Lượng Đơn Hàng"
+            title="Đơn Hàng"
             total={orderOfDayData?.length}
             rate="0.43%"
             levelUp
@@ -100,10 +101,12 @@ const MainContent = () => {
             </div>
           </CardDataStats>
           <CardDataStats
-            title="Số Lượng Sản Phẩm Bày Bán "
+            title="Sản Phẩm Bày Bán "
             total={productData?.data?.length}
             rate="0.43%"
             levelUp
+            onClick={() => navigate("/admin/products")} // Điều hướng khi nhấn vào
+            className="cursor-pointer"
           >
             <div className="fill-[#3C50E0] bg-[#EFF2F7] rounded-full flex justify-between items-center">
               <svg

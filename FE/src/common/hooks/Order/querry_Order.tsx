@@ -139,7 +139,7 @@ export const useSearchOrdersByNumberOrNumberPhone = (searchOrder: string) => {
 };
 export const use10NewOrderInDay = () => {
   const { data, ...rest } = useQuery({
-    queryKey: ["NewOrderInDay"],
+    queryKey: ["Order_Key"],
     queryFn: () => GetNew10OrderInDay()
   });
   return { data, ...rest };
