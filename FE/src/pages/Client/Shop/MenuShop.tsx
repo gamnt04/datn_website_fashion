@@ -1,7 +1,7 @@
 import React from "react";
 import CategoryFilter from "./Filter/CategoryFilter";
 import PriceFilter from "./Filter/PriceFilter";
-import ColorFilter from "./Filter/ColorFilter"; // Import ColorFilter
+import ColorFilter from "./Filter/ColorFilter";
 import SizeFilter from "./Filter/SizeFilter";
 import useAttributes from "../../../common/hooks/Attributes/useAttributesQuery";
 import { useCategoryQuery } from "../../../common/hooks/Category/useCategoryQuery";
@@ -15,8 +15,8 @@ interface MenuShopProps {
   toggleSize: (size: string) => void;
   resetSizeFilter: () => void;
   onSizeChange: (sizes: string[]) => void;
+  selectedCategories: string[]; // Thêm prop để nhận danh mục đã chọn
 }
-
 const MenuShop: React.FC<MenuShopProps> = ({
   onCategorySelect,
   onPriceChange,
@@ -26,6 +26,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
   toggleSize,
   resetSizeFilter,
   onSizeChange,
+  selectedCategories, // Nhận danh mục đã chọn từ cha
 }) => {
   const { data: categoryData } = useCategoryQuery();
   const { sizes, loading, error } = useAttributes();
@@ -38,9 +39,9 @@ const MenuShop: React.FC<MenuShopProps> = ({
   };
   const handleColorSearch = (color?: string) => {
     if (color) {
-      onColorChange([color]); 
+      onColorChange([color]);
     } else {
-      onColorChange([]); 
+      onColorChange([]);
     }
   };
 
@@ -51,6 +52,7 @@ const MenuShop: React.FC<MenuShopProps> = ({
         <CategoryFilter
           categories={categoryData || []}
           onCategorySelect={handleCategoryChange}
+          selectedCategories={selectedCategories || []}
         />
       </div>
 

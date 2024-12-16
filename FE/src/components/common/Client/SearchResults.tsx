@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Empty, Spin } from "antd";
+import { Empty, Pagination, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import MenuShop from "../../../pages/Client/Shop/MenuShop";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
@@ -35,14 +35,11 @@ const SearchResults = () => {
     priceRanges,
     selectedColors,
     selectedSizes,
+    currentPage,
+    itemsPerPage,
     sortOption
   );
 
-  const totalPages = results
-    ? Math.ceil(results.data.length / itemsPerPage)
-    : 1;
-  const hasMore = currentPage < totalPages;
-  // Hàm xử lý cho MenuShop
   const handleCategorySelect = (id: string[]) => {
     setCategoryId(id);
   };
@@ -72,6 +69,11 @@ const SearchResults = () => {
     setSortOption(value);
   };
   const resetSizeFilter = () => setSelectedSizes([]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const totalItems = results?.pagination.totalItems || 0;
 
   if (isLoading)
     return (
@@ -118,65 +120,21 @@ const SearchResults = () => {
             {results && results?.data.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
-                  {results?.data
-                    .slice(
-                      (currentPage - 1) * itemsPerPage,
-                      currentPage * itemsPerPage
-                    )
-                    .map((product: any) => (
-                      <Products key={product._id} items={product} />
-                    ))}
+                  {results?.data.map((product: any) => (
+                    <Products key={product._id} items={product} />
+                  ))}
                 </div>
 
-                {results.data.length > itemsPerPage && (
-                  <div className="flex flex-col items-center my-4">
-                    <div className="flex items-center mb-4 space-x-4">
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                        className={`px-4 py-2 border rounded-md ${
-                          currentPage === 1
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-blue-500 text-white hover:bg-blue-600"
-                        }`}
-                        disabled={currentPage === 1}
-                      >
-                        &#10094; Trang trước
-                      </button>
-                      <span className="text-lg font-semibold">
-                        Trang {currentPage}
-                      </span>
-                      <button
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                        className={`px-4 py-2 border rounded-md ${
-                          !hasMore
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-blue-500 text-white hover:bg-blue-600"
-                        }`}
-                        disabled={!hasMore}
-                      >
-                        Trang tiếp theo &#10095;
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap items-center space-x-2">
-                      {totalPages > 1 &&
-                        Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                          (page) => (
-                            <button
-                              key={page}
-                              onClick={() => setCurrentPage(page)}
-                              className={`px-4 py-2 border rounded-md ${
-                                currentPage === page
-                                  ? "bg-blue-500 text-white"
-                                  : "bg-gray-200 text-black hover:bg-gray-300"
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          )
-                        )}
-                    </div>
+                {/* Phân trang */}
+                {totalItems > 0 && (
+                  <div className="flex justify-center my-6">
+                    <Pagination
+                      current={currentPage}
+                      pageSize={itemsPerPage}
+                      total={totalItems}
+                      onChange={handlePageChange}
+                      showSizeChanger={false}
+                    />
                   </div>
                 )}
               </>

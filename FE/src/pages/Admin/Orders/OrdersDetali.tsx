@@ -388,6 +388,7 @@ const OrdersDetali = () => {
                 <h2 className="text-center font-semibold mb-4">
                   Thông tin Shipper đã chọn
                 </h2>
+                {status === 2 && (
                 <div className="flex items-center">
                   <img
                     src={data?.shipperId?.avatar}
@@ -413,6 +414,7 @@ const OrdersDetali = () => {
                     Bỏ chọn
                   </Button>
                 </div>
+                )}
               </div>
             )}
           </div>

@@ -78,7 +78,9 @@ const IndexShops = () => {
             toggleSize={toggleSize}
             resetSizeFilter={resetSizeFilter}
             onSizeChange={handleSizeChange}
+            selectedCategories={cate_id} // Pass cate_id here
           />
+
           <div className="mb:w-[95%] pb-8 xl:w-full mb:mx-[2.5%] xl:mx-0">
             <ArrangeFilter
               sortOption={sortOption}
