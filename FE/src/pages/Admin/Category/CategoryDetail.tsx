@@ -9,6 +9,7 @@ import { IProduct } from "../../../common/interfaces/Product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "../../../configs/axios";
 import { CheckAuths } from "../../../common/hooks/Auth/useAuthorization";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const CategoryDetail: React.FC = () => {
   const queryClient = useQueryClient();
@@ -119,7 +120,10 @@ const CategoryDetail: React.FC = () => {
                 okText="Yes"
                 cancelText="No"
               >
-                <Button danger>Xóa</Button>
+                <Button danger>
+                  {" "}
+                  <FaDeleteLeft />
+                </Button>
               </Popconfirm>
             </div>
           </>

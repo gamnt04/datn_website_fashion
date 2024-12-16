@@ -75,7 +75,7 @@ export const useFilteredProducts = (
   const updateURL = () => {
     const urlParams = new URLSearchParams();
 
-    if (query) urlParams.set("query", query);
+    if (query) urlParams.set("keyword", query);
     urlParams.set("page", page.toString());
     if (sortOption) urlParams.set("sort", sortOption);
     if (cate_id.length) urlParams.set("cate_id", cate_id.join(","));
