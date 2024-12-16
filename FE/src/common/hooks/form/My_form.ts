@@ -32,7 +32,7 @@ const useForm = ({ mode }: UseFormProps) => {
         setOldGalleryFiles(product?.gallery_product);
       }
     }
-  }, [mode]);
+  }, [mode, dataOneItem?.data?.product]);
 
   const { mutate, isLoading, isError, status_api } = Mutation_items(
     mode ? "EDIT" : "CREATE"

@@ -123,11 +123,6 @@ const ListVoucher = () => {
       key: "code_voucher",
     },
     {
-      title: "Số lượng ",
-      dataIndex: "quantity_voucher",
-      key: "quantity_voucher",
-    },
-    {
       key: "discountType",
       title: "Loại giảm giá",
       dataIndex: "discountType",
@@ -140,9 +135,19 @@ const ListVoucher = () => {
       ),
     },
     {
-      title: "Giá trị ",
+      title: "Giá trị mã",
       dataIndex: "discountValue",
       key: "discountValue",
+      render: (discountValue: number, record: IVoucher) =>
+        record.discountType === "percentage"
+          ? `${discountValue}%`
+          : `${discountValue.toLocaleString()} đ`,
+    },
+    {
+      title: "Giá trị đơn hàng tối thiểu",
+      dataIndex: "minimumSpend",
+      key: "minimumSpend",
+      render: (minimumSpend: number) => `${minimumSpend.toLocaleString()} đ`,
     },
     {
       title: "Thời gian bắt đầu",
@@ -213,7 +218,7 @@ const ListVoucher = () => {
               <div className="flex space-x-5">
                 <Input
                   className="w-[500px]"
-                  placeholder="Nhập tên danh mục để tìm kiếm..."
+                  placeholder="Nhập tên mã giảm giá để tìm kiếm..."
                   onChange={(e) => setSearchText(e.target.value)}
                 />
                 <Button type="primary">Tìm kiếm</Button>
@@ -258,11 +263,18 @@ const ListVoucher = () => {
               </p>
               <p>
                 <strong>Giá trị mã giảm giá:</strong>{" "}
-                {selectedVoucher.discountValue}
+                <strong>Giá trị mã giảm giá:</strong>{" "}
+                {selectedVoucher.discountType === "percentage"
+                  ? `${selectedVoucher.discountValue}%`
+                  : `${selectedVoucher.discountValue} đ`}
               </p>
               <p>
                 <strong>Giá trị giảm giá tối đa:</strong>{" "}
-                {selectedVoucher.maxDiscount}
+                {selectedVoucher.maxDiscount} đ
+              </p>
+              <p>
+                <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
+                {selectedVoucher.minimumSpend} đ
               </p>
               <hr className="my-3" />
               <p>
@@ -279,13 +291,10 @@ const ListVoucher = () => {
                 <strong>Danh mục sản phẩm áp dụng: </strong>{" "}
                 {getCategoryNames(selectedVoucher.appliedCategories)}
               </p>
-              <p>
-                <strong>Số tiền đơn hàng tối thiểu :</strong>{" "}
-                {selectedVoucher.minimumSpend} VND
-              </p>
+
               <hr className="my-3" />
               <p>
-                <strong>Giới hạn mã giảm giá: </strong>
+                <strong>Giới hạn mã giảm giá</strong>
               </p>
               <p>
                 <strong>Số lượng tạo:</strong>{" "}
@@ -320,7 +329,7 @@ const ListVoucher = () => {
               </p>
               <hr className="my-3" />
               <p>
-                <strong>Số lượng còn lại:</strong>
+                <strong>Số lượng còn lại: </strong>
                 {selectedVoucher.quantity_voucher - selectedVoucher.usedCount}
               </p>
               <p>

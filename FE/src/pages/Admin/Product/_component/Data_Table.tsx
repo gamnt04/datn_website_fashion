@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Checkbox, Popconfirm, Space } from "antd";
+import { Button, Checkbox, message, Popconfirm, Space } from "antd";
 import { ChevronUp } from "lucide-react";
 import { format } from "date-fns";
 import { FaEdit, FaRecycle } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { io } from 'socket.io-client';
 import { useEffect } from "react";
 
 export default function Data_Table({ dataProps }: any) {
+  const [messageApi, contextHolder] = message.useMessage();
   const socket = io('http://localhost:2004');
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -23,6 +24,7 @@ export default function Data_Table({ dataProps }: any) {
 
   return (
     <>
+      {contextHolder}
       <div className="grid text-gray-900 grid-cols-[20px_70px_180px_150px_200px_150px_150px_120px] gap-x-4 items-center justify-between p-4 text-sm whitespace-nowrap">
         <div></div>
         <span>Ảnh</span>
@@ -78,11 +80,17 @@ export default function Data_Table({ dataProps }: any) {
                   <Space>
                     <Button
                       type="primary"
-                      onClick={() =>
+                      onClick={() => {
+                        messageApi.destroy()
+                        messageApi.open({
+                          type: "success",
+                          content: `Đã khôi phục lại sản phẩm ${(data?.name_product?.length > 20 ? data?.name_product?.slice(0, 20) + '...' : data?.name_product)}!`,
+                        });
                         dataProps?.mutate({
                           action: "restore",
                           id_item: data._id,
                         })
+                      }
                       }
                     >
                       <FaRecycle />
@@ -91,7 +99,14 @@ export default function Data_Table({ dataProps }: any) {
                     <Popconfirm
                       title="Xóa vĩnh viễn sản phẩm"
                       description="Bạn chắc chắn muốn xóa vĩnh viễn sản phẩm này chứ?"
-                      onConfirm={() => dataProps?.mutate(data._id!)}
+                      onConfirm={() => {
+                        messageApi.destroy()
+                        messageApi.open({
+                          type: "success",
+                          content: "Xóa thành công!",
+                        });
+                        dataProps?.mutate(data._id!)
+                      }}
                       // onCancel={cancel}
                       okText="Yes"
                       cancelText="No"
@@ -111,6 +126,12 @@ export default function Data_Table({ dataProps }: any) {
                       description="Bạn có muốn xóa sản phẩm này không?"
                       onConfirm={() => {
                         socket.emit('gui_thong_tin_san_pham_xoa', data);
+                        messageApi.destroy()
+                        messageApi.open({
+                          type: "success",
+                          content: `Đã xóa sản phẩm ${(data?.name_product?.length > 20 ? data?.name_product?.slice(0, 20) + '...' : data?.name_product)}. Bạn có thể 
+                          khôi phục lại trong thùng rác!`,
+                        });
                         dataProps?.mutate({
                           id_item: data._id,
                           action: "remove",
@@ -130,80 +151,82 @@ export default function Data_Table({ dataProps }: any) {
               </div>
             </div>
             {/* options */}
-            {data?.attributes && (
-              <details
-                className="group [&_summary::-webkit-details-marker]:hidden"
-                open={true}
-              >
-                <summary className="flex cursor-pointer items-center justify-between px-4 py-1 w-[100px] mx-auto ">
-                  <span className="group-open:block hidden">Ẩn</span>
-                  <span className="group-open:hidden">Hiện</span>
-                  <span className="shrink-0 transition duration-300 group-open:-rotate-180">
-                    <ChevronUp className="h-4" />
-                  </span>
-                </summary>
-                {data?.attributes &&
-                  data?.attributes?.values?.map((item: any) =>
-                    item?.size?.map((value: any) => (
-                      <div
-                        key={value?._id}
-                        className="grid border-t duration-200 border-gray-300 gap-x-4 grid-cols-[180px_180px_180px_250px_100px_100px_150px_80px] 
+            {
+              data?.attributes && (
+                <details
+                  className="group [&_summary::-webkit-details-marker]:hidden"
+                  open={true}
+                >
+                  <summary className="flex cursor-pointer items-center justify-between px-4 py-1 w-[100px] mx-auto ">
+                    <span className="group-open:block hidden">Ẩn</span>
+                    <span className="group-open:hidden">Hiện</span>
+                    <span className="shrink-0 transition duration-300 group-open:-rotate-180">
+                      <ChevronUp className="h-4" />
+                    </span>
+                  </summary>
+                  {data?.attributes &&
+                    data?.attributes?.values?.map((item: any) =>
+                      item?.size?.map((value: any) => (
+                        <div
+                          key={value?._id}
+                          className="grid border-t duration-200 border-gray-300 gap-x-4 grid-cols-[180px_180px_180px_250px_100px_100px_150px_80px] 
                                                 items-center text-start justify-between py-4"
-                      >
-                        <div></div>
-                        {/* attributes */}
-                        <div className="flex gap-x-2 w-full">
-                          {(item?.symbol?.trim()) ? item?.symbol[0] === '#' ? <div style={{ background: item?.symbol }} className={`w-6 h-6 rounded`} /> :
-                            <img width={40} height={40} src={item?.symbol} /> : ''}
-                          <span className="line-clamp-3">{item?.color}</span>,
-                          <span className="line-clamp-3">
-                            {value?.name_size}
-                          </span>
-                        </div>
-                        {/* div giả */}
-                        <div></div>
-                        {/* price */}
-                        <div>
-                          <span className={`${data?.sale > 0 ? 'text-gray-500 line-through' : 'text-red-600'} line-clamp-1`}>
-                            {value?.price_attribute?.toLocaleString("vi", {
-                              style: "currency",
-                              currency: "VND",
-                            })}
-                          </span>
-                          {
-                            data?.sale > 0 &&
-                            <div className="flex items-center gap-x-3">
-                              <span className="line-clamp-1 text-red-600">
-                                {(value?.price_attribute * (1 - data?.sale / 100))?.toLocaleString("vi", {
-                                  style: "currency",
-                                  currency: "VND",
-                                })}
+                        >
+                          <div></div>
+                          {/* attributes */}
+                          <div className="flex gap-x-2 w-full">
+                            {(item?.symbol?.trim()) ? item?.symbol[0] === '#' ? <div style={{ background: item?.symbol }} className={`w-6 h-6 rounded`} /> :
+                              <img width={40} height={40} src={item?.symbol} /> : ''}
+                            <span className="line-clamp-3">{item?.color}</span>,
+                            <span className="line-clamp-3">
+                              {value?.name_size}
+                            </span>
+                          </div>
+                          {/* div giả */}
+                          <div></div>
+                          {/* price */}
+                          <div>
+                            <span className={`${data?.sale > 0 ? 'text-gray-500 line-through' : 'text-red-600'} line-clamp-1`}>
+                              {value?.price_attribute?.toLocaleString("vi", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
+                            </span>
+                            {
+                              data?.sale > 0 &&
+                              <div className="flex items-center gap-x-3">
+                                <span className="line-clamp-1 text-red-600">
+                                  {(value?.price_attribute * (1 - data?.sale / 100))?.toLocaleString("vi", {
+                                    style: "currency",
+                                    currency: "VND",
+                                  })}
+                                </span>
+                                {
+                                  data?.sale > 0 &&
+                                  <span className="text-sm font-normal text-gray-600 translate-y-[-10px]">-{data?.sale}%</span>
+                                }
+                              </div>
+                            }
+                          </div>
+                          {/* quantity */}
+                          <div>
+                            {value?.stock_attribute > 0 ? (
+                              <span className="line-clamp-2">
+                                {value?.stock_attribute}
                               </span>
-                              {
-                                data?.sale > 0 &&
-                                <span className="text-sm font-normal text-gray-600 translate-y-[-10px]">-{data?.sale}%</span>
-                              }
-                            </div>
-                          }
+                            ) : (
+                              <span className="line-clamp-2 text-red-500">
+                                Hết hàng!
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        {/* quantity */}
-                        <div>
-                          {value?.stock_attribute > 0 ? (
-                            <span className="line-clamp-2">
-                              {value?.stock_attribute}
-                            </span>
-                          ) : (
-                            <span className="line-clamp-2 text-red-500">
-                              Hết hàng!
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-              </details>
-            )}
-          </div>
+                      ))
+                    )}
+                </details>
+              )
+            }
+          </div >
         );
       })}
     </>

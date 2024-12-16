@@ -1,30 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ICategory } from "../../../../common/interfaces/Category";
 
 interface CategoryFilterProps {
   categories?: ICategory[];
   onCategorySelect: (ids: string[]) => void;
+  selectedCategories: string[]; // Thêm prop để nhận danh mục đã chọn
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories = [],
   onCategorySelect,
+  selectedCategories, // Nhận các danh mục đã chọn
 }) => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(true);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Đọc danh mục từ query parameter khi URL thay đổi
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl) {
+      const categoryIds = categoryFromUrl.split(",");
+      onCategorySelect(categoryIds); // Cập nhật danh mục đã chọn
+    }
+  }, [searchParams, onCategorySelect]);
 
   const handleCategoryToggle = (id: string) => {
-    setSelectedCategories((prev) => {
-      const updatedCategories = prev.includes(id)
-        ? prev.filter((catId) => catId !== id)
-        : [...prev, id];
+    const updatedCategories = selectedCategories.includes(id)
+      ? selectedCategories.filter((catId) => catId !== id)
+      : [...selectedCategories, id];
 
-      onCategorySelect(updatedCategories);
-      return updatedCategories;
-    });
+    onCategorySelect(updatedCategories); // Gọi callback với danh mục đã chọn
   };
-
-  // Lọc danh mục đã được công bố và không có tên là "Uncategorized"
   const visibleCategories = categories.filter(
     (category) =>
       category.published && category.name_category !== "Uncategorized"
@@ -34,7 +41,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     <div className="relative border border-gray-200">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full py-2 px-4 text-gray-900 rounded-md"
+        className="flex items-center justify-between w-full px-4 py-2 text-gray-900 rounded-md"
       >
         <strong className="font-semibold mb:text-sm lg:text-lg">
           Danh Mục
@@ -61,15 +68,15 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
       {isOpen && (
         <div className="w-full bg-white rounded-md">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
             {visibleCategories.length > 0 ? (
               visibleCategories.map((category) => (
                 <div key={category._id} className="flex items-center">
                   <input
                     type="checkbox"
                     id={category._id}
-                    checked={selectedCategories.includes(category._id)}
-                    onChange={() => handleCategoryToggle(category._id)}
+                    checked={selectedCategories.includes(category._id)} // Kiểm tra nếu danh mục đã được chọn
+                    onChange={() => handleCategoryToggle(category._id)} // Toggle checkbox state
                     className="mr-2"
                   />
                   <label htmlFor={category._id} className="text-gray-700">
