@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import Table_cpnt from "./table_cpnt";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useLocalStorage from "../../../../common/hooks/Storage/useStorage";
 import { Dispatch_thuoc_tinh, Lay_the_loai_thuoc_tinh, Lay_thuoc_tinh } from "../../../../API/Dispatch/slice_attribute";
 import { Button, Form, FormProps, Input, Spin, Upload } from "antd";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import Table_cpn from "./table_cpn";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadImage } from "../../../../systems/utils/uploadImage";
+import { AiFillBackward } from "react-icons/ai";
 
 export default function Attribute() {
   const [user] = useLocalStorage("user", {});
@@ -34,7 +35,7 @@ export default function Attribute() {
   };
   const onFinish: FormProps<any>['onFinish'] = async (values) => {
     if (data?.category_attribute === 'ux_image') {
-      setLoadingUpload(true)
+      setLoadingUpload(true);
       const imageUrl = await UploadImage(imageFile[0]);
       const data_request = {
         ten_thuoc_tinh: values?.ten_thuoc_tinh,
@@ -42,14 +43,14 @@ export default function Attribute() {
         id_account: user?.user?._id,
         symbol_thuoc_tinh: imageUrl
       }
+      setLoadingUpload(false)
       setValidate(false)
       if (!imageUrl) {
         setValidate(true)
       } else {
-        setLoadingUpload(false)
         mutate(data_request);
       }
-    } else {
+    } else if (data?.category_attribute === 'ux_color') {
       const data_request = {
         ten_thuoc_tinh: values?.ten_thuoc_tinh,
         the_loai_thuoc_tinh: data?.category_attribute,
@@ -62,6 +63,14 @@ export default function Attribute() {
       else {
         mutate(data_request);
       }
+    } else {
+      const data_request = {
+        ten_thuoc_tinh: values?.ten_thuoc_tinh,
+        the_loai_thuoc_tinh: data?.category_attribute,
+        id_account: user?.user?._id,
+        symbol_thuoc_tinh: ''
+      }
+      mutate(data_request);
     }
   };
 
@@ -75,18 +84,42 @@ export default function Attribute() {
   return (
     <div className="px-10 pt-5">
       {
-        loading || isLoading || loadingUpload || loading_2 && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+        loading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         </div>
       }
-      <span className="text-xl font-semibold">Thuộc tính {data?.name_attribute}</span>
+      {
+        isLoading && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+      {
+        loadingUpload && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+      {
+        loading_2 && <div className="fixed bg-[#33333333] top-0 left-0 w-screen h-screen z-10 grid place-items-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      }
+
+      <div className="flex justify-between items-center mb-8">
+        <span className="text-xl font-semibold">Thuộc tính {data?.name_attribute}</span>
+        <Link to="/admin/products/the_loai_thuoc_tinh">
+          <Button type="primary">
+            <AiFillBackward /> Quay lại
+          </Button>
+        </Link>
+      </div>
+
       <section className="grid grid-cols-[35%_60%] justify-between">
         {/* cot trai */}
         <div className="mt-10">
           <div className="mb-3 text-lg">Thêm mới {data?.name_attribute}</div>
           <Form
             name="basic"
-            initialValues={{ remember: true }}
+            initialValues={{}}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
@@ -128,6 +161,7 @@ export default function Attribute() {
               </Upload>
             }
             {
+              (data?.category_attribute === 'ux_color' || data?.category_attribute === 'ux_image') &&
               validate && <div className="text-red-500 text-sm mt-2">Vui lòng chọn</div>
             }
             {

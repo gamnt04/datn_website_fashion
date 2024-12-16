@@ -1,20 +1,16 @@
 import {
   LeftOutlined,
   LoadingOutlined,
-  UploadOutlined
 } from "@ant-design/icons";
 import {
   Button,
-  Form,
   message,
-  Modal,
   Popconfirm,
   Radio,
   Spin,
   Table,
-  Upload
+
 } from "antd";
-import { UploadFile } from "antd/es/upload/interface";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -27,7 +23,6 @@ import { Mutation_Shipper } from "../../../common/hooks/Shipper/mutation_shipper
 import { useListAllShipper } from "../../../common/hooks/Shipper/querry_shipper";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import instance from "../../../configs/axios";
-import { UploadImage } from "../../../systems/utils/uploadImage";
 import Status_order from "./Status_order";
 const OrdersDetali = () => {
   const [user] = useLocalStorage("user", {});
@@ -37,26 +32,19 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch, isLoading } = Query_Orders(id);
-  console.log(data);
-
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
   const { mutate: cancel } = useOrderMutations(
     "REQUEST_CANCEL_or_CANCEL_PRODUCT_or_COMPLETED_PRODUCT"
   );
-
-  const { mutate: failDelivery } = useOrderMutations("FAIL_DELIVERY");
-  const [isDeliverSuccessModalVisible, setDeliverSuccessModalVisible] =
-    useState(false);
-  const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [orderId, setOrderId] = useState<string | null>(null);
   const { mutate: AddShipper } = Mutation_Shipper("ADD");
   const { data: shipperData } = useListAllShipper();
   const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
+  const [selectedShipperInfo, setSelectedShipperInfo] = useState<any>(null);
   const handleSelectShipper = (shipperId: string) => {
     setSelectedShipper(shipperId);
+    setSelectedShipperInfo(shipperId)
     if (!id) return;
     AddShipper(
       { orderId: id, shipperId },
@@ -72,12 +60,10 @@ const OrdersDetali = () => {
     );
   };
   const handleDeselectShipper = () => {
-    setSelectedShipper(null);
-    messageApi.info("Đã bỏ chọn shipper.");
-    // Thực hiện các xử lý khác nếu cần
+    setSelectedShipperInfo(null)
+    messageApi.success("Đã bỏ chọn shipper.");
   };
 
-  // Kiểm tra dữ liệu shipper
   if (!shipperData || !shipperData.shippers || !shipperData.orders) {
     return <p>Shipper data is not available yet</p>;
   }
@@ -86,54 +72,14 @@ const OrdersDetali = () => {
       (order: any) =>
         order?.shipperId?._id === shipper?._id && order.status === "3"
     );
-    // Bao gồm lại shipper nếu shipper bị bỏ chọn
     const isCurrentlySelected = selectedShipper === shipper._id;
 
     return !shipperHasOngoingDelivery && !isCurrentlySelected;
   });
-
-  // if (availableShippers.length === 0) {
-  //   return <p>No available shippers</p>;
-  // }
   const calculateTotalProductPrice = () => {
     return data?.items.reduce((total: number, item: any) => {
       return total + item.price_item * item.quantity;
     }, 0);
-  };
-  const handleFileChange = ({ fileList }: { fileList: UploadFile<any>[] }) => {
-    setFileList(fileList.slice(-1));
-    if (fileList.length > 0) {
-      const file = fileList[0].originFileObj;
-      const previewUrl = URL.createObjectURL(file);
-      setPreviewImage(previewUrl); // Cập nhật ảnh preview
-    } else {
-      setPreviewImage(null);
-    }
-  };
-  const handleDeliverSuccess = async () => {
-    if (!orderId) {
-      console.error("Order ID is missing");
-      return;
-    }
-    const file = fileList.length > 0 ? fileList[0].originFileObj : null;
-    try {
-      let imageUrl = null;
-      if (file) {
-        imageUrl = await UploadImage(file);
-      }
-      await instance.post("/deliver-success", {
-        orderId,
-        confirmationImage: imageUrl
-      });
-      handleStatusUpdate(4, data?.orderNumber, data._id);
-      refetch();
-
-      messageApi.success("Đơn hàng đã được đánh dấu là giao hàng thành công.");
-      setDeliverSuccessModalVisible(false);
-    } catch (error) {
-      messageApi.error("Giao hàng thành công thất bại. Vui lòng thử lại.");
-      console.error("Failed to mark order as delivered", error);
-    }
   };
   function yeu_cau(dataBody: {
     id_item: string | number;
@@ -146,11 +92,10 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan"
-          ? "xác nhận"
-          : `Từ Chối:  ${dataBody?.cancellationReason}`
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan"
+        ? "xác nhận"
+        : `Từ Chối:  ${dataBody?.cancellationReason}`
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder
     });
@@ -171,34 +116,11 @@ const OrdersDetali = () => {
     });
     cancel(dataBody);
   }
-  const reason = [
-    "Người nhận không nghe máy",
-    "Hoàn hàng",
-    "Đơn hàng quá 3 ngày"
-  ];
+
   const reason1 = [
     "Đơn hàng đã được giao cho đơn vị vận chuyển",
     "Chúng tôi không thể đồng ý với yêu cầu của bạn"
   ];
-  function giao_hang_that_bai(dataBody: {
-    id_item: string | number;
-    numberOrder?: string | number;
-    action?: string;
-    cancellationReason?: string;
-    linkUri?: string | number;
-  }) {
-    dispathNotification?.mutate({
-      userId: userId,
-      receiver_id: data?.userId,
-      message: `Người giao hàng đã giao hàng đơn hàng  ${dataBody?.numberOrder} thất bại với lí do ${dataBody?.cancellationReason}!`,
-      different: dataBody?.id_item,
-      id_different: dataBody?.numberOrder
-    });
-    console.log(dataBody.cancellationReason);
-
-    failDelivery(dataBody);
-  }
-
   const handleStatusUpdate = async (
     status: number | string,
     code_order?: string | number,
@@ -209,14 +131,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : status === 6
-        ? `Đã giao đơn hàng ${code_order} thành công!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : status === 6
+                ? `Đã giao đơn hàng ${code_order} thành công!`
+                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -266,10 +188,12 @@ const OrdersDetali = () => {
       dataIndex: "name_product",
       key: "name_product",
       render: (_: any, item: any) => (
+        console.log(item),
+
         <div>
-          <p className="text-lg font-medium w-[80%]">
+          <Link to={`/admin/products/edit/${item?.productId?._id}`} className="text-lg font-medium w-[80%] text-black">
             {item?.productId?.name_product}
-          </p>
+          </Link>
           <p className=" mt-1 font-medium text-[#0000008A]">
             Loại: {item?.color_item} - {item?.name_size}
           </p>
@@ -311,6 +235,7 @@ const OrdersDetali = () => {
       )
     }
   ];
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -336,90 +261,102 @@ const OrdersDetali = () => {
             Chi Tiết Đơn Hàng
           </h1>
         </div>
-        <div className="flex space-x-4 items-center justify-between">
-          <div className="w-1/2">
-            {data?.status == 2 && (
-              <div className="bg-white p-4 rounded shadow">
-                <h2 className="text-center font-semibold mb-4">Chọn Shipper</h2>
-                {availableShippers.length > 0 ? (
-                  availableShippers.map((shipper: any) => (
-                    <div key={shipper._id} className="my-4">
-                      <div className="flex items-center">
-                        <img
-                          src={shipper.avatar}
-                          alt="Shipper Avatar"
-                          className="w-14 h-14 rounded-lg object-cover mr-4"
-                        />
-                        <div className="flex-1 w-40 ">
-                          <p className="text-lg font-medium">
-                            {shipper.fullName}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            SDT: {shipper.phone} - Phương tiện:{" "}
-                            {shipper.vehicle || "Chưa cập nhật"}
-                          </p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Địa chỉ: {shipper.address || "Chưa cập nhật"}
-                          </p>
-                        </div>
-                        <Button
-                          onClick={() => handleSelectShipper(shipper._id)}
-                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${
-                            selectedShipper === shipper._id
-                              ? "bg-green-500"
-                              : ""
-                          }`}
-                        >
-                          {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
-                        </Button>
-                      </div>
+        <div className="my-6 shadow  rounded">
+          {data?.status === "2" && (
+            <div className="bg-white p-4 rounded shadow">
+              {selectedShipperInfo ? (
+                <div>
+                  <h2 className="text-center font-semibold mb-4">Thông tin người giao hàng</h2>
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={selectedShipperInfo.avatar}
+                      alt="Shipper Avatar"
+                      className="w-14 h-14 rounded-lg object-cover mr-4"
+                    />
+                    <div className="flex-1">
+                      <p className="text-lg text-gray-500">Tên: <strong className="text-black">{selectedShipperInfo.fullName}</strong></p>
+                      <p className="text-sm text-gray-500 py-1"> SDT: {selectedShipperInfo.phone}</p>
+                      <p className="text-sm text-gray-500 py-1">Phương tiện: {selectedShipperInfo.vehicle || "Chưa cập nhật"}</p>
+                      <p className="text-sm text-gray-500 mt-1">Địa chỉ: {selectedShipperInfo.address || "Chưa cập nhật"}</p>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-center text-red-500">
-                    Hiện shipper đang không đủ, vui lòng đợi!
-                  </p>
-                )}
-              </div>
-            )}
-
-            {data?.status >= 2 && selectedShipper && (
-              <div className="bg-white p-4 rounded shadow-md mt-4">
-                <h2 className="text-center font-semibold mb-4">
-                  Thông tin Shipper đã chọn
-                </h2>
-                {status === 2 && (
-                <div className="flex items-center">
-                  <img
-                    src={data?.shipperId?.avatar}
-                    alt="Shipper Avatar"
-                    className="w-12 h-12 rounded-full object-cover mr-4"
-                  />
-                  <div className="flex-1 ">
-                    <p className="text-lg font-medium">
-                      {data?.shipperId?.fullName}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      SDT: {data?.shipperId?.phone} - Phương tiện :{" "}
-                      {data?.shipperId?.vehicle || "Chưa cập nhật"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Địa chỉ: {data?.shipperId?.address || "Chưa cập nhật"}
-                    </p>
+                    <Button
+                      onClick={handleDeselectShipper}
+                      className="!bg-red-500 !text-white px-4 py-5 rounded !border-none"
+                    >
+                      Bỏ chọn
+                    </Button>
                   </div>
-                  <Button
-                    onClick={handleDeselectShipper}
-                    className="!bg-red-500 !text-white px-4 py-4 rounded hover:bg-red-600"
-                  >
-                    Bỏ chọn
-                  </Button>
                 </div>
-                )}
-              </div>
-            )}
-          </div>
+              ) : (
+                <>
+                  <h2 className="text-center font-semibold mb-4">Người giao hàng</h2>
+                  {availableShippers.length > 0 ? (
+                    availableShippers.map((shipper: any) => (
+                      <div key={shipper._id} className="my-4">
+                        <div className="flex items-center">
+                          <img
+                            src={shipper.avatar}
+                            alt="Shipper Avatar"
+                            className="w-14 h-14 rounded-lg object-cover mr-4"
+                          />
+                          <div className="flex-1 w-40 ">
+                            <p className="text-lg font-medium">{shipper.fullName}</p>
+                            <p className="text-sm text-gray-500">
+                              SDT: {shipper.phone} - Phương tiện:{" "}
+                              {shipper.vehicle || "Chưa cập nhật"}
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              Địa chỉ: {shipper.address || "Chưa cập nhật"}
+                            </p>
+                          </div>
+                          <Button
+                            onClick={() => handleSelectShipper(shipper)}
+                            className={`!bg-blue-500 !text-white px-4 py-5 rounded hover:bg-blue-600 ${selectedShipper === shipper._id ? "bg-green-500" : ""
+                              }`}
+                          >
+                            Chọn
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-red-500">
+                      Hiện shipper đang không đủ, vui lòng đợi!
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          )}
 
-          <div className="shadow rounded bg-white w-1/2">
+          {data?.status >= 3 && (
+            <div className="bg-white p-4 rounded shadow-md mt-4">
+              <h2 className="text-center font-semibold mb-4">
+                Thông tin người giao hàng
+              </h2>
+              <div className="flex items-center space-x-3">
+                <img
+                  src={data?.shipperId?.avatar}
+                  alt="Shipper Avatar"
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div className="flex-1">
+                  <p className="text-lg font-medium">Tên: <strong>{data?.shipperId?.fullName}</strong></p>
+                  <p className="text-sm text-gray-500">SDT: {data?.shipperId?.phone}</p>
+                  <p className="text-sm text-gray-500 py-1">Phương tiện: {data?.shipperId?.vehicle || "Chưa cập nhật"}</p>
+                  <p className="text-sm text-gray-500">
+                    Địa chỉ: {data?.shipperId?.address || "Chưa cập nhật"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+        <div className="my-6 shadow  rounded">
+
+
+          <div className="shadow rounded bg-white ">
             <div className="p-4 text-center text-black font-semibold">
               Trạng thái đơn hàng
             </div>
@@ -429,44 +366,26 @@ const OrdersDetali = () => {
         <div className="overflow-x-auto my-6 shadow  rounded">
           <Table columns={columns} dataSource={dataSort} pagination={false} />
           <div className="bg-white divide-y divide-gray-200">
-            {/* <div className="flex justify-between py-4">
-                        <p>Đơn vị vận chuyển</p>
-                        <p>Giao hàng tiết kiệm: 20000 đ</p>
-                    </div> */}
-            {/* <div className="flex gap-8 py-4">
-                        <span className="flex gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                                className="lucide lucide-ticket text-orange-300">
-                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                                <path d="M13 5v2" /><path d="M13 17v2" /><path d="M13 11v2" />
-                            </svg>
-                            <p>Voucher</p>
-                        </span>
-                        <p>Mã voucher:</p>
-                    </div> */}
-            <p className="flex justify-end items-end p-4 text-[#0000008A]">
-              Tổng số tiền :
-              <span className="text-[#ee4d2d] pl-2 text-xl">
-                {" "}
-                <p>
-                  {calculateTotalProductPrice()?.toLocaleString("vi", {
-                    style: "currency",
-                    currency: "VND"
-                  })}
-                </p>
-              </span>
-            </p>
           </div>
         </div>
         <div className="bg-white overflow-x-auto my-6 shadow p-4 rounded">
-          <div className=" flex items-center gap-4  border-b pb-4">
-            <p className="text-black font-semibold">Phương thức thanh toán</p>
-            <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
-              {data?.status == 6
-                ? "Đã thanh toán khi nhận hàng"
-                : data?.customerInfo?.payment}
-            </p>
+          <div className=" flex items-center justify-between  gap-4  border-b pb-4">
+            <div className="flex items-center space-x-4">
+              <p className="text-black font-semibold">Phương thức thanh toán</p>
+              <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
+                {data?.status == 6
+                  ? "Đã thanh toán khi nhận hàng"
+                  : data?.customerInfo?.payment}
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <p className="text-black font-semibold">Trạng thái thanh toán</p>
+              <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
+                {data?.status == 6
+                  ? "Thanh toán thành công" : data?.status == 5 ? "Thanh toán thất bại"
+                    : "Chưa thanh toán"}
+              </p>
+            </div>
           </div>
           <div className="flex justify-between my-4">
             <div className="flex gap-6">
@@ -513,10 +432,7 @@ const OrdersDetali = () => {
                 <p className="flex justify-between items-center space-x-2 py-2 text-gray-600">
                   <span className="font-semibold">Phí vận chuyển:</span>
                   <span>:</span>
-                  {/* <span>{data?.delivery_fee?.toLocaleString("vi", {
-                    style: "currency",
-                    currency: "VND",
-                  })}</span> */}
+
                 </p>
                 <p className="flex justify-between items-center space-x-2 py-2 text-gray-600">
                   <span className="font-semibold">Voucher giảm giá</span>
@@ -546,9 +462,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND"
-                      })} `
+                      style: "currency",
+                      currency: "VND"
+                    })} `
                     : "0đ"}
                 </p>
 
@@ -711,64 +627,15 @@ const OrdersDetali = () => {
                 <Button
                   className="w-52 bg-blue-500 rounded text-white"
                   type="primary"
-                  onClick={() => {
-                    setOrderId(data._id);
-                    setDeliverSuccessModalVisible(true);
-                  }}
-                  disabled={role !== "courier"}
-                >
+                  disabled>
                   Giao Hàng Thành Công
                 </Button>
-
-                <Popconfirm
-                  title="Xác nhận giao hàng thất bại?"
-                  description={
-                    <div>
-                      <p>
-                        Bạn có chắc chắn muốn xác nhận đơn hàng này thất bại ko?
-                      </p>
-                      <div>
-                        <p>Chọn lý do giao hàng thất bại:</p>
-                        <Radio.Group
-                          className="flex flex-col gap-2"
-                          onChange={(e) => setSelectedReason(e.target.value)}
-                          disabled={role !== "courier"}
-                        >
-                          {reason.map((reason, index) => (
-                            <Radio key={index} value={reason}>
-                              {reason}
-                            </Radio>
-                          ))}
-                        </Radio.Group>
-                      </div>
-                    </div>
-                  }
-                  onConfirm={() => {
-                    if (role === "courier") {
-                      giao_hang_that_bai({
-                        id_item: data?._id,
-                        action: "huy",
-                        cancellationReason: selectedReason,
-                        numberOrder: data?.orderNumber,
-                        linkUri: data?._id
-                      });
-                    }
-                  }}
-                  okText="Xác Nhận"
-                  cancelText="Không"
-                  disabled={role !== "courier"}
+                <Button
+                  className="w-52 bg-blue-500 rounded text-white"
+                  disabled
                 >
-                  <button
-                    className={`w - 52 rounded text - white ${
-                      role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
-                    } `}
-                    disabled={role !== "courier"}
-                  >
-                    Giao Hàng Thất Bại
-                  </button>
-                </Popconfirm>
+                  Giao Hàng Thất Bại
+                </Button>
               </>
             )}
             {data?.status === "4" && (
@@ -804,48 +671,7 @@ const OrdersDetali = () => {
               </button>
             )}
           </div>
-          <Modal
-            title="Xác Nhận Giao Hàng Thành Công"
-            visible={isDeliverSuccessModalVisible}
-            onOk={handleDeliverSuccess}
-            onCancel={() => setDeliverSuccessModalVisible(false)}
-          >
-            <Form.Item
-              name="confirmationImage"
-              label="Ảnh Xác Nhận"
-              rules={[
-                { required: true, message: "Vui lòng chọn ảnh xác nhận" }
-              ]}
-            >
-              <Upload
-                listType="picture"
-                beforeUpload={() => false} // Không tự động upload
-                onChange={handleFileChange}
-                fileList={fileList}
-                maxCount={1} // Chỉ cho phép chọn 1 ảnh
-                accept="image/*"
-                showUploadList={false} // Không hiển thị tên file đã chọn
-              >
-                <Button icon={<UploadOutlined />}>Tải Ảnh Lên</Button>
-              </Upload>
 
-              {/* Hiển thị ảnh preview nếu có */}
-              {previewImage && (
-                <div style={{ marginTop: 16 }}>
-                  <img
-                    src={previewImage}
-                    alt="Ảnh Xác Nhận"
-                    style={{
-                      width: "40%",
-                      maxHeight: 200,
-                      objectFit: "cover",
-                      border: "1px solid black"
-                    }}
-                  />
-                </div>
-              )}
-            </Form.Item>
-          </Modal>
         </div>
       </div>
     </>

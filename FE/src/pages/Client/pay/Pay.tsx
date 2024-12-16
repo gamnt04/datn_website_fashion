@@ -405,7 +405,7 @@ const Pay = () => {
           "customerInfo",
           JSON.stringify({ ...data_form, toa_do: selectedAddress?.coordinates })
         );
-    
+
         // Tạo URL thanh toán
         const UrlPayment = await axios.post(
           `http://localhost:2004/api/v1/create_payment_url`,
@@ -419,7 +419,7 @@ const Pay = () => {
             language: "vn",
           }
         );
-    
+
         // Lưu thông tin vào sessionStorage
         sessionStorage.setItem("item_order", JSON.stringify(item_order));
         window.location.href = UrlPayment.data.paymentUrl;
@@ -634,7 +634,7 @@ const Pay = () => {
                 dataSource={dataSort}
                 pagination={false}
               />
-              <div className="flex items-center justify-end gap-8 p-6">
+              {/* <div className="flex items-center justify-end gap-8 p-6">
                 <p className="text-xl font-semibold text-black">
                   <p>
                     Tổng tiền :{" "}
@@ -644,7 +644,7 @@ const Pay = () => {
                     })}
                   </p>
                 </p>
-              </div>
+              </div> */}
             </div>
             <div className="mt-4 mb-8 border rounded shadow-sm">
               <div className="flex justify-between px-6 py-6 border-b">
@@ -697,7 +697,7 @@ const Pay = () => {
                       onClick={showVoucherModal}
                       className="mt-1 ml-12 text-lg underline"
                     >
-                      Xem tất cả các voucher
+                      Chọn mã giảm giá
                     </Button>
                     {(selectedVoucher || discountAmount > 0) && (
                       <div>
@@ -705,7 +705,7 @@ const Pay = () => {
                           className="mt-2 text-blue-500 underline"
                           onClick={handleRemoveVoucher}
                         >
-                          Bỏ chọn voucher
+                          Bỏ chọn mã giảm giá
                         </button>
                       </div>
                     )}
@@ -721,7 +721,7 @@ const Pay = () => {
                   centered
                   width={1350}
                 >
-                  <p className="mb-5 text-xl">Tất cả Voucher</p>
+                  <p className="mb-5 text-xl">Tất cả mã giảm giá</p>
                   {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
@@ -776,15 +776,13 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              } ${
-                                isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                                } ${isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -808,9 +806,8 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                  }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled}
                               >
@@ -821,7 +818,7 @@ const Pay = () => {
                         })}
                     </div>
                   ) : (
-                    <p>Không có voucher nào khả dụng</p>
+                    <p>Không có mã giảm giá nào khả dụng</p>
                   )}
                 </Modal>
 
@@ -876,8 +873,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -917,18 +914,18 @@ const Pay = () => {
                     </p>
                   </div>
                   <div className="flex justify-between gap-16 py-3">
-                    <p>Voucher giảm giá</p>
+                    <p>Giảm giá</p>
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
                   <div className="my-4 border rounded shadow-sm">
-                    <div className="flex items-center justify-end gap-8 p-6">
+                    <div className="flex items-center justify-end gap-8 p-4">
                       <p className="text-xl font-semibold text-black">
                         <p>
                           Tổng số tiền:{" "}
@@ -946,10 +943,6 @@ const Pay = () => {
                 </div>
               </div>
               <div className="flex items-center justify-end px-6 py-6">
-                {/* <p>
-                  Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo{" "}
-                  <span className="text-blue-400">Điều khoản</span>
-                </p> */}
                 <button
                   className="w-[200px] py-3 bg-black text-white font-bold rounded"
                   type="submit"

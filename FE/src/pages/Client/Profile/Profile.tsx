@@ -7,7 +7,7 @@ import {
   Image,
   Input,
   Spin,
-  Upload
+  Upload,
 } from "antd";
 import dayjs from "dayjs";
 import ProfileHook from "../../../common/hooks/Settings/ProfileHook";
@@ -44,7 +44,7 @@ const Profile = () => {
     handlePreview,
     handleChange,
     setPreviewOpen,
-    setPreviewImage
+    setPreviewImage,
   } = ProfileHook();
 
   const validateBirthDate = (_: any, value: any) => {
@@ -81,8 +81,13 @@ const Profile = () => {
     mutate({ ...values, avatar: avatarUrl });
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isLoading) return <div>Pending...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
   if (isError) return <div>{error.message}</div>;
 
   return (
@@ -103,9 +108,9 @@ const Profile = () => {
             initialValues={
               data
                 ? {
-                  ...data,
-                  birthDate: data.birthDate ? dayjs(data.birthDate) : null
-                }
+                    ...data,
+                    birthDate: data.birthDate ? dayjs(data.birthDate) : null,
+                  }
                 : {}
             }
             onFinish={onFinish}
@@ -119,8 +124,8 @@ const Profile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Tên đăng nhập là bắt buộc!"
-                    }
+                      message: "Tên đăng nhập là bắt buộc!",
+                    },
                   ]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
@@ -134,12 +139,12 @@ const Profile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Họ và tên là bắt buộc!"
+                      message: "Họ và tên là bắt buộc!",
                     },
                     {
                       min: 3,
-                      message: "Họ và tên phải lớn hơn 3 ký tự!"
-                    }
+                      message: "Họ và tên phải lớn hơn 3 ký tự!",
+                    },
                   ]}
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 15 }}
@@ -155,9 +160,9 @@ const Profile = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Email là bắt buộc!"
+                      message: "Email là bắt buộc!",
                     },
-                    { type: "email", message: "Không đúng định dạng Email" }
+                    { type: "email", message: "Không đúng định dạng Email" },
                   ]}
                 >
                   <Input />
@@ -171,8 +176,8 @@ const Profile = () => {
                   rules={[
                     {
                       pattern: /^[0-9]{10,11}$/,
-                      message: "Số điện thoại không hợp lệ!"
-                    }
+                      message: "Số điện thoại không hợp lệ!",
+                    },
                   ]}
                 >
                   <Input placeholder="Nhập số điện thoại của bạn" />
@@ -245,7 +250,7 @@ const Profile = () => {
                         action={api}
                         data={{
                           upload_preset: PRESET_NAME,
-                          folder: FOLDER_NAME
+                          folder: FOLDER_NAME,
                         }}
                         listType="picture-card"
                         fileList={fileList}
@@ -253,7 +258,7 @@ const Profile = () => {
                         onChange={handleChange}
                         showUploadList={false}
                         style={{ display: "none" }}
-                      // multiple
+                        // multiple
                       >
                         <button
                           className="bg-black text-white w-[100px] h-[40px]"
@@ -271,7 +276,7 @@ const Profile = () => {
                         visible: previewOpen,
                         onVisibleChange: (visible) => setPreviewOpen(visible),
                         afterOpenChange: (visible) =>
-                          !visible && setPreviewImage("")
+                          !visible && setPreviewImage(""),
                       }}
                       src={previewImage}
                     />

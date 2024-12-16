@@ -5,13 +5,16 @@ import { ICategory } from "../../../../common/interfaces/Category";
 interface CategoryFilterProps {
   categories?: ICategory[];
   onCategorySelect: (ids: string[]) => void;
+
   selectedCategories?: string[];
+
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories = [],
   onCategorySelect,
   selectedCategories = [], // Nhận các danh mục đã chọn
+
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [searchParams] = useSearchParams();
@@ -26,12 +29,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   }, [searchParams, onCategorySelect]);
 
   const handleCategoryToggle = (id: string) => {
+
     const updatedCategories = selectedCategories?.includes(id)
       ? selectedCategories.filter((catId) => catId !== id)
       : [...(selectedCategories || []), id];
 
     onCategorySelect(updatedCategories);
   };
+
 
   const visibleCategories = categories.filter(
     (category) =>
@@ -76,8 +81,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   <input
                     type="checkbox"
                     id={category._id}
-                    checked={selectedCategories.includes(category._id)}
-                    onChange={() => handleCategoryToggle(category._id)}
+                    checked={selectedCategories.includes(category._id)} // Kiểm tra nếu danh mục đã được chọn
+                    onChange={() => handleCategoryToggle(category._id)} // Toggle checkbox state
                     className="mr-2"
                   />
                   <label htmlFor={category._id} className="text-gray-700">
