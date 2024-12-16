@@ -24,6 +24,7 @@ import instance from "../../../configs/axios";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
+import Loading from "../../../components/base/Loading/Loading";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -99,8 +100,10 @@ const Pay = () => {
   const [selectedVoucherCode, setSelectedVoucherCode] = useState<string | null>(
     null
   );
-
+  const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
   const handleApplyDiscount = async () => {
+    setIsApplyingVoucher(true);
+
     try {
       const selectedProductIds = item_order_checkked?.map(
         (item: any) => item.productId._id
@@ -131,6 +134,8 @@ const Pay = () => {
           autoClose: 1200,
         });
       }
+    } finally {
+      setIsApplyingVoucher(false); // Tắt loading sau khi hoàn tất
     }
   };
 
@@ -153,6 +158,8 @@ const Pay = () => {
 
   const handleApplyVoucher = async (e: React.MouseEvent, voucher: any) => {
     e.preventDefault();
+    setIsApplyingVoucher(true);
+
     try {
       const selectedProductIds = item_order_checkked?.map(
         (item: any) => item.productId._id
@@ -191,6 +198,8 @@ const Pay = () => {
           autoClose: 1200,
         });
       }
+    } finally {
+      setIsApplyingVoucher(false); // Tắt loading sau khi hoàn tất
     }
   };
   const handleTAdd = () => {
@@ -239,6 +248,13 @@ const Pay = () => {
   const sortedVouchers = activeVouchers.sort((a: any, b: any) => {
     const currentDate = new Date();
 
+    // Tính toán tổng giá trị giỏ hàng
+    const totalCartValue = item_lon_hon_0.reduce(
+      (total: any, item: any) => total + item.total_price_item,
+      0
+    );
+
+    // Kiểm tra tính hợp lệ của voucher A
     const isProductValidA = item_lon_hon_0.every(
       (item: any) =>
         a.appliedProducts.length === 0 ||
@@ -251,13 +267,7 @@ const Pay = () => {
     );
     const isVoucherValidA = isProductValidA && isCategoryValidA;
 
-    const aDisabled =
-      (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
-      a.usedCount >= a.quantity_voucher ||
-      new Date(a.expirationDate) < currentDate ||
-      new Date(a.startDate) > currentDate ||
-      !isVoucherValidA;
-
+    // Kiểm tra tính hợp lệ của voucher B
     const isProductValidB = item_lon_hon_0.every(
       (item: any) =>
         b.appliedProducts.length === 0 ||
@@ -270,15 +280,30 @@ const Pay = () => {
     );
     const isVoucherValidB = isProductValidB && isCategoryValidB;
 
+    // Kiểm tra tính hợp lệ của voucher A và B theo các điều kiện như giá trị chi tiêu tối thiểu và các điều kiện khác
+    const aDisabled =
+      (a.allowedUsers.length > 0 && !a.allowedUsers.includes(userId)) ||
+      a.usedCount >= a.quantity_voucher ||
+      new Date(a.expirationDate) < currentDate ||
+      new Date(a.startDate) > currentDate ||
+      !isVoucherValidA ||
+      totalCartValue < a.minimumSpend; // Kiểm tra giá trị chi tiêu tối thiểu của voucher A
+
     const bDisabled =
       (b.allowedUsers.length > 0 && !b.allowedUsers.includes(userId)) ||
       b.usedCount >= b.quantity_voucher ||
       new Date(b.expirationDate) < currentDate ||
       new Date(b.startDate) > currentDate ||
-      !isVoucherValidB;
+      !isVoucherValidB ||
+      totalCartValue < b.minimumSpend; // Kiểm tra giá trị chi tiêu tối thiểu của voucher B
 
+    // So sánh voucher a và b:
+    // - Nếu a bị disabled và b không bị disabled, thì a sẽ xuống dưới (trả về 1).
+    // - Nếu b bị disabled và a không bị disabled, thì b sẽ xuống dưới (trả về -1).
     if (aDisabled && !bDisabled) return 1;
     if (!aDisabled && bDisabled) return -1;
+
+    // Nếu cả hai đều bị disabled hoặc cả hai đều không bị disabled, giữ nguyên thứ tự (trả về 0).
     return 0;
   });
 
@@ -722,6 +747,19 @@ const Pay = () => {
                   width={1350}
                 >
                   <p className="mb-5 text-xl">Tất cả mã giảm giá</p>
+
+                  {/* Hiển thị giao diện loading khi đang áp dụng voucher */}
+                  {isApplyingVoucher && (
+                    <div className="fixed z-[10] bg-[#17182177] w-screen h-screen top-0 right-0 grid place-items-center">
+                      <div className="flex justify-center items-center h-screen">
+                        <Spin
+                          indicator={<LoadingOutlined spin />}
+                          size="large"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {sortedVouchers.length > 0 ? (
                     <div
                       className="flex flex-wrap gap-4 overflow-y-auto"
@@ -733,7 +771,6 @@ const Pay = () => {
                             new Date(voucher.expirationDate) < currentDate;
                           const isVoucherAvailable =
                             voucher.usedCount < voucher.quantity_voucher;
-
                           return !isExpired && isVoucherAvailable;
                         })
                         .map((voucher: any) => {
@@ -767,22 +804,34 @@ const Pay = () => {
                           const isNotYetValid =
                             new Date(voucher.startDate) > currentDate;
 
+                          const totalCartValue = item_lon_hon_0.reduce(
+                            (total: any, item: any) =>
+                              total + item.total_price_item,
+                            0
+                          );
+
+                          // Giả sử voucher có trường `minimumSpend`
+                          const isMinimumSpendValid =
+                            totalCartValue >= voucher.minimumSpend;
                           const isDisabled =
                             isExpired ||
                             !isVoucherAvailable ||
                             isVoucherDisabled ||
                             isNotYetValid ||
-                            !isAllowedUser;
+                            !isAllowedUser ||
+                            !isMinimumSpendValid;
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                                } ${isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
+                                selectedVoucher?._id === voucher._id
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              } ${
+                                isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                                }`}
+                              }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -806,12 +855,17 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
-                                  }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
+                                  isDisabled ? "bg-gray-300" : ""
+                                }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
-                                disabled={isDisabled}
+                                disabled={isDisabled || isApplyingVoucher} // Disable nút khi đang áp dụng voucher
                               >
-                                {isDisabled ? "Không hợp lệ" : "Sử dụng"}
+                                {isApplyingVoucher
+                                  ? "Đang áp dụng..."
+                                  : isDisabled
+                                  ? "Không hợp lệ"
+                                  : "Sử dụng"}
                               </button>
                             </div>
                           );
@@ -853,28 +907,34 @@ const Pay = () => {
                       </p>
                       <p>
                         <strong className="text-lg">Ưu đãi: </strong>
-                        {voucherDetails.discountValue}
-                        {voucherDetails.discountType === "percentage"
-                          ? "%"
-                          : "đ"}
-                        {voucherDetails.maxDiscount && (
+                        {voucherDetails.discountType === "percentage" ? (
                           <>
-                            {" "}
-                            Giảm tối đa{" "}
-                            {voucherDetails.maxDiscount.toLocaleString(
-                              "vi-VN"
-                            )}{" "}
-                            đ
+                            {voucherDetails.discountValue}%{" "}
+                            {voucherDetails.maxDiscount &&
+                              voucherDetails.maxDiscount > 0 && (
+                                <>
+                                  Giảm tối đa{" "}
+                                  {voucherDetails.maxDiscount.toLocaleString(
+                                    "vi-VN"
+                                  )}{" "}
+                                  đ
+                                </>
+                              )}
                           </>
+                        ) : (
+                          `${voucherDetails.discountValue.toLocaleString(
+                            "vi-VN"
+                          )} đ`
                         )}
                       </p>
+
                       <p>
                         <strong className="text-lg">Áp dụng cho: </strong>{" "}
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                            "vi-VN"
-                          )} đ`
+                              "vi-VN"
+                            )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -918,9 +978,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}`
+                            style: "currency",
+                            currency: "VND",
+                          })}`
                         : "0đ"}
                     </p>
                   </div>

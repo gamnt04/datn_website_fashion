@@ -494,10 +494,14 @@ export async function filterItems(req, res) {
       const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0);
       const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
 
+      // Tính giá sau khi giảm giá
+      const priceAfterSaleA = a.maxPrice - a.maxPrice * (a.sale / 100);
+      const priceAfterSaleB = b.maxPrice - b.maxPrice * (b.sale / 100);
+
       if (_sort === "price:desc") {
-        return (b.maxPrice || 0) - (a.maxPrice || 0);
+        return priceAfterSaleB - priceAfterSaleA;
       } else if (_sort === "price:asc") {
-        return (a.minPrice || Infinity) - (b.minPrice || Infinity);
+        return priceAfterSaleA - priceAfterSaleB;
       } else if (_sort === "updatedAt:desc") {
         return dateB - dateA;
       } else if (_sort === "updatedAt:asc") {

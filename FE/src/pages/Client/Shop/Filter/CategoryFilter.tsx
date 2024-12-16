@@ -11,7 +11,7 @@ interface CategoryFilterProps {
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories = [],
   onCategorySelect,
-  selectedCategories, // Nhận các danh mục đã chọn
+  selectedCategories = [], // Default to an empty array if not provided
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [searchParams] = useSearchParams();
@@ -32,6 +32,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
     onCategorySelect(updatedCategories); // Gọi callback với danh mục đã chọn
   };
+
   const visibleCategories = categories.filter(
     (category) =>
       category.published && category.name_category !== "Uncategorized"

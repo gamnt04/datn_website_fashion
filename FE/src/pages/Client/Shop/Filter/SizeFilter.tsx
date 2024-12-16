@@ -18,6 +18,13 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Hàm sắp xếp size theo thứ tự (tùy chỉnh theo yêu cầu)
+  const sortedSizeOptions = sizeOptions.sort((a, b) => {
+    // Ví dụ: sắp xếp theo thứ tự kích thước từ S đến XL
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
+    return sizeOrder.indexOf(a) - sizeOrder.indexOf(b);
+  });
+
   const handleSizeChange = (size: string) => {
     toggleSize(size);
     const updatedSizes = selectedSizes.includes(size)
@@ -43,8 +50,8 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
         {isOpen && (
           <div className="w-full bg-white  rounded-md">
             <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-2">
-              {sizeOptions.length > 0 ? (
-                sizeOptions.map((size) => (
+              {sortedSizeOptions.length > 0 ? (
+                sortedSizeOptions.map((size) => (
                   <li key={size} className="flex items-center">
                     <input
                       type="checkbox"
