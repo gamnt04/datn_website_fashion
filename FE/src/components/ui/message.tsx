@@ -37,12 +37,13 @@ const formatMessageWithProductLink = (message: string): string => {
   const productIdRegex = /\b([a-f0-9]{24})\b/;
 
   return message.replace(urlRegex, (url) => {
-    // Kiểm tra nếu URL chứa ID sản phẩm
     const productIdMatch = url.match(productIdRegex);
+    // Kiểm tra nếu URL chứa ID sản phẩm
     if (productIdMatch) {
-      return `<a href="${url}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">tại đây</a>`;
+      // Tạo liên kết với URL chứa ID
+      return `<a href="http://localhost:7899/shops/${productIdMatch[0]}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">tại đây</a>`;
     }
-    // Nếu chỉ là URL thường, gắn thẻ <a>
+    // Nếu chỉ là URL thường, gắn URL trực tiếp
     return `<a href="${url}" target="_blank" class="text-blue-800 underline underline-offset-1" rel="noopener noreferrer">tại đây</a>`;
   });
 };
