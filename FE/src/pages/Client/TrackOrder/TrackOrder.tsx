@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, Typography, message, Row, Col, Table, Tag, Image, Space, Modal, Spin } from 'antd';
+import { Form, Input, Button, Card, Typography, message, Row, Col, Table, Tag, Image, Space, Modal, Spin, Pagination } from 'antd';
 import { SearchOutlined, ShoppingOutlined, UserOutlined, DollarOutlined, CalendarOutlined, HomeOutlined, EyeOutlined, LoadingOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -56,6 +56,12 @@ const TrackOrder: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const paginatedOrders = orders.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const handlePageChange = (page: any) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     const userInfo = localStorage.getItem('user');
@@ -171,15 +177,16 @@ const TrackOrder: React.FC = () => {
       render: (total: number) => <Text strong>{`${total.toLocaleString()}đ`}</Text>,
     },
   ];
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">
       <Spin indicator={<LoadingOutlined spin />} size="large" />
     </div>;
   }
-  return (
 
+  return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded mb-5 mt-5" >
+      <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded mb-5 mt-5">
         <Link to={`/`} className="text-gray-500 hover:text-black ">
           Trang chủ
         </Link>
@@ -258,7 +265,6 @@ const TrackOrder: React.FC = () => {
         </Card>
       )}
 
-
       {/* Hiển thị danh sách các đơn hàng nếu có nhiều đơn hàng */}
       {orders.length > 0 && (
         <Card
@@ -266,10 +272,17 @@ const TrackOrder: React.FC = () => {
           style={{ marginBottom: '20px', padding: '20px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}
         >
           <Table
-            dataSource={orders}
+            dataSource={paginatedOrders}
             columns={orderColumns}
             pagination={false}
             rowKey="orderNumber"
+          />
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={orders.length}
+            onChange={handlePageChange}
+            style={{ textAlign: 'center', marginTop: '20px' }}
           />
         </Card>
       )}
@@ -321,7 +334,6 @@ const TrackOrder: React.FC = () => {
               </Col>
             </Row>
 
-
             {/* Thông tin khách hàng */}
             <Card
               title={<Title level={4}><UserOutlined /> Thông tin khách hàng</Title>}
@@ -360,7 +372,6 @@ const TrackOrder: React.FC = () => {
           </>
         )}
       </Modal>
-
     </div>
   );
 };
