@@ -1,39 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { ICategory } from "../../../../common/interfaces/Category";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { ICategory } from "../../../../common/interfaces/Category";
 
 interface CategoryFilterProps {
   categories?: ICategory[];
   onCategorySelect: (ids: string[]) => void;
+  selectedCategories: string[]; // Thêm prop để nhận danh mục đã chọn
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories = [],
   onCategorySelect,
+  selectedCategories, // Nhận các danh mục đã chọn
 }) => {
-  const [searchParams] = useSearchParams();
-  const categoryFromUrl = searchParams.get("cate_id");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(true);
+  const [searchParams] = useSearchParams();
 
-  // Chỉ đồng bộ một lần khi component mount hoặc categoryFromUrl thay đổi
   useEffect(() => {
-    if (categoryFromUrl && !selectedCategories.includes(categoryFromUrl)) {
-      setSelectedCategories([categoryFromUrl]);
-      onCategorySelect([categoryFromUrl]);
+    // Đọc danh mục từ query parameter khi URL thay đổi
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl) {
+      const categoryIds = categoryFromUrl.split(",");
+      onCategorySelect(categoryIds); // Cập nhật danh mục đã chọn
     }
-  }, [categoryFromUrl]); // Bỏ onCategorySelect khỏi dependencies
+  }, [searchParams, onCategorySelect]);
 
   const handleCategoryToggle = (id: string) => {
     const updatedCategories = selectedCategories.includes(id)
       ? selectedCategories.filter((catId) => catId !== id)
       : [...selectedCategories, id];
 
-    setSelectedCategories(updatedCategories);
-    onCategorySelect(updatedCategories);
+    onCategorySelect(updatedCategories); // Gọi callback với danh mục đã chọn
   };
-
-  // Lọc danh mục đã được công bố và không có tên là "Uncategorized"
   const visibleCategories = categories.filter(
     (category) =>
       category.published && category.name_category !== "Uncategorized"
@@ -77,8 +75,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   <input
                     type="checkbox"
                     id={category._id}
-                    checked={selectedCategories.includes(category._id)}
-                    onChange={() => handleCategoryToggle(category._id)}
+                    checked={selectedCategories.includes(category._id)} // Kiểm tra nếu danh mục đã được chọn
+                    onChange={() => handleCategoryToggle(category._id)} // Toggle checkbox state
                     className="mr-2"
                   />
                   <label htmlFor={category._id} className="text-gray-700">
