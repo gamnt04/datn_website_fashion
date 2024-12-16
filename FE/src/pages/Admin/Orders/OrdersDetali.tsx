@@ -15,7 +15,7 @@ import {
   Upload
 } from "antd";
 import { UploadFile } from "antd/es/upload/interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Mutation_Notification,
@@ -54,7 +54,16 @@ const OrdersDetali = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const { mutate: AddShipper } = Mutation_Shipper("ADD");
   const { data: shipperData } = useListAllShipper();
-  const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
+  const [selectedShipper, setSelectedShipper] = useState<string | null>(() => {
+    return localStorage.getItem("selectedShipper");
+  });
+  useEffect(() => {
+    if (selectedShipper) {
+      localStorage.setItem("selectedShipper", selectedShipper);
+    } else {
+      localStorage.removeItem("selectedShipper");
+    }
+  }, [selectedShipper]);
   const handleSelectShipper = (shipperId: string) => {
     setSelectedShipper(shipperId);
     if (!id) return;
@@ -146,11 +155,10 @@ const OrdersDetali = () => {
     dispathNotification?.mutate({
       userId: userId,
       receiver_id: data?.userId,
-      message: `Người bán đã ${
-        dataBody?.action === "xac_nhan"
-          ? "xác nhận"
-          : `Từ Chối:  ${dataBody?.cancellationReason}`
-      } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
+      message: `Người bán đã ${dataBody?.action === "xac_nhan"
+        ? "xác nhận"
+        : `Từ Chối:  ${dataBody?.cancellationReason}`
+        } yêu cầu hủy đơn hàng ${dataBody?.numberOrder}`,
       different: dataBody?.id_item,
       id_different: dataBody?.numberOrder
     });
@@ -209,14 +217,14 @@ const OrdersDetali = () => {
       status === 2
         ? `Người bán đã xác nhận đơn hàng ${code_order} `
         : status === 3
-        ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
-        : status === 4
-        ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
-        : status === 5
-        ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
-        : status === 6
-        ? `Đã giao đơn hàng ${code_order} thành công!`
-        : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
+          ? `Người bán đã giao đơn hàng ${code_order} cho đơn vị vận chuyển!`
+          : status === 4
+            ? `Đã giao đơn hàng ${code_order} thành công!.Vui lòng ấn đã nhận hàng!`
+            : status === 5
+              ? `Người Giao hàng đã giao đơn hàng ${code_order} thất bại!`
+              : status === 6
+                ? `Đã giao đơn hàng ${code_order} thành công!`
+                : `Người bán đã từ chối đơn hàng ${code_order}. Vui lòng chọn sản phẩm khác!`;
 
     dispathNotification?.mutate({
       userId: userId,
@@ -266,10 +274,12 @@ const OrdersDetali = () => {
       dataIndex: "name_product",
       key: "name_product",
       render: (_: any, item: any) => (
+        console.log(item),
+
         <div>
-          <p className="text-lg font-medium w-[80%]">
+          <Link to={`/admin/products/edit/${item?.productId?._id}`} className="text-lg font-medium w-[80%] text-black">
             {item?.productId?.name_product}
-          </p>
+          </Link>
           <p className=" mt-1 font-medium text-[#0000008A]">
             Loại: {item?.color_item} - {item?.name_size}
           </p>
@@ -364,11 +374,10 @@ const OrdersDetali = () => {
                         </div>
                         <Button
                           onClick={() => handleSelectShipper(shipper._id)}
-                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${
-                            selectedShipper === shipper._id
-                              ? "bg-green-500"
-                              : ""
-                          }`}
+                          className={`!bg-blue-500 !text-white px-4 py-4 rounded hover:bg-blue-600 ${selectedShipper === shipper._id
+                            ? "bg-green-500"
+                            : ""
+                            }`}
                         >
                           {selectedShipper === shipper._id ? "Đã chọn" : "Chọn"}
                         </Button>
@@ -406,12 +415,15 @@ const OrdersDetali = () => {
                       Địa chỉ: {data?.shipperId?.address || "Chưa cập nhật"}
                     </p>
                   </div>
-                  <Button
-                    onClick={handleDeselectShipper}
-                    className="!bg-red-500 !text-white px-4 py-4 rounded hover:bg-red-600"
-                  >
-                    Bỏ chọn
-                  </Button>
+                  {data?.status === "2" && (
+                    <Button
+                      onClick={handleDeselectShipper}
+                      className="!bg-red-500 !text-white px-4 py-4 rounded hover:bg-red-600"
+                    >
+                      Bỏ chọn
+                    </Button>
+                  )}
+
                 </div>
               </div>
             )}
@@ -443,7 +455,7 @@ const OrdersDetali = () => {
                         </span>
                         <p>Mã voucher:</p>
                     </div> */}
-            <p className="flex justify-end items-end p-4 text-[#0000008A]">
+            {/* <p className="flex justify-end items-end p-4 text-[#0000008A]">
               Tổng số tiền :
               <span className="text-[#ee4d2d] pl-2 text-xl">
                 {" "}
@@ -454,7 +466,7 @@ const OrdersDetali = () => {
                   })}
                 </p>
               </span>
-            </p>
+            </p> */}
           </div>
         </div>
         <div className="bg-white overflow-x-auto my-6 shadow p-4 rounded">
@@ -544,9 +556,9 @@ const OrdersDetali = () => {
                   {" "}
                   {data?.discountAmount
                     ? `- ${data?.discountAmount?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND"
-                      })} `
+                      style: "currency",
+                      currency: "VND"
+                    })} `
                     : "0đ"}
                 </p>
 
@@ -757,11 +769,10 @@ const OrdersDetali = () => {
                   disabled={role !== "courier"}
                 >
                   <button
-                    className={`w - 52 rounded text - white ${
-                      role !== "courier"
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-red-500"
-                    } `}
+                    className={`w - 52 rounded text - white ${role !== "courier"
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
+                      } `}
                     disabled={role !== "courier"}
                   >
                     Giao Hàng Thất Bại
