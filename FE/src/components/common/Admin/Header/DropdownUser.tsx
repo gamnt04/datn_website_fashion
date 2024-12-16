@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Modal, Spin } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useLogout from "../../../../common/hooks/Auth/Logout";
@@ -23,7 +23,13 @@ const DropdownUser = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  if (isLoading) return <div className="">loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
   if (isError) return <div className="">{error.message}</div>;
   return (
     <div>

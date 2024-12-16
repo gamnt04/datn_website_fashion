@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Divider, Drawer, Row } from "antd";
+import { Col, Divider, Drawer, Row, Spin } from "antd";
 import instance from "../../../configs/axios";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -24,7 +24,13 @@ const Shipper_Detail: React.FC<ShipperDetailProps> = ({
     return format(date, "dd/MM/yyyy");
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   const shipperData = data?.data || {};
 
