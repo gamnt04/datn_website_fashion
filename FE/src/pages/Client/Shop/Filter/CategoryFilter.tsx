@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ICategory } from "../../../../common/interfaces/Category";
+import { useSearchParams } from "react-router-dom";
 
 interface CategoryFilterProps {
   categories?: ICategory[];
@@ -10,18 +11,26 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories = [],
   onCategorySelect,
 }) => {
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("cate_id");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(true);
 
-  const handleCategoryToggle = (id: string) => {
-    setSelectedCategories((prev) => {
-      const updatedCategories = prev.includes(id)
-        ? prev.filter((catId) => catId !== id)
-        : [...prev, id];
+  // Chỉ đồng bộ một lần khi component mount hoặc categoryFromUrl thay đổi
+  useEffect(() => {
+    if (categoryFromUrl && !selectedCategories.includes(categoryFromUrl)) {
+      setSelectedCategories([categoryFromUrl]);
+      onCategorySelect([categoryFromUrl]);
+    }
+  }, [categoryFromUrl]); // Bỏ onCategorySelect khỏi dependencies
 
-      onCategorySelect(updatedCategories);
-      return updatedCategories;
-    });
+  const handleCategoryToggle = (id: string) => {
+    const updatedCategories = selectedCategories.includes(id)
+      ? selectedCategories.filter((catId) => catId !== id)
+      : [...selectedCategories, id];
+
+    setSelectedCategories(updatedCategories);
+    onCategorySelect(updatedCategories);
   };
 
   // Lọc danh mục đã được công bố và không có tên là "Uncategorized"
@@ -34,7 +43,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     <div className="relative border border-gray-200">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full py-2 px-4 text-gray-900 rounded-md"
+        className="flex items-center justify-between w-full px-4 py-2 text-gray-900 rounded-md"
       >
         <strong className="font-semibold mb:text-sm lg:text-lg">
           Danh Mục
@@ -61,7 +70,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
       {isOpen && (
         <div className="w-full bg-white rounded-md">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
             {visibleCategories.length > 0 ? (
               visibleCategories.map((category) => (
                 <div key={category._id} className="flex items-center">
