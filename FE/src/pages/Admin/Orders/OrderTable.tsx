@@ -158,8 +158,8 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
         order.status === "6"
           ? "Thanh toán thành công"
           : order.status === "5"
-          ? "Thanh toán thất bại"
-          : "Chưa thanh toán"
+            ? "Thanh toán thất bại"
+            : "Chưa thanh toán"
     },
     {
       title: "Trạng Thái",
@@ -412,7 +412,7 @@ const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
         <Pagination
           current={currentPage}
           pageSize={10}
-          total={totalPages * 10}
+          total={totalPages}
           onChange={goToPage}
         />
       </div>
