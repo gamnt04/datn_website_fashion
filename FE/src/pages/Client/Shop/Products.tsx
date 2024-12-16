@@ -4,6 +4,7 @@ import { Spin, Pagination } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Products from "../../../components/common/Items/Products";
 import { IProduct } from "../../../common/interfaces/Product";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Products_ShopProps {
   query: string;
@@ -25,6 +26,9 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const {
     data: productsResponse,
     isLoading,
@@ -40,15 +44,46 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     itemsPerPage,
     sortOption
   );
-  // Define updateURL function
+
+  // Handle URL updates
+  const updateURL = () => {
+    const urlParams = new URLSearchParams(location.search);
+
+    if (query) urlParams.set("keyword", query);
+    urlParams.set("page", currentPage.toString());
+    if (sortOption) urlParams.set("sort", sortOption);
+    if (cate_id.length) urlParams.set("cate_id", cate_id.join(","));
+    if (price_ranges.length)
+      urlParams.set("price_ranges", JSON.stringify(price_ranges));
+    if (selectedColors.length) urlParams.set("color", selectedColors.join(","));
+    if (selectedSizes.length)
+      urlParams.set("name_size", selectedSizes.join(","));
+
+    navigate({ search: urlParams.toString() });
+  };
+
+  // Get params from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    const page = params.get("page");
+    const cate_id_from_url = params.get("cate_id")?.split(",") || [];
+    const price_ranges_from_url = params.get("price_ranges")
+      ? JSON.parse(params.get("price_ranges") || "[]")
+      : [];
+    const name_size_from_url = params.get("name_size")?.split(",") || [];
+    const color_from_url = params.get("color")?.split(",") || [];
+    const sort_from_url = params.get("sort") || "";
+
+    if (page) setCurrentPage(Number(page));
+
+    // Update state with URL params
+    updateURL(); // Ensure the URL gets updated on first render as well
+  }, [location.search]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [query, cate_id, price_ranges, selectedSizes, selectedColors, sortOption]);
 
   if (isLoading) {
     return (

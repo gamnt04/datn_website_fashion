@@ -5,13 +5,16 @@ import { ICategory } from "../../../../common/interfaces/Category";
 interface CategoryFilterProps {
   categories?: ICategory[];
   onCategorySelect: (ids: string[]) => void;
-  selectedCategories: string[]; // Thêm prop để nhận danh mục đã chọn
+
+  selectedCategories?: string[];
+
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories = [],
   onCategorySelect,
-  selectedCategories, // Nhận các danh mục đã chọn
+  selectedCategories = [], // Nhận các danh mục đã chọn
+
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [searchParams] = useSearchParams();
@@ -26,12 +29,15 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   }, [searchParams, onCategorySelect]);
 
   const handleCategoryToggle = (id: string) => {
-    const updatedCategories = selectedCategories.includes(id)
-      ? selectedCategories.filter((catId) => catId !== id)
-      : [...selectedCategories, id];
 
-    onCategorySelect(updatedCategories); // Gọi callback với danh mục đã chọn
+    const updatedCategories = selectedCategories?.includes(id)
+      ? selectedCategories.filter((catId) => catId !== id)
+      : [...(selectedCategories || []), id];
+
+    onCategorySelect(updatedCategories);
   };
+
+
   const visibleCategories = categories.filter(
     (category) =>
       category.published && category.name_category !== "Uncategorized"

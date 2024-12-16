@@ -18,7 +18,6 @@ interface MenuShopProps {
   onSizeChange: (sizes: string[]) => void;
   selectedCategories: string[]; // Thêm prop để nhận danh mục đã chọn
 }
-
 const MenuShop: React.FC<MenuShopProps> = ({
   onCategorySelect,
   onPriceChange,
@@ -60,7 +59,9 @@ const MenuShop: React.FC<MenuShopProps> = ({
         <CategoryFilter
           categories={categoryData || []}
           onCategorySelect={handleCategoryChange}
-          selectedCategories={selectedCategories} // Truyền danh mục đã chọn
+
+          selectedCategories={selectedCategories || []}
+
         />
       </div>
 
