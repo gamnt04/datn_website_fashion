@@ -33,8 +33,6 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch, isLoading } = Query_Orders(id);
-  console.log(data?.confirmationImage);
-
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
@@ -238,7 +236,6 @@ const OrdersDetali = () => {
       )
     }
   ];
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -332,7 +329,8 @@ const OrdersDetali = () => {
             </div>
           )}
 
-          {data?.status == 3 || data?.status == 4 || data?.status == 6 || data?.status == 5 && (
+          {(data?.status == 3 || data?.status == 4 || data?.status == 6 || data?.status == 5) && (
+
             <div className="bg-white p-4 rounded shadow-md mt-4">
               <h2 className="text-center font-semibold mb-4">
                 Thông tin người giao hàng
