@@ -4,6 +4,7 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
+  Image,
   message,
   Popconfirm,
   Radio,
@@ -32,6 +33,8 @@ const OrdersDetali = () => {
   const { id } = useParams();
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch, isLoading } = Query_Orders(id);
+  console.log(data?.confirmationImage);
+  
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
@@ -329,12 +332,13 @@ const OrdersDetali = () => {
             </div>
           )}
 
-          {data?.status >= 3 && (
+          {data?.status == 3 || data?.status == 4 || data?.status == 6 || data?.status == 5&& (
             <div className="bg-white p-4 rounded shadow-md mt-4">
               <h2 className="text-center font-semibold mb-4">
                 Thông tin người giao hàng
               </h2>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center space-x-14">
+                <div className="flex items-center space-x-3">
                 <img
                   src={data?.shipperId?.avatar}
                   alt="Shipper Avatar"
@@ -347,6 +351,13 @@ const OrdersDetali = () => {
                   <p className="text-sm text-gray-500">
                     Địa chỉ: {data?.shipperId?.address || "Chưa cập nhật"}
                   </p>
+                </div>
+                
+                </div>
+                <div>
+                  <Image src={data?.confirmationImage} style={{width: 100}} alt="" />
+{data?.confirmationImage === undefined ? (""
+): (<p className="text-gray-500">Ảnh xác nhận</p>)}
                 </div>
               </div>
             </div>
@@ -375,13 +386,13 @@ const OrdersDetali = () => {
               <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
                 {data?.status == 6
                   ? "Đã thanh toán khi nhận hàng"
-                  : data?.customerInfo?.payment}
+                  : data?.customerInfo?.payment == "VNPAY" ? "Thanh toán qua VNPAY" : ""}
               </p>
             </div>
             <div className="flex items-center space-x-4">
               <p className="text-black font-semibold">Trạng thái thanh toán</p>
               <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
-                {data?.status == 6
+                {data?.status == 6 || data.customerInfo?.payment == "VNPAY"
                   ? "Thanh toán thành công" : data?.status == 5 ? "Thanh toán thất bại"
                     : "Chưa thanh toán"}
               </p>
