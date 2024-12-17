@@ -4,7 +4,7 @@ import { Ellipsis_horizontal } from "../../../components/common/Client/_componen
 import { IOrder } from "../../../common/interfaces/Orders";
 import { ColumnType, SortOrder } from "antd/es/table/interface";
 
-const OrderTable = ({ orders }: any) => {
+const OrderTable = ({ orders, currentPage, goToPage, totalPages }: any) => {
   const formatDate = (createdAt: any) => {
     if (!createdAt) return "";
     const date = new Date(createdAt);

@@ -633,7 +633,7 @@ export const updateOrderStatus = async (req, res) => {
 export async function get_orders_client(req, res) {
   const {
     _page = 1,
-    _limit = 7,
+    _limit = 10,
     _sort = "",
     _search = "",
     _status = "",

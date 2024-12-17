@@ -10,14 +10,14 @@ import Routes_auth from "./routers/auth";
 import Router_Contact from "./routers/contact";
 import Routes_payments from "./routers/OnlineCheckoutRoutes";
 import Routes_Attribute from "./routers/attribute";
-
+import { createServer } from 'node:http'
 import Router_Notification from "./routers/notification";
 import Route_Shipper from "./routers/shipper";
-
 import { Server } from "socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
 import Route_Salary from "./routers/salary";
+import { handle_socket_event } from "./socket/socket.io";
 
 dotenv.config();
 
@@ -58,8 +58,5 @@ app.get("/profile/allorder", (req, res) => {
     res.send("Giao dịch thất bại");
   }
 });
-
-// Tạo server HTTP
-const server = http.createServer(app);
 
 export const viteNodeApp = app;

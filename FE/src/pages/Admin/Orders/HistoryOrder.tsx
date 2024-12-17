@@ -4,7 +4,7 @@ import {
   Query_Orders,
   useSearchOrdersByNumberOrNumberPhone,
 } from "../../../common/hooks/Order/querry_Order";
-import { Button, Input, Select } from "antd";
+import { Button, Input, Pagination, Select } from "antd";
 const { Option } = Select;
 
 const HistoryOrder = () => {
@@ -53,6 +53,15 @@ const HistoryOrder = () => {
           goToPage={goToPage}
           totalPages={totalPages}
         />
+        <div className="flex justify-center items-center mt-4">
+          <Pagination
+            current={currentPage}
+            pageSize={10}
+            total={totalPages * 10}
+            onChange={goToPage}
+            showSizeChanger={false}
+          />
+        </div>
       </div>
     </div>
   );
