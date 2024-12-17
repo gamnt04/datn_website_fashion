@@ -565,6 +565,7 @@ export const getProductsByName = async (req, res) => {
     const products = await Products.find({
       name_product: { $regex: new RegExp(searchName, "i") },
     });
+    await Products.populate(products, { path: "attributes" });
     if (products.length === 0) {
       return res
         .status(StatusCodes.NOT_FOUND)

@@ -10,13 +10,13 @@ import {
   message,
   Select,
 } from "antd";
-import instance from "../../../configs/axios";
+import instance from "../../../../configs/axios";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRandom } from "react-icons/fa";
 import { Loader } from "lucide-react";
-import { IProduct } from "../../../common/interfaces/Product";
+import { IProduct } from "../../../../common/interfaces/Product";
 
 type FieldType = {
   name_voucher: string;
@@ -46,7 +46,7 @@ const AddVoucher = () => {
   const [limitType, setLimitType] = useState<string | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isLoading: loading } = useMutation({
     mutationFn: async (formData: FieldType) => {
       try {
         return await instance.post(`/voucher`, formData);
@@ -136,12 +136,12 @@ const AddVoucher = () => {
     userType.length === 0
       ? []
       : userType.includes("user") && userType.includes("courier")
-      ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
-      : userType.includes("user")
-      ? auth?.data
-      : userType.includes("courier")
-      ? shippersData?.data.shippers
-      : [];
+        ? [...(auth?.data || []), ...(shippersData?.data.shippers || [])]
+        : userType.includes("user")
+          ? auth?.data
+          : userType.includes("courier")
+            ? shippersData?.data.shippers
+            : [];
   const onApplyTypeChange = (value: string) => {
     setApplyType(value);
   };

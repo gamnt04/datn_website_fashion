@@ -16,6 +16,8 @@ import Router_Notification from "./routers/notification";
 import Route_Shipper from "./routers/shipper";
 import Routes_voucher from "./routers/voucher";
 import { Server } from "socket.io";
+import { createServer } from "http";
+import { handle_socket_event } from "./socket/socket.io";
 import http from "http";
 import jwt from "jsonwebtoken";
 import Messages from "./models/Message/Message";
@@ -68,69 +70,20 @@ app.use("/api/v1", Router_HuyMail);
 //   }
 // });
 
-// Tạo server HTTP
-const server = http.createServer(app);
-
 // Thiết lập Socket.IO server
-const io = new Server(server, {
+// web socket
+const server_socket = createServer(app)
+const io = new Server(server_socket, {
   cors: {
-    origin: "http://localhost:7899",
-    methods: ["GET", "POST"],
-  },
-});
-
-// Middleware xác thực JWT cho Socket.IO
-io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
-  if (!token) {
-    return next(new Error("Vui lòng cung cấp token hợp lệ."));
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = decoded;
-    next();
-  } catch (error) {
-    return next(new Error("Token không hợp lệ."));
+    origin: process.env.HOST_SOCKET || 8888,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   }
 });
+handle_socket_event(io)
 
-// Sự kiện khi có kết nối socket
-io.on("connection", (socket) => {
-  console.log(`Người dùng kết nối: ${socket.user.userId}`);
-  console.log("Client đã kết nối:", socket.id);
-  
-  socket.on('gui_thong_tin_san_pham_xoa', (data) => {
-    console.log('day la thong tin', data)
-    io.emit('lay_thong_tin_san_pham_xoa', data)
-  })
-
-  socket.on("send_message", async (data) => {
-    const { receiverId, content } = data;
-
-    try {
-      const message = new Messages({
-        senderId: socket.user.userId,
-        receiverId,
-        content,
-      });
-
-      await message.save();
-      socket.to(receiverId).emit("receive_message", message);
-    } catch (error) {
-      console.error("Lỗi khi lưu tin nhắn:", error);
-      socket.emit("error", "Gửi tin nhắn thất bại.");
-    }
-  });
-  socket.on("disconnect", () => {
-    console.log(`Người dùng ngắt kết nối: ${socket.user.userId}`);
-  });
-});
-
+server_socket.listen(process.env.PORT_SOCKET, () => {
+  console.log('server running!' + process.env.PORT_SOCKET);
+})
+// Tạo server HTTP
 // Lắng nghe cổng
-const PORT = process.env.PORT || 2004;
-server.listen(PORT, () => {
-  console.log(`Server đang chạy trên cổng ${PORT}`);
-});
-
 export const viteNodeApp = app;
