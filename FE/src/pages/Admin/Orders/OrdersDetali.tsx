@@ -34,7 +34,7 @@ const OrdersDetali = () => {
   const [selectedReason, setSelectedReason] = useState("");
   const { data, refetch, isLoading } = Query_Orders(id);
   console.log(data?.confirmationImage);
-  
+
   const { data: notification } = Query_notification(userId, role);
   const { mutate } = useOrderMutations("CONFIRM_CANCEL");
   const dispathNotification = Mutation_Notification("Add");
@@ -332,32 +332,32 @@ const OrdersDetali = () => {
             </div>
           )}
 
-          {data?.status == 3 || data?.status == 4 || data?.status == 6 || data?.status == 5&& (
+          {data?.status == 3 || data?.status == 4 || data?.status == 6 || data?.status == 5 && (
             <div className="bg-white p-4 rounded shadow-md mt-4">
               <h2 className="text-center font-semibold mb-4">
                 Thông tin người giao hàng
               </h2>
               <div className="flex items-center justify-center space-x-14">
                 <div className="flex items-center space-x-3">
-                <img
-                  src={data?.shipperId?.avatar}
-                  alt="Shipper Avatar"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
-                <div className="flex-1">
-                  <p className="text-lg font-medium">Tên: <strong>{data?.shipperId?.fullName}</strong></p>
-                  <p className="text-sm text-gray-500">SDT: {data?.shipperId?.phone}</p>
-                  <p className="text-sm text-gray-500 py-1">Phương tiện: {data?.shipperId?.vehicle || "Chưa cập nhật"}</p>
-                  <p className="text-sm text-gray-500">
-                    Địa chỉ: {data?.shipperId?.address || "Chưa cập nhật"}
-                  </p>
-                </div>
-                
+                  <img
+                    src={data?.shipperId?.avatar}
+                    alt="Shipper Avatar"
+                    className="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                  <div className="flex-1">
+                    <p className="text-lg font-medium">Tên: <strong>{data?.shipperId?.fullName}</strong></p>
+                    <p className="text-sm text-gray-500">SDT: {data?.shipperId?.phone}</p>
+                    <p className="text-sm text-gray-500 py-1">Phương tiện: {data?.shipperId?.vehicle || "Chưa cập nhật"}</p>
+                    <p className="text-sm text-gray-500">
+                      Địa chỉ: {data?.shipperId?.address || "Chưa cập nhật"}
+                    </p>
+                  </div>
+
                 </div>
                 <div>
-                  <Image src={data?.confirmationImage} style={{width: 100}} alt="" />
-{data?.confirmationImage === undefined ? (""
-): (<p className="text-gray-500">Ảnh xác nhận</p>)}
+                  <Image src={data?.confirmationImage} style={{ width: 100 }} alt="" />
+                  {data?.confirmationImage === undefined ? (""
+                  ) : (<p className="text-gray-500">Ảnh xác nhận</p>)}
                 </div>
               </div>
             </div>
@@ -384,9 +384,7 @@ const OrdersDetali = () => {
             <div className="flex items-center space-x-4">
               <p className="text-black font-semibold">Phương thức thanh toán</p>
               <p className="w-auto p-3 border-2 border-[#1B7EE2] text-[#1B7EE2] rounded">
-                {data?.status == 6
-                  ? "Đã thanh toán khi nhận hàng"
-                  : data?.customerInfo?.payment == "VNPAY" ? "Thanh toán qua VNPAY" : ""}
+                {data?.customerInfo?.payment == "VNPAY" ? "Thanh toán qua VNPAY" : "Đã thanh toán khi nhận hàng"}
               </p>
             </div>
             <div className="flex items-center space-x-4">

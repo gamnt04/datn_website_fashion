@@ -362,6 +362,7 @@ const ListCart = () => {
     );
     if (userId) {
       if (data_cart.length === 0 || data?.total_price < 1) {
+        messageApi.destroy()
         messageApi.open({
           type: "warning",
           content: "Vui lòng chọn sản phẩm trước khi thanh toán!",
