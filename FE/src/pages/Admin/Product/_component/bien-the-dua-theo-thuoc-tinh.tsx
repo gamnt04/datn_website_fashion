@@ -100,10 +100,11 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                             >
                               <Select
                                 className=" mt-2 h-[40px] max-w-[200px] text-[#1C2434] border-gray-600 !outline-none "
-                                options={props?.sizes.map((size: any) => ({
-                                  label: size,
-                                  value: size,
-                                }))}
+                                options={
+                                  props?.sizes?.map((size: any) => ({
+                                    label: size,
+                                    value: size,
+                                  }))}
                                 placeholder="Chọn kích cỡ"
                               />
                               {/* <Input className=" mt-2 py-2 max-w-[200px] text-[#1C2434] border-gray-600 !outline-none " /> */}
