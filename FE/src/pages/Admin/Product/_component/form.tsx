@@ -286,8 +286,7 @@ const Form_Item = ({ mode }: any) => {
                     ruler_field: [
                       {
                         required: true,
-                        message:
-                          "Ưu đãi tối thiểu bằng 0!"
+                        message: "Ưu đãi sản phẩm bắt buộc phải nhập!"
                       },
                       {
                         type: "number",

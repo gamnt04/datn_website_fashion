@@ -11,16 +11,16 @@ const App = () => {
   const { isActive } = useContext(LoadingContext);
   return (
     <GoogleOAuthProvider clientId="952541671937-4hv2c9lrhp31bqlvljr4chgvp4iafnqd.apps.googleusercontent.com">
-    <LoadingProvider> {/* Wrap the App component with the provider */}
-      <LoadingOverlay
-        active={isActive}
-        spinner
-        text='Loading'
-      >
-        <RouterComponent />
-        <ToastContainer position="bottom-right" />
-      </LoadingOverlay>
-    </LoadingProvider>
+      <LoadingProvider> {/* Wrap the App component with the provider */}
+        <LoadingOverlay
+          active={isActive}
+          spinner
+          text='Loading'
+        >
+          <RouterComponent />
+          <ToastContainer position="bottom-right" />
+        </LoadingOverlay>
+      </LoadingProvider>
     </GoogleOAuthProvider>
   );
 };

@@ -10,18 +10,21 @@ import {
   TableProps,
 } from "antd";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 import { Mutation_Cart } from "../../../common/hooks/Cart/mutation_Carts";
 import { List_Cart } from "../../../common/hooks/Cart/querry_Cart";
 import ScrollTop from "../../../common/hooks/Customers/ScrollTop";
 import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import Dow_btn from "./_components/dow";
+import { useToast } from '../../../components/ui/use-toast'
 import Het_hang from "./_components/het_hang";
 import Up_btn from "./_components/up";
 import { Trash2 } from "lucide-react";
 import { io } from "socket.io-client";
+import { ToastAction } from "@radix-ui/react-toast";
+import { Toaster } from "../../../components/ui/toaster";
 
 interface DataType {
   key: string;
@@ -32,11 +35,12 @@ interface DataType {
 }
 
 const ListCart = () => {
-  const socket = io("http://localhost:2004");
+  const socket = io("http://localhost:8888");
   const routing = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [user] = useLocalStorage("user", {});
   const userId = user?.user?._id;
+  const { toast: toast_shadcn } = useToast();
   const { data, isLoading, isError, error } = List_Cart(userId);
   const { mutate: removeSingle } = Mutation_Cart("REMOVE");
   const { mutate: removeMultiple } = Mutation_Cart("REMOVE_MULTIPLE");
@@ -48,10 +52,15 @@ const ListCart = () => {
     });
   }, [socket]);
   useEffect(() => {
-    const socket = io("http://localhost:2004");
-    socket.on("lay_thong_tin_san_pham_xoa", (data: any) => {
-      console.log(data);
-      window.alert(data);
+    socket.on("res_message_delete_item", (data: any) => {
+      toast_shadcn({
+        title: "Thông báo!",
+        description: `Rất tiếc, sản phẩm ${data?.name_product} không còn tồn tại!`,
+        className: 'border border-gray-800 bg-white',
+        action: (
+          <ToastAction altText="Goto schedule to undo">Ok</ToastAction>
+        ),
+      })
     });
   }, []);
   const { mutate: updateQuantity, isLoading: loading_update_quantity } =
@@ -395,7 +404,7 @@ const ListCart = () => {
             <Spin indicator={<LoadingOutlined spin />} size="large" />
           </div>
         ))}
-
+      <Toaster />
       <div className="mt-10">
         {contextHolder}
         <div className="text-sm py-6 bg-[#F3F3F3] font-medium px-[2.5%] rounded">

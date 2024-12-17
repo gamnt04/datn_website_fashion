@@ -100,6 +100,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
       case "Color":
         setQuantity_item(1);
         setSize(undefined);
+        setQuantity_attr(undefined);
         ref_validate_attr?.current?.classList.add("hidden");
         ref_validate_attr?.current?.classList.remove("block");
         dataItem?.attributes?.values?.filter((i: any) => {
@@ -437,7 +438,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
               </span>
             </div>
           </div>
-          <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
+          {/* <div className="mt-3 flex items-center mb-4 gap-x-2 font-medium lg:text-xl lg:tracking-[0.7px] mb:text-base">
             <span>Tạm tính :</span>
             <span className="text-[#EB2606]">
               {(dataProps?.products?.attributes
@@ -447,7 +448,7 @@ const InforProduct: React.FC<InforProductProp> = ({ dataProps }: any) => {
                 : (price_product * quantity_item)
               )?.toLocaleString("vi", { style: "currency", currency: "VND" })}
             </span>
-          </div>
+          </div> */}
           <div className="mt-5 flex items-center gap-x-5 font-medium lg:text-base mb:text-sm *:rounded *:duration-300 w-full">
             <Button
               className="hover:bg-black hover:text-white w-full lg:w-[20%]"

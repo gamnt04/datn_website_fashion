@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 export default function Data_Table({ dataProps }: any) {
   const [messageApi, contextHolder] = message.useMessage();
-  const socket = io('http://localhost:2004');
+  const socket = io('http://localhost:8888');
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
     return format(date, "HH:mm dd/MM/yyyy");
@@ -125,7 +125,7 @@ export default function Data_Table({ dataProps }: any) {
                       title="Xóa sản phẩm"
                       description="Bạn có muốn xóa sản phẩm này không?"
                       onConfirm={() => {
-                        socket.emit('gui_thong_tin_san_pham_xoa', data);
+                        socket.emit('send_message_delete_item', data);
                         messageApi.destroy()
                         messageApi.open({
                           type: "success",

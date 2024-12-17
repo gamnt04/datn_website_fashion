@@ -5,6 +5,7 @@ import useLocalStorage from "../../../common/hooks/Storage/useStorage";
 import { List_Auth } from "../../../common/hooks/Auth/querry_Auth";
 import { Button, Modal, Result, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
+import { Toaster } from "../../../components/ui/toaster";
 import {
   Add_Address,
   List_Address,
@@ -21,10 +22,12 @@ import { toast } from "react-toastify";
 import { filter_positive_Stock_Item } from "../../../_lib/Config/Filter_stock_cart_and_order";
 // import { Mutation_Notification } from "../../../_lib/React_Query/Notification/Query";
 import instance from "../../../configs/axios";
+import { io } from "socket.io-client";
 import { Tinh_tong_km } from "../../../Utils/tinh_khoang_cach";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useVouchersQuery } from "../../../common/hooks/voucher/useVouchersQuery";
-import Loading from "../../../components/base/Loading/Loading";
+import { useToast } from "../../../components/ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
 const Pay = () => {
   const routing = useNavigate();
@@ -51,7 +54,25 @@ const Pay = () => {
     messageApi,
     isLoading: loadingOrder,
   } = Pay_Mutation();
-
+  const socket = io("http://localhost:8888");
+  const { toast: toast_shadcn } = useToast();
+  useEffect(() => {
+    socket.on("connect_error", () => {
+      socket.disconnect();
+    });
+  }, [socket]);
+  useEffect(() => {
+    socket.on("res_message_delete_item", (data: any) => {
+      toast_shadcn({
+        title: "Thông báo!",
+        description: `Rất tiếc, sản phẩm ${data?.name_product} không còn tồn tại!`,
+        className: 'border border-gray-800 bg-white',
+        action: (
+          <ToastAction altText="Goto schedule to undo">Ok</ToastAction>
+        ),
+      })
+    });
+  }, []);
   const { data: activeVouchers, isLoading, error } = useVouchersQuery();
   const item_order_checkked = data?.products?.filter(
     (value: any) => value?.status_checked && value?.productId !== null
@@ -555,6 +576,7 @@ const Pay = () => {
 
   return (
     <>
+      <Toaster />
       <div className="max-w-[1440px] w-[95vw] mx-auto ">
         {contextHolder}
         <div className="mt-20">
@@ -823,15 +845,13 @@ const Pay = () => {
                           return (
                             <div
                               key={voucher._id}
-                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${
-                                selectedVoucher?._id === voucher._id
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              } ${
-                                isDisabled
+                              className={`border rounded p-6 flex-shrink-0 w-[400px] flex items-center justify-between ${selectedVoucher?._id === voucher._id
+                                ? "border-blue-500"
+                                : "border-gray-300"
+                                } ${isDisabled
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div>
                                 <p className="text-lg font-bold">
@@ -855,17 +875,16 @@ const Pay = () => {
                                 </Button>
                               </div>
                               <button
-                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${
-                                  isDisabled ? "bg-gray-300" : ""
-                                }`}
+                                className={`ml-4 px-6 py-3 bg-blue-500 text-white font-bold rounded ${isDisabled ? "bg-gray-300" : ""
+                                  }`}
                                 onClick={(e) => handleApplyVoucher(e, voucher)}
                                 disabled={isDisabled || isApplyingVoucher} // Disable nút khi đang áp dụng voucher
                               >
                                 {isApplyingVoucher
                                   ? "Đang áp dụng..."
                                   : isDisabled
-                                  ? "Không hợp lệ"
-                                  : "Sử dụng"}
+                                    ? "Không hợp lệ"
+                                    : "Sử dụng"}
                               </button>
                             </div>
                           );
@@ -933,8 +952,8 @@ const Pay = () => {
                         {" Đơn hàng tối thiểu "}
                         {voucherDetails.minimumSpend
                           ? `${voucherDetails.minimumSpend.toLocaleString(
-                              "vi-VN"
-                            )} đ`
+                            "vi-VN"
+                          )} đ`
                           : "Không có"}
                       </p>
                       <p>
@@ -978,9 +997,9 @@ const Pay = () => {
                     <p>
                       {discountAmount > 0
                         ? `-${discountAmount?.toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}`
+                          style: "currency",
+                          currency: "VND",
+                        })}`
                         : "0đ"}
                     </p>
                   </div>
