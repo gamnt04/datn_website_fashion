@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useFilteredProducts } from "../../../common/hooks/Products/useFilterProducts";
 import { Spin, Pagination } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -22,7 +23,14 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
   selectedColors,
   sortOption,
 }) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Lấy page từ URL khi load trang
+  const queryParams = new URLSearchParams(location.search);
+  const initialPage = parseInt(queryParams.get("page") || "1", 10);
+
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const itemsPerPage = 12;
 
   const {
@@ -40,15 +48,27 @@ const Products_Shop: React.FC<Products_ShopProps> = ({
     itemsPerPage,
     sortOption
   );
-  // Define updateURL function
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    // Cập nhật URL với trang hiện tại
+    navigate(`${location.pathname}?page=${page}`);
   };
 
   useEffect(() => {
+    // Khi các filter thay đổi, reset về trang 1 và cập nhật URL
     setCurrentPage(1);
-  }, [query, cate_id, price_ranges, selectedSizes, selectedColors, sortOption]);
+    navigate(`${location.pathname}?page=1`);
+  }, [
+    query,
+    cate_id,
+    price_ranges,
+    selectedSizes,
+    selectedColors,
+    sortOption,
+    navigate,
+    location.pathname,
+  ]);
 
   if (isLoading) {
     return (

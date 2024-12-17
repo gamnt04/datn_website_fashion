@@ -282,7 +282,7 @@ const List_Category: React.FC = () => {
     total: dataSource.length,
     showSizeChanger: false,
     pageSizeOptions: [],
-    showQuickJumper: true,
+    showQuickJumper: false, // Đặt false để ẩn "Go to Page"
     itemRender: (
       page: number,
       type: string,
@@ -302,6 +302,7 @@ const List_Category: React.FC = () => {
     onChange: onChangePage,
     showTotal: (total: number) => `Tổng ${total} mục`,
   };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">

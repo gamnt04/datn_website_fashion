@@ -10,7 +10,6 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
   // const { selectedPriceRanges, handlePriceChange, resetPriceFilter } =
   const { selectedPriceRanges, handlePriceChange } = usePriceFilter();
 
-
   // Kiểm tra xem khoảng giá có được chọn không
   const isPriceRangeSelected = useCallback(
     (min: number, max: number) => {
@@ -28,9 +27,9 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
     (min: number, max: number) => {
       const newPriceRanges = isPriceRangeSelected(min, max)
         ? selectedPriceRanges.filter(
-          (range) =>
-            !(range.min === min && (range.max === max || max === Infinity))
-        )
+            (range) =>
+              !(range.min === min && (range.max === max || max === Infinity))
+          )
         : [...selectedPriceRanges, { min, max }];
 
       // Cập nhật trạng thái chọn khoảng giá
@@ -41,7 +40,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
       handlePriceChange,
       onPriceChange,
       selectedPriceRanges,
-      isPriceRangeSelected
+      isPriceRangeSelected,
     ]
   );
 
@@ -54,7 +53,8 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onPriceChange }) => {
   return (
     <div className="border border-gray-200">
       <details
-        className="group [&_summary::-webkit-details-marker]:hidden *:px-4" open
+        className="group [&_summary::-webkit-details-marker]:hidden *:px-4"
+        open
       >
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900">
           <strong>Giá </strong>
