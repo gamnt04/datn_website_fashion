@@ -71,34 +71,34 @@ export const useFilteredProducts = (
     sortOption,
   ];
 
-  // Cập nhật URL với tham số lọc
-  const updateURL = () => {
-    const urlParams = new URLSearchParams();
+  // // Cập nhật URL với tham số lọc
+  // const updateURL = () => {
+  //   const urlParams = new URLSearchParams();
 
-    if (query) urlParams.set("keyword", query);
-    urlParams.set("page", page.toString());
-    if (sortOption) urlParams.set("sort", sortOption);
-    if (cate_id.length) urlParams.set("cate_id", cate_id.join(","));
-    if (price_ranges.length)
-      urlParams.set("price_ranges", JSON.stringify(price_ranges));
+  //   if (query) urlParams.set("keyword", query);
+  //   urlParams.set("page", page.toString());
+  //   if (sortOption) urlParams.set("sort", sortOption);
+  //   if (cate_id.length) urlParams.set("cate_id", cate_id.join(","));
+  //   if (price_ranges.length)
+  //     urlParams.set("price_ranges", JSON.stringify(price_ranges));
 
-    // Kiểm tra nếu color có giá trị, nếu không thì xóa
-    if (color.length > 0) {
-      urlParams.set("color", color.join(","));
-    } else {
-      urlParams.delete("color"); // Xóa color khỏi URL nếu không có màu
-    }
+  //   // Kiểm tra nếu color có giá trị, nếu không thì xóa
+  //   if (color.length > 0) {
+  //     urlParams.set("color", color.join(","));
+  //   } else {
+  //     urlParams.delete("color"); // Xóa color khỏi URL nếu không có màu
+  //   }
 
-    if (name_size.length) urlParams.set("name_size", name_size.join(","));
+  //   if (name_size.length) urlParams.set("name_size", name_size.join(","));
 
-    // Cập nhật URL mới
-    navigate({ search: urlParams.toString() });
-  };
+  //   // Cập nhật URL mới
+  //   navigate({ search: urlParams.toString() });
+  // };
 
-  // Gọi hàm updateURL mỗi khi các tham số lọc thay đổi
-  React.useEffect(() => {
-    updateURL();
-  }, [query, cate_id, price_ranges, color, name_size, page, limit, sortOption]);
+  // // Gọi hàm updateURL mỗi khi các tham số lọc thay đổi
+  // React.useEffect(() => {
+  //   updateURL();
+  // }, [query, cate_id, price_ranges, color, name_size, page, limit, sortOption]);
 
   // Sử dụng React Query để gọi API và lưu trữ kết quả
   const { data, error, isLoading, isError } = useQuery<

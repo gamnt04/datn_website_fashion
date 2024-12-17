@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Empty, Pagination, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -13,7 +12,7 @@ const SearchResults = () => {
   const searchParams = new URLSearchParams(location.search);
   const query: any = searchParams.get("keyword");
 
-  // Thêm các state mới cho việc lọc
+  // Các state lọc
   const [cate_id, setCategoryId] = useState<string[]>([]);
   const [priceRanges, setPriceRanges] = useState<
     { min: number; max: number }[]
@@ -22,8 +21,10 @@ const SearchResults = () => {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<any>("");
-  const itemsPerPage = 16; // Số lượng sản phẩm mỗi trang
 
+  const itemsPerPage = 16;
+
+  // Dữ liệu sản phẩm đã lọc
   const {
     data: results,
     isLoading,
@@ -32,46 +33,39 @@ const SearchResults = () => {
   } = useFilteredProducts(
     query,
     cate_id,
-    priceRanges,
+    priceRanges, // Truyền priceRanges vào hook để lọc sản phẩm theo giá
     selectedColors,
     selectedSizes,
     currentPage,
     itemsPerPage,
     sortOption
   );
-
-  const handleCategorySelect = (id: string[]) => {
-    setCategoryId(id);
+  const handleCategorySelect = (_id: string[]) => {
+    setCategoryId(_id);
+    setCurrentPage(1); // Reset về trang 1
   };
 
   const handlePriceChange = (priceRanges: { min: number; max: number }[]) => {
     setPriceRanges(priceRanges);
+    setCurrentPage(1); // Reset về trang 1
   };
 
-  const handleColorChange = (colors: string[]) => setSelectedColors(colors);
-
-  const handleSizeChange = (sizes: string[]) => setSelectedSizes(sizes);
-
-  const toggleColor = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    );
+  const handleColorChange = (colors: string[]) => {
+    setSelectedColors(colors);
+    setCurrentPage(1); // Reset về trang 1
   };
 
-  const resetColorFilter = () => setSelectedColors([]);
-
-  const toggleSize = (size: string) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
+  const handleSizeChange = (sizes: string[]) => {
+    setSelectedSizes(sizes);
+    setCurrentPage(1); // Reset về trang 1
   };
+
   const handleSortChange = (value: string) => {
     setSortOption(value);
+    setCurrentPage(1); // Reset về trang 1
   };
-  const resetSizeFilter = () => setSelectedSizes([]);
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
   const totalItems = results?.pagination.totalItems || 0;
 
@@ -101,31 +95,29 @@ const SearchResults = () => {
         <div className="xl:grid grid-cols-[21%_76%] justify-between">
           <MenuShop
             onCategorySelect={handleCategorySelect}
-            onPriceChange={handlePriceChange}
-            setSearch={() => {}}
+            onPriceChange={handlePriceChange} // Truyền hàm xử lý thay đổi giá vào MenuShop
             selectedColors={selectedColors}
-            toggleColor={toggleColor}
-            resetColorFilter={resetColorFilter}
             onColorChange={handleColorChange}
             selectedSizes={selectedSizes}
-            toggleSize={toggleSize}
-            resetSizeFilter={resetSizeFilter}
+            toggleSize={(size) => handleSizeChange([size])} // Truyền lại các giá trị kích thước
+            resetSizeFilter={() => setSelectedSizes([])}
             onSizeChange={handleSizeChange}
+            selectedCategories={cate_id}
           />
           <div className="mb:w-[95%] xl:w-full mb:mx-[2.5%] xl:mx-0">
             <ArrangeFilter
               sortOption={sortOption}
               onSortChange={handleSortChange}
             />
-            {results && results?.data.length > 0 ? (
+            {results?.data?.length ? (
               <>
                 <div className="grid grid-cols-2 gap-6 my-4 lg:grid-cols-4">
-                  {results?.data.map((product: any) => (
+                  {results.data.map((product: any) => (
                     <Products key={product._id} items={product} />
                   ))}
                 </div>
 
-                {/* Phân trang */}
+                {/* Pagination */}
                 {totalItems > 0 && (
                   <div className="flex justify-center my-6">
                     <Pagination

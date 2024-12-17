@@ -16,7 +16,7 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
   // resetSizeFilter,
   onSizeChange,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Mặc định mở
 
   // Hàm sắp xếp size theo thứ tự (tùy chỉnh theo yêu cầu)
   const sortedSizeOptions = sizeOptions.sort((a, b) => {
@@ -37,8 +37,7 @@ const SizeFilter: React.FC<SizeFilterProps> = ({
     <div className="border border-gray-200">
       <details
         className="group [&_summary::-webkit-details-marker]:block *:px-4"
-        open={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
+        open={isOpen} // Luôn mở mặc định
       >
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900 ">
           <strong>Kích cỡ</strong>

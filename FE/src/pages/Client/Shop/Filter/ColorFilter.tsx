@@ -38,7 +38,7 @@ const ColorFilter: React.FC<ColorFilterProps> = ({
 
   return (
     <div className="space-y-2 border border-gray-200">
-      <details className="group">
+      <details className="group" open>
         <summary className="flex cursor-pointer items-center justify-between py-2 text-gray-900">
           <strong className="ml-3">Tìm kiếm màu</strong>
           <span className="shrink-0 transition duration-300 group-open:-rotate-180 mr-4">

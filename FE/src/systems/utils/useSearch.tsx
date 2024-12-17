@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import instance from "../../configs/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import debounce from "lodash/debounce";
 
 const useSearch = () => {
@@ -11,8 +11,16 @@ const useSearch = () => {
   const [searchError, setSearchError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const location = useLocation(); // Để theo dõi thay đổi pathname
 
   const searchRef = useRef(null);
+
+  // Reset ô tìm kiếm khi chuyển trang
+  useEffect(() => {
+    setQuery("");
+    setSuggestions([]);
+    setShowSuggestions(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
