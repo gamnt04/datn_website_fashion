@@ -33,20 +33,38 @@ const AddVoucher = () => {
   const { mutate, isLoading } = useMutation({
     mutationFn: async (formData: IVoucher) => {
       try {
-        return await instance.post(`/voucher`, formData);
+        const response = await fetch('http://localhost:2004/api/v1', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        console.log(response)
+        if (response?.status === 400 || response?.status === 404) {
+          messageApi.destroy()
+          messageApi.open({
+            type: "error",
+            content: "Mã giảm giá đã tồn tại!",
+          });
+        }
+        return response;
       } catch (error) {
         throw new Error(error as any).message;
       }
     },
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      messageApi.destroy()
       messageApi.open({
         type: "success",
         content: "Thêm mới mã giảm giá thành công",
       });
       form.resetFields();
-      setTimeout(() => {
-        nav("/admin/voucher");
-      }, 1000);
+      if (response?.status === 201) {
+        setTimeout(() => {
+          nav("/admin/voucher");
+        }, 1000);
+      }
     },
     onError: (error) => {
       messageApi.open({
@@ -134,12 +152,12 @@ const AddVoucher = () => {
               {/* Cột 1 */}
               <div className="w-full px-4 md:w-1/2">
                 <Form.Item<IVoucher>
-                  label="Tên mã giảm giá"
+                  label="Tên chương trình giảm giá"
                   name="name_voucher"
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập tên mã giảm giá!",
+                      message: "Vui lòng nhập tên chương trình giảm giá!",
                     },
                   ]}
                 >
@@ -575,6 +593,7 @@ const AddVoucher = () => {
                     mode="multiple"
                     placeholder="Chọn người người sử dụng mã giảm giá"
                     onChange={handleSelectAuth}
+                    defaultOpen={false}
                     style={{ width: "100%" }}
                     suffixIcon={
                       <p className="text-black">

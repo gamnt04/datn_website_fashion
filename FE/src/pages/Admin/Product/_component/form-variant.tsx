@@ -226,7 +226,7 @@ export default function Form_variant({ propsData }: any) {
                                                                     onClick={() => addSize()}
                                                                     className="px-2 "
                                                                 >
-                                                                    Thêm biến thể
+                                                                    Thêm kích thước
                                                                 </Button>
                                                                 {
                                                                     (fields?.length > 1) &&

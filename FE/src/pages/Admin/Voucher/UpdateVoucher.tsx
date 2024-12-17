@@ -191,12 +191,12 @@ const UpdateVoucher = () => {
               {/* Cột 1 */}
               <div className="w-full px-4 md:w-1/2">
                 <Form.Item<IVoucher>
-                  label="Tên mã giảm giá"
+                  label="Tên chương trình giảm giá"
                   name="name_voucher"
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập tên mã giảm giá!",
+                      message: "Vui lòng nhập tên chương trình giảm giá!",
                     },
                   ]}
                 >

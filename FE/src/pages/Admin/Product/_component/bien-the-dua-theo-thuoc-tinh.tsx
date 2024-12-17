@@ -206,7 +206,7 @@ const Filed_bien_the_dua_theo_thuoc_tinh = ({ props }: any) => {
                         onClick={() => addSize()}
                         className="px-2 "
                       >
-                        Thêm biến thể
+                        Thêm kích thước
                       </Button>
                       {fields?.length > 1 && (
                         <Button

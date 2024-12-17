@@ -208,7 +208,7 @@ export default function Bien_the_trang_update({ props }: any) {
                           onClick={() => addSize()}
                           className="px-2 "
                         >
-                          Thêm biến thể
+                          Thêm kích thước
                         </Button>
                         <Button
                           onClick={() => remove(name)}
